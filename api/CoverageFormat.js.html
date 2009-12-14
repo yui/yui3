@@ -47,37 +47,37 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Coverage.Format&quot;</span><span class="o">);</span>
+                        <div class="highlight"><pre>    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Coverage.Format&quot;</span><span class="p">);</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Returns the coverage report in JSON format. This is the straight</span>
-<span class="c">     * JSON representation of the native coverage report.</span>
-<span class="c">     * @param {Object} coverage The coverage report object.</span>
-<span class="c">     * @return {String} A JSON-formatted string of coverage data.</span>
-<span class="c">     * @method JSON</span>
-<span class="c">     * @namespace Coverage.Format</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Coverage</span><span class="o">.</span><span class="nx">Format</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">coverage</span><span class="o">){</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">stringify</span><span class="o">(</span><span class="nx">coverage</span><span class="o">);</span>
-    <span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the coverage report in JSON format. This is the straight</span>
+<span class="cm">     * JSON representation of the native coverage report.</span>
+<span class="cm">     * @param {Object} coverage The coverage report object.</span>
+<span class="cm">     * @return {String} A JSON-formatted string of coverage data.</span>
+<span class="cm">     * @method JSON</span>
+<span class="cm">     * @namespace Coverage.Format</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Coverage</span><span class="p">.</span><span class="nx">Format</span><span class="p">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">coverage</span><span class="p">){</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">coverage</span><span class="p">);</span>
+    <span class="p">};</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns the coverage report in a JSON format compatible with</span>
-<span class="c">     * Xdebug. See &lt;a href=&quot;http://www.xdebug.com/docs/code_coverage&quot;&gt;Xdebug Documentation&lt;/a&gt;</span>
-<span class="c">     * for more information. Note: function coverage is not available</span>
-<span class="c">     * in this format.</span>
-<span class="c">     * @param {Object} coverage The coverage report object.</span>
-<span class="c">     * @return {String} A JSON-formatted string of coverage data.</span>
-<span class="c">     * @method XdebugJSON</span>
-<span class="c">     * @namespace Coverage.Format</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Coverage</span><span class="o">.</span><span class="nx">Format</span><span class="o">.</span><span class="nx">XdebugJSON</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">coverage</span><span class="o">){</span>
-        <span class="k">var</span> <span class="nx">report</span> <span class="o">=</span> <span class="o">{};</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">coverage</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span> <span class="nx">name</span><span class="o">){</span>
-            <span class="nx">report</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">coverage</span><span class="o">[</span><span class="nx">name</span><span class="o">].</span><span class="nx">lines</span><span class="o">;</span>
-        <span class="o">});</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">stringify</span><span class="o">(</span><span class="nx">report</span><span class="o">);</span>        
-    <span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the coverage report in a JSON format compatible with</span>
+<span class="cm">     * Xdebug. See &lt;a href=&quot;http://www.xdebug.com/docs/code_coverage&quot;&gt;Xdebug Documentation&lt;/a&gt;</span>
+<span class="cm">     * for more information. Note: function coverage is not available</span>
+<span class="cm">     * in this format.</span>
+<span class="cm">     * @param {Object} coverage The coverage report object.</span>
+<span class="cm">     * @return {String} A JSON-formatted string of coverage data.</span>
+<span class="cm">     * @method XdebugJSON</span>
+<span class="cm">     * @namespace Coverage.Format</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Coverage</span><span class="p">.</span><span class="nx">Format</span><span class="p">.</span><span class="nx">XdebugJSON</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">coverage</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">report</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">coverage</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">name</span><span class="p">){</span>
+            <span class="nx">report</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">coverage</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">lines</span><span class="p">;</span>
+        <span class="p">});</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">report</span><span class="p">);</span>        
+    <span class="p">};</span>
 
 
   
@@ -128,6 +128,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class="selected"><a href="module_test.html" title="test">test</a></li>

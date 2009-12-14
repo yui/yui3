@@ -12,6 +12,7 @@ package com.yui.util
 	import flash.net.URLVariables;
 	import flash.utils.Timer;
 	import flash.external.ExternalInterface;
+	import flash.system.Security;
 
 	public class io extends Sprite
 	{
@@ -25,6 +26,7 @@ package com.yui.util
 			yId = root.loaderInfo.parameters.yid;
 			var a:Array = [yId];
 
+			Security.allowDomain("*");
 			ExternalInterface.addCallback("send", send);
 			ExternalInterface.addCallback("abort", ioAbort);
 			ExternalInterface.addCallback("isInProgress", isInProgress);

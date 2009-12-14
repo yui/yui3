@@ -47,112 +47,112 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Returns a simple string representation of the object or array.</span>
-<span class="c"> * Other types of objects will be returned unprocessed.  Arrays</span>
-<span class="c"> * are expected to be indexed.  Use object notation for</span>
-<span class="c"> * associative arrays.</span>
-<span class="c"> *</span>
-<span class="c"> * If included, the dump method is added to the YUI instance.</span>
-<span class="c"> *</span>
-<span class="c"> * @module dump</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Returns a simple string representation of the object or array.</span>
+<span class="cm"> * Other types of objects will be returned unprocessed.  Arrays</span>
+<span class="cm"> * are expected to be indexed.  Use object notation for</span>
+<span class="cm"> * associative arrays.</span>
+<span class="cm"> *</span>
+<span class="cm"> * If included, the dump method is added to the YUI instance.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module dump</span>
+<span class="cm"> */</span>
 
-    <span class="k">var</span> <span class="nx">L</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> <span class="nx">OBJ</span><span class="o">=</span><span class="s1">&#39;{...}&#39;</span><span class="o">,</span> <span class="nx">FUN</span><span class="o">=</span><span class="s1">&#39;f(){...}&#39;</span><span class="o">,</span> <span class="nx">COMMA</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="o">,</span> <span class="nx">ARROW</span><span class="o">=</span><span class="s1">&#39; =&gt; &#39;</span><span class="o">,</span>
+    <span class="kd">var</span> <span class="nx">L</span><span class="o">=</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span> <span class="nx">OBJ</span><span class="o">=</span><span class="s1">&#39;{...}&#39;</span><span class="p">,</span> <span class="nx">FUN</span><span class="o">=</span><span class="s1">&#39;f(){...}&#39;</span><span class="p">,</span> <span class="nx">COMMA</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="nx">ARROW</span><span class="o">=</span><span class="s1">&#39; =&gt; &#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * The following methods are added to the YUI instance</span>
-<span class="c">     * @class YUI~dump</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * The following methods are added to the YUI instance</span>
+<span class="cm">     * @class YUI~dump</span>
+<span class="cm">     */</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Returns a simple string representation of the object or array.</span>
-<span class="c">     * Other types of objects will be returned unprocessed.  Arrays</span>
-<span class="c">     * are expected to be indexed.  Use object notation for</span>
-<span class="c">     * associative arrays.</span>
-<span class="c">     *</span>
-<span class="c">     * @TODO dumping a window is causing an unhandled exception in</span>
-<span class="c">     * FireFox.</span>
-<span class="c">     *</span>
-<span class="c">     * This method is in the &#39;dump&#39; module, which is not bundled with</span>
-<span class="c">     * the core YUI object</span>
-<span class="c">     *</span>
-<span class="c">     * @method dump</span>
-<span class="c">     * @param o {object} The object to dump</span>
-<span class="c">     * @param d {int} How deep to recurse child objects, default 3</span>
-<span class="c">     * @return {string} the dump result</span>
-<span class="c">     */</span>
-    <span class="nx">dump</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">,</span> <span class="nx">s</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns a simple string representation of the object or array.</span>
+<span class="cm">     * Other types of objects will be returned unprocessed.  Arrays</span>
+<span class="cm">     * are expected to be indexed.  Use object notation for</span>
+<span class="cm">     * associative arrays.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @TODO dumping a window is causing an unhandled exception in</span>
+<span class="cm">     * FireFox.</span>
+<span class="cm">     *</span>
+<span class="cm">     * This method is in the &#39;dump&#39; module, which is not bundled with</span>
+<span class="cm">     * the core YUI object</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method dump</span>
+<span class="cm">     * @param o {object} The object to dump</span>
+<span class="cm">     * @param d {int} How deep to recurse child objects, default 3</span>
+<span class="cm">     * @return {string} the dump result</span>
+<span class="cm">     */</span>
+    <span class="nx">dump</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">s</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
 
-        <span class="c">// Cast non-objects to string</span>
-<span class="c"></span>        <span class="c">// Skip dates because the std toString is what we want</span>
-<span class="c"></span>        <span class="c">// Skip HTMLElement-like objects because trying to dump </span>
-<span class="c"></span>        <span class="c">// an element will cause an unhandled exception in FF 2.x</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">o</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;date&quot;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span> <span class="o">+</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nb">document</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">navigator</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="s1">&#39;window&#39;</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">location</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">body</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="s1">&#39;document&#39;</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">FUN</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="c1">// Cast non-objects to string</span>
+        <span class="c1">// Skip dates because the std toString is what we want</span>
+        <span class="c1">// Skip HTMLElement-like objects because trying to dump </span>
+        <span class="c1">// an element will cause an unhandled exception in FF 2.x</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">o</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;date&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">tagName</span> <span class="o">+</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nb">document</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">navigator</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;window&#39;</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">location</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;document&#39;</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;function&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">FUN</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        <span class="c">// dig into child objects the depth specifed. Default 3</span>
-<span class="c"></span>        <span class="nx">d</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">d</span><span class="o">))</span> <span class="o">?</span> <span class="nx">d</span> <span class="o">:</span> <span class="m">3</span><span class="o">;</span>
+        <span class="c1">// dig into child objects the depth specifed. Default 3</span>
+        <span class="nx">d</span> <span class="o">=</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">d</span><span class="p">))</span> <span class="o">?</span> <span class="nx">d</span> <span class="o">:</span> <span class="mi">3</span><span class="p">;</span>
 
-        <span class="c">// arrays [1, 2, 3]</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s2">&quot;[&quot;</span><span class="o">);</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span><span class="nx">len</span><span class="o">=</span><span class="nx">o</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="o">;</span><span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
-                    <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">((</span><span class="nx">d</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">?</span> <span class="nx">L</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">:</span> <span class="nx">OBJ</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-                <span class="o">}</span>
-                <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">COMMA</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">s</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">s</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
-            <span class="o">}</span>
-            <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s2">&quot;]&quot;</span><span class="o">);</span>
-        <span class="c">// regexp /foo/</span>
-<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;regexp&quot;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">toString</span><span class="o">());</span>
-        <span class="c">// objects {k1 =&gt; v1, k2 =&gt; v2}</span>
-<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s2">&quot;{&quot;</span><span class="o">);</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="k">try</span> <span class="o">{</span>
-                        <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="nx">ARROW</span><span class="o">);</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
-                            <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">((</span><span class="nx">d</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">?</span> <span class="nx">L</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">:</span> <span class="nx">OBJ</span><span class="o">);</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-                        <span class="o">}</span>
-                        <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">COMMA</span><span class="o">);</span>
-                    <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s1">&#39;Error: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">message</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">s</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">s</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
-            <span class="o">}</span>
-            <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s2">&quot;}&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="c1">// arrays [1, 2, 3]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nx">len</span><span class="o">=</span><span class="nx">o</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span><span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                    <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">((</span><span class="nx">d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">L</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="nx">OBJ</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">COMMA</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">);</span>
+        <span class="c1">// regexp /foo/</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;regexp&quot;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
+        <span class="c1">// objects {k1 =&gt; v1, k2 =&gt; v2}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">try</span> <span class="p">{</span>
+                        <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="nx">ARROW</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
+                            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">((</span><span class="nx">d</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nx">L</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="nx">OBJ</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                        <span class="p">}</span>
+                        <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">COMMA</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;Error: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">s</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">s</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s2">&quot;&quot;</span><span class="o">);</span>
-    <span class="o">};</span>
+        <span class="k">return</span> <span class="nx">s</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">);</span>
+    <span class="p">};</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span> <span class="o">=</span> <span class="nx">dump</span><span class="o">;</span>
-    <span class="nx">L</span><span class="o">.</span><span class="nx">dump</span> <span class="o">=</span> <span class="nx">dump</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span> <span class="o">=</span> <span class="nx">dump</span><span class="p">;</span>
+    <span class="nx">L</span><span class="p">.</span><span class="nx">dump</span> <span class="o">=</span> <span class="nx">dump</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -200,6 +200,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

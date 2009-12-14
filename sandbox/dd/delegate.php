@@ -17,7 +17,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             height: 400px;
         }
         #demo .item {
-            width: 50px;
+            width: 150px;
             border: 2px solid black;
             background-color: #ccc;
             margin: 4px;
@@ -43,6 +43,10 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #drop.yui-dd-drop-over {
             border: 4px solid green;
         }
+
+        #demo li.disabled {
+            opacity: .5;
+        }
 	</style>
 </head>
 <body class="yui-skin-sam">
@@ -52,7 +56,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <ul>
 <?php
 foreach (range(1, $count) as $k) {
-    echo('  <li class="item">'.$k.'</li>'."\n");
+    echo('  <li class="item'.(($k % 2) ? ' disabled' : '').'">'.$k.' <strong>[Grab]</strong></li>'."\n");
 }
 ?>
 </ul>
@@ -107,8 +111,11 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     var del = new Y.DD.Delegate({
         cont: '#demo',
         nodes: '.item',
-        target: true
+        target: true,
+        invalid: '.disabled',
+        handles: ['strong']
     });
+
     /*
     del.plugdd(Y.Plugin.DDProxy, {
         moveOnEnd: false

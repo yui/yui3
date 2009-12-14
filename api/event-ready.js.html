@@ -47,33 +47,33 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-<span class="c">/*</span>
-<span class="c"> * DOM event listener abstraction layer</span>
-<span class="c"> * @module event</span>
-<span class="c"> * @submodule event-base</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="cm">/*</span>
+<span class="cm"> * DOM event listener abstraction layer</span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-base</span>
+<span class="cm"> */</span>
 
-<span class="k">var</span> <span class="nx">GLOBAL_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span>
+<span class="kd">var</span> <span class="nx">GLOBAL_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
     
-    <span class="nx">yready</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;domready&#39;</span><span class="o">);</span>
-    <span class="o">};</span>
+    <span class="nx">yready</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">);</span>
+    <span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s1">&#39;domready&#39;</span><span class="o">,</span> <span class="o">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">fireOnce</span><span class="o">:</span> <span class="kc">true</span>
-<span class="o">});</span>
+<span class="p">});</span>
 
-<span class="k">if</span> <span class="o">(</span><span class="nx">GLOBAL_ENV</span><span class="o">.</span><span class="nx">DOMReady</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c">// console.log(&#39;DOMReady already fired&#39;, &#39;info&#39;, &#39;event&#39;);</span>
-<span class="c"></span>    <span class="nx">yready</span><span class="o">();</span>
-<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-    <span class="c">// console.log(&#39;setting up before listener&#39;, &#39;info&#39;, &#39;event&#39;);</span>
-<span class="c"></span>    <span class="c">// console.log(&#39;env: &#39; + YUI.Env.windowLoaded, &#39;info&#39;, &#39;event&#39;);</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">before</span><span class="o">(</span><span class="nx">yready</span><span class="o">,</span> <span class="nx">GLOBAL_ENV</span><span class="o">,</span> <span class="s2">&quot;_ready&quot;</span><span class="o">);</span>
-<span class="o">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">DOMReady</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// console.log(&#39;DOMReady already fired&#39;, &#39;info&#39;, &#39;event&#39;);</span>
+    <span class="nx">yready</span><span class="p">();</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1">// console.log(&#39;setting up before listener&#39;, &#39;info&#39;, &#39;event&#39;);</span>
+    <span class="c1">// console.log(&#39;env: &#39; + YUI.Env.windowLoaded, &#39;info&#39;, &#39;event&#39;);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="nx">yready</span><span class="p">,</span> <span class="nx">GLOBAL_ENV</span><span class="p">,</span> <span class="s2">&quot;_ready&quot;</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="o">})();</span>
+<span class="p">})();</span>
 </pre></div>
 
                     </div>
@@ -121,6 +121,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

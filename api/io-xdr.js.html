@@ -47,284 +47,284 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>   <span class="c">/**</span>
-<span class="c">    * Extends the IO base class to provide an alternate, Flash transport, for making</span>
-<span class="c">    * cross-domain requests.</span>
-<span class="c">	* @module io</span>
-<span class="c">	* @submodule io-xdr</span>
-<span class="c">	*/</span>
+                        <div class="highlight"><pre>   <span class="cm">/**</span>
+<span class="cm">    * Extends the IO base class to provide an alternate, Flash transport, for making</span>
+<span class="cm">    * cross-domain requests.</span>
+<span class="cm">	* @module io</span>
+<span class="cm">	* @submodule io-xdr</span>
+<span class="cm">	*/</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @event io:xdrReady</span>
-<span class="c">	* @description This event is fired by YUI.io when the specified transport is</span>
-<span class="c">	* ready for use.</span>
-<span class="c">	* @type Event Custom</span>
-<span class="c">	*/</span>
-	<span class="k">var</span> <span class="nx">E_XDR_READY</span> <span class="o">=</span> <span class="s1">&#39;io:xdrReady&#39;</span><span class="o">,</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @event io:xdrReady</span>
+<span class="cm">	* @description This event is fired by YUI.io when the specified transport is</span>
+<span class="cm">	* ready for use.</span>
+<span class="cm">	* @type Event Custom</span>
+<span class="cm">	*/</span>
+	<span class="kd">var</span> <span class="nx">E_XDR_READY</span> <span class="o">=</span> <span class="s1">&#39;io:xdrReady&#39;</span><span class="p">,</span>
 
 
-   <span class="c">/**</span>
-<span class="c">	* @description Object that stores callback handlers for cross-domain requests</span>
-<span class="c">	* when using Flash as the transport.</span>
-<span class="c">	*</span>
-<span class="c">	* @property _fn</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @type object</span>
-<span class="c">	*/</span>
-	<span class="nx">_fn</span> <span class="o">=</span> <span class="o">{},</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Object that stores callback handlers for cross-domain requests</span>
+<span class="cm">	* when using Flash as the transport.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @property _fn</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @type object</span>
+<span class="cm">	*/</span>
+	<span class="nx">_fn</span> <span class="o">=</span> <span class="p">{},</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Map of transaction state used when XDomainRequest is the</span>
-<span class="c">	* XDR transport.</span>
-<span class="c">	*</span>
-<span class="c">	* @property _rS</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @type object</span>
-<span class="c">	*/</span>
-	<span class="nx">_rS</span> <span class="o">=</span> <span class="o">{};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Map of transaction state used when XDomainRequest is the</span>
+<span class="cm">	* XDR transport.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @property _rS</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @type object</span>
+<span class="cm">	*/</span>
+	<span class="nx">_rS</span> <span class="o">=</span> <span class="p">{};</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method that creates the Flash transport swf.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _swf</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {string} uri - location of io.swf.</span>
-<span class="c">	* @param {string} yid - YUI instance id.</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_swf</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">yid</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="s1">&#39;&lt;object id=&quot;yuiIoSwf&quot; type=&quot;application/x-shockwave-flash&quot; data=&quot;&#39;</span> <span class="o">+</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method that creates the Flash transport swf.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _swf</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {string} uri - location of io.swf.</span>
+<span class="cm">	* @param {string} yid - YUI instance id.</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_swf</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">yid</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="s1">&#39;&lt;object id=&quot;yuiIoSwf&quot; type=&quot;application/x-shockwave-flash&quot; data=&quot;&#39;</span> <span class="o">+</span>
 		        <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot; width=&quot;0&quot; height=&quot;0&quot;&gt;&#39;</span> <span class="o">+</span>
 		     	<span class="s1">&#39;&lt;param name=&quot;movie&quot; value=&quot;&#39;</span> <span class="o">+</span> <span class="nx">uri</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
 		     	<span class="s1">&#39;&lt;param name=&quot;FlashVars&quot; value=&quot;yid=&#39;</span> <span class="o">+</span> <span class="nx">yid</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&#39;</span> <span class="o">+</span>
                 <span class="s1">&#39;&lt;param name=&quot;allowScriptAccess&quot; value=&quot;always&quot;&gt;&#39;</span> <span class="o">+</span>
-		    	<span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="o">,</span>
-		    <span class="nx">c</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;div&#39;</span><span class="o">);</span>
+		    	<span class="s1">&#39;&lt;/object&gt;&#39;</span><span class="p">,</span>
+		    <span class="nx">c</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
 
-		<span class="nb">document</span><span class="o">.</span><span class="nx">body</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">c</span><span class="o">);</span>
-		<span class="nx">c</span><span class="o">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
-	<span class="o">}</span>
+		<span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+		<span class="nx">c</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Sets event handlers for XDomainRequest transactions.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _xdr</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">    * @param {object} o - Transaction object generated by _create() in io-base.</span>
-<span class="c">	* @param {object} c - configuration object for the transaction.</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_xdr</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">onprogress</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="nx">_rS</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="m">3</span><span class="o">;</span> <span class="o">}</span>
-		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-			<span class="nx">_rS</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="m">4</span><span class="o">;</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">xdrResponse</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="s1">&#39;success&#39;</span><span class="o">);</span>
-		<span class="o">};</span>
-		<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-			<span class="nx">_rS</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="m">4</span><span class="o">;</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">xdrResponse</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="s1">&#39;failure&#39;</span><span class="o">);</span>
-		<span class="o">};</span>
-		<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">ontimeout</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-				<span class="nx">_rS</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="m">4</span><span class="o">;</span>
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">xdrResponse</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="s1">&#39;timeout&#39;</span><span class="o">);</span>
-			<span class="o">};</span>
-			<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">timeout</span><span class="o">;</span>
-		<span class="o">}</span>
-	<span class="o">}</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Sets event handlers for XDomainRequest transactions.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _xdr</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">    * @param {object} o - Transaction object generated by _create() in io-base.</span>
+<span class="cm">	* @param {object} c - configuration object for the transaction.</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_xdr</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">onprogress</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">_rS</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="p">}</span>
+		<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nx">_rS</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">xdrResponse</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">);</span>
+		<span class="p">};</span>
+		<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">onerror</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nx">_rS</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">xdrResponse</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="s1">&#39;failure&#39;</span><span class="p">);</span>
+		<span class="p">};</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">ontimeout</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+				<span class="nx">_rS</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">xdrResponse</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">);</span>
+			<span class="p">};</span>
+			<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Creates a response object for XDR transactions, for success</span>
-<span class="c">	* and failure cases.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _data</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">    * @param {object} o - Transaction object generated by _create() in io-base.</span>
-<span class="c">	* @param {boolean} isFlash - True if Flash was used as the transport.</span>
-<span class="c">	* @param {boolean} isXML - True if the response data are XML.</span>
-<span class="c">	*</span>
-<span class="c">	* @return object</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_data</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">isFlash</span><span class="o">,</span> <span class="nx">isXML</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">text</span><span class="o">,</span> <span class="nx">xml</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Creates a response object for XDR transactions, for success</span>
+<span class="cm">	* and failure cases.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _data</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">    * @param {object} o - Transaction object generated by _create() in io-base.</span>
+<span class="cm">	* @param {boolean} isFlash - True if Flash was used as the transport.</span>
+<span class="cm">	* @param {boolean} isXML - True if the response data are XML.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @return object</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_data</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">isFlash</span><span class="p">,</span> <span class="nx">isXML</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">xml</span><span class="p">;</span>
 
-		<span class="k">if</span> <span class="o">(!</span><span class="nx">o</span><span class="o">.</span><span class="nx">status</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">text</span> <span class="o">=</span> <span class="nx">isFlash</span> <span class="o">?</span> <span class="nb">decodeURI</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">responseText</span><span class="o">;</span>
-			<span class="nx">xml</span> <span class="o">=</span> <span class="nx">isXML</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nx">XML</span><span class="o">.</span><span class="nx">parse</span><span class="o">(</span><span class="nx">text</span><span class="o">)</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">status</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">text</span> <span class="o">=</span> <span class="nx">isFlash</span> <span class="o">?</span> <span class="nb">decodeURI</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">responseText</span><span class="p">)</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">responseText</span><span class="p">;</span>
+			<span class="nx">xml</span> <span class="o">=</span> <span class="nx">isXML</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataType</span><span class="p">.</span><span class="nx">XML</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
 
-			<span class="k">return</span> <span class="o">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">c</span><span class="o">:</span> <span class="o">{</span> <span class="nx">responseText</span><span class="o">:</span> <span class="nx">text</span><span class="o">,</span> <span class="nx">responseXML</span><span class="o">:</span> <span class="nx">xml</span> <span class="o">}</span> <span class="o">};</span>
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="o">{</span>
-			<span class="k">return</span> <span class="o">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">status</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">};</span>
-		<span class="o">}</span>
+			<span class="k">return</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">c</span><span class="o">:</span> <span class="p">{</span> <span class="nx">responseText</span><span class="o">:</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">responseXML</span><span class="o">:</span> <span class="nx">xml</span> <span class="p">}</span> <span class="p">};</span>
+		<span class="p">}</span>
+		<span class="k">else</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">status</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">status</span> <span class="p">};</span>
+		<span class="p">}</span>
 
-	<span class="o">}</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for intiating an XDR transaction abort.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _abort</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {object} o - Transaction object generated by _create() in io-base.</span>
-<span class="c">	* @param {object} c - configuration object for the transaction.</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_abort</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">abort</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">abort</span><span class="o">();</span>
-	<span class="o">}</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for intiating an XDR transaction abort.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _abort</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {object} o - Transaction object generated by _create() in io-base.</span>
+<span class="cm">	* @param {object} c - configuration object for the transaction.</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_abort</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">abort</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for determining if an XDR transaction has completed</span>
-<span class="c">	* and all data are received.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _isInProgress.</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {object} o - Transaction object generated by _create() in io-base.</span>
-<span class="c">	* @param {object} c - configuration object for the transaction.</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_isInProgress</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">t</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">isInProgress</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">:</span> <span class="nx">_rS</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">!==</span> <span class="m">4</span><span class="o">;</span>
-	<span class="o">}</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for determining if an XDR transaction has completed</span>
+<span class="cm">	* and all data are received.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _isInProgress.</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {object} o - Transaction object generated by _create() in io-base.</span>
+<span class="cm">	* @param {object} c - configuration object for the transaction.</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_isInProgress</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="p">(</span><span class="nx">t</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">isInProgress</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="o">:</span> <span class="nx">_rS</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">!==</span> <span class="mi">4</span><span class="p">;</span>
+	<span class="p">}</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">,</span> <span class="p">{</span>
 
-	   <span class="c">/**</span>
-<span class="c">		* @description Map of io transports.</span>
-<span class="c">		*</span>
-<span class="c">		* @property _transport</span>
-<span class="c">		* @private</span>
-<span class="c">		* @static</span>
-<span class="c">		* @type object</span>
-<span class="c">		*/</span>
-		<span class="nx">_transport</span><span class="o">:</span> <span class="o">{},</span>
+	   <span class="cm">/**</span>
+<span class="cm">		* @description Map of io transports.</span>
+<span class="cm">		*</span>
+<span class="cm">		* @property _transport</span>
+<span class="cm">		* @private</span>
+<span class="cm">		* @static</span>
+<span class="cm">		* @type object</span>
+<span class="cm">		*/</span>
+		<span class="nx">_transport</span><span class="o">:</span> <span class="p">{},</span>
 
-	   <span class="c">/**</span>
-<span class="c">	   	* @description Method for accessing the transport&#39;s interface for making a</span>
-<span class="c">	   	* cross-domain transaction.</span>
-<span class="c">	   	*</span>
-<span class="c">		* @method _xdr</span>
-<span class="c">		* @private</span>
-<span class="c">		* @static</span>
-<span class="c">		* @param {string} uri - qualified path to transaction resource.</span>
-<span class="c">    	* @param {object} o - Transaction object generated by _create() in io-base.</span>
-<span class="c">		* @param {object} c - configuration object for the transaction.</span>
-<span class="c">		*/</span>
-		<span class="nx">xdr</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">_fn</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span>
-					<span class="nx">on</span><span class="o">:</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span><span class="o">,</span>
-					<span class="nx">context</span><span class="o">:</span> <span class="nx">c</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span>
-					<span class="nx">arguments</span><span class="o">:</span> <span class="nx">c</span><span class="o">.</span><span class="nx">arguments</span>
-				<span class="o">};</span>
-				<span class="c">// These nodes do not need to be serialized across Flash&#39;s</span>
-<span class="c"></span>				<span class="c">// ExternalInterface.  Doing so will result in exceptions.</span>
-<span class="c"></span>				<span class="nx">c</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-				<span class="nx">c</span><span class="o">.</span><span class="nx">form</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+	   <span class="cm">/**</span>
+<span class="cm">	   	* @description Method for accessing the transport&#39;s interface for making a</span>
+<span class="cm">	   	* cross-domain transaction.</span>
+<span class="cm">	   	*</span>
+<span class="cm">		* @method _xdr</span>
+<span class="cm">		* @private</span>
+<span class="cm">		* @static</span>
+<span class="cm">		* @param {string} uri - qualified path to transaction resource.</span>
+<span class="cm">    	* @param {object} o - Transaction object generated by _create() in io-base.</span>
+<span class="cm">		* @param {object} c - configuration object for the transaction.</span>
+<span class="cm">		*/</span>
+		<span class="nx">xdr</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">_fn</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+					<span class="nx">on</span><span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">,</span>
+					<span class="nx">context</span><span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span>
+					<span class="nx">arguments</span><span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span>
+				<span class="p">};</span>
+				<span class="c1">// These nodes do not need to be serialized across Flash&#39;s</span>
+				<span class="c1">// ExternalInterface.  Doing so will result in exceptions.</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+				<span class="nx">c</span><span class="p">.</span><span class="nx">form</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
-				<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">send</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
-			<span class="o">}</span>
-			<span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nb">window</span><span class="o">.</span><span class="nx">XDomainRequest</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">_xdr</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-				<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">open</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">method</span> <span class="o">||</span> <span class="s1">&#39;GET&#39;</span><span class="o">,</span> <span class="nx">uri</span><span class="o">);</span>
-				<span class="nx">o</span><span class="o">.</span><span class="nx">c</span><span class="o">.</span><span class="nx">send</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span><span class="o">);</span>
-			<span class="o">}</span>
+				<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">XDomainRequest</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">_xdr</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+				<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">method</span> <span class="o">||</span> <span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="nx">uri</span><span class="p">);</span>
+				<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+			<span class="p">}</span>
 
-			<span class="k">return</span> <span class="o">{</span>
-				<span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span>
-				<span class="nx">abort</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-					<span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span> <span class="o">?</span> <span class="nx">_abort</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
-				<span class="o">},</span>
-				<span class="nx">isInProgress</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-					<span class="k">return</span> <span class="nx">o</span><span class="o">.</span><span class="nx">c</span> <span class="o">?</span> <span class="nx">_isInProgress</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span><span class="o">)</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
-				<span class="o">}</span>
-			<span class="o">}</span>
-		<span class="o">},</span>
+			<span class="k">return</span> <span class="p">{</span>
+				<span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+				<span class="nx">abort</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+					<span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">?</span> <span class="nx">_abort</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+				<span class="p">},</span>
+				<span class="nx">isInProgress</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+					<span class="k">return</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">?</span> <span class="nx">_isInProgress</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">use</span><span class="p">)</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
 
-	   <span class="c">/**</span>
-<span class="c">	   	* @description Response controller for cross-domain requests when using the</span>
-<span class="c">	   	* Flash transport or IE8&#39;s XDomainRequest object.</span>
-<span class="c">	   	*</span>
-<span class="c">		* @method xdrResponse</span>
-<span class="c">		* @private</span>
-<span class="c">		* @static</span>
-<span class="c">    	* @param {object} o - Transaction object generated by _create() in io-base.</span>
-<span class="c">		* @param {object} c - configuration object for the transaction.</span>
-<span class="c">		* @param {string} e - Event name</span>
-<span class="c">		* @return object</span>
-<span class="c">		*/</span>
-		<span class="nx">xdrResponse</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-   			<span class="k">var</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span>
-   				<span class="nx">isFlash</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
-   				<span class="nx">isXML</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">xdr</span><span class="o">.</span><span class="nx">dataType</span> <span class="o">===</span> <span class="s1">&#39;xml&#39;</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
-   				<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">||</span> <span class="o">{};</span>
+	   <span class="cm">/**</span>
+<span class="cm">	   	* @description Response controller for cross-domain requests when using the</span>
+<span class="cm">	   	* Flash transport or IE8&#39;s XDomainRequest object.</span>
+<span class="cm">	   	*</span>
+<span class="cm">		* @method xdrResponse</span>
+<span class="cm">		* @private</span>
+<span class="cm">		* @static</span>
+<span class="cm">    	* @param {object} o - Transaction object generated by _create() in io-base.</span>
+<span class="cm">		* @param {object} c - configuration object for the transaction.</span>
+<span class="cm">		* @param {string} e - Event name</span>
+<span class="cm">		* @return object</span>
+<span class="cm">		*/</span>
+		<span class="nx">xdrResponse</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+   			<span class="kd">var</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span>
+   				<span class="nx">isFlash</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+   				<span class="nx">isXML</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">dataType</span> <span class="o">===</span> <span class="s1">&#39;xml&#39;</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+   				<span class="nx">c</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">on</span> <span class="o">||</span> <span class="p">{};</span>
 
-   			<span class="k">if</span> <span class="o">(</span><span class="nx">isFlash</span><span class="o">)</span> <span class="o">{</span>
-   				<span class="nx">m</span> <span class="o">=</span> <span class="nx">_fn</span> <span class="o">||</span> <span class="o">{};</span>
-   				<span class="nx">fn</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">?</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-   				<span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-	   				<span class="nx">c</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">on</span><span class="o">;</span>
-	   				<span class="nx">c</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">context</span><span class="o">;</span>
-	   				<span class="nx">c</span><span class="o">.</span><span class="nx">arguments</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">arguments</span><span class="o">;</span>
-				<span class="o">}</span>
-			<span class="o">}</span>
-			<span class="k">if</span> <span class="o">(</span><span class="nx">e</span> <span class="o">===</span> <span class="o">(</span><span class="s1">&#39;abort&#39;</span> <span class="o">||</span> <span class="s1">&#39;timeout&#39;</span><span class="o">))</span> <span class="o">{</span>
-				<span class="nx">o</span><span class="o">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">e</span><span class="o">;</span>
-			<span class="o">}</span>
+   			<span class="k">if</span> <span class="p">(</span><span class="nx">isFlash</span><span class="p">)</span> <span class="p">{</span>
+   				<span class="nx">m</span> <span class="o">=</span> <span class="nx">_fn</span> <span class="o">||</span> <span class="p">{};</span>
+   				<span class="nx">fn</span> <span class="o">=</span> <span class="nx">m</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">?</span> <span class="nx">m</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+   				<span class="k">if</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+	   				<span class="nx">c</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">on</span><span class="p">;</span>
+	   				<span class="nx">c</span><span class="p">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
+	   				<span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">arguments</span><span class="p">;</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">===</span> <span class="p">(</span><span class="s1">&#39;abort&#39;</span> <span class="o">||</span> <span class="s1">&#39;timeout&#39;</span><span class="p">))</span> <span class="p">{</span>
+				<span class="nx">o</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span>
+			<span class="p">}</span>
 
-			<span class="nx">switch</span> <span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">case</span> <span class="s1">&#39;start&#39;</span><span class="o">:</span>
-					<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">start</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-					<span class="k">break</span><span class="o">;</span>
-				<span class="nx">case</span> <span class="s1">&#39;success&#39;</span><span class="o">:</span>
-					<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">success</span><span class="o">(</span><span class="nx">_data</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">isFlash</span><span class="o">,</span> <span class="nx">isXML</span><span class="o">),</span> <span class="nx">c</span><span class="o">);</span>
-					<span class="nx">isFlash</span> <span class="o">?</span> <span class="nx">delete</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="nx">delete</span> <span class="nx">_rS</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">];</span>
-					<span class="k">break</span><span class="o">;</span>
-				<span class="nx">case</span> <span class="s1">&#39;timeout&#39;</span><span class="o">:</span>
-				<span class="nx">case</span> <span class="s1">&#39;abort&#39;</span><span class="o">:</span>
-				<span class="nx">case</span> <span class="s1">&#39;failure&#39;</span><span class="o">:</span>
-					<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">failure</span><span class="o">(</span><span class="nx">_data</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">isFlash</span><span class="o">,</span> <span class="nx">isXML</span><span class="o">),</span> <span class="nx">c</span><span class="o">);</span>
-					<span class="nx">isFlash</span> <span class="o">?</span> <span class="nx">delete</span> <span class="nx">m</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">:</span> <span class="nx">delete</span> <span class="nx">_rS</span><span class="o">[</span><span class="nx">o</span><span class="o">.</span><span class="nx">id</span><span class="o">];</span>
-					<span class="k">break</span><span class="o">;</span>
-			<span class="o">}</span>
-		<span class="o">},</span>
+			<span class="k">switch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">case</span> <span class="s1">&#39;start&#39;</span><span class="o">:</span>
+					<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">start</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
+					<span class="k">break</span><span class="p">;</span>
+				<span class="k">case</span> <span class="s1">&#39;success&#39;</span><span class="o">:</span>
+					<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">success</span><span class="p">(</span><span class="nx">_data</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">isFlash</span><span class="p">,</span> <span class="nx">isXML</span><span class="p">),</span> <span class="nx">c</span><span class="p">);</span>
+					<span class="nx">isFlash</span> <span class="o">?</span> <span class="k">delete</span> <span class="nx">m</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">:</span> <span class="k">delete</span> <span class="nx">_rS</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
+					<span class="k">break</span><span class="p">;</span>
+				<span class="k">case</span> <span class="s1">&#39;timeout&#39;</span><span class="o">:</span>
+				<span class="k">case</span> <span class="s1">&#39;abort&#39;</span><span class="o">:</span>
+				<span class="k">case</span> <span class="s1">&#39;failure&#39;</span><span class="o">:</span>
+					<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">failure</span><span class="p">(</span><span class="nx">_data</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">isFlash</span><span class="p">,</span> <span class="nx">isXML</span><span class="p">),</span> <span class="nx">c</span><span class="p">);</span>
+					<span class="nx">isFlash</span> <span class="o">?</span> <span class="k">delete</span> <span class="nx">m</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">:</span> <span class="k">delete</span> <span class="nx">_rS</span><span class="p">[</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
+					<span class="k">break</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
 
-	   <span class="c">/**</span>
-<span class="c">		* @description Fires event &quot;io:xdrReady&quot;</span>
-<span class="c">		*</span>
-<span class="c">		* @method xdrReady</span>
-<span class="c">		* @private</span>
-<span class="c">		* @static</span>
-<span class="c">		* @param {number} id - transaction id</span>
-<span class="c">		* @param {object} c - configuration object for the transaction.</span>
-<span class="c">		*</span>
-<span class="c">		* @return void</span>
-<span class="c">		*/</span>
-		<span class="nx">xdrReady</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">E_XDR_READY</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
-		<span class="o">},</span>
+	   <span class="cm">/**</span>
+<span class="cm">		* @description Fires event &quot;io:xdrReady&quot;</span>
+<span class="cm">		*</span>
+<span class="cm">		* @method xdrReady</span>
+<span class="cm">		* @private</span>
+<span class="cm">		* @static</span>
+<span class="cm">		* @param {number} id - transaction id</span>
+<span class="cm">		* @param {object} c - configuration object for the transaction.</span>
+<span class="cm">		*</span>
+<span class="cm">		* @return void</span>
+<span class="cm">		*/</span>
+		<span class="nx">xdrReady</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">E_XDR_READY</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+		<span class="p">},</span>
 
-	   <span class="c">/**</span>
-<span class="c">		* @description Method to initialize the desired transport.</span>
-<span class="c">		*</span>
-<span class="c">		* @method transport</span>
-<span class="c">		* @public</span>
-<span class="c">		* @static</span>
-<span class="c">		* @param {object} o - object of transport configurations.</span>
-<span class="c">		* @return void</span>
-<span class="c">		*/</span>
-		<span class="nx">transport</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">o</span><span class="o">.</span><span class="nx">yid</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">yid</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
+	   <span class="cm">/**</span>
+<span class="cm">		* @description Method to initialize the desired transport.</span>
+<span class="cm">		*</span>
+<span class="cm">		* @method transport</span>
+<span class="cm">		* @public</span>
+<span class="cm">		* @static</span>
+<span class="cm">		* @param {object} o - object of transport configurations.</span>
+<span class="cm">		* @return void</span>
+<span class="cm">		*/</span>
+		<span class="nx">transport</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">yid</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">yid</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
 
-			<span class="nx">_swf</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">src</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
-			<span class="k">this</span><span class="o">.</span><span class="nx">_transport</span><span class="o">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="s1">&#39;yuiIoSwf&#39;</span><span class="o">);</span>
-		<span class="o">}</span>
-	<span class="o">});</span>
+			<span class="nx">_swf</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">src</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_transport</span><span class="p">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;yuiIoSwf&#39;</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">});</span>
 </pre></div>
 
                     </div>
@@ -372,6 +372,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

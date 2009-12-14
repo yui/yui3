@@ -47,129 +47,129 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Extends DataSource with caching functionality.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datasource</span>
-<span class="c"> * @submodule datasource-cache</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Extends DataSource with caching functionality.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datasource</span>
+<span class="cm"> * @submodule datasource-cache</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Adds cacheability to the DataSource Utility.</span>
-<span class="c"> * @class DataSourceCache</span>
-<span class="c"> * @extends Cache</span>
-<span class="c"> */</span>    
-<span class="k">var</span> <span class="nx">DataSourceCache</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-    <span class="nx">DataSourceCache</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Adds cacheability to the DataSource Utility.</span>
+<span class="cm"> * @class DataSourceCache</span>
+<span class="cm"> * @extends Cache</span>
+<span class="cm"> */</span>    
+<span class="kd">var</span> <span class="nx">DataSourceCache</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">DataSourceCache</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DataSourceCache</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * The namespace for the plugin. This will be the property on the host which</span>
-<span class="c">     * references the plugin instance.</span>
-<span class="c">     *</span>
-<span class="c">     * @property NS</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static</span>
-<span class="c">     * @final</span>
-<span class="c">     * @value &quot;cache&quot;</span>
-<span class="c">     */</span>
-    <span class="nx">NS</span><span class="o">:</span> <span class="s2">&quot;cache&quot;</span><span class="o">,</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">DataSourceCache</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * The namespace for the plugin. This will be the property on the host which</span>
+<span class="cm">     * references the plugin instance.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property NS</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @value &quot;cache&quot;</span>
+<span class="cm">     */</span>
+    <span class="nx">NS</span><span class="o">:</span> <span class="s2">&quot;cache&quot;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Class name.</span>
-<span class="c">     *</span>
-<span class="c">     * @property NAME</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static</span>
-<span class="c">     * @final</span>
-<span class="c">     * @value &quot;dataSourceCache&quot;</span>
-<span class="c">     */</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceCache&quot;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Class name.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @value &quot;dataSourceCache&quot;</span>
+<span class="cm">     */</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceCache&quot;</span><span class="p">,</span>
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSourceCache Attributes</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>
-    <span class="nx">ATTRS</span><span class="o">:</span> <span class="o">{</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSourceCache Attributes</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
 
-    <span class="o">}</span>
-<span class="o">});</span>
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DataSourceCache</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Cache</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">    * Internal init() handler.</span>
-<span class="c">    *</span>
-<span class="c">    * @method initializer</span>
-<span class="c">    * @param config {Object} Config object.</span>
-<span class="c">    * @private</span>
-<span class="c">    */</span>
-    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">doBefore</span><span class="o">(</span><span class="s2">&quot;_defRequestFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_beforeDefRequestFn</span><span class="o">);</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">doBefore</span><span class="o">(</span><span class="s2">&quot;_defResponseFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_beforeDefResponseFn</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 
-    <span class="c">/**</span>
-<span class="c">     * First look for cached response, then send request to live data.</span>
-<span class="c">     *</span>
-<span class="c">     * @method _beforeDefRequestFn</span>
-<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_beforeDefRequestFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// Is response already in the Cache?</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">entry</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">retrieve</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">))</span> <span class="o">||</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="k">if</span><span class="o">(</span><span class="nx">entry</span> <span class="o">&amp;&amp;</span> <span class="nx">entry</span><span class="o">.</span><span class="nx">response</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">).</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;response&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">response</span><span class="o">:</span> <span class="nx">entry</span><span class="o">.</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">Halt</span><span class="o">(</span><span class="s2">&quot;DataSourceCache plugin halted _defRequestFn&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">DataSourceCache</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Cache</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">    * Internal init() handler.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method initializer</span>
+<span class="cm">    * @param config {Object} Config object.</span>
+<span class="cm">    * @private</span>
+<span class="cm">    */</span>
+    <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">doBefore</span><span class="p">(</span><span class="s2">&quot;_defRequestFn&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_beforeDefRequestFn</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">doBefore</span><span class="p">(</span><span class="s2">&quot;_defResponseFn&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_beforeDefResponseFn</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * First look for cached response, then send request to live data.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _beforeDefRequestFn</span>
+<span class="cm">     * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_beforeDefRequestFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Is response already in the Cache?</span>
+        <span class="kd">var</span> <span class="nx">entry</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">retrieve</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">request</span><span class="p">))</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">entry</span> <span class="o">&amp;&amp;</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">).</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">response</span><span class="o">:</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">response</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">Halt</span><span class="p">(</span><span class="s2">&quot;DataSourceCache plugin halted _defRequestFn&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Adds data to cache before returning data.</span>
-<span class="c">     *</span>
-<span class="c">     * @method _beforeDefResponseFn</span>
-<span class="c">     * @param e {Event.Facade} Event Facade with the following properties:</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized response object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;cached (Object)&lt;/dt&gt; &lt;dd&gt;True when response is cached.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;error (Object)&lt;/dt&gt; &lt;dd&gt;Error object.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-     <span class="nx">_beforeDefResponseFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// Add to Cache before returning</span>
-<span class="c"></span>        <span class="k">if</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">.</span><span class="nx">cached</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">.</span><span class="nx">cached</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">request</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">response</span><span class="o">,</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="o">.</span><span class="nx">callback</span><span class="o">.</span><span class="nx">argument</span><span class="o">));</span>
-        <span class="o">}</span>
-     <span class="o">}</span>
-<span class="o">});</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Adds data to cache before returning data.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _beforeDefResponseFn</span>
+<span class="cm">     * @param e {Event.Facade} Event Facade with the following properties:</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;response (Object)&lt;/dt&gt; &lt;dd&gt;Normalized response object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;cached (Object)&lt;/dt&gt; &lt;dd&gt;True when response is cached.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;results (Object)&lt;/dt&gt; &lt;dd&gt;Parsed results.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;meta (Object)&lt;/dt&gt; &lt;dd&gt;Parsed meta data.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;error (Object)&lt;/dt&gt; &lt;dd&gt;Error object.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;cfg (Object)&lt;/dt&gt; &lt;dd&gt;Configuration object.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+     <span class="nx">_beforeDefResponseFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Add to Cache before returning</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">response</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">cached</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">e</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">cached</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">response</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">callback</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">callback</span><span class="p">.</span><span class="nx">argument</span><span class="p">));</span>
+        <span class="p">}</span>
+     <span class="p">}</span>
+<span class="p">});</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;Plugin&#39;</span><span class="o">).</span><span class="nx">DataSourceCache</span> <span class="o">=</span> <span class="nx">DataSourceCache</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Plugin&#39;</span><span class="p">).</span><span class="nx">DataSourceCache</span> <span class="o">=</span> <span class="nx">DataSourceCache</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -217,6 +217,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

@@ -47,95 +47,95 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>   <span class="c">/**</span>
-<span class="c">    * Extends the IO base class to enable HTML form data serialization, when specified</span>
-<span class="c">    * in the transaction&#39;s configuration object.</span>
-<span class="c">    * @module io</span>
-<span class="c">    * @submodule io-form</span>
-<span class="c">    */</span>
+                        <div class="highlight"><pre>   <span class="cm">/**</span>
+<span class="cm">    * Extends the IO base class to enable HTML form data serialization, when specified</span>
+<span class="cm">    * in the transaction&#39;s configuration object.</span>
+<span class="cm">    * @module io</span>
+<span class="cm">    * @submodule io-form</span>
+<span class="cm">    */</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">,</span> <span class="o">{</span>
-       <span class="c">/**</span>
-<span class="c">        * @description Method to enumerate through an HTML form&#39;s elements collection</span>
-<span class="c">        * and return a string comprised of key-value pairs.</span>
-<span class="c">        *</span>
-<span class="c">        * @method _serialize</span>
-<span class="c">        * @private</span>
-<span class="c">        * @static</span>
-<span class="c">        * @param {object} c - YUI form node or HTML form id.</span>
-<span class="c">        * @param {string} s - Transaction data defined in the configuration.</span>
-<span class="c">        * @return string</span>
-<span class="c">        */</span>
-        <span class="nx">_serialize</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">c</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">var</span> <span class="nx">eUC</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="o">,</span>
-            	<span class="nx">data</span> <span class="o">=</span> <span class="o">[],</span>
-            	<span class="nx">useDf</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">useDisabled</span> <span class="o">||</span> <span class="kc">false</span><span class="o">,</span>
-            	<span class="nx">item</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
-            	<span class="nx">id</span> <span class="o">=</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">c</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">id</span> <span class="o">:</span> <span class="nx">c</span><span class="o">.</span><span class="nx">id</span><span class="o">.</span><span class="nx">getAttribute</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">),</span>
-            	<span class="nx">e</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">il</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">jl</span><span class="o">,</span> <span class="nx">o</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">,</span> <span class="p">{</span>
+       <span class="cm">/**</span>
+<span class="cm">        * @description Method to enumerate through an HTML form&#39;s elements collection</span>
+<span class="cm">        * and return a string comprised of key-value pairs.</span>
+<span class="cm">        *</span>
+<span class="cm">        * @method _serialize</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @static</span>
+<span class="cm">        * @param {object} c - YUI form node or HTML form id.</span>
+<span class="cm">        * @param {string} s - Transaction data defined in the configuration.</span>
+<span class="cm">        * @return string</span>
+<span class="cm">        */</span>
+        <span class="nx">_serialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">eUC</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">,</span>
+            	<span class="nx">data</span> <span class="o">=</span> <span class="p">[],</span>
+            	<span class="nx">useDf</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">useDisabled</span> <span class="o">||</span> <span class="kc">false</span><span class="p">,</span>
+            	<span class="nx">item</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            	<span class="nx">id</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">c</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">id</span> <span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span>
+            	<span class="nx">e</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">il</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">jl</span><span class="p">,</span> <span class="nx">o</span><span class="p">;</span>
 
-            	<span class="k">if</span> <span class="o">(!</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-					<span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">(</span><span class="s1">&#39;io:&#39;</span><span class="o">);</span>
-					<span class="nx">c</span><span class="o">.</span><span class="nx">id</span><span class="o">.</span><span class="nx">setAttribute</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
-				<span class="o">}</span>
+            	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(</span><span class="s1">&#39;io:&#39;</span><span class="p">);</span>
+					<span class="nx">c</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+				<span class="p">}</span>
 
-            	<span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
+            	<span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
 
-            <span class="c">// Iterate over the form elements collection to construct the</span>
-<span class="c"></span>            <span class="c">// label-value pairs.</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">il</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">elements</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">il</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">e</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">elements</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="nx">d</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">disabled</span><span class="o">;</span>
-                <span class="nx">n</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">name</span><span class="o">;</span>
+            <span class="c1">// Iterate over the form elements collection to construct the</span>
+            <span class="c1">// label-value pairs.</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">il</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">il</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">e</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">elements</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="nx">d</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">disabled</span><span class="p">;</span>
+                <span class="nx">n</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
 
-                <span class="k">if</span> <span class="o">((</span><span class="nx">useDf</span><span class="o">)</span> <span class="o">?</span> <span class="nx">n</span> <span class="o">:</span> <span class="o">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">d</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">n</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="o">;</span>
-                    <span class="nx">v</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">value</span><span class="o">);</span>
+                <span class="k">if</span> <span class="p">((</span><span class="nx">useDf</span><span class="p">)</span> <span class="o">?</span> <span class="nx">n</span> <span class="o">:</span> <span class="p">(</span><span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">d</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">n</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span><span class="p">;</span>
+                    <span class="nx">v</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
 
-                    <span class="nx">switch</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="c">// Safari, Opera, FF all default options.value from .text if</span>
-<span class="c"></span>                        <span class="c">// value attribute not specified in markup</span>
-<span class="c"></span>                        <span class="nx">case</span> <span class="s1">&#39;select-one&#39;</span><span class="o">:</span>
-                            <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">selectedIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                                <span class="nx">o</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">options</span><span class="o">[</span><span class="nx">e</span><span class="o">.</span><span class="nx">selectedIndex</span><span class="o">];</span>
-                                <span class="nx">data</span><span class="o">[</span><span class="nx">item</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">eUC</span><span class="o">((</span><span class="nx">o</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span><span class="o">.</span><span class="nx">specified</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">text</span><span class="o">);</span>
-                            <span class="o">}</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="s1">&#39;select-multiple&#39;</span><span class="o">:</span>
-                            <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">selectedIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                                <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">selectedIndex</span><span class="o">,</span> <span class="nx">jl</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">options</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">jl</span><span class="o">;</span> <span class="o">++</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
-                                    <span class="nx">o</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">options</span><span class="o">[</span><span class="nx">j</span><span class="o">];</span>
-                                    <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">selected</span><span class="o">)</span> <span class="o">{</span>
-                                      <span class="nx">data</span><span class="o">[</span><span class="nx">item</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">eUC</span><span class="o">((</span><span class="nx">o</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">attributes</span><span class="o">.</span><span class="nx">value</span><span class="o">.</span><span class="nx">specified</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">text</span><span class="o">);</span>
-                                    <span class="o">}</span>
-                                <span class="o">}</span>
-                            <span class="o">}</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="s1">&#39;radio&#39;</span><span class="o">:</span>
-                        <span class="nx">case</span> <span class="s1">&#39;checkbox&#39;</span><span class="o">:</span>
-                            <span class="k">if</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">checked</span><span class="o">){</span>
-                                <span class="nx">data</span><span class="o">[</span><span class="nx">item</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">v</span><span class="o">;</span>
-                            <span class="o">}</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="s1">&#39;file&#39;</span><span class="o">:</span>
-                            <span class="c">// stub case as XMLHttpRequest will only send the file path as a string.</span>
-<span class="c"></span>                        <span class="nx">case</span> <span class="kc">undefined</span><span class="o">:</span>
-                            <span class="c">// stub case for fieldset element which returns undefined.</span>
-<span class="c"></span>                        <span class="nx">case</span> <span class="s1">&#39;reset&#39;</span><span class="o">:</span>
-                            <span class="c">// stub case for input type reset button.</span>
-<span class="c"></span>                        <span class="nx">case</span> <span class="s1">&#39;button&#39;</span><span class="o">:</span>
-                            <span class="c">// stub case for input type button elements.</span>
-<span class="c"></span>                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="s1">&#39;submit&#39;</span><span class="o">:</span>
-                        <span class="nx">default</span><span class="o">:</span>
-                            <span class="nx">data</span><span class="o">[</span><span class="nx">item</span><span class="o">++]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">v</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;HTML form serialized. The value is: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&amp;&#39;</span><span class="o">),</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-            <span class="k">return</span> <span class="nx">s</span> <span class="o">?</span> <span class="nx">data</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&amp;&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">:</span> <span class="nx">data</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&amp;&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">},</span> <span class="kc">true</span><span class="o">);</span>
+                    <span class="k">switch</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// Safari, Opera, FF all default options.value from .text if</span>
+                        <span class="c1">// value attribute not specified in markup</span>
+                        <span class="k">case</span> <span class="s1">&#39;select-one&#39;</span><span class="o">:</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">selectedIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">o</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">options</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">];</span>
+                                <span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">eUC</span><span class="p">((</span><span class="nx">o</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">specified</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+                            <span class="p">}</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="s1">&#39;select-multiple&#39;</span><span class="o">:</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">selectedIndex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">,</span> <span class="nx">jl</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">jl</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+                                    <span class="nx">o</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">options</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+                                    <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">selected</span><span class="p">)</span> <span class="p">{</span>
+                                      <span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">eUC</span><span class="p">((</span><span class="nx">o</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">specified</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span><span class="p">.</span><span class="nx">value</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">text</span><span class="p">);</span>
+                                    <span class="p">}</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="s1">&#39;radio&#39;</span><span class="o">:</span>
+                        <span class="k">case</span> <span class="s1">&#39;checkbox&#39;</span><span class="o">:</span>
+                            <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">checked</span><span class="p">){</span>
+                                <span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">v</span><span class="p">;</span>
+                            <span class="p">}</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="s1">&#39;file&#39;</span><span class="o">:</span>
+                            <span class="c1">// stub case as XMLHttpRequest will only send the file path as a string.</span>
+                        <span class="k">case</span> <span class="kc">undefined</span><span class="o">:</span>
+                            <span class="c1">// stub case for fieldset element which returns undefined.</span>
+                        <span class="k">case</span> <span class="s1">&#39;reset&#39;</span><span class="o">:</span>
+                            <span class="c1">// stub case for input type reset button.</span>
+                        <span class="k">case</span> <span class="s1">&#39;button&#39;</span><span class="o">:</span>
+                            <span class="c1">// stub case for input type button elements.</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="s1">&#39;submit&#39;</span><span class="o">:</span>
+                        <span class="k">default</span><span class="o">:</span>
+                            <span class="nx">data</span><span class="p">[</span><span class="nx">item</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">+</span> <span class="nx">v</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;HTML form serialized. The value is: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">),</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">s</span> <span class="o">?</span> <span class="nx">data</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">:</span> <span class="nx">data</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 </pre></div>
 
                     </div>
@@ -183,6 +183,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

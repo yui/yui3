@@ -47,45 +47,45 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="o">{</span>
-    <span class="nx">offsetHeight</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">h</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">setHeight</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="nx">h</span><span class="o">);</span>
-            <span class="k">return</span> <span class="nx">h</span><span class="o">;</span>
-        <span class="o">},</span>
+                        <div class="highlight"><pre><span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">offsetHeight</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setHeight</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">h</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">h</span><span class="p">;</span>
+        <span class="p">},</span>
 
-        <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">offsetHeight</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+        <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">offsetHeight</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-    <span class="nx">offsetWidth</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">setWidth</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> <span class="nx">w</span><span class="o">);</span>
-            <span class="k">return</span> <span class="nx">w</span><span class="o">;</span>
-        <span class="o">},</span>
+    <span class="nx">offsetWidth</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">w</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setWidth</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">w</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">w</span><span class="p">;</span>
+        <span class="p">},</span>
 
-        <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">offsetWidth</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+        <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">offsetWidth</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">{</span>
-    <span class="nx">sizeTo</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">w</span><span class="o">,</span> <span class="nx">h</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">node</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">one</span><span class="o">(</span><span class="nx">w</span><span class="o">);</span>
-            <span class="nx">w</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="o">);</span>
-            <span class="nx">h</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="o">);</span>
-        <span class="o">}</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">sizeTo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">w</span><span class="p">);</span>
+            <span class="nx">w</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="p">);</span>
+            <span class="nx">h</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">setAttrs</span><span class="o">({</span>
-            <span class="nx">offsetWidth</span><span class="o">:</span> <span class="nx">w</span><span class="o">,</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setAttrs</span><span class="p">({</span>
+            <span class="nx">offsetWidth</span><span class="o">:</span> <span class="nx">w</span><span class="p">,</span>
             <span class="nx">offsetHeight</span><span class="o">:</span> <span class="nx">h</span>
-        <span class="o">});</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+        <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 </pre></div>
 
                     </div>
@@ -133,6 +133,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

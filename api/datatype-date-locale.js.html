@@ -47,102 +47,102 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * @module datatype</span>
-<span class="c">*/</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * @module datatype</span>
+<span class="cm">*/</span>
 
-<span class="c">/**</span>
-<span class="c"> * The Date.Locale class is a container for all localised date strings</span>
-<span class="c"> * used by Y.DataType.Date. It is used internally, but may be extended</span>
-<span class="c"> * to provide new date localisations.</span>
-<span class="c"> *</span>
-<span class="c"> * To create your own Locale, follow these steps:</span>
-<span class="c"> * &lt;ol&gt;</span>
-<span class="c"> *  &lt;li&gt;Find an existing locale that matches closely with your needs&lt;/li&gt;</span>
-<span class="c"> *  &lt;li&gt;Use this as your base class.  Use Y.DataType.Date.Locale[&quot;en&quot;] if nothing</span>
-<span class="c"> *   matches.&lt;/li&gt;</span>
-<span class="c"> *  &lt;li&gt;Create your own class as an extension of the base class using</span>
-<span class="c"> *   Y.merge, and add your own localisations where needed.&lt;/li&gt;</span>
-<span class="c"> * &lt;/ol&gt;</span>
-<span class="c"> * See the Y.DataType.Date.Locale[&quot;en-US&quot;] and Y.DataType.Date.Locale[&quot;en-GB&quot;]</span>
-<span class="c"> * classes which extend Y.DataType.Date.Locale[&quot;en&quot;].</span>
-<span class="c"> *</span>
-<span class="c"> * For example, to implement locales for French french and Canadian french,</span>
-<span class="c"> * we would do the following:</span>
-<span class="c"> * &lt;ol&gt;</span>
-<span class="c"> *  &lt;li&gt;For French french, we have no existing similar locale, so use</span>
-<span class="c"> *   Y.DataType.Date.Locale[&quot;en&quot;] as the base, and extend it:</span>
-<span class="c"> *   &lt;pre&gt;</span>
-<span class="c"> *      Y.DataType.Date.Locale[&quot;fr&quot;] = Y.merge(Y.DataType.Date.Locale, {</span>
-<span class="c"> *          a: [&quot;dim&quot;, &quot;lun&quot;, &quot;mar&quot;, &quot;mer&quot;, &quot;jeu&quot;, &quot;ven&quot;, &quot;sam&quot;],</span>
-<span class="c"> *          A: [&quot;dimanche&quot;, &quot;lundi&quot;, &quot;mardi&quot;, &quot;mercredi&quot;, &quot;jeudi&quot;, &quot;vendredi&quot;, &quot;samedi&quot;],</span>
-<span class="c"> *          b: [&quot;jan&quot;, &quot;f&amp;eacute;v&quot;, &quot;mar&quot;, &quot;avr&quot;, &quot;mai&quot;, &quot;jun&quot;, &quot;jui&quot;, &quot;ao&amp;ucirc;&quot;, &quot;sep&quot;, &quot;oct&quot;, &quot;nov&quot;, &quot;d&amp;eacute;c&quot;],</span>
-<span class="c"> *          B: [&quot;janvier&quot;, &quot;f&amp;eacute;vrier&quot;, &quot;mars&quot;, &quot;avril&quot;, &quot;mai&quot;, &quot;juin&quot;, &quot;juillet&quot;, &quot;ao&amp;ucirc;t&quot;, &quot;septembre&quot;, &quot;octobre&quot;, &quot;novembre&quot;, &quot;d&amp;eacute;cembre&quot;],</span>
-<span class="c"> *          c: &quot;%a %d %b %Y %T %Z&quot;,</span>
-<span class="c"> *          p: [&quot;&quot;, &quot;&quot;],</span>
-<span class="c"> *          P: [&quot;&quot;, &quot;&quot;],</span>
-<span class="c"> *          x: &quot;%d.%m.%Y&quot;,</span>
-<span class="c"> *          X: &quot;%T&quot;</span>
-<span class="c"> *      });</span>
-<span class="c"> *   &lt;/pre&gt;</span>
-<span class="c"> *  &lt;/li&gt;</span>
-<span class="c"> *  &lt;li&gt;For Canadian french, we start with French french and change the meaning of \%x:</span>
-<span class="c"> *   &lt;pre&gt;</span>
-<span class="c"> *      Y.DataType.Date.Locale[&quot;fr-CA&quot;] = Y.merge(Y.DataType.Date.Locale[&quot;fr&quot;], {</span>
-<span class="c"> *          x: &quot;%Y-%m-%d&quot;</span>
-<span class="c"> *      });</span>
-<span class="c"> *   &lt;/pre&gt;</span>
-<span class="c"> *  &lt;/li&gt;</span>
-<span class="c"> * &lt;/ol&gt;</span>
-<span class="c"> *</span>
-<span class="c"> * With that, you can use your new locales:</span>
-<span class="c"> * &lt;pre&gt;</span>
-<span class="c"> *    var d = new Date(&quot;2008/04/22&quot;);</span>
-<span class="c"> *    Y.DataType.Date.format(d, { format: &quot;%A, %d %B == %x&quot;, locale: &quot;fr&quot; });</span>
-<span class="c"> * &lt;/pre&gt;</span>
-<span class="c"> * will return:</span>
-<span class="c"> * &lt;pre&gt;</span>
-<span class="c"> *    mardi, 22 avril == 22.04.2008</span>
-<span class="c"> * &lt;/pre&gt;</span>
-<span class="c"> * And</span>
-<span class="c"> * &lt;pre&gt;</span>
-<span class="c"> *    Y.DataType.Date.format(d, {format: &quot;%A, %d %B == %x&quot;, locale: &quot;fr-CA&quot; });</span>
-<span class="c"> * &lt;/pre&gt;</span>
-<span class="c"> * Will return:</span>
-<span class="c"> * &lt;pre&gt;</span>
-<span class="c"> *   mardi, 22 avril == 2008-04-22</span>
-<span class="c"> * &lt;/pre&gt;</span>
-<span class="c"> * @requires oop</span>
-<span class="c"> * @class DataType.Date.Locale</span>
-<span class="c"> * @static</span>
-<span class="c"> */</span>
-<span class="k">var</span> <span class="nx">YDateEn</span> <span class="o">=</span> <span class="o">{</span>
-	<span class="nx">a</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;Sun&quot;</span><span class="o">,</span> <span class="s2">&quot;Mon&quot;</span><span class="o">,</span> <span class="s2">&quot;Tue&quot;</span><span class="o">,</span> <span class="s2">&quot;Wed&quot;</span><span class="o">,</span> <span class="s2">&quot;Thu&quot;</span><span class="o">,</span> <span class="s2">&quot;Fri&quot;</span><span class="o">,</span> <span class="s2">&quot;Sat&quot;</span><span class="o">],</span>
-	<span class="nx">A</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;Sunday&quot;</span><span class="o">,</span> <span class="s2">&quot;Monday&quot;</span><span class="o">,</span> <span class="s2">&quot;Tuesday&quot;</span><span class="o">,</span> <span class="s2">&quot;Wednesday&quot;</span><span class="o">,</span> <span class="s2">&quot;Thursday&quot;</span><span class="o">,</span> <span class="s2">&quot;Friday&quot;</span><span class="o">,</span> <span class="s2">&quot;Saturday&quot;</span><span class="o">],</span>
-	<span class="nx">b</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;Jan&quot;</span><span class="o">,</span> <span class="s2">&quot;Feb&quot;</span><span class="o">,</span> <span class="s2">&quot;Mar&quot;</span><span class="o">,</span> <span class="s2">&quot;Apr&quot;</span><span class="o">,</span> <span class="s2">&quot;May&quot;</span><span class="o">,</span> <span class="s2">&quot;Jun&quot;</span><span class="o">,</span> <span class="s2">&quot;Jul&quot;</span><span class="o">,</span> <span class="s2">&quot;Aug&quot;</span><span class="o">,</span> <span class="s2">&quot;Sep&quot;</span><span class="o">,</span> <span class="s2">&quot;Oct&quot;</span><span class="o">,</span> <span class="s2">&quot;Nov&quot;</span><span class="o">,</span> <span class="s2">&quot;Dec&quot;</span><span class="o">],</span>
-	<span class="nx">B</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;January&quot;</span><span class="o">,</span> <span class="s2">&quot;February&quot;</span><span class="o">,</span> <span class="s2">&quot;March&quot;</span><span class="o">,</span> <span class="s2">&quot;April&quot;</span><span class="o">,</span> <span class="s2">&quot;May&quot;</span><span class="o">,</span> <span class="s2">&quot;June&quot;</span><span class="o">,</span> <span class="s2">&quot;July&quot;</span><span class="o">,</span> <span class="s2">&quot;August&quot;</span><span class="o">,</span> <span class="s2">&quot;September&quot;</span><span class="o">,</span> <span class="s2">&quot;October&quot;</span><span class="o">,</span> <span class="s2">&quot;November&quot;</span><span class="o">,</span> <span class="s2">&quot;December&quot;</span><span class="o">],</span>
-	<span class="nx">c</span><span class="o">:</span> <span class="s2">&quot;%a %d %b %Y %T %Z&quot;</span><span class="o">,</span>
-	<span class="nx">p</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;AM&quot;</span><span class="o">,</span> <span class="s2">&quot;PM&quot;</span><span class="o">],</span>
-	<span class="nx">P</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;am&quot;</span><span class="o">,</span> <span class="s2">&quot;pm&quot;</span><span class="o">],</span>
-	<span class="nx">r</span><span class="o">:</span> <span class="s2">&quot;%I:%M:%S %p&quot;</span><span class="o">,</span>
-	<span class="nx">x</span><span class="o">:</span> <span class="s2">&quot;%d/%m/%y&quot;</span><span class="o">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * The Date.Locale class is a container for all localised date strings</span>
+<span class="cm"> * used by Y.DataType.Date. It is used internally, but may be extended</span>
+<span class="cm"> * to provide new date localisations.</span>
+<span class="cm"> *</span>
+<span class="cm"> * To create your own Locale, follow these steps:</span>
+<span class="cm"> * &lt;ol&gt;</span>
+<span class="cm"> *  &lt;li&gt;Find an existing locale that matches closely with your needs&lt;/li&gt;</span>
+<span class="cm"> *  &lt;li&gt;Use this as your base class.  Use Y.DataType.Date.Locale[&quot;en&quot;] if nothing</span>
+<span class="cm"> *   matches.&lt;/li&gt;</span>
+<span class="cm"> *  &lt;li&gt;Create your own class as an extension of the base class using</span>
+<span class="cm"> *   Y.merge, and add your own localisations where needed.&lt;/li&gt;</span>
+<span class="cm"> * &lt;/ol&gt;</span>
+<span class="cm"> * See the Y.DataType.Date.Locale[&quot;en-US&quot;] and Y.DataType.Date.Locale[&quot;en-GB&quot;]</span>
+<span class="cm"> * classes which extend Y.DataType.Date.Locale[&quot;en&quot;].</span>
+<span class="cm"> *</span>
+<span class="cm"> * For example, to implement locales for French french and Canadian french,</span>
+<span class="cm"> * we would do the following:</span>
+<span class="cm"> * &lt;ol&gt;</span>
+<span class="cm"> *  &lt;li&gt;For French french, we have no existing similar locale, so use</span>
+<span class="cm"> *   Y.DataType.Date.Locale[&quot;en&quot;] as the base, and extend it:</span>
+<span class="cm"> *   &lt;pre&gt;</span>
+<span class="cm"> *      Y.DataType.Date.Locale[&quot;fr&quot;] = Y.merge(Y.DataType.Date.Locale, {</span>
+<span class="cm"> *          a: [&quot;dim&quot;, &quot;lun&quot;, &quot;mar&quot;, &quot;mer&quot;, &quot;jeu&quot;, &quot;ven&quot;, &quot;sam&quot;],</span>
+<span class="cm"> *          A: [&quot;dimanche&quot;, &quot;lundi&quot;, &quot;mardi&quot;, &quot;mercredi&quot;, &quot;jeudi&quot;, &quot;vendredi&quot;, &quot;samedi&quot;],</span>
+<span class="cm"> *          b: [&quot;jan&quot;, &quot;f&amp;eacute;v&quot;, &quot;mar&quot;, &quot;avr&quot;, &quot;mai&quot;, &quot;jun&quot;, &quot;jui&quot;, &quot;ao&amp;ucirc;&quot;, &quot;sep&quot;, &quot;oct&quot;, &quot;nov&quot;, &quot;d&amp;eacute;c&quot;],</span>
+<span class="cm"> *          B: [&quot;janvier&quot;, &quot;f&amp;eacute;vrier&quot;, &quot;mars&quot;, &quot;avril&quot;, &quot;mai&quot;, &quot;juin&quot;, &quot;juillet&quot;, &quot;ao&amp;ucirc;t&quot;, &quot;septembre&quot;, &quot;octobre&quot;, &quot;novembre&quot;, &quot;d&amp;eacute;cembre&quot;],</span>
+<span class="cm"> *          c: &quot;%a %d %b %Y %T %Z&quot;,</span>
+<span class="cm"> *          p: [&quot;&quot;, &quot;&quot;],</span>
+<span class="cm"> *          P: [&quot;&quot;, &quot;&quot;],</span>
+<span class="cm"> *          x: &quot;%d.%m.%Y&quot;,</span>
+<span class="cm"> *          X: &quot;%T&quot;</span>
+<span class="cm"> *      });</span>
+<span class="cm"> *   &lt;/pre&gt;</span>
+<span class="cm"> *  &lt;/li&gt;</span>
+<span class="cm"> *  &lt;li&gt;For Canadian french, we start with French french and change the meaning of \%x:</span>
+<span class="cm"> *   &lt;pre&gt;</span>
+<span class="cm"> *      Y.DataType.Date.Locale[&quot;fr-CA&quot;] = Y.merge(Y.DataType.Date.Locale[&quot;fr&quot;], {</span>
+<span class="cm"> *          x: &quot;%Y-%m-%d&quot;</span>
+<span class="cm"> *      });</span>
+<span class="cm"> *   &lt;/pre&gt;</span>
+<span class="cm"> *  &lt;/li&gt;</span>
+<span class="cm"> * &lt;/ol&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * With that, you can use your new locales:</span>
+<span class="cm"> * &lt;pre&gt;</span>
+<span class="cm"> *    var d = new Date(&quot;2008/04/22&quot;);</span>
+<span class="cm"> *    Y.DataType.Date.format(d, { format: &quot;%A, %d %B == %x&quot;, locale: &quot;fr&quot; });</span>
+<span class="cm"> * &lt;/pre&gt;</span>
+<span class="cm"> * will return:</span>
+<span class="cm"> * &lt;pre&gt;</span>
+<span class="cm"> *    mardi, 22 avril == 22.04.2008</span>
+<span class="cm"> * &lt;/pre&gt;</span>
+<span class="cm"> * And</span>
+<span class="cm"> * &lt;pre&gt;</span>
+<span class="cm"> *    Y.DataType.Date.format(d, {format: &quot;%A, %d %B == %x&quot;, locale: &quot;fr-CA&quot; });</span>
+<span class="cm"> * &lt;/pre&gt;</span>
+<span class="cm"> * Will return:</span>
+<span class="cm"> * &lt;pre&gt;</span>
+<span class="cm"> *   mardi, 22 avril == 2008-04-22</span>
+<span class="cm"> * &lt;/pre&gt;</span>
+<span class="cm"> * @requires oop</span>
+<span class="cm"> * @class DataType.Date.Locale</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">YDateEn</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="nx">a</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Sun&quot;</span><span class="p">,</span> <span class="s2">&quot;Mon&quot;</span><span class="p">,</span> <span class="s2">&quot;Tue&quot;</span><span class="p">,</span> <span class="s2">&quot;Wed&quot;</span><span class="p">,</span> <span class="s2">&quot;Thu&quot;</span><span class="p">,</span> <span class="s2">&quot;Fri&quot;</span><span class="p">,</span> <span class="s2">&quot;Sat&quot;</span><span class="p">],</span>
+	<span class="nx">A</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Sunday&quot;</span><span class="p">,</span> <span class="s2">&quot;Monday&quot;</span><span class="p">,</span> <span class="s2">&quot;Tuesday&quot;</span><span class="p">,</span> <span class="s2">&quot;Wednesday&quot;</span><span class="p">,</span> <span class="s2">&quot;Thursday&quot;</span><span class="p">,</span> <span class="s2">&quot;Friday&quot;</span><span class="p">,</span> <span class="s2">&quot;Saturday&quot;</span><span class="p">],</span>
+	<span class="nx">b</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Jan&quot;</span><span class="p">,</span> <span class="s2">&quot;Feb&quot;</span><span class="p">,</span> <span class="s2">&quot;Mar&quot;</span><span class="p">,</span> <span class="s2">&quot;Apr&quot;</span><span class="p">,</span> <span class="s2">&quot;May&quot;</span><span class="p">,</span> <span class="s2">&quot;Jun&quot;</span><span class="p">,</span> <span class="s2">&quot;Jul&quot;</span><span class="p">,</span> <span class="s2">&quot;Aug&quot;</span><span class="p">,</span> <span class="s2">&quot;Sep&quot;</span><span class="p">,</span> <span class="s2">&quot;Oct&quot;</span><span class="p">,</span> <span class="s2">&quot;Nov&quot;</span><span class="p">,</span> <span class="s2">&quot;Dec&quot;</span><span class="p">],</span>
+	<span class="nx">B</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;January&quot;</span><span class="p">,</span> <span class="s2">&quot;February&quot;</span><span class="p">,</span> <span class="s2">&quot;March&quot;</span><span class="p">,</span> <span class="s2">&quot;April&quot;</span><span class="p">,</span> <span class="s2">&quot;May&quot;</span><span class="p">,</span> <span class="s2">&quot;June&quot;</span><span class="p">,</span> <span class="s2">&quot;July&quot;</span><span class="p">,</span> <span class="s2">&quot;August&quot;</span><span class="p">,</span> <span class="s2">&quot;September&quot;</span><span class="p">,</span> <span class="s2">&quot;October&quot;</span><span class="p">,</span> <span class="s2">&quot;November&quot;</span><span class="p">,</span> <span class="s2">&quot;December&quot;</span><span class="p">],</span>
+	<span class="nx">c</span><span class="o">:</span> <span class="s2">&quot;%a %d %b %Y %T %Z&quot;</span><span class="p">,</span>
+	<span class="nx">p</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;AM&quot;</span><span class="p">,</span> <span class="s2">&quot;PM&quot;</span><span class="p">],</span>
+	<span class="nx">P</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;am&quot;</span><span class="p">,</span> <span class="s2">&quot;pm&quot;</span><span class="p">],</span>
+	<span class="nx">r</span><span class="o">:</span> <span class="s2">&quot;%I:%M:%S %p&quot;</span><span class="p">,</span>
+	<span class="nx">x</span><span class="o">:</span> <span class="s2">&quot;%d/%m/%y&quot;</span><span class="p">,</span>
 	<span class="nx">X</span><span class="o">:</span> <span class="s2">&quot;%T&quot;</span>
-<span class="o">};</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;DataType.Date.Locale&quot;</span><span class="o">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;DataType.Date.Locale&quot;</span><span class="p">);</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="s2">&quot;en&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">YDateEn</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DataType</span><span class="p">.</span><span class="nb">Date</span><span class="p">.</span><span class="nx">Locale</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">YDateEn</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="s2">&quot;en-US&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">YDateEn</span><span class="o">,</span> <span class="o">{</span>
-	<span class="nx">c</span><span class="o">:</span> <span class="s2">&quot;%a %d %b %Y %I:%M:%S %p %Z&quot;</span><span class="o">,</span>
-	<span class="nx">x</span><span class="o">:</span> <span class="s2">&quot;%m/%d/%Y&quot;</span><span class="o">,</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DataType</span><span class="p">.</span><span class="nb">Date</span><span class="p">.</span><span class="nx">Locale</span><span class="p">[</span><span class="s2">&quot;en-US&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">YDateEn</span><span class="p">,</span> <span class="p">{</span>
+	<span class="nx">c</span><span class="o">:</span> <span class="s2">&quot;%a %d %b %Y %I:%M:%S %p %Z&quot;</span><span class="p">,</span>
+	<span class="nx">x</span><span class="o">:</span> <span class="s2">&quot;%m/%d/%Y&quot;</span><span class="p">,</span>
 	<span class="nx">X</span><span class="o">:</span> <span class="s2">&quot;%I:%M:%S %p&quot;</span>
-<span class="o">});</span>
+<span class="p">});</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="s2">&quot;en-GB&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">YDateEn</span><span class="o">,</span> <span class="o">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DataType</span><span class="p">.</span><span class="nb">Date</span><span class="p">.</span><span class="nx">Locale</span><span class="p">[</span><span class="s2">&quot;en-GB&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">YDateEn</span><span class="p">,</span> <span class="p">{</span>
 	<span class="nx">r</span><span class="o">:</span> <span class="s2">&quot;%l:%M:%S %P %Z&quot;</span>
-<span class="o">});</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">DataType</span><span class="o">.</span><span class="nb">Date</span><span class="o">.</span><span class="nx">Locale</span><span class="o">[</span><span class="s2">&quot;en-AU&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">YDateEn</span><span class="o">);</span>
+<span class="p">});</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DataType</span><span class="p">.</span><span class="nb">Date</span><span class="p">.</span><span class="nx">Locale</span><span class="p">[</span><span class="s2">&quot;en-AU&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">YDateEn</span><span class="p">);</span>
 </pre></div>
 
                     </div>
@@ -190,6 +190,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

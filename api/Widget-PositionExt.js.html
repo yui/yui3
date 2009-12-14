@@ -47,403 +47,403 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Provides extended/advanced XY positioning support for Widgets, through an extension.</span>
-<span class="c"> *</span>
-<span class="c"> * It builds on top of the widget-position module, to provide alignmentment and centering support.</span>
-<span class="c"> * Future releases aim to add constrained and fixed positioning support.</span>
-<span class="c"> *</span>
-<span class="c"> * @module widget-position-ext</span>
-<span class="c"> */</span>
-        <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-            <span class="nx">ALIGN</span> <span class="o">=</span> <span class="s2">&quot;align&quot;</span><span class="o">,</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides extended/advanced XY positioning support for Widgets, through an extension.</span>
+<span class="cm"> *</span>
+<span class="cm"> * It builds on top of the widget-position module, to provide alignmentment and centering support.</span>
+<span class="cm"> * Future releases aim to add constrained and fixed positioning support.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module widget-position-ext</span>
+<span class="cm"> */</span>
+        <span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+            <span class="nx">ALIGN</span> <span class="o">=</span> <span class="s2">&quot;align&quot;</span><span class="p">,</span>
 
-            <span class="nx">BINDUI</span> <span class="o">=</span> <span class="s2">&quot;bindUI&quot;</span><span class="o">,</span>
-            <span class="nx">SYNCUI</span> <span class="o">=</span> <span class="s2">&quot;syncUI&quot;</span><span class="o">,</span>
+            <span class="nx">BINDUI</span> <span class="o">=</span> <span class="s2">&quot;bindUI&quot;</span><span class="p">,</span>
+            <span class="nx">SYNCUI</span> <span class="o">=</span> <span class="s2">&quot;syncUI&quot;</span><span class="p">,</span>
 
-            <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s2">&quot;offsetWidth&quot;</span><span class="o">,</span>
-            <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;offsetHeight&quot;</span><span class="o">,</span>
-            <span class="nx">VIEWPORT_REGION</span> <span class="o">=</span> <span class="s2">&quot;viewportRegion&quot;</span><span class="o">,</span>
-            <span class="nx">REGION</span> <span class="o">=</span> <span class="s2">&quot;region&quot;</span><span class="o">,</span>
+            <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s2">&quot;offsetWidth&quot;</span><span class="p">,</span>
+            <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s2">&quot;offsetHeight&quot;</span><span class="p">,</span>
+            <span class="nx">VIEWPORT_REGION</span> <span class="o">=</span> <span class="s2">&quot;viewportRegion&quot;</span><span class="p">,</span>
+            <span class="nx">REGION</span> <span class="o">=</span> <span class="s2">&quot;region&quot;</span><span class="p">,</span>
 
-            <span class="nx">AlignChange</span> <span class="o">=</span> <span class="s2">&quot;alignChange&quot;</span><span class="o">;</span>
+            <span class="nx">AlignChange</span> <span class="o">=</span> <span class="s2">&quot;alignChange&quot;</span><span class="p">;</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Widget extension, which can be used to add extended XY positioning support to the base Widget class,</span>
-<span class="c">         * through the &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; method. This extension requires that </span>
-<span class="c">         * the WidgetPosition extension be added to the Widget (before WidgetPositionExt, if part of the same </span>
-<span class="c">         * extension list passed to Base.build).</span>
-<span class="c">         *</span>
-<span class="c">         * @class WidgetPositionExt</span>
-<span class="c">         * @param {Object} User configuration object</span>
-<span class="c">         */</span>
-        <span class="k">function</span> <span class="nx">PositionExt</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_posNode</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added&quot;</span><span class="o">);</span> 
-            <span class="o">}</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_syncUIPosExtras</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">SYNCUI</span><span class="o">);</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_bindUIPosExtras</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">BINDUI</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Widget extension, which can be used to add extended XY positioning support to the base Widget class,</span>
+<span class="cm">         * through the &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; method. This extension requires that </span>
+<span class="cm">         * the WidgetPosition extension be added to the Widget (before WidgetPositionExt, if part of the same </span>
+<span class="cm">         * extension list passed to Base.build).</span>
+<span class="cm">         *</span>
+<span class="cm">         * @class WidgetPositionExt</span>
+<span class="cm">         * @param {Object} User configuration object</span>
+<span class="cm">         */</span>
+        <span class="kd">function</span> <span class="nx">PositionExt</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added&quot;</span><span class="p">);</span> 
+            <span class="p">}</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_syncUIPosExtras</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">SYNCUI</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_bindUIPosExtras</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">BINDUI</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Static property used to define the default attribute </span>
-<span class="c">         * configuration introduced by WidgetPositionExt.</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.ATTRS</span>
-<span class="c">         * @type Object</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Static property used to define the default attribute </span>
+<span class="cm">         * configuration introduced by WidgetPositionExt.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.ATTRS</span>
+<span class="cm">         * @type Object</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
 
-            <span class="c">/**</span>
-<span class="c">             * @attribute align</span>
-<span class="c">             * @type Object</span>
-<span class="c">             * @default null</span>
-<span class="c">             * @desciption The align attribute is used to align a reference point on the widget, with the refernce point on another node, or the viewport. </span>
-<span class="c">             * The object which align expects has the following properties:</span>
-<span class="c">             * &lt;dl&gt;</span>
-<span class="c">             *       &lt;dt&gt;node&lt;/dt&gt;</span>
-<span class="c">             *       &lt;dd&gt;</span>
-<span class="c">             *         The node to which the Widget is to be aligned. If set to null, or not provided, the Widget is aligned to the viewport</span>
-<span class="c">             *       &lt;/dd&gt;</span>
-<span class="c">             *       &lt;dt&gt;points&lt;/dt&gt;</span>
-<span class="c">             *       &lt;dd&gt;</span>
-<span class="c">             *         &lt;p&gt;</span>
-<span class="c">             *         A two element array, defining the two points on the Widget and node/viewport which are to be aligned. The first element is the point on the Widget, and the second element is the point on the node/viewport.</span>
-<span class="c">             *         Supported alignment points are defined as static properties on &lt;code&gt;WidgetPositionExt&lt;/code&gt;.</span>
-<span class="c">             *         &lt;/p&gt;</span>
-<span class="c">             *         &lt;p&gt;</span>
-<span class="c">             *         e.g. &lt;code&gt;[WidgetPositionExt.TR, WidgetPositionExt.TL]&lt;/code&gt; aligns the Top-Right corner of the Widget with the</span>
-<span class="c">             *         Top-Left corner of the node/viewport, and &lt;code&gt;[WidgetPositionExt.CC, WidgetPositionExt.TC]&lt;/code&gt; aligns the Center of the </span>
-<span class="c">             *         Widget with the Top-Center edge of the node/viewport.</span>
-<span class="c">             *         &lt;/p&gt;</span>
-<span class="c">             *       &lt;/dd&gt;</span>
-<span class="c">             *   &lt;/dl&gt;</span>
-<span class="c">             */</span>
-            <span class="nx">align</span><span class="o">:</span> <span class="o">{</span>
+            <span class="cm">/**</span>
+<span class="cm">             * @attribute align</span>
+<span class="cm">             * @type Object</span>
+<span class="cm">             * @default null</span>
+<span class="cm">             * @desciption The align attribute is used to align a reference point on the widget, with the refernce point on another node, or the viewport. </span>
+<span class="cm">             * The object which align expects has the following properties:</span>
+<span class="cm">             * &lt;dl&gt;</span>
+<span class="cm">             *       &lt;dt&gt;node&lt;/dt&gt;</span>
+<span class="cm">             *       &lt;dd&gt;</span>
+<span class="cm">             *         The node to which the Widget is to be aligned. If set to null, or not provided, the Widget is aligned to the viewport</span>
+<span class="cm">             *       &lt;/dd&gt;</span>
+<span class="cm">             *       &lt;dt&gt;points&lt;/dt&gt;</span>
+<span class="cm">             *       &lt;dd&gt;</span>
+<span class="cm">             *         &lt;p&gt;</span>
+<span class="cm">             *         A two element array, defining the two points on the Widget and node/viewport which are to be aligned. The first element is the point on the Widget, and the second element is the point on the node/viewport.</span>
+<span class="cm">             *         Supported alignment points are defined as static properties on &lt;code&gt;WidgetPositionExt&lt;/code&gt;.</span>
+<span class="cm">             *         &lt;/p&gt;</span>
+<span class="cm">             *         &lt;p&gt;</span>
+<span class="cm">             *         e.g. &lt;code&gt;[WidgetPositionExt.TR, WidgetPositionExt.TL]&lt;/code&gt; aligns the Top-Right corner of the Widget with the</span>
+<span class="cm">             *         Top-Left corner of the node/viewport, and &lt;code&gt;[WidgetPositionExt.CC, WidgetPositionExt.TC]&lt;/code&gt; aligns the Center of the </span>
+<span class="cm">             *         Widget with the Top-Center edge of the node/viewport.</span>
+<span class="cm">             *         &lt;/p&gt;</span>
+<span class="cm">             *       &lt;/dd&gt;</span>
+<span class="cm">             *   &lt;/dl&gt;</span>
+<span class="cm">             */</span>
+            <span class="nx">align</span><span class="o">:</span> <span class="p">{</span>
                 <span class="nx">value</span><span class="o">:</span><span class="kc">null</span>
-            <span class="o">},</span>
+            <span class="p">},</span>
 
-            <span class="c">/**</span>
-<span class="c">             * @attribute centered</span>
-<span class="c">             * @type {boolean | node} </span>
-<span class="c">             * @default false</span>
-<span class="c">             * @description A convenience attribute, which can be used as a shortcut for the align attribute.</span>
-<span class="c">             * If set to true, the Widget is centered in the viewport. If set to a node reference or valid selector string,</span>
-<span class="c">             * the Widget will be centered within the node. If set the false, no center positioning is applied.</span>
-<span class="c">             */</span>
-            <span class="nx">centered</span><span class="o">:</span> <span class="o">{</span>
-                <span class="nx">setter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setAlignCenter</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
-                <span class="o">},</span>
-                <span class="nx">lazyAdd</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
+            <span class="cm">/**</span>
+<span class="cm">             * @attribute centered</span>
+<span class="cm">             * @type {boolean | node} </span>
+<span class="cm">             * @default false</span>
+<span class="cm">             * @description A convenience attribute, which can be used as a shortcut for the align attribute.</span>
+<span class="cm">             * If set to true, the Widget is centered in the viewport. If set to a node reference or valid selector string,</span>
+<span class="cm">             * the Widget will be centered within the node. If set the false, no center positioning is applied.</span>
+<span class="cm">             */</span>
+            <span class="nx">centered</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setAlignCenter</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+                <span class="p">},</span>
+                <span class="nx">lazyAdd</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
                 <span class="nx">value</span><span class="o">:</span><span class="kc">false</span>
-            <span class="o">}</span>
-        <span class="o">};</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Constant used to specify the top-left corner for alignment</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.TL</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @static</span>
-<span class="c">         * @value &quot;tl&quot;</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">TL</span> <span class="o">=</span> <span class="s2">&quot;tl&quot;</span><span class="o">;</span>
-        <span class="c">/**</span>
-<span class="c">         * Constant used to specify the top-right corner for alignment</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.TR</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @static</span>
-<span class="c">         * @value &quot;tr&quot;</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">TR</span> <span class="o">=</span> <span class="s2">&quot;tr&quot;</span><span class="o">;</span>
-        <span class="c">/**</span>
-<span class="c">         * Constant used to specify the bottom-left corner for alignment</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.BL</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @static</span>
-<span class="c">         * @value &quot;bl&quot;</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">BL</span> <span class="o">=</span> <span class="s2">&quot;bl&quot;</span><span class="o">;</span>
-        <span class="c">/**</span>
-<span class="c">         * Constant used to specify the bottom-right corner for alignment</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.BR</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @static</span>
-<span class="c">         * @value &quot;br&quot;</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">BR</span> <span class="o">=</span> <span class="s2">&quot;br&quot;</span><span class="o">;</span>
-        <span class="c">/**</span>
-<span class="c">         * Constant used to specify the top edge-center point for alignment</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.TC</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @static</span>
-<span class="c">         * @value &quot;tc&quot;</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">TC</span> <span class="o">=</span> <span class="s2">&quot;tc&quot;</span><span class="o">;</span>
-        <span class="c">/**</span>
-<span class="c">         * Constant used to specify the right edge, center point for alignment</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.RC</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @static</span>
-<span class="c">         * @value &quot;rc&quot;</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">RC</span> <span class="o">=</span> <span class="s2">&quot;rc&quot;</span><span class="o">;</span>
-        <span class="c">/**</span>
-<span class="c">         * Constant used to specify the bottom edge, center point for alignment</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.BC</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @static</span>
-<span class="c">         * @value &quot;bc&quot;</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">BC</span> <span class="o">=</span> <span class="s2">&quot;bc&quot;</span><span class="o">;</span>
-        <span class="c">/**</span>
-<span class="c">         * Constant used to specify the left edge, center point for alignment</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.LC</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @static</span>
-<span class="c">         * @value &quot;lc&quot;</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">LC</span> <span class="o">=</span> <span class="s2">&quot;lc&quot;</span><span class="o">;</span>
-        <span class="c">/**</span>
-<span class="c">         * Constant used to specify the center of widget/node/viewport for alignment</span>
-<span class="c">         * </span>
-<span class="c">         * @property WidgetPositionExt.CC</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @static</span>
-<span class="c">         * @value &quot;cc&quot;</span>
-<span class="c">         */</span>
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">CC</span> <span class="o">=</span> <span class="s2">&quot;cc&quot;</span><span class="o">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant used to specify the top-left corner for alignment</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.TL</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @value &quot;tl&quot;</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">TL</span> <span class="o">=</span> <span class="s2">&quot;tl&quot;</span><span class="p">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant used to specify the top-right corner for alignment</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.TR</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @value &quot;tr&quot;</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">TR</span> <span class="o">=</span> <span class="s2">&quot;tr&quot;</span><span class="p">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant used to specify the bottom-left corner for alignment</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.BL</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @value &quot;bl&quot;</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">BL</span> <span class="o">=</span> <span class="s2">&quot;bl&quot;</span><span class="p">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant used to specify the bottom-right corner for alignment</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.BR</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @value &quot;br&quot;</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">BR</span> <span class="o">=</span> <span class="s2">&quot;br&quot;</span><span class="p">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant used to specify the top edge-center point for alignment</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.TC</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @value &quot;tc&quot;</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">TC</span> <span class="o">=</span> <span class="s2">&quot;tc&quot;</span><span class="p">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant used to specify the right edge, center point for alignment</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.RC</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @value &quot;rc&quot;</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">RC</span> <span class="o">=</span> <span class="s2">&quot;rc&quot;</span><span class="p">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant used to specify the bottom edge, center point for alignment</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.BC</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @value &quot;bc&quot;</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">BC</span> <span class="o">=</span> <span class="s2">&quot;bc&quot;</span><span class="p">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant used to specify the left edge, center point for alignment</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.LC</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @value &quot;lc&quot;</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">LC</span> <span class="o">=</span> <span class="s2">&quot;lc&quot;</span><span class="p">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Constant used to specify the center of widget/node/viewport for alignment</span>
+<span class="cm">         * </span>
+<span class="cm">         * @property WidgetPositionExt.CC</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @static</span>
+<span class="cm">         * @value &quot;cc&quot;</span>
+<span class="cm">         */</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">CC</span> <span class="o">=</span> <span class="s2">&quot;cc&quot;</span><span class="p">;</span>
 
-        <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
 
-            <span class="c">/**</span>
-<span class="c">             * Synchronizes the UI to match the Widgets extended positioning state.</span>
-<span class="c">             * This method in invoked after syncUI is invoked for the Widget class</span>
-<span class="c">             * using YUI&#39;s aop infrastructure.</span>
-<span class="c">             *</span>
-<span class="c">             * @method _syncUIPosExtras</span>
-<span class="c">             * @protected</span>
-<span class="c">             */</span>
-            <span class="nx">_syncUIPosExtras</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">align</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ALIGN</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">align</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetAlign</span><span class="o">(</span><span class="nx">align</span><span class="o">.</span><span class="nx">node</span><span class="o">,</span> <span class="nx">align</span><span class="o">.</span><span class="nx">points</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">},</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Synchronizes the UI to match the Widgets extended positioning state.</span>
+<span class="cm">             * This method in invoked after syncUI is invoked for the Widget class</span>
+<span class="cm">             * using YUI&#39;s aop infrastructure.</span>
+<span class="cm">             *</span>
+<span class="cm">             * @method _syncUIPosExtras</span>
+<span class="cm">             * @protected</span>
+<span class="cm">             */</span>
+            <span class="nx">_syncUIPosExtras</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">align</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ALIGN</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">align</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetAlign</span><span class="p">(</span><span class="nx">align</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">align</span><span class="p">.</span><span class="nx">points</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
 
-            <span class="c">/**</span>
-<span class="c">             * Binds event listeners responsible for updating the UI state in response to </span>
-<span class="c">             * Widget extended positioning related state changes.</span>
-<span class="c">             * &lt;p&gt;</span>
-<span class="c">             * This method is invoked after bindUI is invoked for the Widget class</span>
-<span class="c">             * using YUI&#39;s aop infrastructure.</span>
-<span class="c">             * &lt;/p&gt;</span>
-<span class="c">             * @method _bindUIStack</span>
-<span class="c">             * @protected</span>
-<span class="c">             */</span>
-            <span class="nx">_bindUIPosExtras</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="nx">AlignChange</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_afterAlignChange</span><span class="o">);</span>
-            <span class="o">},</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Binds event listeners responsible for updating the UI state in response to </span>
+<span class="cm">             * Widget extended positioning related state changes.</span>
+<span class="cm">             * &lt;p&gt;</span>
+<span class="cm">             * This method is invoked after bindUI is invoked for the Widget class</span>
+<span class="cm">             * using YUI&#39;s aop infrastructure.</span>
+<span class="cm">             * &lt;/p&gt;</span>
+<span class="cm">             * @method _bindUIStack</span>
+<span class="cm">             * @protected</span>
+<span class="cm">             */</span>
+            <span class="nx">_bindUIPosExtras</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">AlignChange</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterAlignChange</span><span class="p">);</span>
+            <span class="p">},</span>
 
-            <span class="c">/**</span>
-<span class="c">             * Default setter for center attribute changes. Sets up the appropriate value, and passes </span>
-<span class="c">             * it through the to the align attribute.</span>
-<span class="c">             *</span>
-<span class="c">             * @method _setAlignCenter</span>
-<span class="c">             * @protected</span>
-<span class="c">             * @param {boolean | node} The attribute value being set. </span>
-<span class="c">             * @return {Number} The attribute value being set.</span>
-<span class="c">             */</span>
-            <span class="nx">_setAlignCenter</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ALIGN</span><span class="o">,</span> <span class="o">{</span>
-                        <span class="nx">node</span><span class="o">:</span> <span class="nx">val</span> <span class="o">===</span> <span class="kc">true</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="nx">val</span><span class="o">,</span>
-                        <span class="nx">points</span><span class="o">:</span> <span class="o">[</span><span class="nx">PositionExt</span><span class="o">.</span><span class="nx">CC</span><span class="o">,</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">CC</span><span class="o">]</span>
-                    <span class="o">});</span>
-                <span class="o">}</span>
-                <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-            <span class="o">},</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Default setter for center attribute changes. Sets up the appropriate value, and passes </span>
+<span class="cm">             * it through the to the align attribute.</span>
+<span class="cm">             *</span>
+<span class="cm">             * @method _setAlignCenter</span>
+<span class="cm">             * @protected</span>
+<span class="cm">             * @param {boolean | node} The attribute value being set. </span>
+<span class="cm">             * @return {Number} The attribute value being set.</span>
+<span class="cm">             */</span>
+            <span class="nx">_setAlignCenter</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ALIGN</span><span class="p">,</span> <span class="p">{</span>
+                        <span class="nx">node</span><span class="o">:</span> <span class="nx">val</span> <span class="o">===</span> <span class="kc">true</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="nx">val</span><span class="p">,</span>
+                        <span class="nx">points</span><span class="o">:</span> <span class="p">[</span><span class="nx">PositionExt</span><span class="p">.</span><span class="nx">CC</span><span class="p">,</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">CC</span><span class="p">]</span>
+                    <span class="p">});</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+            <span class="p">},</span>
 
-            <span class="c">/**</span>
-<span class="c">             * Default attribute change listener for the align attribute, responsible</span>
-<span class="c">             * for updating the UI, in response to attribute changes.</span>
-<span class="c">             * </span>
-<span class="c">             * @method _afterAlignChange</span>
-<span class="c">             * @protected</span>
-<span class="c">             * @param {EventFacade} e The event facade for the attribute change</span>
-<span class="c">             */</span>
-            <span class="nx">_afterAlignChange</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_uiSetAlign</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">.</span><span class="nx">node</span><span class="o">,</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">.</span><span class="nx">points</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">},</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Default attribute change listener for the align attribute, responsible</span>
+<span class="cm">             * for updating the UI, in response to attribute changes.</span>
+<span class="cm">             * </span>
+<span class="cm">             * @method _afterAlignChange</span>
+<span class="cm">             * @protected</span>
+<span class="cm">             * @param {EventFacade} e The event facade for the attribute change</span>
+<span class="cm">             */</span>
+            <span class="nx">_afterAlignChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetAlign</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">.</span><span class="nx">node</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">.</span><span class="nx">points</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
 
-            <span class="c">/**</span>
-<span class="c">             * Updates the UI to reflect the align value passed in (see the align attribute documentation, for the object stucture expected)</span>
-<span class="c">             * @method _uiSetAlign</span>
-<span class="c">             * @protected</span>
-<span class="c">             * @param {Node | null} The node to align to, or null to indicate the viewport</span>
-<span class="c">             */</span>
-            <span class="nx">_uiSetAlign</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">points</span><span class="o">)</span> <span class="o">{</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Updates the UI to reflect the align value passed in (see the align attribute documentation, for the object stucture expected)</span>
+<span class="cm">             * @method _uiSetAlign</span>
+<span class="cm">             * @protected</span>
+<span class="cm">             * @param {Node | null} The node to align to, or null to indicate the viewport</span>
+<span class="cm">             */</span>
+            <span class="nx">_uiSetAlign</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">points</span><span class="p">)</span> <span class="p">{</span>
 
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">points</span><span class="o">)</span> <span class="o">||</span> <span class="nx">points</span><span class="o">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">error</span><span class="o">(</span><span class="s2">&quot;align: Invalid Points Arguments&quot;</span><span class="o">);</span>
-                    <span class="k">return</span><span class="o">;</span>
-                <span class="o">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">points</span><span class="p">)</span> <span class="o">||</span> <span class="nx">points</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;align: Invalid Points Arguments&quot;</span><span class="p">);</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
 
-                <span class="k">var</span> <span class="nx">nodeRegion</span><span class="o">,</span> <span class="nx">widgetPoint</span><span class="o">,</span> <span class="nx">nodePoint</span><span class="o">,</span> <span class="nx">xy</span><span class="o">;</span>
+                <span class="kd">var</span> <span class="nx">nodeRegion</span><span class="p">,</span> <span class="nx">widgetPoint</span><span class="p">,</span> <span class="nx">nodePoint</span><span class="p">,</span> <span class="nx">xy</span><span class="p">;</span>
 
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_posNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VIEWPORT_REGION</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">REGION</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VIEWPORT_REGION</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REGION</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">nodeRegion</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">nodeRegion</span><span class="p">)</span> <span class="p">{</span>
 
-                    <span class="c">// TODO: ViewportRegion doesn&#39;t have width/height - Workaround until normalized in Node/Dom</span>
-<span class="c"></span>                    <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">width</span> <span class="o">||</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">left</span><span class="o">;</span>
-                    <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">height</span> <span class="o">||</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">top</span><span class="o">;</span>
+                    <span class="c1">// TODO: ViewportRegion doesn&#39;t have width/height - Workaround until normalized in Node/Dom</span>
+                    <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">width</span> <span class="o">||</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">left</span><span class="p">;</span>
+                    <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">height</span> <span class="o">||</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">top</span><span class="p">;</span>
 
-                    <span class="nx">widgetPoint</span> <span class="o">=</span> <span class="nx">points</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
-                    <span class="nx">nodePoint</span> <span class="o">=</span> <span class="nx">points</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
+                    <span class="nx">widgetPoint</span> <span class="o">=</span> <span class="nx">points</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                    <span class="nx">nodePoint</span> <span class="o">=</span> <span class="nx">points</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 
-                    <span class="c">// TODO: Optimize KWeight - Would lookup table help?</span>
-<span class="c"></span>                    <span class="nx">switch</span> <span class="o">(</span><span class="nx">nodePoint</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">TL</span><span class="o">:</span>
-                            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">left</span><span class="o">,</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">top</span><span class="o">];</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">TR</span><span class="o">:</span>
-                            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">right</span><span class="o">,</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">top</span><span class="o">];</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">BL</span><span class="o">:</span>
-                            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">left</span><span class="o">,</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">bottom</span><span class="o">];</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">BR</span><span class="o">:</span>
-                            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">right</span><span class="o">,</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">bottom</span><span class="o">];</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">TC</span><span class="o">:</span>
-                            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">left</span> <span class="o">+</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">width</span><span class="o">/</span><span class="m">2</span><span class="o">),</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">top</span><span class="o">];</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">BC</span><span class="o">:</span>
-                            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">left</span> <span class="o">+</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">width</span><span class="o">/</span><span class="m">2</span><span class="o">),</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">bottom</span><span class="o">];</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">LC</span><span class="o">:</span>
-                            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">left</span><span class="o">,</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">top</span> <span class="o">+</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">height</span><span class="o">/</span><span class="m">2</span><span class="o">)];</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">RC</span><span class="o">:</span>
-                            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">right</span><span class="o">,</span> <span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">top</span> <span class="o">+</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">height</span><span class="o">/</span><span class="m">2</span><span class="o">),</span> <span class="nx">widgetPoint</span><span class="o">];</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">CC</span><span class="o">:</span>
-                            <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">left</span> <span class="o">+</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">nodeRegion</span><span class="o">.</span><span class="nx">width</span><span class="sr">/2), nodeRegion.top + Math.floor(nodeRegion.height/</span><span class="m">2</span><span class="o">),</span> <span class="nx">widgetPoint</span><span class="o">];</span>
-                            <span class="k">break</span><span class="o">;</span>
-                        <span class="nx">default</span><span class="o">:</span>
-                            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;align: Invalid Points Arguments&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;widget-position-extras&quot;</span><span class="o">);</span>
-                            <span class="k">break</span><span class="o">;</span>
-                    <span class="o">}</span>
+                    <span class="c1">// TODO: Optimize KWeight - Would lookup table help?</span>
+                    <span class="k">switch</span> <span class="p">(</span><span class="nx">nodePoint</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">TL</span><span class="o">:</span>
+                            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">top</span><span class="p">];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">TR</span><span class="o">:</span>
+                            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">right</span><span class="p">,</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">top</span><span class="p">];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">BL</span><span class="o">:</span>
+                            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">bottom</span><span class="p">];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">BR</span><span class="o">:</span>
+                            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">right</span><span class="p">,</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">bottom</span><span class="p">];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">TC</span><span class="o">:</span>
+                            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">left</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">width</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">top</span><span class="p">];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">BC</span><span class="o">:</span>
+                            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">left</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">width</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">bottom</span><span class="p">];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">LC</span><span class="o">:</span>
+                            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">top</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">height</span><span class="o">/</span><span class="mi">2</span><span class="p">)];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">RC</span><span class="o">:</span>
+                            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">right</span><span class="p">,</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">top</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">height</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="nx">widgetPoint</span><span class="p">];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">CC</span><span class="o">:</span>
+                            <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">left</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">width</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">top</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">height</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="nx">widgetPoint</span><span class="p">];</span>
+                            <span class="k">break</span><span class="p">;</span>
+                        <span class="k">default</span><span class="o">:</span>
+                            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;align: Invalid Points Arguments&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget-position-extras&quot;</span><span class="p">);</span>
+                            <span class="k">break</span><span class="p">;</span>
+                    <span class="p">}</span>
 
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">this</span><span class="o">.</span><span class="nx">_doAlign</span><span class="o">(</span><span class="nx">widgetPoint</span><span class="o">,</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">},</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">xy</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">_doAlign</span><span class="p">(</span><span class="nx">widgetPoint</span><span class="p">,</span> <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
 
-            <span class="c">/**</span>
-<span class="c">             * Helper method, used to align the given point on the widget, with the XY page co-ordinates provided.</span>
-<span class="c">             *</span>
-<span class="c">             * @method _doAlign</span>
-<span class="c">             * @private</span>
-<span class="c">             * @param {String} widgetPoint Supported point constant (e.g. WidgetPositionExt.TL)</span>
-<span class="c">             * @param {Number} x X page co-ordinate to align to</span>
-<span class="c">             * @param {Number} y Y page co-ordinate to align to</span>
-<span class="c">             */</span>
-            <span class="nx">_doAlign</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">widgetPoint</span><span class="o">,</span> <span class="nx">x</span><span class="o">,</span> <span class="nx">y</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">widgetNode</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_posNode</span><span class="o">,</span>
-                    <span class="nx">xy</span><span class="o">;</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Helper method, used to align the given point on the widget, with the XY page co-ordinates provided.</span>
+<span class="cm">             *</span>
+<span class="cm">             * @method _doAlign</span>
+<span class="cm">             * @private</span>
+<span class="cm">             * @param {String} widgetPoint Supported point constant (e.g. WidgetPositionExt.TL)</span>
+<span class="cm">             * @param {Number} x X page co-ordinate to align to</span>
+<span class="cm">             * @param {Number} y Y page co-ordinate to align to</span>
+<span class="cm">             */</span>
+            <span class="nx">_doAlign</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">widgetPoint</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">widgetNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">,</span>
+                    <span class="nx">xy</span><span class="p">;</span>
 
-                <span class="nx">switch</span> <span class="o">(</span><span class="nx">widgetPoint</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">TL</span><span class="o">:</span>
-                        <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span><span class="o">,</span> <span class="nx">y</span><span class="o">];</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">TR</span><span class="o">:</span>
-                        <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">),</span> <span class="nx">y</span><span class="o">];</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">BL</span><span class="o">:</span>
-                        <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span><span class="o">,</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)];</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">BR</span><span class="o">:</span>
-                        <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">),</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)];</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">TC</span><span class="o">:</span>
-                        <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="o">(</span><span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)/</span><span class="m">2</span><span class="o">),</span> <span class="nx">y</span><span class="o">];</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">BC</span><span class="o">:</span>
-                        <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="o">(</span><span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)/</span><span class="m">2</span><span class="o">),</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)];</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">LC</span><span class="o">:</span>
-                        <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span><span class="o">,</span> <span class="nx">y</span> <span class="o">-</span> <span class="o">(</span><span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)/</span><span class="m">2</span><span class="o">)];</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">RC</span><span class="o">:</span>
-                        <span class="nx">xy</span> <span class="o">=</span> <span class="o">[(</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)),</span> <span class="nx">y</span> <span class="o">-</span> <span class="o">(</span><span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)/</span><span class="m">2</span><span class="o">)];</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">case</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">CC</span><span class="o">:</span>
-                        <span class="nx">xy</span> <span class="o">=</span> <span class="o">[</span><span class="nx">x</span> <span class="o">-</span> <span class="o">(</span><span class="nx">widgetNode</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)</span><span class="sr">/2), y - (widgetNode.get(OFFSET_HEIGHT)/</span><span class="m">2</span><span class="o">)];</span>
-                        <span class="k">break</span><span class="o">;</span>
-                    <span class="nx">default</span><span class="o">:</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;align: Invalid Points Argument&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;widget-position-extras&quot;</span><span class="o">);</span>
-                        <span class="k">break</span><span class="o">;</span>
-                <span class="o">}</span>
+                <span class="k">switch</span> <span class="p">(</span><span class="nx">widgetPoint</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">TL</span><span class="o">:</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">];</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">TR</span><span class="o">:</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">),</span> <span class="nx">y</span><span class="p">];</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">BL</span><span class="o">:</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">)];</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">BR</span><span class="o">:</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">),</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">)];</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">TC</span><span class="o">:</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">x</span> <span class="o">-</span> <span class="p">(</span><span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="nx">y</span><span class="p">];</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">BC</span><span class="o">:</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">x</span> <span class="o">-</span> <span class="p">(</span><span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="nx">y</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">)];</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">LC</span><span class="o">:</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span> <span class="o">-</span> <span class="p">(</span><span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)];</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">RC</span><span class="o">:</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[(</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">)),</span> <span class="nx">y</span> <span class="o">-</span> <span class="p">(</span><span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)];</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">case</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">CC</span><span class="o">:</span>
+                        <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">x</span> <span class="o">-</span> <span class="p">(</span><span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_WIDTH</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="nx">y</span> <span class="o">-</span> <span class="p">(</span><span class="nx">widgetNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OFFSET_HEIGHT</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)];</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="k">default</span><span class="o">:</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;align: Invalid Points Argument&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget-position-extras&quot;</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">move</span><span class="o">(</span><span class="nx">xy</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">},</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">xy</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">move</span><span class="p">(</span><span class="nx">xy</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
 
-            <span class="c">/**</span>
-<span class="c">             * Aligns the Widget to the provided node (or viewport) using the provided</span>
-<span class="c">             * points. The method can be invoked directly, however it will result in </span>
-<span class="c">             * the align attribute being out of sync with current position of the of Widget.</span>
-<span class="c">             * </span>
-<span class="c">             * @method align</span>
-<span class="c">             * @param {Node | String | null} node A reference (or selector string) for the Node which with the Widget is to be aligned.</span>
-<span class="c">             * If null is passed in, the Widget will be aligned with the viewport.</span>
-<span class="c">             * @param {Array[2]} points A two element array, specifying the points on the Widget and node/viewport which need to be aligned. </span>
-<span class="c">             * The first entry is the point on the Widget, and the second entry is the point on the node/viewport which need to align.</span>
-<span class="c">             * Valid point references are defined as static constants on the WidgetPositionExt class. </span>
-<span class="c">             * </span>
-<span class="c">             * e.g. [WidgetPositionExt.TL, WidgetPositionExt.TR] will align the top-left corner of the Widget with the top-right corner of the node/viewport.</span>
-<span class="c">             */</span>
-            <span class="nx">align</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">points</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">ALIGN</span><span class="o">,</span> <span class="o">{</span><span class="nx">node</span><span class="o">:</span> <span class="nx">node</span><span class="o">,</span> <span class="nx">points</span><span class="o">:</span><span class="nx">points</span><span class="o">});</span>
-            <span class="o">},</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Aligns the Widget to the provided node (or viewport) using the provided</span>
+<span class="cm">             * points. The method can be invoked directly, however it will result in </span>
+<span class="cm">             * the align attribute being out of sync with current position of the of Widget.</span>
+<span class="cm">             * </span>
+<span class="cm">             * @method align</span>
+<span class="cm">             * @param {Node | String | null} node A reference (or selector string) for the Node which with the Widget is to be aligned.</span>
+<span class="cm">             * If null is passed in, the Widget will be aligned with the viewport.</span>
+<span class="cm">             * @param {Array[2]} points A two element array, specifying the points on the Widget and node/viewport which need to be aligned. </span>
+<span class="cm">             * The first entry is the point on the Widget, and the second entry is the point on the node/viewport which need to align.</span>
+<span class="cm">             * Valid point references are defined as static constants on the WidgetPositionExt class. </span>
+<span class="cm">             * </span>
+<span class="cm">             * e.g. [WidgetPositionExt.TL, WidgetPositionExt.TR] will align the top-left corner of the Widget with the top-right corner of the node/viewport.</span>
+<span class="cm">             */</span>
+            <span class="nx">align</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">points</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ALIGN</span><span class="p">,</span> <span class="p">{</span><span class="nx">node</span><span class="o">:</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">points</span><span class="o">:</span><span class="nx">points</span><span class="p">});</span>
+            <span class="p">},</span>
 
-            <span class="c">/**</span>
-<span class="c">             * Centers the container in the viewport, or if a node is passed in,</span>
-<span class="c">             * the node.</span>
-<span class="c">             *</span>
-<span class="c">             * @method centered</span>
-<span class="c">             * @param {Node | String} node Optional. A node reference or selector string defining the node </span>
-<span class="c">             * inside which the Widget is to be centered. If not passed in, the Widget will be centered in the </span>
-<span class="c">             * viewport.</span>
-<span class="c">             */</span>
-            <span class="nx">centered</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">align</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="o">[</span><span class="nx">PositionExt</span><span class="o">.</span><span class="nx">CC</span><span class="o">,</span> <span class="nx">PositionExt</span><span class="o">.</span><span class="nx">CC</span><span class="o">]);</span>
-            <span class="o">}</span>
-        <span class="o">};</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Centers the container in the viewport, or if a node is passed in,</span>
+<span class="cm">             * the node.</span>
+<span class="cm">             *</span>
+<span class="cm">             * @method centered</span>
+<span class="cm">             * @param {Node | String} node Optional. A node reference or selector string defining the node </span>
+<span class="cm">             * inside which the Widget is to be centered. If not passed in, the Widget will be centered in the </span>
+<span class="cm">             * viewport.</span>
+<span class="cm">             */</span>
+            <span class="nx">centered</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">align</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="p">[</span><span class="nx">PositionExt</span><span class="p">.</span><span class="nx">CC</span><span class="p">,</span> <span class="nx">PositionExt</span><span class="p">.</span><span class="nx">CC</span><span class="p">]);</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">WidgetPositionExt</span> <span class="o">=</span> <span class="nx">PositionExt</span><span class="o">;</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetPositionExt</span> <span class="o">=</span> <span class="nx">PositionExt</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -491,6 +491,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

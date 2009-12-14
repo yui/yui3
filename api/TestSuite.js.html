@@ -47,82 +47,82 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>        
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Test&quot;</span><span class="o">);</span>
+                        <div class="highlight"><pre>        
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Test&quot;</span><span class="p">);</span>
     
-    <span class="c">/**</span>
-<span class="c">     * A test suite that can contain a collection of TestCase and TestSuite objects.</span>
-<span class="c">     * @param {String||Object} data The name of the test suite or an object containing</span>
-<span class="c">     *      a name property as well as setUp and tearDown methods.</span>
-<span class="c">     * @namespace Test</span>
-<span class="c">     * @class Suite</span>
-<span class="c">     * @constructor</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Suite</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">data</span> <span class="c">/*:String||Object*/</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * A test suite that can contain a collection of TestCase and TestSuite objects.</span>
+<span class="cm">     * @param {String||Object} data The name of the test suite or an object containing</span>
+<span class="cm">     *      a name property as well as setUp and tearDown methods.</span>
+<span class="cm">     * @namespace Test</span>
+<span class="cm">     * @class Suite</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Suite</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span> <span class="cm">/*:String||Object*/</span><span class="p">)</span> <span class="p">{</span>
     
-        <span class="c">/**</span>
-<span class="c">         * The name of the test suite.</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @property name</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The name of the test suite.</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @property name</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Array of test suites and</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">items</span> <span class="o">=</span> <span class="o">[];</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Array of test suites and</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">items</span> <span class="o">=</span> <span class="p">[];</span>
     
-        <span class="c">//initialize the properties</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">data</span><span class="o">)){</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">data</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">data</span><span class="o">)){</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">data</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="c1">//initialize the properties</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">data</span><span class="p">)){</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">data</span><span class="p">)){</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
     
-        <span class="c">//double-check name</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s2">&quot;&quot;</span><span class="o">){</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;testSuite&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
-        <span class="o">}</span>
+        <span class="c1">//double-check name</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="s2">&quot;&quot;</span><span class="p">){</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;testSuite&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span>
+        <span class="p">}</span>
     
-    <span class="o">};</span>
+    <span class="p">};</span>
     
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Suite</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Suite</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Adds a test suite or test case to the test suite.</span>
-<span class="c">         * @param {Y.Test.Suite||Y.Test.Case} testObject The test suite or test case to add.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method add</span>
-<span class="c">         */</span>
-        <span class="nx">add</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">testObject</span> <span class="c">/*:Y.Test.Suite*/</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">testObject</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Suite</span> <span class="o">||</span> <span class="nx">testObject</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Case</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">items</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">testObject</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Adds a test suite or test case to the test suite.</span>
+<span class="cm">         * @param {Y.Test.Suite||Y.Test.Case} testObject The test suite or test case to add.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method add</span>
+<span class="cm">         */</span>
+        <span class="nx">add</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">testObject</span> <span class="cm">/*:Y.Test.Suite*/</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">testObject</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Suite</span> <span class="o">||</span> <span class="nx">testObject</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Case</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">testObject</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">},</span>
         
-        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>        <span class="c">// Stub Methods</span>
-<span class="c"></span>        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>    
-        <span class="c">/**</span>
-<span class="c">         * Function to run before each test is executed.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method setUp</span>
-<span class="c">         */</span>
-        <span class="nx">setUp</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="o">},</span>
+        <span class="c1">//-------------------------------------------------------------------------</span>
+        <span class="c1">// Stub Methods</span>
+        <span class="c1">//-------------------------------------------------------------------------</span>
+    
+        <span class="cm">/**</span>
+<span class="cm">         * Function to run before each test is executed.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method setUp</span>
+<span class="cm">         */</span>
+        <span class="nx">setUp</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Function to run after each test is executed.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method tearDown</span>
-<span class="c">         */</span>
-        <span class="nx">tearDown</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="o">}</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Function to run after each test is executed.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method tearDown</span>
+<span class="cm">         */</span>
+        <span class="nx">tearDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="p">}</span>
         
-    <span class="o">};</span>
+    <span class="p">};</span>
 </pre></div>
 
                     </div>
@@ -170,6 +170,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class="selected"><a href="module_test.html" title="test">test</a></li>

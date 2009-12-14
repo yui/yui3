@@ -47,108 +47,108 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Provides console log capability and exposes a custom event for</span>
-<span class="c"> * console implementations.</span>
-<span class="c"> * @module yui</span>
-<span class="c"> * @submodule yui-log</span>
-<span class="c"> */</span>
-<span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides console log capability and exposes a custom event for</span>
+<span class="cm"> * console implementations.</span>
+<span class="cm"> * @module yui</span>
+<span class="cm"> * @submodule yui-log</span>
+<span class="cm"> */</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-<span class="k">var</span> <span class="nx">INSTANCE</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">,</span>
-    <span class="nx">LOGEVENT</span> <span class="o">=</span> <span class="s1">&#39;yui:log&#39;</span><span class="o">,</span>
-    <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span><span class="o">,</span>
-    <span class="nx">LEVELS</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">debug</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span> <span class="nx">info</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span> <span class="nx">warn</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span> <span class="nx">error</span><span class="o">:</span> <span class="m">1</span> <span class="o">},</span>
-    <span class="nx">_published</span><span class="o">;</span>
+<span class="kd">var</span> <span class="nx">INSTANCE</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">,</span>
+    <span class="nx">LOGEVENT</span> <span class="o">=</span> <span class="s1">&#39;yui:log&#39;</span><span class="p">,</span>
+    <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">,</span>
+    <span class="nx">LEVELS</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">debug</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">info</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">warn</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">error</span><span class="o">:</span> <span class="mi">1</span> <span class="p">},</span>
+    <span class="nx">_published</span><span class="p">;</span>
 
-<span class="c">/**</span>
-<span class="c"> * If the &#39;debug&#39; config is true, a &#39;yui:log&#39; event will be</span>
-<span class="c"> * dispatched, which the Console widget and anything else</span>
-<span class="c"> * can consume.  If the &#39;useBrowserConsole&#39; config is true, it will</span>
-<span class="c"> * write to the browser console if available.  YUI-specific log</span>
-<span class="c"> * messages will only be present in the -debug versions of the</span>
-<span class="c"> * JS files.  The build system is supposed to remove log statements</span>
-<span class="c"> * from the raw and minified versions of the files.</span>
-<span class="c"> *</span>
-<span class="c"> * @method log</span>
-<span class="c"> * @for YUI</span>
-<span class="c"> * @param  {String}  msg  The message to log.</span>
-<span class="c"> * @param  {String}  cat  The log category for the message.  Default</span>
-<span class="c"> *                        categories are &quot;info&quot;, &quot;warn&quot;, &quot;error&quot;, time&quot;.</span>
-<span class="c"> *                        Custom categories can be used as well. (opt)</span>
-<span class="c"> * @param  {String}  src  The source of the the message (opt)</span>
-<span class="c"> * @param  {boolean} silent If true, the log event won&#39;t fire</span>
-<span class="c"> * @return {YUI}      YUI instance</span>
-<span class="c"> */</span>
-<span class="nx">INSTANCE</span><span class="o">.</span><span class="nx">log</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span><span class="o">,</span> <span class="nx">silent</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="nx">INSTANCE</span><span class="o">,</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> <span class="nx">bail</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">excl</span><span class="o">,</span> <span class="nx">incl</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">f</span><span class="o">;</span>
-    <span class="c">// suppress log message if the config is off or the event stack</span>
-<span class="c"></span>    <span class="c">// or the event call stack contains a consumer of the yui:log event</span>
-<span class="c"></span>    <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">debug</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// apply source filters</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">excl</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">logExclude</span><span class="o">;</span> 
-            <span class="nx">incl</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">logInclude</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * If the &#39;debug&#39; config is true, a &#39;yui:log&#39; event will be</span>
+<span class="cm"> * dispatched, which the Console widget and anything else</span>
+<span class="cm"> * can consume.  If the &#39;useBrowserConsole&#39; config is true, it will</span>
+<span class="cm"> * write to the browser console if available.  YUI-specific log</span>
+<span class="cm"> * messages will only be present in the -debug versions of the</span>
+<span class="cm"> * JS files.  The build system is supposed to remove log statements</span>
+<span class="cm"> * from the raw and minified versions of the files.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method log</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> * @param  {String}  msg  The message to log.</span>
+<span class="cm"> * @param  {String}  cat  The log category for the message.  Default</span>
+<span class="cm"> *                        categories are &quot;info&quot;, &quot;warn&quot;, &quot;error&quot;, time&quot;.</span>
+<span class="cm"> *                        Custom categories can be used as well. (opt)</span>
+<span class="cm"> * @param  {String}  src  The source of the the message (opt)</span>
+<span class="cm"> * @param  {boolean} silent If true, the log event won&#39;t fire</span>
+<span class="cm"> * @return {YUI}      YUI instance</span>
+<span class="cm"> */</span>
+<span class="nx">INSTANCE</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">cat</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="nx">INSTANCE</span><span class="p">,</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> <span class="nx">bail</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">excl</span><span class="p">,</span> <span class="nx">incl</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">f</span><span class="p">;</span>
+    <span class="c1">// suppress log message if the config is off or the event stack</span>
+    <span class="c1">// or the event call stack contains a consumer of the yui:log event</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// apply source filters</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">src</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">excl</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">logExclude</span><span class="p">;</span> 
+            <span class="nx">incl</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">logInclude</span><span class="p">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">incl</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">incl</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">bail</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">excl</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">excl</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">bail</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">incl</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="p">(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">incl</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">bail</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">excl</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">excl</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">bail</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">bail</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">bail</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">useBrowserConsole</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">m</span> <span class="o">=</span> <span class="o">(</span><span class="nx">src</span><span class="o">)</span> <span class="o">?</span> <span class="nx">src</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span> <span class="o">:</span> <span class="nx">msg</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">console</span> <span class="o">!=</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span><span class="o">.</span><span class="nx">log</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cat</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span><span class="o">[</span><span class="nx">cat</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">cat</span> <span class="k">in</span> <span class="nx">LEVELS</span><span class="o">))</span> <span class="o">?</span> <span class="nx">cat</span> <span class="o">:</span> <span class="s1">&#39;log&#39;</span><span class="o">;</span>
-                    <span class="nx">console</span><span class="o">[</span><span class="nx">f</span><span class="o">](</span><span class="nx">m</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">opera</span> <span class="o">!=</span> <span class="nx">UNDEFINED</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">opera</span><span class="o">.</span><span class="nx">postError</span><span class="o">(</span><span class="nx">m</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">useBrowserConsole</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">m</span> <span class="o">=</span> <span class="p">(</span><span class="nx">src</span><span class="p">)</span> <span class="o">?</span> <span class="nx">src</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span> <span class="o">:</span> <span class="nx">msg</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">console</span> <span class="o">!=</span> <span class="nx">UNDEFINED</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">f</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cat</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span><span class="p">[</span><span class="nx">cat</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">cat</span> <span class="k">in</span> <span class="nx">LEVELS</span><span class="p">))</span> <span class="o">?</span> <span class="nx">cat</span> <span class="o">:</span> <span class="s1">&#39;log&#39;</span><span class="p">;</span>
+                    <span class="nx">console</span><span class="p">[</span><span class="nx">f</span><span class="p">](</span><span class="nx">m</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">opera</span> <span class="o">!=</span> <span class="nx">UNDEFINED</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">opera</span><span class="p">.</span><span class="nx">postError</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">silent</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">_published</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">LOGEVENT</span><span class="o">,</span> <span class="o">{</span>
-                        <span class="nx">broadcast</span><span class="o">:</span> <span class="m">2</span><span class="o">,</span>
-                        <span class="nx">emitFacade</span><span class="o">:</span> <span class="m">1</span>
-                    <span class="o">});</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_published</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">LOGEVENT</span><span class="p">,</span> <span class="p">{</span>
+                        <span class="nx">broadcast</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+                        <span class="nx">emitFacade</span><span class="o">:</span> <span class="mi">1</span>
+                    <span class="p">});</span>
 
-                    <span class="nx">_published</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+                    <span class="nx">_published</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-                <span class="o">}</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">LOGEVENT</span><span class="o">,</span> <span class="o">{</span>
-                    <span class="nx">msg</span><span class="o">:</span> <span class="nx">msg</span><span class="o">,</span> 
-                    <span class="nx">cat</span><span class="o">:</span> <span class="nx">cat</span><span class="o">,</span> 
+                <span class="p">}</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">LOGEVENT</span><span class="p">,</span> <span class="p">{</span>
+                    <span class="nx">msg</span><span class="o">:</span> <span class="nx">msg</span><span class="p">,</span> 
+                    <span class="nx">cat</span><span class="o">:</span> <span class="nx">cat</span><span class="p">,</span> 
                     <span class="nx">src</span><span class="o">:</span> <span class="nx">src</span>
-                <span class="o">});</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-    <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
-<span class="o">};</span>
+    <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Write a system message.  This message will be preserved in the</span>
-<span class="c"> * minified and raw versions of the YUI files, unlike log statements.</span>
-<span class="c"> * @method message</span>
-<span class="c"> * @for YUI</span>
-<span class="c"> * @param  {String}  msg  The message to log.</span>
-<span class="c"> * @param  {String}  cat  The log category for the message.  Default</span>
-<span class="c"> *                        categories are &quot;info&quot;, &quot;warn&quot;, &quot;error&quot;, time&quot;.</span>
-<span class="c"> *                        Custom categories can be used as well. (opt)</span>
-<span class="c"> * @param  {String}  src  The source of the the message (opt)</span>
-<span class="c"> * @param  {boolean} silent If true, the log event won&#39;t fire</span>
-<span class="c"> * @return {YUI}      YUI instance</span>
-<span class="c"> */</span>
-<span class="nx">INSTANCE</span><span class="o">.</span><span class="nx">message</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">INSTANCE</span><span class="o">.</span><span class="nx">log</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">INSTANCE</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Write a system message.  This message will be preserved in the</span>
+<span class="cm"> * minified and raw versions of the YUI files, unlike log statements.</span>
+<span class="cm"> * @method message</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> * @param  {String}  msg  The message to log.</span>
+<span class="cm"> * @param  {String}  cat  The log category for the message.  Default</span>
+<span class="cm"> *                        categories are &quot;info&quot;, &quot;warn&quot;, &quot;error&quot;, time&quot;.</span>
+<span class="cm"> *                        Custom categories can be used as well. (opt)</span>
+<span class="cm"> * @param  {String}  src  The source of the the message (opt)</span>
+<span class="cm"> * @param  {boolean} silent If true, the log event won&#39;t fire</span>
+<span class="cm"> * @return {YUI}      YUI instance</span>
+<span class="cm"> */</span>
+<span class="nx">INSTANCE</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">INSTANCE</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">INSTANCE</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="o">})();</span>
+<span class="p">})();</span>
 </pre></div>
 
                     </div>
@@ -196,6 +196,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

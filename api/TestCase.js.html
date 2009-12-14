@@ -47,128 +47,128 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * YUI JavaScript Testing Framework</span>
-<span class="c">     *</span>
-<span class="c">     * @module test</span>
-<span class="c">     */</span>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * YUI JavaScript Testing Framework</span>
+<span class="cm">     *</span>
+<span class="cm">     * @module test</span>
+<span class="cm">     */</span>
 
     
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Test&quot;</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Test&quot;</span><span class="p">);</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Test case containing various tests to run.</span>
-<span class="c">     * @param template An object containing any number of test methods, other methods,</span>
-<span class="c">     *                 an optional name, and anything else the test case needs.</span>
-<span class="c">     * @class Case</span>
-<span class="c">     * @namespace Test</span>
-<span class="c">     * @constructor</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Case</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">template</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Test case containing various tests to run.</span>
+<span class="cm">     * @param template An object containing any number of test methods, other methods,</span>
+<span class="cm">     *                 an optional name, and anything else the test case needs.</span>
+<span class="cm">     * @class Case</span>
+<span class="cm">     * @namespace Test</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Case</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">template</span><span class="p">)</span> <span class="p">{</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Special rules for the test case. Possible subobjects</span>
-<span class="c">         * are fail, for tests that should fail, and error, for</span>
-<span class="c">         * tests that should throw an error.</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_should</span> <span class="o">=</span> <span class="o">{};</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Special rules for the test case. Possible subobjects</span>
+<span class="cm">         * are fail, for tests that should fail, and error, for</span>
+<span class="cm">         * tests that should throw an error.</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_should</span> <span class="o">=</span> <span class="p">{};</span>
         
-        <span class="c">//copy over all properties from the template to this object</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">prop</span> <span class="k">in</span> <span class="nx">template</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">[</span><span class="nx">prop</span><span class="o">]</span> <span class="o">=</span> <span class="nx">template</span><span class="o">[</span><span class="nx">prop</span><span class="o">];</span>
-        <span class="o">}</span>    
+        <span class="c1">//copy over all properties from the template to this object</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">prop</span> <span class="k">in</span> <span class="nx">template</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">template</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+        <span class="p">}</span>    
         
-        <span class="c">//check for a valid name</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">name</span><span class="o">)){</span>
-            <span class="c">/**</span>
-<span class="c">             * Name for the test case.</span>
-<span class="c">             */</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;testCase&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">guid</span><span class="o">();</span>
-        <span class="o">}</span>
+        <span class="c1">//check for a valid name</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">)){</span>
+            <span class="cm">/**</span>
+<span class="cm">             * Name for the test case.</span>
+<span class="cm">             */</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;testCase&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span>
+        <span class="p">}</span>
     
-    <span class="o">};</span>
+    <span class="p">};</span>
             
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Case</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>  
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Case</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>  
     
-        <span class="c">/**</span>
-<span class="c">         * Resumes a paused test and runs the given function.</span>
-<span class="c">         * @param {Function} segment (Optional) The function to run.</span>
-<span class="c">         *      If omitted, the test automatically passes.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method resume</span>
-<span class="c">         */</span>
-        <span class="nx">resume</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">segment</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Runner</span><span class="o">.</span><span class="nx">resume</span><span class="o">(</span><span class="nx">segment</span><span class="o">);</span>
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Resumes a paused test and runs the given function.</span>
+<span class="cm">         * @param {Function} segment (Optional) The function to run.</span>
+<span class="cm">         *      If omitted, the test automatically passes.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method resume</span>
+<span class="cm">         */</span>
+        <span class="nx">resume</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">segment</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Runner</span><span class="p">.</span><span class="nx">resume</span><span class="p">(</span><span class="nx">segment</span><span class="p">);</span>
+        <span class="p">},</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Causes the test case to wait a specified amount of time and then</span>
-<span class="c">         * continue executing the given code.</span>
-<span class="c">         * @param {Function} segment (Optional) The function to run after the delay.</span>
-<span class="c">         *      If omitted, the TestRunner will wait until resume() is called.</span>
-<span class="c">         * @param {int} delay (Optional) The number of milliseconds to wait before running</span>
-<span class="c">         *      the function. If omitted, defaults to zero.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method wait</span>
-<span class="c">         */</span>
-        <span class="nx">wait</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">segment</span><span class="o">,</span> <span class="nx">delay</span><span class="o">){</span>
-            <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">])){</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Wait</span><span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">args</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Wait</span><span class="o">(</span><span class="k">function</span><span class="o">(){</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;Timeout: wait() called but resume() never called.&quot;</span><span class="o">);</span>
-                <span class="o">},</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">?</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">:</span> <span class="m">10000</span><span class="o">));</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Causes the test case to wait a specified amount of time and then</span>
+<span class="cm">         * continue executing the given code.</span>
+<span class="cm">         * @param {Function} segment (Optional) The function to run after the delay.</span>
+<span class="cm">         *      If omitted, the TestRunner will wait until resume() is called.</span>
+<span class="cm">         * @param {int} delay (Optional) The number of milliseconds to wait before running</span>
+<span class="cm">         *      the function. If omitted, defaults to zero.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method wait</span>
+<span class="cm">         */</span>
+        <span class="nx">wait</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">segment</span><span class="p">,</span> <span class="nx">delay</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])){</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Wait</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Wait</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="s2">&quot;Timeout: wait() called but resume() never called.&quot;</span><span class="p">);</span>
+                <span class="p">},</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">?</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="mi">10000</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
     
-        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>        <span class="c">// Stub Methods</span>
-<span class="c"></span>        <span class="c">//-------------------------------------------------------------------------</span>
-<span class="c"></span>    
-        <span class="c">/**</span>
-<span class="c">         * Function to run before each test is executed.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method setUp</span>
-<span class="c">         */</span>
-        <span class="nx">setUp</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="o">},</span>
+        <span class="c1">//-------------------------------------------------------------------------</span>
+        <span class="c1">// Stub Methods</span>
+        <span class="c1">//-------------------------------------------------------------------------</span>
+    
+        <span class="cm">/**</span>
+<span class="cm">         * Function to run before each test is executed.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method setUp</span>
+<span class="cm">         */</span>
+        <span class="nx">setUp</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Function to run after each test is executed.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method tearDown</span>
-<span class="c">         */</span>
-        <span class="nx">tearDown</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>    
-        <span class="o">}</span>
-    <span class="o">};</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Function to run after each test is executed.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method tearDown</span>
+<span class="cm">         */</span>
+        <span class="nx">tearDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>    
+        <span class="p">}</span>
+    <span class="p">};</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Represents a stoppage in test execution to wait for an amount of time before</span>
-<span class="c">     * continuing.</span>
-<span class="c">     * @param {Function} segment A function to run when the wait is over.</span>
-<span class="c">     * @param {int} delay The number of milliseconds to wait before running the code.</span>
-<span class="c">     * @class Wait</span>
-<span class="c">     * @namespace Test</span>
-<span class="c">     * @constructor</span>
-<span class="c">     *</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Wait</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">segment</span><span class="o">,</span> <span class="nx">delay</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Represents a stoppage in test execution to wait for an amount of time before</span>
+<span class="cm">     * continuing.</span>
+<span class="cm">     * @param {Function} segment A function to run when the wait is over.</span>
+<span class="cm">     * @param {int} delay The number of milliseconds to wait before running the code.</span>
+<span class="cm">     * @class Wait</span>
+<span class="cm">     * @namespace Test</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     *</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Wait</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">segment</span><span class="p">,</span> <span class="nx">delay</span><span class="p">)</span> <span class="p">{</span>
         
-        <span class="c">/**</span>
-<span class="c">         * The segment of code to run when the wait is over.</span>
-<span class="c">         * @type Function</span>
-<span class="c">         * @property segment</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">segment</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">segment</span><span class="o">)</span> <span class="o">?</span> <span class="nx">segment</span> <span class="o">:</span> <span class="kc">null</span><span class="o">);</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The segment of code to run when the wait is over.</span>
+<span class="cm">         * @type Function</span>
+<span class="cm">         * @property segment</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">segment</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">segment</span><span class="p">)</span> <span class="o">?</span> <span class="nx">segment</span> <span class="o">:</span> <span class="kc">null</span><span class="p">);</span>
     
-        <span class="c">/**</span>
-<span class="c">         * The delay before running the segment of code.</span>
-<span class="c">         * @type int</span>
-<span class="c">         * @property delay</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">delay</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">delay</span><span class="o">)</span> <span class="o">?</span> <span class="nx">delay</span> <span class="o">:</span> <span class="m">0</span><span class="o">);</span>        
-    <span class="o">};</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The delay before running the segment of code.</span>
+<span class="cm">         * @type int</span>
+<span class="cm">         * @property delay</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">delay</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">delay</span><span class="p">)</span> <span class="o">?</span> <span class="nx">delay</span> <span class="o">:</span> <span class="mi">0</span><span class="p">);</span>        
+    <span class="p">};</span>
 </pre></div>
 
                     </div>
@@ -216,6 +216,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class="selected"><a href="module_test.html" title="test">test</a></li>
