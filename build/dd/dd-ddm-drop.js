@@ -386,7 +386,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         getDrop: function(node) {
             var drop = false,
-                n = Y.Node.get(node);
+                n = Y.one(node);
             if (n instanceof Y.Node) {
                 Y.each(this.targets, function(v, k) {
                     if (n.compareTo(v.get('node'))) {

@@ -2,7 +2,8 @@ YUI.add('dd-scroll', function(Y) {
 
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * This class is the base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
+     * This class should not be called on it's own, it's designed to be a plugin.
      * @module dd
      * @submodule dd-scroll
      */
@@ -19,6 +20,7 @@ YUI.add('dd-scroll', function(Y) {
         S.superclass.constructor.apply(this, arguments);
 
     },
+    WS, NS,
     HOST = 'host',
     BUFFER = 'buffer',
     PARENT_SCROLL = 'parentScroll',
@@ -129,27 +131,23 @@ YUI.add('dd-scroll', function(Y) {
         * @description Sets the _vpRegionCache property with an Object containing the dims from the viewport.
         */        
         _getVPRegion: function() {
-            var r = {};
-            //if (!this._vpRegionCache) {
-                var n = this.get(PARENT_SCROLL),
-                b = this.get(BUFFER),
-                ws = this.get(WINDOW_SCROLL),
-                xy = ((ws) ? [] : n.getXY()),
-                w = ((ws) ? 'winWidth' : OFFSET_WIDTH),
-                h = ((ws) ? 'winHeight' : OFFSET_HEIGHT),
-                t = ((ws) ? n.get(SCROLL_TOP) : xy[1]),
-                l = ((ws) ? n.get(SCROLL_LEFT) : xy[0]);
+            var r = {},
+                n = this.get(PARENT_SCROLL),
+            b = this.get(BUFFER),
+            ws = this.get(WINDOW_SCROLL),
+            xy = ((ws) ? [] : n.getXY()),
+            w = ((ws) ? 'winWidth' : OFFSET_WIDTH),
+            h = ((ws) ? 'winHeight' : OFFSET_HEIGHT),
+            t = ((ws) ? n.get(SCROLL_TOP) : xy[1]),
+            l = ((ws) ? n.get(SCROLL_LEFT) : xy[0]);
 
-                r = {
-                    top: t + b,
-                    right: (n.get(w) + l) - b,
-                    bottom: (n.get(h) + t) - b,
-                    left: l + b
-                };
-                this._vpRegionCache = r;
-            //} else {
-            //    r = this._vpRegionCache;
-            //}
+            r = {
+                top: t + b,
+                right: (n.get(w) + l) - b,
+                bottom: (n.get(h) + t) - b,
+                left: l + b
+            };
+            this._vpRegionCache = r;
             return r;
         },
         initializer: function() {
@@ -159,7 +157,7 @@ YUI.add('dd-scroll', function(Y) {
             h.on('drag:align', Y.bind(this.align, this));
 
             //TODO - This doesn't work yet??
-            Y.get(window).on('scroll', Y.bind(function() {
+            Y.one(window).on('scroll', Y.bind(function() {
                 this._vpRegionCache = null;
             }, this));
         },
@@ -328,7 +326,7 @@ YUI.add('dd-scroll', function(Y) {
      * @namespace Plugin
      * @constructor
      */
-    var WS = function() {
+    WS = function() {
         WS.superclass.constructor.apply(this, arguments);
     };
     WS.ATTRS = Y.merge(S.ATTRS, {
@@ -341,7 +339,7 @@ YUI.add('dd-scroll', function(Y) {
             value: true,
             setter: function(scroll) {
                 if (scroll) {
-                    this.set(PARENT_SCROLL, Y.get(window));
+                    this.set(PARENT_SCROLL, Y.one(window));
                 }
                 return scroll;
             }
@@ -364,7 +362,7 @@ YUI.add('dd-scroll', function(Y) {
      * @namespace Plugin
      * @constructor
      */
-    var NS = function() {
+    NS = function() {
         NS.superclass.constructor.apply(this, arguments);
 
     };
@@ -377,7 +375,7 @@ YUI.add('dd-scroll', function(Y) {
         node: {
             value: false,
             setter: function(node) {
-                var n = Y.get(node);
+                var n = Y.one(node);
                 if (!n) {
                     if (node !== false) {
                         Y.error('DDNodeScroll: Invalid Node Given: ' + node);
