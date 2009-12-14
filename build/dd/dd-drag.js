@@ -2,12 +2,12 @@ YUI.add('dd-drag', function(Y) {
 
 
     /**
-     * This class provides the ability to drag a Node.
+     * Provides the ability to drag a Node.
      * @module dd
      * @submodule dd-drag
      */     
     /**
-     * This class provides the ability to drag a Node.
+     * Provides the ability to drag a Node.
      * @class Drag
      * @extends Base
      * @constructor
