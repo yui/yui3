@@ -49,7 +49,8 @@
                         </style>
                         <div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">hasAttribute</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// IE &lt; 8</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasAttribute</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">)</span> <span class="o">!==</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="o">!!</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">&amp;&amp;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">attr</span><span class="p">].</span><span class="nx">specified</span><span class="p">);</span>
     <span class="p">};</span>
 <span class="p">}</span>
 
