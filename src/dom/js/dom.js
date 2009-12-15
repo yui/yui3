@@ -24,6 +24,7 @@ var NODE_TYPE = 'nodeType',
     NEXT_SIBLING = 'nextSibling',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
+    EMPTY_STRING = '',
 
     documentElement = document.documentElement,
 
@@ -453,6 +454,12 @@ Y.DOM = {
             } else {
                 ret = node.value;
             }
+        }
+
+        // workaround for IE8 JSON stringify bug
+        // which converts empty string values to null
+        if (ret === EMPTY_STRING) {
+            ret = EMPTY_STRING; // for real
         }
 
         return (typeof ret === 'string') ? ret : '';

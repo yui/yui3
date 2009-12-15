@@ -84,6 +84,8 @@ form {
             <form id="test-form" class="test-class" action="#">
                 <input id="test-text-value" value="text value">
                 <input id="test-text-novalue">
+                <input id="test-text-emptyvalue">
+
 
                 <textarea id="test-textarea-value" value="textarea value"></textarea>
                 <textarea id="test-textarea-novalue"></textarea>
@@ -586,6 +588,10 @@ form {
 
                 Y.DOM.setValue(Y.DOM.byId(id), 'new value');
                 Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-text-emptyvalue';
+                Assert.areEqual('""', Y.JSON.stringify(Y.DOM.getValue(Y.DOM.byId(id))),
+                    "Y.JSON.stringify(Y.DOM.getValue(Y.DOM.byId(" + id + ")))");
             },
 
             test_position: function() { // basic position tests
