@@ -1,12 +1,12 @@
 YUI.add('dd-delegate', function(Y) {
 
     /**
-     * This class provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
+     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @module dd
      * @submodule dd-delegate
      */     
     /**
-     * This class provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
+     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @class Delegate
      * @extends Base
      * @constructor
@@ -222,7 +222,6 @@ YUI.add('dd-delegate', function(Y) {
         */        
         syncTargets: function(group) {
             if (!Y.Plugin.Drop) {
-                Y.error('DD.Delegate: Drop Plugin Not Found');
                 return;
             }
             var items, groups, self = this;

@@ -1,11 +1,11 @@
 
     /**
-     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.
+     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.
      * @module dd
      * @submodule dd-proxy
      */
     /**
-     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.
+     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.
      * @class DDProxy
      * @extends Base
      * @constructor
