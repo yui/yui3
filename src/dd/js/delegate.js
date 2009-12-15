@@ -1,11 +1,11 @@
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @module dd
      * @submodule dd-delegate
      */     
     /**
-     * This class provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
+     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @class Delegate
      * @extends Base
      * @constructor
@@ -16,6 +16,8 @@
     var D = function(o) {
         D.superclass.constructor.apply(this, arguments);
     },
+    CONT = 'cont',
+    NODES = 'nodes',
     _tmpNode = Y.Node.create('<div>Temp Node</div>');
 
     D.NAME = 'delegate';
@@ -36,6 +38,14 @@
         */        
         nodes: {
             value: '.dd-draggable'
+        },
+        /**
+        * @attribute invalid
+        * @description A selector query to test a node to see if it's an invalid item.
+        * @type String
+        */        
+        invalid: {
+            value: ''
         },
         /**
         * @attribute lastNode
@@ -84,6 +94,14 @@
         */        
         dragConfig: {
             value: null
+        },
+        /**
+        * @attribute handles
+        * @description The handles config option added to the temp DD instance.
+        * @type Array
+        */        
+        handles: {
+            value: null
         }
     };
 
@@ -115,11 +133,12 @@
         * @param {Event} e The Event.
         */
         _handleDragEnd: function(e) {
-            Y.DD.DDM._noShim = this._shimState;
-            this.set('lastNode', this.dd.get('node'));
-            this.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
-            this.dd._unprep();
-            this.dd.set('node', _tmpNode);
+            var self = this;
+            Y.DD.DDM._noShim = self._shimState;
+            self.set('lastNode', self.dd.get('node'));
+            self.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
+            self.dd._unprep();
+            self.dd.set('node', _tmpNode);
         },
         /**
         * @private
@@ -128,18 +147,20 @@
         * @param {Event} e The MouseDown Event.
         */
         _handleDelegate: function(e) {
-            if (e.currentTarget.test(this.get('nodes'))) {
-                this._shimState = Y.DD.DDM._noShim;
+            var tar = e.currentTarget,
+                self = this, dd = self.dd;
+            if (tar.test(self.get(NODES)) && !tar.test(self.get('invalid'))) {
+                self._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
-                this.set('currentNode', e.currentTarget);
-                this.dd.set('node', e.currentTarget);
-                if (this.dd.proxy) {
-                    this.dd.set('dragNode', Y.DD.DDM._proxy);
+                self.set('currentNode', tar);
+                dd.set('node', tar);
+                if (dd.proxy) {
+                    dd.set('dragNode', Y.DD.DDM._proxy);
                 } else {
-                    this.dd.set('dragNode', e.currentTarget);
+                    dd.set('dragNode', tar);
                 }
-                this.dd._prep();
-                this.dd.fire.call(this.dd, 'drag:mouseDown', { ev: e });
+                dd._prep();
+                dd.fire.call(dd, 'drag:mouseDown', { ev: e });
             }
         },
         /**
@@ -163,28 +184,33 @@
         },
         initializer: function() {
             //Create a tmp DD instance under the hood.
-            var conf = this.get('dragConfig') || {};
-            conf.node = _tmpNode.cloneNode(true);
-            conf.bubbles = this;
+            var conf = this.get('dragConfig') || {},
+                self = this, cont = self.get(CONT);
 
-            this.dd = new Y.DD.Drag(conf);
+            conf.node = _tmpNode.cloneNode(true);
+            conf.bubbles = self;
+            if (self.get('handles')) {
+                conf.handles = self.get('handles');
+            }
+
+            self.dd = new Y.DD.Drag(conf);
 
             //Set this as the target
-            this.addTarget(Y.DD.DDM);
+            self.addTarget(Y.DD.DDM);
 
             //On end drag, detach the listeners
-            this.dd.after('drag:end', Y.bind(this._handleDragEnd, this));
-            this.dd.on('dragNodeChange', Y.bind(this._handleNodeChange, this));
+            self.dd.after('drag:end', Y.bind(self._handleDragEnd, self));
+            self.dd.on('dragNodeChange', Y.bind(self._handleNodeChange, self));
 
             //Attach the delegate to the container
-            Y.delegate('mousedown', Y.bind(this._handleDelegate, this), this.get('cont'), this.get('nodes'));
+            Y.delegate('mousedown', Y.bind(self._handleDelegate, self), cont, self.get(NODES));
 
-            Y.on('mouseenter', Y.bind(this._handleMouseEnter, this), this.get('cont'));
+            Y.on('mouseenter', Y.bind(self._handleMouseEnter, self), cont);
 
-            Y.on('mouseleave', Y.bind(this._handleMouseLeave, this), this.get('cont'));
+            Y.on('mouseleave', Y.bind(self._handleMouseLeave, self), cont);
 
-            this.syncTargets();
-            Y.DD.DDM.regDelegate(this);
+            self.syncTargets();
+            Y.DD.DDM.regDelegate(self);
         },
         /**
         * @method syncTargets
@@ -195,22 +221,23 @@
         */        
         syncTargets: function(group) {
             if (!Y.Plugin.Drop) {
-                Y.error('DD.Delegate: Drop Plugin Not Found');
                 return;
             }
-            if (this.get('target')) {
-                var items = Y.one(this.get('cont')).all(this.get('nodes')),
-                    groups = this.dd.get('groups');
+            var items, groups, self = this;
+
+            if (self.get('target')) {
+                items = Y.one(self.get(CONT)).all(self.get(NODES));
+                groups = self.dd.get('groups');
 
                 if (group) {
                     groups = [group];
                 }
 
                 items.each(function(i) {
-                    this.createDrop(i, groups);
-                }, this);
+                    self.createDrop(i, groups);
+                });
             }
-            return this;
+            return self;
         },
         /**
         * @method createDrop
@@ -241,7 +268,7 @@
                 this.dd.destroy();
             }
             if (Y.Plugin.Drop) {
-                var targets = Y.one(this.get('cont')).all(this.get('nodes'));
+                var targets = Y.one(this.get(CONT)).all(this.get(NODES));
                 targets.each(function(node) {
                     node.drop.destroy();
                     node.unplug(Y.Plugin.Drop);
@@ -277,7 +304,7 @@
             var del = null;
             node = Y.one(node);
             Y.each(this._delegates, function(v) {
-                if (node.test(v.get('cont'))) {
+                if (node.test(v.get(CONT))) {
                     del = v;
                 }
             }, this);

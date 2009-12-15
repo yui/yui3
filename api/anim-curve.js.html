@@ -47,58 +47,58 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Adds support for the &lt;code&gt;curve&lt;/code&gt; property for the &lt;code&gt;to&lt;/code&gt; </span>
-<span class="c"> * attribute.  A curve is zero or more control points and an end point.</span>
-<span class="c"> * @module anim</span>
-<span class="c"> * @submodule anim-curve</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds support for the &lt;code&gt;curve&lt;/code&gt; property for the &lt;code&gt;to&lt;/code&gt; </span>
+<span class="cm"> * attribute.  A curve is zero or more control points and an end point.</span>
+<span class="cm"> * @module anim</span>
+<span class="cm"> * @submodule anim-curve</span>
+<span class="cm"> */</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">.</span><span class="nx">curve</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">anim</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">from</span><span class="o">,</span> <span class="nx">to</span><span class="o">,</span> <span class="nx">elapsed</span><span class="o">,</span> <span class="nx">duration</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">from</span> <span class="o">=</span> <span class="nx">from</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">from</span><span class="o">);</span>
-        <span class="nx">to</span> <span class="o">=</span> <span class="nx">to</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">to</span><span class="o">);</span>
-        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">100</span><span class="o">,</span> <span class="nx">duration</span><span class="o">)</span> <span class="o">/</span> <span class="m">100</span><span class="o">;</span>
-        <span class="nx">to</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">from</span><span class="o">);</span>
-        <span class="nx">anim</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">getBezier</span><span class="o">(</span><span class="nx">to</span><span class="o">,</span> <span class="nx">t</span><span class="o">));</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">.</span><span class="nx">curve</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">from</span><span class="p">,</span> <span class="nx">to</span><span class="p">,</span> <span class="nx">elapsed</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">from</span> <span class="o">=</span> <span class="nx">from</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">from</span><span class="p">);</span>
+        <span class="nx">to</span> <span class="o">=</span> <span class="nx">to</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">to</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">elapsed</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="nx">duration</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">;</span>
+        <span class="nx">to</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">from</span><span class="p">);</span>
+        <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">setXY</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">getBezier</span><span class="p">(</span><span class="nx">to</span><span class="p">,</span> <span class="nx">t</span><span class="p">));</span>
+    <span class="p">},</span>
 
-    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">anim</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">anim</span><span class="o">.</span><span class="nx">_node</span><span class="o">.</span><span class="nx">getXY</span><span class="o">();</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">anim</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">anim</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">getXY</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Get the current position of the animated element based on t.</span>
-<span class="c"> * Each point is an array of &quot;x&quot; and &quot;y&quot; values (0 = x, 1 = y)</span>
-<span class="c"> * At least 2 points are required (start and end).</span>
-<span class="c"> * First point is start. Last point is end.</span>
-<span class="c"> * Additional control points are optional.     </span>
-<span class="c"> * @for Anim</span>
-<span class="c"> * @method getBezier</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param {Array} points An array containing Bezier points</span>
-<span class="c"> * @param {Number} t A number between 0 and 1 which is the basis for determining current position</span>
-<span class="c"> * @return {Array} An array containing int x and y member data</span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">getBezier</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">points</span><span class="o">,</span> <span class="nx">t</span><span class="o">)</span> <span class="o">{</span>  
-    <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">points</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-    <span class="k">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="o">[];</span>
+<span class="cm">/**</span>
+<span class="cm"> * Get the current position of the animated element based on t.</span>
+<span class="cm"> * Each point is an array of &quot;x&quot; and &quot;y&quot; values (0 = x, 1 = y)</span>
+<span class="cm"> * At least 2 points are required (start and end).</span>
+<span class="cm"> * First point is start. Last point is end.</span>
+<span class="cm"> * Additional control points are optional.     </span>
+<span class="cm"> * @for Anim</span>
+<span class="cm"> * @method getBezier</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param {Array} points An array containing Bezier points</span>
+<span class="cm"> * @param {Number} t A number between 0 and 1 which is the basis for determining current position</span>
+<span class="cm"> * @return {Array} An array containing int x and y member data</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">getBezier</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">points</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span> <span class="p">{</span>  
+    <span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">points</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">){</span>
-        <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span><span class="nx">points</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">0</span><span class="o">],</span> <span class="nx">points</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">1</span><span class="o">]];</span> <span class="c">// save input</span>
-<span class="c"></span>    <span class="o">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">){</span>
+        <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nx">points</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nx">points</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]];</span> <span class="c1">// save input</span>
+    <span class="p">}</span>
     
-    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="o">;</span> <span class="o">++</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span> <span class="o">-</span> <span class="nx">j</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="m">1</span> <span class="o">-</span> <span class="nx">t</span><span class="o">)</span> <span class="o">*</span> <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">t</span> <span class="o">*</span> <span class="nx">tmp</span><span class="o">[</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">,</span> <span class="m">10</span><span class="o">)][</span><span class="m">0</span><span class="o">];</span>
-            <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="m">1</span> <span class="o">-</span> <span class="nx">t</span><span class="o">)</span> <span class="o">*</span> <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">t</span> <span class="o">*</span> <span class="nx">tmp</span><span class="o">[</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">,</span> <span class="m">10</span><span class="o">)][</span><span class="m">1</span><span class="o">];</span> 
-        <span class="o">}</span>
-    <span class="o">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span> <span class="o">-</span> <span class="nx">j</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">t</span><span class="p">)</span> <span class="o">*</span> <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">t</span> <span class="o">*</span> <span class="nx">tmp</span><span class="p">[</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)][</span><span class="mi">0</span><span class="p">];</span>
+            <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nx">t</span><span class="p">)</span> <span class="o">*</span> <span class="nx">tmp</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nx">t</span> <span class="o">*</span> <span class="nx">tmp</span><span class="p">[</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)][</span><span class="mi">1</span><span class="p">];</span> 
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-    <span class="k">return</span> <span class="o">[</span> <span class="nx">tmp</span><span class="o">[</span><span class="m">0</span><span class="o">][</span><span class="m">0</span><span class="o">],</span> <span class="nx">tmp</span><span class="o">[</span><span class="m">0</span><span class="o">][</span><span class="m">1</span><span class="o">]</span> <span class="o">];</span> 
+    <span class="k">return</span> <span class="p">[</span> <span class="nx">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nx">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="p">];</span> 
 
-<span class="o">};</span>
+<span class="p">};</span>
 </pre></div>
 
                     </div>
@@ -146,6 +146,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

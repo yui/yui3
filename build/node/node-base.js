@@ -1555,7 +1555,8 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 if (!document.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
-        return Y.DOM.getAttribute(this._node, attr) !== '';
+        return !!(this._node.attributes[attr] &&
+                this._node.attributes[attr].specified);
     };
 }
 

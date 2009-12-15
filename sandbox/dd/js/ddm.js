@@ -73,7 +73,7 @@ YUI.add('dd-ddm', function(Y) {
         */
         _pg_size: function() {
             if (this.activeDrag) {
-                var b = Y.get('body'),
+                var b = Y.one('body'),
                 h = b.get('docHeight'),
                 w = b.get('docWidth');
                 this._pg.setStyles({
@@ -89,7 +89,7 @@ YUI.add('dd-ddm', function(Y) {
         */
         _createPG: function() {
             var pg = Y.Node.create('<div></div>'),
-            bd = Y.get('body');
+            bd = Y.one('body'), win;
             pg.setStyles({
                 top: '0',
                 left: '0',
@@ -112,7 +112,7 @@ YUI.add('dd-ddm', function(Y) {
             this._pg.on('mouseup', Y.bind(this._end, this));
             this._pg.on('mousemove', Y.bind(this._move, this));
             
-            var win = Y.get(window);
+            win = Y.one(window);
             Y.on('window:resize', Y.bind(this._pg_size, this));
             win.on('scroll', Y.bind(this._pg_size, this));
         }   

@@ -47,82 +47,82 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="k">var</span> <span class="nx">addClass</span><span class="o">,</span> <span class="nx">hasClass</span><span class="o">,</span> <span class="nx">removeClass</span><span class="o">;</span>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">addClass</span><span class="p">,</span> <span class="nx">hasClass</span><span class="p">,</span> <span class="nx">removeClass</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * Determines whether a DOM element has the given className.</span>
-<span class="c">     * @method hasClass</span>
-<span class="c">     * @param {HTMLElement} element The DOM element. </span>
-<span class="c">     * @param {String} className the class name to search for</span>
-<span class="c">     * @return {Boolean} Whether or not the element has the given class. </span>
-<span class="c">     */</span>
-    <span class="nx">hasClass</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getRegExp</span><span class="o">(</span><span class="s1">&#39;(?:^|\\s+)&#39;</span> <span class="o">+</span> <span class="nx">className</span> <span class="o">+</span> <span class="s1">&#39;(?:\\s+|$)&#39;</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">re</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">className</span><span class="o">);</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Determines whether a DOM element has the given className.</span>
+<span class="cm">     * @method hasClass</span>
+<span class="cm">     * @param {HTMLElement} element The DOM element. </span>
+<span class="cm">     * @param {String} className the class name to search for</span>
+<span class="cm">     * @return {Boolean} Whether or not the element has the given class. </span>
+<span class="cm">     */</span>
+    <span class="nx">hasClass</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getRegExp</span><span class="p">(</span><span class="s1">&#39;(?:^|\\s+)&#39;</span> <span class="o">+</span> <span class="nx">className</span> <span class="o">+</span> <span class="s1">&#39;(?:\\s+|$)&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">re</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">className</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Adds a class name to a given DOM element.</span>
-<span class="c">     * @method addClass         </span>
-<span class="c">     * @param {HTMLElement} element The DOM element. </span>
-<span class="c">     * @param {String} className the class name to add to the class attribute</span>
-<span class="c">     */</span>
-    <span class="nx">addClass</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">))</span> <span class="o">{</span> <span class="c">// skip if already present </span>
-<span class="c"></span>            <span class="nx">node</span><span class="o">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">([</span><span class="nx">node</span><span class="o">.</span><span class="nx">className</span><span class="o">,</span> <span class="nx">className</span><span class="o">].</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39; &#39;</span><span class="o">));</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Adds a class name to a given DOM element.</span>
+<span class="cm">     * @method addClass         </span>
+<span class="cm">     * @param {HTMLElement} element The DOM element. </span>
+<span class="cm">     * @param {String} className the class name to add to the class attribute</span>
+<span class="cm">     */</span>
+    <span class="nx">addClass</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// skip if already present </span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">trim</span><span class="p">([</span><span class="nx">node</span><span class="p">.</span><span class="nx">className</span><span class="p">,</span> <span class="nx">className</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Removes a class name from a given element.</span>
-<span class="c">     * @method removeClass         </span>
-<span class="c">     * @param {HTMLElement} element The DOM element. </span>
-<span class="c">     * @param {String} className the class name to remove from the class attribute</span>
-<span class="c">     */</span>
-    <span class="nx">removeClass</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">className</span> <span class="o">&amp;&amp;</span> <span class="nx">hasClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">node</span><span class="o">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">className</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">_getRegExp</span><span class="o">(</span><span class="s1">&#39;(?:^|\\s+)&#39;</span> <span class="o">+</span>
-                            <span class="nx">className</span> <span class="o">+</span> <span class="s1">&#39;(?:\\s+|$)&#39;</span><span class="o">),</span> <span class="s1">&#39; &#39;</span><span class="o">));</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Removes a class name from a given element.</span>
+<span class="cm">     * @method removeClass         </span>
+<span class="cm">     * @param {HTMLElement} element The DOM element. </span>
+<span class="cm">     * @param {String} className the class name to remove from the class attribute</span>
+<span class="cm">     */</span>
+    <span class="nx">removeClass</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">className</span> <span class="o">&amp;&amp;</span> <span class="nx">hasClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">className</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getRegExp</span><span class="p">(</span><span class="s1">&#39;(?:^|\\s+)&#39;</span> <span class="o">+</span>
+                            <span class="nx">className</span> <span class="o">+</span> <span class="s1">&#39;(?:\\s+|$)&#39;</span><span class="p">),</span> <span class="s1">&#39; &#39;</span><span class="p">));</span>
 
-            <span class="k">if</span> <span class="o">(</span> <span class="nx">hasClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span> <span class="c">// in case of multiple adjacent</span>
-<span class="c"></span>                <span class="nx">removeClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>                 
-    <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nx">hasClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// in case of multiple adjacent</span>
+                <span class="nx">removeClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>                 
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Replace a class with another class for a given element.</span>
-<span class="c">     * If no oldClassName is present, the newClassName is simply added.</span>
-<span class="c">     * @method replaceClass  </span>
-<span class="c">     * @param {HTMLElement} element The DOM element. </span>
-<span class="c">     * @param {String} oldClassName the class name to be replaced</span>
-<span class="c">     * @param {String} newClassName the class name that will be replacing the old class name</span>
-<span class="c">     */</span>
-    <span class="nx">replaceClass</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">oldC</span><span class="o">,</span> <span class="nx">newC</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">//Y.log(&#39;replaceClass replacing &#39; + oldC + &#39; with &#39; + newC, &#39;info&#39;, &#39;Node&#39;);</span>
-<span class="c"></span>        <span class="nx">addClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">newC</span><span class="o">);</span>
-        <span class="nx">removeClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">oldC</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Replace a class with another class for a given element.</span>
+<span class="cm">     * If no oldClassName is present, the newClassName is simply added.</span>
+<span class="cm">     * @method replaceClass  </span>
+<span class="cm">     * @param {HTMLElement} element The DOM element. </span>
+<span class="cm">     * @param {String} oldClassName the class name to be replaced</span>
+<span class="cm">     * @param {String} newClassName the class name that will be replacing the old class name</span>
+<span class="cm">     */</span>
+    <span class="nx">replaceClass</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">oldC</span><span class="p">,</span> <span class="nx">newC</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//Y.log(&#39;replaceClass replacing &#39; + oldC + &#39; with &#39; + newC, &#39;info&#39;, &#39;Node&#39;);</span>
+        <span class="nx">addClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">newC</span><span class="p">);</span>
+        <span class="nx">removeClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">oldC</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * If the className exists on the node it is removed, if it doesn&#39;t exist it is added.</span>
-<span class="c">     * @method toggleClass  </span>
-<span class="c">     * @param {HTMLElement} element The DOM element. </span>
-<span class="c">     * @param {String} className the class name to be toggled</span>
-<span class="c">     */</span>
-    <span class="nx">toggleClass</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">removeClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">addClass</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">className</span><span class="o">);</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+    <span class="cm">/**</span>
+<span class="cm">     * If the className exists on the node it is removed, if it doesn&#39;t exist it is added.</span>
+<span class="cm">     * @method toggleClass  </span>
+<span class="cm">     * @param {HTMLElement} element The DOM element. </span>
+<span class="cm">     * @param {String} className the class name to be toggled</span>
+<span class="cm">     */</span>
+    <span class="nx">toggleClass</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">removeClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">addClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 
-<span class="nx">hasClass</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">;</span>
-<span class="nx">removeClass</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">removeClass</span><span class="o">;</span>
-<span class="nx">addClass</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">addClass</span><span class="o">;</span>
+<span class="nx">hasClass</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">hasClass</span><span class="p">;</span>
+<span class="nx">removeClass</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">;</span>
+<span class="nx">addClass</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">addClass</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -170,6 +170,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

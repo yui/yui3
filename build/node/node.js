@@ -1555,7 +1555,8 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 if (!document.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
-        return Y.DOM.getAttribute(this._node, attr) !== '';
+        return !!(this._node.attributes[attr] &&
+                this._node.attributes[attr].specified);
     };
 }
 
@@ -2019,5 +2020,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
 

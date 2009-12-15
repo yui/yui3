@@ -47,231 +47,231 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Test.Format&quot;</span><span class="o">);</span>
+                        <div class="highlight"><pre>    
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Test.Format&quot;</span><span class="p">);</span>
     
-    <span class="c">/* (intentionally not documented)</span>
-<span class="c">     * Basic XML escaping method. Replaces quotes, less-than, greater-than,</span>
-<span class="c">     * apostrophe, and ampersand characters with their corresponding entities.</span>
-<span class="c">     * @param {String} text The text to encode.</span>
-<span class="c">     * @return {String} The XML-escaped text.</span>
-<span class="c">     */</span>
-    <span class="k">function</span> <span class="nx">xmlEscape</span><span class="o">(</span><span class="nx">text</span><span class="o">){</span>
+    <span class="cm">/* (intentionally not documented)</span>
+<span class="cm">     * Basic XML escaping method. Replaces quotes, less-than, greater-than,</span>
+<span class="cm">     * apostrophe, and ampersand characters with their corresponding entities.</span>
+<span class="cm">     * @param {String} text The text to encode.</span>
+<span class="cm">     * @return {String} The XML-escaped text.</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">xmlEscape</span><span class="p">(</span><span class="nx">text</span><span class="p">){</span>
     
-        <span class="k">return</span> <span class="nx">text</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="sr">/[&lt;&gt;&quot;&#39;&amp;]/g</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-            <span class="nx">switch</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-                <span class="nx">case</span> <span class="s2">&quot;&lt;&quot;</span><span class="o">:</span>   <span class="k">return</span> <span class="s2">&quot;&amp;lt;&quot;</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s2">&quot;&gt;&quot;</span><span class="o">:</span>   <span class="k">return</span> <span class="s2">&quot;&amp;gt;&quot;</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">:</span>  <span class="k">return</span> <span class="s2">&quot;&amp;quot;&quot;</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s2">&quot;&#39;&quot;</span><span class="o">:</span>   <span class="k">return</span> <span class="s2">&quot;&amp;apos;&quot;</span><span class="o">;</span>
-                <span class="nx">case</span> <span class="s2">&quot;&amp;&quot;</span><span class="o">:</span>   <span class="k">return</span> <span class="s2">&quot;&amp;amp;&quot;</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
+        <span class="k">return</span> <span class="nx">text</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[&lt;&gt;&quot;&#39;&amp;]/g</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+            <span class="k">switch</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+                <span class="k">case</span> <span class="s2">&quot;&lt;&quot;</span><span class="o">:</span>   <span class="k">return</span> <span class="s2">&quot;&amp;lt;&quot;</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s2">&quot;&gt;&quot;</span><span class="o">:</span>   <span class="k">return</span> <span class="s2">&quot;&amp;gt;&quot;</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">:</span>  <span class="k">return</span> <span class="s2">&quot;&amp;quot;&quot;</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s2">&quot;&#39;&quot;</span><span class="o">:</span>   <span class="k">return</span> <span class="s2">&quot;&amp;apos;&quot;</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s2">&quot;&amp;&quot;</span><span class="o">:</span>   <span class="k">return</span> <span class="s2">&quot;&amp;amp;&quot;</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
     
-    <span class="o">}</span>
+    <span class="p">}</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Returns test results formatted as a JSON string. Requires JSON utility.</span>
-<span class="c">     * @param {Object} result The results object created by TestRunner.</span>
-<span class="c">     * @return {String} A JSON-formatted string of results.</span>
-<span class="c">     * @namespace Test.Format</span>
-<span class="c">     * @method JSON</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Format</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">results</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">stringify</span><span class="o">(</span><span class="nx">results</span><span class="o">);</span>
-    <span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns test results formatted as a JSON string. Requires JSON utility.</span>
+<span class="cm">     * @param {Object} result The results object created by TestRunner.</span>
+<span class="cm">     * @return {String} A JSON-formatted string of results.</span>
+<span class="cm">     * @namespace Test.Format</span>
+<span class="cm">     * @method JSON</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Format</span><span class="p">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+    <span class="p">};</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Returns test results formatted as an XML string.</span>
-<span class="c">     * @param {Object} result The results object created by TestRunner.</span>
-<span class="c">     * @return {String} An XML-formatted string of results.</span>
-<span class="c">     * @namespace Test.Format</span>
-<span class="c">     * @method XML</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Format</span><span class="o">.</span><span class="nx">XML</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">results</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns test results formatted as an XML string.</span>
+<span class="cm">     * @param {Object} result The results object created by TestRunner.</span>
+<span class="cm">     * @return {String} An XML-formatted string of results.</span>
+<span class="cm">     * @namespace Test.Format</span>
+<span class="cm">     * @method XML</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Format</span><span class="p">.</span><span class="nx">XML</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">function</span> <span class="nx">serializeToXML</span><span class="o">(</span><span class="nx">results</span><span class="o">){</span>
-            <span class="k">var</span> <span class="nx">l</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-                <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; name=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">name</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">;</span>
+        <span class="kd">function</span> <span class="nx">serializeToXML</span><span class="p">(</span><span class="nx">results</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">l</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+                <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; name=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">;</span>
             
-            <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">duration</span><span class="o">)){</span>
-                <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot; duration=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">duration</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="o">;</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">duration</span><span class="p">)){</span>
+                <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot; duration=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">duration</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&quot;</span><span class="p">;</span>
+            <span class="p">}</span>
             
-            <span class="k">if</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="o">){</span>
-                <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot; result=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">result</span> <span class="o">+</span> <span class="s2">&quot;\&quot; message=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">message</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&quot;</span><span class="o">;</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot; passed=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">passed</span> <span class="o">+</span> <span class="s2">&quot;\&quot; failed=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot;\&quot; ignored=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">ignored</span> <span class="o">+</span> <span class="s2">&quot;\&quot; total=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&quot;</span><span class="o">;</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">results</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">value</span><span class="o">)){</span>
-                        <span class="nx">xml</span> <span class="o">+=</span> <span class="nx">serializeToXML</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">});</span>       
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;test&quot;</span><span class="p">){</span>
+                <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot; result=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">result</span> <span class="o">+</span> <span class="s2">&quot;\&quot; message=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">message</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&quot;</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot; passed=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">passed</span> <span class="o">+</span> <span class="s2">&quot;\&quot; failed=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot;\&quot; ignored=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">ignored</span> <span class="o">+</span> <span class="s2">&quot;\&quot; total=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&quot;</span><span class="p">;</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">value</span><span class="p">)){</span>
+                        <span class="nx">xml</span> <span class="o">+=</span> <span class="nx">serializeToXML</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">});</span>       
+            <span class="p">}</span>
 
-            <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span><span class="o">;</span>
+            <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">;</span>
             
-            <span class="k">return</span> <span class="nx">xml</span><span class="o">;</span>    
-        <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">xml</span><span class="p">;</span>    
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="s2">&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;&quot;</span> <span class="o">+</span> <span class="nx">serializeToXML</span><span class="o">(</span><span class="nx">results</span><span class="o">);</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;&quot;</span> <span class="o">+</span> <span class="nx">serializeToXML</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
 
-    <span class="o">};</span>
+    <span class="p">};</span>
 
 
-    <span class="c">/**</span>
-<span class="c">     * Returns test results formatted in JUnit XML format.</span>
-<span class="c">     * @param {Object} result The results object created by TestRunner.</span>
-<span class="c">     * @return {String} An XML-formatted string of results.</span>
-<span class="c">     * @namespace Test.Format</span>
-<span class="c">     * @method JUnitXML</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Format</span><span class="o">.</span><span class="nx">JUnitXML</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">results</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns test results formatted in JUnit XML format.</span>
+<span class="cm">     * @param {Object} result The results object created by TestRunner.</span>
+<span class="cm">     * @return {String} An XML-formatted string of results.</span>
+<span class="cm">     * @namespace Test.Format</span>
+<span class="cm">     * @method JUnitXML</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Format</span><span class="p">.</span><span class="nx">JUnitXML</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">function</span> <span class="nx">serializeToJUnitXML</span><span class="o">(</span><span class="nx">results</span><span class="o">){</span>
-            <span class="k">var</span> <span class="nx">l</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-                <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
+        <span class="kd">function</span> <span class="nx">serializeToJUnitXML</span><span class="p">(</span><span class="nx">results</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">l</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+                <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
                 
-            <span class="nx">switch</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">type</span><span class="o">){</span>
-                <span class="c">//equivalent to testcase in JUnit</span>
-<span class="c"></span>                <span class="nx">case</span> <span class="s2">&quot;test&quot;</span><span class="o">:</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">result</span> <span class="o">!=</span> <span class="s2">&quot;ignore&quot;</span><span class="o">){</span>
-                        <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&lt;testcase name=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">name</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot; time=\&quot;&quot;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">duration</span><span class="o">/</span><span class="m">1000</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&quot;</span><span class="o">;</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">result</span> <span class="o">==</span> <span class="s2">&quot;fail&quot;</span><span class="o">){</span>
-                            <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;failure message=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">message</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&lt;![CDATA[&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">message</span> <span class="o">+</span> <span class="s2">&quot;]]&gt;&lt;/failure&gt;&quot;</span><span class="o">;</span>
-                        <span class="o">}</span>
-                        <span class="nx">xml</span><span class="o">+=</span> <span class="s2">&quot;&lt;/testcase&gt;&quot;</span><span class="o">;</span>
-                    <span class="o">}</span>
-                    <span class="k">break</span><span class="o">;</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">type</span><span class="p">){</span>
+                <span class="c1">//equivalent to testcase in JUnit</span>
+                <span class="k">case</span> <span class="s2">&quot;test&quot;</span><span class="o">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">result</span> <span class="o">!=</span> <span class="s2">&quot;ignore&quot;</span><span class="p">){</span>
+                        <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&lt;testcase name=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot; time=\&quot;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&quot;</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">result</span> <span class="o">==</span> <span class="s2">&quot;fail&quot;</span><span class="p">){</span>
+                            <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;failure message=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">message</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&lt;![CDATA[&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">message</span> <span class="o">+</span> <span class="s2">&quot;]]&gt;&lt;/failure&gt;&quot;</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="nx">xml</span><span class="o">+=</span> <span class="s2">&quot;&lt;/testcase&gt;&quot;</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="k">break</span><span class="p">;</span>
                     
-                <span class="c">//equivalent to testsuite in JUnit</span>
-<span class="c"></span>                <span class="nx">case</span> <span class="s2">&quot;testcase&quot;</span><span class="o">:</span>
+                <span class="c1">//equivalent to testsuite in JUnit</span>
+                <span class="k">case</span> <span class="s2">&quot;testcase&quot;</span><span class="o">:</span>
                 
-                    <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&lt;testsuite name=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">name</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot; tests=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;\&quot; failures=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot;\&quot; time=\&quot;&quot;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">duration</span><span class="o">/</span><span class="m">1000</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&quot;</span><span class="o">;</span>
+                    <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&lt;testsuite name=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">xmlEscape</span><span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot; tests=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;\&quot; failures=\&quot;&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot;\&quot; time=\&quot;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">duration</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;\&quot;&gt;&quot;</span><span class="p">;</span>
                     
-                    <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">results</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">value</span><span class="o">)){</span>
-                            <span class="nx">xml</span> <span class="o">+=</span> <span class="nx">serializeToJUnitXML</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
-                        <span class="o">}</span>
-                    <span class="o">});</span>             
+                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">value</span><span class="p">)){</span>
+                            <span class="nx">xml</span> <span class="o">+=</span> <span class="nx">serializeToJUnitXML</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">});</span>             
                     
-                    <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/testsuite&gt;&quot;</span><span class="o">;</span>
-                    <span class="k">break</span><span class="o">;</span>
+                    <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/testsuite&gt;&quot;</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
                 
-                <span class="c">//no JUnit equivalent, don&#39;t output anything</span>
-<span class="c"></span>                <span class="nx">case</span> <span class="s2">&quot;testsuite&quot;</span><span class="o">:</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">results</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">value</span><span class="o">)){</span>
-                            <span class="nx">xml</span> <span class="o">+=</span> <span class="nx">serializeToJUnitXML</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
-                        <span class="o">}</span>
-                    <span class="o">});</span>                                                     
-                    <span class="k">break</span><span class="o">;</span>
+                <span class="c1">//no JUnit equivalent, don&#39;t output anything</span>
+                <span class="k">case</span> <span class="s2">&quot;testsuite&quot;</span><span class="o">:</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">value</span><span class="p">)){</span>
+                            <span class="nx">xml</span> <span class="o">+=</span> <span class="nx">serializeToJUnitXML</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">});</span>                                                     
+                    <span class="k">break</span><span class="p">;</span>
                     
-                <span class="c">//top-level, equivalent to testsuites in JUnit</span>
-<span class="c"></span>                <span class="nx">case</span> <span class="s2">&quot;report&quot;</span><span class="o">:</span>
+                <span class="c1">//top-level, equivalent to testsuites in JUnit</span>
+                <span class="k">case</span> <span class="s2">&quot;report&quot;</span><span class="o">:</span>
                 
-                    <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&lt;testsuites&gt;&quot;</span><span class="o">;</span>
+                    <span class="nx">xml</span> <span class="o">=</span> <span class="s2">&quot;&lt;testsuites&gt;&quot;</span><span class="p">;</span>
                 
-                    <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">results</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">value</span><span class="o">)){</span>
-                            <span class="nx">xml</span> <span class="o">+=</span> <span class="nx">serializeToJUnitXML</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
-                        <span class="o">}</span>
-                    <span class="o">});</span>             
+                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">value</span><span class="p">)){</span>
+                            <span class="nx">xml</span> <span class="o">+=</span> <span class="nx">serializeToJUnitXML</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">});</span>             
                     
-                    <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/testsuites&gt;&quot;</span><span class="o">;</span>            
+                    <span class="nx">xml</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/testsuites&gt;&quot;</span><span class="p">;</span>            
                 
-                <span class="c">//no default</span>
-<span class="c"></span>            <span class="o">}</span>
+                <span class="c1">//no default</span>
+            <span class="p">}</span>
             
-            <span class="k">return</span> <span class="nx">xml</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">xml</span><span class="p">;</span>
      
-        <span class="o">}</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="s2">&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;&quot;</span> <span class="o">+</span> <span class="nx">serializeToJUnitXML</span><span class="o">(</span><span class="nx">results</span><span class="o">);</span>
-    <span class="o">};</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;&quot;</span> <span class="o">+</span> <span class="nx">serializeToJUnitXML</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+    <span class="p">};</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Returns test results formatted in TAP format.</span>
-<span class="c">     * For more information, see &lt;a href=&quot;http://testanything.org/&quot;&gt;Test Anything Protocol&lt;/a&gt;.</span>
-<span class="c">     * @param {Object} result The results object created by TestRunner.</span>
-<span class="c">     * @return {String} A TAP-formatted string of results.</span>
-<span class="c">     * @namespace Test.Format</span>
-<span class="c">     * @method TAP</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Format</span><span class="o">.</span><span class="nx">TAP</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">results</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Returns test results formatted in TAP format.</span>
+<span class="cm">     * For more information, see &lt;a href=&quot;http://testanything.org/&quot;&gt;Test Anything Protocol&lt;/a&gt;.</span>
+<span class="cm">     * @param {Object} result The results object created by TestRunner.</span>
+<span class="cm">     * @return {String} A TAP-formatted string of results.</span>
+<span class="cm">     * @namespace Test.Format</span>
+<span class="cm">     * @method TAP</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Format</span><span class="p">.</span><span class="nx">TAP</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
     
-        <span class="k">var</span> <span class="nx">currentTestNum</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+        <span class="kd">var</span> <span class="nx">currentTestNum</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-        <span class="k">function</span> <span class="nx">serializeToTAP</span><span class="o">(</span><span class="nx">results</span><span class="o">){</span>
-            <span class="k">var</span> <span class="nx">l</span>   <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
-                <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
+        <span class="kd">function</span> <span class="nx">serializeToTAP</span><span class="p">(</span><span class="nx">results</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">l</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+                <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
                 
-            <span class="nx">switch</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">type</span><span class="o">){</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">type</span><span class="p">){</span>
 
-                <span class="nx">case</span> <span class="s2">&quot;test&quot;</span><span class="o">:</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">result</span> <span class="o">!=</span> <span class="s2">&quot;ignore&quot;</span><span class="o">){</span>
+                <span class="k">case</span> <span class="s2">&quot;test&quot;</span><span class="o">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">result</span> <span class="o">!=</span> <span class="s2">&quot;ignore&quot;</span><span class="p">){</span>
 
-                        <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;ok &quot;</span> <span class="o">+</span> <span class="o">(</span><span class="nx">currentTestNum</span><span class="o">++)</span> <span class="o">+</span> <span class="s2">&quot; - &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">name</span><span class="o">;</span>
+                        <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;ok &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">currentTestNum</span><span class="o">++</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; - &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
                         
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">results</span><span class="o">.</span><span class="nx">result</span> <span class="o">==</span> <span class="s2">&quot;fail&quot;</span><span class="o">){</span>
-                            <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;not &quot;</span> <span class="o">+</span> <span class="nx">text</span> <span class="o">+</span> <span class="s2">&quot; - &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">message</span><span class="o">;</span>
-                        <span class="o">}</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">results</span><span class="p">.</span><span class="nx">result</span> <span class="o">==</span> <span class="s2">&quot;fail&quot;</span><span class="p">){</span>
+                            <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;not &quot;</span> <span class="o">+</span> <span class="nx">text</span> <span class="o">+</span> <span class="s2">&quot; - &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">message</span><span class="p">;</span>
+                        <span class="p">}</span>
                         
-                        <span class="nx">text</span> <span class="o">+=</span> <span class="s2">&quot;\n&quot;</span><span class="o">;</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;#Ignored test &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="o">;</span>
-                    <span class="o">}</span>
-                    <span class="k">break</span><span class="o">;</span>
+                        <span class="nx">text</span> <span class="o">+=</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;#Ignored test &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="k">break</span><span class="p">;</span>
                     
-                <span class="nx">case</span> <span class="s2">&quot;testcase&quot;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s2">&quot;testcase&quot;</span><span class="o">:</span>
                 
-                    <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;#Begin testcase &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot; failed of &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;)\n&quot;</span><span class="o">;</span>
+                    <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;#Begin testcase &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot; failed of &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;)\n&quot;</span><span class="p">;</span>
                                     
-                    <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">results</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">value</span><span class="o">)){</span>
-                            <span class="nx">text</span> <span class="o">+=</span> <span class="nx">serializeToTAP</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
-                        <span class="o">}</span>
-                    <span class="o">});</span>             
+                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">value</span><span class="p">)){</span>
+                            <span class="nx">text</span> <span class="o">+=</span> <span class="nx">serializeToTAP</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">});</span>             
                     
-                    <span class="nx">text</span> <span class="o">+=</span> <span class="s2">&quot;#End testcase &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="o">;</span>
+                    <span class="nx">text</span> <span class="o">+=</span> <span class="s2">&quot;#End testcase &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
                     
                     
-                    <span class="k">break</span><span class="o">;</span>
+                    <span class="k">break</span><span class="p">;</span>
                 
-                <span class="nx">case</span> <span class="s2">&quot;testsuite&quot;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s2">&quot;testsuite&quot;</span><span class="o">:</span>
 
-                    <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;#Begin testsuite &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot; failed of &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;)\n&quot;</span><span class="o">;</span>                
+                    <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;#Begin testsuite &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">failed</span> <span class="o">+</span> <span class="s2">&quot; failed of &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;)\n&quot;</span><span class="p">;</span>                
                 
-                    <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">results</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">value</span><span class="o">)){</span>
-                            <span class="nx">text</span> <span class="o">+=</span> <span class="nx">serializeToTAP</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
-                        <span class="o">}</span>
-                    <span class="o">});</span>                                                     
+                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">value</span><span class="p">)){</span>
+                            <span class="nx">text</span> <span class="o">+=</span> <span class="nx">serializeToTAP</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">});</span>                                                     
 
-                    <span class="nx">text</span> <span class="o">+=</span> <span class="s2">&quot;#End testsuite &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="o">;</span>
-                    <span class="k">break</span><span class="o">;</span>
+                    <span class="nx">text</span> <span class="o">+=</span> <span class="s2">&quot;#End testsuite &quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
 
-                <span class="nx">case</span> <span class="s2">&quot;report&quot;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s2">&quot;report&quot;</span><span class="o">:</span>
                 
-                    <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">results</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">){</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">value</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">value</span><span class="o">)){</span>
-                            <span class="nx">text</span> <span class="o">+=</span> <span class="nx">serializeToTAP</span><span class="o">(</span><span class="nx">value</span><span class="o">);</span>
-                        <span class="o">}</span>
-                    <span class="o">});</span>             
+                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">){</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">l</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">l</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">value</span><span class="p">)){</span>
+                            <span class="nx">text</span> <span class="o">+=</span> <span class="nx">serializeToTAP</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">});</span>             
                     
-                <span class="c">//no default</span>
-<span class="c"></span>            <span class="o">}</span>
+                <span class="c1">//no default</span>
+            <span class="p">}</span>
             
-            <span class="k">return</span> <span class="nx">text</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">text</span><span class="p">;</span>
      
-        <span class="o">}</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="s2">&quot;1..&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="o">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span> <span class="o">+</span> <span class="nx">serializeToTAP</span><span class="o">(</span><span class="nx">results</span><span class="o">);</span>
-    <span class="o">};</span>
+        <span class="k">return</span> <span class="s2">&quot;1..&quot;</span> <span class="o">+</span> <span class="nx">results</span><span class="p">.</span><span class="nx">total</span> <span class="o">+</span> <span class="s2">&quot;\n&quot;</span> <span class="o">+</span> <span class="nx">serializeToTAP</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+    <span class="p">};</span>
         
 </pre></div>
 
@@ -320,6 +320,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class="selected"><a href="module_test.html" title="test">test</a></li>

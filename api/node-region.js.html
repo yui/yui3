@@ -47,76 +47,76 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Returns a region object for the node </span>
-<span class="c"> * @config region</span>
-<span class="c"> * @for Node</span>
-<span class="c"> * @type Node</span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">.</span><span class="nx">region</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">),</span>
-            <span class="nx">region</span><span class="o">;</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Returns a region object for the node </span>
+<span class="cm"> * @config region</span>
+<span class="cm"> * @for Node</span>
+<span class="cm"> * @type Node</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">.</span><span class="nx">region</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">),</span>
+            <span class="nx">region</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="m">9</span><span class="o">)</span> <span class="o">{</span> <span class="c">// document</span>
-<span class="c"></span>                <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">alert</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">viewportRegion</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">region</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">region</span><span class="o">;</span> 
-    <span class="o">}</span>
-<span class="o">};</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// document</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">alert</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">region</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">viewportRegion</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">region</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">region</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">region</span><span class="p">;</span> 
+    <span class="p">}</span>
+<span class="p">};</span>
     
-<span class="c">/**</span>
-<span class="c"> * Returns a region object for the node&#39;s viewport </span>
-<span class="c"> * @config viewportRegion</span>
-<span class="c"> * @type Node</span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">.</span><span class="nx">viewportRegion</span> <span class="o">=</span> <span class="o">{</span>
-    <span class="nx">getter</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">viewportRegion</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">));</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns a region object for the node&#39;s viewport </span>
+<span class="cm"> * @config viewportRegion</span>
+<span class="cm"> * @type Node</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">.</span><span class="nx">viewportRegion</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">viewportRegion</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="s1">&#39;inViewportRegion&#39;</span><span class="o">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="s1">&#39;inViewportRegion&#39;</span><span class="p">);</span>
 
-<span class="c">// these need special treatment to extract 2nd node arg</span>
-<span class="c">/**</span>
-<span class="c"> * Compares the intersection of the node with another node or region </span>
-<span class="c"> * @method intersect         </span>
-<span class="c"> * @for Node</span>
-<span class="c"> * @param {Node|Object} node2 The node or region to compare with.</span>
-<span class="c"> * @param {Object} altRegion An alternate region to use (rather than this node&#39;s). </span>
-<span class="c"> * @return {Object} An object representing the intersection of the regions. </span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">intersect</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node2</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">node1</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-    <span class="k">if</span> <span class="o">(</span><span class="nx">node2</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span> <span class="c">// might be a region object</span>
-<span class="c"></span>        <span class="nx">node2</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">node2</span><span class="o">);</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">intersect</span><span class="o">(</span><span class="nx">node1</span><span class="o">,</span> <span class="nx">node2</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">);</span> 
-<span class="o">};</span>
+<span class="c1">// these need special treatment to extract 2nd node arg</span>
+<span class="cm">/**</span>
+<span class="cm"> * Compares the intersection of the node with another node or region </span>
+<span class="cm"> * @method intersect         </span>
+<span class="cm"> * @for Node</span>
+<span class="cm"> * @param {Node|Object} node2 The node or region to compare with.</span>
+<span class="cm"> * @param {Object} altRegion An alternate region to use (rather than this node&#39;s). </span>
+<span class="cm"> * @return {Object} An object representing the intersection of the regions. </span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">intersect</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node2</span><span class="p">,</span> <span class="nx">altRegion</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">node1</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">node2</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// might be a region object</span>
+        <span class="nx">node2</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">node2</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">intersect</span><span class="p">(</span><span class="nx">node1</span><span class="p">,</span> <span class="nx">node2</span><span class="p">,</span> <span class="nx">altRegion</span><span class="p">);</span> 
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the node is within the giving region.</span>
-<span class="c"> * @method inRegion         </span>
-<span class="c"> * @param {Node|Object} node2 The node or region to compare with.</span>
-<span class="c"> * @param {Boolean} all Whether or not all of the node must be in the region. </span>
-<span class="c"> * @param {Object} altRegion An alternate region to use (rather than this node&#39;s). </span>
-<span class="c"> * @return {Object} An object representing the intersection of the regions. </span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">inRegion</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node2</span><span class="o">,</span> <span class="nx">all</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">node1</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-    <span class="k">if</span> <span class="o">(</span><span class="nx">node2</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span> <span class="c">// might be a region object</span>
-<span class="c"></span>        <span class="nx">node2</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">node2</span><span class="o">);</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">inRegion</span><span class="o">(</span><span class="nx">node1</span><span class="o">,</span> <span class="nx">node2</span><span class="o">,</span> <span class="nx">all</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">);</span> 
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the node is within the giving region.</span>
+<span class="cm"> * @method inRegion         </span>
+<span class="cm"> * @param {Node|Object} node2 The node or region to compare with.</span>
+<span class="cm"> * @param {Boolean} all Whether or not all of the node must be in the region. </span>
+<span class="cm"> * @param {Object} altRegion An alternate region to use (rather than this node&#39;s). </span>
+<span class="cm"> * @return {Object} An object representing the intersection of the regions. </span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">inRegion</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node2</span><span class="p">,</span> <span class="nx">all</span><span class="p">,</span> <span class="nx">altRegion</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">node1</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">node2</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// might be a region object</span>
+        <span class="nx">node2</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">node2</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">inRegion</span><span class="p">(</span><span class="nx">node1</span><span class="p">,</span> <span class="nx">node2</span><span class="p">,</span> <span class="nx">all</span><span class="p">,</span> <span class="nx">altRegion</span><span class="p">);</span> 
+<span class="p">};</span>
 </pre></div>
 
                     </div>
@@ -164,6 +164,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

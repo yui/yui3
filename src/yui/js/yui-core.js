@@ -161,8 +161,7 @@ Y.cached = function(source, cache, refetch){
 
     return function(arg1, arg2) {
 
-        var k = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1,
-            v = cache[k];
+        var k = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
 
         if (!(k in cache) || (refetch && cache[k] == refetch)) {
             cache[k] = source.apply(source, arguments);

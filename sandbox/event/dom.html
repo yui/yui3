@@ -66,9 +66,9 @@ Y.Event.detach("click", handler, "#button0");
     //     e.returnValue = "let's do this";
     // });
 
-    // Y.on('mousewheel', function(e, arg1) {
-    //     Y.log('mousewheel: ' + e.wheelDelta + ', ' + arg1);
-    // }, Y, 1);
+    Y.on('mousewheel', function(e, arg1) {
+        Y.log('mousewheel: ' + e.wheelDelta + ', ' + arg1);
+    }, Y, 1);
 
 
     // debugger;

@@ -47,131 +47,131 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * String variable substitution and string formatting.</span>
-<span class="c"> * If included, the substitute method is added to the YUI instance.</span>
-<span class="c"> *</span>
-<span class="c"> * @module substitute</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * String variable substitution and string formatting.</span>
+<span class="cm"> * If included, the substitute method is added to the YUI instance.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module substitute</span>
+<span class="cm"> */</span>
 
-    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> <span class="nx">DUMP</span><span class="o">=</span><span class="s1">&#39;dump&#39;</span><span class="o">,</span> <span class="nx">SPACE</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="o">,</span> <span class="nx">LBRACE</span><span class="o">=</span><span class="s1">&#39;{&#39;</span><span class="o">,</span> <span class="nx">RBRACE</span><span class="o">=</span><span class="s1">&#39;}&#39;</span><span class="o">,</span>
+    <span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span> <span class="nx">DUMP</span><span class="o">=</span><span class="s1">&#39;dump&#39;</span><span class="p">,</span> <span class="nx">SPACE</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="nx">LBRACE</span><span class="o">=</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="nx">RBRACE</span><span class="o">=</span><span class="s1">&#39;}&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * The following methods are added to the YUI instance</span>
-<span class="c">     * @class YUI~substitute</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * The following methods are added to the YUI instance</span>
+<span class="cm">     * @class YUI~substitute</span>
+<span class="cm">     */</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Does variable substitution on a string. It scans through the string </span>
-<span class="c">     * looking for expressions enclosed in { } braces. If an expression </span>
-<span class="c">     * is found, it is used a key on the object.  If there is a space in</span>
-<span class="c">     * the key, the first word is used for the key and the rest is provided</span>
-<span class="c">     * to an optional function to be used to programatically determine the</span>
-<span class="c">     * value (the extra information might be used for this decision). If </span>
-<span class="c">     * the value for the key in the object, or what is returned from the</span>
-<span class="c">     * function has a string value, number value, or object value, it is </span>
-<span class="c">     * substituted for the bracket expression and it repeats.  If this</span>
-<span class="c">     * value is an object, it uses the Object&#39;s toString() if this has</span>
-<span class="c">     * been overridden, otherwise it does a shallow dump of the key/value</span>
-<span class="c">     * pairs if Y.dump is available (if dump isn&#39;t available, toString()</span>
-<span class="c">     * is used).</span>
-<span class="c">     *</span>
-<span class="c">     * This method is included in the &#39;substitute&#39; module.  It is not included</span>
-<span class="c">     * in the YUI module.</span>
-<span class="c">     *</span>
-<span class="c">     * @method substitute</span>
-<span class="c">     * @param s {string} The string that will be modified.</span>
-<span class="c">     * @param o An object containing the replacement values</span>
-<span class="c">     * @param f {function} An optional function that can be used to</span>
-<span class="c">     *                     process each match.  It receives the key,</span>
-<span class="c">     *                     value, and any extra metadata included with</span>
-<span class="c">     *                     the key inside of the braces.</span>
-<span class="c">     * @return {string} the substituted string</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Does variable substitution on a string. It scans through the string </span>
+<span class="cm">     * looking for expressions enclosed in { } braces. If an expression </span>
+<span class="cm">     * is found, it is used a key on the object.  If there is a space in</span>
+<span class="cm">     * the key, the first word is used for the key and the rest is provided</span>
+<span class="cm">     * to an optional function to be used to programatically determine the</span>
+<span class="cm">     * value (the extra information might be used for this decision). If </span>
+<span class="cm">     * the value for the key in the object, or what is returned from the</span>
+<span class="cm">     * function has a string value, number value, or object value, it is </span>
+<span class="cm">     * substituted for the bracket expression and it repeats.  If this</span>
+<span class="cm">     * value is an object, it uses the Object&#39;s toString() if this has</span>
+<span class="cm">     * been overridden, otherwise it does a shallow dump of the key/value</span>
+<span class="cm">     * pairs if Y.dump is available (if dump isn&#39;t available, toString()</span>
+<span class="cm">     * is used).</span>
+<span class="cm">     *</span>
+<span class="cm">     * This method is included in the &#39;substitute&#39; module.  It is not included</span>
+<span class="cm">     * in the YUI module.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method substitute</span>
+<span class="cm">     * @param s {string} The string that will be modified.</span>
+<span class="cm">     * @param o An object containing the replacement values</span>
+<span class="cm">     * @param f {function} An optional function that can be used to</span>
+<span class="cm">     *                     process each match.  It receives the key,</span>
+<span class="cm">     *                     value, and any extra metadata included with</span>
+<span class="cm">     *                     the key inside of the braces.</span>
+<span class="cm">     * @return {string} the substituted string</span>
+<span class="cm">     */</span>
 
-    <span class="nx">substitute</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">recurse</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="nx">key</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">meta</span><span class="o">,</span> <span class="nx">saved</span><span class="o">=[],</span> <span class="nx">token</span><span class="o">,</span> <span class="nx">dump</span><span class="o">,</span>
-            <span class="nx">lidx</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+    <span class="nx">substitute</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">recurse</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">meta</span><span class="p">,</span> <span class="nx">saved</span><span class="o">=</span><span class="p">[],</span> <span class="nx">token</span><span class="p">,</span> <span class="nx">dump</span><span class="p">,</span>
+            <span class="nx">lidx</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="o">(;;)</span> <span class="o">{</span>
-            <span class="nx">i</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">lastIndexOf</span><span class="o">(</span><span class="nx">LBRACE</span><span class="o">,</span> <span class="nx">lidx</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="nx">j</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">RBRACE</span><span class="o">,</span> <span class="nx">i</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span> <span class="o">&gt;=</span> <span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="o">}</span>
+        <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+            <span class="nx">i</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">LBRACE</span><span class="p">,</span> <span class="nx">lidx</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">j</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">RBRACE</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
 
-            <span class="c">//Extract key and meta info </span>
-<span class="c"></span>            <span class="nx">token</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">,</span> <span class="nx">j</span><span class="o">);</span>
-            <span class="nx">key</span> <span class="o">=</span> <span class="nx">token</span><span class="o">;</span>
-            <span class="nx">meta</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-            <span class="nx">k</span> <span class="o">=</span> <span class="nx">key</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">SPACE</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">k</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">meta</span> <span class="o">=</span> <span class="nx">key</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="nx">k</span> <span class="o">+</span> <span class="m">1</span><span class="o">);</span>
-                <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">k</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c1">//Extract key and meta info </span>
+            <span class="nx">token</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">j</span><span class="p">);</span>
+            <span class="nx">key</span> <span class="o">=</span> <span class="nx">token</span><span class="p">;</span>
+            <span class="nx">meta</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="nx">k</span> <span class="o">=</span> <span class="nx">key</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">SPACE</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">meta</span> <span class="o">=</span> <span class="nx">key</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+                <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="c">// lookup the value</span>
-<span class="c"></span>            <span class="nx">v</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">key</span><span class="o">];</span>
+            <span class="c1">// lookup the value</span>
+            <span class="nx">v</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
 
-            <span class="c">// if a substitution function was provided, execute it</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">v</span> <span class="o">=</span> <span class="nx">f</span><span class="o">(</span><span class="nx">key</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">meta</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c1">// if a substitution function was provided, execute it</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">v</span> <span class="o">=</span> <span class="nx">f</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">meta</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">v</span> <span class="o">=</span> <span class="nx">v</span><span class="o">.</span><span class="nx">toString</span><span class="o">();</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">v</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">meta</span><span class="o">,</span> <span class="m">10</span><span class="o">));</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">v</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">v</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">meta</span><span class="p">,</span> <span class="mi">10</span><span class="p">));</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
 
-                        <span class="c">// look for the keyword &#39;dump&#39;, if found force obj dump</span>
-<span class="c"></span>                        <span class="nx">dump</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DUMP</span><span class="o">);</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">dump</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">4</span><span class="o">);</span>
-                        <span class="o">}</span>
+                        <span class="c1">// look for the keyword &#39;dump&#39;, if found force obj dump</span>
+                        <span class="nx">dump</span> <span class="o">=</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">DUMP</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">dump</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+                        <span class="p">}</span>
 
-                        <span class="c">// use the toString if it is not the Object toString </span>
-<span class="c"></span>                        <span class="c">// and the &#39;dump&#39; meta info was not found</span>
-<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">toString</span><span class="o">===</span><span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">toString</span><span class="o">||</span><span class="nx">dump</span><span class="o">&gt;-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">v</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">meta</span><span class="o">,</span> <span class="m">10</span><span class="o">));</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">v</span> <span class="o">=</span> <span class="nx">v</span><span class="o">.</span><span class="nx">toString</span><span class="o">();</span>
-                        <span class="o">}</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
-                <span class="c">// This {block} has no replace string. Save it for later.</span>
-<span class="c"></span>                <span class="nx">v</span> <span class="o">=</span> <span class="s2">&quot;~-&quot;</span> <span class="o">+</span> <span class="nx">saved</span><span class="o">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot;-~&quot;</span><span class="o">;</span>
-                <span class="nx">saved</span><span class="o">[</span><span class="nx">saved</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">token</span><span class="o">;</span>
+                        <span class="c1">// use the toString if it is not the Object toString </span>
+                        <span class="c1">// and the &#39;dump&#39; meta info was not found</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">toString</span><span class="o">===</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="o">||</span><span class="nx">dump</span><span class="o">&gt;-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">v</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">dump</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">meta</span><span class="p">,</span> <span class="mi">10</span><span class="p">));</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">v</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
+                <span class="c1">// This {block} has no replace string. Save it for later.</span>
+                <span class="nx">v</span> <span class="o">=</span> <span class="s2">&quot;~-&quot;</span> <span class="o">+</span> <span class="nx">saved</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot;-~&quot;</span><span class="p">;</span>
+                <span class="nx">saved</span><span class="p">[</span><span class="nx">saved</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="nx">token</span><span class="p">;</span>
 
-                <span class="c">// break;</span>
-<span class="c"></span>            <span class="o">}</span>
+                <span class="c1">// break;</span>
+            <span class="p">}</span>
 
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">+</span> <span class="nx">v</span> <span class="o">+</span> <span class="nx">s</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="nx">j</span> <span class="o">+</span> <span class="m">1</span><span class="o">);</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="o">+</span> <span class="nx">v</span> <span class="o">+</span> <span class="nx">s</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
 
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">recurse</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">lidx</span> <span class="o">=</span> <span class="nx">i</span><span class="o">-</span><span class="m">1</span><span class="o">;</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">recurse</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">lidx</span> <span class="o">=</span> <span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
 
-        <span class="o">}</span>
+        <span class="p">}</span>
 
-        <span class="c">// restore saved {block}s</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">saved</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">i</span><span class="o">&gt;=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="s2">&quot;~-&quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot;-~&quot;</span><span class="o">),</span> <span class="nx">LBRACE</span>  <span class="o">+</span> <span class="nx">saved</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="nx">RBRACE</span><span class="o">,</span> <span class="s2">&quot;g&quot;</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="c1">// restore saved {block}s</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="nx">saved</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s2">&quot;~-&quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot;-~&quot;</span><span class="p">),</span> <span class="nx">LBRACE</span>  <span class="o">+</span> <span class="nx">saved</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="nx">RBRACE</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">s</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
 
-    <span class="o">};</span>
+    <span class="p">};</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">substitute</span> <span class="o">=</span> <span class="nx">substitute</span><span class="o">;</span>
-    <span class="nx">L</span><span class="o">.</span><span class="nx">substitute</span> <span class="o">=</span> <span class="nx">substitute</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">substitute</span> <span class="o">=</span> <span class="nx">substitute</span><span class="p">;</span>
+    <span class="nx">L</span><span class="p">.</span><span class="nx">substitute</span> <span class="o">=</span> <span class="nx">substitute</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -219,6 +219,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class="selected"><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

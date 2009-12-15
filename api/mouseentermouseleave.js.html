@@ -47,187 +47,187 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Adds support for mouseenter/mouseleave events</span>
-<span class="c"> * @module event</span>
-<span class="c"> * @submodule event-mouseenter</span>
-<span class="c"> */</span>
-<span class="k">var</span> <span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span>
-	<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds support for mouseenter/mouseleave events</span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-mouseenter</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span>
+	<span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
 
-	<span class="nx">plugins</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">,</span>
+	<span class="nx">plugins</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">,</span>
 	
-	<span class="nx">listeners</span> <span class="o">=</span> <span class="o">{},</span>
+	<span class="nx">listeners</span> <span class="o">=</span> <span class="p">{},</span>
 
-	<span class="nx">eventConfig</span> <span class="o">=</span> <span class="o">{</span>
+	<span class="nx">eventConfig</span> <span class="o">=</span> <span class="p">{</span>
 
-    	<span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
+    	<span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
 
-		    <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span>	    
-				<span class="nx">element</span> <span class="o">=</span> <span class="nx">el</span><span class="o">,</span>
-				<span class="nx">availHandle</span><span class="o">;</span>
+		    <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>	    
+				<span class="nx">element</span> <span class="o">=</span> <span class="nx">el</span><span class="p">,</span>
+				<span class="nx">availHandle</span><span class="p">;</span>
 
 
-			<span class="k">if</span> <span class="o">(</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
 
-				<span class="c">//	Need to use Y.all because if el is a string it could be a </span>
-<span class="c"></span>				<span class="c">//	selector that returns a NodeList</span>
-<span class="c"></span>
-				<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+				<span class="c1">//	Need to use Y.all because if el is a string it could be a </span>
+				<span class="c1">//	selector that returns a NodeList</span>
 
-				<span class="k">if</span> <span class="o">(</span><span class="nx">element</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span> <span class="c">// Not found, check using onAvailable</span>
-<span class="c"></span>
-		            <span class="nx">availHandle</span> <span class="o">=</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">onAvailable</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+				<span class="nx">element</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
 
-		                <span class="nx">availHandle</span><span class="o">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Not found, check using onAvailable</span>
 
-		            <span class="o">},</span> <span class="nx">Event</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+		            <span class="nx">availHandle</span> <span class="o">=</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">onAvailable</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+		                <span class="nx">availHandle</span><span class="p">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+
+		            <span class="p">},</span> <span class="nx">Event</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
 		
-					<span class="k">return</span> <span class="nx">availHandle</span><span class="o">;</span>
+					<span class="k">return</span> <span class="nx">availHandle</span><span class="p">;</span>
 
-				<span class="o">}</span>
+				<span class="p">}</span>
 
-			<span class="o">}</span>
+			<span class="p">}</span>
 			
 
-	        <span class="k">var</span> <span class="nx">sDOMEvent</span> <span class="o">=</span> <span class="o">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;mouseenter&quot;</span><span class="o">)</span> <span class="o">?</span> <span class="s2">&quot;mouseover&quot;</span> <span class="o">:</span> <span class="s2">&quot;mouseout&quot;</span><span class="o">,</span>
+	        <span class="kd">var</span> <span class="nx">sDOMEvent</span> <span class="o">=</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;mouseenter&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;mouseover&quot;</span> <span class="o">:</span> <span class="s2">&quot;mouseout&quot;</span><span class="p">,</span>
 
-				<span class="c">//	The name of the custom event</span>
-<span class="c"></span>				<span class="nx">sEventName</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">element</span><span class="o">)</span> <span class="o">+</span> <span class="nx">sDOMEvent</span><span class="o">,</span>
+				<span class="c1">//	The name of the custom event</span>
+				<span class="nx">sEventName</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="o">+</span> <span class="nx">sDOMEvent</span><span class="p">,</span>
 
-				<span class="nx">listener</span> <span class="o">=</span> <span class="nx">listeners</span><span class="o">[</span><span class="nx">sEventName</span><span class="o">],</span>
+				<span class="nx">listener</span> <span class="o">=</span> <span class="nx">listeners</span><span class="p">[</span><span class="nx">sEventName</span><span class="p">],</span>
 
-				<span class="nx">domEventHandle</span><span class="o">,</span>
+				<span class="nx">domEventHandle</span><span class="p">,</span>
 				
-				<span class="nx">ceHandle</span><span class="o">,</span>
+				<span class="nx">ceHandle</span><span class="p">,</span>
 				
-				<span class="nx">nListeners</span><span class="o">;</span>
+				<span class="nx">nListeners</span><span class="p">;</span>
 
 
-			<span class="c">//	Bind an actual DOM event listener that will call the </span>
-<span class="c"></span>			<span class="c">//	the custom event				</span>
-<span class="c"></span>			<span class="k">if</span> <span class="o">(!</span><span class="nx">listener</span><span class="o">)</span> <span class="o">{</span>
+			<span class="c1">//	Bind an actual DOM event listener that will call the </span>
+			<span class="c1">//	the custom event				</span>
+			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">listener</span><span class="p">)</span> <span class="p">{</span>
 				
-				<span class="nx">domEventHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="nx">sDOMEvent</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">rbind</span><span class="o">(</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_fireMouseEnter</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">sEventName</span><span class="o">),</span> <span class="nx">element</span><span class="o">);</span>
+				<span class="nx">domEventHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">sDOMEvent</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">rbind</span><span class="p">(</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_fireMouseEnter</span><span class="p">,</span> <span class="nx">Y</span><span class="p">,</span> <span class="nx">sEventName</span><span class="p">),</span> <span class="nx">element</span><span class="p">);</span>
 
-				<span class="c">//	Hook into the _delete method for the Custom Event wrapper of this</span>
-<span class="c"></span>				<span class="c">//	DOM Event in order to clean up the &#39;listeners&#39; map and unsubscribe</span>
-<span class="c"></span>				<span class="c">//	the associated Custom Event listeners fired by this DOM event</span>
-<span class="c"></span>				<span class="c">//	listener if/when the user calls &quot;purgeElement&quot; OR removes all </span>
-<span class="c"></span>				<span class="c">//	listeners of the Custom Event.</span>
-<span class="c"></span>
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">function</span> <span class="o">(</span><span class="nx">sub</span><span class="o">)</span> <span class="o">{</span>
+				<span class="c1">//	Hook into the _delete method for the Custom Event wrapper of this</span>
+				<span class="c1">//	DOM Event in order to clean up the &#39;listeners&#39; map and unsubscribe</span>
+				<span class="c1">//	the associated Custom Event listeners fired by this DOM event</span>
+				<span class="c1">//	listener if/when the user calls &quot;purgeElement&quot; OR removes all </span>
+				<span class="c1">//	listeners of the Custom Event.</span>
 
-					<span class="k">if</span> <span class="o">(</span><span class="nx">domEventHandle</span><span class="o">.</span><span class="nx">sub</span> <span class="o">==</span> <span class="nx">sub</span><span class="o">)</span> <span class="o">{</span>
+				<span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
 
-						<span class="c">//	Delete this event from the map of known mouseenter </span>
-<span class="c"></span>						<span class="c">//	and mouseleave listeners</span>
-<span class="c"></span>						<span class="nx">delete</span> <span class="nx">listeners</span><span class="o">[</span><span class="nx">sEventName</span><span class="o">];</span>
+					<span class="k">if</span> <span class="p">(</span><span class="nx">domEventHandle</span><span class="p">.</span><span class="nx">sub</span> <span class="o">==</span> <span class="nx">sub</span><span class="p">)</span> <span class="p">{</span>
 
-						<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;DOM event listener associated with the &quot;</span> <span class="o">+</span> <span class="nx">sEventName</span> <span class="o">+</span> <span class="s2">&quot; Custom Event removed.  Removing all &quot;</span> <span class="o">+</span> <span class="nx">sEventName</span> <span class="o">+</span> <span class="s2">&quot; listeners.&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Event&quot;</span><span class="o">);</span>
+						<span class="c1">//	Delete this event from the map of known mouseenter </span>
+						<span class="c1">//	and mouseleave listeners</span>
+						<span class="k">delete</span> <span class="nx">listeners</span><span class="p">[</span><span class="nx">sEventName</span><span class="p">];</span>
 
-						<span class="c">//	Unsubscribe all listeners of the Custom Event fired </span>
-<span class="c"></span>						<span class="c">//	by this DOM event.</span>
-<span class="c"></span>						<span class="nx">Y</span><span class="o">.</span><span class="nx">detachAll</span><span class="o">(</span><span class="nx">sEventName</span><span class="o">);</span>
+						<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;DOM event listener associated with the &quot;</span> <span class="o">+</span> <span class="nx">sEventName</span> <span class="o">+</span> <span class="s2">&quot; Custom Event removed.  Removing all &quot;</span> <span class="o">+</span> <span class="nx">sEventName</span> <span class="o">+</span> <span class="s2">&quot; listeners.&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;Event&quot;</span><span class="p">);</span>
 
-					<span class="o">}</span>
+						<span class="c1">//	Unsubscribe all listeners of the Custom Event fired </span>
+						<span class="c1">//	by this DOM event.</span>
+						<span class="nx">Y</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">(</span><span class="nx">sEventName</span><span class="p">);</span>
 
-				<span class="o">},</span> <span class="nx">domEventHandle</span><span class="o">.</span><span class="nx">evt</span><span class="o">,</span> <span class="s2">&quot;_delete&quot;</span><span class="o">);</span>
+					<span class="p">}</span>
+
+				<span class="p">},</span> <span class="nx">domEventHandle</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span> <span class="s2">&quot;_delete&quot;</span><span class="p">);</span>
 				
 
-				<span class="nx">listener</span> <span class="o">=</span> <span class="o">{};</span>				
-				<span class="nx">listener</span><span class="o">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">domEventHandle</span><span class="o">;</span>				
+				<span class="nx">listener</span> <span class="o">=</span> <span class="p">{};</span>				
+				<span class="nx">listener</span><span class="p">.</span><span class="nx">handle</span> <span class="o">=</span> <span class="nx">domEventHandle</span><span class="p">;</span>				
 
-				<span class="nx">listeners</span><span class="o">[</span><span class="nx">sEventName</span><span class="o">]</span> <span class="o">=</span> <span class="nx">listener</span><span class="o">;</span>
+				<span class="nx">listeners</span><span class="p">[</span><span class="nx">sEventName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">listener</span><span class="p">;</span>
 
-			<span class="o">}</span>
+			<span class="p">}</span>
 
-			<span class="nx">nListeners</span> <span class="o">=</span> <span class="nx">listener</span><span class="o">.</span><span class="nx">count</span><span class="o">;</span>
+			<span class="nx">nListeners</span> <span class="o">=</span> <span class="nx">listener</span><span class="p">.</span><span class="nx">count</span><span class="p">;</span>
 
-			<span class="nx">listener</span><span class="o">.</span><span class="nx">count</span> <span class="o">=</span> <span class="nx">nListeners</span> <span class="o">?</span> <span class="o">(</span><span class="nx">nListeners</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">:</span> <span class="m">1</span><span class="o">;</span>
+			<span class="nx">listener</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="nx">nListeners</span> <span class="o">?</span> <span class="p">(</span><span class="nx">nListeners</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
 
-	        <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">sEventName</span><span class="o">;</span>
+	        <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">sEventName</span><span class="p">;</span>
 
-	        <span class="c">// Remove the element from the args</span>
-<span class="c"></span>			<span class="nx">args</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+	        <span class="c1">// Remove the element from the args</span>
+			<span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 
-	        <span class="c">// Subscribe to the custom event</span>
-<span class="c"></span>	        <span class="nx">ceHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+	        <span class="c1">// Subscribe to the custom event</span>
+	        <span class="nx">ceHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
 	
-			<span class="c">//	Hook into the detach method of the handle in order to clean up the </span>
-<span class="c"></span>			<span class="c">//	&#39;listeners&#39; map and remove the associated DOM event handler </span>
-<span class="c"></span>			<span class="c">//	responsible for firing this Custom Event if all listener for this </span>
-<span class="c"></span>			<span class="c">//	event have been removed.</span>
-<span class="c"></span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">(</span><span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+			<span class="c1">//	Hook into the detach method of the handle in order to clean up the </span>
+			<span class="c1">//	&#39;listeners&#39; map and remove the associated DOM event handler </span>
+			<span class="c1">//	responsible for firing this Custom Event if all listener for this </span>
+			<span class="c1">//	event have been removed.</span>
 
-				<span class="nx">listener</span><span class="o">.</span><span class="nx">count</span> <span class="o">=</span> <span class="o">(</span><span class="nx">listener</span><span class="o">.</span><span class="nx">count</span> <span class="o">-</span> <span class="m">1</span><span class="o">);</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-				<span class="k">if</span> <span class="o">(</span><span class="nx">listener</span><span class="o">.</span><span class="nx">count</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-					<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;No more listeners for the &quot;</span> <span class="o">+</span> <span class="nx">sEventName</span> <span class="o">+</span> <span class="s2">&quot; Custom Event.  Removing its associated DOM event listener.&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Event&quot;</span><span class="o">);</span>
-					<span class="nx">listener</span><span class="o">.</span><span class="nx">handle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-				<span class="o">}</span>
+				<span class="nx">listener</span><span class="p">.</span><span class="nx">count</span> <span class="o">=</span> <span class="p">(</span><span class="nx">listener</span><span class="p">.</span><span class="nx">count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
 
-			<span class="o">},</span> <span class="nx">ceHandle</span><span class="o">,</span> <span class="s2">&quot;detach&quot;</span><span class="o">);</span>	
+				<span class="k">if</span> <span class="p">(</span><span class="nx">listener</span><span class="p">.</span><span class="nx">count</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;No more listeners for the &quot;</span> <span class="o">+</span> <span class="nx">sEventName</span> <span class="o">+</span> <span class="s2">&quot; Custom Event.  Removing its associated DOM event listener.&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;Event&quot;</span><span class="p">);</span>
+					<span class="nx">listener</span><span class="p">.</span><span class="nx">handle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+				<span class="p">}</span>
+
+			<span class="p">},</span> <span class="nx">ceHandle</span><span class="p">,</span> <span class="s2">&quot;detach&quot;</span><span class="p">);</span>	
 	
 	
-			<span class="k">return</span> <span class="nx">ceHandle</span><span class="o">;</span>
+			<span class="k">return</span> <span class="nx">ceHandle</span><span class="p">;</span>
 
-	    <span class="o">}</span>
+	    <span class="p">}</span>
 
-	<span class="o">};</span>
+	<span class="p">};</span>
 	
 
-<span class="nx">Event</span><span class="o">.</span><span class="nx">_fireMouseEnter</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">eventName</span><span class="o">)</span> <span class="o">{</span>
+<span class="nx">Event</span><span class="p">.</span><span class="nx">_fireMouseEnter</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
 
-	<span class="k">var</span> <span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">relatedTarget</span><span class="o">,</span>
-		<span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
+	<span class="kd">var</span> <span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">relatedTarget</span><span class="p">,</span>
+		<span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
 
-	<span class="k">if</span> <span class="o">(</span><span class="nx">currentTarget</span> <span class="o">!==</span> <span class="nx">relatedTarget</span> <span class="o">&amp;&amp;</span> 
-		<span class="o">!</span><span class="nx">currentTarget</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">relatedTarget</span><span class="o">))</span> <span class="o">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="nx">currentTarget</span> <span class="o">!==</span> <span class="nx">relatedTarget</span> <span class="o">&amp;&amp;</span> 
+		<span class="o">!</span><span class="nx">currentTarget</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">relatedTarget</span><span class="p">))</span> <span class="p">{</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">eventName</span><span class="o">,</span> <span class="o">{</span>
-               <span class="nx">contextFn</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                   <span class="k">return</span> <span class="nx">currentTarget</span><span class="o">;</span>
-               <span class="o">}</span>
-           <span class="o">});</span>			
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="p">{</span>
+               <span class="nx">contextFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                   <span class="k">return</span> <span class="nx">currentTarget</span><span class="p">;</span>
+               <span class="p">}</span>
+           <span class="p">});</span>			
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">eventName</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
 
-	<span class="o">}</span>
+	<span class="p">}</span>
 
-<span class="o">};</span>	
+<span class="p">};</span>	
 
 
-<span class="c">/**</span>
-<span class="c"> * Sets up a &quot;mouseenter&quot; listener&amp;#151;a listener that is called the first time </span>
-<span class="c"> * the user&#39;s mouse enters the specified element(s).</span>
-<span class="c"> * </span>
-<span class="c"> * @event mouseenter</span>
-<span class="c"> * @param type {string} &quot;mouseenter&quot;</span>
-<span class="c"> * @param fn {function} The method the event invokes.</span>
-<span class="c"> * @param el {string|node} The element(s) to assign the listener to.</span>
-<span class="c"> * @param spec {string} Optional.  String representing a selector that must </span>
-<span class="c"> * match the target of the event in order for the listener to be called.</span>
-<span class="c"> * @return {EventHandle} the detach handle</span>
-<span class="c"> * @for YUI</span>
-<span class="c"> */</span>
-<span class="nx">plugins</span><span class="o">.</span><span class="nx">mouseenter</span> <span class="o">=</span> <span class="nx">eventConfig</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * Sets up a &quot;mouseenter&quot; listener&amp;#151;a listener that is called the first time </span>
+<span class="cm"> * the user&#39;s mouse enters the specified element(s).</span>
+<span class="cm"> * </span>
+<span class="cm"> * @event mouseenter</span>
+<span class="cm"> * @param type {string} &quot;mouseenter&quot;</span>
+<span class="cm"> * @param fn {function} The method the event invokes.</span>
+<span class="cm"> * @param el {string|node} The element(s) to assign the listener to.</span>
+<span class="cm"> * @param spec {string} Optional.  String representing a selector that must </span>
+<span class="cm"> * match the target of the event in order for the listener to be called.</span>
+<span class="cm"> * @return {EventHandle} the detach handle</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
+<span class="nx">plugins</span><span class="p">.</span><span class="nx">mouseenter</span> <span class="o">=</span> <span class="nx">eventConfig</span><span class="p">;</span>
 
-<span class="c">/**</span>
-<span class="c">* Sets up a &quot;mouseleave&quot; listener&amp;#151;a listener that is called the first time </span>
-<span class="c">* the user&#39;s mouse leaves the specified element(s).</span>
-<span class="c">* </span>
-<span class="c">* @event mouseleave</span>
-<span class="c">* @param type {string} &quot;mouseleave&quot;</span>
-<span class="c">* @param fn {function} The method the event invokes.</span>
-<span class="c">* @param el {string|node} The element(s) to assign the listener to.</span>
-<span class="c">* @param spec {string} Optional.  String representing a selector that must </span>
-<span class="c">* match the target of the event in order for the listener to be called.</span>
-<span class="c">* @return {EventHandle} the detach handle</span>
-<span class="c">* @for YUI</span>
-<span class="c"> */</span>
-<span class="nx">plugins</span><span class="o">.</span><span class="nx">mouseleave</span> <span class="o">=</span> <span class="nx">eventConfig</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm">* Sets up a &quot;mouseleave&quot; listener&amp;#151;a listener that is called the first time </span>
+<span class="cm">* the user&#39;s mouse leaves the specified element(s).</span>
+<span class="cm">* </span>
+<span class="cm">* @event mouseleave</span>
+<span class="cm">* @param type {string} &quot;mouseleave&quot;</span>
+<span class="cm">* @param fn {function} The method the event invokes.</span>
+<span class="cm">* @param el {string|node} The element(s) to assign the listener to.</span>
+<span class="cm">* @param spec {string} Optional.  String representing a selector that must </span>
+<span class="cm">* match the target of the event in order for the listener to be called.</span>
+<span class="cm">* @return {EventHandle} the detach handle</span>
+<span class="cm">* @for YUI</span>
+<span class="cm"> */</span>
+<span class="nx">plugins</span><span class="p">.</span><span class="nx">mouseleave</span> <span class="o">=</span> <span class="nx">eventConfig</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -275,6 +275,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

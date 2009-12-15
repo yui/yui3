@@ -5,7 +5,7 @@
      * @submodule dd-constrain
      */
     /**
-     * This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a renodenode or viewport. It anode* supports tick based moves and XY axis constraints.
+     * Plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a node or viewport. It supports tick based moves and XY axis constraints.
      * @class DragConstrained
      * @extends Base
      * @constructor
@@ -25,11 +25,10 @@
         RIGHT = 'right',
         BOTTOM = 'bottom',
         LEFT = 'left',
-        proto = null;
-
-    var C = function(config) {
-        C.superclass.constructor.apply(this, arguments);
-    };
+        proto = null,
+        C = function(config) {
+            C.superclass.constructor.apply(this, arguments);
+        };
     
     C.NAME = 'DragConstrained';
     /**
@@ -141,7 +140,7 @@
             value: false,
             setter: function(n) {
                 if (!this.get(CON_2_REGION)) {
-                    var node = Y.Node.get(n);
+                    var node = Y.one(n);
                     if (node) {
                         return node;
                     }

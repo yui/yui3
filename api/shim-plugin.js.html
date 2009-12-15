@@ -47,107 +47,107 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * Provides shimming support for Node via a Plugin.</span>
-<span class="c">     * This fixes SELECT bleedthrough for IE6 &amp; Mac scrollbars</span>
-<span class="c">     * @module shim-plugin</span>
-<span class="c">     */</span>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * Provides shimming support for Node via a Plugin.</span>
+<span class="cm">     * This fixes SELECT bleedthrough for IE6 &amp; Mac scrollbars</span>
+<span class="cm">     * @module shim-plugin</span>
+<span class="cm">     */</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Node plugin which can be used to add shim support.</span>
-<span class="c">     *</span>
-<span class="c">     * @class Plugin.Shim</span>
-<span class="c">     * @param {Object} User configuration object</span>
-<span class="c">     */</span>
-    <span class="k">function</span> <span class="nx">Shim</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
-    <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Node plugin which can be used to add shim support.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @class Plugin.Shim</span>
+<span class="cm">     * @param {Object} User configuration object</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">Shim</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+    <span class="p">}</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Default class used to mark the shim element</span>
-<span class="c">     *</span>
-<span class="c">     * @property Shim.CLASS_NAME</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static</span>
-<span class="c">     * @default &quot;yui-node-shim&quot;</span>
-<span class="c">     */</span>
-    <span class="c">// TODO: use ClassNameManager</span>
-<span class="c"></span>    <span class="nx">Shim</span><span class="o">.</span><span class="nx">CLASS_NAME</span> <span class="o">=</span> <span class="s1">&#39;yui-node-shim&#39;</span><span class="o">;</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Default class used to mark the shim element</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Shim.CLASS_NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @default &quot;yui-node-shim&quot;</span>
+<span class="cm">     */</span>
+    <span class="c1">// TODO: use ClassNameManager</span>
+    <span class="nx">Shim</span><span class="p">.</span><span class="nx">CLASS_NAME</span> <span class="o">=</span> <span class="s1">&#39;yui-node-shim&#39;</span><span class="p">;</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Default markup template used to generate the shim element.</span>
-<span class="c">     * </span>
-<span class="c">     * @property Shim.TEMPLATE</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
-    <span class="nx">Shim</span><span class="o">.</span><span class="nx">TEMPLATE</span> <span class="o">=</span> <span class="s1">&#39;&lt;iframe class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">Shim</span><span class="o">.</span><span class="nx">CLASS_NAME</span> <span class="o">+</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Default markup template used to generate the shim element.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @property Shim.TEMPLATE</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">Shim</span><span class="p">.</span><span class="nx">TEMPLATE</span> <span class="o">=</span> <span class="s1">&#39;&lt;iframe class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">Shim</span><span class="p">.</span><span class="nx">CLASS_NAME</span> <span class="o">+</span>
             <span class="s1">&#39;&quot; frameborder=&quot;0&quot; title=&quot;Node Stacking Shim&quot;&#39;</span> <span class="o">+</span>
             <span class="s1">&#39;src=&quot;javascript:false&quot; tabindex=&quot;-1&quot; role=&quot;presentation&quot;&#39;</span> <span class="o">+</span>
-            <span class="s1">&#39;style=&quot;position:absolute; z-index:-1;&quot;&gt;&lt;/iframe&gt;&#39;</span><span class="o">;</span>
+            <span class="s1">&#39;style=&quot;position:absolute; z-index:-1;&quot;&gt;&lt;/iframe&gt;&#39;</span><span class="p">;</span>
 
-    <span class="nx">Shim</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="nx">init</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_host</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">host</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">initEvents</span><span class="o">();</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">insert</span><span class="o">();</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">sync</span><span class="o">();</span>
-        <span class="o">},</span>
+    <span class="nx">Shim</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_host</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">host</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">initEvents</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">insert</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">sync</span><span class="p">();</span>
+        <span class="p">},</span>
 
-        <span class="nx">initEvents</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_host</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">sync</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
-        <span class="o">},</span>
+        <span class="nx">initEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_resizeHandle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sync</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+        <span class="p">},</span>
         
-        <span class="nx">getShim</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_shim</span> <span class="o">||</span> <span class="o">(</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_shim</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span>
-                    <span class="nx">Shim</span><span class="o">.</span><span class="nx">TEMPLATE</span><span class="o">,</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_host</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;ownerDocument&#39;</span><span class="o">)</span>
-                <span class="o">)</span>
-            <span class="o">);</span>
-        <span class="o">},</span>
+        <span class="nx">getShim</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_shim</span> <span class="o">||</span> <span class="p">(</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_shim</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
+                    <span class="nx">Shim</span><span class="p">.</span><span class="nx">TEMPLATE</span><span class="p">,</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;ownerDocument&#39;</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">);</span>
+        <span class="p">},</span>
 
-        <span class="nx">insert</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_host</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_shim</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span> <span class="k">this</span><span class="o">.</span><span class="nx">getShim</span><span class="o">(),</span>
-                    <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;firstChild&#39;</span><span class="o">));</span>
-        <span class="o">},</span>
+        <span class="nx">insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_shim</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">getShim</span><span class="p">(),</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
+        <span class="p">},</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Updates the size of the shim to fill its container</span>
-<span class="c">         * @method sync</span>
-<span class="c">         */</span>
-        <span class="nx">sync</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">shim</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_shim</span><span class="o">,</span>
-                <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_host</span><span class="o">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Updates the size of the shim to fill its container</span>
+<span class="cm">         * @method sync</span>
+<span class="cm">         */</span>
+        <span class="nx">sync</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">shim</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_shim</span><span class="p">,</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_host</span><span class="p">;</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">shim</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">shim</span><span class="o">.</span><span class="nx">setAttrs</span><span class="o">({</span>
-                    <span class="nx">width</span><span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="s1">&#39;width&#39;</span><span class="o">),</span>
-                    <span class="nx">height</span><span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="s1">&#39;height&#39;</span><span class="o">)</span>
-                <span class="o">});</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">shim</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">shim</span><span class="p">.</span><span class="nx">setAttrs</span><span class="p">({</span>
+                    <span class="nx">width</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">),</span>
+                    <span class="nx">height</span><span class="o">:</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">)</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Removes the shim and destroys the plugin</span>
-<span class="c">         * @method destroy</span>
-<span class="c">         */</span>
-        <span class="nx">destroy</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">shim</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_shim</span><span class="o">;</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">shim</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">shim</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-            <span class="o">}</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Removes the shim and destroys the plugin</span>
+<span class="cm">         * @method destroy</span>
+<span class="cm">         */</span>
+        <span class="nx">destroy</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">shim</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_shim</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">shim</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">shim</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">_resizeHandle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_resizeHandle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
 
-    <span class="nx">Shim</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;Shim&#39;</span><span class="o">;</span>
-    <span class="nx">Shim</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s1">&#39;shim&#39;</span><span class="o">;</span>
+    <span class="nx">Shim</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;Shim&#39;</span><span class="p">;</span>
+    <span class="nx">Shim</span><span class="p">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s1">&#39;shim&#39;</span><span class="p">;</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;Plugin&#39;</span><span class="o">);</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Shim</span> <span class="o">=</span> <span class="nx">Shim</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Plugin&#39;</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">Shim</span> <span class="o">=</span> <span class="nx">Shim</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -195,6 +195,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

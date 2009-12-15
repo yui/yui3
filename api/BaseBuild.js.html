@@ -47,185 +47,185 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * The base-build submodule provides Base.build functionality, which</span>
-<span class="c">     * can be used to create custom classes, by aggregating extensions onto </span>
-<span class="c">     * a main class.</span>
-<span class="c">     *</span>
-<span class="c">     * @module base</span>
-<span class="c">     * @submodule base-build</span>
-<span class="c">     * @for Base</span>
-<span class="c">     */</span>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * The base-build submodule provides Base.build functionality, which</span>
+<span class="cm">     * can be used to create custom classes, by aggregating extensions onto </span>
+<span class="cm">     * a main class.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @module base</span>
+<span class="cm">     * @submodule base-build</span>
+<span class="cm">     * @for Base</span>
+<span class="cm">     */</span>
 
-    <span class="k">var</span> <span class="nx">Base</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span>
-        <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+    <span class="kd">var</span> <span class="nx">Base</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span>
+        <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">;</span>
 
-    <span class="c">/**</span>
-<span class="c">     * The build configuration for the Base class.</span>
-<span class="c">     *</span>
-<span class="c">     * Defines the static fields which need to be aggregated</span>
-<span class="c">     * when the Base class is used as the main class passed to </span>
-<span class="c">     * the &lt;a href=&quot;#method_Base.build&quot;&gt;Base.build&lt;/a&gt; method.</span>
-<span class="c">     *</span>
-<span class="c">     * @property Base._buildCfg</span>
-<span class="c">     * @type Object</span>
-<span class="c">     * @static</span>
-<span class="c">     * @final</span>
-<span class="c">     * @private</span>
-<span class="c">     */</span>
-    <span class="nx">Base</span><span class="o">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="nx">aggregates</span> <span class="o">:</span> <span class="o">[</span><span class="s2">&quot;ATTRS&quot;</span><span class="o">,</span> <span class="s2">&quot;_PLUG&quot;</span><span class="o">,</span> <span class="s2">&quot;_UNPLUG&quot;</span><span class="o">]</span>
-    <span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * The build configuration for the Base class.</span>
+<span class="cm">     *</span>
+<span class="cm">     * Defines the static fields which need to be aggregated</span>
+<span class="cm">     * when the Base class is used as the main class passed to </span>
+<span class="cm">     * the &lt;a href=&quot;#method_Base.build&quot;&gt;Base.build&lt;/a&gt; method.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Base._buildCfg</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
+    <span class="nx">Base</span><span class="p">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">aggregates</span> <span class="o">:</span> <span class="p">[</span><span class="s2">&quot;ATTRS&quot;</span><span class="p">,</span> <span class="s2">&quot;_PLUG&quot;</span><span class="p">,</span> <span class="s2">&quot;_UNPLUG&quot;</span><span class="p">]</span>
+    <span class="p">};</span>
 
-    <span class="c">/**</span>
-<span class="c">     * &lt;p&gt;</span>
-<span class="c">     * Builds a custom constructor function (class) from the</span>
-<span class="c">     * main function, and array of extension functions (classes)</span>
-<span class="c">     * provided. The NAME field for the constructor function is </span>
-<span class="c">     * defined by the first argument passed in.</span>
-<span class="c">     * &lt;/p&gt;</span>
-<span class="c">     * &lt;p&gt;</span>
-<span class="c">     * The cfg object supports the following properties</span>
-<span class="c">     * &lt;/p&gt;</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     *    &lt;dt&gt;dynamic &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
-<span class="c">     *    &lt;dd&gt;</span>
-<span class="c">     *    &lt;p&gt;If true (default), a completely new class</span>
-<span class="c">     *    is created which extends the main class, and acts as the </span>
-<span class="c">     *    host on which the extension classes are augmented.&lt;/p&gt;</span>
-<span class="c">     *    &lt;p&gt;If false, the extensions classes are augmented directly to</span>
-<span class="c">     *    the main class, modifying the main class&#39; prototype.&lt;/p&gt;</span>
-<span class="c">     *    &lt;/dd&gt;</span>
-<span class="c">     *    &lt;dt&gt;aggregates &amp;#60;String[]&amp;#62;&lt;/dt&gt;</span>
-<span class="c">     *    &lt;dd&gt;An array of static property names, which will get aggregated</span>
-<span class="c">     *    on to the built class, in addition to the default properties build </span>
-<span class="c">     *    will always aggregate as defined by the main class&#39; static _buildCfg</span>
-<span class="c">     *    property.</span>
-<span class="c">     *    &lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     *</span>
-<span class="c">     * @method Base.build</span>
-<span class="c">     * @static</span>
-<span class="c">     * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.</span>
-<span class="c">     * @param {Function} main The main class on which to base the built class</span>
-<span class="c">     * @param {Function[]} extensions The set of extension classes which will be</span>
-<span class="c">     * augmented/aggregated to the built class.</span>
-<span class="c">     * @param {Object} cfg Optional. Build configuration for the class (see description).</span>
-<span class="c">     * @return {Function} A custom class, created from the provided main and extension classes</span>
-<span class="c">     */</span>
-    <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Builds a custom constructor function (class) from the</span>
+<span class="cm">     * main function, and array of extension functions (classes)</span>
+<span class="cm">     * provided. The NAME field for the constructor function is </span>
+<span class="cm">     * defined by the first argument passed in.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * The cfg object supports the following properties</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     *    &lt;dt&gt;dynamic &amp;#60;boolean&amp;#62;&lt;/dt&gt;</span>
+<span class="cm">     *    &lt;dd&gt;</span>
+<span class="cm">     *    &lt;p&gt;If true (default), a completely new class</span>
+<span class="cm">     *    is created which extends the main class, and acts as the </span>
+<span class="cm">     *    host on which the extension classes are augmented.&lt;/p&gt;</span>
+<span class="cm">     *    &lt;p&gt;If false, the extensions classes are augmented directly to</span>
+<span class="cm">     *    the main class, modifying the main class&#39; prototype.&lt;/p&gt;</span>
+<span class="cm">     *    &lt;/dd&gt;</span>
+<span class="cm">     *    &lt;dt&gt;aggregates &amp;#60;String[]&amp;#62;&lt;/dt&gt;</span>
+<span class="cm">     *    &lt;dd&gt;An array of static property names, which will get aggregated</span>
+<span class="cm">     *    on to the built class, in addition to the default properties build </span>
+<span class="cm">     *    will always aggregate as defined by the main class&#39; static _buildCfg</span>
+<span class="cm">     *    property.</span>
+<span class="cm">     *    &lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method Base.build</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.</span>
+<span class="cm">     * @param {Function} main The main class on which to base the built class</span>
+<span class="cm">     * @param {Function[]} extensions The set of extension classes which will be</span>
+<span class="cm">     * augmented/aggregated to the built class.</span>
+<span class="cm">     * @param {Object} cfg Optional. Build configuration for the class (see description).</span>
+<span class="cm">     * @return {Function} A custom class, created from the provided main and extension classes</span>
+<span class="cm">     */</span>
+    <span class="nx">Base</span><span class="p">.</span><span class="nx">build</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">main</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">,</span>
-            <span class="nx">builtClass</span> <span class="o">=</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_getClass</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">),</span>
-            <span class="nx">aggregates</span> <span class="o">=</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_getAggregates</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">),</span>
-            <span class="nx">dynamic</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">,</span>
-            <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">extClass</span><span class="o">;</span>
+        <span class="kd">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="nx">Base</span><span class="p">.</span><span class="nx">build</span><span class="p">,</span>
+            <span class="nx">builtClass</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_getClass</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">),</span>
+            <span class="nx">aggregates</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_getAggregates</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">),</span>
+            <span class="nx">dynamic</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">.</span><span class="nx">dynamic</span><span class="p">,</span>
+            <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">;</span>
 
-        <span class="c">// Shallow isolate aggregates</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">aggregates</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">main</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">builtClass</span><span class="o">[</span><span class="nx">val</span><span class="o">]</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">main</span><span class="o">[</span><span class="nx">val</span><span class="o">])</span> <span class="o">?</span> <span class="o">[]</span> <span class="o">:</span> <span class="o">{};</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">main</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">aggregates</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+        <span class="c1">// Shallow isolate aggregates</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">dynamic</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">aggregates</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">main</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">builtClass</span><span class="p">[</span><span class="nx">val</span><span class="p">]</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">main</span><span class="p">[</span><span class="nx">val</span><span class="p">])</span> <span class="o">?</span> <span class="p">[]</span> <span class="o">:</span> <span class="p">{};</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">main</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">aggregates</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
-        <span class="c">// Augment/Aggregate</span>
-<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">extensions</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-            <span class="nx">extClass</span> <span class="o">=</span> <span class="nx">extensions</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+        <span class="c1">// Augment/Aggregate</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">extensions</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">extClass</span> <span class="o">=</span> <span class="nx">extensions</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">aggregates</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">extClass</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">aggregates</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">aggregates</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">aggregates</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="c">// Old augment</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">extClass</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+            <span class="c1">// Old augment</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 
-            <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">extClass</span><span class="o">);</span>
-        <span class="o">}</span>
+            <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">.</span><span class="nx">exts</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">extClass</span><span class="p">);</span>
+        <span class="p">}</span>
 
-        <span class="nx">builtClass</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">hasImpl</span> <span class="o">=</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_hasImpl</span><span class="o">;</span>
+        <span class="nx">builtClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasImpl</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_hasImpl</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">builtClass</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">name</span><span class="o">;</span>
-            <span class="nx">builtClass</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">dynamic</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">builtClass</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+            <span class="nx">builtClass</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        <span class="k">return</span> <span class="nx">builtClass</span><span class="o">;</span>
-    <span class="o">};</span>
+        <span class="k">return</span> <span class="nx">builtClass</span><span class="p">;</span>
+    <span class="p">};</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Base</span><span class="p">.</span><span class="nx">build</span><span class="p">,</span> <span class="p">{</span>
 
-        <span class="nx">_template</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">_template</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="k">function</span> <span class="nx">BuiltClass</span><span class="o">()</span> <span class="o">{</span>
-                <span class="nx">BuiltClass</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-                <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">BuiltClass</span><span class="o">,</span> <span class="nx">main</span><span class="o">);</span>
+            <span class="kd">function</span> <span class="nx">BuiltClass</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">BuiltClass</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">BuiltClass</span><span class="p">,</span> <span class="nx">main</span><span class="p">);</span>
 
-            <span class="k">return</span> <span class="nx">BuiltClass</span><span class="o">;</span>
-        <span class="o">},</span>
+            <span class="k">return</span> <span class="nx">BuiltClass</span><span class="p">;</span>
+        <span class="p">},</span>
 
-        <span class="nx">_hasImpl</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">extClass</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">();</span>
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">cls</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+        <span class="nx">_hasImpl</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">extClass</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getClasses</span><span class="p">();</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">classes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">cls</span> <span class="o">=</span> <span class="nx">classes</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                  
-                <span class="k">if</span> <span class="o">(</span><span class="nx">cls</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">exts</span> <span class="o">=</span> <span class="nx">cls</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span>
-                        <span class="nx">ll</span> <span class="o">=</span> <span class="nx">exts</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
-                        <span class="nx">j</span><span class="o">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">cls</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">exts</span> <span class="o">=</span> <span class="nx">cls</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">.</span><span class="nx">exts</span><span class="p">,</span>
+                        <span class="nx">ll</span> <span class="o">=</span> <span class="nx">exts</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+                        <span class="nx">j</span><span class="p">;</span>
     
-                    <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">ll</span><span class="o">;</span> <span class="nx">j</span><span class="o">++)</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">exts</span><span class="o">[</span><span class="nx">j</span><span class="o">]</span> <span class="o">===</span> <span class="nx">extClass</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-                        <span class="o">}</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-        <span class="o">},</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">ll</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">exts</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">===</span> <span class="nx">extClass</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">},</span>
 
-        <span class="nx">_getClass</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">_getClass</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
 
-           <span class="k">var</span> <span class="nx">dynamic</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="kc">false</span> <span class="o">===</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-                <span class="nx">builtClass</span> <span class="o">=</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">.</span><span class="nx">_template</span><span class="o">(</span><span class="nx">main</span><span class="o">)</span> <span class="o">:</span> <span class="nx">main</span><span class="o">;</span>
+           <span class="kd">var</span> <span class="nx">dynamic</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="kc">false</span> <span class="o">===</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">dynamic</span><span class="p">)</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nx">builtClass</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dynamic</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Base</span><span class="p">.</span><span class="nx">build</span><span class="p">.</span><span class="nx">_template</span><span class="p">(</span><span class="nx">main</span><span class="p">)</span> <span class="o">:</span> <span class="nx">main</span><span class="p">;</span>
 
-            <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span> <span class="o">=</span> <span class="o">{</span>
-                <span class="nx">id</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
-                <span class="nx">exts</span> <span class="o">:</span> <span class="o">[],</span>
+            <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">id</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">exts</span> <span class="o">:</span> <span class="p">[],</span>
                 <span class="nx">dynamic</span> <span class="o">:</span> <span class="nx">dynamic</span>
-            <span class="o">};</span>
+            <span class="p">};</span>
 
-            <span class="k">return</span> <span class="nx">builtClass</span><span class="o">;</span>
-        <span class="o">},</span>
+            <span class="k">return</span> <span class="nx">builtClass</span><span class="p">;</span>
+        <span class="p">},</span>
 
-        <span class="nx">_getAggregates</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">aggr</span> <span class="o">=</span> <span class="o">[],</span>
-                <span class="nx">cfgAggr</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">aggregates</span><span class="o">),</span>
-                <span class="nx">c</span> <span class="o">=</span> <span class="nx">main</span><span class="o">,</span>
-                <span class="nx">classAggr</span><span class="o">;</span>
+        <span class="nx">_getAggregates</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">aggr</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">cfgAggr</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">),</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">main</span><span class="p">,</span>
+                <span class="nx">classAggr</span><span class="p">;</span>
 
-            <span class="k">while</span> <span class="o">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">prototype</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">classAggr</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">_buildCfg</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="o">.</span><span class="nx">_buildCfg</span><span class="o">.</span><span class="nx">aggregates</span><span class="o">;</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">classAggr</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">classAggr</span><span class="o">);</span>
-                <span class="o">}</span>
-                <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
-            <span class="o">}</span>
+            <span class="k">while</span> <span class="p">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">prototype</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">classAggr</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">_buildCfg</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">_buildCfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">classAggr</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">classAggr</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">cfgAggr</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="o">.</span><span class="nx">concat</span><span class="o">(</span><span class="nx">cfgAggr</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cfgAggr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">cfgAggr</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="k">return</span> <span class="nx">aggr</span><span class="o">;</span>
-        <span class="o">}</span>
-    <span class="o">});</span>
+            <span class="k">return</span> <span class="nx">aggr</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
 </pre></div>
 
                     </div>
@@ -273,6 +273,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

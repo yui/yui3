@@ -149,7 +149,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         _setupListeners: function() {
             this._active = true;
-            var doc = Y.get(document);
+            var doc = Y.one(document);
             doc.on('mousemove', Y.bind(this._move, this));
             //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
             doc.on('mouseup', Y.bind(this._end, this));
@@ -249,7 +249,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         getDrag: function(node) {
             var drag = false,
-                n = Y.get(node);
+                n = Y.one(node);
             if (n instanceof Y.Node) {
                 Y.each(this._drags, function(v, k) {
                     if (n.compareTo(v.get('node'))) {

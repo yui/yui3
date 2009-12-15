@@ -47,184 +47,184 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">each</span><span class="o">([</span>
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method replaceChild</span>
-<span class="c">     * @for Node</span>
-<span class="c">     * @param {HTMLElement | Node} node Node to be inserted </span>
-<span class="c">     * @param {HTMLElement | Node} refNode Node to be replaced </span>
-<span class="c">     * @return {Node} The replaced node </span>
-<span class="c">     */</span>
-    <span class="s1">&#39;replaceChild&#39;</span><span class="o">,</span>
+                        <div class="highlight"><pre><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">([</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method replaceChild</span>
+<span class="cm">     * @for Node</span>
+<span class="cm">     * @param {HTMLElement | Node} node Node to be inserted </span>
+<span class="cm">     * @param {HTMLElement | Node} refNode Node to be replaced </span>
+<span class="cm">     * @return {Node} The replaced node </span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;replaceChild&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method appendChild</span>
-<span class="c">     * @param {HTMLElement | Node} node Node to be appended </span>
-<span class="c">     * @return {Node} The appended node </span>
-<span class="c">     */</span>
-    <span class="s1">&#39;appendChild&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method appendChild</span>
+<span class="cm">     * @param {HTMLElement | Node} node Node to be appended </span>
+<span class="cm">     * @return {Node} The appended node </span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;appendChild&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method insertBefore</span>
-<span class="c">     * @param {HTMLElement | Node} newNode Node to be appended </span>
-<span class="c">     * @param {HTMLElement | Node} refNode Node to be inserted before </span>
-<span class="c">     * @return {Node} The inserted node </span>
-<span class="c">     */</span>
-    <span class="s1">&#39;insertBefore&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method insertBefore</span>
+<span class="cm">     * @param {HTMLElement | Node} newNode Node to be appended </span>
+<span class="cm">     * @param {HTMLElement | Node} refNode Node to be inserted before </span>
+<span class="cm">     * @return {Node} The inserted node </span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;insertBefore&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method removeChild</span>
-<span class="c">     * @param {HTMLElement | Node} node Node to be removed </span>
-<span class="c">     * @return {Node} The removed node </span>
-<span class="c">     */</span>
-    <span class="s1">&#39;removeChild&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method removeChild</span>
+<span class="cm">     * @param {HTMLElement | Node} node Node to be removed </span>
+<span class="cm">     * @return {Node} The removed node </span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;removeChild&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method hasChildNodes</span>
-<span class="c">     * @return {Boolean} Whether or not the node has any childNodes </span>
-<span class="c">     */</span>
-    <span class="s1">&#39;hasChildNodes&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method hasChildNodes</span>
+<span class="cm">     * @return {Boolean} Whether or not the node has any childNodes </span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;hasChildNodes&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method cloneNode</span>
-<span class="c">     * @param {Boolean} deep Whether or not to perform a deep clone, which includes</span>
-<span class="c">     * subtree and attributes</span>
-<span class="c">     * @return {Node} The clone </span>
-<span class="c">     */</span>
-    <span class="s1">&#39;cloneNode&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method cloneNode</span>
+<span class="cm">     * @param {Boolean} deep Whether or not to perform a deep clone, which includes</span>
+<span class="cm">     * subtree and attributes</span>
+<span class="cm">     * @return {Node} The clone </span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;cloneNode&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method hasAttribute</span>
-<span class="c">     * @param {String} attribute The attribute to test for </span>
-<span class="c">     * @return {Boolean} Whether or not the attribute is present </span>
-<span class="c">     */</span>
-    <span class="s1">&#39;hasAttribute&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method hasAttribute</span>
+<span class="cm">     * @param {String} attribute The attribute to test for </span>
+<span class="cm">     * @return {Boolean} Whether or not the attribute is present </span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;hasAttribute&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method removeAttribute</span>
-<span class="c">     * @param {String} attribute The attribute to be removed </span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;removeAttribute&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method removeAttribute</span>
+<span class="cm">     * @param {String} attribute The attribute to be removed </span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;removeAttribute&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method scrollIntoView</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;scrollIntoView&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method scrollIntoView</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;scrollIntoView&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method getElementsByTagName</span>
-<span class="c">     * @param {String} tagName The tagName to collect </span>
-<span class="c">     * @return {NodeList} A NodeList representing the HTMLCollection</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;getElementsByTagName&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method getElementsByTagName</span>
+<span class="cm">     * @param {String} tagName The tagName to collect </span>
+<span class="cm">     * @return {NodeList} A NodeList representing the HTMLCollection</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;getElementsByTagName&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method focus</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;focus&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method focus</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;focus&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method blur</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;blur&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method blur</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;blur&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * Only valid on FORM elements</span>
-<span class="c">     * @method submit</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;submit&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * Only valid on FORM elements</span>
+<span class="cm">     * @method submit</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;submit&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * Only valid on FORM elements</span>
-<span class="c">     * @method reset</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;reset&#39;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * Only valid on FORM elements</span>
+<span class="cm">     * @method reset</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;reset&#39;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Passes through to DOM method.</span>
-<span class="c">     * @method select</span>
-<span class="c">     * @chainable</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Passes through to DOM method.</span>
+<span class="cm">     * @method select</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
      <span class="s1">&#39;select&#39;</span>
-<span class="o">],</span> <span class="k">function</span><span class="o">(</span><span class="nx">method</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">method</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">,</span> <span class="nx">arg3</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">invoke</span><span class="o">(</span><span class="nx">method</span><span class="o">,</span> <span class="nx">arg1</span><span class="o">,</span> <span class="nx">arg2</span><span class="o">,</span> <span class="nx">arg3</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
-    <span class="o">};</span>
-<span class="o">});</span>
+<span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">};</span>
+<span class="p">});</span>
 
-<span class="nx">Node</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">,</span> <span class="o">[</span>
-    <span class="c">/**</span>
-<span class="c">     * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.</span>
-<span class="c">     * @method contains</span>
-<span class="c">     * @param {Node | HTMLElement} needle The possible node or descendent</span>
-<span class="c">     * @return {Boolean} Whether or not this node is the needle its ancestor</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;contains&#39;</span><span class="o">,</span>
-    <span class="c">/**</span>
-<span class="c">     * Allows setting attributes on DOM nodes, normalizing in some cases.</span>
-<span class="c">     * This passes through to the DOM node, allowing for custom attributes.</span>
-<span class="c">     * @method setAttribute</span>
-<span class="c">     * @for Node</span>
-<span class="c">     * @for NodeList</span>
-<span class="c">     * @chainable</span>
-<span class="c">     * @param {string} name The attribute name </span>
-<span class="c">     * @param {string} value The value to set</span>
-<span class="c">     */</span>
-    <span class="s1">&#39;setAttribute&#39;</span><span class="o">,</span>
-    <span class="c">/**</span>
-<span class="c">     * Allows getting attributes on DOM nodes, normalizing in some cases.</span>
-<span class="c">     * This passes through to the DOM node, allowing for custom attributes.</span>
-<span class="c">     * @method getAttribute</span>
-<span class="c">     * @for Node</span>
-<span class="c">     * @for NodeList</span>
-<span class="c">     * @param {string} name The attribute name </span>
-<span class="c">     * @return {string} The attribute value </span>
-<span class="c">     */</span>
+<span class="nx">Node</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="p">[</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.</span>
+<span class="cm">     * @method contains</span>
+<span class="cm">     * @param {Node | HTMLElement} needle The possible node or descendent</span>
+<span class="cm">     * @return {Boolean} Whether or not this node is the needle its ancestor</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;contains&#39;</span><span class="p">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Allows setting attributes on DOM nodes, normalizing in some cases.</span>
+<span class="cm">     * This passes through to the DOM node, allowing for custom attributes.</span>
+<span class="cm">     * @method setAttribute</span>
+<span class="cm">     * @for Node</span>
+<span class="cm">     * @for NodeList</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     * @param {string} name The attribute name </span>
+<span class="cm">     * @param {string} value The value to set</span>
+<span class="cm">     */</span>
+    <span class="s1">&#39;setAttribute&#39;</span><span class="p">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Allows getting attributes on DOM nodes, normalizing in some cases.</span>
+<span class="cm">     * This passes through to the DOM node, allowing for custom attributes.</span>
+<span class="cm">     * @method getAttribute</span>
+<span class="cm">     * @for Node</span>
+<span class="cm">     * @for NodeList</span>
+<span class="cm">     * @param {string} name The attribute name </span>
+<span class="cm">     * @return {string} The attribute value </span>
+<span class="cm">     */</span>
     <span class="s1">&#39;getAttribute&#39;</span>
-<span class="o">]);</span>
+<span class="p">]);</span>
 
-<span class="c">/**</span>
-<span class="c"> * Allows setting attributes on DOM nodes, normalizing in some cases.</span>
-<span class="c"> * This passes through to the DOM node, allowing for custom attributes.</span>
-<span class="c"> * @method setAttribute</span>
-<span class="c"> * @see Node</span>
-<span class="c"> * @for NodeList</span>
-<span class="c"> * @chainable</span>
-<span class="c"> * @param {string} name The attribute name </span>
-<span class="c"> * @param {string} value The value to set</span>
-<span class="c"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Allows setting attributes on DOM nodes, normalizing in some cases.</span>
+<span class="cm"> * This passes through to the DOM node, allowing for custom attributes.</span>
+<span class="cm"> * @method setAttribute</span>
+<span class="cm"> * @see Node</span>
+<span class="cm"> * @for NodeList</span>
+<span class="cm"> * @chainable</span>
+<span class="cm"> * @param {string} name The attribute name </span>
+<span class="cm"> * @param {string} value The value to set</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Allows getting attributes on DOM nodes, normalizing in some cases.</span>
-<span class="c"> * This passes through to the DOM node, allowing for custom attributes.</span>
-<span class="c"> * @method getAttribute</span>
-<span class="c"> * @see Node</span>
-<span class="c"> * @for NodeList</span>
-<span class="c"> * @param {string} name The attribute name </span>
-<span class="c"> * @return {string} The attribute value </span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">.</span><span class="nx">importMethod</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="o">[</span><span class="s1">&#39;getAttribute&#39;</span><span class="o">,</span> <span class="s1">&#39;setAttribute&#39;</span><span class="o">]);</span>
+<span class="cm">/**</span>
+<span class="cm"> * Allows getting attributes on DOM nodes, normalizing in some cases.</span>
+<span class="cm"> * This passes through to the DOM node, allowing for custom attributes.</span>
+<span class="cm"> * @method getAttribute</span>
+<span class="cm"> * @see Node</span>
+<span class="cm"> * @for NodeList</span>
+<span class="cm"> * @param {string} name The attribute name </span>
+<span class="cm"> * @return {string} The attribute value </span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;getAttribute&#39;</span><span class="p">,</span> <span class="s1">&#39;setAttribute&#39;</span><span class="p">]);</span>
 </pre></div>
 
                     </div>
@@ -272,6 +272,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

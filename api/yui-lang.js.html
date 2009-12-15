@@ -47,216 +47,216 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The YUI module contains the components required for building the YUI seed file.</span>
-<span class="c"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
-<span class="c"> * @module yui</span>
-<span class="c"> * @submodule yui-base</span>
-<span class="c"> */</span>
-<span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-<span class="c">/**</span>
-<span class="c"> * Provides the language utilites and extensions used by the library</span>
-<span class="c"> * @class Lang</span>
-<span class="c"> * @static</span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span> <span class="o">||</span> <span class="o">{};</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The YUI module contains the components required for building the YUI seed file.</span>
+<span class="cm"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
+<span class="cm"> * @module yui</span>
+<span class="cm"> * @submodule yui-base</span>
+<span class="cm"> */</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * Provides the language utilites and extensions used by the library</span>
+<span class="cm"> * @class Lang</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span> <span class="o">||</span> <span class="p">{};</span>
 
-<span class="k">var</span> <span class="nx">L</span>     <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> 
+<span class="kd">var</span> <span class="nx">L</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span> 
 
-<span class="nx">ARRAY</span>     <span class="o">=</span> <span class="s1">&#39;array&#39;</span><span class="o">,</span>
-<span class="nx">BOOLEAN</span>   <span class="o">=</span> <span class="s1">&#39;boolean&#39;</span><span class="o">,</span>
-<span class="nx">DATE</span>      <span class="o">=</span> <span class="s1">&#39;date&#39;</span><span class="o">,</span>
-<span class="nx">ERROR</span>     <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span>
-<span class="nx">FUNCTION</span>  <span class="o">=</span> <span class="s1">&#39;function&#39;</span><span class="o">,</span>
-<span class="nx">NUMBER</span>    <span class="o">=</span> <span class="s1">&#39;number&#39;</span><span class="o">,</span>
-<span class="nx">NULL</span>      <span class="o">=</span> <span class="s1">&#39;null&#39;</span><span class="o">,</span>
-<span class="nx">OBJECT</span>    <span class="o">=</span> <span class="s1">&#39;object&#39;</span><span class="o">,</span>
-<span class="nx">REGEX</span>     <span class="o">=</span> <span class="s1">&#39;regexp&#39;</span><span class="o">,</span>
-<span class="nx">STRING</span>    <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="o">,</span>
-<span class="nx">TOSTRING</span>  <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">toString</span><span class="o">,</span>
-<span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span><span class="o">,</span>
+<span class="nx">ARRAY</span>     <span class="o">=</span> <span class="s1">&#39;array&#39;</span><span class="p">,</span>
+<span class="nx">BOOLEAN</span>   <span class="o">=</span> <span class="s1">&#39;boolean&#39;</span><span class="p">,</span>
+<span class="nx">DATE</span>      <span class="o">=</span> <span class="s1">&#39;date&#39;</span><span class="p">,</span>
+<span class="nx">ERROR</span>     <span class="o">=</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span>
+<span class="nx">FUNCTION</span>  <span class="o">=</span> <span class="s1">&#39;function&#39;</span><span class="p">,</span>
+<span class="nx">NUMBER</span>    <span class="o">=</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span>
+<span class="nx">NULL</span>      <span class="o">=</span> <span class="s1">&#39;null&#39;</span><span class="p">,</span>
+<span class="nx">OBJECT</span>    <span class="o">=</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
+<span class="nx">REGEX</span>     <span class="o">=</span> <span class="s1">&#39;regexp&#39;</span><span class="p">,</span>
+<span class="nx">STRING</span>    <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+<span class="nx">TOSTRING</span>  <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">,</span>
+<span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">,</span>
 
-<span class="nx">TYPES</span>     <span class="o">=</span> <span class="o">{</span>
-    <span class="s1">&#39;undefined&#39;</span>         <span class="o">:</span> <span class="nx">UNDEFINED</span><span class="o">,</span>
-    <span class="s1">&#39;number&#39;</span>            <span class="o">:</span> <span class="nx">NUMBER</span><span class="o">,</span>
-    <span class="s1">&#39;boolean&#39;</span>           <span class="o">:</span> <span class="nx">BOOLEAN</span><span class="o">,</span>
-    <span class="s1">&#39;string&#39;</span>            <span class="o">:</span> <span class="nx">STRING</span><span class="o">,</span>
-    <span class="s1">&#39;[object Function]&#39;</span> <span class="o">:</span> <span class="nx">FUNCTION</span><span class="o">,</span>
-    <span class="s1">&#39;[object RegExp]&#39;</span>   <span class="o">:</span> <span class="nx">REGEX</span><span class="o">,</span>
-    <span class="s1">&#39;[object Array]&#39;</span>    <span class="o">:</span> <span class="nx">ARRAY</span><span class="o">,</span>
-    <span class="s1">&#39;[object Date]&#39;</span>     <span class="o">:</span> <span class="nx">DATE</span><span class="o">,</span>
+<span class="nx">TYPES</span>     <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;undefined&#39;</span>         <span class="o">:</span> <span class="nx">UNDEFINED</span><span class="p">,</span>
+    <span class="s1">&#39;number&#39;</span>            <span class="o">:</span> <span class="nx">NUMBER</span><span class="p">,</span>
+    <span class="s1">&#39;boolean&#39;</span>           <span class="o">:</span> <span class="nx">BOOLEAN</span><span class="p">,</span>
+    <span class="s1">&#39;string&#39;</span>            <span class="o">:</span> <span class="nx">STRING</span><span class="p">,</span>
+    <span class="s1">&#39;[object Function]&#39;</span> <span class="o">:</span> <span class="nx">FUNCTION</span><span class="p">,</span>
+    <span class="s1">&#39;[object RegExp]&#39;</span>   <span class="o">:</span> <span class="nx">REGEX</span><span class="p">,</span>
+    <span class="s1">&#39;[object Array]&#39;</span>    <span class="o">:</span> <span class="nx">ARRAY</span><span class="p">,</span>
+    <span class="s1">&#39;[object Date]&#39;</span>     <span class="o">:</span> <span class="nx">DATE</span><span class="p">,</span>
     <span class="s1">&#39;[object Error]&#39;</span>    <span class="o">:</span> <span class="nx">ERROR</span> 
-<span class="o">},</span>
+<span class="p">},</span>
 
-<span class="nx">TRIMREGEX</span> <span class="o">=</span> <span class="sr">/^\s+|\s+$/g</span><span class="o">,</span>
-<span class="nx">EMPTYSTRING</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+<span class="nx">TRIMREGEX</span> <span class="o">=</span> <span class="sr">/^\s+|\s+$/g</span><span class="p">,</span>
+<span class="nx">EMPTYSTRING</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the provided item is an array.</span>
-<span class="c"> * Returns false for array-like collections such as the</span>
-<span class="c"> * function arguments collection or HTMLElement collection</span>
-<span class="c"> * will return false.  You can use @see Array.test if you </span>
-<span class="c"> * want to</span>
-<span class="c"> * @method isArray</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The object to test</span>
-<span class="c"> * @return {boolean} true if o is an array</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span> 
-    <span class="k">return</span> <span class="nx">L</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">===</span> <span class="nx">ARRAY</span><span class="o">;</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the provided item is an array.</span>
+<span class="cm"> * Returns false for array-like collections such as the</span>
+<span class="cm"> * function arguments collection or HTMLElement collection</span>
+<span class="cm"> * will return false.  You can use @see Array.test if you </span>
+<span class="cm"> * want to</span>
+<span class="cm"> * @method isArray</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The object to test</span>
+<span class="cm"> * @return {boolean} true if o is an array</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span> 
+    <span class="k">return</span> <span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="o">===</span> <span class="nx">ARRAY</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the provided item is a boolean</span>
-<span class="c"> * @method isBoolean</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The object to test</span>
-<span class="c"> * @return {boolean} true if o is a boolean</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">isBoolean</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">BOOLEAN</span><span class="o">;</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the provided item is a boolean</span>
+<span class="cm"> * @method isBoolean</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The object to test</span>
+<span class="cm"> * @return {boolean} true if o is a boolean</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">isBoolean</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">BOOLEAN</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the provided item is a function</span>
-<span class="c"> * Note: Internet Explorer thinks certain functions are objects:</span>
-<span class="c"> *</span>
-<span class="c"> * var obj = document.createElement(&quot;object&quot;);</span>
-<span class="c"> * Y.Lang.isFunction(obj.getAttribute) // reports false in IE</span>
-<span class="c"> *</span>
-<span class="c"> * var input = document.createElement(&quot;input&quot;); // append to body</span>
-<span class="c"> * Y.Lang.isFunction(input.focus) // reports false in IE</span>
-<span class="c"> *</span>
-<span class="c"> * You will have to implement additional tests if these functions</span>
-<span class="c"> * matter to you.</span>
-<span class="c"> *</span>
-<span class="c"> * @method isFunction</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The object to test</span>
-<span class="c"> * @return {boolean} true if o is a function</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">L</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">===</span> <span class="nx">FUNCTION</span><span class="o">;</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the provided item is a function</span>
+<span class="cm"> * Note: Internet Explorer thinks certain functions are objects:</span>
+<span class="cm"> *</span>
+<span class="cm"> * var obj = document.createElement(&quot;object&quot;);</span>
+<span class="cm"> * Y.Lang.isFunction(obj.getAttribute) // reports false in IE</span>
+<span class="cm"> *</span>
+<span class="cm"> * var input = document.createElement(&quot;input&quot;); // append to body</span>
+<span class="cm"> * Y.Lang.isFunction(input.focus) // reports false in IE</span>
+<span class="cm"> *</span>
+<span class="cm"> * You will have to implement additional tests if these functions</span>
+<span class="cm"> * matter to you.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method isFunction</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The object to test</span>
+<span class="cm"> * @return {boolean} true if o is a function</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="o">===</span> <span class="nx">FUNCTION</span><span class="p">;</span>
+<span class="p">};</span>
     
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the supplied item is a date instance</span>
-<span class="c"> * @method isDate</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The object to test</span>
-<span class="c"> * @return {boolean} true if o is a date</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">isDate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c">// return o instanceof Date;</span>
-<span class="c"></span>    <span class="k">return</span> <span class="nx">L</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">===</span> <span class="nx">DATE</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">toString</span><span class="o">()</span> <span class="o">!==</span> <span class="s1">&#39;Invalid Date&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">isNaN</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the supplied item is a date instance</span>
+<span class="cm"> * @method isDate</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The object to test</span>
+<span class="cm"> * @return {boolean} true if o is a date</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">isDate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// return o instanceof Date;</span>
+    <span class="k">return</span> <span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="o">===</span> <span class="nx">DATE</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="o">!==</span> <span class="s1">&#39;Invalid Date&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the provided item is null</span>
-<span class="c"> * @method isNull</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The object to test</span>
-<span class="c"> * @return {boolean} true if o is null</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">isNull</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nx">o</span> <span class="o">===</span> <span class="kc">null</span><span class="o">;</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the provided item is null</span>
+<span class="cm"> * @method isNull</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The object to test</span>
+<span class="cm"> * @return {boolean} true if o is null</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">isNull</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">o</span> <span class="o">===</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">};</span>
     
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the provided item is a legal number</span>
-<span class="c"> * @method isNumber</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The object to test</span>
-<span class="c"> * @return {boolean} true if o is a number</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">NUMBER</span> <span class="o">&amp;&amp;</span> <span class="nb">isFinite</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the provided item is a legal number</span>
+<span class="cm"> * @method isNumber</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The object to test</span>
+<span class="cm"> * @return {boolean} true if o is a number</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">NUMBER</span> <span class="o">&amp;&amp;</span> <span class="nb">isFinite</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+<span class="p">};</span>
   
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the provided item is of type object</span>
-<span class="c"> * or function</span>
-<span class="c"> * @method isObject</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The object to test</span>
-<span class="c"> * @param failfn {boolean} fail if the input is a function</span>
-<span class="c"> * @return {boolean} true if o is an object</span>
-<span class="c"> */</span>  
-<span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">failfn</span><span class="o">)</span> <span class="o">{</span>
-<span class="k">return</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">OBJECT</span> <span class="o">||</span> <span class="o">(!</span><span class="nx">failfn</span> <span class="o">&amp;&amp;</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">o</span><span class="o">))))</span> <span class="o">||</span> <span class="kc">false</span><span class="o">;</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the provided item is of type object</span>
+<span class="cm"> * or function</span>
+<span class="cm"> * @method isObject</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The object to test</span>
+<span class="cm"> * @param failfn {boolean} fail if the input is a function</span>
+<span class="cm"> * @return {boolean} true if o is an object</span>
+<span class="cm"> */</span>  
+<span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">failfn</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">return</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">OBJECT</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="nx">failfn</span> <span class="o">&amp;&amp;</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">o</span><span class="p">))))</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span>
     
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the provided item is a string</span>
-<span class="c"> * @method isString</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The object to test</span>
-<span class="c"> * @return {boolean} true if o is a string</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">isString</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">STRING</span><span class="o">;</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the provided item is a string</span>
+<span class="cm"> * @method isString</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The object to test</span>
+<span class="cm"> * @return {boolean} true if o is a string</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">isString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">STRING</span><span class="p">;</span>
+<span class="p">};</span>
     
-<span class="c">/**</span>
-<span class="c"> * Determines whether or not the provided item is undefined</span>
-<span class="c"> * @method isUndefined</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The object to test</span>
-<span class="c"> * @return {boolean} true if o is undefined</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">isUndefined</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">UNDEFINED</span><span class="o">;</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Determines whether or not the provided item is undefined</span>
+<span class="cm"> * @method isUndefined</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The object to test</span>
+<span class="cm"> * @return {boolean} true if o is undefined</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">isUndefined</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">UNDEFINED</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns a string without any leading or trailing whitespace.  If </span>
-<span class="c"> * the input is not a string, the input will be returned untouched.</span>
-<span class="c"> * @method trim</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param s {string} the string to trim</span>
-<span class="c"> * @return {string} the trimmed string</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">trim</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">s</span><span class="o">){</span>
-    <span class="k">try</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">s</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">TRIMREGEX</span><span class="o">,</span> <span class="nx">EMPTYSTRING</span><span class="o">);</span>
-    <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">s</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns a string without any leading or trailing whitespace.  If </span>
+<span class="cm"> * the input is not a string, the input will be returned untouched.</span>
+<span class="cm"> * @method trim</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param s {string} the string to trim</span>
+<span class="cm"> * @return {string} the trimmed string</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">trim</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">){</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">TRIMREGEX</span><span class="p">,</span> <span class="nx">EMPTYSTRING</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * A convenience method for detecting a legitimate non-null value.</span>
-<span class="c"> * Returns false for null/undefined/NaN, true for other values, </span>
-<span class="c"> * including 0/false/&#39;&#39;</span>
-<span class="c"> * @method isValue</span>
-<span class="c"> * @static</span>
-<span class="c"> * @param o The item to test</span>
-<span class="c"> * @return {boolean} true if it is not null/undefined/NaN || false</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">isValue</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">type</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-    <span class="nx">switch</span> <span class="o">(</span><span class="nx">t</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">case</span> <span class="nx">NUMBER</span><span class="o">:</span>
-            <span class="k">return</span> <span class="nb">isFinite</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-        <span class="nx">case</span> <span class="nx">NULL</span><span class="o">:</span>
-        <span class="nx">case</span> <span class="nx">UNDEFINED</span><span class="o">:</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-        <span class="nx">default</span><span class="o">:</span>
-            <span class="k">return</span> <span class="o">!!(</span><span class="nx">t</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * A convenience method for detecting a legitimate non-null value.</span>
+<span class="cm"> * Returns false for null/undefined/NaN, true for other values, </span>
+<span class="cm"> * including 0/false/&#39;&#39;</span>
+<span class="cm"> * @method isValue</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param o The item to test</span>
+<span class="cm"> * @return {boolean} true if it is not null/undefined/NaN || false</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">isValue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="nx">NUMBER</span><span class="o">:</span>
+            <span class="k">return</span> <span class="nb">isFinite</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+        <span class="k">case</span> <span class="nx">NULL</span><span class="o">:</span>
+        <span class="k">case</span> <span class="nx">UNDEFINED</span><span class="o">:</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="k">return</span> <span class="o">!!</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-<span class="c">/**</span>
-<span class="c"> * Returns a string representing the type of the item passed in.</span>
-<span class="c"> * @method type</span>
-<span class="c"> * @param o the item to test</span>
-<span class="c"> * @return {string} the detected type</span>
-<span class="c"> */</span>
-<span class="nx">L</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span>  <span class="nx">TYPES</span><span class="o">[</span><span class="k">typeof</span> <span class="nx">o</span><span class="o">]</span> <span class="o">||</span> <span class="nx">TYPES</span><span class="o">[</span><span class="nx">TOSTRING</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">)]</span> <span class="o">||</span> <span class="o">(</span><span class="nx">o</span> <span class="o">?</span> <span class="nx">OBJECT</span> <span class="o">:</span> <span class="nx">NULL</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Returns a string representing the type of the item passed in.</span>
+<span class="cm"> * @method type</span>
+<span class="cm"> * @param o the item to test</span>
+<span class="cm"> * @return {string} the detected type</span>
+<span class="cm"> */</span>
+<span class="nx">L</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span>  <span class="nx">TYPES</span><span class="p">[</span><span class="k">typeof</span> <span class="nx">o</span><span class="p">]</span> <span class="o">||</span> <span class="nx">TYPES</span><span class="p">[</span><span class="nx">TOSTRING</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">)]</span> <span class="o">||</span> <span class="p">(</span><span class="nx">o</span> <span class="o">?</span> <span class="nx">OBJECT</span> <span class="o">:</span> <span class="nx">NULL</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="o">})();</span>
+<span class="p">})();</span>
 </pre></div>
 
                     </div>
@@ -304,6 +304,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

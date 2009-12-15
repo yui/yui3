@@ -47,327 +47,327 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>   
-    <span class="c">/**</span>
-<span class="c">     * The ArrayAssert object provides functions to test JavaScript array objects</span>
-<span class="c">     * for a variety of cases.</span>
-<span class="c">     *</span>
-<span class="c">     * @class ArrayAssert</span>
-<span class="c">     * @static</span>
-<span class="c">     */</span>
+                        <div class="highlight"><pre>   
+    <span class="cm">/**</span>
+<span class="cm">     * The ArrayAssert object provides functions to test JavaScript array objects</span>
+<span class="cm">     * for a variety of cases.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @class ArrayAssert</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
      
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">ArrayAssert</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">ArrayAssert</span> <span class="o">=</span> <span class="p">{</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Asserts that a value is present in an array. This uses the triple equals </span>
-<span class="c">         * sign so no type cohersion may occur.</span>
-<span class="c">         * @param {Object} needle The value that is expected in the array.</span>
-<span class="c">         * @param {Array} haystack An array of values.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method contains</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">contains</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">needle</span><span class="o">,</span> <span class="nx">haystack</span><span class="o">,</span> 
-                               <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that a value is present in an array. This uses the triple equals </span>
+<span class="cm">         * sign so no type cohersion may occur.</span>
+<span class="cm">         * @param {Object} needle The value that is expected in the array.</span>
+<span class="cm">         * @param {Array} haystack An array of values.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method contains</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">contains</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">needle</span><span class="p">,</span> <span class="nx">haystack</span><span class="p">,</span> 
+                               <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
             
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>               
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>               
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">haystack</span><span class="o">,</span> <span class="nx">needle</span><span class="o">)</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Value &quot;</span> <span class="o">+</span> <span class="nx">needle</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">needle</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;) not found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">haystack</span><span class="p">,</span> <span class="nx">needle</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Value &quot;</span> <span class="o">+</span> <span class="nx">needle</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">needle</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;) not found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Asserts that a set of values are present in an array. This uses the triple equals </span>
-<span class="c">         * sign so no type cohersion may occur. For this assertion to pass, all values must</span>
-<span class="c">         * be found.</span>
-<span class="c">         * @param {Object[]} needles An array of values that are expected in the array.</span>
-<span class="c">         * @param {Array} haystack An array of values to check.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method containsItems</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">containsItems</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">needles</span><span class="o">,</span> <span class="nx">haystack</span><span class="o">,</span> 
-                               <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>               
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that a set of values are present in an array. This uses the triple equals </span>
+<span class="cm">         * sign so no type cohersion may occur. For this assertion to pass, all values must</span>
+<span class="cm">         * be found.</span>
+<span class="cm">         * @param {Object[]} needles An array of values that are expected in the array.</span>
+<span class="cm">         * @param {Array} haystack An array of values to check.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method containsItems</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">containsItems</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">needles</span><span class="p">,</span> <span class="nx">haystack</span><span class="p">,</span> 
+                               <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>               
     
-            <span class="c">//begin checking values</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">needles</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">haystack</span><span class="o">,</span> <span class="nx">needles</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">==</span> <span class="o">-</span><span class="m">1</span><span class="o">){</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Value &quot;</span> <span class="o">+</span> <span class="nx">needles</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">needles</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">+</span> <span class="s2">&quot;) not found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="o">));</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="c1">//begin checking values</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">needles</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">haystack</span><span class="p">,</span> <span class="nx">needles</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Value &quot;</span> <span class="o">+</span> <span class="nx">needles</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; (&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">needles</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;) not found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="p">));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Asserts that a value matching some condition is present in an array. This uses</span>
-<span class="c">         * a function to determine a match.</span>
-<span class="c">         * @param {Function} matcher A function that returns true if the items matches or false if not.</span>
-<span class="c">         * @param {Array} haystack An array of values.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method containsMatch</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">containsMatch</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">matcher</span><span class="o">,</span> <span class="nx">haystack</span><span class="o">,</span> 
-                               <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that a value matching some condition is present in an array. This uses</span>
+<span class="cm">         * a function to determine a match.</span>
+<span class="cm">         * @param {Function} matcher A function that returns true if the items matches or false if not.</span>
+<span class="cm">         * @param {Array} haystack An array of values.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method containsMatch</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">containsMatch</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">matcher</span><span class="p">,</span> <span class="nx">haystack</span><span class="p">,</span> 
+                               <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
             
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>               
-            <span class="c">//check for valid matcher</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">matcher</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="o">){</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="o">(</span><span class="s2">&quot;ArrayAssert.containsMatch(): First argument must be a function.&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>               
+            <span class="c1">//check for valid matcher</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">matcher</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="p">){</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s2">&quot;ArrayAssert.containsMatch(): First argument must be a function.&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
             
-            <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">some</span><span class="o">(</span><span class="nx">haystack</span><span class="o">,</span> <span class="nx">matcher</span><span class="o">)){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;No match found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nx">haystack</span><span class="p">,</span> <span class="nx">matcher</span><span class="p">)){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;No match found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Asserts that a value is not present in an array. This uses the triple equals </span>
-<span class="c">         * Asserts that a value is not present in an array. This uses the triple equals </span>
-<span class="c">         * sign so no type cohersion may occur.</span>
-<span class="c">         * @param {Object} needle The value that is expected in the array.</span>
-<span class="c">         * @param {Array} haystack An array of values.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method doesNotContain</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">doesNotContain</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">needle</span><span class="o">,</span> <span class="nx">haystack</span><span class="o">,</span> 
-                               <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that a value is not present in an array. This uses the triple equals </span>
+<span class="cm">         * Asserts that a value is not present in an array. This uses the triple equals </span>
+<span class="cm">         * sign so no type cohersion may occur.</span>
+<span class="cm">         * @param {Object} needle The value that is expected in the array.</span>
+<span class="cm">         * @param {Array} haystack An array of values.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method doesNotContain</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">doesNotContain</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">needle</span><span class="p">,</span> <span class="nx">haystack</span><span class="p">,</span> 
+                               <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
             
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>               
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>               
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">haystack</span><span class="o">,</span> <span class="nx">needle</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Value found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">haystack</span><span class="p">,</span> <span class="nx">needle</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Value found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Asserts that a set of values are not present in an array. This uses the triple equals </span>
-<span class="c">         * sign so no type cohersion may occur. For this assertion to pass, all values must</span>
-<span class="c">         * not be found.</span>
-<span class="c">         * @param {Object[]} needles An array of values that are not expected in the array.</span>
-<span class="c">         * @param {Array} haystack An array of values to check.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method doesNotContainItems</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">doesNotContainItems</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">needles</span><span class="o">,</span> <span class="nx">haystack</span><span class="o">,</span> 
-                               <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that a set of values are not present in an array. This uses the triple equals </span>
+<span class="cm">         * sign so no type cohersion may occur. For this assertion to pass, all values must</span>
+<span class="cm">         * not be found.</span>
+<span class="cm">         * @param {Object[]} needles An array of values that are not expected in the array.</span>
+<span class="cm">         * @param {Array} haystack An array of values to check.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method doesNotContainItems</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">doesNotContainItems</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">needles</span><span class="p">,</span> <span class="nx">haystack</span><span class="p">,</span> 
+                               <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
     
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>               
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>               
     
-            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">needles</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">haystack</span><span class="o">,</span> <span class="nx">needles</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">){</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Value found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="o">));</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">needles</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">haystack</span><span class="p">,</span> <span class="nx">needles</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Value found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="p">));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
     
-        <span class="o">},</span>
+        <span class="p">},</span>
             
-        <span class="c">/**</span>
-<span class="c">         * Asserts that no values matching a condition are present in an array. This uses</span>
-<span class="c">         * a function to determine a match.</span>
-<span class="c">         * @param {Function} matcher A function that returns true if the items matches or false if not.</span>
-<span class="c">         * @param {Array} haystack An array of values.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method doesNotContainMatch</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">doesNotContainMatch</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">matcher</span><span class="o">,</span> <span class="nx">haystack</span><span class="o">,</span> 
-                               <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that no values matching a condition are present in an array. This uses</span>
+<span class="cm">         * a function to determine a match.</span>
+<span class="cm">         * @param {Function} matcher A function that returns true if the items matches or false if not.</span>
+<span class="cm">         * @param {Array} haystack An array of values.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method doesNotContainMatch</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">doesNotContainMatch</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">matcher</span><span class="p">,</span> <span class="nx">haystack</span><span class="p">,</span> 
+                               <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
             
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>     
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>     
           
-            <span class="c">//check for valid matcher</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">matcher</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="o">){</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="o">(</span><span class="s2">&quot;ArrayAssert.doesNotContainMatch(): First argument must be a function.&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c1">//check for valid matcher</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">matcher</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="p">){</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s2">&quot;ArrayAssert.doesNotContainMatch(): First argument must be a function.&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
             
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">some</span><span class="o">(</span><span class="nx">haystack</span><span class="o">,</span> <span class="nx">matcher</span><span class="o">)){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Value found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nx">haystack</span><span class="p">,</span> <span class="nx">matcher</span><span class="p">)){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Value found in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
             
-        <span class="c">/**</span>
-<span class="c">         * Asserts that the given value is contained in an array at the specified index.</span>
-<span class="c">         * This uses the triple equals sign so no type cohersion will occur.</span>
-<span class="c">         * @param {Object} needle The value to look for.</span>
-<span class="c">         * @param {Array} haystack The array to search in.</span>
-<span class="c">         * @param {int} index The index at which the value should exist.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method indexOf</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">indexOf</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">needle</span><span class="o">,</span> <span class="nx">haystack</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that the given value is contained in an array at the specified index.</span>
+<span class="cm">         * This uses the triple equals sign so no type cohersion will occur.</span>
+<span class="cm">         * @param {Object} needle The value to look for.</span>
+<span class="cm">         * @param {Array} haystack The array to search in.</span>
+<span class="cm">         * @param {int} index The index at which the value should exist.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method indexOf</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">indexOf</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">needle</span><span class="p">,</span> <span class="nx">haystack</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
         
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>     
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>     
 
-            <span class="c">//try to find the value in the array</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">haystack</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">haystack</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">needle</span><span class="o">){</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">index</span> <span class="o">!=</span> <span class="nx">i</span><span class="o">){</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Value exists at index &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; but should be at index &quot;</span> <span class="o">+</span> <span class="nx">index</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="o">));</span>                    
-                    <span class="o">}</span>
-                    <span class="k">return</span><span class="o">;</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+            <span class="c1">//try to find the value in the array</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">haystack</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">haystack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">needle</span><span class="p">){</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!=</span> <span class="nx">i</span><span class="p">){</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Value exists at index &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; but should be at index &quot;</span> <span class="o">+</span> <span class="nx">index</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">));</span>                    
+                    <span class="p">}</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
             
-            <span class="c">//if it makes it here, it wasn&#39;t found at all</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Value doesn&#39;t exist in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="o">));</span>
-        <span class="o">},</span>
+            <span class="c1">//if it makes it here, it wasn&#39;t found at all</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Value doesn&#39;t exist in array [&quot;</span> <span class="o">+</span> <span class="nx">haystack</span> <span class="o">+</span> <span class="s2">&quot;].&quot;</span><span class="p">));</span>
+        <span class="p">},</span>
             
-        <span class="c">/**</span>
-<span class="c">         * Asserts that the values in an array are equal, and in the same position,</span>
-<span class="c">         * as values in another array. This uses the double equals sign</span>
-<span class="c">         * so type cohersion may occur. Note that the array objects themselves</span>
-<span class="c">         * need not be the same for this test to pass.</span>
-<span class="c">         * @param {Array} expected An array of the expected values.</span>
-<span class="c">         * @param {Array} actual Any array of the actual values.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method itemsAreEqual</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">itemsAreEqual</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">expected</span><span class="o">,</span> <span class="nx">actual</span><span class="o">,</span> 
-                               <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that the values in an array are equal, and in the same position,</span>
+<span class="cm">         * as values in another array. This uses the double equals sign</span>
+<span class="cm">         * so type cohersion may occur. Note that the array objects themselves</span>
+<span class="cm">         * need not be the same for this test to pass.</span>
+<span class="cm">         * @param {Array} expected An array of the expected values.</span>
+<span class="cm">         * @param {Array} actual Any array of the actual values.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method itemsAreEqual</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">itemsAreEqual</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="nx">actual</span><span class="p">,</span> 
+                               <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
             
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>     
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>     
             
-            <span class="c">//first check array length</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">length</span><span class="o">){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Array should have a length of &quot;</span> <span class="o">+</span> <span class="nx">expected</span><span class="o">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot; but has a length of &quot;</span> <span class="o">+</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">length</span><span class="o">));</span>
-            <span class="o">}</span>
+            <span class="c1">//first check array length</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">expected</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">actual</span><span class="p">.</span><span class="nx">length</span><span class="p">){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Array should have a length of &quot;</span> <span class="o">+</span> <span class="nx">expected</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot; but has a length of &quot;</span> <span class="o">+</span> <span class="nx">actual</span><span class="p">.</span><span class="nx">length</span><span class="p">));</span>
+            <span class="p">}</span>
            
-            <span class="c">//begin checking values</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">expected</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">[</span><span class="nx">i</span><span class="o">]){</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">ComparisonFailure</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Values in position &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; are not equal.&quot;</span><span class="o">),</span> <span class="nx">expected</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">actual</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="c1">//begin checking values</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">expected</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">expected</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!=</span> <span class="nx">actual</span><span class="p">[</span><span class="nx">i</span><span class="p">]){</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">ComparisonFailure</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Values in position &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; are not equal.&quot;</span><span class="p">),</span> <span class="nx">expected</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">actual</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that the values in an array are equivalent, and in the same position,</span>
-<span class="c">         * as values in another array. This uses a function to determine if the values</span>
-<span class="c">         * are equivalent. Note that the array objects themselves</span>
-<span class="c">         * need not be the same for this test to pass.</span>
-<span class="c">         * @param {Array} expected An array of the expected values.</span>
-<span class="c">         * @param {Array} actual Any array of the actual values.</span>
-<span class="c">         * @param {Function} comparator A function that returns true if the values are equivalent</span>
-<span class="c">         *      or false if not.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method itemsAreEquivalent</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">itemsAreEquivalent</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">expected</span><span class="o">,</span> <span class="nx">actual</span><span class="o">,</span> 
-                               <span class="nx">comparator</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that the values in an array are equivalent, and in the same position,</span>
+<span class="cm">         * as values in another array. This uses a function to determine if the values</span>
+<span class="cm">         * are equivalent. Note that the array objects themselves</span>
+<span class="cm">         * need not be the same for this test to pass.</span>
+<span class="cm">         * @param {Array} expected An array of the expected values.</span>
+<span class="cm">         * @param {Array} actual Any array of the actual values.</span>
+<span class="cm">         * @param {Function} comparator A function that returns true if the values are equivalent</span>
+<span class="cm">         *      or false if not.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method itemsAreEquivalent</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">itemsAreEquivalent</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="nx">actual</span><span class="p">,</span> 
+                               <span class="nx">comparator</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
             
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>     
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>     
 
-            <span class="c">//make sure the comparator is valid</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">comparator</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="o">){</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="o">(</span><span class="s2">&quot;ArrayAssert.itemsAreEquivalent(): Third argument must be a function.&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c1">//make sure the comparator is valid</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">comparator</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="p">){</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="s2">&quot;ArrayAssert.itemsAreEquivalent(): Third argument must be a function.&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
             
-            <span class="c">//first check array length</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">length</span><span class="o">){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Array should have a length of &quot;</span> <span class="o">+</span> <span class="nx">expected</span><span class="o">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot; but has a length of &quot;</span> <span class="o">+</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">length</span><span class="o">));</span>
-            <span class="o">}</span>
+            <span class="c1">//first check array length</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">expected</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">actual</span><span class="p">.</span><span class="nx">length</span><span class="p">){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Array should have a length of &quot;</span> <span class="o">+</span> <span class="nx">expected</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot; but has a length of &quot;</span> <span class="o">+</span> <span class="nx">actual</span><span class="p">.</span><span class="nx">length</span><span class="p">));</span>
+            <span class="p">}</span>
             
-            <span class="c">//begin checking values</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">expected</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">comparator</span><span class="o">(</span><span class="nx">expected</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">actual</span><span class="o">[</span><span class="nx">i</span><span class="o">])){</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">ComparisonFailure</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Values in position &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; are not equivalent.&quot;</span><span class="o">),</span> <span class="nx">expected</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">actual</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="c1">//begin checking values</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">expected</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">comparator</span><span class="p">(</span><span class="nx">expected</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">actual</span><span class="p">[</span><span class="nx">i</span><span class="p">])){</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">ComparisonFailure</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Values in position &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; are not equivalent.&quot;</span><span class="p">),</span> <span class="nx">expected</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">actual</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that an array is empty.</span>
-<span class="c">         * @param {Array} actual The array to test.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method isEmpty</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">isEmpty</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">actual</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>        
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>     
-            <span class="k">if</span> <span class="o">(</span><span class="nx">actual</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Array should be empty.&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
-        <span class="o">},</span>    
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that an array is empty.</span>
+<span class="cm">         * @param {Array} actual The array to test.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method isEmpty</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">isEmpty</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">actual</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>        
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>     
+            <span class="k">if</span> <span class="p">(</span><span class="nx">actual</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Array should be empty.&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">},</span>    
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that an array is not empty.</span>
-<span class="c">         * @param {Array} actual The array to test.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method isNotEmpty</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">isNotEmpty</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">actual</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>        
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>     
-            <span class="k">if</span> <span class="o">(</span><span class="nx">actual</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Array should not be empty.&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
-        <span class="o">},</span>    
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that an array is not empty.</span>
+<span class="cm">         * @param {Array} actual The array to test.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method isNotEmpty</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">isNotEmpty</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">actual</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>        
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>     
+            <span class="k">if</span> <span class="p">(</span><span class="nx">actual</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Array should not be empty.&quot;</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">},</span>    
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that the values in an array are the same, and in the same position,</span>
-<span class="c">         * as values in another array. This uses the triple equals sign</span>
-<span class="c">         * so no type cohersion will occur. Note that the array objects themselves</span>
-<span class="c">         * need not be the same for this test to pass.</span>
-<span class="c">         * @param {Array} expected An array of the expected values.</span>
-<span class="c">         * @param {Array} actual Any array of the actual values.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method itemsAreSame</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">itemsAreSame</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">expected</span><span class="o">,</span> <span class="nx">actual</span><span class="o">,</span> 
-                              <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that the values in an array are the same, and in the same position,</span>
+<span class="cm">         * as values in another array. This uses the triple equals sign</span>
+<span class="cm">         * so no type cohersion will occur. Note that the array objects themselves</span>
+<span class="cm">         * need not be the same for this test to pass.</span>
+<span class="cm">         * @param {Array} expected An array of the expected values.</span>
+<span class="cm">         * @param {Array} actual Any array of the actual values.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method itemsAreSame</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">itemsAreSame</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">expected</span><span class="p">,</span> <span class="nx">actual</span><span class="p">,</span> 
+                              <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
             
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_increment</span><span class="o">();</span>     
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_increment</span><span class="p">();</span>     
 
-            <span class="c">//first check array length</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">length</span><span class="o">){</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Array should have a length of &quot;</span> <span class="o">+</span> <span class="nx">expected</span><span class="o">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot; but has a length of &quot;</span> <span class="o">+</span> <span class="nx">actual</span><span class="o">.</span><span class="nx">length</span><span class="o">));</span>
-            <span class="o">}</span>
+            <span class="c1">//first check array length</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">expected</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">actual</span><span class="p">.</span><span class="nx">length</span><span class="p">){</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Array should have a length of &quot;</span> <span class="o">+</span> <span class="nx">expected</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="s2">&quot; but has a length of &quot;</span> <span class="o">+</span> <span class="nx">actual</span><span class="p">.</span><span class="nx">length</span><span class="p">));</span>
+            <span class="p">}</span>
                         
-            <span class="c">//begin checking values</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">expected</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">expected</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">!==</span> <span class="nx">actual</span><span class="o">[</span><span class="nx">i</span><span class="o">]){</span>
-                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">ComparisonFailure</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Values in position &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; are not the same.&quot;</span><span class="o">),</span> <span class="nx">expected</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">actual</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="c1">//begin checking values</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">expected</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">expected</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">actual</span><span class="p">[</span><span class="nx">i</span><span class="p">]){</span>
+                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">ComparisonFailure</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Values in position &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; are not the same.&quot;</span><span class="p">),</span> <span class="nx">expected</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">actual</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Asserts that the given value is contained in an array at the specified index,</span>
-<span class="c">         * starting from the back of the array.</span>
-<span class="c">         * This uses the triple equals sign so no type cohersion will occur.</span>
-<span class="c">         * @param {Object} needle The value to look for.</span>
-<span class="c">         * @param {Array} haystack The array to search in.</span>
-<span class="c">         * @param {int} index The index at which the value should exist.</span>
-<span class="c">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
-<span class="c">         * @method lastIndexOf</span>
-<span class="c">         * @static</span>
-<span class="c">         */</span>
-        <span class="nx">lastIndexOf</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">needle</span><span class="o">,</span> <span class="nx">haystack</span><span class="o">,</span> <span class="nx">index</span><span class="o">,</span> <span class="nx">message</span><span class="o">)</span> <span class="o">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Asserts that the given value is contained in an array at the specified index,</span>
+<span class="cm">         * starting from the back of the array.</span>
+<span class="cm">         * This uses the triple equals sign so no type cohersion will occur.</span>
+<span class="cm">         * @param {Object} needle The value to look for.</span>
+<span class="cm">         * @param {Array} haystack The array to search in.</span>
+<span class="cm">         * @param {int} index The index at which the value should exist.</span>
+<span class="cm">         * @param {String} message (Optional) The message to display if the assertion fails.</span>
+<span class="cm">         * @method lastIndexOf</span>
+<span class="cm">         * @static</span>
+<span class="cm">         */</span>
+        <span class="nx">lastIndexOf</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">needle</span><span class="p">,</span> <span class="nx">haystack</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
         
-            <span class="c">//try to find the value in the array</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="nx">haystack</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">--){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">haystack</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">needle</span><span class="o">){</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">index</span> <span class="o">!=</span> <span class="nx">i</span><span class="o">){</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Value exists at index &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; but should be at index &quot;</span> <span class="o">+</span> <span class="nx">index</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="o">));</span>                    
-                    <span class="o">}</span>
-                    <span class="k">return</span><span class="o">;</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
+            <span class="c1">//try to find the value in the array</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="nx">haystack</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">haystack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">needle</span><span class="p">){</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">!=</span> <span class="nx">i</span><span class="p">){</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Value exists at index &quot;</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="s2">&quot; but should be at index &quot;</span> <span class="o">+</span> <span class="nx">index</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">));</span>                    
+                    <span class="p">}</span>
+                    <span class="k">return</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
             
-            <span class="c">//if it makes it here, it wasn&#39;t found at all</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Assert</span><span class="o">.</span><span class="nx">_formatMessage</span><span class="o">(</span><span class="nx">message</span><span class="o">,</span> <span class="s2">&quot;Value doesn&#39;t exist in array.&quot;</span><span class="o">));</span>        
-        <span class="o">}</span>
+            <span class="c1">//if it makes it here, it wasn&#39;t found at all</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">fail</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Assert</span><span class="p">.</span><span class="nx">_formatMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">,</span> <span class="s2">&quot;Value doesn&#39;t exist in array.&quot;</span><span class="p">));</span>        
+        <span class="p">}</span>
         
-    <span class="o">};</span>
+    <span class="p">};</span>
 </pre></div>
 
                     </div>
@@ -415,6 +415,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class="selected"><a href="module_test.html" title="test">test</a></li>

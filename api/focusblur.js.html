@@ -47,84 +47,84 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Adds focus and blur event listener support.  These events normally</span>
-<span class="c"> * do not bubble, so this adds support for that so these events</span>
-<span class="c"> * can be used in event delegation scenarios.</span>
-<span class="c"> * </span>
-<span class="c"> * @module event</span>
-<span class="c"> * @submodule event-focus</span>
-<span class="c"> */</span>
-<span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds focus and blur event listener support.  These events normally</span>
+<span class="cm"> * do not bubble, so this adds support for that so these events</span>
+<span class="cm"> * can be used in event delegation scenarios.</span>
+<span class="cm"> * </span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-focus</span>
+<span class="cm"> */</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-<span class="k">var</span> <span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span>
-	<span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span>
-	<span class="nx">plugins</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">,</span>
-	<span class="nx">ie</span> <span class="o">=</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">,</span>
-	<span class="nx">bUseMutation</span> <span class="o">=</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span> <span class="o">||</span> <span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span><span class="o">),</span>
-	<span class="nx">eventNames</span> <span class="o">=</span> <span class="o">{</span>
-		<span class="nx">focus</span><span class="o">:</span> <span class="o">(</span><span class="nx">ie</span> <span class="o">?</span> <span class="s1">&#39;focusin&#39;</span> <span class="o">:</span> <span class="o">(</span><span class="nx">bUseMutation</span> <span class="o">?</span> <span class="s1">&#39;DOMFocusIn&#39;</span> <span class="o">:</span> <span class="s1">&#39;focus&#39;</span><span class="o">)),</span>
-		<span class="nx">blur</span><span class="o">:</span> <span class="o">(</span><span class="nx">ie</span> <span class="o">?</span> <span class="s1">&#39;focusout&#39;</span> <span class="o">:</span> <span class="o">(</span><span class="nx">bUseMutation</span> <span class="o">?</span> <span class="s1">&#39;DOMFocusOut&#39;</span> <span class="o">:</span> <span class="s1">&#39;blur&#39;</span><span class="o">))</span>
-	<span class="o">},</span>
+<span class="kd">var</span> <span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">,</span>
+	<span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span>
+	<span class="nx">plugins</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">,</span>
+	<span class="nx">ie</span> <span class="o">=</span> <span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">,</span>
+	<span class="nx">bUseMutation</span> <span class="o">=</span> <span class="p">(</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span> <span class="o">||</span> <span class="nx">UA</span><span class="p">.</span><span class="nx">webkit</span><span class="p">),</span>
+	<span class="nx">eventNames</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="nx">focus</span><span class="o">:</span> <span class="p">(</span><span class="nx">ie</span> <span class="o">?</span> <span class="s1">&#39;focusin&#39;</span> <span class="o">:</span> <span class="p">(</span><span class="nx">bUseMutation</span> <span class="o">?</span> <span class="s1">&#39;DOMFocusIn&#39;</span> <span class="o">:</span> <span class="s1">&#39;focus&#39;</span><span class="p">)),</span>
+		<span class="nx">blur</span><span class="o">:</span> <span class="p">(</span><span class="nx">ie</span> <span class="o">?</span> <span class="s1">&#39;focusout&#39;</span> <span class="o">:</span> <span class="p">(</span><span class="nx">bUseMutation</span> <span class="o">?</span> <span class="s1">&#39;DOMFocusOut&#39;</span> <span class="o">:</span> <span class="s1">&#39;blur&#39;</span><span class="p">))</span>
+	<span class="p">},</span>
 
-	<span class="c">//	Only need to use capture phase for Gecko since it doesn&#39;t support </span>
-<span class="c"></span>	<span class="c">//	focusin, focusout, DOMFocusIn, or DOMFocusOut</span>
-<span class="c"></span>    <span class="nx">CAPTURE_CONFIG</span> <span class="o">=</span> <span class="o">{</span> <span class="nx">capture</span><span class="o">:</span> <span class="o">(</span><span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">)</span> <span class="o">},</span>
+	<span class="c1">//	Only need to use capture phase for Gecko since it doesn&#39;t support </span>
+	<span class="c1">//	focusin, focusout, DOMFocusIn, or DOMFocusOut</span>
+    <span class="nx">CAPTURE_CONFIG</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">capture</span><span class="o">:</span> <span class="p">(</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">)</span> <span class="p">},</span>
 
 
-	<span class="nx">attach</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+	<span class="nx">attach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
 
-	    <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">args</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-		<span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">eventNames</span><span class="o">[</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]];</span>
-	    <span class="k">return</span> <span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">config</span><span class="o">);</span>
+	    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+		<span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">eventNames</span><span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]];</span>
+	    <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
 
-	<span class="o">},</span>
+	<span class="p">},</span>
 	
-	<span class="nx">eventAdapter</span> <span class="o">=</span> <span class="o">{</span>
+	<span class="nx">eventAdapter</span> <span class="o">=</span> <span class="p">{</span>
 
-		<span class="nx">on</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-			<span class="k">return</span> <span class="nx">attach</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">CAPTURE_CONFIG</span><span class="o">);</span>
-		<span class="o">}</span>
+		<span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">attach</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CAPTURE_CONFIG</span><span class="p">);</span>
+		<span class="p">}</span>
 
-	<span class="o">};</span>
+	<span class="p">};</span>
 
 
-<span class="nx">Event</span><span class="o">.</span><span class="nx">_attachFocus</span> <span class="o">=</span> <span class="nx">attach</span><span class="o">;</span>
-<span class="nx">Event</span><span class="o">.</span><span class="nx">_attachBlur</span> <span class="o">=</span> <span class="nx">attach</span><span class="o">;</span>
+<span class="nx">Event</span><span class="p">.</span><span class="nx">_attachFocus</span> <span class="o">=</span> <span class="nx">attach</span><span class="p">;</span>
+<span class="nx">Event</span><span class="p">.</span><span class="nx">_attachBlur</span> <span class="o">=</span> <span class="nx">attach</span><span class="p">;</span>
 
-<span class="c">/**</span>
-<span class="c"> * Adds a DOM focus listener.  Uses the focusin event in IE, </span>
-<span class="c"> * DOMFocusIn for Opera and Webkit, and the capture phase for Gecko so that</span>
-<span class="c"> * the event propagates in a way that enables event delegation.</span>
-<span class="c"> *</span>
-<span class="c"> * @for YUI</span>
-<span class="c"> * @event focus</span>
-<span class="c"> * @param type {string} &#39;focus&#39;</span>
-<span class="c"> * @param fn {function} the callback function to execute</span>
-<span class="c"> * @param o {string|HTMLElement|collection} the element(s) to bind</span>
-<span class="c"> * @param context optional context object</span>
-<span class="c"> * @param args 0..n additional arguments to provide to the listener.</span>
-<span class="c"> * @return {EventHandle} the detach handle</span>
-<span class="c"> */</span>
-<span class="nx">plugins</span><span class="o">.</span><span class="nx">focus</span> <span class="o">=</span> <span class="nx">eventAdapter</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * Adds a DOM focus listener.  Uses the focusin event in IE, </span>
+<span class="cm"> * DOMFocusIn for Opera and Webkit, and the capture phase for Gecko so that</span>
+<span class="cm"> * the event propagates in a way that enables event delegation.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> * @event focus</span>
+<span class="cm"> * @param type {string} &#39;focus&#39;</span>
+<span class="cm"> * @param fn {function} the callback function to execute</span>
+<span class="cm"> * @param o {string|HTMLElement|collection} the element(s) to bind</span>
+<span class="cm"> * @param context optional context object</span>
+<span class="cm"> * @param args 0..n additional arguments to provide to the listener.</span>
+<span class="cm"> * @return {EventHandle} the detach handle</span>
+<span class="cm"> */</span>
+<span class="nx">plugins</span><span class="p">.</span><span class="nx">focus</span> <span class="o">=</span> <span class="nx">eventAdapter</span><span class="p">;</span>
 
-<span class="c">/**</span>
-<span class="c"> * Adds a DOM blur listener.  Uses the focusout event in IE, </span>
-<span class="c"> * DOMFocusOut for Opera and Webkit, and the capture phase for Gecko so that</span>
-<span class="c"> * the event propagates in a way that enables event delegation.</span>
-<span class="c"> *</span>
-<span class="c"> * @for YUI</span>
-<span class="c"> * @event blur</span>
-<span class="c"> * @param type {string} &#39;blur&#39;</span>
-<span class="c"> * @param fn {function} the callback function to execute</span>
-<span class="c"> * @param o {string|HTMLElement|collection} the element(s) to bind</span>
-<span class="c"> * @param context optional context object</span>
-<span class="c"> * @param args 0..n additional arguments to provide to the listener.</span>
-<span class="c"> * @return {EventHandle} the detach handle</span>
-<span class="c"> */</span>
-<span class="nx">plugins</span><span class="o">.</span><span class="nx">blur</span> <span class="o">=</span> <span class="nx">eventAdapter</span><span class="o">;</span>
+<span class="cm">/**</span>
+<span class="cm"> * Adds a DOM blur listener.  Uses the focusout event in IE, </span>
+<span class="cm"> * DOMFocusOut for Opera and Webkit, and the capture phase for Gecko so that</span>
+<span class="cm"> * the event propagates in a way that enables event delegation.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> * @event blur</span>
+<span class="cm"> * @param type {string} &#39;blur&#39;</span>
+<span class="cm"> * @param fn {function} the callback function to execute</span>
+<span class="cm"> * @param o {string|HTMLElement|collection} the element(s) to bind</span>
+<span class="cm"> * @param context optional context object</span>
+<span class="cm"> * @param args 0..n additional arguments to provide to the listener.</span>
+<span class="cm"> * @return {EventHandle} the detach handle</span>
+<span class="cm"> */</span>
+<span class="nx">plugins</span><span class="p">.</span><span class="nx">blur</span> <span class="o">=</span> <span class="nx">eventAdapter</span><span class="p">;</span>
 
-<span class="o">})();</span>
+<span class="p">})();</span>
 </pre></div>
 
                     </div>
@@ -172,6 +172,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

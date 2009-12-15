@@ -1,12 +1,12 @@
 YUI.add('dd-proxy', function(Y) {
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.
      * @module dd
      * @submodule dd-proxy
      */
     /**
-     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.
+     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.
      * @class DDProxy
      * @extends Base
      * @constructor
@@ -16,11 +16,10 @@ YUI.add('dd-proxy', function(Y) {
         NODE = 'node',
         DRAG_NODE = 'dragNode',
         HOST = 'host',
-        TRUE = true;
-
-    var P = function(config) {
-        P.superclass.constructor.apply(this, arguments);
-    };
+        TRUE = true, proto,
+        P = function(config) {
+            P.superclass.constructor.apply(this, arguments);
+        };
     
     P.NAME = 'DDProxy';
     /**
@@ -78,7 +77,7 @@ YUI.add('dd-proxy', function(Y) {
         }
     };
 
-    var proto = {
+    proto = {
         /**
         * @private
         * @property _hands
@@ -98,7 +97,7 @@ YUI.add('dd-proxy', function(Y) {
             if (!this._hands) {
                 this._hands = [];
             }
-            var i, h, h1, host = this.get(HOST), dnode = host.get(DRAG_NODE);
+            var h, h1, host = this.get(HOST), dnode = host.get(DRAG_NODE);
             if (dnode.compareTo(host.get(NODE))) {
                 if (DDM._proxy) {
                     host.set(DRAG_NODE, DDM._proxy);
@@ -170,7 +169,7 @@ YUI.add('dd-proxy', function(Y) {
                 DDM._proxy = TRUE;
 
                 var p = Y.Node.create('<div></div>'),
-                b = Y.Node.get('body');
+                b = Y.one('body');
 
                 p.setStyles({
                     position: 'absolute',

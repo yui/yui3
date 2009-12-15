@@ -47,106 +47,106 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Extends DataSource with schema-parsing on JSON data.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datasource</span>
-<span class="c"> * @submodule datasource-jsonschema</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Extends DataSource with schema-parsing on JSON data.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datasource</span>
+<span class="cm"> * @submodule datasource-jsonschema</span>
+<span class="cm"> */</span>
 
-<span class="c">/**</span>
-<span class="c"> * Adds schema-parsing to the DataSource Utility.</span>
-<span class="c"> * @class DataSourceJSONSchema</span>
-<span class="c"> * @extends Plugin.Base</span>
-<span class="c"> */</span>    
-<span class="k">var</span> <span class="nx">DataSourceJSONSchema</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-    <span class="nx">DataSourceJSONSchema</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-<span class="o">};</span>
+<span class="cm">/**</span>
+<span class="cm"> * Adds schema-parsing to the DataSource Utility.</span>
+<span class="cm"> * @class DataSourceJSONSchema</span>
+<span class="cm"> * @extends Plugin.Base</span>
+<span class="cm"> */</span>    
+<span class="kd">var</span> <span class="nx">DataSourceJSONSchema</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">DataSourceJSONSchema</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">DataSourceJSONSchema</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">     * The namespace for the plugin. This will be the property on the host which</span>
-<span class="c">     * references the plugin instance.</span>
-<span class="c">     *</span>
-<span class="c">     * @property NS</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static</span>
-<span class="c">     * @final</span>
-<span class="c">     * @value &quot;schema&quot;</span>
-<span class="c">     */</span>
-    <span class="nx">NS</span><span class="o">:</span> <span class="s2">&quot;schema&quot;</span><span class="o">,</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">DataSourceJSONSchema</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * The namespace for the plugin. This will be the property on the host which</span>
+<span class="cm">     * references the plugin instance.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property NS</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @value &quot;schema&quot;</span>
+<span class="cm">     */</span>
+    <span class="nx">NS</span><span class="o">:</span> <span class="s2">&quot;schema&quot;</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Class name.</span>
-<span class="c">     *</span>
-<span class="c">     * @property NAME</span>
-<span class="c">     * @type String</span>
-<span class="c">     * @static</span>
-<span class="c">     * @final</span>
-<span class="c">     * @value &quot;dataSourceJSONSchema&quot;</span>
-<span class="c">     */</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceJSONSchema&quot;</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Class name.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @final</span>
+<span class="cm">     * @value &quot;dataSourceJSONSchema&quot;</span>
+<span class="cm">     */</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s2">&quot;dataSourceJSONSchema&quot;</span><span class="p">,</span>
 
-    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">// DataSourceJSONSchema Attributes</span>
-<span class="c"></span>    <span class="c">//</span>
-<span class="c"></span>    <span class="c">/////////////////////////////////////////////////////////////////////////////</span>
-<span class="c"></span>
-    <span class="nx">ATTRS</span><span class="o">:</span> <span class="o">{</span>
-        <span class="nx">schema</span><span class="o">:</span> <span class="o">{</span>
-            <span class="c">//value: {}</span>
-<span class="c"></span>        <span class="o">}</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
+    <span class="c1">//</span>
+    <span class="c1">// DataSourceJSONSchema Attributes</span>
+    <span class="c1">//</span>
+    <span class="c1">/////////////////////////////////////////////////////////////////////////////</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DataSourceJSONSchema</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">/**</span>
-<span class="c">    * Internal init() handler.</span>
-<span class="c">    *</span>
-<span class="c">    * @method initializer</span>
-<span class="c">    * @param config {Object} Config object.</span>
-<span class="c">    * @private</span>
-<span class="c">    */</span>
-    <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">doBefore</span><span class="o">(</span><span class="s2">&quot;_defDataFn&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_beforeDefDataFn</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">schema</span><span class="o">:</span> <span class="p">{</span>
+            <span class="c1">//value: {}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Parses raw data into a normalized response.</span>
-<span class="c">     *</span>
-<span class="c">     * @method _beforeDefDataFn</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
-<span class="c">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * &lt;/dd&gt;</span>
-<span class="c">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
-<span class="c">     * @protected</span>
-<span class="c">     */</span>
-    <span class="nx">_beforeDefDataFn</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">IO</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">)</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">IO</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">data</span><span class="o">.</span><span class="nx">responseText</span><span class="o">))</span> <span class="o">?</span> <span class="nx">e</span><span class="o">.</span><span class="nx">data</span><span class="o">.</span><span class="nx">responseText</span> <span class="o">:</span> <span class="nx">e</span><span class="o">.</span><span class="nx">data</span><span class="o">,</span>
-            <span class="nx">response</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DataSchema</span><span class="o">.</span><span class="nx">JSON</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;schema&quot;</span><span class="o">),</span> <span class="nx">data</span><span class="o">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">DataSourceJSONSchema</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">    * Internal init() handler.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @method initializer</span>
+<span class="cm">    * @param config {Object} Config object.</span>
+<span class="cm">    * @private</span>
+<span class="cm">    */</span>
+    <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">doBefore</span><span class="p">(</span><span class="s2">&quot;_defDataFn&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_beforeDefDataFn</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Parses raw data into a normalized response.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _beforeDefDataFn</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;tId (Number)&lt;/dt&gt; &lt;dd&gt;Unique transaction ID.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;request (Object)&lt;/dt&gt; &lt;dd&gt;The request.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;callback (Object)&lt;/dt&gt; &lt;dd&gt;The callback object with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;success (Function)&lt;/dt&gt; &lt;dd&gt;Success handler.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;failure (Function)&lt;/dt&gt; &lt;dd&gt;Failure handler.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * &lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;data (Object)&lt;/dt&gt; &lt;dd&gt;Raw data.&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_beforeDefDataFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nx">IO</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">)</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nx">IO</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">responseText</span><span class="p">))</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">responseText</span> <span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span>
+            <span class="nx">response</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataSchema</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;schema&quot;</span><span class="p">),</span> <span class="nx">data</span><span class="p">);</span>
             
-        <span class="c">// Default</span>
-<span class="c"></span>        <span class="k">if</span><span class="o">(!</span><span class="nx">response</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">response</span> <span class="o">=</span> <span class="o">{</span>
-                <span class="nx">meta</span><span class="o">:</span> <span class="o">{},</span>
+        <span class="c1">// Default</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">response</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">meta</span><span class="o">:</span> <span class="p">{},</span>
                 <span class="nx">results</span><span class="o">:</span> <span class="nx">data</span>
-            <span class="o">};</span>
-        <span class="o">}</span>
+            <span class="p">};</span>
+        <span class="p">}</span>
         
-        <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s2">&quot;host&quot;</span><span class="o">).</span><span class="nx">fire</span><span class="o">(</span><span class="s2">&quot;response&quot;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">({</span><span class="nx">response</span><span class="o">:</span><span class="nx">response</span><span class="o">},</span> <span class="nx">e</span><span class="o">));</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">Halt</span><span class="o">(</span><span class="s2">&quot;DataSourceJSONSchema plugin halted _defDataFn&quot;</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">).</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span><span class="nx">response</span><span class="o">:</span><span class="nx">response</span><span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">Halt</span><span class="p">(</span><span class="s2">&quot;DataSourceJSONSchema plugin halted _defDataFn&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">});</span>
     
-<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;Plugin&#39;</span><span class="o">).</span><span class="nx">DataSourceJSONSchema</span> <span class="o">=</span> <span class="nx">DataSourceJSONSchema</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Plugin&#39;</span><span class="p">).</span><span class="nx">DataSourceJSONSchema</span> <span class="o">=</span> <span class="nx">DataSourceJSONSchema</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -194,6 +194,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

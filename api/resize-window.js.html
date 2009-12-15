@@ -47,65 +47,65 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Adds a window resize event that has its behavior normalized to fire at the</span>
-<span class="c"> * end of the resize rather than constantly during the resize.</span>
-<span class="c"> * @module event</span>
-<span class="c"> * @submodule event-resize</span>
-<span class="c"> */</span>
-<span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds a window resize event that has its behavior normalized to fire at the</span>
+<span class="cm"> * end of the resize rather than constantly during the resize.</span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-resize</span>
+<span class="cm"> */</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-<span class="k">var</span> <span class="nx">detachHandle</span><span class="o">,</span>
+<span class="kd">var</span> <span class="nx">detachHandle</span><span class="p">,</span>
 
-    <span class="nx">timerHandle</span><span class="o">,</span>
+    <span class="nx">timerHandle</span><span class="p">,</span>
 
-    <span class="nx">CE_NAME</span> <span class="o">=</span> <span class="s1">&#39;window:resize&#39;</span><span class="o">,</span>
+    <span class="nx">CE_NAME</span> <span class="o">=</span> <span class="s1">&#39;window:resize&#39;</span><span class="p">,</span>
 
-    <span class="nx">handler</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">handler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">gecko</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">CE_NAME</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">CE_NAME</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
 
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">timerHandle</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">timerHandle</span><span class="o">.</span><span class="nx">cancel</span><span class="o">();</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">timerHandle</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">timerHandle</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+            <span class="p">}</span>
 
-            <span class="nx">timerHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">windowResizeDelay</span> <span class="o">||</span> <span class="m">40</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">CE_NAME</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
-            <span class="o">});</span>
-        <span class="o">}</span>
+            <span class="nx">timerHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">windowResizeDelay</span> <span class="o">||</span> <span class="mi">40</span><span class="p">,</span> <span class="nx">Y</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">CE_NAME</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
         
-    <span class="o">};</span>
+    <span class="p">};</span>
 
 
-<span class="c">/**</span>
-<span class="c"> * Firefox fires the window resize event once when the resize action</span>
-<span class="c"> * finishes, other browsers fire the event periodically during the</span>
-<span class="c"> * resize.  This code uses timeout logic to simulate the Firefox </span>
-<span class="c"> * behavior in other browsers.</span>
-<span class="c"> * @event windowresize</span>
-<span class="c"> * @for YUI</span>
-<span class="c"> */</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">evt</span><span class="o">.</span><span class="nx">plugins</span><span class="o">.</span><span class="nx">windowresize</span> <span class="o">=</span> <span class="o">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * Firefox fires the window resize event once when the resize action</span>
+<span class="cm"> * finishes, other browsers fire the event periodically during the</span>
+<span class="cm"> * resize.  This code uses timeout logic to simulate the Firefox </span>
+<span class="cm"> * behavior in other browsers.</span>
+<span class="cm"> * @event windowresize</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">windowresize</span> <span class="o">=</span> <span class="p">{</span>
 
-    <span class="nx">on</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="c">// check for single window listener and add if needed</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">detachHandle</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">detachHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">_attach</span><span class="o">([</span><span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="nx">handler</span><span class="o">]);</span>
-        <span class="o">}</span>
+        <span class="c1">// check for single window listener and add if needed</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">detachHandle</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">detachHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;resize&#39;</span><span class="p">,</span> <span class="nx">handler</span><span class="p">]);</span>
+        <span class="p">}</span>
 
-        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-        <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">CE_NAME</span><span class="o">;</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CE_NAME</span><span class="p">;</span>
 
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
-<span class="o">})();</span>
+<span class="p">})();</span>
 </pre></div>
 
                     </div>
@@ -153,6 +153,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

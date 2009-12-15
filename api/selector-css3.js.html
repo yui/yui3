@@ -47,145 +47,145 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * The selector css3 module provides support for css3 selectors.</span>
-<span class="c"> * @module dom</span>
-<span class="c"> * @submodule selector-css3</span>
-<span class="c"> * @for Selector</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * The selector css3 module provides support for css3 selectors.</span>
+<span class="cm"> * @module dom</span>
+<span class="cm"> * @submodule selector-css3</span>
+<span class="cm"> * @for Selector</span>
+<span class="cm"> */</span>
 
-<span class="c">/*</span>
-<span class="c">    an+b = get every _a_th node starting at the _b_th</span>
-<span class="c">    0n+b = no repeat (&quot;0&quot; and &quot;n&quot; may both be omitted (together) , e.g. &quot;0n+1&quot; or &quot;1&quot;, not &quot;0+1&quot;), return only the _b_th element</span>
-<span class="c">    1n+b =  get every element starting from b (&quot;1&quot; may may be omitted, e.g. &quot;1n+0&quot; or &quot;n+0&quot; or &quot;n&quot;)</span>
-<span class="c">    an+0 = get every _a_th element, &quot;0&quot; may be omitted </span>
-<span class="c">*/</span>
+<span class="cm">/*</span>
+<span class="cm">    an+b = get every _a_th node starting at the _b_th</span>
+<span class="cm">    0n+b = no repeat (&quot;0&quot; and &quot;n&quot; may both be omitted (together) , e.g. &quot;0n+1&quot; or &quot;1&quot;, not &quot;0+1&quot;), return only the _b_th element</span>
+<span class="cm">    1n+b =  get every element starting from b (&quot;1&quot; may may be omitted, e.g. &quot;1n+0&quot; or &quot;n+0&quot; or &quot;n&quot;)</span>
+<span class="cm">    an+0 = get every _a_th element, &quot;0&quot; may be omitted </span>
+<span class="cm">*/</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_reNth</span> <span class="o">=</span> <span class="sr">/^(?:([\-]?\d*)(n){1}|(odd|even)$)*([\-+]?\d*)$/</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_reNth</span> <span class="o">=</span> <span class="sr">/^(?:([\-]?\d*)(n){1}|(odd|even)$)*([\-+]?\d*)$/</span><span class="p">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">,</span> <span class="nx">tag</span><span class="o">,</span> <span class="nx">reverse</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_reNth</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">expr</span><span class="o">);</span>
-    <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nb">RegExp</span><span class="o">.</span><span class="nx">$1</span><span class="o">,</span> <span class="m">10</span><span class="o">),</span> <span class="c">// include every _a_ elements (zero means no repeat, just first _a_)</span>
-<span class="c"></span>        <span class="nx">n</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="o">.</span><span class="nx">$2</span><span class="o">,</span> <span class="c">// &quot;n&quot;</span>
-<span class="c"></span>        <span class="nx">oddeven</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="o">.</span><span class="nx">$3</span><span class="o">,</span> <span class="c">// &quot;odd&quot; or &quot;even&quot;</span>
-<span class="c"></span>        <span class="nx">b</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nb">RegExp</span><span class="o">.</span><span class="nx">$4</span><span class="o">,</span> <span class="m">10</span><span class="o">)</span> <span class="o">||</span> <span class="m">0</span><span class="o">,</span> <span class="c">// start scan from element _b_</span>
-<span class="c"></span>        <span class="nx">result</span> <span class="o">=</span> <span class="o">[],</span>
-        <span class="nx">siblings</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">tag</span><span class="o">),</span>
-        <span class="nx">op</span><span class="o">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_getNth</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">,</span> <span class="nx">tag</span><span class="p">,</span> <span class="nx">reverse</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_reNth</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">expr</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nb">RegExp</span><span class="p">.</span><span class="nx">$1</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="c1">// include every _a_ elements (zero means no repeat, just first _a_)</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$2</span><span class="p">,</span> <span class="c1">// &quot;n&quot;</span>
+        <span class="nx">oddeven</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$3</span><span class="p">,</span> <span class="c1">// &quot;odd&quot; or &quot;even&quot;</span>
+        <span class="nx">b</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nb">RegExp</span><span class="p">.</span><span class="nx">$4</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">||</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">// start scan from element _b_</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">siblings</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_children</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">,</span> <span class="nx">tag</span><span class="p">),</span>
+        <span class="nx">op</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="o">(</span><span class="nx">oddeven</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">a</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span> <span class="c">// always every other</span>
-<span class="c"></span>        <span class="nx">op</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">;</span>
-        <span class="nx">n</span> <span class="o">=</span> <span class="s1">&#39;n&#39;</span><span class="o">;</span>
-        <span class="nx">b</span> <span class="o">=</span> <span class="o">(</span><span class="nx">oddeven</span> <span class="o">===</span> <span class="s1">&#39;odd&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">;</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span> <span class="nb">isNaN</span><span class="o">(</span><span class="nx">a</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span>
-        <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">;</span> <span class="c">// start from the first or no repeat</span>
-<span class="c"></span>    <span class="o">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">oddeven</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">a</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">// always every other</span>
+        <span class="nx">op</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="p">;</span>
+        <span class="nx">n</span> <span class="o">=</span> <span class="s1">&#39;n&#39;</span><span class="p">;</span>
+        <span class="nx">b</span> <span class="o">=</span> <span class="p">(</span><span class="nx">oddeven</span> <span class="o">===</span> <span class="s1">&#39;odd&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="nb">isNaN</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// start from the first or no repeat</span>
+    <span class="p">}</span>
 
-    <span class="k">if</span> <span class="o">(</span><span class="nx">a</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span> <span class="c">// just the first</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">reverse</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">b</span> <span class="o">=</span> <span class="nx">siblings</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">b</span> <span class="o">+</span> <span class="m">1</span><span class="o">;</span> 
-        <span class="o">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">a</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// just the first</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">reverse</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">b</span> <span class="o">=</span> <span class="nx">siblings</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> 
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">siblings</span><span class="o">[</span><span class="nx">b</span> <span class="o">-</span> <span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">siblings</span><span class="p">[</span><span class="nx">b</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
 
-    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">a</span> <span class="o">&lt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">reverse</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">reverse</span><span class="o">;</span>
-        <span class="nx">a</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="nx">a</span><span class="o">);</span>
-    <span class="o">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">reverse</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">reverse</span><span class="p">;</span>
+        <span class="nx">a</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span>
+    <span class="p">}</span>
 
-    <span class="k">if</span> <span class="o">(!</span><span class="nx">reverse</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">-</span> <span class="m">1</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">siblings</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> <span class="nx">siblings</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span> <span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">siblings</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">siblings</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">-=</span> <span class="nx">a</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">siblings</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span> <span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-<span class="o">};</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">reverse</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">b</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">siblings</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">siblings</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">node</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">siblings</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">siblings</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">-=</span> <span class="nx">a</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">siblings</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">node</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">pseudos</span><span class="o">,</span> <span class="o">{</span>
-    <span class="s1">&#39;root&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">node</span> <span class="o">===</span> <span class="nx">node</span><span class="o">.</span><span class="nx">ownerDocument</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">;</span>
-    <span class="o">},</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">pseudos</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s1">&#39;root&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">node</span> <span class="o">===</span> <span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="s1">&#39;nth-child&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;nth-child&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_getNth</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="s1">&#39;nth-last-child&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;nth-last-child&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_getNth</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="s1">&#39;nth-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;nth-of-type&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_getNth</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">tagName</span><span class="p">);</span>
+    <span class="p">},</span>
      
-    <span class="s1">&#39;nth-last-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_getNth</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;nth-last-of-type&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_getNth</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">tagName</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="p">},</span>
      
-    <span class="s1">&#39;last-child&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">children</span><span class="o">[</span><span class="nx">children</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;last-child&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_children</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">children</span><span class="p">[</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="s1">&#39;first-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;first-of-type&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_children</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">tagName</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="p">},</span>
      
-    <span class="s1">&#39;last-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">children</span><span class="o">[</span><span class="nx">children</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;last-of-type&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_children</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">tagName</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">children</span><span class="p">[</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="p">},</span>
      
-    <span class="s1">&#39;only-child&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">children</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">children</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;only-child&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_children</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">children</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="s1">&#39;only-of-type&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">_children</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">,</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">);</span>
-        <span class="k">return</span> <span class="nx">children</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">children</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="nx">node</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;only-of-type&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_children</span><span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">tagName</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">children</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">children</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="s1">&#39;empty&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">childNodes</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;empty&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="s1">&#39;not&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">);</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;not&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">);</span>
+    <span class="p">},</span>
 
-    <span class="s1">&#39;contains&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">expr</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">innerText</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">textContent</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-        <span class="k">return</span> <span class="nx">text</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">expr</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="s1">&#39;contains&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">expr</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">text</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">textContent</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">text</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">expr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="s1">&#39;checked&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">checked</span> <span class="o">===</span> <span class="kc">true</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">});</span>
+    <span class="s1">&#39;checked&#39;</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">checked</span> <span class="o">===</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">operators</span><span class="o">,</span> <span class="o">{</span>
-    <span class="s1">&#39;^=&#39;</span><span class="o">:</span> <span class="s1">&#39;^{val}&#39;</span><span class="o">,</span> <span class="c">// Match starts with value</span>
-<span class="c"></span>    <span class="s1">&#39;$=&#39;</span><span class="o">:</span> <span class="s1">&#39;{val}$&#39;</span><span class="o">,</span> <span class="c">// Match ends with value</span>
-<span class="c"></span>    <span class="s1">&#39;*=&#39;</span><span class="o">:</span> <span class="s1">&#39;{val}&#39;</span> <span class="c">// Match contains value as substring </span>
-<span class="c"></span><span class="o">});</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">operators</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s1">&#39;^=&#39;</span><span class="o">:</span> <span class="s1">&#39;^{val}&#39;</span><span class="p">,</span> <span class="c1">// Match starts with value</span>
+    <span class="s1">&#39;$=&#39;</span><span class="o">:</span> <span class="s1">&#39;{val}$&#39;</span><span class="p">,</span> <span class="c1">// Match ends with value</span>
+    <span class="s1">&#39;*=&#39;</span><span class="o">:</span> <span class="s1">&#39;{val}&#39;</span> <span class="c1">// Match contains value as substring </span>
+<span class="p">});</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">combinators</span><span class="o">[</span><span class="s1">&#39;~&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">combinators</span><span class="p">[</span><span class="s1">&#39;~&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">axis</span><span class="o">:</span> <span class="s1">&#39;previousSibling&#39;</span>
-<span class="o">};</span>
+<span class="p">};</span>
 </pre></div>
 
                     </div>
@@ -233,6 +233,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

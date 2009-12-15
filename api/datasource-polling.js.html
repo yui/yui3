@@ -47,86 +47,86 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Extends DataSource with polling functionality.</span>
-<span class="c"> *</span>
-<span class="c"> * @module datasource</span>
-<span class="c"> * @submodule datasource-polling</span>
-<span class="c"> */</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Extends DataSource with polling functionality.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module datasource</span>
+<span class="cm"> * @submodule datasource-polling</span>
+<span class="cm"> */</span>
     
-<span class="c">/**</span>
-<span class="c"> * Adds polling to the DataSource Utility.</span>
-<span class="c"> * @class Pollable</span>
-<span class="c"> * @extends DataSource.Local</span>
-<span class="c"> */</span>    
-<span class="k">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span>
+<span class="cm">/**</span>
+<span class="cm"> * Adds polling to the DataSource Utility.</span>
+<span class="cm"> * @class Pollable</span>
+<span class="cm"> * @extends DataSource.Local</span>
+<span class="cm"> */</span>    
+<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
 
-    <span class="nx">Pollable</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_intervals</span> <span class="o">=</span> <span class="o">{};</span>
-    <span class="o">};</span>
+    <span class="nx">Pollable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_intervals</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="p">};</span>
 
-<span class="nx">Pollable</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+<span class="nx">Pollable</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
 
-    <span class="c">/**</span>
-<span class="c">    * @property _intervals</span>
-<span class="c">    * @description Hash of polling interval IDs that have been enabled,</span>
-<span class="c">    * stored here to be able to clear all intervals.</span>
-<span class="c">    * @private</span>
-<span class="c">    */</span>
-    <span class="nx">_intervals</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+    <span class="cm">/**</span>
+<span class="cm">    * @property _intervals</span>
+<span class="cm">    * @description Hash of polling interval IDs that have been enabled,</span>
+<span class="cm">    * stored here to be able to clear all intervals.</span>
+<span class="cm">    * @private</span>
+<span class="cm">    */</span>
+    <span class="nx">_intervals</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Sets up a polling mechanism to send requests at set intervals and forward</span>
-<span class="c">     * responses to given callback.</span>
-<span class="c">     *</span>
-<span class="c">     * @method setInterval</span>
-<span class="c">     * @param msec {Number} Length of interval in milliseconds.</span>
-<span class="c">     * @param request {Object} Request object.</span>
-<span class="c">     * @param callback {Object} An object literal with the following properties:</span>
-<span class="c">     *     &lt;dl&gt;</span>
-<span class="c">     *     &lt;dt&gt;&lt;code&gt;success&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="c">     *     &lt;dd&gt;The function to call when the data is ready.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;dt&gt;&lt;code&gt;failure&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="c">     *     &lt;dd&gt;The function to call upon a response failure condition.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;dt&gt;&lt;code&gt;argument&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="c">     *     &lt;dd&gt;Arbitrary data that will be passed back to the success and failure handlers.&lt;/dd&gt;</span>
-<span class="c">     *     &lt;/dl&gt;</span>
-<span class="c">     * @return {Number} Interval ID.</span>
-<span class="c">     */</span>
-    <span class="nx">setInterval</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msec</span><span class="o">,</span> <span class="nx">request</span><span class="o">,</span> <span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="nx">msec</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">sendRequest</span><span class="o">,</span> <span class="o">[</span><span class="nx">request</span><span class="o">,</span> <span class="nx">callback</span><span class="o">],</span> <span class="kc">true</span><span class="o">);</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_intervals</span><span class="o">[</span><span class="nx">x</span><span class="o">.</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="nx">x</span><span class="o">;</span>
-        <span class="k">return</span> <span class="nx">x</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Sets up a polling mechanism to send requests at set intervals and forward</span>
+<span class="cm">     * responses to given callback.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method setInterval</span>
+<span class="cm">     * @param msec {Number} Length of interval in milliseconds.</span>
+<span class="cm">     * @param request {Object} Request object.</span>
+<span class="cm">     * @param callback {Object} An object literal with the following properties:</span>
+<span class="cm">     *     &lt;dl&gt;</span>
+<span class="cm">     *     &lt;dt&gt;&lt;code&gt;success&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;The function to call when the data is ready.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;&lt;code&gt;failure&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;The function to call upon a response failure condition.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;&lt;code&gt;argument&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;Arbitrary data that will be passed back to the success and failure handlers.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;/dl&gt;</span>
+<span class="cm">     * @return {Number} Interval ID.</span>
+<span class="cm">     */</span>
+    <span class="nx">setInterval</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msec</span><span class="p">,</span> <span class="nx">request</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">msec</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sendRequest</span><span class="p">,</span> <span class="p">[</span><span class="nx">request</span><span class="p">,</span> <span class="nx">callback</span><span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Disables polling mechanism associated with the given interval ID.</span>
-<span class="c">     *</span>
-<span class="c">     * @method clearInterval</span>
-<span class="c">     * @param id {Number} Interval ID.</span>
-<span class="c">     */</span>
-    <span class="nx">clearInterval</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">key</span><span class="o">)</span> <span class="o">{</span>
-        <span class="c">// In case of being called by clearAllIntervals()</span>
-<span class="c"></span>        <span class="nx">id</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">||</span> <span class="nx">id</span><span class="o">;</span>
-        <span class="k">if</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_intervals</span><span class="o">[</span><span class="nx">id</span><span class="o">])</span> <span class="o">{</span>
-            <span class="c">// Clear the interval</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_intervals</span><span class="o">[</span><span class="nx">id</span><span class="o">].</span><span class="nx">cancel</span><span class="o">();</span>
-            <span class="c">// Clear from tracker</span>
-<span class="c"></span>            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">_intervals</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
-        <span class="o">}</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Disables polling mechanism associated with the given interval ID.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method clearInterval</span>
+<span class="cm">     * @param id {Number} Interval ID.</span>
+<span class="cm">     */</span>
+    <span class="nx">clearInterval</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// In case of being called by clearAllIntervals()</span>
+        <span class="nx">id</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">||</span> <span class="nx">id</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+            <span class="c1">// Clear the interval</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">id</span><span class="p">].</span><span class="nx">cancel</span><span class="p">();</span>
+            <span class="c1">// Clear from tracker</span>
+            <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Clears all intervals.</span>
-<span class="c">     *</span>
-<span class="c">     * @method clearAllIntervals</span>
-<span class="c">     */</span>
-    <span class="nx">clearAllIntervals</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_intervals</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">clearInterval</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Clears all intervals.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method clearAllIntervals</span>
+<span class="cm">     */</span>
+    <span class="nx">clearAllIntervals</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">clearInterval</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
     
-<span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DataSource</span><span class="o">.</span><span class="nx">Local</span><span class="o">,</span> <span class="nx">Pollable</span><span class="o">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">augment</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">.</span><span class="nx">Local</span><span class="p">,</span> <span class="nx">Pollable</span><span class="p">);</span>
 </pre></div>
 
                     </div>
@@ -174,6 +174,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

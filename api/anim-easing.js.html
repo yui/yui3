@@ -47,349 +47,349 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre><span class="c">/*</span>
-<span class="c">TERMS OF USE - EASING EQUATIONS</span>
-<span class="c">Open source under the BSD License.</span>
-<span class="c">Copyright 2001 Robert Penner All rights reserved.</span>
-<span class="c"></span>
-<span class="c">Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
-<span class="c"></span>
-<span class="c"> * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</span>
-<span class="c"> * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</span>
-<span class="c"> * Neither the name of the author nor the names of contributors may be used to endorse or promote products derived from this software without specific prior written permission.</span>
-<span class="c"></span>
-<span class="c">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
-<span class="c">*/</span>
+                        <div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">TERMS OF USE - EASING EQUATIONS</span>
+<span class="cm">Open source under the BSD License.</span>
+<span class="cm">Copyright 2001 Robert Penner All rights reserved.</span>
 
-<span class="c">/**</span>
-<span class="c"> * The easing module provides methods for customizing</span>
-<span class="c"> * how an animation behaves during each run.</span>
-<span class="c"> * @class Easing</span>
-<span class="c"> * @module anim</span>
-<span class="c"> * @submodule anim-easing</span>
-<span class="c"> */</span>
+<span class="cm">Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span> <span class="o">=</span> <span class="o">{</span>
+<span class="cm"> * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</span>
+<span class="cm"> * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</span>
+<span class="cm"> * Neither the name of the author nor the names of contributors may be used to endorse or promote products derived from this software without specific prior written permission.</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Uniform speed between points.</span>
-<span class="c">     * @for Easing</span>
-<span class="c">     * @method easeNone</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">easeNone</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="nx">t</span><span class="o">/</span><span class="nx">d</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+<span class="cm">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+<span class="cm">*/</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * The easing module provides methods for customizing</span>
+<span class="cm"> * how an animation behaves during each run.</span>
+<span class="cm"> * @class Easing</span>
+<span class="cm"> * @module anim</span>
+<span class="cm"> * @submodule anim-easing</span>
+<span class="cm"> */</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Easing</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Uniform speed between points.</span>
+<span class="cm">     * @for Easing</span>
+<span class="cm">     * @method easeNone</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">easeNone</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="nx">t</span><span class="o">/</span><span class="nx">d</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Begins slowly and accelerates towards end. (quadratic)</span>
-<span class="c">     * @method easeIn</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">easeIn</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">)*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Begins slowly and accelerates towards end. (quadratic)</span>
+<span class="cm">     * @method easeIn</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">easeIn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Begins quickly and decelerates towards end.  (quadratic)</span>
-<span class="c">     * @method easeOut</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">easeOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span> <span class="o">*(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">)*(</span><span class="nx">t</span><span class="o">-</span><span class="m">2</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Begins quickly and decelerates towards end.  (quadratic)</span>
+<span class="cm">     * @method easeOut</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">easeOut</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span> <span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Begins slowly and decelerates towards end. (quadratic)</span>
-<span class="c">     * @method easeBoth</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">easeBoth</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">((</span><span class="nx">t</span><span class="sr">/=d/</span><span class="m">2</span><span class="o">)</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="m">2</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Begins slowly and decelerates towards end. (quadratic)</span>
+<span class="cm">     * @method easeBoth</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">easeBoth</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span>
         
-        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span><span class="o">/</span><span class="m">2</span> <span class="o">*</span> <span class="o">((--</span><span class="nx">t</span><span class="o">)*(</span><span class="nx">t</span><span class="o">-</span><span class="m">2</span><span class="o">)</span> <span class="o">-</span> <span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="o">--</span><span class="nx">t</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Begins slowly and accelerates towards end. (quartic)</span>
-<span class="c">     * @method easeInStrong</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">easeInStrong</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">)*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Begins slowly and accelerates towards end. (quartic)</span>
+<span class="cm">     * @method easeInStrong</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">easeInStrong</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Begins quickly and decelerates towards end.  (quartic)</span>
-<span class="c">     * @method easeOutStrong</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">easeOutStrong</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span> <span class="o">*</span> <span class="o">((</span><span class="nx">t</span><span class="o">=</span><span class="nx">t</span><span class="o">/</span><span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">-</span> <span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Begins quickly and decelerates towards end.  (quartic)</span>
+<span class="cm">     * @method easeOutStrong</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">easeOutStrong</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span> <span class="o">*</span> <span class="p">((</span><span class="nx">t</span><span class="o">=</span><span class="nx">t</span><span class="o">/</span><span class="nx">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Begins slowly and decelerates towards end. (quartic)</span>
-<span class="c">     * @method easeBothStrong</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">easeBothStrong</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">((</span><span class="nx">t</span><span class="sr">/=d/</span><span class="m">2</span><span class="o">)</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="m">2</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Begins slowly and decelerates towards end. (quartic)</span>
+<span class="cm">     * @method easeBothStrong</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">easeBothStrong</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span>
         
-        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span><span class="o">/</span><span class="m">2</span> <span class="o">*</span> <span class="o">((</span><span class="nx">t</span><span class="o">-=</span><span class="m">2</span><span class="o">)*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">-</span> <span class="m">2</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="nx">t</span><span class="o">-=</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Snap in elastic effect.</span>
-<span class="c">     * @method elasticIn</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @param {Number} a Amplitude (optional)</span>
-<span class="c">     * @param {Number} p Period (optional)</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Snap in elastic effect.</span>
+<span class="cm">     * @method elasticIn</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @param {Number} a Amplitude (optional)</span>
+<span class="cm">     * @param {Number} p Period (optional)</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
 
-    <span class="nx">elasticIn</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">s</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">t</span> <span class="o">/=</span> <span class="nx">d</span><span class="o">)</span> <span class="o">===</span> <span class="m">1</span> <span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">b</span><span class="o">+</span><span class="nx">c</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">3</span><span class="o">;</span>
-        <span class="o">}</span>
+    <span class="nx">elasticIn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">s</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="nx">t</span> <span class="o">/=</span> <span class="nx">d</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="o">+</span><span class="nx">c</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="o">*</span> <span class="mf">0.3</span><span class="p">;</span>
+        <span class="p">}</span>
         
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">a</span> <span class="o">||</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="nx">c</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span> 
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="o">/</span><span class="m">4</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="sr">/(2*Math.PI) * Math.asin (c/</span><span class="nx">a</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">a</span> <span class="o">||</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">c</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span> 
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="o">/</span><span class="mi">4</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">asin</span> <span class="p">(</span><span class="nx">c</span><span class="o">/</span><span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
         
-        <span class="k">return</span> <span class="o">-(</span><span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">pow</span><span class="o">(</span><span class="m">2</span><span class="o">,</span><span class="m">10</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=</span><span class="m">1</span><span class="o">))</span> <span class="o">*</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">sin</span><span class="o">(</span> <span class="o">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="o">)*(</span><span class="m">2</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">PI</span><span class="o">)/</span><span class="nx">p</span> <span class="o">))</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">-=</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">sin</span><span class="p">(</span> <span class="p">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">)</span><span class="o">/</span><span class="nx">p</span> <span class="p">))</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Snap out elastic effect.</span>
-<span class="c">     * @method elasticOut</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @param {Number} a Amplitude (optional)</span>
-<span class="c">     * @param {Number} p Period (optional)</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">elasticOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">s</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">t</span> <span class="o">/=</span> <span class="nx">d</span><span class="o">)</span> <span class="o">===</span> <span class="m">1</span> <span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">b</span><span class="o">+</span><span class="nx">c</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">p</span><span class="o">=</span><span class="nx">d</span> <span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">3</span><span class="o">;</span>
-        <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Snap out elastic effect.</span>
+<span class="cm">     * @method elasticOut</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @param {Number} a Amplitude (optional)</span>
+<span class="cm">     * @param {Number} p Period (optional)</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">elasticOut</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">s</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="nx">t</span> <span class="o">/=</span> <span class="nx">d</span><span class="p">)</span> <span class="o">===</span> <span class="mi">1</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="o">+</span><span class="nx">c</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">p</span><span class="o">=</span><span class="nx">d</span> <span class="o">*</span> <span class="mf">0.3</span><span class="p">;</span>
+        <span class="p">}</span>
         
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">a</span> <span class="o">||</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="nx">c</span><span class="o">))</span> <span class="o">{</span>
-            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span> <span class="o">/</span> <span class="m">4</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="sr">/(2*Math.PI) * Math.asin (c/</span><span class="nx">a</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">a</span> <span class="o">||</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">c</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span> <span class="o">/</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">asin</span> <span class="p">(</span><span class="nx">c</span><span class="o">/</span><span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
         
-        <span class="k">return</span> <span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">pow</span><span class="o">(</span><span class="m">2</span><span class="o">,-</span><span class="m">10</span><span class="o">*</span><span class="nx">t</span><span class="o">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">sin</span><span class="o">(</span> <span class="o">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="o">)*(</span><span class="m">2</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">PI</span><span class="o">)/</span><span class="nx">p</span> <span class="o">)</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="o">*</span><span class="nx">t</span><span class="p">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">sin</span><span class="p">(</span> <span class="p">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">)</span><span class="o">/</span><span class="nx">p</span> <span class="p">)</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Snap both elastic effect.</span>
-<span class="c">     * @method elasticBoth</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @param {Number} a Amplitude (optional)</span>
-<span class="c">     * @param {Number} p Period (optional)</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">elasticBoth</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">s</span><span class="o">;</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Snap both elastic effect.</span>
+<span class="cm">     * @method elasticBoth</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @param {Number} a Amplitude (optional)</span>
+<span class="cm">     * @param {Number} p Period (optional)</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">elasticBoth</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">s</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span>
         
-        <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">t</span> <span class="sr">/= d/</span><span class="m">2</span><span class="o">)</span> <span class="o">===</span> <span class="m">2</span> <span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">b</span><span class="o">+</span><span class="nx">c</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="nx">t</span> <span class="o">/=</span> <span class="nx">d</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">===</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="o">+</span><span class="nx">c</span><span class="p">;</span>
+        <span class="p">}</span>
         
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="o">*(</span><span class="m">0</span><span class="o">.</span><span class="m">3</span><span class="o">*</span><span class="m">1</span><span class="o">.</span><span class="m">5</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="o">*</span><span class="p">(</span><span class="mf">0.3</span><span class="o">*</span><span class="mf">1.5</span><span class="p">);</span>
+        <span class="p">}</span>
         
-        <span class="k">if</span> <span class="o">(</span> <span class="o">!</span><span class="nx">a</span> <span class="o">||</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span>
-            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span> 
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="o">/</span><span class="m">4</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="sr">/(2*Math.PI) * Math.asin (c/</span><span class="nx">a</span><span class="o">);</span>
-        <span class="o">}</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">a</span> <span class="o">||</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span> 
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="o">/</span><span class="mi">4</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">asin</span> <span class="p">(</span><span class="nx">c</span><span class="o">/</span><span class="nx">a</span><span class="p">);</span>
+        <span class="p">}</span>
         
-        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="o">-</span><span class="m">0</span><span class="o">.</span><span class="m">5</span><span class="o">*(</span><span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">pow</span><span class="o">(</span><span class="m">2</span><span class="o">,</span><span class="m">10</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=</span><span class="m">1</span><span class="o">))</span> <span class="o">*</span> 
-                    <span class="nb">Math</span><span class="o">.</span><span class="nx">sin</span><span class="o">(</span> <span class="o">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="o">)*(</span><span class="m">2</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">PI</span><span class="o">)/</span><span class="nx">p</span> <span class="o">))</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">pow</span><span class="o">(</span><span class="m">2</span><span class="o">,-</span><span class="m">10</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=</span><span class="m">1</span><span class="o">))</span> <span class="o">*</span> 
-                <span class="nb">Math</span><span class="o">.</span><span class="nx">sin</span><span class="o">(</span> <span class="o">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="o">)*(</span><span class="m">2</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">PI</span><span class="o">)/</span><span class="nx">p</span> <span class="o">)*</span><span class="m">0</span><span class="o">.</span><span class="m">5</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">-=</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> 
+                    <span class="nb">Math</span><span class="p">.</span><span class="nx">sin</span><span class="p">(</span> <span class="p">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">)</span><span class="o">/</span><span class="nx">p</span> <span class="p">))</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">-=</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> 
+                <span class="nb">Math</span><span class="p">.</span><span class="nx">sin</span><span class="p">(</span> <span class="p">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">)</span><span class="o">/</span><span class="nx">p</span> <span class="p">)</span><span class="o">*</span><span class="mf">0.5</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
 
 
-    <span class="c">/**</span>
-<span class="c">     * Backtracks slightly, then reverses direction and moves to end.</span>
-<span class="c">     * @method backIn</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @param {Number} s Overshoot (optional)</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">backIn</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">s</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="m">1</span><span class="o">.</span><span class="m">70158</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">t</span> <span class="o">-=</span> <span class="m">0</span><span class="o">.</span><span class="m">001</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">)*</span><span class="nx">t</span><span class="o">*((</span><span class="nx">s</span><span class="o">+</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span> <span class="o">-</span> <span class="nx">s</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Backtracks slightly, then reverses direction and moves to end.</span>
+<span class="cm">     * @method backIn</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @param {Number} s Overshoot (optional)</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">backIn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">s</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="mf">1.70158</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">===</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">t</span> <span class="o">-=</span> <span class="mf">0.001</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="p">((</span><span class="nx">s</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span> <span class="o">-</span> <span class="nx">s</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Overshoots end, then reverses and comes back to end.</span>
-<span class="c">     * @method backOut</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @param {Number} s Overshoot (optional)</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">backOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="m">1</span><span class="o">.</span><span class="m">70158</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">c</span><span class="o">*((</span><span class="nx">t</span><span class="o">=</span><span class="nx">t</span><span class="o">/</span><span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span><span class="o">*((</span><span class="nx">s</span><span class="o">+</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">s</span><span class="o">)</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Overshoots end, then reverses and comes back to end.</span>
+<span class="cm">     * @method backOut</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @param {Number} s Overshoot (optional)</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">backOut</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="mf">1.70158</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="p">((</span><span class="nx">t</span><span class="o">=</span><span class="nx">t</span><span class="o">/</span><span class="nx">d</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="p">((</span><span class="nx">s</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Backtracks slightly, then reverses direction, overshoots end, </span>
-<span class="c">     * then reverses and comes back to end.</span>
-<span class="c">     * @method backBoth</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @param {Number} s Overshoot (optional)</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">backBoth</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="m">1</span><span class="o">.</span><span class="m">70158</span><span class="o">;</span> 
-        <span class="o">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Backtracks slightly, then reverses direction, overshoots end, </span>
+<span class="cm">     * then reverses and comes back to end.</span>
+<span class="cm">     * @method backBoth</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @param {Number} s Overshoot (optional)</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">backBoth</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="mf">1.70158</span><span class="p">;</span> 
+        <span class="p">}</span>
         
-        <span class="k">if</span> <span class="o">((</span><span class="nx">t</span> <span class="sr">/= d/</span><span class="m">2</span> <span class="o">)</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="m">2</span><span class="o">*(</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*(((</span><span class="nx">s</span><span class="o">*=(</span><span class="m">1</span><span class="o">.</span><span class="m">525</span><span class="o">))+</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span> <span class="o">-</span> <span class="nx">s</span><span class="o">))</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="m">2</span><span class="o">*((</span><span class="nx">t</span><span class="o">-=</span><span class="m">2</span><span class="o">)*</span><span class="nx">t</span><span class="o">*(((</span><span class="nx">s</span><span class="o">*=(</span><span class="m">1</span><span class="o">.</span><span class="m">525</span><span class="o">))+</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">s</span><span class="o">)</span> <span class="o">+</span> <span class="m">2</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">t</span> <span class="o">/=</span> <span class="nx">d</span><span class="o">/</span><span class="mi">2</span> <span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="p">(((</span><span class="nx">s</span><span class="o">*=</span><span class="p">(</span><span class="mf">1.525</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span> <span class="o">-</span> <span class="nx">s</span><span class="p">))</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">((</span><span class="nx">t</span><span class="o">-=</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="p">(((</span><span class="nx">s</span><span class="o">*=</span><span class="p">(</span><span class="mf">1.525</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Bounce off of start.</span>
-<span class="c">     * @method bounceIn</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">bounceIn</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">c</span> <span class="o">-</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span><span class="o">.</span><span class="nx">bounceOut</span><span class="o">(</span><span class="nx">d</span><span class="o">-</span><span class="nx">t</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Bounce off of start.</span>
+<span class="cm">     * @method bounceIn</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">bounceIn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">c</span> <span class="o">-</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Easing</span><span class="p">.</span><span class="nx">bounceOut</span><span class="p">(</span><span class="nx">d</span><span class="o">-</span><span class="nx">t</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Bounces off end.</span>
-<span class="c">     * @method bounceOut</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">bounceOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">((</span><span class="nx">t</span><span class="sr">/=d) &lt; (1/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="m">7</span><span class="o">.</span><span class="m">5625</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="o">(</span><span class="m">2</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="m">7</span><span class="o">.</span><span class="m">5625</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=(</span><span class="m">1</span><span class="o">.</span><span class="m">5</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))*</span><span class="nx">t</span> <span class="o">+</span> <span class="m">0</span><span class="o">.</span><span class="m">75</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="o">(</span><span class="m">2</span><span class="o">.</span><span class="m">5</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="m">7</span><span class="o">.</span><span class="m">5625</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=(</span><span class="m">2</span><span class="o">.</span><span class="m">25</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))*</span><span class="nx">t</span> <span class="o">+</span> <span class="m">0</span><span class="o">.</span><span class="m">9375</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="m">7</span><span class="o">.</span><span class="m">5625</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=(</span><span class="m">2</span><span class="o">.</span><span class="m">625</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))*</span><span class="nx">t</span> <span class="o">+</span> <span class="m">0</span><span class="o">.</span><span class="m">984375</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">},</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Bounces off end.</span>
+<span class="cm">     * @method bounceOut</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">bounceOut</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">((</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.75</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="p">(</span><span class="mf">7.5625</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mf">2.75</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="p">(</span><span class="mf">7.5625</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">-=</span><span class="p">(</span><span class="mf">1.5</span><span class="o">/</span><span class="mf">2.75</span><span class="p">))</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="mf">0.75</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">2.5</span><span class="o">/</span><span class="mf">2.75</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="p">(</span><span class="mf">7.5625</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">-=</span><span class="p">(</span><span class="mf">2.25</span><span class="o">/</span><span class="mf">2.75</span><span class="p">))</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="mf">0.9375</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="p">(</span><span class="mf">7.5625</span><span class="o">*</span><span class="p">(</span><span class="nx">t</span><span class="o">-=</span><span class="p">(</span><span class="mf">2.625</span><span class="o">/</span><span class="mf">2.75</span><span class="p">))</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="mf">0.984375</span><span class="p">)</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">},</span>
     
-    <span class="c">/**</span>
-<span class="c">     * Bounces off start and end.</span>
-<span class="c">     * @method bounceBoth</span>
-<span class="c">     * @param {Number} t Time value used to compute current value</span>
-<span class="c">     * @param {Number} b Starting value</span>
-<span class="c">     * @param {Number} c Delta between start and end values</span>
-<span class="c">     * @param {Number} d Total length of animation</span>
-<span class="c">     * @return {Number} The computed value for the current animation frame</span>
-<span class="c">     */</span>
-    <span class="nx">bounceBoth</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="nx">d</span><span class="o">/</span><span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span><span class="o">.</span><span class="nx">bounceIn</span><span class="o">(</span><span class="nx">t</span> <span class="o">*</span> <span class="m">2</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span><span class="o">.</span><span class="nx">bounceOut</span><span class="o">(</span><span class="nx">t</span> <span class="o">*</span> <span class="m">2</span> <span class="o">-</span> <span class="nx">d</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">};</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Bounces off start and end.</span>
+<span class="cm">     * @method bounceBoth</span>
+<span class="cm">     * @param {Number} t Time value used to compute current value</span>
+<span class="cm">     * @param {Number} b Starting value</span>
+<span class="cm">     * @param {Number} c Delta between start and end values</span>
+<span class="cm">     * @param {Number} d Total length of animation</span>
+<span class="cm">     * @return {Number} The computed value for the current animation frame</span>
+<span class="cm">     */</span>
+    <span class="nx">bounceBoth</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="nx">d</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Easing</span><span class="p">.</span><span class="nx">bounceIn</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Easing</span><span class="p">.</span><span class="nx">bounceOut</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">-</span> <span class="nx">d</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 </pre></div>
 
                     </div>
@@ -437,6 +437,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

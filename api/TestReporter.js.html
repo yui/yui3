@@ -47,171 +47,171 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight" ><pre>    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;Test&quot;</span><span class="o">);</span>
+                        <div class="highlight"><pre>    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;Test&quot;</span><span class="p">);</span>
     
-    <span class="c">/**</span>
-<span class="c">     * An object capable of sending test results to a server.</span>
-<span class="c">     * @param {String} url The URL to submit the results to.</span>
-<span class="c">     * @param {Function} format (Optiona) A function that outputs the results in a specific format.</span>
-<span class="c">     *      Default is Y.Test.Format.XML.</span>
-<span class="c">     * @constructor</span>
-<span class="c">     * @namespace Test</span>
-<span class="c">     * @class Reporter</span>
-<span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Reporter</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">format</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * An object capable of sending test results to a server.</span>
+<span class="cm">     * @param {String} url The URL to submit the results to.</span>
+<span class="cm">     * @param {Function} format (Optiona) A function that outputs the results in a specific format.</span>
+<span class="cm">     *      Default is Y.Test.Format.XML.</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     * @namespace Test</span>
+<span class="cm">     * @class Reporter</span>
+<span class="cm">     */</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Reporter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">format</span><span class="p">)</span> <span class="p">{</span>
     
-        <span class="c">/**</span>
-<span class="c">         * The URL to submit the data to.</span>
-<span class="c">         * @type String</span>
-<span class="c">         * @property url</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span><span class="o">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The URL to submit the data to.</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @property url</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
     
-        <span class="c">/**</span>
-<span class="c">         * The formatting function to call when submitting the data.</span>
-<span class="c">         * @type Function</span>
-<span class="c">         * @property format</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">format</span> <span class="o">=</span> <span class="nx">format</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Format</span><span class="o">.</span><span class="nx">XML</span><span class="o">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The formatting function to call when submitting the data.</span>
+<span class="cm">         * @type Function</span>
+<span class="cm">         * @property format</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">format</span> <span class="o">=</span> <span class="nx">format</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Format</span><span class="p">.</span><span class="nx">XML</span><span class="p">;</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Extra fields to submit with the request.</span>
-<span class="c">         * @type Object</span>
-<span class="c">         * @property _fields</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Object</span><span class="o">();</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Extra fields to submit with the request.</span>
+<span class="cm">         * @type Object</span>
+<span class="cm">         * @property _fields</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Object</span><span class="p">();</span>
         
-        <span class="c">/**</span>
-<span class="c">         * The form element used to submit the results.</span>
-<span class="c">         * @type HTMLFormElement</span>
-<span class="c">         * @property _form</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_form</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="cm">/**</span>
+<span class="cm">         * The form element used to submit the results.</span>
+<span class="cm">         * @type HTMLFormElement</span>
+<span class="cm">         * @property _form</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_form</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Iframe used as a target for form submission.</span>
-<span class="c">         * @type HTMLIFrameElement</span>
-<span class="c">         * @property _iframe</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-    <span class="o">};</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Iframe used as a target for form submission.</span>
+<span class="cm">         * @type HTMLIFrameElement</span>
+<span class="cm">         * @property _iframe</span>
+<span class="cm">         * @private</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">};</span>
     
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Reporter</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Reporter</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
     
-        <span class="c">//restore missing constructor</span>
-<span class="c"></span>        <span class="nx">constructor</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Test</span><span class="o">.</span><span class="nx">Reporter</span><span class="o">,</span>
+        <span class="c1">//restore missing constructor</span>
+        <span class="nx">constructor</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Reporter</span><span class="p">,</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Adds a field to the form that submits the results.</span>
-<span class="c">         * @param {String} name The name of the field.</span>
-<span class="c">         * @param {Variant} value The value of the field.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method addField</span>
-<span class="c">         */</span>
-        <span class="nx">addField</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">value</span><span class="o">){</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">value</span><span class="o">;</span>    
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Adds a field to the form that submits the results.</span>
+<span class="cm">         * @param {String} name The name of the field.</span>
+<span class="cm">         * @param {Variant} value The value of the field.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method addField</span>
+<span class="cm">         */</span>
+        <span class="nx">addField</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">){</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>    
+        <span class="p">},</span>
         
-        <span class="c">/**</span>
-<span class="c">         * Removes all previous defined fields.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method addField</span>
-<span class="c">         */</span>
-        <span class="nx">clearFields</span> <span class="o">:</span> <span class="k">function</span><span class="o">(){</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Object</span><span class="o">();</span>
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Removes all previous defined fields.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method addField</span>
+<span class="cm">         */</span>
+        <span class="nx">clearFields</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Object</span><span class="p">();</span>
+        <span class="p">},</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Cleans up the memory associated with the TestReporter, removing DOM elements</span>
-<span class="c">         * that were created.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method destroy</span>
-<span class="c">         */</span>
-        <span class="nx">destroy</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">){</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-            <span class="o">}</span>        
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span><span class="o">){</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-            <span class="o">}</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-        <span class="o">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Cleans up the memory associated with the TestReporter, removing DOM elements</span>
+<span class="cm">         * that were created.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method destroy</span>
+<span class="cm">         */</span>
+        <span class="nx">destroy</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>        
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">},</span>
     
-        <span class="c">/**</span>
-<span class="c">         * Sends the report to the server.</span>
-<span class="c">         * @param {Object} results The results object created by TestRunner.</span>
-<span class="c">         * @return {Void}</span>
-<span class="c">         * @method report</span>
-<span class="c">         */</span>
-        <span class="nx">report</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">results</span><span class="o">){</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Sends the report to the server.</span>
+<span class="cm">         * @param {Object} results The results object created by TestRunner.</span>
+<span class="cm">         * @return {Void}</span>
+<span class="cm">         * @method report</span>
+<span class="cm">         */</span>
+        <span class="nx">report</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">results</span><span class="p">){</span>
         
-            <span class="c">//if the form hasn&#39;t been created yet, create it</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">){</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s2">&quot;form&quot;</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">method</span> <span class="o">=</span> <span class="s2">&quot;post&quot;</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s2">&quot;absolute&quot;</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">top</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-                <span class="nb">document</span><span class="o">.</span><span class="nx">body</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">);</span>
+            <span class="c1">//if the form hasn&#39;t been created yet, create it</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;form&quot;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="s2">&quot;post&quot;</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s2">&quot;absolute&quot;</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">);</span>
             
-                <span class="c">//IE won&#39;t let you assign a name using the DOM, must do it the hacky way</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">){</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s2">&quot;&lt;iframe name=\&quot;yuiTestTarget\&quot; /&gt;&quot;</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s2">&quot;iframe&quot;</span><span class="o">);</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;yuiTestTarget&quot;</span><span class="o">;</span>
-                <span class="o">}</span>
+                <span class="c1">//IE won&#39;t let you assign a name using the DOM, must do it the hacky way</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">){</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;&lt;iframe name=\&quot;yuiTestTarget\&quot; /&gt;&quot;</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;iframe&quot;</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;yuiTestTarget&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
     
-                <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span><span class="o">.</span><span class="nx">src</span> <span class="o">=</span> <span class="s2">&quot;javascript:false&quot;</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s2">&quot;absolute&quot;</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span><span class="o">.</span><span class="nx">style</span><span class="o">.</span><span class="nx">top</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-                <span class="nb">document</span><span class="o">.</span><span class="nx">body</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_iframe</span><span class="o">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="s2">&quot;javascript:false&quot;</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s2">&quot;absolute&quot;</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">);</span>
     
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="s2">&quot;yuiTestTarget&quot;</span><span class="o">;</span>
-            <span class="o">}</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="s2">&quot;yuiTestTarget&quot;</span><span class="p">;</span>
+            <span class="p">}</span>
     
-            <span class="c">//set the form&#39;s action</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">action</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">url</span><span class="o">;</span>
+            <span class="c1">//set the form&#39;s action</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">action</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
         
-            <span class="c">//remove any existing fields</span>
-<span class="c"></span>            <span class="k">while</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">hasChildNodes</span><span class="o">()){</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">removeChild</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">lastChild</span><span class="o">);</span>
-            <span class="o">}</span>
+            <span class="c1">//remove any existing fields</span>
+            <span class="k">while</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">hasChildNodes</span><span class="p">()){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">lastChild</span><span class="p">);</span>
+            <span class="p">}</span>
             
-            <span class="c">//create default fields</span>
-<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span><span class="o">.</span><span class="nx">results</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">format</span><span class="o">(</span><span class="nx">results</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span><span class="o">.</span><span class="nx">useragent</span> <span class="o">=</span> <span class="nx">navigator</span><span class="o">.</span><span class="nx">userAgent</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span><span class="o">.</span><span class="nx">timestamp</span> <span class="o">=</span> <span class="o">(</span><span class="k">new</span> <span class="nb">Date</span><span class="o">()).</span><span class="nx">toLocaleString</span><span class="o">();</span>
+            <span class="c1">//create default fields</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span><span class="p">.</span><span class="nx">results</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span><span class="p">.</span><span class="nx">useragent</span> <span class="o">=</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">userAgent</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span><span class="p">.</span><span class="nx">timestamp</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nb">Date</span><span class="p">()).</span><span class="nx">toLocaleString</span><span class="p">();</span>
     
-            <span class="c">//add fields to the form</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_fields</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">value</span><span class="o">,</span> <span class="nx">prop</span><span class="o">){</span>
-                <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">value</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="o">){</span>
-                    <span class="k">var</span> <span class="nx">input</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s2">&quot;input&quot;</span><span class="o">);</span>
-                    <span class="nx">input</span><span class="o">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="o">;</span>
-                    <span class="nx">input</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">prop</span><span class="o">;</span>
-                    <span class="nx">input</span><span class="o">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="o">;</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">input</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+            <span class="c1">//add fields to the form</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_fields</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">prop</span><span class="p">){</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">value</span> <span class="o">!=</span> <span class="s2">&quot;function&quot;</span><span class="p">){</span>
+                    <span class="kd">var</span> <span class="nx">input</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">);</span>
+                    <span class="nx">input</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="p">;</span>
+                    <span class="nx">input</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">prop</span><span class="p">;</span>
+                    <span class="nx">input</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">input</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
     
-            <span class="c">//remove default fields</span>
-<span class="c"></span>            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span><span class="o">.</span><span class="nx">results</span><span class="o">;</span>
-            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span><span class="o">.</span><span class="nx">useragent</span><span class="o">;</span>
-            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">_fields</span><span class="o">.</span><span class="nx">timestamp</span><span class="o">;</span>
+            <span class="c1">//remove default fields</span>
+            <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span><span class="p">.</span><span class="nx">results</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span><span class="p">.</span><span class="nx">useragent</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fields</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">;</span>
             
-            <span class="k">if</span> <span class="o">(</span><span class="nx">arguments</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">){</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">_form</span><span class="o">.</span><span class="nx">submit</span><span class="o">();</span>
-            <span class="o">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_form</span><span class="p">.</span><span class="nx">submit</span><span class="p">();</span>
+            <span class="p">}</span>
         
-        <span class="o">}</span>
+        <span class="p">}</span>
     
-    <span class="o">};</span>
+    <span class="p">};</span>
 </pre></div>
 
                     </div>
@@ -259,6 +259,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class="selected"><a href="module_test.html" title="test">test</a></li>
