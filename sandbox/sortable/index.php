@@ -80,6 +80,7 @@ foreach (range(1, $count) as $k) {
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/attribute/attribute-base-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -129,13 +130,14 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         nodes: '.item',
         opacity: '.5',
         moveType: 'copy',
-        invalid: '.disabled'
+        invalid: '.disabled',
+        opacityNode: 'currentNode'
     });
     sel.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'
     });
 
-    console.log('sel: ', sel.get('id'));
+    //console.log('sel: ', sel.get('id'));
 
     
 
@@ -147,7 +149,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     sel2.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'
     });
-    console.log('sel2: ', sel2.get('id'));
+    //console.log('sel2: ', sel2.get('id'));
 
     //sel2.bindTo(sel);
     //sel2.bindWith(sel);
@@ -163,7 +165,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     sel3.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'
     });
-    console.log('sel3: ', sel3.get('id'));
+    //console.log('sel3: ', sel3.get('id'));
     sel3.join(sel);
 
     /*

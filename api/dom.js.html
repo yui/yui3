@@ -73,6 +73,7 @@
     <span class="nx">NEXT_SIBLING</span> <span class="o">=</span> <span class="s1">&#39;nextSibling&#39;</span><span class="p">,</span>
     <span class="nx">CONTAINS</span> <span class="o">=</span> <span class="s1">&#39;contains&#39;</span><span class="p">,</span>
     <span class="nx">COMPARE_DOCUMENT_POSITION</span> <span class="o">=</span> <span class="s1">&#39;compareDocumentPosition&#39;</span><span class="p">,</span>
+    <span class="nx">EMPTY_STRING</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 
     <span class="nx">documentElement</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
 
@@ -502,6 +503,12 @@
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
             <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// workaround for IE8 JSON stringify bug</span>
+        <span class="c1">// which converts empty string values to null</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span> <span class="o">===</span> <span class="nx">EMPTY_STRING</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">EMPTY_STRING</span><span class="p">;</span> <span class="c1">// for real</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">ret</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">ret</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
