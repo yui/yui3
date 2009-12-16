@@ -167,7 +167,7 @@ YUI.add('sortable', function(Y) {
             }).on('drop:over', Y.bind(self._handleDropOver, self));
 
             del.on('drag:start', Y.bind(self._handleDragStart, self));
-            del.on('drag:end', Y.bind(self._handleDragEnd, del));
+            del.on('drag:end', Y.bind(self._handleDragEnd, self));
             del.on('drag:over', Y.bind(self._handleDragOver, self));
 
             self.delegate = del;
@@ -236,8 +236,6 @@ YUI.add('sortable', function(Y) {
         * @description Handles the DragStart event and initializes some settings.
         */
         _handleDragStart: function(e) {
-            console.log(this.get(OPACITY_NODE));
-            console.log(this.delegate.get(this.get(OPACITY_NODE)));
             this.delegate.get('lastNode').setStyle('zIndex', '');
             this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
             this.delegate.get(CURRENT_NODE).setStyle('zIndex', '999');
@@ -249,8 +247,8 @@ YUI.add('sortable', function(Y) {
         * @description Handles the DragEnd event that cleans up the settings in the drag:start event.
         */
         _handleDragEnd: function(e) {
-            this.get(this.get(OPACITY_NODE)).setStyle(OPACITY, 1);
-            this.get(CURRENT_NODE).setStyles({
+            this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, 1);
+            this.delegate.get(CURRENT_NODE).setStyles({
                 top: '',
                 left: ''
             });
