@@ -1,17 +1,5 @@
-//  TO DO
-//  -   Ask Adam about "queuable" configuration for events
-//  -   Confirm implementation of the "items" Attribute.  Goals were/are:
-//      1.  Provide convience of being able to set once via the constructor only
-//      2.  Disallow setting via "set"
-//      3.  Provide get access through standard "get()"
-//  -   Talk to Adam about being able to listen for "selectedChange" and 
-//      and "focusedChange" at the parent level
-//  -   Future performance optimization, if add() is passed a config, 
-//      defer the instance creation until the instance is needed 
-
-
 /**
- * Provides an extension enabling a Widget to be a parent of another Widget.
+ * Extension enabling a Widget to be a parent of another Widget.
  *
  * @module widget-parent
  */
@@ -38,6 +26,8 @@ Parent.ATTRS = {
      * managed by this Widget.
      */
     defaultItemType: {
+        //  TO DO:  Add support for being able to specify the type via  
+        //  a reference.
         validator: Lang.isString
     },
 
@@ -78,7 +68,7 @@ Parent.ATTRS = {
      * @description Returns the currently selected child Widget.  If the 
      * <code>mulitple</code> attribte is set to <code>true</code> will 
      * return an array of the currently selected children.  If no children 
-     * are selection, will return null.
+     * are selected, will return null.
      */
     selection: {
         readOnly: true,
@@ -114,36 +104,27 @@ Parent.prototype = {
      */
     _afterSelectionChange: function (event) {
 
-        var prevSelection = event.prevVal,
-            selection = event.newVal;
+        if (event.target == this) {
 
-        if (selection) {
+            var selection = event.newVal,
+                selectedVal = 0;    //  Not selected
 
-            if (Lang.isArray(selection)) {
 
-                if (selection.length === this.get("items").length) {
-                    this.set("selected", 1, { src: this });
+            if (selection) {
+
+                selectedVal = 1;    //  Assume fully selected, confirm otherwise
+
+                if (Lang.isArray(selection) && 
+                    (selection.length < this.get("items").length)) {
+
+                    selectedVal = 2;    //  Partially selected
+
                 }
-                else {
-                    this.set("selected", 2, { src: this });
-                }
-
-            }
-            else {
-
-                if (prevSelection) {
-                    //  Set src equal to the current context to prevent
-                    //  unnecessary re-calculation of the selection.
-                    prevSelection.set("selected", 0, { src: this });
-                }
-
-                this.set("selected", 1, { src: this });
-
+                
             }
 
-        }
-        else {
-           this.set("selected", 0, { src: this });
+            this.set("selected", selectedVal, { src: this });
+        
         }
         
     },
@@ -151,7 +132,9 @@ Parent.prototype = {
 
     /**
      * Attribute change listener for the <code>selected</code> 
-     * attribute.
+     * attribute, responsible for syncing the selected state of all children to 
+     * match that of their parent Widget.
+     * 
      *
      * @method _afterParentSelectedChange
      * @protected
@@ -162,16 +145,17 @@ Parent.prototype = {
         var value = event.newVal,
             items = this.get("items");
 
-        //  Sync the selected state of all children to match that of their
-        //  parent Widget
-        if (event.src != this && this == event.target && items.length > 0 && 
+        if (this == event.target && event.src != this && items.length > 0 && 
             (value === 0 || value === 1)) {
 
             Y.each(items, function (item) {
+
                 //  Specify the source of this change as the parent so that 
                 //  value of the parent's "selection" attribute isn't 
                 //  recalculated
+
                 item.set("selected", value, { src: this });
+
             }, this);
             
         }
@@ -230,8 +214,29 @@ Parent.prototype = {
      */
     _afterItemSelectedChange: function (event) {
 
+        var item = event.target,
+            selection = this.get("selection"),
+            root = this.get("root") || this;
+
         if (event.src != this) {
-            this._set("selection", event.target);
+
+            if (!root.get("multiple") && selection && event.newVal > 0) {
+
+                //  Set src equal to the current context to prevent
+                //  unnecessary re-calculation of the selection.
+
+                selection.set("selected", 0, { src: this });
+
+            }
+
+
+            //  TO DO/DISCUSS: 
+            //  This fails because when bubbling is enabled because the event
+            //  target is not correct when the attribute change is being 
+            //  processed.
+            
+            this._set("selection", item);
+
         }
 
     },
@@ -336,6 +341,16 @@ Parent.prototype = {
             this._set("selection", item);
         }
 
+
+        //  TO DO/DISCUSS: 
+        //  Would like to be able to take advantage of bubbling, and listen
+        //  for these events via a single listener per type at the parent level 
+        //  rather than bind event listeners to each child.  However, since each
+        //  child/descendant's type is unknown at this point and there is
+        //  currently no support for being able to listen for all events of a
+        //  given type via something like "*:selectedChange", this is the 
+        //  approach for now.
+
         item.after("selectedChange", Y.bind(this._afterItemSelectedChange, this));
         item.after("focusedChange", Y.bind(this._afterItemFocusedChange, this));
         
@@ -384,15 +399,13 @@ Parent.prototype = {
 	* @description Adds a Widget as a child.  If the specified Widget already
 	* has a parent it will be removed from its current parent before
 	* being added as a child.
-	* @return {Widget} Widget instance that was successfully added, otherwise
-	* null.
+	* @return {Widget} Widget instance that was successfully added.
 	*/
     add: function (item, index) {   
 
         var aItems,
             oItem,
-            returnVal,
-            success = false;
+            returnVal;
 
 
         if (Lang.isArray(item)) {
@@ -424,9 +437,9 @@ Parent.prototype = {
                 oItem = this._createItem(item);
             }
 
-            success = this.fire("itemAdded", { item: oItem, index: index });
-
-            returnVal = success ? oItem : null;
+            if (this.fire("itemAdded", { item: oItem, index: index })) {
+                returnVal = oItem;
+            }
 
         }
 
@@ -441,26 +454,18 @@ Parent.prototype = {
     * child to be removed.
 	* @description Removes the Widget from its parent.  Optionally, can remove
 	* a child by specifying its index.
-	* @return {Widget} Widget instance that was successfully removed, otherwise
-	* null.
+	* @return {Widget} Widget instance that was successfully removed.
 	*/
     remove: function (index) {
 
-        var items = this.get("items"),
-            item,
-            success = false;
+        var item = this.get("items")[index],
+            returnVal;
 
-        if (Lang.isNumber(index)) {
-
-            item = items[index];
-
-            if (item) {
-                success = this.fire("itemRemoved", { item: item, index: index });
-            }
-
+        if (item && this.fire("itemRemoved", { item: item, index: index })) {
+            returnVal = item;
         }
         
-        return success ? item : null;
+        return returnVal;
 
     },
 
@@ -472,21 +477,25 @@ Parent.prototype = {
 	*/
     removeAll: function () {
 
-        var items = this.get("items"),
-            aRemoved = [],
+        var aRemoved = [],
+            returnVal,
             item;
 
-        Y.each(items, function (v, k) {
+        Y.each(this.get("items"), function (v, k) {
 
             item = this.remove(k);
 
             if (item) {
-                aRemoved.push();                
+                aRemoved.push(item);
             }
 
         });
 
-        return (aRemoved.length > 0 ? aRemoved : null);
+        if (aRemoved.length > 0) {
+            returnVal = aRemoved;
+        }
+
+        return returnVal;
 
     },
 
@@ -497,11 +506,7 @@ Parent.prototype = {
 	* @return {Widget} Widget instance.
 	*/
     item: function (index) {
-        
-        var items = this.get("items");
-        
-        return items ? items[index] : null;
-        
+        return this.get("items")[index];
     },
     
 
@@ -523,7 +528,6 @@ Parent.prototype = {
         });
         
     },
-
     
     initializer: function (config) {
 
@@ -560,6 +564,14 @@ Parent.prototype = {
         * @param {EventFacade} e The Event Facade
         */
         this.publish("itemRemoved", { defaultFn: this._defItemRemoved });
+
+
+        //  TO DO: Confirm implementation of the "items" Attribute.  
+        //  Goals are:
+        //  1.  Provide convience of being able to set once via the constructor
+        //  2.  Disallow setting on a instance via "set", since we have the
+        //      add() interface.
+        //  3.  Provide get access through standard "get()"
 
         if (config && config.items) {
             this.add(config.items);
