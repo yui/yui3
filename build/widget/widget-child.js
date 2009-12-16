@@ -1,7 +1,7 @@
 YUI.add('widget-child', function(Y) {
 
 /**
- * Provides an extension enabling a Widget to be a child of another Widget.
+ * Extension enabling a Widget to be a child of another Widget.
  *
  * @module widget-child
  */
@@ -169,6 +169,8 @@ Child.prototype = {
 	/**
 	* @method next
 	* @description Returns the Widget's next sibling.
+    * @param {Boolean} circular Boolean indicating if the parent's first child 
+    * should be returned if the child has no next sibling.	
 	* @return {Widget} Widget instance. 
 	*/
     next: function (circular) {
@@ -190,8 +192,10 @@ Child.prototype = {
 
 
 	/**
-	* @method previous
+    * @method previous
 	* @description Returns the Widget's previous sibling.
+    * @param {Boolean} circular Boolean indicating if the parent's last child 
+    * should be returned if the child has no previous sibling.
 	* @return {Widget} Widget instance. 
 	*/
     previous: function (circular) {
