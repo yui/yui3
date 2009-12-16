@@ -116,12 +116,6 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         handles: ['strong']
     });
 
-    /*
-    del.plugdd(Y.Plugin.DDProxy, {
-        moveOnEnd: false
-    });
-    */
-
     del.on('drag:start', function(e) {
         this.get('lastNode').setStyle('zIndex', '');
         this.get('currentNode').setStyle('zIndex', '999');
