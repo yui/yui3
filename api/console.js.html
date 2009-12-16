@@ -65,10 +65,6 @@
 <span class="cm"> * @param conf {Object} Configuration object (see Configuration attributes)</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> */</span>
-<span class="kd">function</span> <span class="nx">Console</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">Console</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
-<span class="p">}</span>
-
 <span class="kd">var</span> <span class="nx">getCN</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">,</span>
     <span class="nx">CHECKED</span>        <span class="o">=</span> <span class="s1">&#39;checked&#39;</span><span class="p">,</span>
     <span class="nx">CLEAR</span>          <span class="o">=</span> <span class="s1">&#39;clear&#39;</span><span class="p">,</span>
@@ -143,8 +139,921 @@
     <span class="nx">substitute</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">substitute</span><span class="p">;</span>
     
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Console</span><span class="p">,</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">Console</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">Console</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
+<span class="p">}</span>
 
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Console</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Console</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span>
+
+<span class="c1">// Y.Console prototype</span>
+<span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Category to prefix all event subscriptions to allow for ease of detach</span>
+<span class="cm">     * during destroy.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _evtCat</span>
+<span class="cm">     * @type string</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_evtCat</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Reference to the Node instance containing the header contents.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _head</span>
+<span class="cm">     * @type Node</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_head</span>    <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Reference to the Node instance that will house the console messages.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _body</span>
+<span class="cm">     * @type Node</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_body</span>    <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Reference to the Node instance containing the footer contents.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _foot</span>
+<span class="cm">     * @type Node</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_foot</span>    <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Holds the object API returned from &lt;code&gt;Y.later&lt;/code&gt; for the print</span>
+<span class="cm">     * loop interval.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property _printLoop</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_printLoop</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Array of normalized message objects awaiting printing.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property buffer</span>
+<span class="cm">     * @type Array</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">buffer</span>   <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Wrapper for &lt;code&gt;Y.log&lt;/code&gt;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method log</span>
+<span class="cm">     * @param arg* {MIXED} (all arguments passed through to &lt;code&gt;Y.log&lt;/code&gt;)</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">log</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Clear the console of messages and flush the buffer of pending messages.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method clearConsole</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">clearConsole</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// TODO: clear event listeners from console contents</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">INNER_HTML</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_cancelPrintLoop</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Clears the console and resets internal timers.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method reset</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">reset</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">RESET</span><span class="p">);</span>
+        
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Collapses the body and footer.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method collapse</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">collapse</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Expands the body and footer if collapsed.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method expand</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">expand</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Outputs buffered messages to the console UI.  This is typically called</span>
+<span class="cm">     * from a scheduled interval until the buffer is empty (referred to as the</span>
+<span class="cm">     * print loop).  The number of buffered messages output to the Console is</span>
+<span class="cm">     * limited to the number provided as an argument.  If no limit is passed,</span>
+<span class="cm">     * all buffered messages are rendered.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @method printBuffer</span>
+<span class="cm">     * @param limit {Number} (optional) max number of buffered entries to write</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">printBuffer</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">limit</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">messages</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">,</span>
+            <span class="nx">debug</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span><span class="p">,</span>
+            <span class="nx">entries</span>     <span class="o">=</span> <span class="p">[],</span>
+            <span class="nx">consoleLimit</span><span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;consoleLimit&#39;</span><span class="p">),</span>
+            <span class="nx">newestOnTop</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="p">),</span>
+            <span class="nx">anchor</span>      <span class="o">=</span> <span class="nx">newestOnTop</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">i</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">messages</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">consoleLimit</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">messages</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">consoleLimit</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">limit</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="p">(</span><span class="nx">limit</span> <span class="o">||</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">));</span>
+        
+        <span class="c1">// turn off logging system</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;rendered&#39;</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">limit</span> <span class="o">&amp;&amp;</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">entries</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createEntryHTML</span><span class="p">(</span><span class="nx">messages</span><span class="p">.</span><span class="nx">shift</span><span class="p">());</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_cancelPrintLoop</span><span class="p">();</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">entries</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">newestOnTop</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">entries</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
+                <span class="p">}</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">create</span><span class="p">(</span><span class="nx">entries</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)),</span> <span class="nx">anchor</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollIntoView&#39;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">scrollToLatest</span><span class="p">();</span>
+                <span class="p">}</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">_trimOldEntries</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// restore logging system</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    
+    <span class="cm">/**</span>
+<span class="cm">     * Constructor code.  Set up the buffer and entry template, publish</span>
+<span class="cm">     * internal events, and subscribe to the configured logEvent.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @method initializer</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">initializer</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="p">;</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logSource&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logEvent&#39;</span><span class="p">),</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;_onLogEvent&quot;</span><span class="p">,</span><span class="k">this</span><span class="p">));</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Transfers a received message to the print loop buffer.  Default</span>
+<span class="cm">         * behavior defined in _defEntryFn.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @event entry</span>
+<span class="cm">         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:</span>
+<span class="cm">         *  &lt;dl&gt;</span>
+<span class="cm">         *      &lt;dt&gt;message&lt;/dt&gt;</span>
+<span class="cm">         *          &lt;dd&gt;The message data normalized into an object literal (see _normalizeMessage)&lt;/dd&gt;</span>
+<span class="cm">         *  &lt;/dl&gt;</span>
+<span class="cm">         * @preventable _defEntryFn</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">ENTRY</span><span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defEntryFn</span> <span class="p">});</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Triggers the reset behavior via the default logic in _defResetFn.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @event reset</span>
+<span class="cm">         * @param event {Event.Facade} Event Facade object</span>
+<span class="cm">         * @preventable _defResetFn</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">RESET</span><span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defResetFn</span> <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;rendered&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_schedulePrint</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Tears down the instance, flushing event subscriptions and purging the UI.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method destructor</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">destructor</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_cancelPrintLoop</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logSource&#39;</span><span class="p">).</span><span class="nx">detach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span><span class="p">);</span>
+        
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">purgeElement</span><span class="p">(</span><span class="nx">bb</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+        <span class="nx">bb</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Generate the Console UI.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method renderUI</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">renderUI</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_initHead</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_initBody</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_initFoot</span><span class="p">();</span>
+
+        <span class="c1">// Apply positioning to the bounding box if appropriate</span>
+        <span class="kd">var</span> <span class="nx">style</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">style</span> <span class="o">!==</span> <span class="s1">&#39;block&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;yui-&#39;</span><span class="o">+</span><span class="nx">style</span><span class="o">+</span><span class="s1">&#39;-console&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Sync the UI state to the current attribute state.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method syncUI</span>
+<span class="cm">     */</span>
+    <span class="nx">syncUI</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdatePaused</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdateCollapsed</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetHeight</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">));</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Set up event listeners to wire up the UI to the internal state.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method bindUI</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">bindUI</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;button.&#39;</span><span class="o">+</span><span class="nx">C_COLLAPSE</span><span class="p">).</span>
+            <span class="nx">on</span><span class="p">(</span><span class="nx">CLICK</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">_onCollapseClick</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;input[type=checkbox].&#39;</span><span class="o">+</span><span class="nx">C_PAUSE</span><span class="p">).</span>
+            <span class="nx">on</span><span class="p">(</span><span class="nx">CLICK</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">_onPauseClick</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;button.&#39;</span><span class="o">+</span><span class="nx">C_CLEAR</span><span class="p">).</span>
+            <span class="nx">on</span><span class="p">(</span><span class="nx">CLICK</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">_onClearClick</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
+        
+        <span class="c1">// Attribute changes</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;stringsChange&#39;</span><span class="p">,</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_afterStringsChange</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;pausedChange&#39;</span><span class="p">,</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_afterPausedChange</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;consoleLimitChange&#39;</span><span class="p">,</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_afterConsoleLimitChange</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;collapsedChange&#39;</span><span class="p">,</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_afterCollapsedChange</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    
+    <span class="cm">/**</span>
+<span class="cm">     * Create the DOM structure for the header elements.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _initHead</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_initHead</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">cb</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">),</span>
+            <span class="nx">info</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">Console</span><span class="p">.</span><span class="nx">CHROME_CLASSES</span><span class="p">,</span> <span class="p">{</span>
+                        <span class="nx">str_collapse</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.collapse&#39;</span><span class="p">),</span>
+                        <span class="nx">str_title</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.title&#39;</span><span class="p">)</span>
+                    <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_head</span> <span class="o">=</span> <span class="nx">create</span><span class="p">(</span><span class="nx">substitute</span><span class="p">(</span><span class="nx">Console</span><span class="p">.</span><span class="nx">HEADER_TEMPLATE</span><span class="p">,</span><span class="nx">info</span><span class="p">));</span>
+
+        <span class="nx">cb</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_head</span><span class="p">,</span><span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Create the DOM structure for the console body&amp;#8212;where messages are</span>
+<span class="cm">     * rendered.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _initBody</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_initBody</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_body</span> <span class="o">=</span> <span class="nx">create</span><span class="p">(</span><span class="nx">substitute</span><span class="p">(</span>
+                            <span class="nx">Console</span><span class="p">.</span><span class="nx">BODY_TEMPLATE</span><span class="p">,</span>
+                            <span class="nx">Console</span><span class="p">.</span><span class="nx">CHROME_CLASSES</span><span class="p">));</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Create the DOM structure for the footer elements.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _initFoot</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_initFoot</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">Console</span><span class="p">.</span><span class="nx">CHROME_CLASSES</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">id_guid</span>   <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span>
+                <span class="nx">str_pause</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.pause&#39;</span><span class="p">),</span>
+                <span class="nx">str_clear</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.clear&#39;</span><span class="p">)</span>
+            <span class="p">});</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_foot</span> <span class="o">=</span> <span class="nx">create</span><span class="p">(</span><span class="nx">substitute</span><span class="p">(</span><span class="nx">Console</span><span class="p">.</span><span class="nx">FOOTER_TEMPLATE</span><span class="p">,</span><span class="nx">info</span><span class="p">));</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_foot</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Determine if incoming log messages are within the configured logLevel</span>
+<span class="cm">     * to be buffered for printing.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _isInLogLevel</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_isInLogLevel</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">cat</span><span class="p">,</span> <span class="nx">lvl</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logLevel&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">lvl</span> <span class="o">!==</span> <span class="nx">INFO</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cat</span> <span class="o">=</span> <span class="nx">cat</span> <span class="o">||</span> <span class="nx">INFO</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">cat</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">cat</span> <span class="o">=</span> <span class="nx">cat</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">((</span><span class="nx">cat</span> <span class="o">===</span> <span class="nx">WARN</span> <span class="o">&amp;&amp;</span> <span class="nx">lvl</span> <span class="o">===</span> <span class="nx">ERROR</span><span class="p">)</span> <span class="o">||</span>
+                <span class="p">(</span><span class="nx">cat</span> <span class="o">===</span> <span class="nx">INFO</span> <span class="o">&amp;&amp;</span> <span class="nx">lvl</span> <span class="o">!==</span> <span class="nx">INFO</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Create a log entry message from the inputs including the following keys:</span>
+<span class="cm">     * &lt;ul&gt;</span>
+<span class="cm">     *     &lt;li&gt;time - this moment&lt;/li&gt;</span>
+<span class="cm">     *     &lt;li&gt;message - leg message&lt;/li&gt;</span>
+<span class="cm">     *     &lt;li&gt;category - logLevel or custom category for the message&lt;/li&gt;</span>
+<span class="cm">     *     &lt;li&gt;source - when provided, the widget or util calling Y.log&lt;/li&gt;</span>
+<span class="cm">     *     &lt;li&gt;sourceAndDetail - same as source but can include instance info&lt;/li&gt;</span>
+<span class="cm">     *     &lt;li&gt;localTime - readable version of time&lt;/li&gt;</span>
+<span class="cm">     *     &lt;li&gt;elapsedTime - ms since last entry&lt;/li&gt;</span>
+<span class="cm">     *     &lt;li&gt;totalTime - ms since Console was instantiated or reset&lt;/li&gt;</span>
+<span class="cm">     * &lt;/ul&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _normalizeMessage</span>
+<span class="cm">     * @param e {Event} custom event containing the log message</span>
+<span class="cm">     * @return Object the message object</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_normalizeMessage</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">msg</span><span class="p">,</span>
+            <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">cat</span><span class="p">,</span>
+            <span class="nx">src</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">src</span><span class="p">,</span>
+
+            <span class="nx">m</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">time</span>            <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
+                <span class="nx">message</span>         <span class="o">:</span> <span class="nx">msg</span><span class="p">,</span>
+                <span class="nx">category</span>        <span class="o">:</span> <span class="nx">cat</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;defaultCategory&#39;</span><span class="p">),</span>
+                <span class="nx">sourceAndDetail</span> <span class="o">:</span> <span class="nx">src</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;defaultSource&#39;</span><span class="p">),</span>
+                <span class="nx">source</span>          <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">localTime</span>       <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">elapsedTime</span>     <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">totalTime</span>       <span class="o">:</span> <span class="kc">null</span>
+            <span class="p">};</span>
+
+        <span class="c1">// Extract m.source &quot;Foo&quot; from m.sourceAndDetail &quot;Foo bar baz&quot;</span>
+        <span class="nx">m</span><span class="p">.</span><span class="nx">source</span>          <span class="o">=</span> <span class="nx">RE_INLINE_SOURCE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">sourceAndDetail</span><span class="p">)</span> <span class="o">?</span>
+                                <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$1</span> <span class="o">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">sourceAndDetail</span><span class="p">;</span>
+        <span class="nx">m</span><span class="p">.</span><span class="nx">localTime</span>       <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">toLocaleTimeString</span> <span class="o">?</span> 
+                            <span class="nx">m</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">toLocaleTimeString</span><span class="p">()</span> <span class="o">:</span> <span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">time</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="nx">m</span><span class="p">.</span><span class="nx">elapsedTime</span>     <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">time</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LAST_TIME</span><span class="p">);</span>
+        <span class="nx">m</span><span class="p">.</span><span class="nx">totalTime</span>       <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">time</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">START_TIME</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">LAST_TIME</span><span class="p">,</span><span class="nx">m</span><span class="p">.</span><span class="nx">time</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">m</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Sets an interval for buffered messages to be output to the console.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _schedulePrint</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_schedulePrint</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;rendered&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;printTimeout&#39;</span><span class="p">),</span>
+                                <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">printBuffer</span><span class="p">,</span>
+                                <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;printLimit&#39;</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Translates message meta into the markup for a console entry.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _createEntryHTML</span>
+<span class="cm">     * @param m {Object} object literal containing normalized message metadata</span>
+<span class="cm">     * @return String</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_createEntryHTML</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">m</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_htmlEscapeMessage</span><span class="p">(</span><span class="nx">m</span><span class="p">),</span>
+                <span class="nx">Console</span><span class="p">.</span><span class="nx">ENTRY_CLASSES</span><span class="p">,</span>
+                <span class="p">{</span>
+                    <span class="nx">cat_class</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">ENTRY</span><span class="p">,</span><span class="nx">m</span><span class="p">.</span><span class="nx">category</span><span class="p">),</span>
+                    <span class="nx">src_class</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">ENTRY</span><span class="p">,</span><span class="nx">m</span><span class="p">.</span><span class="nx">source</span><span class="p">)</span>
+                <span class="p">});</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;entryTemplate&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\{(\w+)\}/g</span><span class="p">,</span>
+            <span class="kd">function</span> <span class="p">(</span><span class="nx">_</span><span class="p">,</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">token</span> <span class="k">in</span> <span class="nx">m</span> <span class="o">?</span> <span class="nx">m</span><span class="p">[</span><span class="nx">token</span><span class="p">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+            <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Scrolls to the most recent entry</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method scrollToLatest</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">scrollToLatest</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">scrollTop</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="p">)</span> <span class="o">?</span>
+                            <span class="mi">0</span> <span class="o">:</span>
+                            <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollHeight&#39;</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;scrollTop&#39;</span><span class="p">,</span> <span class="nx">scrollTop</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Performs HTML escaping on strings in the message object.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _htmlEscapeMessage</span>
+<span class="cm">     * @param m {Object} the normalized message object</span>
+<span class="cm">     * @return Object the message object with proper escapement</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_htmlEscapeMessage</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">m</span><span class="p">.</span><span class="nx">message</span>         <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_encodeHTML</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+        <span class="nx">m</span><span class="p">.</span><span class="nx">source</span>          <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_encodeHTML</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">source</span><span class="p">);</span>
+        <span class="nx">m</span><span class="p">.</span><span class="nx">sourceAndDetail</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_encodeHTML</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">sourceAndDetail</span><span class="p">);</span>
+        <span class="nx">m</span><span class="p">.</span><span class="nx">category</span>        <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_encodeHTML</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">category</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">m</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Removes the oldest message entries from the UI to maintain the limit</span>
+<span class="cm">     * specified in the consoleLimit configuration.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _trimOldEntries</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_trimOldEntries</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// Turn off the logging system for the duration of this operation</span>
+        <span class="c1">// to prevent an infinite loop</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+        <span class="kd">var</span> <span class="nx">bd</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">,</span>
+            <span class="nx">limit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;consoleLimit&#39;</span><span class="p">),</span>
+            <span class="nx">debug</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span><span class="p">,</span>
+            <span class="nx">entries</span><span class="p">,</span><span class="nx">e</span><span class="p">,</span><span class="nx">i</span><span class="p">,</span><span class="nx">l</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">bd</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">entries</span> <span class="o">=</span> <span class="nx">bd</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">DOT</span><span class="o">+</span><span class="nx">C_ENTRY</span><span class="p">);</span>
+            <span class="nx">l</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">-</span> <span class="nx">limit</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">l</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">i</span> <span class="o">=</span> <span class="nx">limit</span><span class="p">;</span>
+                    <span class="nx">l</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="p">}</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;display&#39;</span><span class="p">,</span><span class="s1">&#39;none&#39;</span><span class="p">);</span>
+
+                <span class="k">for</span> <span class="p">(;</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">e</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">e</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;display&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the input string with ampersands (&amp;amp;), &amp;lt, and &amp;gt; encoded</span>
+<span class="cm">     * as HTML entities.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _encodeHTML</span>
+<span class="cm">     * @param s {String} the raw string</span>
+<span class="cm">     * @return String the encoded string</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_encodeHTML</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">isString</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="o">?</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">RE_AMP</span><span class="p">,</span><span class="nx">ESC_AMP</span><span class="p">).</span>
+              <span class="nx">replace</span><span class="p">(</span><span class="nx">RE_LT</span><span class="p">,</span> <span class="nx">ESC_LT</span><span class="p">).</span>
+              <span class="nx">replace</span><span class="p">(</span><span class="nx">RE_GT</span><span class="p">,</span> <span class="nx">ESC_GT</span><span class="p">)</span> <span class="o">:</span>
+            <span class="nx">s</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Clears the timeout for printing buffered messages.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _cancelPrintLoop</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_cancelPrintLoop</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Validates input value for style attribute.  Accepts only values &#39;inline&#39;,</span>
+<span class="cm">     * &#39;block&#39;, and &#39;separate&#39;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _validateStyle</span>
+<span class="cm">     * @param style {String} the proposed value</span>
+<span class="cm">     * @return {Boolean} pass/fail</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_validateStyle</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">style</span> <span class="o">===</span> <span class="s1">&#39;inline&#39;</span> <span class="o">||</span> <span class="nx">style</span> <span class="o">===</span> <span class="s1">&#39;block&#39;</span> <span class="o">||</span> <span class="nx">style</span> <span class="o">===</span> <span class="s1">&#39;separate&#39;</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Event handler for clicking on the Pause checkbox to update the paused</span>
+<span class="cm">     * attribute.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _onPauseClick</span>
+<span class="cm">     * @param e {Event} DOM event facade for the click event</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_onPauseClick</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">,</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CHECKED</span><span class="p">));</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Event handler for clicking on the Clear button.  Pass-through to</span>
+<span class="cm">     * &lt;code&gt;this.clearConsole()&lt;/code&gt;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _onClearClick</span>
+<span class="cm">     * @param e {Event} DOM event facade for the click event</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_onClearClick</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">clearConsole</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Event handler for clicking on the Collapse/Expand button. Sets the</span>
+<span class="cm">     * &amp;quot;collapsed&amp;quot; attribute accordingly.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _onCollapseClick</span>
+<span class="cm">     * @param e {Event} DOM event facade for the click event</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_onCollapseClick</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">,</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">));</span>
+    <span class="p">},</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * Validator for logSource attribute.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _validateLogSource</span>
+<span class="cm">     * @param v {Object} the desired logSource</span>
+<span class="cm">     * @return {Boolean} true if the input is an object with an &lt;code&gt;on&lt;/code&gt;</span>
+<span class="cm">     *                   method</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_validateLogSource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">v</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">on</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Setter method for logLevel attribute.  Acceptable values are</span>
+<span class="cm">     * &amp;quot;error&amp;quot, &amp;quot;warn&amp;quot, and &amp;quot;info&amp;quot (case</span>
+<span class="cm">     * insensitive).  Other values are treated as &amp;quot;info&amp;quot;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setLogLevel</span>
+<span class="cm">     * @param v {String} the desired log level</span>
+<span class="cm">     * @return String One of Console.LOG_LEVEL_INFO, _WARN, or _ERROR</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_setLogLevel</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">v</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+        <span class="p">}</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="nx">v</span> <span class="o">===</span> <span class="nx">WARN</span> <span class="o">||</span> <span class="nx">v</span> <span class="o">===</span> <span class="nx">ERROR</span><span class="p">)</span> <span class="o">?</span> <span class="nx">v</span> <span class="o">:</span> <span class="nx">INFO</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Getter method for useBrowserConsole attribute.  Just a pass through to</span>
+<span class="cm">     * the YUI instance configuration setting.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _getUseBrowserConsole</span>
+<span class="cm">     * @return {Boolean} or null if logSource is not a YUI instance</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_getUseBrowserConsole</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">logSource</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logSource&#39;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">logSource</span> <span class="k">instanceof</span> <span class="nx">YUI</span> <span class="o">?</span>
+            <span class="nx">logSource</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">useBrowserConsole</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Setter method for useBrowserConsole attributes.  Only functional if the</span>
+<span class="cm">     * logSource attribute points to a YUI instance.  Passes the value down to</span>
+<span class="cm">     * the YUI instance.  NOTE: multiple Console instances cannot maintain</span>
+<span class="cm">     * independent useBrowserConsole values, since it is just a pass through to</span>
+<span class="cm">     * the YUI instance configuration.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setUseBrowserConsole</span>
+<span class="cm">     * @param v {Boolean} false to disable browser console printing (default)</span>
+<span class="cm">     * @return {Boolean} true|false if logSource is a YUI instance</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_setUseBrowserConsole</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">logSource</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logSource&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">logSource</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">v</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">v</span><span class="p">;</span>
+            <span class="nx">logSource</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">useBrowserConsole</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">v</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">INVALID_VALUE</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Set the height of the Console container.  Set the body height to the difference between the configured height and the calculated heights of the header and footer.</span>
+<span class="cm">     * Overrides Widget.prototype._uiSetHeight.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _uiSetHeight</span>
+<span class="cm">     * @param v {String|Number} the new height</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_uiSetHeight</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Console</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_uiSetHeight</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_head</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_foot</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">h</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span> <span class="o">-</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_head</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span> <span class="o">-</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_foot</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">,</span><span class="nx">h</span><span class="o">+</span><span class="s1">&#39;px&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Updates the UI if changes are made to any of the strings in the strings</span>
+<span class="cm">     * attribute.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _afterStringsChange</span>
+<span class="cm">     * @param e {Event} Custom event for the attribute change</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_afterStringsChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">prop</span>   <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">subAttrName</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">subAttrName</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">DOT</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">cb</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">),</span>
+            <span class="nx">before</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">prevVal</span><span class="p">,</span>
+            <span class="nx">after</span>  <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">prop</span> <span class="o">||</span> <span class="nx">prop</span> <span class="o">===</span> <span class="nx">TITLE</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">before</span><span class="p">.</span><span class="nx">title</span> <span class="o">!==</span> <span class="nx">after</span><span class="p">.</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">DOT</span><span class="o">+</span><span class="nx">C_CONSOLE_TITLE</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="nx">INNER_HTML</span><span class="p">,</span> <span class="nx">after</span><span class="p">.</span><span class="nx">title</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">prop</span> <span class="o">||</span> <span class="nx">prop</span> <span class="o">===</span> <span class="nx">PAUSE</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">before</span><span class="p">.</span><span class="nx">pause</span> <span class="o">!==</span> <span class="nx">after</span><span class="p">.</span><span class="nx">pause</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">DOT</span><span class="o">+</span><span class="nx">C_PAUSE_LABEL</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="nx">INNER_HTML</span><span class="p">,</span> <span class="nx">after</span><span class="p">.</span><span class="nx">pause</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">prop</span> <span class="o">||</span> <span class="nx">prop</span> <span class="o">===</span> <span class="nx">CLEAR</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">before</span><span class="p">.</span><span class="nx">clear</span> <span class="o">!==</span> <span class="nx">after</span><span class="p">.</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">cb</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">DOT</span><span class="o">+</span><span class="nx">C_CLEAR</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span><span class="nx">after</span><span class="p">.</span><span class="nx">clear</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Updates the UI and schedules or cancels the print loop.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _afterPausedChange</span>
+<span class="cm">     * @param e {Event} Custom event for the attribute change</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_afterPausedChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">paused</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">SRC_UI</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdatePaused</span><span class="p">(</span><span class="nx">paused</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">paused</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_schedulePrint</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_cancelPrintLoop</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Checks or unchecks the paused checkbox</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _uiUpdatePaused</span>
+<span class="cm">     * @param on {Boolean} the new checked state</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_uiUpdatePaused</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">on</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_foot</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;input[type=checkbox].&#39;</span><span class="o">+</span><span class="nx">C_PAUSE</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">CHECKED</span><span class="p">,</span><span class="nx">on</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Calls this._trimOldEntries() in response to changes in the configured</span>
+<span class="cm">     * consoleLimit attribute.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @method _afterConsoleLimitChange</span>
+<span class="cm">     * @param e {Event} Custom event for the attribute change</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_afterConsoleLimitChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_trimOldEntries</span><span class="p">();</span>
+    <span class="p">},</span>
+
+
+    <span class="cm">/**</span>
+<span class="cm">     * Updates the className of the contentBox, which should trigger CSS to</span>
+<span class="cm">     * hide or show the body and footer sections depending on the new value.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _afterCollapsedChange</span>
+<span class="cm">     * @param e {Event} Custom event for the attribute change</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_afterCollapsedChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdateCollapsed</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Updates the UI to reflect the new Collapsed state</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _uiUpdateCollapsed</span>
+<span class="cm">     * @param v {Boolean} true for collapsed, false for expanded</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_uiUpdateCollapsed</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">bb</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">),</span>
+            <span class="nx">button</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;button.&#39;</span><span class="o">+</span><span class="nx">C_COLLAPSE</span><span class="p">),</span>
+            <span class="nx">method</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">?</span> <span class="s1">&#39;addClass&#39;</span> <span class="o">:</span> <span class="s1">&#39;removeClass&#39;</span><span class="p">,</span>
+            <span class="nx">str</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">v</span> <span class="o">?</span> <span class="s1">&#39;expand&#39;</span> <span class="o">:</span> <span class="s1">&#39;collapse&#39;</span><span class="p">));</span>
+
+        <span class="nx">bb</span><span class="p">[</span><span class="nx">method</span><span class="p">](</span><span class="nx">C_COLLAPSED</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">button</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">button</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span><span class="nx">str</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetHeight</span><span class="p">(</span><span class="nx">v</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_head</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">));</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Makes adjustments to the UI if needed when the Console is hidden or shown</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _afterVisibleChange</span>
+<span class="cm">     * @param e {Event} the visibleChange event</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_afterVisibleChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Console</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_afterVisibleChange</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdateFromHideShow</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Recalculates dimensions and updates appropriately when shown</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _uiUpdateFromHideShow</span>
+<span class="cm">     * @param v {Boolean} true for visible, false for hidden</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_uiUpdateFromHideShow</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetHeight</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Responds to log events by normalizing qualifying messages and passing</span>
+<span class="cm">     * them along through the entry event for buffering etc.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @method _onLogEvent</span>
+<span class="cm">     * @param msg {String} the log message</span>
+<span class="cm">     * @param cat {String} OPTIONAL the category or logLevel of the message</span>
+<span class="cm">     * @param src {String} OPTIONAL the source of the message (e.g. widget name)</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_onLogEvent</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_isInLogLevel</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span> <span class="p">{</span>
+
+            <span class="kd">var</span> <span class="nx">debug</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
+
+            <span class="cm">/* TODO: needed? */</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">ENTRY</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">message</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_normalizeMessage</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+            <span class="p">});</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Clears the console, resets the startTime attribute, enables and</span>
+<span class="cm">     * unpauses the widget.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defResetFn</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defResetFn</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">clearConsole</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">START_TIME</span><span class="p">,</span><span class="k">new</span> <span class="nb">Date</span><span class="p">());</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">,</span><span class="kc">false</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">,</span><span class="kc">false</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Buffers incoming message objects and schedules the printing.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defEntryFn</span>
+<span class="cm">     * @param e {Event} The Custom event carrying the message in its payload</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defEntryFn</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_schedulePrint</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">},</span>
+
+<span class="c1">// Y.Console static properties</span>
+<span class="p">{</span>
     <span class="cm">/**</span>
 <span class="cm">     * The identity of the widget.</span>
 <span class="cm">     *</span>
@@ -645,915 +1554,6 @@
     <span class="p">}</span>
 
 <span class="p">});</span>
-
-<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Console</span><span class="p">,</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,{</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Category to prefix all event subscriptions to allow for ease of detach</span>
-<span class="cm">     * during destroy.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property _evtCat</span>
-<span class="cm">     * @type string</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_evtCat</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Reference to the Node instance containing the header contents.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property _head</span>
-<span class="cm">     * @type Node</span>
-<span class="cm">     * @default null</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_head</span>    <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Reference to the Node instance that will house the console messages.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property _body</span>
-<span class="cm">     * @type Node</span>
-<span class="cm">     * @default null</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_body</span>    <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Reference to the Node instance containing the footer contents.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property _foot</span>
-<span class="cm">     * @type Node</span>
-<span class="cm">     * @default null</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_foot</span>    <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Holds the object API returned from &lt;code&gt;Y.later&lt;/code&gt; for the print</span>
-<span class="cm">     * loop interval.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property _printLoop</span>
-<span class="cm">     * @type Object</span>
-<span class="cm">     * @default null</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_printLoop</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Array of normalized message objects awaiting printing.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property buffer</span>
-<span class="cm">     * @type Array</span>
-<span class="cm">     * @default null</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">buffer</span>   <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Wrapper for &lt;code&gt;Y.log&lt;/code&gt;.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method log</span>
-<span class="cm">     * @param arg* {MIXED} (all arguments passed through to &lt;code&gt;Y.log&lt;/code&gt;)</span>
-<span class="cm">     * @chainable</span>
-<span class="cm">     */</span>
-    <span class="nx">log</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
-
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Clear the console of messages and flush the buffer of pending messages.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method clearConsole</span>
-<span class="cm">     * @chainable</span>
-<span class="cm">     */</span>
-    <span class="nx">clearConsole</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="c1">// TODO: clear event listeners from console contents</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">INNER_HTML</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_cancelPrintLoop</span><span class="p">();</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span>
-
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Clears the console and resets internal timers.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method reset</span>
-<span class="cm">     * @chainable</span>
-<span class="cm">     */</span>
-    <span class="nx">reset</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">RESET</span><span class="p">);</span>
-        
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Collapses the body and footer.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method collapse</span>
-<span class="cm">     * @chainable</span>
-<span class="cm">     */</span>
-    <span class="nx">collapse</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Expands the body and footer if collapsed.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method expand</span>
-<span class="cm">     * @chainable</span>
-<span class="cm">     */</span>
-    <span class="nx">expand</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Outputs buffered messages to the console UI.  This is typically called</span>
-<span class="cm">     * from a scheduled interval until the buffer is empty (referred to as the</span>
-<span class="cm">     * print loop).  The number of buffered messages output to the Console is</span>
-<span class="cm">     * limited to the number provided as an argument.  If no limit is passed,</span>
-<span class="cm">     * all buffered messages are rendered.</span>
-<span class="cm">     * </span>
-<span class="cm">     * @method printBuffer</span>
-<span class="cm">     * @param limit {Number} (optional) max number of buffered entries to write</span>
-<span class="cm">     * @chainable</span>
-<span class="cm">     */</span>
-    <span class="nx">printBuffer</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">limit</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">messages</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">,</span>
-            <span class="nx">debug</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span><span class="p">,</span>
-            <span class="nx">entries</span>     <span class="o">=</span> <span class="p">[],</span>
-            <span class="nx">consoleLimit</span><span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;consoleLimit&#39;</span><span class="p">),</span>
-            <span class="nx">newestOnTop</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="p">),</span>
-            <span class="nx">anchor</span>      <span class="o">=</span> <span class="nx">newestOnTop</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">i</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">messages</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">consoleLimit</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">messages</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="nx">consoleLimit</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="nx">limit</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="p">(</span><span class="nx">limit</span> <span class="o">||</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">));</span>
-        
-        <span class="c1">// turn off logging system</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;rendered&#39;</span><span class="p">))</span> <span class="p">{</span>
-
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">limit</span> <span class="o">&amp;&amp;</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">entries</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createEntryHTML</span><span class="p">(</span><span class="nx">messages</span><span class="p">.</span><span class="nx">shift</span><span class="p">());</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">messages</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_cancelPrintLoop</span><span class="p">();</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">entries</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">newestOnTop</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">entries</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
-                <span class="p">}</span>
-
-                <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">create</span><span class="p">(</span><span class="nx">entries</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)),</span> <span class="nx">anchor</span><span class="p">);</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollIntoView&#39;</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">scrollToLatest</span><span class="p">();</span>
-                <span class="p">}</span>
-
-                <span class="k">this</span><span class="p">.</span><span class="nx">_trimOldEntries</span><span class="p">();</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="c1">// restore logging system</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="p">;</span>
-
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    
-    <span class="cm">/**</span>
-<span class="cm">     * Constructor code.  Set up the buffer and entry template, publish</span>
-<span class="cm">     * internal events, and subscribe to the configured logEvent.</span>
-<span class="cm">     * </span>
-<span class="cm">     * @method initializer</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">initializer</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="p">;</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[];</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logSource&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logEvent&#39;</span><span class="p">),</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;_onLogEvent&quot;</span><span class="p">,</span><span class="k">this</span><span class="p">));</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Transfers a received message to the print loop buffer.  Default</span>
-<span class="cm">         * behavior defined in _defEntryFn.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @event entry</span>
-<span class="cm">         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:</span>
-<span class="cm">         *  &lt;dl&gt;</span>
-<span class="cm">         *      &lt;dt&gt;message&lt;/dt&gt;</span>
-<span class="cm">         *          &lt;dd&gt;The message data normalized into an object literal (see _normalizeMessage)&lt;/dd&gt;</span>
-<span class="cm">         *  &lt;/dl&gt;</span>
-<span class="cm">         * @preventable _defEntryFn</span>
-<span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">ENTRY</span><span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defEntryFn</span> <span class="p">});</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Triggers the reset behavior via the default logic in _defResetFn.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @event reset</span>
-<span class="cm">         * @param event {Event.Facade} Event Facade object</span>
-<span class="cm">         * @preventable _defResetFn</span>
-<span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">RESET</span><span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defResetFn</span> <span class="p">});</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;rendered&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_schedulePrint</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Tears down the instance, flushing event subscriptions and purging the UI.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method destructor</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">destructor</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">bb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_cancelPrintLoop</span><span class="p">();</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logSource&#39;</span><span class="p">).</span><span class="nx">detach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span><span class="p">);</span>
-        
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">purgeElement</span><span class="p">(</span><span class="nx">bb</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-
-        <span class="nx">bb</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Generate the Console UI.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method renderUI</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">renderUI</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_initHead</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_initBody</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_initFoot</span><span class="p">();</span>
-
-        <span class="c1">// Apply positioning to the bounding box if appropriate</span>
-        <span class="kd">var</span> <span class="nx">style</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;style&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">style</span> <span class="o">!==</span> <span class="s1">&#39;block&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;yui-&#39;</span><span class="o">+</span><span class="nx">style</span><span class="o">+</span><span class="s1">&#39;-console&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Sync the UI state to the current attribute state.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method syncUI</span>
-<span class="cm">     */</span>
-    <span class="nx">syncUI</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdatePaused</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">));</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdateCollapsed</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">));</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetHeight</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">));</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Set up event listeners to wire up the UI to the internal state.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method bindUI</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">bindUI</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;button.&#39;</span><span class="o">+</span><span class="nx">C_COLLAPSE</span><span class="p">).</span>
-            <span class="nx">on</span><span class="p">(</span><span class="nx">CLICK</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">_onCollapseClick</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;input[type=checkbox].&#39;</span><span class="o">+</span><span class="nx">C_PAUSE</span><span class="p">).</span>
-            <span class="nx">on</span><span class="p">(</span><span class="nx">CLICK</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">_onPauseClick</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;button.&#39;</span><span class="o">+</span><span class="nx">C_CLEAR</span><span class="p">).</span>
-            <span class="nx">on</span><span class="p">(</span><span class="nx">CLICK</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">_onClearClick</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
-        
-        <span class="c1">// Attribute changes</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;stringsChange&#39;</span><span class="p">,</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_afterStringsChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;pausedChange&#39;</span><span class="p">,</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_afterPausedChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;consoleLimitChange&#39;</span><span class="p">,</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_afterConsoleLimitChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;collapsedChange&#39;</span><span class="p">,</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_afterCollapsedChange</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    
-    <span class="cm">/**</span>
-<span class="cm">     * Create the DOM structure for the header elements.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _initHead</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_initHead</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">cb</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">),</span>
-            <span class="nx">info</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">Console</span><span class="p">.</span><span class="nx">CHROME_CLASSES</span><span class="p">,</span> <span class="p">{</span>
-                        <span class="nx">str_collapse</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.collapse&#39;</span><span class="p">),</span>
-                        <span class="nx">str_title</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.title&#39;</span><span class="p">)</span>
-                    <span class="p">});</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_head</span> <span class="o">=</span> <span class="nx">create</span><span class="p">(</span><span class="nx">substitute</span><span class="p">(</span><span class="nx">Console</span><span class="p">.</span><span class="nx">HEADER_TEMPLATE</span><span class="p">,</span><span class="nx">info</span><span class="p">));</span>
-
-        <span class="nx">cb</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_head</span><span class="p">,</span><span class="nx">cb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;firstChild&#39;</span><span class="p">));</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Create the DOM structure for the console body&amp;#8212;where messages are</span>
-<span class="cm">     * rendered.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _initBody</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_initBody</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_body</span> <span class="o">=</span> <span class="nx">create</span><span class="p">(</span><span class="nx">substitute</span><span class="p">(</span>
-                            <span class="nx">Console</span><span class="p">.</span><span class="nx">BODY_TEMPLATE</span><span class="p">,</span>
-                            <span class="nx">Console</span><span class="p">.</span><span class="nx">CHROME_CLASSES</span><span class="p">));</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Create the DOM structure for the footer elements.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _initFoot</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_initFoot</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">Console</span><span class="p">.</span><span class="nx">CHROME_CLASSES</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">id_guid</span>   <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span>
-                <span class="nx">str_pause</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.pause&#39;</span><span class="p">),</span>
-                <span class="nx">str_clear</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.clear&#39;</span><span class="p">)</span>
-            <span class="p">});</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_foot</span> <span class="o">=</span> <span class="nx">create</span><span class="p">(</span><span class="nx">substitute</span><span class="p">(</span><span class="nx">Console</span><span class="p">.</span><span class="nx">FOOTER_TEMPLATE</span><span class="p">,</span><span class="nx">info</span><span class="p">));</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_foot</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Determine if incoming log messages are within the configured logLevel</span>
-<span class="cm">     * to be buffered for printing.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _isInLogLevel</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_isInLogLevel</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">cat</span><span class="p">,</span> <span class="nx">lvl</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logLevel&#39;</span><span class="p">);</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">lvl</span> <span class="o">!==</span> <span class="nx">INFO</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">cat</span> <span class="o">=</span> <span class="nx">cat</span> <span class="o">||</span> <span class="nx">INFO</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">cat</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">cat</span> <span class="o">=</span> <span class="nx">cat</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">((</span><span class="nx">cat</span> <span class="o">===</span> <span class="nx">WARN</span> <span class="o">&amp;&amp;</span> <span class="nx">lvl</span> <span class="o">===</span> <span class="nx">ERROR</span><span class="p">)</span> <span class="o">||</span>
-                <span class="p">(</span><span class="nx">cat</span> <span class="o">===</span> <span class="nx">INFO</span> <span class="o">&amp;&amp;</span> <span class="nx">lvl</span> <span class="o">!==</span> <span class="nx">INFO</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Create a log entry message from the inputs including the following keys:</span>
-<span class="cm">     * &lt;ul&gt;</span>
-<span class="cm">     *     &lt;li&gt;time - this moment&lt;/li&gt;</span>
-<span class="cm">     *     &lt;li&gt;message - leg message&lt;/li&gt;</span>
-<span class="cm">     *     &lt;li&gt;category - logLevel or custom category for the message&lt;/li&gt;</span>
-<span class="cm">     *     &lt;li&gt;source - when provided, the widget or util calling Y.log&lt;/li&gt;</span>
-<span class="cm">     *     &lt;li&gt;sourceAndDetail - same as source but can include instance info&lt;/li&gt;</span>
-<span class="cm">     *     &lt;li&gt;localTime - readable version of time&lt;/li&gt;</span>
-<span class="cm">     *     &lt;li&gt;elapsedTime - ms since last entry&lt;/li&gt;</span>
-<span class="cm">     *     &lt;li&gt;totalTime - ms since Console was instantiated or reset&lt;/li&gt;</span>
-<span class="cm">     * &lt;/ul&gt;</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _normalizeMessage</span>
-<span class="cm">     * @param e {Event} custom event containing the log message</span>
-<span class="cm">     * @return Object the message object</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_normalizeMessage</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">msg</span><span class="p">,</span>
-            <span class="nx">cat</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">cat</span><span class="p">,</span>
-            <span class="nx">src</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">src</span><span class="p">,</span>
-
-            <span class="nx">m</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">time</span>            <span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(),</span>
-                <span class="nx">message</span>         <span class="o">:</span> <span class="nx">msg</span><span class="p">,</span>
-                <span class="nx">category</span>        <span class="o">:</span> <span class="nx">cat</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;defaultCategory&#39;</span><span class="p">),</span>
-                <span class="nx">sourceAndDetail</span> <span class="o">:</span> <span class="nx">src</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;defaultSource&#39;</span><span class="p">),</span>
-                <span class="nx">source</span>          <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-                <span class="nx">localTime</span>       <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-                <span class="nx">elapsedTime</span>     <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-                <span class="nx">totalTime</span>       <span class="o">:</span> <span class="kc">null</span>
-            <span class="p">};</span>
-
-        <span class="c1">// Extract m.source &quot;Foo&quot; from m.sourceAndDetail &quot;Foo bar baz&quot;</span>
-        <span class="nx">m</span><span class="p">.</span><span class="nx">source</span>          <span class="o">=</span> <span class="nx">RE_INLINE_SOURCE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">sourceAndDetail</span><span class="p">)</span> <span class="o">?</span>
-                                <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$1</span> <span class="o">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">sourceAndDetail</span><span class="p">;</span>
-        <span class="nx">m</span><span class="p">.</span><span class="nx">localTime</span>       <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">toLocaleTimeString</span> <span class="o">?</span> 
-                            <span class="nx">m</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">toLocaleTimeString</span><span class="p">()</span> <span class="o">:</span> <span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">time</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-        <span class="nx">m</span><span class="p">.</span><span class="nx">elapsedTime</span>     <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">time</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LAST_TIME</span><span class="p">);</span>
-        <span class="nx">m</span><span class="p">.</span><span class="nx">totalTime</span>       <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">time</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">START_TIME</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">LAST_TIME</span><span class="p">,</span><span class="nx">m</span><span class="p">.</span><span class="nx">time</span><span class="p">);</span>
-
-        <span class="k">return</span> <span class="nx">m</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Sets an interval for buffered messages to be output to the console.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _schedulePrint</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_schedulePrint</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;rendered&#39;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span>
-                                <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;printTimeout&#39;</span><span class="p">),</span>
-                                <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">printBuffer</span><span class="p">,</span>
-                                <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;printLimit&#39;</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Translates message meta into the markup for a console entry.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _createEntryHTML</span>
-<span class="cm">     * @param m {Object} object literal containing normalized message metadata</span>
-<span class="cm">     * @return String</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_createEntryHTML</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">m</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_htmlEscapeMessage</span><span class="p">(</span><span class="nx">m</span><span class="p">),</span>
-                <span class="nx">Console</span><span class="p">.</span><span class="nx">ENTRY_CLASSES</span><span class="p">,</span>
-                <span class="p">{</span>
-                    <span class="nx">cat_class</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">ENTRY</span><span class="p">,</span><span class="nx">m</span><span class="p">.</span><span class="nx">category</span><span class="p">),</span>
-                    <span class="nx">src_class</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">ENTRY</span><span class="p">,</span><span class="nx">m</span><span class="p">.</span><span class="nx">source</span><span class="p">)</span>
-                <span class="p">});</span>
-
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;entryTemplate&#39;</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\{(\w+)\}/g</span><span class="p">,</span>
-            <span class="kd">function</span> <span class="p">(</span><span class="nx">_</span><span class="p">,</span><span class="nx">token</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">token</span> <span class="k">in</span> <span class="nx">m</span> <span class="o">?</span> <span class="nx">m</span><span class="p">[</span><span class="nx">token</span><span class="p">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-            <span class="p">});</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Scrolls to the most recent entry</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method scrollToLatest</span>
-<span class="cm">     * @chainable</span>
-<span class="cm">     */</span>
-    <span class="nx">scrollToLatest</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">scrollTop</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="p">)</span> <span class="o">?</span>
-                            <span class="mi">0</span> <span class="o">:</span>
-                            <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;scrollHeight&#39;</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;scrollTop&#39;</span><span class="p">,</span> <span class="nx">scrollTop</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Performs HTML escaping on strings in the message object.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _htmlEscapeMessage</span>
-<span class="cm">     * @param m {Object} the normalized message object</span>
-<span class="cm">     * @return Object the message object with proper escapement</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_htmlEscapeMessage</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">m</span><span class="p">.</span><span class="nx">message</span>         <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_encodeHTML</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
-        <span class="nx">m</span><span class="p">.</span><span class="nx">source</span>          <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_encodeHTML</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">source</span><span class="p">);</span>
-        <span class="nx">m</span><span class="p">.</span><span class="nx">sourceAndDetail</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_encodeHTML</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">sourceAndDetail</span><span class="p">);</span>
-        <span class="nx">m</span><span class="p">.</span><span class="nx">category</span>        <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_encodeHTML</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">category</span><span class="p">);</span>
-
-        <span class="k">return</span> <span class="nx">m</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Removes the oldest message entries from the UI to maintain the limit</span>
-<span class="cm">     * specified in the consoleLimit configuration.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _trimOldEntries</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_trimOldEntries</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="c1">// Turn off the logging system for the duration of this operation</span>
-        <span class="c1">// to prevent an infinite loop</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
-        <span class="kd">var</span> <span class="nx">bd</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">,</span>
-            <span class="nx">limit</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;consoleLimit&#39;</span><span class="p">),</span>
-            <span class="nx">debug</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span><span class="p">,</span>
-            <span class="nx">entries</span><span class="p">,</span><span class="nx">e</span><span class="p">,</span><span class="nx">i</span><span class="p">,</span><span class="nx">l</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">bd</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">entries</span> <span class="o">=</span> <span class="nx">bd</span><span class="p">.</span><span class="nx">queryAll</span><span class="p">(</span><span class="nx">DOT</span><span class="o">+</span><span class="nx">C_ENTRY</span><span class="p">);</span>
-            <span class="nx">l</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">-</span> <span class="nx">limit</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">l</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newestOnTop&#39;</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">i</span> <span class="o">=</span> <span class="nx">limit</span><span class="p">;</span>
-                    <span class="nx">l</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-                <span class="p">}</span>
-
-                <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;display&#39;</span><span class="p">,</span><span class="s1">&#39;none&#39;</span><span class="p">);</span>
-
-                <span class="k">for</span> <span class="p">(;</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">e</span> <span class="o">=</span> <span class="nx">entries</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">e</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-
-                <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;display&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
-            <span class="p">}</span>
-
-        <span class="p">}</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Returns the input string with ampersands (&amp;amp;), &amp;lt, and &amp;gt; encoded</span>
-<span class="cm">     * as HTML entities.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _encodeHTML</span>
-<span class="cm">     * @param s {String} the raw string</span>
-<span class="cm">     * @return String the encoded string</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_encodeHTML</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">isString</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="o">?</span>
-            <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">RE_AMP</span><span class="p">,</span><span class="nx">ESC_AMP</span><span class="p">).</span>
-              <span class="nx">replace</span><span class="p">(</span><span class="nx">RE_LT</span><span class="p">,</span> <span class="nx">ESC_LT</span><span class="p">).</span>
-              <span class="nx">replace</span><span class="p">(</span><span class="nx">RE_GT</span><span class="p">,</span> <span class="nx">ESC_GT</span><span class="p">)</span> <span class="o">:</span>
-            <span class="nx">s</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Clears the timeout for printing buffered messages.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _cancelPrintLoop</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_cancelPrintLoop</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Validates input value for style attribute.  Accepts only values &#39;inline&#39;,</span>
-<span class="cm">     * &#39;block&#39;, and &#39;separate&#39;.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _validateStyle</span>
-<span class="cm">     * @param style {String} the proposed value</span>
-<span class="cm">     * @return {Boolean} pass/fail</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_validateStyle</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">style</span> <span class="o">===</span> <span class="s1">&#39;inline&#39;</span> <span class="o">||</span> <span class="nx">style</span> <span class="o">===</span> <span class="s1">&#39;block&#39;</span> <span class="o">||</span> <span class="nx">style</span> <span class="o">===</span> <span class="s1">&#39;separate&#39;</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Event handler for clicking on the Pause checkbox to update the paused</span>
-<span class="cm">     * attribute.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _onPauseClick</span>
-<span class="cm">     * @param e {Event} DOM event facade for the click event</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_onPauseClick</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">,</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CHECKED</span><span class="p">));</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Event handler for clicking on the Clear button.  Pass-through to</span>
-<span class="cm">     * &lt;code&gt;this.clearConsole()&lt;/code&gt;.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _onClearClick</span>
-<span class="cm">     * @param e {Event} DOM event facade for the click event</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_onClearClick</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">clearConsole</span><span class="p">();</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Event handler for clicking on the Collapse/Expand button. Sets the</span>
-<span class="cm">     * &amp;quot;collapsed&amp;quot; attribute accordingly.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _onCollapseClick</span>
-<span class="cm">     * @param e {Event} DOM event facade for the click event</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_onCollapseClick</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">,</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">COLLAPSED</span><span class="p">));</span>
-    <span class="p">},</span>
-
-
-    <span class="cm">/**</span>
-<span class="cm">     * Validator for logSource attribute.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _validateLogSource</span>
-<span class="cm">     * @param v {Object} the desired logSource</span>
-<span class="cm">     * @return {Boolean} true if the input is an object with an &lt;code&gt;on&lt;/code&gt;</span>
-<span class="cm">     *                   method</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_validateLogSource</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">v</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">on</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Setter method for logLevel attribute.  Acceptable values are</span>
-<span class="cm">     * &amp;quot;error&amp;quot, &amp;quot;warn&amp;quot, and &amp;quot;info&amp;quot (case</span>
-<span class="cm">     * insensitive).  Other values are treated as &amp;quot;info&amp;quot;.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _setLogLevel</span>
-<span class="cm">     * @param v {String} the desired log level</span>
-<span class="cm">     * @return String One of Console.LOG_LEVEL_INFO, _WARN, or _ERROR</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_setLogLevel</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">isString</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">v</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
-        <span class="p">}</span>
-        
-        <span class="k">return</span> <span class="p">(</span><span class="nx">v</span> <span class="o">===</span> <span class="nx">WARN</span> <span class="o">||</span> <span class="nx">v</span> <span class="o">===</span> <span class="nx">ERROR</span><span class="p">)</span> <span class="o">?</span> <span class="nx">v</span> <span class="o">:</span> <span class="nx">INFO</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Getter method for useBrowserConsole attribute.  Just a pass through to</span>
-<span class="cm">     * the YUI instance configuration setting.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _getUseBrowserConsole</span>
-<span class="cm">     * @return {Boolean} or null if logSource is not a YUI instance</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_getUseBrowserConsole</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">logSource</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logSource&#39;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">logSource</span> <span class="k">instanceof</span> <span class="nx">YUI</span> <span class="o">?</span>
-            <span class="nx">logSource</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">useBrowserConsole</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Setter method for useBrowserConsole attributes.  Only functional if the</span>
-<span class="cm">     * logSource attribute points to a YUI instance.  Passes the value down to</span>
-<span class="cm">     * the YUI instance.  NOTE: multiple Console instances cannot maintain</span>
-<span class="cm">     * independent useBrowserConsole values, since it is just a pass through to</span>
-<span class="cm">     * the YUI instance configuration.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _setUseBrowserConsole</span>
-<span class="cm">     * @param v {Boolean} false to disable browser console printing (default)</span>
-<span class="cm">     * @return {Boolean} true|false if logSource is a YUI instance</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_setUseBrowserConsole</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">logSource</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;logSource&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">logSource</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">v</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">v</span><span class="p">;</span>
-            <span class="nx">logSource</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">useBrowserConsole</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
-            <span class="k">return</span> <span class="nx">v</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">INVALID_VALUE</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Set the height of the Console container.  Set the body height to the difference between the configured height and the calculated heights of the header and footer.</span>
-<span class="cm">     * Overrides Widget.prototype._uiSetHeight.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _uiSetHeight</span>
-<span class="cm">     * @param v {String|Number} the new height</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_uiSetHeight</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Console</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_uiSetHeight</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_head</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_foot</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">h</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span> <span class="o">-</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">_head</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span> <span class="o">-</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">_foot</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">);</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">_body</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">,</span><span class="nx">h</span><span class="o">+</span><span class="s1">&#39;px&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Updates the UI if changes are made to any of the strings in the strings</span>
-<span class="cm">     * attribute.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _afterStringsChange</span>
-<span class="cm">     * @param e {Event} Custom event for the attribute change</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_afterStringsChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">prop</span>   <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">subAttrName</span> <span class="o">?</span> <span class="nx">e</span><span class="p">.</span><span class="nx">subAttrName</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">DOT</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">cb</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">),</span>
-            <span class="nx">before</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">prevVal</span><span class="p">,</span>
-            <span class="nx">after</span>  <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">prop</span> <span class="o">||</span> <span class="nx">prop</span> <span class="o">===</span> <span class="nx">TITLE</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">before</span><span class="p">.</span><span class="nx">title</span> <span class="o">!==</span> <span class="nx">after</span><span class="p">.</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">queryAll</span><span class="p">(</span><span class="nx">DOT</span><span class="o">+</span><span class="nx">C_CONSOLE_TITLE</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="nx">INNER_HTML</span><span class="p">,</span> <span class="nx">after</span><span class="p">.</span><span class="nx">title</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">prop</span> <span class="o">||</span> <span class="nx">prop</span> <span class="o">===</span> <span class="nx">PAUSE</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">before</span><span class="p">.</span><span class="nx">pause</span> <span class="o">!==</span> <span class="nx">after</span><span class="p">.</span><span class="nx">pause</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">queryAll</span><span class="p">(</span><span class="nx">DOT</span><span class="o">+</span><span class="nx">C_PAUSE_LABEL</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="nx">INNER_HTML</span><span class="p">,</span> <span class="nx">after</span><span class="p">.</span><span class="nx">pause</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">prop</span> <span class="o">||</span> <span class="nx">prop</span> <span class="o">===</span> <span class="nx">CLEAR</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">before</span><span class="p">.</span><span class="nx">clear</span> <span class="o">!==</span> <span class="nx">after</span><span class="p">.</span><span class="nx">clear</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">cb</span><span class="p">.</span><span class="nx">queryAll</span><span class="p">(</span><span class="nx">DOT</span><span class="o">+</span><span class="nx">C_CLEAR</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span><span class="nx">after</span><span class="p">.</span><span class="nx">clear</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Updates the UI and schedules or cancels the print loop.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _afterPausedChange</span>
-<span class="cm">     * @param e {Event} Custom event for the attribute change</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_afterPausedChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">paused</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span> <span class="o">!==</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">SRC_UI</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdatePaused</span><span class="p">(</span><span class="nx">paused</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">paused</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_schedulePrint</span><span class="p">();</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_printLoop</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_cancelPrintLoop</span><span class="p">();</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Checks or unchecks the paused checkbox</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _uiUpdatePaused</span>
-<span class="cm">     * @param on {Boolean} the new checked state</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_uiUpdatePaused</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">on</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_foot</span><span class="p">.</span><span class="nx">queryAll</span><span class="p">(</span><span class="s1">&#39;input[type=checkbox].&#39;</span><span class="o">+</span><span class="nx">C_PAUSE</span><span class="p">);</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">node</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">CHECKED</span><span class="p">,</span><span class="nx">on</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Calls this._trimOldEntries() in response to changes in the configured</span>
-<span class="cm">     * consoleLimit attribute.</span>
-<span class="cm">     * </span>
-<span class="cm">     * @method _afterConsoleLimitChange</span>
-<span class="cm">     * @param e {Event} Custom event for the attribute change</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_afterConsoleLimitChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_trimOldEntries</span><span class="p">();</span>
-    <span class="p">},</span>
-
-
-    <span class="cm">/**</span>
-<span class="cm">     * Updates the className of the contentBox, which should trigger CSS to</span>
-<span class="cm">     * hide or show the body and footer sections depending on the new value.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _afterCollapsedChange</span>
-<span class="cm">     * @param e {Event} Custom event for the attribute change</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_afterCollapsedChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdateCollapsed</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Updates the UI to reflect the new Collapsed state</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _uiUpdateCollapsed</span>
-<span class="cm">     * @param v {Boolean} true for collapsed, false for expanded</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_uiUpdateCollapsed</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">bb</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">),</span>
-            <span class="nx">button</span> <span class="o">=</span> <span class="nx">bb</span><span class="p">.</span><span class="nx">queryAll</span><span class="p">(</span><span class="s1">&#39;button.&#39;</span><span class="o">+</span><span class="nx">C_COLLAPSE</span><span class="p">),</span>
-            <span class="nx">method</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">?</span> <span class="s1">&#39;addClass&#39;</span> <span class="o">:</span> <span class="s1">&#39;removeClass&#39;</span><span class="p">,</span>
-            <span class="nx">str</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;strings.&#39;</span><span class="o">+</span><span class="p">(</span><span class="nx">v</span> <span class="o">?</span> <span class="s1">&#39;expand&#39;</span> <span class="o">:</span> <span class="s1">&#39;collapse&#39;</span><span class="p">));</span>
-
-        <span class="nx">bb</span><span class="p">[</span><span class="nx">method</span><span class="p">](</span><span class="nx">C_COLLAPSED</span><span class="p">);</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">button</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">button</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;innerHTML&#39;</span><span class="p">,</span><span class="nx">str</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetHeight</span><span class="p">(</span><span class="nx">v</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_head</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="p">)</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">));</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Makes adjustments to the UI if needed when the Console is hidden or shown</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _afterVisibleChange</span>
-<span class="cm">     * @param e {Event} the visibleChange event</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_afterVisibleChange</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Console</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_afterVisibleChange</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_uiUpdateFromHideShow</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Recalculates dimensions and updates appropriately when shown</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _uiUpdateFromHideShow</span>
-<span class="cm">     * @param v {Boolean} true for visible, false for hidden</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_uiUpdateFromHideShow</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetHeight</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HEIGHT</span><span class="p">));</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Responds to log events by normalizing qualifying messages and passing</span>
-<span class="cm">     * them along through the entry event for buffering etc.</span>
-<span class="cm">     * </span>
-<span class="cm">     * @method _onLogEvent</span>
-<span class="cm">     * @param msg {String} the log message</span>
-<span class="cm">     * @param cat {String} OPTIONAL the category or logLevel of the message</span>
-<span class="cm">     * @param src {String} OPTIONAL the source of the message (e.g. widget name)</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_onLogEvent</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_isInLogLevel</span><span class="p">(</span><span class="nx">e</span><span class="p">))</span> <span class="p">{</span>
-
-            <span class="kd">var</span> <span class="nx">debug</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span><span class="p">;</span>
-
-            <span class="cm">/* TODO: needed? */</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">ENTRY</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">message</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_normalizeMessage</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
-            <span class="p">});</span>
-
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">debug</span> <span class="o">=</span> <span class="nx">debug</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Clears the console, resets the startTime attribute, enables and</span>
-<span class="cm">     * unpauses the widget.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _defResetFn</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_defResetFn</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">clearConsole</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">START_TIME</span><span class="p">,</span><span class="k">new</span> <span class="nb">Date</span><span class="p">());</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">DISABLED</span><span class="p">,</span><span class="kc">false</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">,</span><span class="kc">false</span><span class="p">);</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Buffers incoming message objects and schedules the printing.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _defEntryFn</span>
-<span class="cm">     * @param e {Event} The Custom event carrying the message in its payload</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_defEntryFn</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_schedulePrint</span><span class="p">();</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-<span class="p">});</span>
-
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Console</span> <span class="o">=</span> <span class="nx">Console</span><span class="p">;</span>
 </pre></div>
 
                     </div>
