@@ -16,8 +16,8 @@ YUI.add('sortable', function(Y) {
     var S = function(o) {
         S.superclass.constructor.apply(this, arguments);
     },
-    DRAG_NODE = 'dragNode',
     CURRENT_NODE = 'currentNode',
+    OPACITY_NODE = 'opacityNode',
     ID = 'id',
     OPACITY = 'opacity',
     PARENT_NODE = 'parentNode',
@@ -49,6 +49,14 @@ YUI.add('sortable', function(Y) {
         */        
         opacity: {
             value: '.75'
+        },
+        /**
+        * @attribute opacityNode
+        * @description The node to set opacity on when dragging (dragNode or currentNode). Default: currentNode.
+        * @type String
+        */        
+        opacityNode: {
+            value: 'currentNode'
         },
         /**
         * @attribute id
@@ -228,8 +236,10 @@ YUI.add('sortable', function(Y) {
         * @description Handles the DragStart event and initializes some settings.
         */
         _handleDragStart: function(e) {
+            console.log(this.get(OPACITY_NODE));
+            console.log(this.delegate.get(this.get(OPACITY_NODE)));
             this.delegate.get('lastNode').setStyle('zIndex', '');
-            this.delegate.get(DRAG_NODE).setStyle(OPACITY, this.get(OPACITY));
+            this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
             this.delegate.get(CURRENT_NODE).setStyle('zIndex', '999');
         },
         /**
@@ -239,7 +249,7 @@ YUI.add('sortable', function(Y) {
         * @description Handles the DragEnd event that cleans up the settings in the drag:start event.
         */
         _handleDragEnd: function(e) {
-            this.get(DRAG_NODE).setStyle(OPACITY, 1);
+            this.get(this.get(OPACITY_NODE)).setStyle(OPACITY, 1);
             this.get(CURRENT_NODE).setStyles({
                 top: '',
                 left: ''
