@@ -638,11 +638,17 @@ Y.mix(Node.prototype, {
      *
      */
     remove: function(destroy) {
-        var node = this._node;
-        node.parentNode.removeChild(node);
+        var node = this._node,
+            parentNode = node.parentNode;
+
+        if (parentNode) {
+            parentNode.removeChild(node); 
+        }
+
         if (destroy) {
             this.destroy(true);
         }
+
         return this;
     },
 
@@ -832,10 +838,9 @@ Y.mix(Node.prototype, {
         return this;
     },
 
-    // TODO: need this?
     hasMethod: function(method) {
         var node = this._node;
-        return (node && (typeof node === 'function'));
+        return (node && node[method] && (typeof node[method] === 'function'));
     }
 }, true);
 
