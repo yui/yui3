@@ -154,7 +154,7 @@ YUI.add('sortable', function(Y) {
 
             self.set(ID, id);
 
-            del.plugdd(Y.Plugin.DDProxy, {
+            del.dd.plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false,
                 cloneNode: true
             });
@@ -260,7 +260,7 @@ YUI.add('sortable', function(Y) {
         * @chainable
         */
         plug: function(cls, config) {
-            this.delegate.plugdd(cls, config);
+            this.delegate.dd.plug(cls, config);
             return this;
         },
         /**

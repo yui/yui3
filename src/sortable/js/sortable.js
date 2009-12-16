@@ -153,7 +153,7 @@
 
             self.set(ID, id);
 
-            del.plugdd(Y.Plugin.DDProxy, {
+            del.dd.plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false,
                 cloneNode: true
             });
@@ -259,7 +259,7 @@
         * @chainable
         */
         plug: function(cls, config) {
-            this.delegate.plugdd(cls, config);
+            this.delegate.dd.plug(cls, config);
             return this;
         },
         /**
