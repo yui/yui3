@@ -838,10 +838,10 @@ Y.mix(Node.prototype, {
         return this;
     },
 
-    // TODO: need this?
+    // TODO: test
     hasMethod: function(method) {
         var node = this._node;
-        return (node && (typeof node === 'function'));
+        return (node && node[method] && (typeof node[method] === 'function'));
     }
 }, true);
 
