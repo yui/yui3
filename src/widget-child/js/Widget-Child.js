@@ -1,5 +1,5 @@
 /**
- * Provides an extension enabling a Widget to be a child of another Widget.
+ * Extension enabling a Widget to be a child of another Widget.
  *
  * @module widget-child
  */

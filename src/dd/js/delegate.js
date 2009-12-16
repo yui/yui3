@@ -258,11 +258,6 @@
             node.drop.set('groups', groups);
             return node;
         },
-        //TODO
-        plugdd: function(cls, conf) {
-            this.dd.plug(cls, conf);
-            return this;
-        },
         destructor: function() {
             if (this.dd) {
                 this.dd.destroy();

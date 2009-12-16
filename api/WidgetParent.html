@@ -72,6 +72,52 @@ parent of another Widget.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="protected" rel="yui:method" resource="#method__afterItemFocusedChange">
+                                    <h4>
+                                        <a name="method__afterItemFocusedChange">_afterItemFocusedChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterItemFocusedChange</strong>
+                                           (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Attribute change listener for the <code>focused</code> 
+attribute of child Widgets, responsible for setting the value of the 
+parent's <code>activeItem</code> attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">event</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event facade for the attribute change.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__afterItemSelectedChange">
                                     <h4>
                                         <a name="method__afterItemSelectedChange">_afterItemSelectedChange</a></h4>
@@ -139,53 +185,8 @@ parent's <code>selection</code> attribute.
                                         
                                         <div class="description" property="yui:description">
                                             Attribute change listener for the <code>selected</code> 
-attribute.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">event</span>
-                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The event facade for the attribute change.</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__afterSelectedChange">
-                                    <h4>
-                                        <a name="method__afterSelectedChange">_afterSelectedChange</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_afterSelectedChange</strong>
-                                           (
-                                                
-                                                        
-                                                         event
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Attribute change listener for the <code>focused</code> 
-attribute of child Widgets, responsible for setting the value of the 
-parent's <code>activeItem</code> attribute.
+attribute, responsible for syncing the selected state of all children to 
+match that of their parent Widget.
                                         </div>
 
                                         <div class="description">
@@ -567,8 +568,7 @@ which the child should be inserted.</span>
                                                     <code property="yui:return">
                                                             Widget
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Widget instance that was successfully added, otherwise
-null.</dd>
+                                                    <dd property="yui:returnInfo">Widget instance that was successfully added.</dd>
                                                 </dl>
 
 
@@ -658,8 +658,7 @@ child to be removed.</span>
                                                     <code property="yui:return">
                                                             Widget
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Widget instance that was successfully removed, otherwise
-null.</dd>
+                                                    <dd property="yui:returnInfo">Widget instance that was successfully removed.</dd>
                                                 </dl>
 
 
@@ -1127,7 +1126,7 @@ once.
                                             Returns the currently selected child Widget.  If the 
 <code>mulitple</code> attribte is set to <code>true</code> will 
 return an array of the currently selected children.  If no children 
-are selection, will return null.
+are selected, will return null.
                                         </div>
                                     </div>
  
@@ -1217,9 +1216,9 @@ are selection, will return null.
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class="protected"><a href="#method__afterItemFocusedChange" title="_afterItemFocusedChange">_afterItemFocusedChange</a></li>
                                 <li class="protected"><a href="#method__afterItemSelectedChange" title="_afterItemSelectedChange">_afterItemSelectedChange</a></li>
                                 <li class="protected"><a href="#method__afterParentSelectedChange" title="_afterParentSelectedChange">_afterParentSelectedChange</a></li>
-                                <li class="protected"><a href="#method__afterSelectedChange" title="_afterSelectedChange">_afterSelectedChange</a></li>
                                 <li class="protected"><a href="#method__afterSelectionChange" title="_afterSelectionChange">_afterSelectionChange</a></li>
                                 <li class="protected"><a href="#method__createItem" title="_createItem">_createItem</a></li>
                                 <li class="protected"><a href="#method__defItemAdded" title="_defItemAdded">_defItemAdded</a></li>
@@ -1266,7 +1265,7 @@ are selection, will return null.
 	</div>
 </div>
 <script type="text/javascript">
-    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeItem", "url": "WidgetParent.html#config_activeItem", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeItemChange", "url": "WidgetParent.html#event_activeItemChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterItemSelectedChange", "url": "WidgetParent.html#method__afterItemSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectedChange", "url": "WidgetParent.html#method__afterSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_createItem", "url": "WidgetParent.html#method__createItem", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultItemType", "url": "WidgetParent.html#config_defaultItemType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultItemTypeChange", "url": "WidgetParent.html#event_defaultItemTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defItemAdded", "url": "WidgetParent.html#method__defItemAdded", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defItemRemoved", "url": "WidgetParent.html#method__defItemRemoved", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "item", "url": "WidgetParent.html#method_item", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "items", "url": "WidgetParent.html#config_items", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "itemsChange", "url": "WidgetParent.html#event_itemsChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderUIParent", "url": "WidgetParent.html#method__renderUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "widget:itemAdded", "url": "WidgetParent.html#event_widget:itemAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "widget:itemRemoved", "url": "WidgetParent.html#event_widget:itemRemoved", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeItem", "url": "WidgetParent.html#config_activeItem", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeItemChange", "url": "WidgetParent.html#event_activeItemChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterItemFocusedChange", "url": "WidgetParent.html#method__afterItemFocusedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterItemSelectedChange", "url": "WidgetParent.html#method__afterItemSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_createItem", "url": "WidgetParent.html#method__createItem", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultItemType", "url": "WidgetParent.html#config_defaultItemType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultItemTypeChange", "url": "WidgetParent.html#event_defaultItemTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defItemAdded", "url": "WidgetParent.html#method__defItemAdded", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defItemRemoved", "url": "WidgetParent.html#method__defItemRemoved", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "item", "url": "WidgetParent.html#method_item", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "items", "url": "WidgetParent.html#config_items", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "itemsChange", "url": "WidgetParent.html#event_itemsChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderUIParent", "url": "WidgetParent.html#method__renderUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "widget:itemAdded", "url": "WidgetParent.html#event_widget:itemAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "widget:itemRemoved", "url": "WidgetParent.html#event_widget:itemRemoved", "type": "event"}];
     YAHOO.yuidoc.init();
 </script>
 </body>

@@ -469,7 +469,7 @@ Y.extend(Widget, Y.Base, {
 
             if (!delegates[type]) {
 
-                delegates[type] = rootNode.delegate(type, function (event) {
+                delegates[type] = rootNode.get("parentNode").delegate(type, function (event) {
 
                     var widget = Y.Widget.getByNode(this);
 
