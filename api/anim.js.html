@@ -406,15 +406,14 @@
     <span class="kd">var</span> <span class="nx">proto</span> <span class="o">=</span> <span class="p">{</span>
         <span class="cm">/**</span>
 <span class="cm">         * Starts or resumes an animation.</span>
-<span class="cm">         * percent start time marker.</span>
 <span class="cm">         * @method run</span>
 <span class="cm">         * @chainable</span>
 <span class="cm">         */</span>    
         <span class="nx">run</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RUNNING</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_start</span><span class="p">();</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_resume</span><span class="p">();</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RUNNING</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_start</span><span class="p">();</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">},</span>
@@ -565,10 +564,10 @@
         <span class="nx">_initAnimAttr</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">from</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;from&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="p">{},</span>
                 <span class="nx">to</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;to&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="p">{},</span>
-                <span class="nx">dur</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
-                <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span>
-                <span class="nx">easing</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;easing&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="p">{},</span>
-                <span class="nx">attr</span> <span class="o">=</span> <span class="p">{},</span>
+                <span class="nx">attr</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nx">duration</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+                    <span class="nx">easing</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;easing&#39;</span><span class="p">)</span>
+                <span class="p">},</span>
                 <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
                 <span class="nx">unit</span><span class="p">,</span> <span class="nx">begin</span><span class="p">,</span> <span class="nx">end</span><span class="p">;</span>
 
@@ -606,9 +605,6 @@
                     <span class="nx">to</span><span class="o">:</span> <span class="nx">end</span><span class="p">,</span>
                     <span class="nx">unit</span><span class="o">:</span> <span class="nx">unit</span>
                 <span class="p">};</span>
-
-                <span class="nx">attr</span><span class="p">.</span><span class="nx">duration</span> <span class="o">=</span> <span class="nx">dur</span><span class="p">;</span>
-                <span class="nx">attr</span><span class="p">.</span><span class="nx">easing</span> <span class="o">=</span> <span class="nx">easing</span><span class="p">;</span>
 
             <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
 
