@@ -171,8 +171,8 @@ var _JSON  = Y.config.win.JSON,
             
             // Test for any remaining invalid characters
             if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
-                                 replace(_VALUES,']').
-                                 replace(_BRACKETS,''))) {
+                                replace(_VALUES,']').
+                                replace(_BRACKETS,''))) {
 
                 // Eval the text into a JavaScript data structure, apply any
                 // reviver function, and return
