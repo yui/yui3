@@ -1,4 +1,5 @@
 (function() {
+
     var Event=YAHOO.util.Event,
         Dom=YAHOO.util.Dom,
         oACDS, oAutoComp,
@@ -6,9 +7,18 @@
             'private': false,
             'protected': false,
             'deprecated': false
-        };
+        },
+        
+        ITEM_TEMPLATE = '<em>{host}</em> <span>{name}</span>',
+        // ITEM_TEMPLATE = '<em>{host}</em> <span>{params}</span> <span>{name}</span>',
+        // ITEM_TEMPLATE = '<em>{host}</em> <span>{params}</span> <span>{name}</span><div>{description}</div>',
+        yuidoc = YAHOO.namespace('yuidoc');
 
-Event.onAvailable('yui-classopts-form', function() {
+yuidoc.init = function() {
+
+};
+
+yuidoc.initUI = function() {
     //Checkboxes are available..
     var handleClick = function(e) {
         var id, checked = false;
@@ -37,14 +47,6 @@ Event.onAvailable('yui-classopts-form', function() {
         var value = YAHOO.util.Cookie.getSub('yuidoc', id),
             el = Dom.get(id), checked = (value === 'checked');;
 
-        /*
-        if (value === 'checked') {
-            el.checked = true;
-        } else {
-            el.checked = false;
-        }
-        */
-
         el.checked = checked;
         return checked;
     };
@@ -68,7 +70,7 @@ Event.onAvailable('yui-classopts-form', function() {
         }
     }
     
-});
+};
 
 //Starting the AutoComplete code
     var getResults = function(query) {
@@ -132,8 +134,10 @@ Event.onAvailable('yui-classopts-form', function() {
         oAutoComp.maxResultsDisplayed = 200;
         oAutoComp.minQueryLength = 0;
         oAutoComp.formatResult = function(oResultItem, query) {
-            var sMarkup = "<em>" + oResultItem[1].host + '</em> <span>' + oResultItem[1].name + '</span>';
-            return sMarkup;
+            // var sMarkup = "<em>" + oResultItem[1].host + '</em> <span>' + oResultItem[1].name + '</span>';
+            // return sMarkup;
+            // return  "<em>" + oResultItem[1].host + '</em> <span>' + oResultItem[1].name + '</span>';
+            return  YAHOO.lang.substitute(ITEM_TEMPLATE, oResultItem[1]);
         };
 
         // Subscribe to Custom Events
@@ -158,5 +162,9 @@ Event.onAvailable('yui-classopts-form', function() {
         tree1.render();    
     });
     */
+
+    YAHOO.util.Event.onAvailable('show_private', function() {
+        YAHOO.yuidoc.initUI();
+    });
 
 })();

@@ -166,20 +166,13 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_initEvents</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="cm">/*</span>
-<span class="cm">        this.publish({</span>
-<span class="cm">            &#39;execute&#39; : { defaultFn : this._defExecFn },</span>
-<span class="cm">            &#39;shift&#39;   : { defaultFn : this._defShiftFn },</span>
-<span class="cm">            &#39;add&#39;     : { defaultFn : this._defAddFn },</span>
-<span class="cm">            &#39;promote&#39; : { defaultFn : this._defPromoteFn },</span>
-<span class="cm">            &#39;remove&#39;  : { defaultFn : this._defRemoveFn }</span>
-<span class="cm">        });</span>
-<span class="cm">        */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;execute&#39;</span> <span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defExecFn</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;shift&#39;</span>   <span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defShiftFn</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;add&#39;</span>     <span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defAddFn</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;promote&#39;</span> <span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defPromoteFn</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span>  <span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRemoveFn</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">({</span>
+            <span class="s1">&#39;execute&#39;</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defExecFn</span><span class="p">,</span>    <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+            <span class="s1">&#39;shift&#39;</span>   <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defShiftFn</span><span class="p">,</span>   <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+            <span class="s1">&#39;add&#39;</span>     <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defAddFn</span><span class="p">,</span>     <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+            <span class="s1">&#39;promote&#39;</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defPromoteFn</span><span class="p">,</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">},</span>
+            <span class="s1">&#39;remove&#39;</span>  <span class="o">:</span> <span class="p">{</span> <span class="nx">defaultFn</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRemoveFn</span><span class="p">,</span>  <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span>
+        <span class="p">});</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>

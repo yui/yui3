@@ -429,6 +429,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             var parent = Y.Node.get(element.parentNode);
             var node = Y.Node.get('#test-prop');
 
+            Assert.isTrue(node.hasMethod('appendChild'), "node.hasMethod('appendChild')");
             //Assert.isTrue(element === Y.get(node), 'element === Y.get(node)');
             Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName'); 
             var insertNode = document.createElement('div');
@@ -501,8 +502,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.isTrue(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex")');
             node.removeAttribute('tabIndex');
             Assert.isFalse(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex") (false)');
-            console.log(node.getAttribute('tabIndex'));
-            console.log(node._node.getAttribute('tabIndex'));
             Assert.areEqual(node.getAttribute('tabIndex'), node.get('tabIndex'),
                 "node.getAttribute('tabIndex') === node.get('tabIndex')");
             
@@ -905,6 +904,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
             node.remove();
             Assert.isTrue(parent !== domNode.parentNode, 'node.remove()');
+
+            // ensure remove doesnt fail when no parent
+            node = Y.Node.create('<div/>');
+            node.remove();
         },
 
         test_replace: function() {
