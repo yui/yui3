@@ -971,11 +971,11 @@ Y.Color = {
 
             for (var i = 0; i < val.length; i++) {
                 if (val[i].length < 2) {
-                    val[i] = val[i].replace(Y.Color.re_hex3, '$1$1');
+                    val[i] = '0' + val[i];
                 }
             }
 
-            val = '#' + val.join('');
+            val = val.join('');
         }
 
         if (val.length < 6) {
@@ -986,7 +986,7 @@ Y.Color = {
             val = '#' + val;
         }
 
-        return val.toLowerCase();
+        return val.toUpperCase();
     }
 };
 })(Y);
