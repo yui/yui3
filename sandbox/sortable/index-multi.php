@@ -70,6 +70,13 @@ foreach (range(1, $count) as $k) {
 }
 ?>
 </ul>
+<ul id="three">
+<?php
+foreach (range(1, $count) as $k) {
+    echo('  <li class="item list-item3">'.$k.'</li>'."\n");
+}
+?>
+</ul>
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -122,8 +129,8 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         cont: '#one',
         nodes: '.item',
         opacity: '.5',
-        moveType: 'move',
-        //invalid: '.disabled',
+        moveType: 'copy',
+        invalid: '.disabled',
         opacityNode: 'currentNode'
     });
     sel.plug(Y.Plugin.DDConstrained, {
@@ -148,6 +155,18 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     //sel2.bindWith(sel);
 
     sel.join(sel2, 'outer');
+    
+
+    var sel3 = new Y.Sortable({
+        cont: '#three',
+        nodes: '.item',
+        moveType: 'move'
+    });
+    sel3.plug(Y.Plugin.DDConstrained, {
+        constrain2node: '#demo'
+    });
+    //console.log('sel3: ', sel3.get('id'));
+    sel3.join(sel);
 
     /*
     console.log(Y.DD.DDM.getDelegate(Y.one('#three')));

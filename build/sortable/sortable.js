@@ -206,19 +206,24 @@ YUI.add('sortable', function(Y) {
                     break;
                 case 'move':
                 case 'copy':
+                    var dragsort = Y.Sortable.getSortable(e.drag.get(NODE).get(PARENT_NODE)),
+                        dropsort = Y.Sortable.getSortable(e.drop.get(NODE).get(PARENT_NODE)),
+                        oldNode, newNode;
+
+                    e.drop.addToGroup(dropsort.get('id'));
+
                     //Same List
                     if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
                         Y.DD.DDM.swapNode(e.drag, e.drop);
                     } else {
                         if (this.get('moveType') == 'copy') {
                             //New List
-                            var oldNode = e.drag.get(NODE),
-                                newNode = oldNode.cloneNode(true),
-                                sort = Y.Sortable.getSortable(e.drop.get(NODE).get(PARENT_NODE));
+                            oldNode = e.drag.get(NODE);
+                            newNode = oldNode.cloneNode(true);
 
                             newNode.set(ID, '');
                             e.drag.set(NODE, newNode);
-                            sort.delegate.createDrop(newNode, [sort.get(ID)]);
+                            dropsort.delegate.createDrop(newNode, [dropsort.get(ID)]);
                             oldNode.setStyles({
                                 top: '',
                                 left: ''
