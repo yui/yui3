@@ -88,7 +88,7 @@ NodeList.importMethod = function(host, name, altName) {
         altName = altName || name;
         NodeList.addMethod(name, host[name]);
     } else {
-        Y.each(name, function(n) {
+        Y.Array.each(name, function(n) {
             NodeList.importMethod(host, n);
         });
     }
@@ -379,6 +379,12 @@ NodeList.importMethod(Y.Node.prototype, [
       * @see Node.remove
       */
     'remove',
+
+    /** Called on each Node instance
+      * @method removeAttribute
+      * @see Node.removeAttribute
+      */
+    'removeAttribute',
 
     /** Called on each Node instance
       * @method set

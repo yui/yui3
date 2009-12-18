@@ -717,6 +717,11 @@ form {
 
                 Assert.areEqual("#FFFFFF", hex, 'toHex(' + rgb + ')');
 
+                rgb = '000';
+                hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#000000", hex, 'toHex(' + rgb + ')');
+
                 rgb = "rgb(97, 56, 11)" ;
                 hex = Y.Color.toHex(rgb);
                 Assert.areSame(hex, "#61380B", " shoudl be #61380B"); 

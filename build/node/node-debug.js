@@ -158,7 +158,7 @@ Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
         Node.prototype[name] = function() {
             context = context || this;
-            var args = Y.Array(arguments),
+            var args = Y.Array(arguments, 0, true),
                 ret;
 
             if (args[0] && args[0] instanceof Node) {
@@ -182,7 +182,7 @@ Node.importMethod = function(host, name, altName) {
         altName = altName || name;
         Node.addMethod(altName, host[name], host);
     } else {
-        Y.each(name, function(n) {
+        Y.Array.each(name, function(n) {
             Node.importMethod(host, n);
         });
     }
@@ -945,7 +945,7 @@ NodeList.importMethod = function(host, name, altName) {
         altName = altName || name;
         NodeList.addMethod(name, host[name]);
     } else {
-        Y.each(name, function(n) {
+        Y.Array.each(name, function(n) {
             NodeList.importMethod(host, n);
         });
     }

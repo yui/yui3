@@ -577,6 +577,25 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
         },
 
+        test_toggle: function() {
+            var node = Y.one('#test-class');
+
+            node.toggleClass('foo');
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo');
+            Assert.isFalse(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo', false);
+            Assert.isFalse(node.hasClass('foo'), "node.toggleClass('foo', false)");
+
+            node.toggleClass('foo');
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo', true);
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo', true)");
+        },
+
         test_setStyle: function() {
             var element = byId('set-style'),
                 node = Y.Node.get(element),
