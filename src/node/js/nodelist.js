@@ -314,6 +314,15 @@ Y.mix(NodeList.prototype, {
         return this._nodes.length;
     },
 
+    /**
+     * Determines if the instance is bound to any nodes
+     * @method isEmpty
+     * @return {Boolean} Whether or not the NodeList is bound to any nodes 
+     */
+    isEmpty: function() {
+        return this._nodes.length < 1;
+    },
+
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',

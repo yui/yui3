@@ -671,6 +671,7 @@ Y.DOM = {
                 options = node.options;
 
             if (options && val === '') {
+                // TODO: implement multipe select
                 if (node.multiple) {
                     Y.log('multiple select normalization not implemented', 'warn', 'DOM');
                 } else {

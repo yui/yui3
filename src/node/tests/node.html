@@ -534,7 +534,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual(document.documentElement.scrollTop, node.get('docScrollY'), 'node.get("docScrollY")');
 
             node.setXY([100, 100]);
-            ArrayAssert.itemsAreEqual([100, 100], node.getXY(), 'Node.getXY("foo", "bar")');
+            var xy = node.getXY();
+            var x = Math.round(xy[0]);
+            var y = Math.round(xy[1]);
+            ArrayAssert.itemsAreEqual([100, 100], [x, y], 'Node.getXY("foo", "bar")');
         },
 
         test_region: function() {
@@ -983,11 +986,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Y.all('input').each(function(n) {
                 Assert.areEqual(undefined, n.fx, "Y.all('input').unplug(Y.Plugin.NodeFX)");
             });
-        }
-    }));
-
-    suite.add( new tool.TestCase({
-        name: 'Document Node',
+        },
 
         test_props: function() {
             var mask = document.createElement('div');
@@ -1041,6 +1040,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
                 Y.one(node).all('h2')._nodes,
                 "Y.one(Y.DOM.byId('_funky:id{$400}')).all(h2)");
+        },
+
+        test_isEmpty: function() {
+            Assert.isFalse(Y.all('input').isEmpty());
+            Assert.isTrue(Y.all('.nomatch').isEmpty());
         }
     })); 
 
