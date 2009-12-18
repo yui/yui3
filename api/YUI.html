@@ -1900,7 +1900,7 @@ If no oldClassName is present, the newClassName is simply added.
                                                         <code><span property="yui:name">element</span>
                                                         &lt;<span property="yui:type">HTMLElement</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The DOM element.</span>
+                                                        <span property="yui:description"> The DOM element</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">oldClassName</span>
@@ -2073,6 +2073,10 @@ be returned if the object has one assigned to it.</span>
                                                          className
                                                     
                                                 
+                                                        , 
+                                                         addClass
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -2088,13 +2092,20 @@ be returned if the object has one assigned to it.</span>
                                                         <code><span property="yui:name">element</span>
                                                         &lt;<span property="yui:type">HTMLElement</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The DOM element.</span>
+                                                        <span property="yui:description"> The DOM element</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">className</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> the class name to be toggled</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">addClass</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> optional boolean to indicate whether class
+should be added or removed regardless of current state</span>
                                                         </dd>
                                                 </dl>
 
