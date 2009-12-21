@@ -429,6 +429,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             var parent = Y.Node.get(element.parentNode);
             var node = Y.Node.get('#test-prop');
 
+            Assert.isTrue(node.hasMethod('appendChild'), "node.hasMethod('appendChild')");
             //Assert.isTrue(element === Y.get(node), 'element === Y.get(node)');
             Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName'); 
             var insertNode = document.createElement('div');
@@ -498,7 +499,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.isTrue(node.hasAttribute('id'), 'node.hasAttribute("id")');
             Assert.isTrue(node.hasAttribute('title'), 'node.hasAttribute("title")');
             Assert.isFalse(node.hasAttribute('foo'), 'node.hasAttribute("foo")');
-
+            Assert.isTrue(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex")');
+            node.removeAttribute('tabIndex');
+            Assert.isFalse(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex") (false)');
+            Assert.areEqual(node.getAttribute('tabIndex'), node.get('tabIndex'),
+                "node.getAttribute('tabIndex') === node.get('tabIndex')");
             
             Assert.isFalse(Y.get('body').hasAttribute('title'), 'body.hasAttribute("title")');
             Assert.areEqual('0', Y.get('select[name=test-select] option:nth-child(1)').getAttribute('value'), 'option1.getAttribute("value") (from innerText)');
@@ -529,7 +534,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual(document.documentElement.scrollTop, node.get('docScrollY'), 'node.get("docScrollY")');
 
             node.setXY([100, 100]);
-            ArrayAssert.itemsAreEqual([100, 100], node.getXY(), 'Node.getXY("foo", "bar")');
+            var xy = node.getXY();
+            var x = Math.round(xy[0]);
+            var y = Math.round(xy[1]);
+            ArrayAssert.itemsAreEqual([100, 100], [x, y], 'Node.getXY("foo", "bar")');
         },
 
         test_region: function() {
@@ -570,6 +578,25 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
                 Assert.isFalse(n.hasClass('bar'));
             });
 
+        },
+
+        test_toggle: function() {
+            var node = Y.one('#test-class');
+
+            node.toggleClass('foo');
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo');
+            Assert.isFalse(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo', false);
+            Assert.isFalse(node.hasClass('foo'), "node.toggleClass('foo', false)");
+
+            node.toggleClass('foo');
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo', true);
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo', true)");
         },
 
         test_setStyle: function() {
@@ -899,6 +926,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
             node.remove();
             Assert.isTrue(parent !== domNode.parentNode, 'node.remove()');
+
+            // ensure remove doesnt fail when no parent
+            node = Y.Node.create('<div/>');
+            node.remove();
         },
 
         test_replace: function() {
@@ -955,11 +986,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Y.all('input').each(function(n) {
                 Assert.areEqual(undefined, n.fx, "Y.all('input').unplug(Y.Plugin.NodeFX)");
             });
-        }
-    }));
-
-    suite.add( new tool.TestCase({
-        name: 'Document Node',
+        },
 
         test_props: function() {
             var mask = document.createElement('div');
@@ -1013,6 +1040,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
                 Y.one(node).all('h2')._nodes,
                 "Y.one(Y.DOM.byId('_funky:id{$400}')).all(h2)");
+        },
+
+        test_isEmpty: function() {
+            Assert.isFalse(Y.all('input').isEmpty());
+            Assert.isTrue(Y.all('.nomatch').isEmpty());
         }
     })); 
 

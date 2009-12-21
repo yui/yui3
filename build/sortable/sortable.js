@@ -16,8 +16,8 @@ YUI.add('sortable', function(Y) {
     var S = function(o) {
         S.superclass.constructor.apply(this, arguments);
     },
-    DRAG_NODE = 'dragNode',
     CURRENT_NODE = 'currentNode',
+    OPACITY_NODE = 'opacityNode',
     ID = 'id',
     OPACITY = 'opacity',
     PARENT_NODE = 'parentNode',
@@ -51,6 +51,14 @@ YUI.add('sortable', function(Y) {
             value: '.75'
         },
         /**
+        * @attribute opacityNode
+        * @description The node to set opacity on when dragging (dragNode or currentNode). Default: currentNode.
+        * @type String
+        */        
+        opacityNode: {
+            value: 'currentNode'
+        },
+        /**
         * @attribute id
         * @description The id of this sortable, used to get a reference to this sortable list from another list.
         * @type String
@@ -65,6 +73,14 @@ YUI.add('sortable', function(Y) {
         */        
         moveType: {
             value: 'swap'
+        },
+        /**
+        * @attribute invalid
+        * @description A selector string to test if a list item is invalid and not sortable
+        * @type String
+        */        
+        invalid: {
+            value: ''
         }
     };
 
@@ -126,34 +142,36 @@ YUI.add('sortable', function(Y) {
         delegate: null,
         initializer: function() {
             var id = 'sortable-' + Y.stamp({}), c,
+                self = this,
                 del = new Y.DD.Delegate({
-                    cont: this.get('cont'),
-                    nodes: this.get('nodes'),
+                    cont: self.get('cont'),
+                    nodes: self.get('nodes'),
                     target: true,
+                    invalid: self.get('invalid'),
                     dragConfig: {
                         groups: [ id ]
                     }
                 });
 
-            this.set(ID, id);
+            self.set(ID, id);
 
-            del.plugdd(Y.Plugin.DDProxy, {
+            del.dd.plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false,
                 cloneNode: true
             });
 
             c = new Y.DD.Drop({
-                node: this.get('cont'),
+                node: self.get('cont'),
                 bubbles: del,
                 groups: del.dd.get('groups')
-            }).on('drop:over', Y.bind(this._handleDropOver, this));
+            }).on('drop:over', Y.bind(self._handleDropOver, self));
 
-            del.on('drag:start', Y.bind(this._handleDragStart, this));
-            del.on('drag:end', Y.bind(this._handleDragEnd, del));
-            del.on('drag:over', Y.bind(this._handleDragOver, this));
+            del.on('drag:start', Y.bind(self._handleDragStart, self));
+            del.on('drag:end', Y.bind(self._handleDragEnd, self));
+            del.on('drag:over', Y.bind(self._handleDragOver, self));
 
-            this.delegate = del;
-            S.regSortable(this);
+            self.delegate = del;
+            S.regSortable(self);
         },
         /**
         * @private
@@ -188,19 +206,23 @@ YUI.add('sortable', function(Y) {
                     break;
                 case 'move':
                 case 'copy':
+                    var dropsort = Y.Sortable.getSortable(e.drop.get(NODE).get(PARENT_NODE)),
+                        oldNode, newNode;
+
+                    Y.DD.DDM.getDrop(e.drag.get(NODE)).addToGroup(dropsort.get('id'));
+
                     //Same List
                     if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
                         Y.DD.DDM.swapNode(e.drag, e.drop);
                     } else {
                         if (this.get('moveType') == 'copy') {
                             //New List
-                            var oldNode = e.drag.get(NODE),
-                                newNode = oldNode.cloneNode(true),
-                                sort = Y.Sortable.getSortable(e.drop.get(NODE).get(PARENT_NODE));
+                            oldNode = e.drag.get(NODE);
+                            newNode = oldNode.cloneNode(true);
 
                             newNode.set(ID, '');
                             e.drag.set(NODE, newNode);
-                            sort.delegate.createDrop(newNode, [sort.get(ID)]);
+                            dropsort.delegate.createDrop(newNode, [dropsort.get(ID)]);
                             oldNode.setStyles({
                                 top: '',
                                 left: ''
@@ -219,7 +241,7 @@ YUI.add('sortable', function(Y) {
         */
         _handleDragStart: function(e) {
             this.delegate.get('lastNode').setStyle('zIndex', '');
-            this.delegate.get(DRAG_NODE).setStyle(OPACITY, this.get(OPACITY));
+            this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
             this.delegate.get(CURRENT_NODE).setStyle('zIndex', '999');
         },
         /**
@@ -229,8 +251,8 @@ YUI.add('sortable', function(Y) {
         * @description Handles the DragEnd event that cleans up the settings in the drag:start event.
         */
         _handleDragEnd: function(e) {
-            this.get(DRAG_NODE).setStyle(OPACITY, 1);
-            this.get(CURRENT_NODE).setStyles({
+            this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, 1);
+            this.delegate.get(CURRENT_NODE).setStyles({
                 top: '',
                 left: ''
             });
@@ -243,7 +265,7 @@ YUI.add('sortable', function(Y) {
         * @chainable
         */
         plug: function(cls, config) {
-            this.delegate.plugdd(cls, config);
+            this.delegate.dd.plug(cls, config);
             return this;
         },
         /**

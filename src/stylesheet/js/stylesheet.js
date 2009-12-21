@@ -120,7 +120,7 @@ function StyleSheet(seed, name) {
     // Extract the DOM node from Node instances
     if (seed) {
         if (Y.Node && seed instanceof Y.Node) {
-            node = Y.Node.getDOMNode(seed);
+            node = seed._node;
         } else if (seed.nodeName) {
             node = seed;
         // capture the DOM node if the string is an id

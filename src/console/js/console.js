@@ -16,10 +16,6 @@
  * @param conf {Object} Configuration object (see Configuration attributes)
  * @constructor
  */
-function Console() {
-    Console.superclass.constructor.apply(this,arguments);
-}
-
 var getCN = Y.ClassNameManager.getClassName,
     CHECKED        = 'checked',
     CLEAR          = 'clear',
@@ -94,8 +90,921 @@ var getCN = Y.ClassNameManager.getClassName,
     substitute = Y.substitute;
     
 
-Y.mix(Console, {
+function Console() {
+    Console.superclass.constructor.apply(this,arguments);
+}
 
+Y.Console = Y.extend(Console, Y.Widget,
+
+// Y.Console prototype
+{
+    /**
+     * Category to prefix all event subscriptions to allow for ease of detach
+     * during destroy.
+     *
+     * @property _evtCat
+     * @type string
+     * @protected
+     */
+    _evtCat : null,
+
+    /**
+     * Reference to the Node instance containing the header contents.
+     *
+     * @property _head
+     * @type Node
+     * @default null
+     * @protected
+     */
+    _head    : null,
+
+    /**
+     * Reference to the Node instance that will house the console messages.
+     *
+     * @property _body
+     * @type Node
+     * @default null
+     * @protected
+     */
+    _body    : null,
+
+    /**
+     * Reference to the Node instance containing the footer contents.
+     *
+     * @property _foot
+     * @type Node
+     * @default null
+     * @protected
+     */
+    _foot    : null,
+
+    /**
+     * Holds the object API returned from <code>Y.later</code> for the print
+     * loop interval.
+     *
+     * @property _printLoop
+     * @type Object
+     * @default null
+     * @protected
+     */
+    _printLoop : null,
+
+    /**
+     * Array of normalized message objects awaiting printing.
+     *
+     * @property buffer
+     * @type Array
+     * @default null
+     * @protected
+     */
+    buffer   : null,
+
+    /**
+     * Wrapper for <code>Y.log</code>.
+     *
+     * @method log
+     * @param arg* {MIXED} (all arguments passed through to <code>Y.log</code>)
+     * @chainable
+     */
+    log : function () {
+        Y.log.apply(Y,arguments);
+
+        return this;
+    },
+
+    /**
+     * Clear the console of messages and flush the buffer of pending messages.
+     *
+     * @method clearConsole
+     * @chainable
+     */
+    clearConsole : function () {
+        // TODO: clear event listeners from console contents
+        this._body.set(INNER_HTML,'');
+
+        this._cancelPrintLoop();
+
+        this.buffer = [];
+
+        return this;
+    },
+
+    /**
+     * Clears the console and resets internal timers.
+     *
+     * @method reset
+     * @chainable
+     */
+    reset : function () {
+        this.fire(RESET);
+        
+        return this;
+    },
+
+    /**
+     * Collapses the body and footer.
+     *
+     * @method collapse
+     * @chainable
+     */
+    collapse : function () {
+        this.set(COLLAPSED, true);
+
+        return this;
+    },
+
+    /**
+     * Expands the body and footer if collapsed.
+     *
+     * @method expand
+     * @chainable
+     */
+    expand : function () {
+        this.set(COLLAPSED, false);
+
+        return this;
+    },
+
+    /**
+     * Outputs buffered messages to the console UI.  This is typically called
+     * from a scheduled interval until the buffer is empty (referred to as the
+     * print loop).  The number of buffered messages output to the Console is
+     * limited to the number provided as an argument.  If no limit is passed,
+     * all buffered messages are rendered.
+     * 
+     * @method printBuffer
+     * @param limit {Number} (optional) max number of buffered entries to write
+     * @chainable
+     */
+    printBuffer: function (limit) {
+        var messages    = this.buffer,
+            debug       = Y.config.debug,
+            entries     = [],
+            consoleLimit= this.get('consoleLimit'),
+            newestOnTop = this.get('newestOnTop'),
+            anchor      = newestOnTop ? this._body.get('firstChild') : null,
+            i;
+
+        if (messages.length > consoleLimit) {
+            messages.splice(0, messages.length - consoleLimit);
+        }
+
+        limit = Math.min(messages.length, (limit || messages.length));
+        
+        // turn off logging system
+        Y.config.debug = false;
+
+        if (!this.get(PAUSED) && this.get('rendered')) {
+
+            for (i = 0; i < limit && messages.length; ++i) {
+                entries[i] = this._createEntryHTML(messages.shift());
+            }
+
+            if (!messages.length) {
+                this._cancelPrintLoop();
+            }
+
+            if (entries.length) {
+                if (newestOnTop) {
+                    entries.reverse();
+                }
+
+                this._body.insertBefore(create(entries.join('')), anchor);
+
+                if (this.get('scrollIntoView')) {
+                    this.scrollToLatest();
+                }
+
+                this._trimOldEntries();
+            }
+        }
+
+        // restore logging system
+        Y.config.debug = debug;
+
+        return this;
+    },
+
+    
+    /**
+     * Constructor code.  Set up the buffer and entry template, publish
+     * internal events, and subscribe to the configured logEvent.
+     * 
+     * @method initializer
+     * @protected
+     */
+    initializer : function () {
+        this._evtCat = Y.stamp(this) + '|';
+
+        this.buffer = [];
+
+        this.get('logSource').on(this._evtCat +
+            this.get('logEvent'),Y.bind("_onLogEvent",this));
+
+        /**
+         * Transfers a received message to the print loop buffer.  Default
+         * behavior defined in _defEntryFn.
+         *
+         * @event entry
+         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
+         *  <dl>
+         *      <dt>message</dt>
+         *          <dd>The message data normalized into an object literal (see _normalizeMessage)</dd>
+         *  </dl>
+         * @preventable _defEntryFn
+         */
+        this.publish(ENTRY, { defaultFn: this._defEntryFn });
+
+        /**
+         * Triggers the reset behavior via the default logic in _defResetFn.
+         *
+         * @event reset
+         * @param event {Event.Facade} Event Facade object
+         * @preventable _defResetFn
+         */
+        this.publish(RESET, { defaultFn: this._defResetFn });
+
+        this.after('rendered', this._schedulePrint);
+    },
+
+    /**
+     * Tears down the instance, flushing event subscriptions and purging the UI.
+     *
+     * @method destructor
+     * @protected
+     */
+    destructor : function () {
+        var bb = this.get('boundingBox');
+
+        this._cancelPrintLoop();
+
+        this.get('logSource').detach(this._evtCat + '*');
+        
+        Y.Event.purgeElement(bb, true);
+
+        bb.set('innerHTML','');
+    },
+
+    /**
+     * Generate the Console UI.
+     *
+     * @method renderUI
+     * @protected
+     */
+    renderUI : function () {
+        this._initHead();
+        this._initBody();
+        this._initFoot();
+
+        // Apply positioning to the bounding box if appropriate
+        var style = this.get('style');
+        if (style !== 'block') {
+            this.get('boundingBox').addClass('yui-'+style+'-console');
+        }
+    },
+
+    /**
+     * Sync the UI state to the current attribute state.
+     *
+     * @method syncUI
+     */
+    syncUI : function () {
+        this._uiUpdatePaused(this.get(PAUSED));
+        this._uiUpdateCollapsed(this.get(COLLAPSED));
+        this._uiSetHeight(this.get(HEIGHT));
+    },
+
+    /**
+     * Set up event listeners to wire up the UI to the internal state.
+     *
+     * @method bindUI
+     * @protected
+     */
+    bindUI : function () {
+        this.get(CONTENT_BOX).one('button.'+C_COLLAPSE).
+            on(CLICK,this._onCollapseClick,this);
+
+        this.get(CONTENT_BOX).one('input[type=checkbox].'+C_PAUSE).
+            on(CLICK,this._onPauseClick,this);
+
+        this.get(CONTENT_BOX).one('button.'+C_CLEAR).
+            on(CLICK,this._onClearClick,this);
+        
+        // Attribute changes
+        this.after(this._evtCat + 'stringsChange',
+            this._afterStringsChange);
+        this.after(this._evtCat + 'pausedChange',
+            this._afterPausedChange);
+        this.after(this._evtCat + 'consoleLimitChange',
+            this._afterConsoleLimitChange);
+        this.after(this._evtCat + 'collapsedChange',
+            this._afterCollapsedChange);
+    },
+
+    
+    /**
+     * Create the DOM structure for the header elements.
+     *
+     * @method _initHead
+     * @protected
+     */
+    _initHead : function () {
+        var cb   = this.get(CONTENT_BOX),
+            info = merge(Console.CHROME_CLASSES, {
+                        str_collapse : this.get('strings.collapse'),
+                        str_title : this.get('strings.title')
+                    });
+
+        this._head = create(substitute(Console.HEADER_TEMPLATE,info));
+
+        cb.insertBefore(this._head,cb.get('firstChild'));
+    },
+
+    /**
+     * Create the DOM structure for the console body&#8212;where messages are
+     * rendered.
+     *
+     * @method _initBody
+     * @protected
+     */
+    _initBody : function () {
+        this._body = create(substitute(
+                            Console.BODY_TEMPLATE,
+                            Console.CHROME_CLASSES));
+
+        this.get(CONTENT_BOX).appendChild(this._body);
+    },
+
+    /**
+     * Create the DOM structure for the footer elements.
+     *
+     * @method _initFoot
+     * @protected
+     */
+    _initFoot : function () {
+        var info = merge(Console.CHROME_CLASSES, {
+                id_guid   : Y.guid(),
+                str_pause : this.get('strings.pause'),
+                str_clear : this.get('strings.clear')
+            });
+
+        this._foot = create(substitute(Console.FOOTER_TEMPLATE,info));
+
+        this.get(CONTENT_BOX).appendChild(this._foot);
+    },
+
+    /**
+     * Determine if incoming log messages are within the configured logLevel
+     * to be buffered for printing.
+     *
+     * @method _isInLogLevel
+     * @protected
+     */
+    _isInLogLevel : function (e) {
+        var cat = e.cat, lvl = this.get('logLevel');
+
+        if (lvl !== INFO) {
+            cat = cat || INFO;
+
+            if (isString(cat)) {
+                cat = cat.toLowerCase();
+            }
+
+            if ((cat === WARN && lvl === ERROR) ||
+                (cat === INFO && lvl !== INFO)) {
+                return false;
+            }
+        }
+
+        return true;
+    },
+
+    /**
+     * Create a log entry message from the inputs including the following keys:
+     * <ul>
+     *     <li>time - this moment</li>
+     *     <li>message - leg message</li>
+     *     <li>category - logLevel or custom category for the message</li>
+     *     <li>source - when provided, the widget or util calling Y.log</li>
+     *     <li>sourceAndDetail - same as source but can include instance info</li>
+     *     <li>localTime - readable version of time</li>
+     *     <li>elapsedTime - ms since last entry</li>
+     *     <li>totalTime - ms since Console was instantiated or reset</li>
+     * </ul>
+     *
+     * @method _normalizeMessage
+     * @param e {Event} custom event containing the log message
+     * @return Object the message object
+     * @protected
+     */
+    _normalizeMessage : function (e) {
+
+        var msg = e.msg,
+            cat = e.cat,
+            src = e.src,
+
+            m = {
+                time            : new Date(),
+                message         : msg,
+                category        : cat || this.get('defaultCategory'),
+                sourceAndDetail : src || this.get('defaultSource'),
+                source          : null,
+                localTime       : null,
+                elapsedTime     : null,
+                totalTime       : null
+            };
+
+        // Extract m.source "Foo" from m.sourceAndDetail "Foo bar baz"
+        m.source          = RE_INLINE_SOURCE.test(m.sourceAndDetail) ?
+                                RegExp.$1 : m.sourceAndDetail;
+        m.localTime       = m.time.toLocaleTimeString ? 
+                            m.time.toLocaleTimeString() : (m.time + '');
+        m.elapsedTime     = m.time - this.get(LAST_TIME);
+        m.totalTime       = m.time - this.get(START_TIME);
+
+        this._set(LAST_TIME,m.time);
+
+        return m;
+    },
+
+    /**
+     * Sets an interval for buffered messages to be output to the console.
+     *
+     * @method _schedulePrint
+     * @protected
+     */
+    _schedulePrint : function () {
+        if (!this._printLoop && !this.get(PAUSED) && this.get('rendered')) {
+            this._printLoop = Y.later(
+                                this.get('printTimeout'),
+                                this, this.printBuffer,
+                                this.get('printLimit'), true);
+        }
+    },
+
+    /**
+     * Translates message meta into the markup for a console entry.
+     *
+     * @method _createEntryHTML
+     * @param m {Object} object literal containing normalized message metadata
+     * @return String
+     * @protected
+     */
+    _createEntryHTML : function (m) {
+        m = merge(
+                this._htmlEscapeMessage(m),
+                Console.ENTRY_CLASSES,
+                {
+                    cat_class : this.getClassName(ENTRY,m.category),
+                    src_class : this.getClassName(ENTRY,m.source)
+                });
+
+        return this.get('entryTemplate').replace(/\{(\w+)\}/g,
+            function (_,token) {
+                return token in m ? m[token] : '';
+            });
+    },
+
+    /**
+     * Scrolls to the most recent entry
+     *
+     * @method scrollToLatest
+     * @chainable
+     */
+    scrollToLatest : function () {
+        var scrollTop = this.get('newestOnTop') ?
+                            0 :
+                            this._body.get('scrollHeight');
+
+        this._body.set('scrollTop', scrollTop);
+    },
+
+    /**
+     * Performs HTML escaping on strings in the message object.
+     *
+     * @method _htmlEscapeMessage
+     * @param m {Object} the normalized message object
+     * @return Object the message object with proper escapement
+     * @protected
+     */
+    _htmlEscapeMessage : function (m) {
+        m.message         = this._encodeHTML(m.message);
+        m.source          = this._encodeHTML(m.source);
+        m.sourceAndDetail = this._encodeHTML(m.sourceAndDetail);
+        m.category        = this._encodeHTML(m.category);
+
+        return m;
+    },
+
+    /**
+     * Removes the oldest message entries from the UI to maintain the limit
+     * specified in the consoleLimit configuration.
+     *
+     * @method _trimOldEntries
+     * @protected
+     */
+    _trimOldEntries : function () {
+        // Turn off the logging system for the duration of this operation
+        // to prevent an infinite loop
+        Y.config.debug = false;
+
+        var bd = this._body,
+            limit = this.get('consoleLimit'),
+            debug = Y.config.debug,
+            entries,e,i,l;
+
+        if (bd) {
+            entries = bd.all(DOT+C_ENTRY);
+            l = entries.size() - limit;
+
+            if (l > 0) {
+                if (this.get('newestOnTop')) {
+                    i = limit;
+                    l = entries.size();
+                } else {
+                    i = 0;
+                }
+
+                this._body.setStyle('display','none');
+
+                for (;i < l; ++i) {
+                    e = entries.item(i);
+                    if (e) {
+                        e.remove();
+                    }
+                }
+
+                this._body.setStyle('display','');
+            }
+
+        }
+
+        Y.config.debug = debug;
+    },
+
+    /**
+     * Returns the input string with ampersands (&amp;), &lt, and &gt; encoded
+     * as HTML entities.
+     *
+     * @method _encodeHTML
+     * @param s {String} the raw string
+     * @return String the encoded string
+     * @protected
+     */
+    _encodeHTML : function (s) {
+        return isString(s) ?
+            s.replace(RE_AMP,ESC_AMP).
+              replace(RE_LT, ESC_LT).
+              replace(RE_GT, ESC_GT) :
+            s;
+    },
+
+    /**
+     * Clears the timeout for printing buffered messages.
+     *
+     * @method _cancelPrintLoop
+     * @protected
+     */
+    _cancelPrintLoop : function () {
+        if (this._printLoop) {
+            this._printLoop.cancel();
+            this._printLoop = null;
+        }
+    },
+
+    /**
+     * Validates input value for style attribute.  Accepts only values 'inline',
+     * 'block', and 'separate'.
+     *
+     * @method _validateStyle
+     * @param style {String} the proposed value
+     * @return {Boolean} pass/fail
+     * @protected
+     */
+    _validateStyle : function (style) {
+        return style === 'inline' || style === 'block' || style === 'separate';
+    },
+
+    /**
+     * Event handler for clicking on the Pause checkbox to update the paused
+     * attribute.
+     *
+     * @method _onPauseClick
+     * @param e {Event} DOM event facade for the click event
+     * @protected
+     */
+    _onPauseClick : function (e) {
+        this.set(PAUSED,e.target.get(CHECKED));
+    },
+
+    /**
+     * Event handler for clicking on the Clear button.  Pass-through to
+     * <code>this.clearConsole()</code>.
+     *
+     * @method _onClearClick
+     * @param e {Event} DOM event facade for the click event
+     * @protected
+     */
+    _onClearClick : function (e) {
+        this.clearConsole();
+    },
+
+    /**
+     * Event handler for clicking on the Collapse/Expand button. Sets the
+     * &quot;collapsed&quot; attribute accordingly.
+     *
+     * @method _onCollapseClick
+     * @param e {Event} DOM event facade for the click event
+     * @protected
+     */
+    _onCollapseClick : function (e) {
+        this.set(COLLAPSED, !this.get(COLLAPSED));
+    },
+
+
+    /**
+     * Validator for logSource attribute.
+     *
+     * @method _validateLogSource
+     * @param v {Object} the desired logSource
+     * @return {Boolean} true if the input is an object with an <code>on</code>
+     *                   method
+     * @protected
+     */
+    _validateLogSource: function (v) {
+        return v && Y.Lang.isFunction(v.on);
+    },
+
+    /**
+     * Setter method for logLevel attribute.  Acceptable values are
+     * &quot;error&quot, &quot;warn&quot, and &quot;info&quot (case
+     * insensitive).  Other values are treated as &quot;info&quot;.
+     *
+     * @method _setLogLevel
+     * @param v {String} the desired log level
+     * @return String One of Console.LOG_LEVEL_INFO, _WARN, or _ERROR
+     * @protected
+     */
+    _setLogLevel : function (v) {
+        if (isString(v)) {
+            v = v.toLowerCase();
+        }
+        
+        return (v === WARN || v === ERROR) ? v : INFO;
+    },
+
+    /**
+     * Getter method for useBrowserConsole attribute.  Just a pass through to
+     * the YUI instance configuration setting.
+     *
+     * @method _getUseBrowserConsole
+     * @return {Boolean} or null if logSource is not a YUI instance
+     * @protected
+     */
+    _getUseBrowserConsole: function () {
+        var logSource = this.get('logSource');
+        return logSource instanceof YUI ?
+            logSource.config.useBrowserConsole : null;
+    },
+
+    /**
+     * Setter method for useBrowserConsole attributes.  Only functional if the
+     * logSource attribute points to a YUI instance.  Passes the value down to
+     * the YUI instance.  NOTE: multiple Console instances cannot maintain
+     * independent useBrowserConsole values, since it is just a pass through to
+     * the YUI instance configuration.
+     *
+     * @method _setUseBrowserConsole
+     * @param v {Boolean} false to disable browser console printing (default)
+     * @return {Boolean} true|false if logSource is a YUI instance
+     * @protected
+     */
+    _setUseBrowserConsole: function (v) {
+        var logSource = this.get('logSource');
+        if (logSource instanceof YUI) {
+            v = !!v;
+            logSource.config.useBrowserConsole = v;
+            return v;
+        } else {
+            return Y.Attribute.INVALID_VALUE;
+        }
+    },
+
+    /**
+     * Set the height of the Console container.  Set the body height to the difference between the configured height and the calculated heights of the header and footer.
+     * Overrides Widget.prototype._uiSetHeight.
+     *
+     * @method _uiSetHeight
+     * @param v {String|Number} the new height
+     * @protected
+     */
+    _uiSetHeight : function (v) {
+        Console.superclass._uiSetHeight.apply(this,arguments);
+
+        if (this._head && this._foot) {
+            var h = this.get('boundingBox').get('offsetHeight') -
+                    this._head.get('offsetHeight') -
+                    this._foot.get('offsetHeight');
+
+            this._body.setStyle(HEIGHT,h+'px');
+        }
+    },
+
+    /**
+     * Updates the UI if changes are made to any of the strings in the strings
+     * attribute.
+     *
+     * @method _afterStringsChange
+     * @param e {Event} Custom event for the attribute change
+     * @protected
+     */
+    _afterStringsChange : function (e) {
+        var prop   = e.subAttrName ? e.subAttrName.split(DOT)[1] : null,
+            cb     = this.get(CONTENT_BOX),
+            before = e.prevVal,
+            after  = e.newVal;
+
+        if ((!prop || prop === TITLE) && before.title !== after.title) {
+            cb.all(DOT+C_CONSOLE_TITLE).set(INNER_HTML, after.title);
+        }
+
+        if ((!prop || prop === PAUSE) && before.pause !== after.pause) {
+            cb.all(DOT+C_PAUSE_LABEL).set(INNER_HTML, after.pause);
+        }
+
+        if ((!prop || prop === CLEAR) && before.clear !== after.clear) {
+            cb.all(DOT+C_CLEAR).set('value',after.clear);
+        }
+    },
+
+    /**
+     * Updates the UI and schedules or cancels the print loop.
+     *
+     * @method _afterPausedChange
+     * @param e {Event} Custom event for the attribute change
+     * @protected
+     */
+    _afterPausedChange : function (e) {
+        var paused = e.newVal;
+
+        if (e.src !== Y.Widget.SRC_UI) {
+            this._uiUpdatePaused(paused);
+        }
+
+        if (!paused) {
+            this._schedulePrint();
+        } else if (this._printLoop) {
+            this._cancelPrintLoop();
+        }
+    },
+
+    /**
+     * Checks or unchecks the paused checkbox
+     *
+     * @method _uiUpdatePaused
+     * @param on {Boolean} the new checked state
+     * @protected
+     */
+    _uiUpdatePaused : function (on) {
+        var node = this._foot.all('input[type=checkbox].'+C_PAUSE);
+
+        if (node) {
+            node.set(CHECKED,on);
+        }
+    },
+
+    /**
+     * Calls this._trimOldEntries() in response to changes in the configured
+     * consoleLimit attribute.
+     * 
+     * @method _afterConsoleLimitChange
+     * @param e {Event} Custom event for the attribute change
+     * @protected
+     */
+    _afterConsoleLimitChange : function () {
+        this._trimOldEntries();
+    },
+
+
+    /**
+     * Updates the className of the contentBox, which should trigger CSS to
+     * hide or show the body and footer sections depending on the new value.
+     *
+     * @method _afterCollapsedChange
+     * @param e {Event} Custom event for the attribute change
+     * @protected
+     */
+    _afterCollapsedChange : function (e) {
+        this._uiUpdateCollapsed(e.newVal);
+    },
+
+    /**
+     * Updates the UI to reflect the new Collapsed state
+     *
+     * @method _uiUpdateCollapsed
+     * @param v {Boolean} true for collapsed, false for expanded
+     * @protected
+     */
+    _uiUpdateCollapsed : function (v) {
+        var bb     = this.get('boundingBox'),
+            button = bb.all('button.'+C_COLLAPSE),
+            method = v ? 'addClass' : 'removeClass',
+            str    = this.get('strings.'+(v ? 'expand' : 'collapse'));
+
+        bb[method](C_COLLAPSED);
+
+        if (button) {
+            button.set('innerHTML',str);
+        }
+
+        this._uiSetHeight(v ? this._head.get('offsetHeight'): this.get(HEIGHT));
+    },
+
+    /**
+     * Makes adjustments to the UI if needed when the Console is hidden or shown
+     *
+     * @method _afterVisibleChange
+     * @param e {Event} the visibleChange event
+     * @protected
+     */
+    _afterVisibleChange : function (e) {
+        Console.superclass._afterVisibleChange.apply(this,arguments);
+
+        this._uiUpdateFromHideShow(e.newVal);
+    },
+
+    /**
+     * Recalculates dimensions and updates appropriately when shown
+     *
+     * @method _uiUpdateFromHideShow
+     * @param v {Boolean} true for visible, false for hidden
+     * @protected
+     */
+    _uiUpdateFromHideShow : function (v) {
+        if (v) {
+            this._uiSetHeight(this.get(HEIGHT));
+        }
+    },
+
+    /**
+     * Responds to log events by normalizing qualifying messages and passing
+     * them along through the entry event for buffering etc.
+     * 
+     * @method _onLogEvent
+     * @param msg {String} the log message
+     * @param cat {String} OPTIONAL the category or logLevel of the message
+     * @param src {String} OPTIONAL the source of the message (e.g. widget name)
+     * @protected
+     */
+    _onLogEvent : function (e) {
+
+        if (!this.get(DISABLED) && this._isInLogLevel(e)) {
+
+            var debug = Y.config.debug;
+
+            /* TODO: needed? */
+            Y.config.debug = false;
+
+            this.fire(ENTRY, {
+                message : this._normalizeMessage(e)
+            });
+
+            Y.config.debug = debug;
+        }
+    },
+
+    /**
+     * Clears the console, resets the startTime attribute, enables and
+     * unpauses the widget.
+     *
+     * @method _defResetFn
+     * @protected
+     */
+    _defResetFn : function () {
+        this.clearConsole();
+        this.set(START_TIME,new Date());
+        this.set(DISABLED,false);
+        this.set(PAUSED,false);
+    },
+
+    /**
+     * Buffers incoming message objects and schedules the printing.
+     *
+     * @method _defEntryFn
+     * @param e {Event} The Custom event carrying the message in its payload
+     * @protected
+     */
+    _defEntryFn : function (e) {
+        if (e.message) {
+            this.buffer.push(e.message);
+            this._schedulePrint();
+        }
+    }
+
+},
+
+// Y.Console static properties
+{
     /**
      * The identity of the widget.
      *
@@ -596,912 +1505,3 @@ Y.mix(Console, {
     }
 
 });
-
-Y.extend(Console,Y.Widget,{
-
-    /**
-     * Category to prefix all event subscriptions to allow for ease of detach
-     * during destroy.
-     *
-     * @property _evtCat
-     * @type string
-     * @protected
-     */
-    _evtCat : null,
-
-    /**
-     * Reference to the Node instance containing the header contents.
-     *
-     * @property _head
-     * @type Node
-     * @default null
-     * @protected
-     */
-    _head    : null,
-
-    /**
-     * Reference to the Node instance that will house the console messages.
-     *
-     * @property _body
-     * @type Node
-     * @default null
-     * @protected
-     */
-    _body    : null,
-
-    /**
-     * Reference to the Node instance containing the footer contents.
-     *
-     * @property _foot
-     * @type Node
-     * @default null
-     * @protected
-     */
-    _foot    : null,
-
-    /**
-     * Holds the object API returned from <code>Y.later</code> for the print
-     * loop interval.
-     *
-     * @property _printLoop
-     * @type Object
-     * @default null
-     * @protected
-     */
-    _printLoop : null,
-
-    /**
-     * Array of normalized message objects awaiting printing.
-     *
-     * @property buffer
-     * @type Array
-     * @default null
-     * @protected
-     */
-    buffer   : null,
-
-    /**
-     * Wrapper for <code>Y.log</code>.
-     *
-     * @method log
-     * @param arg* {MIXED} (all arguments passed through to <code>Y.log</code>)
-     * @chainable
-     */
-    log : function () {
-        Y.log.apply(Y,arguments);
-
-        return this;
-    },
-
-    /**
-     * Clear the console of messages and flush the buffer of pending messages.
-     *
-     * @method clearConsole
-     * @chainable
-     */
-    clearConsole : function () {
-        // TODO: clear event listeners from console contents
-        this._body.set(INNER_HTML,'');
-
-        this._cancelPrintLoop();
-
-        this.buffer = [];
-
-        return this;
-    },
-
-    /**
-     * Clears the console and resets internal timers.
-     *
-     * @method reset
-     * @chainable
-     */
-    reset : function () {
-        this.fire(RESET);
-        
-        return this;
-    },
-
-    /**
-     * Collapses the body and footer.
-     *
-     * @method collapse
-     * @chainable
-     */
-    collapse : function () {
-        this.set(COLLAPSED, true);
-
-        return this;
-    },
-
-    /**
-     * Expands the body and footer if collapsed.
-     *
-     * @method expand
-     * @chainable
-     */
-    expand : function () {
-        this.set(COLLAPSED, false);
-
-        return this;
-    },
-
-    /**
-     * Outputs buffered messages to the console UI.  This is typically called
-     * from a scheduled interval until the buffer is empty (referred to as the
-     * print loop).  The number of buffered messages output to the Console is
-     * limited to the number provided as an argument.  If no limit is passed,
-     * all buffered messages are rendered.
-     * 
-     * @method printBuffer
-     * @param limit {Number} (optional) max number of buffered entries to write
-     * @chainable
-     */
-    printBuffer: function (limit) {
-        var messages    = this.buffer,
-            debug       = Y.config.debug,
-            entries     = [],
-            consoleLimit= this.get('consoleLimit'),
-            newestOnTop = this.get('newestOnTop'),
-            anchor      = newestOnTop ? this._body.get('firstChild') : null,
-            i;
-
-        if (messages.length > consoleLimit) {
-            messages.splice(0, messages.length - consoleLimit);
-        }
-
-        limit = Math.min(messages.length, (limit || messages.length));
-        
-        // turn off logging system
-        Y.config.debug = false;
-
-        if (!this.get(PAUSED) && this.get('rendered')) {
-
-            for (i = 0; i < limit && messages.length; ++i) {
-                entries[i] = this._createEntryHTML(messages.shift());
-            }
-
-            if (!messages.length) {
-                this._cancelPrintLoop();
-            }
-
-            if (entries.length) {
-                if (newestOnTop) {
-                    entries.reverse();
-                }
-
-                this._body.insertBefore(create(entries.join('')), anchor);
-
-                if (this.get('scrollIntoView')) {
-                    this.scrollToLatest();
-                }
-
-                this._trimOldEntries();
-            }
-        }
-
-        // restore logging system
-        Y.config.debug = debug;
-
-        return this;
-    },
-
-    
-    /**
-     * Constructor code.  Set up the buffer and entry template, publish
-     * internal events, and subscribe to the configured logEvent.
-     * 
-     * @method initializer
-     * @protected
-     */
-    initializer : function () {
-        this._evtCat = Y.stamp(this) + '|';
-
-        this.buffer = [];
-
-        this.get('logSource').on(this._evtCat +
-            this.get('logEvent'),Y.bind("_onLogEvent",this));
-
-        /**
-         * Transfers a received message to the print loop buffer.  Default
-         * behavior defined in _defEntryFn.
-         *
-         * @event entry
-         * @param event {Event.Facade} An Event Facade object with the following attribute specific properties added:
-         *  <dl>
-         *      <dt>message</dt>
-         *          <dd>The message data normalized into an object literal (see _normalizeMessage)</dd>
-         *  </dl>
-         * @preventable _defEntryFn
-         */
-        this.publish(ENTRY, { defaultFn: this._defEntryFn });
-
-        /**
-         * Triggers the reset behavior via the default logic in _defResetFn.
-         *
-         * @event reset
-         * @param event {Event.Facade} Event Facade object
-         * @preventable _defResetFn
-         */
-        this.publish(RESET, { defaultFn: this._defResetFn });
-
-        this.after('rendered', this._schedulePrint);
-    },
-
-    /**
-     * Tears down the instance, flushing event subscriptions and purging the UI.
-     *
-     * @method destructor
-     * @protected
-     */
-    destructor : function () {
-        var bb = this.get('boundingBox');
-
-        this._cancelPrintLoop();
-
-        this.get('logSource').detach(this._evtCat + '*');
-        
-        Y.Event.purgeElement(bb, true);
-
-        bb.set('innerHTML','');
-    },
-
-    /**
-     * Generate the Console UI.
-     *
-     * @method renderUI
-     * @protected
-     */
-    renderUI : function () {
-        this._initHead();
-        this._initBody();
-        this._initFoot();
-
-        // Apply positioning to the bounding box if appropriate
-        var style = this.get('style');
-        if (style !== 'block') {
-            this.get('boundingBox').addClass('yui-'+style+'-console');
-        }
-    },
-
-    /**
-     * Sync the UI state to the current attribute state.
-     *
-     * @method syncUI
-     */
-    syncUI : function () {
-        this._uiUpdatePaused(this.get(PAUSED));
-        this._uiUpdateCollapsed(this.get(COLLAPSED));
-        this._uiSetHeight(this.get(HEIGHT));
-    },
-
-    /**
-     * Set up event listeners to wire up the UI to the internal state.
-     *
-     * @method bindUI
-     * @protected
-     */
-    bindUI : function () {
-        this.get(CONTENT_BOX).query('button.'+C_COLLAPSE).
-            on(CLICK,this._onCollapseClick,this);
-
-        this.get(CONTENT_BOX).query('input[type=checkbox].'+C_PAUSE).
-            on(CLICK,this._onPauseClick,this);
-
-        this.get(CONTENT_BOX).query('button.'+C_CLEAR).
-            on(CLICK,this._onClearClick,this);
-        
-        // Attribute changes
-        this.after(this._evtCat + 'stringsChange',
-            this._afterStringsChange);
-        this.after(this._evtCat + 'pausedChange',
-            this._afterPausedChange);
-        this.after(this._evtCat + 'consoleLimitChange',
-            this._afterConsoleLimitChange);
-        this.after(this._evtCat + 'collapsedChange',
-            this._afterCollapsedChange);
-    },
-
-    
-    /**
-     * Create the DOM structure for the header elements.
-     *
-     * @method _initHead
-     * @protected
-     */
-    _initHead : function () {
-        var cb   = this.get(CONTENT_BOX),
-            info = merge(Console.CHROME_CLASSES, {
-                        str_collapse : this.get('strings.collapse'),
-                        str_title : this.get('strings.title')
-                    });
-
-        this._head = create(substitute(Console.HEADER_TEMPLATE,info));
-
-        cb.insertBefore(this._head,cb.get('firstChild'));
-    },
-
-    /**
-     * Create the DOM structure for the console body&#8212;where messages are
-     * rendered.
-     *
-     * @method _initBody
-     * @protected
-     */
-    _initBody : function () {
-        this._body = create(substitute(
-                            Console.BODY_TEMPLATE,
-                            Console.CHROME_CLASSES));
-
-        this.get(CONTENT_BOX).appendChild(this._body);
-    },
-
-    /**
-     * Create the DOM structure for the footer elements.
-     *
-     * @method _initFoot
-     * @protected
-     */
-    _initFoot : function () {
-        var info = merge(Console.CHROME_CLASSES, {
-                id_guid   : Y.guid(),
-                str_pause : this.get('strings.pause'),
-                str_clear : this.get('strings.clear')
-            });
-
-        this._foot = create(substitute(Console.FOOTER_TEMPLATE,info));
-
-        this.get(CONTENT_BOX).appendChild(this._foot);
-    },
-
-    /**
-     * Determine if incoming log messages are within the configured logLevel
-     * to be buffered for printing.
-     *
-     * @method _isInLogLevel
-     * @protected
-     */
-    _isInLogLevel : function (e) {
-        var cat = e.cat, lvl = this.get('logLevel');
-
-        if (lvl !== INFO) {
-            cat = cat || INFO;
-
-            if (isString(cat)) {
-                cat = cat.toLowerCase();
-            }
-
-            if ((cat === WARN && lvl === ERROR) ||
-                (cat === INFO && lvl !== INFO)) {
-                return false;
-            }
-        }
-
-        return true;
-    },
-
-    /**
-     * Create a log entry message from the inputs including the following keys:
-     * <ul>
-     *     <li>time - this moment</li>
-     *     <li>message - leg message</li>
-     *     <li>category - logLevel or custom category for the message</li>
-     *     <li>source - when provided, the widget or util calling Y.log</li>
-     *     <li>sourceAndDetail - same as source but can include instance info</li>
-     *     <li>localTime - readable version of time</li>
-     *     <li>elapsedTime - ms since last entry</li>
-     *     <li>totalTime - ms since Console was instantiated or reset</li>
-     * </ul>
-     *
-     * @method _normalizeMessage
-     * @param e {Event} custom event containing the log message
-     * @return Object the message object
-     * @protected
-     */
-    _normalizeMessage : function (e) {
-
-        var msg = e.msg,
-            cat = e.cat,
-            src = e.src,
-
-            m = {
-                time            : new Date(),
-                message         : msg,
-                category        : cat || this.get('defaultCategory'),
-                sourceAndDetail : src || this.get('defaultSource'),
-                source          : null,
-                localTime       : null,
-                elapsedTime     : null,
-                totalTime       : null
-            };
-
-        // Extract m.source "Foo" from m.sourceAndDetail "Foo bar baz"
-        m.source          = RE_INLINE_SOURCE.test(m.sourceAndDetail) ?
-                                RegExp.$1 : m.sourceAndDetail;
-        m.localTime       = m.time.toLocaleTimeString ? 
-                            m.time.toLocaleTimeString() : (m.time + '');
-        m.elapsedTime     = m.time - this.get(LAST_TIME);
-        m.totalTime       = m.time - this.get(START_TIME);
-
-        this._set(LAST_TIME,m.time);
-
-        return m;
-    },
-
-    /**
-     * Sets an interval for buffered messages to be output to the console.
-     *
-     * @method _schedulePrint
-     * @protected
-     */
-    _schedulePrint : function () {
-        if (!this._printLoop && !this.get(PAUSED) && this.get('rendered')) {
-            this._printLoop = Y.later(
-                                this.get('printTimeout'),
-                                this, this.printBuffer,
-                                this.get('printLimit'), true);
-        }
-    },
-
-    /**
-     * Translates message meta into the markup for a console entry.
-     *
-     * @method _createEntryHTML
-     * @param m {Object} object literal containing normalized message metadata
-     * @return String
-     * @protected
-     */
-    _createEntryHTML : function (m) {
-        m = merge(
-                this._htmlEscapeMessage(m),
-                Console.ENTRY_CLASSES,
-                {
-                    cat_class : this.getClassName(ENTRY,m.category),
-                    src_class : this.getClassName(ENTRY,m.source)
-                });
-
-        return this.get('entryTemplate').replace(/\{(\w+)\}/g,
-            function (_,token) {
-                return token in m ? m[token] : '';
-            });
-    },
-
-    /**
-     * Scrolls to the most recent entry
-     *
-     * @method scrollToLatest
-     * @chainable
-     */
-    scrollToLatest : function () {
-        var scrollTop = this.get('newestOnTop') ?
-                            0 :
-                            this._body.get('scrollHeight');
-
-        this._body.set('scrollTop', scrollTop);
-    },
-
-    /**
-     * Performs HTML escaping on strings in the message object.
-     *
-     * @method _htmlEscapeMessage
-     * @param m {Object} the normalized message object
-     * @return Object the message object with proper escapement
-     * @protected
-     */
-    _htmlEscapeMessage : function (m) {
-        m.message         = this._encodeHTML(m.message);
-        m.source          = this._encodeHTML(m.source);
-        m.sourceAndDetail = this._encodeHTML(m.sourceAndDetail);
-        m.category        = this._encodeHTML(m.category);
-
-        return m;
-    },
-
-    /**
-     * Removes the oldest message entries from the UI to maintain the limit
-     * specified in the consoleLimit configuration.
-     *
-     * @method _trimOldEntries
-     * @protected
-     */
-    _trimOldEntries : function () {
-        // Turn off the logging system for the duration of this operation
-        // to prevent an infinite loop
-        Y.config.debug = false;
-
-        var bd = this._body,
-            limit = this.get('consoleLimit'),
-            debug = Y.config.debug,
-            entries,e,i,l;
-
-        if (bd) {
-            entries = bd.queryAll(DOT+C_ENTRY);
-            l = entries.size() - limit;
-
-            if (l > 0) {
-                if (this.get('newestOnTop')) {
-                    i = limit;
-                    l = entries.size();
-                } else {
-                    i = 0;
-                }
-
-                this._body.setStyle('display','none');
-
-                for (;i < l; ++i) {
-                    e = entries.item(i);
-                    if (e) {
-                        e.remove();
-                    }
-                }
-
-                this._body.setStyle('display','');
-            }
-
-        }
-
-        Y.config.debug = debug;
-    },
-
-    /**
-     * Returns the input string with ampersands (&amp;), &lt, and &gt; encoded
-     * as HTML entities.
-     *
-     * @method _encodeHTML
-     * @param s {String} the raw string
-     * @return String the encoded string
-     * @protected
-     */
-    _encodeHTML : function (s) {
-        return isString(s) ?
-            s.replace(RE_AMP,ESC_AMP).
-              replace(RE_LT, ESC_LT).
-              replace(RE_GT, ESC_GT) :
-            s;
-    },
-
-    /**
-     * Clears the timeout for printing buffered messages.
-     *
-     * @method _cancelPrintLoop
-     * @protected
-     */
-    _cancelPrintLoop : function () {
-        if (this._printLoop) {
-            this._printLoop.cancel();
-            this._printLoop = null;
-        }
-    },
-
-    /**
-     * Validates input value for style attribute.  Accepts only values 'inline',
-     * 'block', and 'separate'.
-     *
-     * @method _validateStyle
-     * @param style {String} the proposed value
-     * @return {Boolean} pass/fail
-     * @protected
-     */
-    _validateStyle : function (style) {
-        return style === 'inline' || style === 'block' || style === 'separate';
-    },
-
-    /**
-     * Event handler for clicking on the Pause checkbox to update the paused
-     * attribute.
-     *
-     * @method _onPauseClick
-     * @param e {Event} DOM event facade for the click event
-     * @protected
-     */
-    _onPauseClick : function (e) {
-        this.set(PAUSED,e.target.get(CHECKED));
-    },
-
-    /**
-     * Event handler for clicking on the Clear button.  Pass-through to
-     * <code>this.clearConsole()</code>.
-     *
-     * @method _onClearClick
-     * @param e {Event} DOM event facade for the click event
-     * @protected
-     */
-    _onClearClick : function (e) {
-        this.clearConsole();
-    },
-
-    /**
-     * Event handler for clicking on the Collapse/Expand button. Sets the
-     * &quot;collapsed&quot; attribute accordingly.
-     *
-     * @method _onCollapseClick
-     * @param e {Event} DOM event facade for the click event
-     * @protected
-     */
-    _onCollapseClick : function (e) {
-        this.set(COLLAPSED, !this.get(COLLAPSED));
-    },
-
-
-    /**
-     * Validator for logSource attribute.
-     *
-     * @method _validateLogSource
-     * @param v {Object} the desired logSource
-     * @return {Boolean} true if the input is an object with an <code>on</code>
-     *                   method
-     * @protected
-     */
-    _validateLogSource: function (v) {
-        return v && Y.Lang.isFunction(v.on);
-    },
-
-    /**
-     * Setter method for logLevel attribute.  Acceptable values are
-     * &quot;error&quot, &quot;warn&quot, and &quot;info&quot (case
-     * insensitive).  Other values are treated as &quot;info&quot;.
-     *
-     * @method _setLogLevel
-     * @param v {String} the desired log level
-     * @return String One of Console.LOG_LEVEL_INFO, _WARN, or _ERROR
-     * @protected
-     */
-    _setLogLevel : function (v) {
-        if (isString(v)) {
-            v = v.toLowerCase();
-        }
-        
-        return (v === WARN || v === ERROR) ? v : INFO;
-    },
-
-    /**
-     * Getter method for useBrowserConsole attribute.  Just a pass through to
-     * the YUI instance configuration setting.
-     *
-     * @method _getUseBrowserConsole
-     * @return {Boolean} or null if logSource is not a YUI instance
-     * @protected
-     */
-    _getUseBrowserConsole: function () {
-        var logSource = this.get('logSource');
-        return logSource instanceof YUI ?
-            logSource.config.useBrowserConsole : null;
-    },
-
-    /**
-     * Setter method for useBrowserConsole attributes.  Only functional if the
-     * logSource attribute points to a YUI instance.  Passes the value down to
-     * the YUI instance.  NOTE: multiple Console instances cannot maintain
-     * independent useBrowserConsole values, since it is just a pass through to
-     * the YUI instance configuration.
-     *
-     * @method _setUseBrowserConsole
-     * @param v {Boolean} false to disable browser console printing (default)
-     * @return {Boolean} true|false if logSource is a YUI instance
-     * @protected
-     */
-    _setUseBrowserConsole: function (v) {
-        var logSource = this.get('logSource');
-        if (logSource instanceof YUI) {
-            v = !!v;
-            logSource.config.useBrowserConsole = v;
-            return v;
-        } else {
-            return Y.Attribute.INVALID_VALUE;
-        }
-    },
-
-    /**
-     * Set the height of the Console container.  Set the body height to the difference between the configured height and the calculated heights of the header and footer.
-     * Overrides Widget.prototype._uiSetHeight.
-     *
-     * @method _uiSetHeight
-     * @param v {String|Number} the new height
-     * @protected
-     */
-    _uiSetHeight : function (v) {
-        Console.superclass._uiSetHeight.apply(this,arguments);
-
-        if (this._head && this._foot) {
-            var h = this.get('boundingBox').get('offsetHeight') -
-                    this._head.get('offsetHeight') -
-                    this._foot.get('offsetHeight');
-
-            this._body.setStyle(HEIGHT,h+'px');
-        }
-    },
-
-    /**
-     * Updates the UI if changes are made to any of the strings in the strings
-     * attribute.
-     *
-     * @method _afterStringsChange
-     * @param e {Event} Custom event for the attribute change
-     * @protected
-     */
-    _afterStringsChange : function (e) {
-        var prop   = e.subAttrName ? e.subAttrName.split(DOT)[1] : null,
-            cb     = this.get(CONTENT_BOX),
-            before = e.prevVal,
-            after  = e.newVal;
-
-        if ((!prop || prop === TITLE) && before.title !== after.title) {
-            cb.queryAll(DOT+C_CONSOLE_TITLE).set(INNER_HTML, after.title);
-        }
-
-        if ((!prop || prop === PAUSE) && before.pause !== after.pause) {
-            cb.queryAll(DOT+C_PAUSE_LABEL).set(INNER_HTML, after.pause);
-        }
-
-        if ((!prop || prop === CLEAR) && before.clear !== after.clear) {
-            cb.queryAll(DOT+C_CLEAR).set('value',after.clear);
-        }
-    },
-
-    /**
-     * Updates the UI and schedules or cancels the print loop.
-     *
-     * @method _afterPausedChange
-     * @param e {Event} Custom event for the attribute change
-     * @protected
-     */
-    _afterPausedChange : function (e) {
-        var paused = e.newVal;
-
-        if (e.src !== Y.Widget.SRC_UI) {
-            this._uiUpdatePaused(paused);
-        }
-
-        if (!paused) {
-            this._schedulePrint();
-        } else if (this._printLoop) {
-            this._cancelPrintLoop();
-        }
-    },
-
-    /**
-     * Checks or unchecks the paused checkbox
-     *
-     * @method _uiUpdatePaused
-     * @param on {Boolean} the new checked state
-     * @protected
-     */
-    _uiUpdatePaused : function (on) {
-        var node = this._foot.queryAll('input[type=checkbox].'+C_PAUSE);
-
-        if (node) {
-            node.set(CHECKED,on);
-        }
-    },
-
-    /**
-     * Calls this._trimOldEntries() in response to changes in the configured
-     * consoleLimit attribute.
-     * 
-     * @method _afterConsoleLimitChange
-     * @param e {Event} Custom event for the attribute change
-     * @protected
-     */
-    _afterConsoleLimitChange : function () {
-        this._trimOldEntries();
-    },
-
-
-    /**
-     * Updates the className of the contentBox, which should trigger CSS to
-     * hide or show the body and footer sections depending on the new value.
-     *
-     * @method _afterCollapsedChange
-     * @param e {Event} Custom event for the attribute change
-     * @protected
-     */
-    _afterCollapsedChange : function (e) {
-        this._uiUpdateCollapsed(e.newVal);
-    },
-
-    /**
-     * Updates the UI to reflect the new Collapsed state
-     *
-     * @method _uiUpdateCollapsed
-     * @param v {Boolean} true for collapsed, false for expanded
-     * @protected
-     */
-    _uiUpdateCollapsed : function (v) {
-        var bb     = this.get('boundingBox'),
-            button = bb.queryAll('button.'+C_COLLAPSE),
-            method = v ? 'addClass' : 'removeClass',
-            str    = this.get('strings.'+(v ? 'expand' : 'collapse'));
-
-        bb[method](C_COLLAPSED);
-
-        if (button) {
-            button.set('innerHTML',str);
-        }
-
-        this._uiSetHeight(v ? this._head.get('offsetHeight'): this.get(HEIGHT));
-    },
-
-    /**
-     * Makes adjustments to the UI if needed when the Console is hidden or shown
-     *
-     * @method _afterVisibleChange
-     * @param e {Event} the visibleChange event
-     * @protected
-     */
-    _afterVisibleChange : function (e) {
-        Console.superclass._afterVisibleChange.apply(this,arguments);
-
-        this._uiUpdateFromHideShow(e.newVal);
-    },
-
-    /**
-     * Recalculates dimensions and updates appropriately when shown
-     *
-     * @method _uiUpdateFromHideShow
-     * @param v {Boolean} true for visible, false for hidden
-     * @protected
-     */
-    _uiUpdateFromHideShow : function (v) {
-        if (v) {
-            this._uiSetHeight(this.get(HEIGHT));
-        }
-    },
-
-    /**
-     * Responds to log events by normalizing qualifying messages and passing
-     * them along through the entry event for buffering etc.
-     * 
-     * @method _onLogEvent
-     * @param msg {String} the log message
-     * @param cat {String} OPTIONAL the category or logLevel of the message
-     * @param src {String} OPTIONAL the source of the message (e.g. widget name)
-     * @protected
-     */
-    _onLogEvent : function (e) {
-
-        if (!this.get(DISABLED) && this._isInLogLevel(e)) {
-
-            var debug = Y.config.debug;
-
-            /* TODO: needed? */
-            Y.config.debug = false;
-
-            this.fire(ENTRY, {
-                message : this._normalizeMessage(e)
-            });
-
-            Y.config.debug = debug;
-        }
-    },
-
-    /**
-     * Clears the console, resets the startTime attribute, enables and
-     * unpauses the widget.
-     *
-     * @method _defResetFn
-     * @protected
-     */
-    _defResetFn : function () {
-        this.clearConsole();
-        this.set(START_TIME,new Date());
-        this.set(DISABLED,false);
-        this.set(PAUSED,false);
-    },
-
-    /**
-     * Buffers incoming message objects and schedules the printing.
-     *
-     * @method _defEntryFn
-     * @param e {Event} The Custom event carrying the message in its payload
-     * @protected
-     */
-    _defEntryFn : function (e) {
-        if (e.message) {
-            this.buffer.push(e.message);
-            this._schedulePrint();
-        }
-    }
-
-});
-
-Y.Console = Console;

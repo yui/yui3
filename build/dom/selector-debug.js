@@ -362,8 +362,8 @@ var PARENT_NODE = 'parentNode',
                 // try ID first
                 if (id) {
                     nodes = Y.DOM.allById(id, root);
-                // try className if supported
-                } else if (className && root.getElementsByClassName) {
+                // try className
+                } else if (className) {
                     nodes = root.getElementsByClassName(className);
                 } else { // default to tagName
                     nodes = root.getElementsByTagName(tagName);
@@ -503,7 +503,7 @@ var PARENT_NODE = 'parentNode',
                     // add prefiltering for ID and CLASS
                     if ((match[1] === 'id' && operator === '=') ||
                             (match[1] === 'className' &&
-                            document.getElementsByClassName &&
+                            document.documentElement.getElementsByClassName &&
                             (operator === '~=' || operator === '='))) {
                         token.prefilter = match[1];
                         token[match[1]] = match[3];

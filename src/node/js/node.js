@@ -156,7 +156,7 @@ Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
         Node.prototype[name] = function() {
             context = context || this;
-            var args = Y.Array(arguments),
+            var args = Y.Array(arguments, 0, true),
                 ret;
 
             if (args[0] && args[0] instanceof Node) {
@@ -180,7 +180,7 @@ Node.importMethod = function(host, name, altName) {
         altName = altName || name;
         Node.addMethod(altName, host[name], host);
     } else {
-        Y.each(name, function(n) {
+        Y.Array.each(name, function(n) {
             Node.importMethod(host, n);
         });
     }
@@ -640,11 +640,17 @@ Y.mix(Node.prototype, {
      *
      */
     remove: function(destroy) {
-        var node = this._node;
-        node.parentNode.removeChild(node);
+        var node = this._node,
+            parentNode = node.parentNode;
+
+        if (parentNode) {
+            parentNode.removeChild(node); 
+        }
+
         if (destroy) {
             this.destroy(true);
         }
+
         return this;
     },
 
@@ -838,10 +844,9 @@ Y.mix(Node.prototype, {
         return this;
     },
 
-    // TODO: need this?
     hasMethod: function(method) {
         var node = this._node;
-        return (node && (typeof node === 'function'));
+        return (node && node[method] && (typeof node[method] === 'function'));
     }
 }, true);
 

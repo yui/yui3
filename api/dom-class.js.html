@@ -95,7 +95,7 @@
 <span class="cm">     * Replace a class with another class for a given element.</span>
 <span class="cm">     * If no oldClassName is present, the newClassName is simply added.</span>
 <span class="cm">     * @method replaceClass  </span>
-<span class="cm">     * @param {HTMLElement} element The DOM element. </span>
+<span class="cm">     * @param {HTMLElement} element The DOM element </span>
 <span class="cm">     * @param {String} oldClassName the class name to be replaced</span>
 <span class="cm">     * @param {String} newClassName the class name that will be replacing the old class name</span>
 <span class="cm">     */</span>
@@ -108,14 +108,19 @@
     <span class="cm">/**</span>
 <span class="cm">     * If the className exists on the node it is removed, if it doesn&#39;t exist it is added.</span>
 <span class="cm">     * @method toggleClass  </span>
-<span class="cm">     * @param {HTMLElement} element The DOM element. </span>
+<span class="cm">     * @param {HTMLElement} element The DOM element</span>
 <span class="cm">     * @param {String} className the class name to be toggled</span>
+<span class="cm">     * @param {Boolean} addClass optional boolean to indicate whether class</span>
+<span class="cm">     * should be added or removed regardless of current state</span>
 <span class="cm">     */</span>
-    <span class="nx">toggleClass</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">removeClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">toggleClass</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">,</span> <span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="p">(</span><span class="nx">force</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="nx">force</span> <span class="o">:</span>
+                <span class="o">!</span><span class="p">(</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">add</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">addClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">removeClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">className</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">});</span>
@@ -170,6 +175,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

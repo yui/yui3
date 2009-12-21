@@ -159,8 +159,8 @@
                 <span class="c1">// try ID first</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">allById</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">root</span><span class="p">);</span>
-                <span class="c1">// try className if supported</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">className</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// try className</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="nx">className</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// default to tagName</span>
                     <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">tagName</span><span class="p">);</span>
@@ -300,7 +300,7 @@
                     <span class="c1">// add prefiltering for ID and CLASS</span>
                     <span class="k">if</span> <span class="p">((</span><span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;id&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">operator</span> <span class="o">===</span> <span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="o">||</span>
                             <span class="p">(</span><span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;className&#39;</span> <span class="o">&amp;&amp;</span>
-                            <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByClassName</span> <span class="o">&amp;&amp;</span>
+                            <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">getElementsByClassName</span> <span class="o">&amp;&amp;</span>
                             <span class="p">(</span><span class="nx">operator</span> <span class="o">===</span> <span class="s1">&#39;~=&#39;</span> <span class="o">||</span> <span class="nx">operator</span> <span class="o">===</span> <span class="s1">&#39;=&#39;</span><span class="p">)))</span> <span class="p">{</span>
                         <span class="nx">token</span><span class="p">.</span><span class="nx">prefilter</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
                         <span class="nx">token</span><span class="p">[</span><span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
@@ -532,6 +532,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>

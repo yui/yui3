@@ -158,7 +158,7 @@ Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
         Node.prototype[name] = function() {
             context = context || this;
-            var args = Y.Array(arguments),
+            var args = Y.Array(arguments, 0, true),
                 ret;
 
             if (args[0] && args[0] instanceof Node) {
@@ -182,7 +182,7 @@ Node.importMethod = function(host, name, altName) {
         altName = altName || name;
         Node.addMethod(altName, host[name], host);
     } else {
-        Y.each(name, function(n) {
+        Y.Array.each(name, function(n) {
             Node.importMethod(host, n);
         });
     }
@@ -642,11 +642,17 @@ Y.mix(Node.prototype, {
      *
      */
     remove: function(destroy) {
-        var node = this._node;
-        node.parentNode.removeChild(node);
+        var node = this._node,
+            parentNode = node.parentNode;
+
+        if (parentNode) {
+            parentNode.removeChild(node); 
+        }
+
         if (destroy) {
             this.destroy(true);
         }
+
         return this;
     },
 
@@ -840,10 +846,9 @@ Y.mix(Node.prototype, {
         return this;
     },
 
-    // TODO: need this?
     hasMethod: function(method) {
         var node = this._node;
-        return (node && (typeof node === 'function'));
+        return (node && node[method] && (typeof node[method] === 'function'));
     }
 }, true);
 
@@ -940,7 +945,7 @@ NodeList.importMethod = function(host, name, altName) {
         altName = altName || name;
         NodeList.addMethod(name, host[name]);
     } else {
-        Y.each(name, function(n) {
+        Y.Array.each(name, function(n) {
             NodeList.importMethod(host, n);
         });
     }
@@ -1166,6 +1171,15 @@ Y.mix(NodeList.prototype, {
         return this._nodes.length;
     },
 
+    /**
+     * Determines if the instance is bound to any nodes
+     * @method isEmpty
+     * @return {Boolean} Whether or not the NodeList is bound to any nodes 
+     */
+    isEmpty: function() {
+        return this._nodes.length < 1;
+    },
+
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to any nodes',
@@ -1231,6 +1245,12 @@ NodeList.importMethod(Y.Node.prototype, [
       * @see Node.remove
       */
     'remove',
+
+    /** Called on each Node instance
+      * @method removeAttribute
+      * @see Node.removeAttribute
+      */
+    'removeAttribute',
 
     /** Called on each Node instance
       * @method set
@@ -1565,7 +1585,8 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
 
 if (!document.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
-        return Y.DOM.getAttribute(this._node, attr) !== '';
+        return !!(this._node.attributes[attr] &&
+                this._node.attributes[attr].specified);
     };
 }
 
@@ -2032,5 +2053,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
 
