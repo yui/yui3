@@ -614,7 +614,8 @@ Y.CustomEvent.prototype = {
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-            Y.later(0, this, Y.bind(this._notify, this, s, this.firedWith));
+            // Y.later(0, this, Y.bind(this._notify, this, s, this.firedWith));
+            setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
         }
 
         if (when == AFTER) {
@@ -1971,7 +1972,10 @@ CEProto._getFacade = function() {
     // update the details field with the arguments
     // ef.type = this.type;
     ef.details = this.details;
-    ef.target = this.target;
+
+    // use the original target when the event bubbled to this target
+    ef.target = this.originalTarget || this.target;
+
     ef.currentTarget = this.currentTarget;
     ef.stopped = 0;
     ef.prevented = 0;
@@ -2060,13 +2064,16 @@ Y.EventTarget.prototype.bubble = function(evt, args, target) {
                     }
 
                 } else {
-                    ce.target = target || (evt && evt.target) || this;
-                    ce.currentTarget = t;
 
+                    // set the original target to that the target payload on the
+                    // facade is correct.
+                    ce.originalTarget = target || (evt && evt.target) || this;
+                    ce.currentTarget = t;
                     bc = ce.broadcast;
                     ce.broadcast = false;
                     ret = ret && ce.fire.apply(ce, args || evt.details || []);
                     ce.broadcast = bc;
+                    ce.originalTarget = null;
 
                     // stopPropagation() was called
                     if (ce.stopped) {
