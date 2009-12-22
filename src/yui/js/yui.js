@@ -50,7 +50,8 @@
 
         _APPLY_TO_WHITE_LIST = {
           'io.xdrReady': 1,
-          'io.xdrResponse':1
+          'io.xdrResponse':1,
+          'SWF.eventHandler':1
         },
 
         SLICE = Array.prototype.slice;

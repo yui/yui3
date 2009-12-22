@@ -10,15 +10,15 @@ var lG = Y.Lang;
 var sF = "ShockwaveFlash";
 
 function parseFlashVersion (flashVer) {
-	if (lG.isNumber(flashVer[0])) {
+	if (lG.isNumber(parseInt(flashVer[0]))) {
 		uA.flashMajor = flashVer[0];
 	}
 	
-	if (lG.isNumber(flashVer[1])) {
+	if (lG.isNumber(parseInt(flashVer[1]))) {
 		uA.flashMinor = flashVer[1];
 	}
 	
-	if (lG.isNumber(flashVer[2])) {
+	if (lG.isNumber(parseInt(flashVer[2]))) {
 		uA.flashRev = flashVer[2];
 	}
 }
@@ -28,6 +28,7 @@ if (uA.gecko || uA.webkit || uA.opera) {
 		      if ((eP = mF.enabledPlugin)) {
 				 var vS = [];
 		         vS = eP.description.replace(/\s[rd]/g, '.').replace(/[A-Za-z\s]+/g, '').split('.');
+				 Y.log(vS[0]);
 				 parseFlashVersion(vS);
 		      }
 		   }
@@ -63,6 +64,30 @@ Y.SWFDetect = {
 		},
 		
 		isFlashVersionAtLeast : function (flashMajor, flashMinor, flashRev) {
-			return (flashMajor >= uA.flashMajor && flashMinor >= uA.flashMinor && flashRev >= uA.flashRev);
+
+			if (flashMajor < uA.flashMajor) {
+				return true;
+			}
+			else if (flashMajor > uA.flashMajor) {
+				return false;
+			}
+			else {
+				if (flashMinor < uA.flashMinor) {
+					return true;
+				}
+				else if (flashMinor > uA.flashMinor) {
+					return false;
+				}
+				else {
+					if (flashRev <= uA.flashRev) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+			}
+			
+			return false;
 		}			
 	};
