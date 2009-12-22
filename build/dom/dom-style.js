@@ -22,9 +22,12 @@ var DOCUMENT_ELEMENT = 'documentElement',
     UNDEFINED = undefined,
 
     re_color = /color$/i;
+    re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
 
 Y.mix(Y.DOM, {
+    DEFAULT_UNIT: 'px',
+
     CUSTOM_STYLES: {
     },
 
@@ -44,6 +47,11 @@ Y.mix(Y.DOM, {
             if (val === null) {
                 val = ''; // normalize for unsetting
             }
+
+            if (typeof val === 'number' && re_unit.test(att)) {
+                val += Y.DOM.DEFAULT_UNIT;
+            }
+
             if (att in CUSTOM_STYLES) {
                 if (CUSTOM_STYLES[att].set) {
                     CUSTOM_STYLES[att].set(node, val, style);

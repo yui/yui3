@@ -672,6 +672,7 @@ Y.DOM = {
                 options = node.options;
 
             if (options && val === '') {
+                // TODO: implement multipe select
                 if (node.multiple) {
                 } else {
                     val = Y.DOM.getValue(options[node.selectedIndex], 'value');
@@ -744,10 +745,10 @@ Y.mix(Y.DOM, {
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
      * @method toggleClass  
-     * @param {HTMLElement} element The DOM element.
+     * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled
      * @param {Boolean} addClass optional boolean to indicate whether class
-     * should be added or removed
+     * should be added or removed regardless of current state
      */
     toggleClass: function(node, className, force) {
         var add = (force !== undefined) ? force :
@@ -792,9 +793,12 @@ var DOCUMENT_ELEMENT = 'documentElement',
     UNDEFINED = undefined,
 
     re_color = /color$/i;
+    re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
 
 Y.mix(Y.DOM, {
+    DEFAULT_UNIT: 'px',
+
     CUSTOM_STYLES: {
     },
 
@@ -814,6 +818,11 @@ Y.mix(Y.DOM, {
             if (val === null) {
                 val = ''; // normalize for unsetting
             }
+
+            if (typeof val === 'number' && re_unit.test(att)) {
+                val += Y.DOM.DEFAULT_UNIT;
+            }
+
             if (att in CUSTOM_STYLES) {
                 if (CUSTOM_STYLES[att].set) {
                     CUSTOM_STYLES[att].set(node, val, style);
