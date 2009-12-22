@@ -46,6 +46,7 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 	
 	this._id = Y.guid("yuiswf");
 	
+	
 	var _id = this._id;
     var oElement = Node.one(p_oElement);
 	
@@ -57,7 +58,7 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 	var flashURL = (shouldExpressInstall)?EXPRESS_INSTALL_URL:swfURL;
 	var objstring = '<object ';
 	var w, h;
-	var flashvarstring = "YUISwfId=" + _id + "&YUIBridgeCallback=" + EVENT_HANDLER;
+	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id + "&YUIBridgeCallback=" + EVENT_HANDLER;
 	
 	Y.SWF._instances[_id] = this;
     if (oElement && (isFlashVersionRight || shouldExpressInstall) && flashURL) {
@@ -98,7 +99,7 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 				objstring += "</object>"; 
 				oElement.setContent(objstring);
 			
-				this._swf = Node.one(_id);
+				this._swf = Node.one("#" + _id);
 			}				
 };
 
@@ -161,13 +162,37 @@ SWF.prototype =
 	{
 		if (!args) { 
 			  args= []; 
-		};
-		
-		if (this._swf[func]) {
-		return(this._swf[func].apply(this._swf, args));
+		};	
+		if (this._swf._node[func]) {
+		return(this._swf._node[func].apply(this._swf._node, args));
 	    } else {
 		return null;
 	    }
+	},
+	
+	createInstance: function (instanceId, className, args) {
+		if (!args) {args = []};
+		if (this._swf._node["createInstance"]) {
+			this._swf._node.createInstance(instanceId, className, args);
+		}
+	},
+	
+	exposeMethod: function (instanceId, methodName, exposedName) {
+		if (this._swf._node["exposeMethod"]) {
+			this._swf._node.exposeMethod(instanceId, methodName, exposedName);
+		}
+	},
+	
+	getProperty: function (instanceId, propertyName) {
+		if (this._swf._node["getProperty"]) {
+			this._swf._node.getProperty(instanceId, propertyName);
+		}
+	},
+	
+	setProperty: function (instanceId, propertyName, propertyValue) {
+		if (this._swf._node["setProperty"]) {
+			this._swf._node.setProperty(instanceId, propertyName, propertyValue);
+		}
 	},
 	
 	/**
