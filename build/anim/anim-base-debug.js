@@ -359,7 +359,6 @@ YUI.add('anim-base', function(Y) {
     var proto = {
         /**
          * Starts or resumes an animation.
-         * percent start time marker.
          * @method run
          * @chainable
          */    
@@ -523,6 +522,7 @@ YUI.add('anim-base', function(Y) {
                     easing: this.get('easing')
                 },
                 customAttr = Y.Anim.behaviors,
+                node = this.get(NODE), // implicit attr init
                 unit, begin, end;
 
             Y.each(to, function(val, name) {

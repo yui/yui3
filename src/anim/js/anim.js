@@ -520,6 +520,7 @@
                     easing: this.get('easing')
                 },
                 customAttr = Y.Anim.behaviors,
+                node = this.get(NODE), // implicit attr init
                 unit, begin, end;
 
             Y.each(to, function(val, name) {
