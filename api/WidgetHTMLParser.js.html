@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: widget   (YUI Library)</title>
+	<title>API: widget   WidgetHTMLParser.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget.html" title="widget">widget</a>
                 
-                
+                 &gt; WidgetHTMLParser.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,36 +43,159 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: widget
-                    
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">Widget</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span>
+    <span class="nx">Node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">,</span>
+    <span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
 
+    <span class="nx">SRC_NODE</span> <span class="o">=</span> <span class="s2">&quot;srcNode&quot;</span><span class="p">,</span>
+    <span class="nx">CONTENT_BOX</span> <span class="o">=</span> <span class="s2">&quot;contentBox&quot;</span><span class="p">;</span>
 
-                    </h3>
-                    <div class="description summary">
-                        Provides the base Widget class
+<span class="cm">/**</span>
+<span class="cm"> * Object hash, defining how attribute values are to be parsed from</span>
+<span class="cm"> * markup contained in the widget&#39;s content box. e.g.:</span>
+<span class="cm"> * &lt;pre&gt;</span>
+<span class="cm"> *   {</span>
+<span class="cm"> *       // Set single Node references using selector syntax </span>
+<span class="cm"> *       // (selector is run through node.query)</span>
+<span class="cm"> *       titleNode: &quot;span.yui-title&quot;,</span>
+<span class="cm"> *       // Set NodeList references using selector syntax </span>
+<span class="cm"> *       // (array indicates selector is to be run through node.queryAll)</span>
+<span class="cm"> *       listNodes: [&quot;li.yui-item&quot;],</span>
+<span class="cm"> *       // Set other attribute types, using a parse function. </span>
+<span class="cm"> *       // Context is set to the widget instance.</span>
+<span class="cm"> *       label: function(contentBox) {</span>
+<span class="cm"> *           return contentBox.query(&quot;span.title&quot;).get(&quot;innerHTML&quot;);</span>
+<span class="cm"> *       }</span>
+<span class="cm"> *   }</span>
+<span class="cm"> * &lt;/pre&gt;</span>
+<span class="cm"> * </span>
+<span class="cm"> * @property Widget.HTML_PARSER</span>
+<span class="cm"> * @type Object</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">Widget</span><span class="p">.</span><span class="nx">HTML_PARSER</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * The build configuration for the Widget class.</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * Defines the static fields which need to be aggregated,</span>
+<span class="cm"> * when this class is used as the main class passed to </span>
+<span class="cm"> * the &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; method.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> * @property _buildCfg</span>
+<span class="cm"> * @type Object</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @final</span>
+<span class="cm"> * @private</span>
+<span class="cm"> */</span>
+<span class="nx">Widget</span><span class="p">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">aggregates</span> <span class="o">:</span> <span class="p">[</span><span class="s2">&quot;HTML_PARSER&quot;</span><span class="p">]</span>
+<span class="p">};</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * The DOM node to parse for configuration values, passed to the Widget&#39;s HTML_PARSER definition</span>
+<span class="cm"> *</span>
+<span class="cm"> * @attribute srcNode</span>
+<span class="cm"> * @type String | Node</span>
+<span class="cm"> * @writeOnce</span>
+<span class="cm"> */</span>
+<span class="nx">Widget</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">[</span><span class="nx">SRC_NODE</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nx">setter</span><span class="o">:</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">,</span>
+    <span class="nx">getter</span><span class="o">:</span> <span class="s2">&quot;_getSrcNode&quot;</span><span class="p">,</span>
+    <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span>
+<span class="p">};</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @method _getSrcNode</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @return {Node} The Node to apply HTML_PARSER to</span>
+<span class="cm">     */</span>
+    <span class="nx">_getSrcNode</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">val</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @method _applyParsedConfig</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @return {Object} The merged configuration literal</span>
+<span class="cm">     */</span>
+    <span class="nx">_applyParsedConfig</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">,</span> <span class="nx">parsedCfg</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">parsedCfg</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">cfg</span><span class="p">,</span> <span class="nx">parsedCfg</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span> <span class="o">:</span> <span class="nx">cfg</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Utilitity method used to apply the &lt;code&gt;HTML_PARSER&lt;/code&gt; configuration for the </span>
+<span class="cm">     * instance, to retrieve config data values.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _applyParser</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param config {Object} User configuration object (will be populated with values from Node) </span>
+<span class="cm">     */</span>
+    <span class="nx">_applyParser</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">srcNode</span> <span class="o">=</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SRC_NODE</span><span class="p">),</span>
+            <span class="nx">schema</span> <span class="o">=</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">_getHtmlParser</span><span class="p">(),</span>
+            <span class="nx">parsedConfig</span><span class="p">,</span>
+            <span class="nx">val</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">schema</span> <span class="o">&amp;&amp;</span> <span class="nx">srcNode</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">schema</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">widget</span><span class="p">,</span> <span class="nx">srcNode</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">srcNode</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">srcNode</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">!==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="nx">val</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">parsedConfig</span> <span class="o">=</span> <span class="nx">parsedConfig</span> <span class="o">||</span> <span class="p">{};</span>
+                    <span class="nx">parsedConfig</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+        <span class="nx">config</span> <span class="o">=</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">_applyParsedConfig</span><span class="p">(</span><span class="nx">srcNode</span><span class="p">,</span> <span class="nx">config</span><span class="p">,</span> <span class="nx">parsedConfig</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Gets the HTML_PARSER definition for this instance, by merging HTML_PARSER</span>
+<span class="cm">     * definitions across the class hierarchy.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @method _getHtmlParser</span>
+<span class="cm">     * @return {Object} HTML_PARSER definition for this instance</span>
+<span class="cm">     */</span>
+    <span class="nx">_getHtmlParser</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// Removed caching for kweight. This is a private method</span>
+        <span class="c1">// and only called once so don&#39;t need to cache HTML_PARSER</span>
+        <span class="kd">var</span> <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getClasses</span><span class="p">(),</span>
+            <span class="nx">parser</span> <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">i</span><span class="p">,</span> <span class="nx">p</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">classes</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">p</span> <span class="o">=</span> <span class="nx">classes</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">HTML_PARSER</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">parser</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">parser</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
                     </div>
-
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                            <p>This module contains the following classes:</p>
-                            <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget", "Attribute": "Attribute", "Plugin.Host": "Plugin.Host", "Base": "Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Attribute": [], "Base": [{"access": "", "deprecated": true, "name": "name"}]}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": true, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}], "Attribute": [{"access": "private", "deprecated": false, "name": "_addAttrs"}, {"access": "private", "deprecated": false, "name": "_addLazyAttr"}, {"access": "private", "deprecated": false, "name": "_defAttrChangeFn"}, {"access": "private", "deprecated": false, "name": "_fireAttrChange"}, {"access": "protected", "deprecated": false, "name": "_getAttr"}, {"access": "private", "deprecated": false, "name": "_getAttrInitVal"}, {"access": "protected", "deprecated": false, "name": "_getAttrs"}, {"access": "private", "deprecated": false, "name": "_getStateVal"}, {"access": "private", "deprecated": false, "name": "_isLazyAttr"}, {"access": "private", "deprecated": false, "name": "_normAttrVals"}, {"access": "protected", "deprecated": false, "name": "_protectAttrs"}, {"access": "protected", "deprecated": false, "name": "_set"}, {"access": "protected", "deprecated": false, "name": "_setAttr"}, {"access": "protected", "deprecated": false, "name": "_setAttrs"}, {"access": "private", "deprecated": false, "name": "_setAttrVal"}, {"access": "private", "deprecated": false, "name": "_setStateVal"}, {"access": "", "deprecated": false, "name": "addAttr"}, {"access": "", "deprecated": false, "name": "addAttrs"}, {"access": "", "deprecated": false, "name": "attrAdded"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "getAttrs"}, {"access": "", "deprecated": false, "name": "modifyAttr"}, {"access": "", "deprecated": false, "name": "removeAttr"}, {"access": "", "deprecated": false, "name": "reset"}, {"access": "", "deprecated": false, "name": "set"}, {"access": "", "deprecated": false, "name": "setAttrs"}], "Plugin.Host": [{"access": "private", "deprecated": false, "name": "_destroyPlugins"}, {"access": "private", "deprecated": false, "name": "_initPlugins"}, {"access": "private", "deprecated": false, "name": "_plug"}, {"access": "private", "deprecated": false, "name": "_unplug"}, {"access": "", "deprecated": false, "name": "hasPlugin"}, {"access": "", "deprecated": false, "name": "plug"}, {"access": "", "deprecated": false, "name": "unplug"}], "Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}]}}, "description": "A base class for widgets, providing:\n<ul>\n<li>The render lifecycle method, in addition to the init and destroy \nlifecycle methods provide by Base</li>\n<li>Abstract methods to support consistent MVC structure across \nwidgets: renderer, renderUI, bindUI, syncUI</li>\n<li>Support for common widget attributes, such as boundingBox, contentBox, visible, \ndisabled, focused, strings</li>\n</ul>", "guessedname": "Widget", "name": "Widget"}];
-                            </script>
-                            <div id="splash_classList">
-                                <ul>
-                                    <li><a href="Widget.html" title="Widget" id="class_0">Widget</a></li>
-                                </ul>
-                            </div>
-                    </div>
-                    <div class="yui-u">
-
-                        </div>
-                </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -142,7 +265,7 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="Widget.js.html" title="Widget.js">Widget.js</a></li>
-                                <li class=""><a href="WidgetHTMLParser.js.html" title="WidgetHTMLParser.js">WidgetHTMLParser.js</a></li>
+                                <li class="selected"><a href="WidgetHTMLParser.js.html" title="WidgetHTMLParser.js">WidgetHTMLParser.js</a></li>
                                 <li class=""><a href="WidgetI18N.js.html" title="WidgetI18N.js">WidgetI18N.js</a></li>
                         </ul>
                     </div>

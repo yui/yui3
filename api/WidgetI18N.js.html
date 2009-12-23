@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: widget   (YUI Library)</title>
+	<title>API: widget   WidgetI18N.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget.html" title="widget">widget</a>
                 
-                
+                 &gt; WidgetI18N.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,36 +43,171 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: widget
-                    
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TRUE</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nx">LOCALE</span> <span class="o">=</span> <span class="s2">&quot;locale&quot;</span><span class="p">,</span>
+    <span class="nx">INIT_VALUE</span> <span class="o">=</span> <span class="s2">&quot;initValue&quot;</span><span class="p">,</span>
+    <span class="nx">HYPHEN</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+    <span class="nx">EMPTY_STR</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nx">Widget</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">;</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * @attribute locale</span>
+<span class="cm"> * @description</span>
+<span class="cm"> * The default locale for the widget. NOTE: Using get/set on the &quot;strings&quot; attribute will</span>
+<span class="cm"> * return/set strings for this locale.</span>
+<span class="cm"> * @default &quot;en&quot;</span>
+<span class="cm"> * @type String</span>
+<span class="cm"> */</span>
+<span class="nx">Widget</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">[</span><span class="nx">LOCALE</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="s2">&quot;en&quot;</span>
+<span class="p">};</span>
 
-                    </h3>
-                    <div class="description summary">
-                        Provides the base Widget class
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Sets strings for a particular locale, merging with any existing</span>
+<span class="cm">     * strings which may already be defined for the locale.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _setStrings</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @param {Object} strings The hash of string key/values to set</span>
+<span class="cm">     * @param {Object} locale The locale for the string values being set</span>
+<span class="cm">     */</span>
+    <span class="nx">_setStrings</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strings</span><span class="p">,</span> <span class="nx">locale</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">strs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_strs</span><span class="p">;</span>
+        <span class="nx">locale</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">])</span> <span class="p">{</span>
+            <span class="nx">strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">],</span> <span class="nx">strings</span><span class="p">,</span> <span class="nx">TRUE</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">];</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the strings key/value hash for a paricular locale, without locale lookup applied.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _getStrings</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @param {Object} locale</span>
+<span class="cm">     */</span>
+    <span class="nx">_getStrings</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">locale</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_strs</span><span class="p">[</span><span class="nx">locale</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()];</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Gets the entire strings hash for a particular locale, performing locale lookup.</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * If no values of the key are defined for a particular locale the value for the </span>
+<span class="cm">     * default locale (in initial locale set for the class) is returned.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * @method getStrings</span>
+<span class="cm">     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.</span>
+<span class="cm">     */</span>
+    <span class="c1">// TODO: Optimize/Cache. Clear cache on _setStrings call.</span>
+    <span class="nx">getStrings</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">locale</span><span class="p">)</span> <span class="p">{</span>
+    
+        <span class="nx">locale</span> <span class="o">=</span> <span class="p">(</span><span class="nx">locale</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">)).</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getStrings: For &quot;</span> <span class="o">+</span> <span class="nx">locale</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span> 
+    
+        <span class="kd">var</span> <span class="nx">defLocale</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDefaultLocale</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">(),</span>
+            <span class="nx">defStrs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="nx">defLocale</span><span class="p">),</span>
+            <span class="nx">strs</span> <span class="o">=</span> <span class="p">(</span><span class="nx">defStrs</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">defStrs</span><span class="p">)</span> <span class="o">:</span> <span class="p">{},</span>
+            <span class="nx">localeSegments</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">HYPHEN</span><span class="p">),</span>
+            <span class="nx">localeStrs</span><span class="p">,</span>
+            <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span>
+            <span class="nx">lookup</span><span class="p">;</span>
+    
+        <span class="c1">// If locale is different than the default, or needs lookup support</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">locale</span> <span class="o">!==</span> <span class="nx">defLocale</span> <span class="o">||</span> <span class="nx">localeSegments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">lookup</span> <span class="o">=</span> <span class="nx">EMPTY_STR</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">localeSegments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">lookup</span> <span class="o">+=</span> <span class="nx">localeSegments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+    
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getStrings: Merging in strings from: &quot;</span> <span class="o">+</span> <span class="nx">lookup</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span> 
+    
+                <span class="nx">localeStrs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="nx">lookup</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">localeStrs</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">strs</span><span class="p">,</span> <span class="nx">localeStrs</span><span class="p">,</span> <span class="nx">TRUE</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="nx">lookup</span> <span class="o">+=</span> <span class="nx">HYPHEN</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    
+        <span class="k">return</span> <span class="nx">strs</span><span class="p">;</span>
+    <span class="p">},</span>
+    
+    <span class="cm">/**</span>
+<span class="cm">     * Gets the string for a particular key, for a particular locale, performing locale lookup.</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * If no values if defined for the key, for the given locale, the value for the </span>
+<span class="cm">     * default locale (in initial locale set for the class) is returned.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     * @method getString</span>
+<span class="cm">     * @param {String} key The key.</span>
+<span class="cm">     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.</span>
+<span class="cm">     */</span>
+    <span class="nx">getString</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">locale</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="nx">locale</span> <span class="o">=</span> <span class="p">(</span><span class="nx">locale</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">)).</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getString: For &quot;</span> <span class="o">+</span> <span class="nx">locale</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span> 
+    
+        <span class="kd">var</span> <span class="nx">defLocale</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getDefaultLocale</span><span class="p">()).</span><span class="nx">toLowerCase</span><span class="p">(),</span>
+            <span class="nx">strs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="nx">defLocale</span><span class="p">)</span> <span class="o">||</span> <span class="p">{},</span>
+            <span class="nx">str</span> <span class="o">=</span> <span class="nx">strs</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span>
+            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">HYPHEN</span><span class="p">);</span>
+    
+        <span class="c1">// If locale is different than the default, or needs lookup support</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">locale</span> <span class="o">!==</span> <span class="nx">defLocale</span> <span class="o">||</span> <span class="nx">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">do</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;getString: Performing lookup for: &quot;</span> <span class="o">+</span> <span class="nx">locale</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span> 
+    
+                <span class="nx">strs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="nx">locale</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">strs</span> <span class="o">&amp;&amp;</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">strs</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">str</span> <span class="o">=</span> <span class="nx">strs</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">idx</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">lastIndexOf</span><span class="p">(</span><span class="nx">HYPHEN</span><span class="p">);</span>
+                <span class="c1">// Chop of last locale segment</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">locale</span> <span class="o">=</span> <span class="nx">locale</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">idx</span><span class="p">);</span>
+                <span class="p">}</span>
+    
+            <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+    
+        <span class="k">return</span> <span class="nx">str</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the default locale for the widget (the locale value defined by the</span>
+<span class="cm">     * widget class, or provided by the user during construction).</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getDefaultLocale</span>
+<span class="cm">     * @return {String} The default locale for the widget</span>
+<span class="cm">     */</span>
+    <span class="nx">getDefaultLocale</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_state</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">,</span> <span class="nx">INIT_VALUE</span><span class="p">);</span>
+    <span class="p">},</span>
+    
+    <span class="nx">_strSetter</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setStrings</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">));</span>
+    <span class="p">},</span>
+
+    <span class="nx">_strGetter</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStrings</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">LOCALE</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
+</pre></div>
+
                     </div>
-
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                            <p>This module contains the following classes:</p>
-                            <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget", "Attribute": "Attribute", "Plugin.Host": "Plugin.Host", "Base": "Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}]}, "properties": {"Attribute": [], "Base": [{"access": "", "deprecated": true, "name": "name"}]}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": true, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}], "Attribute": [{"access": "private", "deprecated": false, "name": "_addAttrs"}, {"access": "private", "deprecated": false, "name": "_addLazyAttr"}, {"access": "private", "deprecated": false, "name": "_defAttrChangeFn"}, {"access": "private", "deprecated": false, "name": "_fireAttrChange"}, {"access": "protected", "deprecated": false, "name": "_getAttr"}, {"access": "private", "deprecated": false, "name": "_getAttrInitVal"}, {"access": "protected", "deprecated": false, "name": "_getAttrs"}, {"access": "private", "deprecated": false, "name": "_getStateVal"}, {"access": "private", "deprecated": false, "name": "_isLazyAttr"}, {"access": "private", "deprecated": false, "name": "_normAttrVals"}, {"access": "protected", "deprecated": false, "name": "_protectAttrs"}, {"access": "protected", "deprecated": false, "name": "_set"}, {"access": "protected", "deprecated": false, "name": "_setAttr"}, {"access": "protected", "deprecated": false, "name": "_setAttrs"}, {"access": "private", "deprecated": false, "name": "_setAttrVal"}, {"access": "private", "deprecated": false, "name": "_setStateVal"}, {"access": "", "deprecated": false, "name": "addAttr"}, {"access": "", "deprecated": false, "name": "addAttrs"}, {"access": "", "deprecated": false, "name": "attrAdded"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "getAttrs"}, {"access": "", "deprecated": false, "name": "modifyAttr"}, {"access": "", "deprecated": false, "name": "removeAttr"}, {"access": "", "deprecated": false, "name": "reset"}, {"access": "", "deprecated": false, "name": "set"}, {"access": "", "deprecated": false, "name": "setAttrs"}], "Plugin.Host": [{"access": "private", "deprecated": false, "name": "_destroyPlugins"}, {"access": "private", "deprecated": false, "name": "_initPlugins"}, {"access": "private", "deprecated": false, "name": "_plug"}, {"access": "private", "deprecated": false, "name": "_unplug"}, {"access": "", "deprecated": false, "name": "hasPlugin"}, {"access": "", "deprecated": false, "name": "plug"}, {"access": "", "deprecated": false, "name": "unplug"}], "Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}]}}, "description": "A base class for widgets, providing:\n<ul>\n<li>The render lifecycle method, in addition to the init and destroy \nlifecycle methods provide by Base</li>\n<li>Abstract methods to support consistent MVC structure across \nwidgets: renderer, renderUI, bindUI, syncUI</li>\n<li>Support for common widget attributes, such as boundingBox, contentBox, visible, \ndisabled, focused, strings</li>\n</ul>", "guessedname": "Widget", "name": "Widget"}];
-                            </script>
-                            <div id="splash_classList">
-                                <ul>
-                                    <li><a href="Widget.html" title="Widget" id="class_0">Widget</a></li>
-                                </ul>
-                            </div>
-                    </div>
-                    <div class="yui-u">
-
-                        </div>
-                </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -143,7 +278,7 @@
                         <ul class="content">        
                                 <li class=""><a href="Widget.js.html" title="Widget.js">Widget.js</a></li>
                                 <li class=""><a href="WidgetHTMLParser.js.html" title="WidgetHTMLParser.js">WidgetHTMLParser.js</a></li>
-                                <li class=""><a href="WidgetI18N.js.html" title="WidgetI18N.js">WidgetI18N.js</a></li>
+                                <li class="selected"><a href="WidgetI18N.js.html" title="WidgetI18N.js">WidgetI18N.js</a></li>
                         </ul>
                     </div>
 
