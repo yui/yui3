@@ -1,5 +1,19 @@
 Development Master
 
+* Split widget module into the following sub-modules
+
+  - widget-base : Core lifecycle and API support. 
+  - widget-i18n : Internationalization support (WIP).
+  - widget-htmlparser : HTML parser support.
+
+  The "widget" module, rolled up from these submodules is 
+  equivalent to the existing "widget" module
+
+* Removed moveStyles support for 3.1. Can be re-added if required, but 
+  currently does not seem to be in use. 
+
+* Made render event fireOnce (along with init and destroy in Base) 
+
 * Widget will now fire user-generated events like DOM elements do (e.g. 
   'click', 'mouseover').  Like all other Widget events, these events are 
   prefixed with the Widget name (e.g. 'menuitem:click') and the default 
@@ -12,7 +26,6 @@ Development Master
   For performance, these events are only created when someone is listening, and
   the actual firing of these events is facilitated by a single, delegated 
   DOM event listener.  
-
 
 * content box now expands to fill bounding box. CSS is used for browsers
   which support box-sizing:border-box. Expansion is handled programmatically 
@@ -33,7 +46,7 @@ Development Master
 * Added _bindAttrUI and _syncAttrUI sugar methods, to bind after listeners
   and sync methods, by attribute name.
 
-* The widget's bounding box is now and removed from the DOM and destroyed
+* The widget's bounding box is now removed from the DOM and destroyed
   when the widget it destroyed.
 
 * Added "srcNode" attribute, which acts as the root for HTML_PARSER.
@@ -41,8 +54,6 @@ Development Master
   This allows widgets to support progressive enhancement, without having
   to put the burden on the user to create and point to bounding boxes,
   or content boxes.
-
-* Renamed private _parseHTML method to _parseNode, to align with srcNode
 
 * Added protected _getSrcNode and _applyParsedConfig methods to allow for 
   HTML_PARSER customization, by allowing Widget developers to customize 
