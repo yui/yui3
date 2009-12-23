@@ -231,6 +231,7 @@
 <span class="cm">             */</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">INIT</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+                <span class="nx">fireOnce</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
                 <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="p">.</span><span class="nx">_defInitFn</span>
             <span class="p">});</span>
 
@@ -285,6 +286,7 @@
 <span class="cm">             */</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">DESTROY</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+                <span class="nx">fireOnce</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
                 <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defDestroyFn</span>
             <span class="p">});</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">DESTROY</span><span class="p">);</span>
@@ -521,6 +523,8 @@
 
                 <span class="k">this</span><span class="p">.</span><span class="nx">addAttrs</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_filterAttrCfgs</span><span class="p">(</span><span class="nx">constr</span><span class="p">,</span> <span class="nx">attrCfgs</span><span class="p">),</span> <span class="nx">userVals</span><span class="p">,</span> <span class="nx">lazy</span><span class="p">);</span>
 
+                <span class="c1">// Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when</span>
+                <span class="c1">// referencing string literals). Not using it in apply, again, for performance &quot;.&quot; is faster. </span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">constrProto</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">INITIALIZER</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">constrProto</span><span class="p">.</span><span class="nx">initializer</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -568,9 +572,6 @@
     <span class="nx">Base</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Base</span><span class="p">;</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span> <span class="o">=</span> <span class="nx">Base</span><span class="p">;</span>
-
-    <span class="c1">// Fix constructor</span>
-    <span class="nx">Base</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">Base</span><span class="p">;</span>
 </pre></div>
 
                     </div>
