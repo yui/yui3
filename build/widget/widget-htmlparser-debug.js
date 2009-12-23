@@ -13,15 +13,15 @@ var Widget = Y.Widget,
  * <pre>
  *   {
  *       // Set single Node references using selector syntax 
- *       // (selector is run through node.query)
+ *       // (selector is run through node.one)
  *       titleNode: "span.yui-title",
  *       // Set NodeList references using selector syntax 
- *       // (array indicates selector is to be run through node.queryAll)
+ *       // (array indicates selector is to be run through node.all)
  *       listNodes: ["li.yui-item"],
  *       // Set other attribute types, using a parse function. 
  *       // Context is set to the widget instance.
  *       label: function(contentBox) {
- *           return contentBox.query("span.title").get("innerHTML");
+ *           return contentBox.one("span.title").get("innerHTML");
  *       }
  *   }
  * </pre>

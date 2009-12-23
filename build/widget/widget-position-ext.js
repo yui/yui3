@@ -258,7 +258,7 @@ YUI.add('widget-position-ext', function(Y) {
                 if (!node) {
                     nodeRegion = this._posNode.get(VIEWPORT_REGION);
                 } else {
-                    node = Y.Node.get(node);
+                    node = Y.Node.one(node);
                     if (node) {
                         nodeRegion = node.get(REGION);
                     }
