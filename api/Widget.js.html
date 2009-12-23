@@ -492,39 +492,32 @@
 <span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     */</span>
     <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DESTROYED</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Render failed; widget has been destroyed&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RENDERED</span><span class="p">))</span> <span class="p">{</span>
-                 <span class="cm">/**</span>
-<span class="cm">                  * Lifcyle event for the render phase, fired prior to rendering the UI </span>
-<span class="cm">                  * for the widget (prior to invoking the widget&#39;s renderer method).</span>
-<span class="cm">                  * &lt;p&gt;</span>
-<span class="cm">                  * Subscribers to the &quot;on&quot; moment of this event, will be notified </span>
-<span class="cm">                  * before the widget is rendered.</span>
-<span class="cm">                  * &lt;/p&gt;</span>
-<span class="cm">                  * &lt;p&gt;</span>
-<span class="cm">                  * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
-<span class="cm">                  * after rendering is complete.</span>
-<span class="cm">                  * &lt;/p&gt;</span>
-<span class="cm">                  *</span>
-<span class="cm">                  * @event widget:render</span>
-<span class="cm">                  * @preventable _defRenderFn</span>
-<span class="cm">                  * @param {EventFacade} e The Event Facade</span>
-<span class="cm">                  */</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">RENDER</span><span class="p">,</span> <span class="p">{</span>
-                    <span class="nx">queuable</span><span class="o">:</span><span class="nx">FALSE</span><span class="p">,</span>
-                    <span class="nx">fireOnce</span><span class="o">:</span><span class="nx">TRUE</span><span class="p">,</span>
-                    <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRenderFn</span>
-                <span class="p">});</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DESTROYED</span><span class="p">))</span> <span class="p">{</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Render failed; widget has been destroyed&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span> <span class="p">}</span>
 
-                <span class="nx">parentNode</span> <span class="o">=</span> <span class="p">(</span><span class="nx">parentNode</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">parentNode</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">parentNode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">())</span> <span class="p">{</span>
-                    <span class="nx">parentNode</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-                <span class="p">}</span>
-    
-                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">RENDER</span><span class="p">,</span> <span class="p">{</span><span class="nx">parentNode</span><span class="o">:</span> <span class="nx">parentNode</span><span class="p">});</span>
-            <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">DESTROYED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RENDERED</span><span class="p">))</span> <span class="p">{</span>
+             <span class="cm">/**</span>
+<span class="cm">              * Lifcyle event for the render phase, fired prior to rendering the UI </span>
+<span class="cm">              * for the widget (prior to invoking the widget&#39;s renderer method).</span>
+<span class="cm">              * &lt;p&gt;</span>
+<span class="cm">              * Subscribers to the &quot;on&quot; moment of this event, will be notified </span>
+<span class="cm">              * before the widget is rendered.</span>
+<span class="cm">              * &lt;/p&gt;</span>
+<span class="cm">              * &lt;p&gt;</span>
+<span class="cm">              * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
+<span class="cm">              * after rendering is complete.</span>
+<span class="cm">              * &lt;/p&gt;</span>
+<span class="cm">              *</span>
+<span class="cm">              * @event widget:render</span>
+<span class="cm">              * @preventable _defRenderFn</span>
+<span class="cm">              * @param {EventFacade} e The Event Facade</span>
+<span class="cm">              */</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">RENDER</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">queuable</span><span class="o">:</span><span class="nx">FALSE</span><span class="p">,</span>
+                <span class="nx">fireOnce</span><span class="o">:</span><span class="nx">TRUE</span><span class="p">,</span>
+                <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRenderFn</span>
+            <span class="p">});</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">RENDER</span><span class="p">,</span> <span class="p">{</span><span class="nx">parentNode</span><span class="o">:</span> <span class="p">(</span><span class="nx">parentNode</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">parentNode</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">});</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">},</span>
