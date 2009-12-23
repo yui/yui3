@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+    <title>YUI Widget Parent Node Tests</title>
+
+    <meta http-equiv=content-type content="text/html; charset=utf-8">
+
+    <script src="../../../../build/yui/yui.js"></script>
+    <style>
+        #red .yui-widget-content {
+            background-color:red;
+        }
+
+        #blue .yui-widget-content {
+            background-color:blue;
+        }
+
+        .yui-widget {
+            margin:10px;
+        }
+
+        .yui-widget-content {
+            padding:2px;
+            color:white;
+            background-color:green;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="blue"></div>
+    <div id="red"></div>
+    <script>
+    YUI().use("widget", function(Y) {
+
+        var widget = new Y.Widget();
+        widget.get("contentBox").set("innerHTML", "render(docFrag) - Should be Blue");
+
+        // Render to a fragment
+        var frag = Y.one("doc").invoke("createDocumentFragment");
+        widget.render(frag);
+
+        // User responsible for putting the fragment contents somewhere...
+        Y.one("#blue").append(frag);
+
+        var widget2 = new Y.Widget();
+        widget2.get("contentBox").set("innerHTML", "render(divInDoc) - Should be Red");
+        widget2.render("#red");
+
+        var widget3 = new Y.Widget();
+        widget3.get("contentBox").set("innerHTML", "render() - Should be Green");
+        widget3.render();
+    });
+    </script>
+</body>
+</html>

@@ -443,39 +443,32 @@ Y.extend(Widget, Y.Base, {
      * </p>
      */
     render: function(parentNode) {
-        if (this.get(DESTROYED)) {
-            Y.log("Render failed; widget has been destroyed", "error", "widget");
-        } else {
-            if (!this.get(RENDERED)) {
-                 /**
-                  * Lifcyle event for the render phase, fired prior to rendering the UI 
-                  * for the widget (prior to invoking the widget's renderer method).
-                  * <p>
-                  * Subscribers to the "on" moment of this event, will be notified 
-                  * before the widget is rendered.
-                  * </p>
-                  * <p>
-                  * Subscribers to the "after" moment of this event, will be notified
-                  * after rendering is complete.
-                  * </p>
-                  *
-                  * @event widget:render
-                  * @preventable _defRenderFn
-                  * @param {EventFacade} e The Event Facade
-                  */
-                this.publish(RENDER, {
-                    queuable:FALSE,
-                    fireOnce:TRUE,
-                    defaultFn: this._defRenderFn
-                });
+        if (this.get(DESTROYED)) { Y.log("Render failed; widget has been destroyed", "error", "widget"); }
 
-                parentNode = (parentNode) ? Node.one(parentNode) : null;
-                if (parentNode && !parentNode.inDoc()) {
-                    parentNode = null;
-                }
-    
-                this.fire(RENDER, {parentNode: parentNode});
-            }
+        if (!this.get(DESTROYED) && !this.get(RENDERED)) {
+             /**
+              * Lifcyle event for the render phase, fired prior to rendering the UI 
+              * for the widget (prior to invoking the widget's renderer method).
+              * <p>
+              * Subscribers to the "on" moment of this event, will be notified 
+              * before the widget is rendered.
+              * </p>
+              * <p>
+              * Subscribers to the "after" moment of this event, will be notified
+              * after rendering is complete.
+              * </p>
+              *
+              * @event widget:render
+              * @preventable _defRenderFn
+              * @param {EventFacade} e The Event Facade
+              */
+            this.publish(RENDER, {
+                queuable:FALSE,
+                fireOnce:TRUE,
+                defaultFn: this._defRenderFn
+            });
+
+            this.fire(RENDER, {parentNode: (parentNode) ? Node.one(parentNode) : null});
         }
         return this;
     },

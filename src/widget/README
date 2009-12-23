@@ -1,5 +1,10 @@
 Development Master
 
+* Removed parentNode.inDoc() check from render, to allow implementations
+  to render to parentNodes which are document fragments. If rendering to 
+  a document fragment, the implementation is responsible for adding the 
+  document fragment to the document during the render lifecycle phase.
+
 * Split widget module into the following sub-modules
 
   - widget-base : Core lifecycle and API support. 
