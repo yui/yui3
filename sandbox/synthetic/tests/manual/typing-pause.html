@@ -61,16 +61,14 @@ YUI().use('node-base', 'event-synthetic', function (Y) {
             }, (args.splice(3,1)[0] || {}), true);
         },
 
-        on: function (node, sub, ce, config) {
+        on: function (node, sub, ce) {
             sub._cat     = Y.guid();
             sub._strokes = 0;
             sub._first   = 0;
             sub._args    = Y.Array(arguments, 4, true);
 
-            node.on(sub._cat+'|keyup', this._handleKey,
-                null, sub, ce, config);
-            node.on(sub._cat+'|blur', this._handleBlur,
-                null, sub, ce, config);
+            node.on(sub._cat+'|keyup', this._handleKey, null, sub, ce);
+            node.on(sub._cat+'|blur', this._handleBlur, null, sub, ce);
         },
 
         detach: function (node, sub, ce) {
@@ -79,13 +77,14 @@ YUI().use('node-base', 'event-synthetic', function (Y) {
         },
 
         // Support functions
-        _handleKey: function (e, sub, ce, config) {
+        _handleKey: function (e, sub, ce) {
             // Allow delete and backspace, but not shift, alt, ctrl, etc
             if (e.keyCode < 46 && e.keyCode !== 8 && e.keyCode !== 32) {
                 return;
             }
 
             var raw       = this.get('value'),
+                config    = sub._extra,
                 value     = config.filter.call(this, raw),
                 minLength = config.minLength,
                 minWait   = config.minWait,
@@ -143,7 +142,7 @@ YUI().use('node-base', 'event-synthetic', function (Y) {
             }
         },
 
-        _handleBlur: function (e, sub, ce, config) {
+        _handleBlur: function (e, sub, ce) {
             sub._strokes = 0;
 
             if (sub._timer) {

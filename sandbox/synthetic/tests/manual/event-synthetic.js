@@ -127,6 +127,9 @@ SyntheticEvent.prototype = {
             if (!ce.getSubscriber(fn, el)) {
                 // Subscribe to the hosted custom event
                 handle = ce.on.apply(ce, args);
+
+                handle.sub._extra = payload;
+
                 // Override the handle's detach method to pass through to the
                 // the this instance's detach method
                 handle.detach = function () {
@@ -135,7 +138,7 @@ SyntheticEvent.prototype = {
 
                 // Pass control to the implementation code
                 if (isFunction(self.impl.on)) {
-                    self.impl.on.call(self.impl, node, handle.sub, ce, payload);
+                    self.impl.on.call(self.impl, node, handle.sub, ce);
                 }
             }
         }
@@ -214,7 +217,7 @@ SyntheticEvent.prototype = {
     },
 
     _processArgs: function (args) {
-        return args.slice(3);
+        return null;
     }
 };
 
