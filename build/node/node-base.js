@@ -572,6 +572,14 @@ Y.mix(Node.prototype, {
         return Y.one(Y.DOM.elementByAxis(this._node, 'nextSibling', _wrapFn(fn), all));
     },
 
+    /**
+     * Returns all matching siblings. 
+     * Returns all siblings if no method provided.
+     * @method siblings
+     * @param {String | Function} fn A selector or boolean method for testing elements.
+     * If a function is used, it receives the current node being tested as the only argument.
+     * @return {NodeList} NodeList instance bound to found siblings
+     */
     siblings: function(fn) {
         return Y.all(Y.DOM.siblings(this._node, _wrapFn(fn)));
     },
@@ -842,6 +850,35 @@ Y.mix(Node.prototype, {
         Y.DOM.addHTML(this._node, content, 'replace');
         return this;
     },
+
+    /**
+    * @method swap
+    * @description Swap DOM locations with the given node.
+    * This does not change which DOM node each Node instance refers to.
+    * @param {Node} otherNode The node to swap with
+     * @chainable
+    */
+    swap: document.documentElement.swapNode ? 
+        function(otherNode) {
+            this._node.swapNode(Y.Node.getDOMNode(otherNode));
+        } :
+        function(otherNode) {
+            otherNode = Y.Node.getDOMNode(otherNode);
+            var node = this._node,
+                parent = otherNode.parentNode,
+                nextSibling = otherNode.nextSibling;
+
+            if (nextSibling === node) {
+                parent.insertBefore(node, otherNode);
+            } else if (otherNode === node.nextSibling) {
+                parent.insertBefore(otherNode, node);
+            } else {
+                node.parentNode.replaceChild(otherNode, node);
+                Y.DOM.addHTML(parent, node, nextSibling);
+            }
+            return this;
+        },
+
 
     hasMethod: function(method) {
         var node = this._node;

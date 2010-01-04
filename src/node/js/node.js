@@ -876,7 +876,7 @@ Y.mix(Node.prototype, {
 
             if (nextSibling === node) {
                 parent.insertBefore(node, otherNode);
-            } else if (otherNode === node.nextSibling)) {
+            } else if (otherNode === node.nextSibling) {
                 parent.insertBefore(otherNode, node);
             } else {
                 node.parentNode.replaceChild(otherNode, node);

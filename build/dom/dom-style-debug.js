@@ -23,7 +23,7 @@ var DOCUMENT_ELEMENT = 'documentElement',
 
     Y_DOM = Y.DOM,
 
-    re_color = /color$/i;
+    re_color = /color$/i,
     re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
 
@@ -49,7 +49,8 @@ Y.mix(Y_DOM, {
         if (style) {
             if (val === null) { // normalize unsetting
                 val = '';
-            } else if (/^\+|-/.test(val)) { // allow increment/decrement TODO: perf test vs charAt
+            // allow increment/decrement prefix operator
+            } else if (/^\+|-/.test(val)) { // TODO: perf test vs charAt
                 current = parseFloat(Y_DOM.getStyle(node, att, style));
                 if (!current) { // in case of 'auto'
                     current = 0;
@@ -82,7 +83,7 @@ Y.mix(Y_DOM, {
      */
     getStyle: function(node, att, style) {
         style = style || node.style;
-            CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES,
+        var CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES,
             val = '';
 
         if (style) {
