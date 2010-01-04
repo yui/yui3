@@ -124,9 +124,9 @@ Y.Array.each([
     };
 });
 
-Node.importMethod(Y.DOM, [
+Y.Node.importMethod(Y.DOM, [
     /**
-     * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
+     * Determines whether the node is an ancestor of another HTML element in the DOM hierarchy.
      * @method contains
      * @param {Node | HTMLElement} needle The possible node or descendent
      * @return {Boolean} Whether or not this node is the needle its ancestor
