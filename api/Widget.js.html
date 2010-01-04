@@ -1160,17 +1160,6 @@
 
                 <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="nx">Widget</span><span class="p">.</span><span class="nx">getByNode</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
-                <span class="c1">//  Can lazy publish the event simply by firing it </span>
-                <span class="c1">//  since at this point the default configuration </span>
-                <span class="c1">//  has everything we need:</span>
-                <span class="c1">//  emitFacade is true (set by Attribute)</span>
-                <span class="c1">//  bubbles is true (EventTarget default)</span>
-                <span class="c1">//  preventable is true (EventTarget default)</span>
-                <span class="c1">//  queuable is false (EventTarget default)</span>
-
-                <span class="c1">//  TO DO: talk to Adam about why this step is </span>
-                <span class="c1">//  necessary when EventTargets are supposed to </span>
-                <span class="c1">//  lazy publish</span>
                 <span class="nx">widget</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">evt</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
 
                 <span class="c1">//  Make the DOM event a property of the custom event</span>
