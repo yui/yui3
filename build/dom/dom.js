@@ -144,12 +144,16 @@ Y.DOM = {
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
      * If no function is given, the parentNode is returned.
-     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-     // TODO: optional stopAt node?
-    ancestor: function(element, fn, all) {
-        return Y.DOM.elementByAxis(element, PARENT_NODE, fn, all);
+    ancestor: function(element, fn, testSelf) {
+        var ret = null;
+        if (testSelf) {
+            ret = (!fn || fn(element)) ? element : null;
+
+        }
+        return ret || Y.DOM.elementByAxis(element, PARENT_NODE, fn, null);
     },
 
     /**
@@ -480,6 +484,26 @@ Y.DOM = {
         }
     },
 
+    siblings: function(node, fn) {
+        var nodes = [],
+            sibling = node;
+
+        while ((sibling = sibling[PREVIOUS_SIBLING])) {
+            if (sibling[TAG_NAME] && (!fn || fn(sibling))) {
+                nodes.unshift(sibling);
+            }
+        }
+
+        sibling = node;
+        while ((sibling = sibling[NEXT_SIBLING])) {
+            if (sibling[TAG_NAME] && (!fn || fn(sibling))) {
+                nodes.push(sibling);
+            }
+        }
+
+        return nodes;
+    },
+
     /**
      * Brute force version of contains.
      * Used for browsers without contains support for non-HTMLElement Nodes (textNodes, etc).
@@ -560,13 +584,6 @@ Y.DOM = {
         }
 
         return ret.length ? ret : nodes;
-    },
-
-    _testElement: function(element, tag, fn) {
-        tag = (tag && tag !== '*') ? tag.toUpperCase() : null;
-        return (element && element[TAG_NAME] &&
-                (!tag || element[TAG_NAME].toUpperCase() === tag) &&
-                (!fn || fn(element)));
     },
 
     creators: {},
@@ -2115,6 +2132,21 @@ var Selector = {
         }
 
         return ret;
+    },
+
+    /**
+     * A convenience function to emulate Y.Node's aNode.ancestor(selector).
+     * @param {HTMLElement} element An HTMLElement to start the query from.
+     * @param {String} selector The CSS selector to test the node against.
+     * @return {HTMLElement} The ancestor node matching the selector, or null.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
+     * @static
+     * @method ancestor
+     */
+    ancestor: function (element, selector, testSelf) {
+        return Y.DOM.ancestor(element, function(n) {
+            return Y.Selector.test(n, selector);
+        }, testSelf);
     }
 };
 
@@ -2170,8 +2202,6 @@ var PARENT_NODE = 'parentNode',
 
             return ret || [];
         },
-
-        _regexCache: {},
 
         _re: {
             //attr: /(\[.*\])/g,
@@ -2341,15 +2371,6 @@ var PARENT_NODE = 'parentNode',
             return result;
         },
 
-        _getRegExp: function(str, flags) {
-            var regexCache = Selector._regexCache;
-            flags = flags || '';
-            if (!regexCache[str + flags]) {
-                regexCache[str + flags] = new RegExp(str, flags);
-            }
-            return regexCache[str + flags];
-        },
-
         combinators: {
             ' ': {
                 axis: 'parentNode'
@@ -2389,7 +2410,7 @@ var PARENT_NODE = 'parentNode',
                     if (operator in operators) {
                         test = operators[operator];
                         if (typeof test === 'string') {
-                            test = Y.Selector._getRegExp(test.replace('{val}', match[3]));
+                            test = Y.DOM._getRegExp(test.replace('{val}', match[3]));
                         }
                         match[2] = test;
                     }
@@ -2527,7 +2548,7 @@ var PARENT_NODE = 'parentNode',
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
-                    selector = selector.replace(Selector._getRegExp(re, 'gi'), shorthand[re]);
+                    selector = selector.replace(Y.DOM._getRegExp(re, 'gi'), shorthand[re]);
                 }
             }
 

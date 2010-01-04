@@ -42,7 +42,7 @@ Y.on('yui:log', function (e) {
 });
 
 Y.Event.define('test', {
-    on: function (node, sub, ce, args) {
+    on: function (node, sub, ce) {
         sub._cat = Y.guid();
         node.on(sub._cat + '|click', function (e) {
             ce.fire();

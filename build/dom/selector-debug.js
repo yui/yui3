@@ -239,6 +239,21 @@ var Selector = {
         }
 
         return ret;
+    },
+
+    /**
+     * A convenience function to emulate Y.Node's aNode.ancestor(selector).
+     * @param {HTMLElement} element An HTMLElement to start the query from.
+     * @param {String} selector The CSS selector to test the node against.
+     * @return {HTMLElement} The ancestor node matching the selector, or null.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
+     * @static
+     * @method ancestor
+     */
+    ancestor: function (element, selector, testSelf) {
+        return Y.DOM.ancestor(element, function(n) {
+            return Y.Selector.test(n, selector);
+        }, testSelf);
     }
 };
 
@@ -294,8 +309,6 @@ var PARENT_NODE = 'parentNode',
 
             return ret || [];
         },
-
-        _regexCache: {},
 
         _re: {
             //attr: /(\[.*\])/g,
@@ -465,15 +478,6 @@ var PARENT_NODE = 'parentNode',
             return result;
         },
 
-        _getRegExp: function(str, flags) {
-            var regexCache = Selector._regexCache;
-            flags = flags || '';
-            if (!regexCache[str + flags]) {
-                regexCache[str + flags] = new RegExp(str, flags);
-            }
-            return regexCache[str + flags];
-        },
-
         combinators: {
             ' ': {
                 axis: 'parentNode'
@@ -513,7 +517,7 @@ var PARENT_NODE = 'parentNode',
                     if (operator in operators) {
                         test = operators[operator];
                         if (typeof test === 'string') {
-                            test = Y.Selector._getRegExp(test.replace('{val}', match[3]));
+                            test = Y.DOM._getRegExp(test.replace('{val}', match[3]));
                         }
                         match[2] = test;
                     }
@@ -652,7 +656,7 @@ var PARENT_NODE = 'parentNode',
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
-                    selector = selector.replace(Selector._getRegExp(re, 'gi'), shorthand[re]);
+                    selector = selector.replace(Y.DOM._getRegExp(re, 'gi'), shorthand[re]);
                 }
             }
 

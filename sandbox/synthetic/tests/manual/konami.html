@@ -26,7 +26,7 @@ Y.on('yui:log', function (e) {
 });
 
 Y.Event.define('konami', {
-    on: function (node, sub, ce, args) {
+    on: function (node, sub, ce) {
         var guid = Y.guid();
 
         node.on(guid + '|keydown', function (e) {
