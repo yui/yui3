@@ -540,11 +540,12 @@ Y.mix(Node.prototype, {
      * Returns the nearest ancestor that passes the test applied by supplied boolean method.
      * @method ancestor
      * @param {String | Function} fn A selector string or boolean method for testing elements.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
      * If a function is used, it receives the current node being tested as the only argument.
      * @return {Node} The matching Node instance or null if not found
      */
-    ancestor: function(fn) {
-        return Y.one(Y.DOM.elementByAxis(this._node, 'parentNode', _wrapFn(fn)));
+    ancestor: function(fn, testSelf) {
+        return Y.one(Y.DOM.ancestor(this._node, _wrapFn(fn), testSelf));
     },
 
     /**

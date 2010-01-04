@@ -144,12 +144,16 @@ Y.DOM = {
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
      * If no function is given, the parentNode is returned.
-     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-     // TODO: optional stopAt node?
-    ancestor: function(element, fn, all) {
-        return Y.DOM.elementByAxis(element, PARENT_NODE, fn, all);
+    ancestor: function(element, fn, testSelf) {
+        var ret = null;
+        if (testSelf) {
+            ret = (!fn || fn(element)) ? element : null;
+
+        }
+        return ret || Y.DOM.elementByAxis(element, PARENT_NODE, fn, null);
     },
 
     /**
@@ -673,6 +677,7 @@ Y.DOM = {
                 options = node.options;
 
             if (options && val === '') {
+                // TODO: implement multipe select
                 if (node.multiple) {
                     Y.log('multiple select normalization not implemented', 'warn', 'DOM');
                 } else {
@@ -747,10 +752,10 @@ Y.mix(Y.DOM, {
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
      * @method toggleClass  
-     * @param {HTMLElement} element The DOM element.
+     * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled
      * @param {Boolean} addClass optional boolean to indicate whether class
-     * should be added or removed
+     * should be added or removed regardless of current state
      */
     toggleClass: function(node, className, force) {
         var add = (force !== undefined) ? force :

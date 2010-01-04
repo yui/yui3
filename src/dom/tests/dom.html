@@ -441,6 +441,7 @@ form {
                 Assert.areEqual(doc, Y.DOM.ancestor(bd), 'ancestor(bd)');
                 Assert.areEqual(doc, Y.DOM.ancestor(bd), 'ancestor(bd)');
                 Assert.areEqual(document.body, Y.DOM.ancestor(bd, function(node) { return node.tagName === 'BODY';}), 'ancestor(bd, fn)');
+                Assert.areEqual(bd, Y.DOM.ancestor(bd, null, true), 'ancestor(bd, true)');
             },
 
 

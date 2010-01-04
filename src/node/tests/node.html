@@ -488,6 +488,9 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.isNull(node.ancestor(function(el) {
                 return el.getAttribute('foo') !== '';
             }), 'ancestor');
+
+            Assert.areEqual(node.get('parentNode'), node.ancestor('div'));
+            Assert.areEqual(node, node.ancestor('div', true));
             Assert.areEqual('test-class', node.previous().get('id'), 'node.previous()');
 
             Assert.isTrue(Y.get(document.body).inDoc(document));
