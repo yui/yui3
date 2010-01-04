@@ -41,9 +41,8 @@ Y.DOM = {
      * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. 
      */
     byId: function(id, doc) {
-        doc = doc || Y.config.doc;
-        // TODO: IE Name
-        return doc.getElementById(id);
+        // handle dupe IDs and IE name collision
+        return Y.DOM.allById(id, doc)[0] || null;
     },
 
     // @deprecated
@@ -840,7 +839,8 @@ Y.mix(Y_DOM, {
         if (style) {
             if (val === null) { // normalize unsetting
                 val = '';
-            } else if (/^\+|-/.test(val)) { // allow increment/decrement TODO: perf test vs charAt
+            // allow increment/decrement prefix operator
+            } else if (/^\+|-/.test(val)) { // TODO: perf test vs charAt
                 current = parseFloat(Y_DOM.getStyle(node, att, style));
                 if (!current) { // in case of 'auto'
                     current = 0;
