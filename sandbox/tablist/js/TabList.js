@@ -8,7 +8,7 @@ Y.mix(TabList, {
 
     ATTRS : {
 
-        defaultItemType: {  
+        defaultChildType: {  
             value: "Tab"
         },
 
