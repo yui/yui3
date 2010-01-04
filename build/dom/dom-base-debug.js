@@ -567,13 +567,6 @@ Y.DOM = {
         return ret.length ? ret : nodes;
     },
 
-    _testElement: function(element, tag, fn) {
-        tag = (tag && tag !== '*') ? tag.toUpperCase() : null;
-        return (element && element[TAG_NAME] &&
-                (!tag || element[TAG_NAME].toUpperCase() === tag) &&
-                (!fn || fn(element)));
-    },
-
     creators: {},
 
     _IESimpleCreate: function(html, doc) {
