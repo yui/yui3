@@ -182,6 +182,7 @@ YUI.add('base-base', function(Y) {
              */
             this.publish(INIT, {
                 queuable:false,
+                fireOnce:true,
                 defaultFn:this._defInitFn
             });
 
@@ -235,6 +236,7 @@ YUI.add('base-base', function(Y) {
              */
             this.publish(DESTROY, {
                 queuable:false,
+                fireOnce:true,
                 defaultFn: this._defDestroyFn
             });
             this.fire(DESTROY);
@@ -469,6 +471,8 @@ YUI.add('base-base', function(Y) {
 
                 this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
 
+                // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
+                // referencing string literals). Not using it in apply, again, for performance "." is faster. 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto.initializer.apply(this, arguments);
                 }
@@ -516,9 +520,6 @@ YUI.add('base-base', function(Y) {
     Base.prototype.constructor = Base;
 
     Y.Base = Base;
-
-    // Fix constructor
-    Base.prototype.constructor = Base;
 
 
 }, '@VERSION@' ,{requires:['attribute-base']});

@@ -116,9 +116,7 @@ YUI.add('base-build', function(Y) {
         _template: function(main) {
 
             function BuiltClass() {
-
                 BuiltClass.superclass.constructor.apply(this, arguments);
-
                 return this;
             }
             Y.extend(BuiltClass, main);
