@@ -572,6 +572,14 @@ Y.mix(Node.prototype, {
         return Y.one(Y.DOM.elementByAxis(this._node, 'nextSibling', _wrapFn(fn), all));
     },
 
+    /**
+     * Returns all matching siblings. 
+     * Returns all siblings if no method provided.
+     * @method siblings
+     * @param {String | Function} fn A selector or boolean method for testing elements.
+     * If a function is used, it receives the current node being tested as the only argument.
+     * @return {NodeList} NodeList instance bound to found siblings
+     */
     siblings: function(fn) {
         return Y.all(Y.DOM.siblings(this._node, _wrapFn(fn)));
     },
