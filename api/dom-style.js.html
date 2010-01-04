@@ -68,10 +68,15 @@
     <span class="nx">DOCUMENT</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
     <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">,</span>
 
+    <span class="nx">Y_DOM</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span>
+
     <span class="nx">re_color</span> <span class="o">=</span> <span class="sr">/color$/i</span><span class="p">;</span>
+    <span class="nx">re_unit</span> <span class="o">=</span> <span class="sr">/width|height|top|left|right|bottom|margin|padding/i</span><span class="p">;</span>
 
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">DEFAULT_UNIT</span><span class="o">:</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+
     <span class="nx">CUSTOM_STYLES</span><span class="o">:</span> <span class="p">{</span>
     <span class="p">},</span>
 
@@ -85,12 +90,26 @@
 <span class="cm">     */</span>
     <span class="nx">setStyle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">style</span> <span class="o">=</span> <span class="nx">style</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">,</span>
+            <span class="nx">current</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span> <span class="c1">// normalize for unsetting</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// normalize unsetting</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+            <span class="c1">// allow increment/decrement prefix operator</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="sr">/^\+|-/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// TODO: perf test vs charAt</span>
+                <span class="nx">current</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">getStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">style</span><span class="p">));</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">current</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// in case of &#39;auto&#39;</span>
+                    <span class="nx">current</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">val</span> <span class="o">=</span>  <span class="nx">current</span> <span class="o">+</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
             <span class="p">}</span>
+
+            <span class="c1">// number values may need a unit</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isNaN</span><span class="p">(</span><span class="k">new</span> <span class="nb">Number</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="nx">re_unit</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">att</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">val</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">DEFAULT_UNIT</span><span class="p">;</span>
+            <span class="p">}</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">CUSTOM_STYLES</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">].</span><span class="nx">set</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">att</span><span class="p">].</span><span class="nx">set</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">style</span><span class="p">);</span>
@@ -109,9 +128,9 @@
 <span class="cm">     * @param {HTMLElement} An HTMLElement to get the style from.</span>
 <span class="cm">     * @param {String} att The style property to get. </span>
 <span class="cm">     */</span>
-    <span class="nx">getStyle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">style</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">STYLE</span><span class="p">],</span>
-            <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">,</span>
+    <span class="nx">getStyle</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">style</span> <span class="o">=</span> <span class="nx">style</span> <span class="o">||</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
+            <span class="nx">CUSTOM_STYLES</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">,</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">style</span><span class="p">)</span> <span class="p">{</span>
@@ -124,7 +143,7 @@
             <span class="p">}</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="nx">style</span><span class="p">[</span><span class="nx">att</span><span class="p">];</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// TODO: is empty string sufficient?</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">);</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -140,8 +159,8 @@
     <span class="nx">setStyles</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">style</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">style</span><span class="p">;</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">style</span><span class="p">);</span>
-        <span class="p">},</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">);</span>
+            <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">style</span><span class="p">);</span>
+        <span class="p">},</span> <span class="nx">Y_DOM</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -164,14 +183,14 @@
 
 <span class="c1">// normalize reserved word float alternatives (&quot;cssFloat&quot; or &quot;styleFloat&quot;)</span>
 <span class="k">if</span> <span class="p">(</span><span class="nx">DOCUMENT</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">][</span><span class="nx">STYLE</span><span class="p">][</span><span class="nx">CSS_FLOAT</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">FLOAT</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CSS_FLOAT</span><span class="p">;</span>
+    <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">FLOAT</span><span class="p">]</span> <span class="o">=</span> <span class="nx">CSS_FLOAT</span><span class="p">;</span>
 <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">DOCUMENT</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">][</span><span class="nx">STYLE</span><span class="p">][</span><span class="nx">STYLE_FLOAT</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">UNDEFINED</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">FLOAT</span><span class="p">]</span> <span class="o">=</span> <span class="nx">STYLE_FLOAT</span><span class="p">;</span>
+    <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">[</span><span class="nx">FLOAT</span><span class="p">]</span> <span class="o">=</span> <span class="nx">STYLE_FLOAT</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="c1">// fix opera computedStyle default color unit (convert to rgb)</span>
 <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y_DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">][</span><span class="nx">DEFAULT_VIEW</span><span class="p">],</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="nx">view</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="nx">att</span><span class="p">];</span>
 
@@ -186,7 +205,7 @@
 
 <span class="c1">// safari converts transparent to rgba(), others use &quot;transparent&quot;</span>
 <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">webkit</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y_DOM</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">att</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">][</span><span class="nx">DEFAULT_VIEW</span><span class="p">],</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="nx">view</span><span class="p">[</span><span class="nx">GET_COMPUTED_STYLE</span><span class="p">](</span><span class="nx">node</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="nx">att</span><span class="p">];</span>
 
