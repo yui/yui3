@@ -21,11 +21,13 @@ var DOCUMENT_ELEMENT = 'documentElement',
     DOCUMENT = Y.config.doc,
     UNDEFINED = undefined,
 
+    Y_DOM = Y.DOM,
+
     re_color = /color$/i;
     re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
 
-Y.mix(Y.DOM, {
+Y.mix(Y_DOM, {
     DEFAULT_UNIT: 'px',
 
     CUSTOM_STYLES: {
@@ -41,15 +43,23 @@ Y.mix(Y.DOM, {
      */
     setStyle: function(node, att, val, style) {
         style = style || node.style;
-        var CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
+        var CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES,
+            current;
 
         if (style) {
-            if (val === null) {
-                val = ''; // normalize for unsetting
+            if (val === null) { // normalize unsetting
+                val = '';
+            } else if (/^\+|-/.test(val)) { // allow increment/decrement TODO: perf test vs charAt
+                current = parseFloat(Y_DOM.getStyle(node, att, style));
+                if (!current) { // in case of 'auto'
+                    current = 0;
+                }
+                val =  current + parseFloat(val);
             }
 
-            if (typeof val === 'number' && re_unit.test(att)) {
-                val += Y.DOM.DEFAULT_UNIT;
+            // number values may need a unit
+            if (!isNaN(new Number(val)) && re_unit.test(att)) {
+                val += Y_DOM.DEFAULT_UNIT;
             }
 
             if (att in CUSTOM_STYLES) {
@@ -70,9 +80,9 @@ Y.mix(Y.DOM, {
      * @param {HTMLElement} An HTMLElement to get the style from.
      * @param {String} att The style property to get. 
      */
-    getStyle: function(node, att) {
-        var style = node[STYLE],
-            CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES,
+    getStyle: function(node, att, style) {
+        style = style || node.style;
+            CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES,
             val = '';
 
         if (style) {
@@ -85,7 +95,7 @@ Y.mix(Y.DOM, {
             }
             val = style[att];
             if (val === '') { // TODO: is empty string sufficient?
-                val = Y.DOM[GET_COMPUTED_STYLE](node, att);
+                val = Y_DOM[GET_COMPUTED_STYLE](node, att);
             }
         }
 
@@ -101,8 +111,8 @@ Y.mix(Y.DOM, {
     setStyles: function(node, hash) {
         var style = node.style;
         Y.each(hash, function(v, n) {
-            Y.DOM.setStyle(node, n, v, style);
-        }, Y.DOM);
+            Y_DOM.setStyle(node, n, v, style);
+        }, Y_DOM);
     },
 
     /**
@@ -125,14 +135,14 @@ Y.mix(Y.DOM, {
 
 // normalize reserved word float alternatives ("cssFloat" or "styleFloat")
 if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== UNDEFINED) {
-    Y.DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
+    Y_DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
 } else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== UNDEFINED) {
-    Y.DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
+    Y_DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
 }
 
 // fix opera computedStyle default color unit (convert to rgb)
 if (Y.UA.opera) {
-    Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
+    Y_DOM[GET_COMPUTED_STYLE] = function(node, att) {
         var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
             val = view[GET_COMPUTED_STYLE](node, '')[att];
 
@@ -147,7 +157,7 @@ if (Y.UA.opera) {
 
 // safari converts transparent to rgba(), others use "transparent"
 if (Y.UA.webkit) {
-    Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
+    Y_DOM[GET_COMPUTED_STYLE] = function(node, att) {
         var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
             val = view[GET_COMPUTED_STYLE](node, '')[att];
 

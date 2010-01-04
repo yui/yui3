@@ -241,7 +241,64 @@ form {
                 Y.DOM.setStyle(ft, 'opacity', 0);
                 Y.DOM.setStyle(ft, 'opacity', '');
                 Assert.areEqual(0.75, Y.DOM.getStyle(ft, 'opacity'), "Y.DOM.setStyle(ft, 'opacity', '')");
-           },
+            },
+
+                test_styleDefaultUnit: function() {
+                    var node = Y.DOM.byId('ft'),
+                        value = '20px',
+                        attr = 'width',
+                        num = 20;
+
+                    attr = 'borderTopWidth';
+                    Y.DOM.setStyle(node, attr, num);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
+
+                    attr = 'opacity';
+                    value = 5;
+                    num = 5;
+                    Y.DOM.setStyle(node, attr, num);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
+
+                    attr = 'borderTopWidth';
+                    value = '5px';
+                    Y.DOM.setStyle(node, attr, num);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
+
+                    attr = 'paddingTop';
+                    num = '5';
+                    value = '5px';
+                    Y.DOM.setStyle(node, attr, num);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
+                },
+
+                test_styleIncrement: function() {
+                    var node = Y.DOM.byId('ft'),
+                        value = '25px',
+                        attr = 'width',
+                        incr = '+20';
+
+                    node.style.width = '5px';
+                    Y.DOM.setStyle(node, attr, incr);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + incr);
+
+                    value = '20px';
+                    incr = '-5';
+
+                    Y.DOM.setStyle(node, attr, incr);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + incr);
+
+                    value = '10px';
+                    incr = '-10px';
+
+                    Y.DOM.setStyle(node, attr, incr);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + incr);
+
+                    value = '20px';
+                    incr = '+10px';
+
+                    Y.DOM.setStyle(node, attr, incr);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + incr);
+                },
 
             test_create: function() {
                 var html = '';
