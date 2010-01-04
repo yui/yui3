@@ -1113,17 +1113,6 @@ Y.extend(Widget, Y.Base, {
 
                 var widget = Widget.getByNode(this);
 
-                //  Can lazy publish the event simply by firing it 
-                //  since at this point the default configuration 
-                //  has everything we need:
-                //  emitFacade is true (set by Attribute)
-                //  bubbles is true (EventTarget default)
-                //  preventable is true (EventTarget default)
-                //  queuable is false (EventTarget default)
-
-                //  TO DO: talk to Adam about why this step is 
-                //  necessary when EventTargets are supposed to 
-                //  lazy publish
                 widget.publish(evt.type);
 
                 //  Make the DOM event a property of the custom event

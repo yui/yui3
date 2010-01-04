@@ -56,15 +56,15 @@ Child.ATTRS = {
         getter: function () {
             
             var parent = this.get("parent"),
-                items,
+                children,
                 index;
             
             if (parent) {
                 
-                items = parent.get("items");
+                children = parent.get("children");
                 
-                for (var i=0, len = items.length; i < len; i++) {
-                    if (this == items[i]) {
+                for (var i=0, len = children.length; i < len; i++) {
+                    if (this == children[i]) {
                         index = i;
                         break;
                     }
@@ -145,12 +145,12 @@ Child.ATTRS = {
 
 Child.prototype = {
 
-    //  Override of Widget's implementation of _getRootNode() to ensure that 
+    //  Override of Widget's implementation of _getUIEventNode() to ensure that 
     //  all event listeners are bound to the Widget's topmost DOM element.
     //  This ensures that the firing of each type of Widget UI event (click,
     //  mousedown, etc.) is facilitated by a single, top-level, delegated DOM
     //  event listener.
-    _getRootNode: function () {
+    _getUIEventNode: function () {
     
         var root = this.get("root"),
             returnVal;
@@ -207,7 +207,7 @@ Child.prototype = {
         }
 
         if (circular && !sibling) {
-            sibling = parent.item((parent.get("items").length - 1));
+            sibling = parent.item((parent.get("children").length - 1));
         }
 
         return sibling; 

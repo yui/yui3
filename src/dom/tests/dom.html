@@ -83,7 +83,7 @@ form {
             </div>
             <form id="test-form" class="test-class" action="#">
                 <input id="test-text-value" value="text value">
-                <input id="test-text-novalue">
+                <input id="test-text-novalue" name=>
                 <input id="test-text-emptyvalue">
 
 
@@ -114,6 +114,9 @@ form {
                     <option value=""></option>
                 </select>
             </form>
+            <form id="test-names">
+                <input id="test-name-id1" name="test-name-id2" >
+                <input id="test-name-id2" name="test-name-id1">
             <div id="test-add">test</div>
         </div>
         <div id="ft">
@@ -148,11 +151,24 @@ form {
             name: 'DOM',
 
             test_byId: function() {
+                var inputs = document.getElementById('test-names').getElementsByTagName('input');
+
                 Assert.areEqual(doc, Y.DOM.byId('doc'), 'byId("doc")');
                 Assert.isNull(Y.DOM.byId('fake-id'), 'byId("fake-id")');
                 Assert.isNull(Y.DOM.byId(null), 'byId(null)');
                 Assert.isNull(Y.DOM.byId(), 'byId()');
 
+                Assert.areEqual(
+                    inputs[0],
+                    Y.DOM.byId('test-name-id1'),
+                    "Y.DOM.byId('test-name-id1')"
+                );
+
+                Assert.areEqual(
+                    inputs[1],
+                    Y.DOM.byId('test-name-id2'),
+                    "Y.DOM.byId('test-name-id2')"
+                );
             },
 
             test_getText: function() {
