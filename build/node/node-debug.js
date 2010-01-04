@@ -573,6 +573,10 @@ Y.mix(Node.prototype, {
     next: function(fn, all) {
         return Y.one(Y.DOM.elementByAxis(this._node, 'nextSibling', _wrapFn(fn), all));
     },
+
+    siblings: function(fn) {
+        return Y.all(Y.DOM.siblings(this._node, _wrapFn(fn)));
+    },
         
     /**
      * Retrieves a Node instance of nodes based on the given CSS selector. 

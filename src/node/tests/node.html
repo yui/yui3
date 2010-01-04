@@ -121,16 +121,18 @@ button {
             <option>baz</option>
         </select>
     </form>
-    <div id="test-nodes"> <ul> <li>item 1</li>
+    <div id="test-nodes">
+        <ul>
+            <li>item 1</li>
             <li>item 2</li>
             <li>item 3</li>
             <li>item 4</li>
         </ul>
         <ol>
-            <li>item 1</li>
+            <li class="bar">item 1</li>
             <li>item 2</li>
             <li>item 3</li>
-            <li>item 4</li>
+            <li class="bar">item 4</li>
         </ol>
     </div>
 
@@ -1048,6 +1050,32 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
         test_isEmpty: function() {
             Assert.isFalse(Y.all('input').isEmpty());
             Assert.isTrue(Y.all('.nomatch').isEmpty());
+        },
+
+        test_siblings: function() {
+            var parent = Y.one('#test-nodes > ol'),
+                children = parent.get('children');
+
+            ArrayAssert.itemsAreEqual(
+                [children.item(0)._node, children.item(1)._node, children.item(3)._node],
+                children.item(2).siblings()._nodes,
+                "children.item(2).siblings()"
+            );
+
+            ArrayAssert.itemsAreEqual(
+                [children.item(0)._node, children.item(1)._node, children.item(3)._node],
+                children.item(2).siblings('li')._nodes,
+                "children.item(2).siblings('li')"
+            );
+
+            children.addClass('bar');
+            children.item(1).removeClass('bar');
+
+            ArrayAssert.itemsAreEqual(
+                [children.item(0)._node, children.item(3)._node],
+                children.item(2).siblings('li.bar')._nodes,
+                "children.item(2).siblings('li.bar')"
+            );
         }
     })); 
 
