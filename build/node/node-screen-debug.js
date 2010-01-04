@@ -149,7 +149,15 @@ Y.Node.importMethod(Y.DOM, [
  * @param {Int} y Y value for new position (coordinates are page-based)
  * @chainable
  */
-    'setY'
+    'setY',
+
+/**
+ * Swaps the XY position of this node with another node. 
+ * @method swapXY
+ * @param {Y.Node || HTMLElement} otherNode The node to swap with.
+ * @chainable
+ */
+    'swapXY'
 ]);
 
 /**

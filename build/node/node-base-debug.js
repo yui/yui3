@@ -93,6 +93,7 @@ Y_Node.DOM_EVENTS = {
     dblclick: 1,
     error: 1,
     focus: 1,
+    key: 1,
     keydown: 1,
     keypress: 1,
     keyup: 1,

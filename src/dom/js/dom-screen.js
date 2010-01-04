@@ -351,14 +351,12 @@ Y.mix(Y_DOM, {
     /**
      * @method swapXY
      * @description Swap the xy position with another node
-     * @param {Node} otherNode The node to swap with
+     * @param {Node} node The node to swap with
+     * @param {Node} otherNode The other node to swap with
      * @return {Node}
      */
-    swapXY: function(otherNode) {
-        otherNode = Y.Node.getNode(otherNode);
-        var node = this._node,
-            xy = DOM.getXY(node);
-
+    swapXY: function(node, otherNode) {
+        var xy = Y_DOM.getXY(node);
         Y_DOM.setXY(node, Y_DOM.getXY(otherNode));
         Y_DOM.setXY(otherNode, xy);
     },

@@ -148,9 +148,17 @@ button {
     <h2>test</h2>
 </div>
 
+<ol id="test-swap">
+    <li>item 1</li>
+    <li>item 2</li>
+    <li>item 3</li>
+    <li>item 4</li>
+</ol>
+
 <div id="_funky:id{$400}">
     <h2>test</h2>
 </div>
+
 <div id="yui-log"></div>
 <script type="text/javascript">
 YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim', function(Y) {
@@ -1076,6 +1084,38 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
                 children.item(2).siblings('li.bar')._nodes,
                 "children.item(2).siblings('li.bar')"
             );
+        },
+
+        test_swap: function() {
+            var elements = Y.DOM.byId('test-swap').getElementsByTagName('li'),
+                nodes = Y.all('#test-swap li');
+
+            Assert.areEqual(elements[0], nodes.item(0)._node);
+
+            nodes.item(0).swap(nodes.item(3));
+            Assert.areEqual(elements[0], nodes.item(3)._node, "nodes.item(0).swap(nodes.item(3))");
+
+            nodes.item(0).swap(nodes.item(3));
+            Assert.areEqual(elements[0], nodes.item(0)._node);
+            Assert.areEqual(elements[3], nodes.item(3)._node);
+
+            nodes.item(1).swap(nodes.item(2));
+            Assert.areEqual(elements[1], nodes.item(2)._node);
+            nodes.item(1).swap(nodes.item(2));
+            Assert.areEqual(elements[1], nodes.item(1)._node);
+            Assert.areEqual(elements[2], nodes.item(2)._node);
+        },
+
+        test_swapXY: function() {
+            var elements = Y.DOM.byId('test-swap').getElementsByTagName('li'),
+                nodes = Y.all('#test-swap li'),
+                xy1 = nodes.item(0).getXY(),
+                xy2 = nodes.item(1).getXY();
+
+            nodes.item(0).swapXY(nodes.item(1));
+            ArrayAssert.itemsAreEqual(xy1, nodes.item(1).getXY());
+            ArrayAssert.itemsAreEqual(xy2, nodes.item(0).getXY());
+
         }
     })); 
 
