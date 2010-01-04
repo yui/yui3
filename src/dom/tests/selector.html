@@ -447,6 +447,14 @@ onload = function() {
 
                 //ArrayAssert.itemsAreEqual([Y.Dom.get('demo2')], $('+ div', Y.DOM.byId('demo')), '#demo + div');
                 //ArrayAssert.itemsAreEqual($('#demo-first-child ~ p'), $('~ p', Y.DOM.byId('demo-first-child')), '#demo-first-child ~ div');
+            },
+
+            testAncestor: function() {
+                var node = Y.DOM.byId('demo-first-child');
+                Assert.isNull(Y.Selector.ancestor(node, 'p'));
+                Assert.areEqual(node, Y.Selector.ancestor(node, 'p', true));
+                Assert.areEqual(document.body, Y.Selector.ancestor(node, 'body', true));
+                Assert.areEqual(node.parentNode, Y.Selector.ancestor(node, 'div'));
             }
 
         });
