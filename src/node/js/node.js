@@ -857,6 +857,35 @@ Y.mix(Node.prototype, {
         return this;
     },
 
+    /**
+    * @method swap
+    * @description Swap DOM locations with the given node.
+    * This does not change which DOM node each Node instance refers to.
+    * @param {Node} otherNode The node to swap with
+     * @chainable
+    */
+    swap: document.documentElement.swapNode ? 
+        function(otherNode) {
+            this._node.swapNode(Y.Node.getDOMNode(otherNode));
+        } :
+        function(otherNode) {
+            otherNode = Y.Node.getDOMNode(otherNode);
+            var node = this._node,
+                parent = otherNode.parentNode,
+                nextSibling = otherNode.nextSibling;
+
+            if (nextSibling === node) {
+                parent.insertBefore(node, otherNode);
+            } else if (otherNode === node.nextSibling)) {
+                parent.insertBefore(otherNode, node);
+            } else {
+                node.parentNode.replaceChild(otherNode, node);
+                Y.DOM.addHTML(parent, node, nextSibling);
+            }
+            return this;
+        },
+
+
     hasMethod: function(method) {
         var node = this._node;
         return (node && node[method] && (typeof node[method] === 'function'));
