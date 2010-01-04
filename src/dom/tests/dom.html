@@ -254,13 +254,14 @@ form {
                     Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
 
                     attr = 'opacity';
-                    value = 5;
-                    num = 5;
+                    value = 0.5;
+                    num = 0.5;
                     Y.DOM.setStyle(node, attr, num);
                     Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
 
                     attr = 'borderTopWidth';
                     value = '5px';
+                    num = 5;
                     Y.DOM.setStyle(node, attr, num);
                     Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
 
