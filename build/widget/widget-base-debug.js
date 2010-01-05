@@ -1117,7 +1117,7 @@ Y.extend(Widget, Y.Base, {
 
                 //  Make the DOM event a property of the custom event
                 //  so that developers still have access to it.
-                widget.fire(event.type, { domEvent: evt });
+                widget.fire(evt.type, { domEvent: evt });
             }, "." + _getWidgetClassName());
 
             this._uiEvts = uiEvts;
