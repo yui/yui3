@@ -183,7 +183,8 @@
 <span class="cm"> * @return {boolean} true if o is an object</span>
 <span class="cm"> */</span>  
 <span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">failfn</span><span class="p">)</span> <span class="p">{</span>
-<span class="k">return</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="nx">OBJECT</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="nx">failfn</span> <span class="o">&amp;&amp;</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">o</span><span class="p">))))</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">o</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">t</span> <span class="o">===</span> <span class="nx">OBJECT</span> <span class="o">||</span> <span class="p">(</span><span class="o">!</span><span class="nx">failfn</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">t</span> <span class="o">===</span> <span class="nx">FUNCTION</span> <span class="o">||</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">o</span><span class="p">)))))</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span>
 <span class="p">};</span>
     
 <span class="cm">/**</span>
@@ -248,6 +249,10 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Returns a string representing the type of the item passed in.</span>
+<span class="cm"> * Known issues:</span>
+<span class="cm"> *    typeof HTMLElementCollection returns function in Safari, but</span>
+<span class="cm"> *    Y.type() reports object, which could be a good thing --</span>
+<span class="cm"> *    but it actually caused the logic in Y.Lang.isObject to fail.</span>
 <span class="cm"> * @method type</span>
 <span class="cm"> * @param o the item to test</span>
 <span class="cm"> * @return {string} the detected type</span>
