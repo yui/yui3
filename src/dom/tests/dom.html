@@ -31,6 +31,7 @@ form {
 }
 
 #ft {
+    height:200px;
     opacity: 0.75;
 }
 .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
@@ -258,11 +259,18 @@ form {
                 Y.DOM.setStyle(ft, 'opacity', '');
                 Assert.areEqual(0.75, Y.DOM.getStyle(ft, 'opacity'), "Y.DOM.setStyle(ft, 'opacity', '')");
 
+                Y.DOM.setStyle(ft, 'height', '100');
+                Assert.areEqual('100px', Y.DOM.getStyle(ft, 'height'),
+                    "Y.DOM.setStyle(ft, 'height', '100')");
+
                 try {
                     Y.DOM.setStyle(ft, 'height', '');
                 } catch(e) {
                     Assert.fail('error thrown setting height: ""');
                 }
+
+                Assert.areEqual('200px', Y.DOM.getStyle(ft, 'height'),
+                    "Y.DOM.setStyle(ft, 'height', '')");
             },
 
                 test_styleDefaultUnit: function() {
