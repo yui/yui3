@@ -12,13 +12,22 @@
         ITEM_TEMPLATE = '<em>{host}</em> <span>{name}</span>',
         // ITEM_TEMPLATE = '<em>{host}</em> <span>{params}</span> <span>{name}</span>',
         // ITEM_TEMPLATE = '<em>{host}</em> <span>{params}</span> <span>{name}</span><div>{description}</div>',
-        yuidoc = YAHOO.namespace('yuidoc');
+        yuidoc = YAHOO.namespace('yuidoc'),
+        propdata,
+        initialized = false;
 
-yuidoc.init = function() {
-
+yuidoc.init = function(altdata) {
+   yuidoc.initUI(altdata);
 };
 
-yuidoc.initUI = function() {
+yuidoc.initUI = function(altdata) {
+
+    if (initialized) {
+        return;
+    }
+
+    propdata = ALL_YUI_PROPS || altdata;
+
     //Checkboxes are available..
     var handleClick = function(e) {
         var id, checked = false;
@@ -75,14 +84,10 @@ yuidoc.initUI = function() {
 //Starting the AutoComplete code
     var getResults = function(query) {
         var results = [];
-        if(query && query.length > 0) {
-
+        if (query && query.length > 0) {
             var q = query.toLowerCase();
-
-            for (var i=0, len=ALL_YUI_PROPS.length; i<len; ++i) {
-
-                var prop = ALL_YUI_PROPS[i];
-
+            for (var i=0, len=propdata.length; i<len; ++i) {
+                var prop = propdata[i];
                 if (!show['protected'] && prop.access == "protected") {
                     // skip
                 } else if (!show['private'] && prop.access == "private") {
@@ -156,6 +161,7 @@ yuidoc.initUI = function() {
     YAHOO.util.Event.onAvailable('classTab', function() {
         var tabs = new YAHOO.widget.TabView('classTab');
     });
+
     /*
     YAHOO.util.Event.onAvailable('codeTree', function() {
         var tree1 = new YAHOO.widget.TreeView('codeTree');
@@ -163,8 +169,10 @@ yuidoc.initUI = function() {
     });
     */
 
-    YAHOO.util.Event.onAvailable('show_private', function() {
-        YAHOO.yuidoc.initUI();
+    YAHOO.util.Event.onDOMReady(function() {
+        if (typeof ALL_YUI_PROPS != "undefined") {
+            YAHOO.yuidoc.initUI();
+        });
     });
 
 })();
