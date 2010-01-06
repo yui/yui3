@@ -571,6 +571,9 @@ Y.CustomEvent = function(type, o) {
      */
     this.signature = YUI3_SIGNATURE;
 
+    this.subCount = 0;
+    this.afterCount = 0;
+
     // this.hasSubscribers = false;
 
     // this.hasAfters = false;
@@ -591,6 +594,32 @@ Y.CustomEvent = function(type, o) {
 };
 
 Y.CustomEvent.prototype = {
+
+    hasSubs: function(when) {
+        var s = this.subCount, a = this.afterCount, sib = this.sibling;
+
+        if (sib) {
+            s += sib.subCount;
+            a += sib.afterCount;
+        }
+
+        if (when) {
+            return (when == 'after') ?  a : s;
+        }
+
+        return (s + a);
+    },
+
+    getSubs: function(when) {
+        var s = Y.merge(this.subscribers), a = Y.merge(this.afters), sib = this.sibling;
+
+        if (sib) {
+            Y.mix(s, sib.subscribers);
+            Y.mix(a, sib.afters);
+        }
+
+        return [s, a];
+    },
 
     /**
      * Apply configuration properties.  Only applies the CONFIG whitelist
@@ -620,10 +649,10 @@ Y.CustomEvent.prototype = {
 
         if (when == AFTER) {
             this.afters[s.id] = s;
-            this.hasAfters = true;
+            this.afterCount++;
         } else {
             this.subscribers[s.id] = s;
-            this.hasSubscribers = true;
+            this.subCount++;
         }
 
         return new Y.EventHandle(this, s);
@@ -780,8 +809,11 @@ Y.CustomEvent.prototype = {
     },
 
     fireSimple: function(args) {
-        if (this.hasSubscribers || this.hasAfters) {
-            this._procSubs(Y.merge(this.subscribers, this.afters), args);
+        if (this.hasSubs()) {
+            // this._procSubs(Y.merge(this.subscribers, this.afters), args);
+            var subs = this.getSubs();
+            this._procSubs(subs[0], args);
+            this._procSubs(subs[1], args);
         }
         this._broadcast(args);
         return this.stopped ? false : true;
@@ -1016,6 +1048,10 @@ var L = Y.Lang,
     PREFIX_DELIMITER = ':',
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
+
+    _wildType = Y.cached(function(type) {
+        return type.replace(/(.*)(:)(.*)/, "*$2$3");
+    }),
 
     /**
      * If the instance has a prefix attribute and the
@@ -1499,17 +1535,22 @@ ET.prototype = {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, a, ret, pre=this._yuievt.config.prefix;
+            ce, a, ret, pre=this._yuievt.config.prefix, ce2;
 
         t = (pre) ? _getType(t, pre) : t;
         ce = this.getEvent(t, true);
+        ce2 = this.getSibling(t, ce);
+
+        if (ce2 && !ce) {
+            ce = this.publish(t);
+        }
 
         // this event has not been published or subscribed to
         if (!ce) {
             
             if (this._yuievt.hasTargets) {
                 a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
-                return this.bubble({ type: type, target: this }, a, this);
+                return this.bubble({ type: t, target: this }, a, this);
             }
 
             // otherwise there is nothing to be done
@@ -1517,14 +1558,38 @@ ET.prototype = {
 
         } else {
 
+            ce.sibling = ce2;
+
             a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
             ret = ce.fire.apply(ce, a);
+
+            // if (ret) { }
 
             // clear target for next fire()
             ce.target = null;
         }
 
         return (this._yuievt.chain) ? this : ret;
+    },
+
+
+    getSibling: function(type, ce) {
+        var ce2;
+        // delegate to *:type events if there are subscribers
+        if (type.indexOf(PREFIX_DELIMITER) > -1) {
+            type = _wildType(type);
+            // console.log(type);
+            ce2 = this.getEvent(type, true);
+            if (ce2) {
+                // console.log("GOT ONE: " + type);
+                ce2.applyConfig(ce);
+                ce2.bubbles = false;
+                ce2.broadcast = 0;
+                // ret = ce2.fire.apply(ce2, a);
+            }
+        }
+
+        return ce2;
     },
 
     /**
@@ -1831,7 +1896,7 @@ Y.EventFacade = function(e, currentTarget) {
 };
 
 CEProto.fireComplex = function(args) {
-    var es = Y.Env._eventstack, ef, q, queue, ce, ret, events;
+    var es = Y.Env._eventstack, ef, q, queue, ce, ret, events, subs;
 
     if (es) {
         // queue this event if the current item in the queue bubbles
@@ -1852,6 +1917,8 @@ CEProto.fireComplex = function(args) {
         };
         es = Y.Env._eventstack;
     }
+
+    subs = this.getSubs();
 
     this.stopped = 0;
     this.prevented = 0;
@@ -1889,8 +1956,10 @@ CEProto.fireComplex = function(args) {
         args.unshift(ef);
     }
 
-    if (this.hasSubscribers) {
-        this._procSubs(Y.merge(this.subscribers), args, ef);
+    // if (subCount) {
+    if (subs[0]) {
+        // this._procSubs(Y.merge(this.subscribers), args, ef);
+        this._procSubs(subs[0], args, ef);
     }
 
     // bubble if this is hosted in an event target and propagation has not been stopped
@@ -1915,8 +1984,10 @@ CEProto.fireComplex = function(args) {
 
     // process after listeners.  If the default behavior was
     // prevented, the after events don't fire.
-    if (this.hasAfters && !this.prevented && this.stopped < 2) {
-        this._procSubs(Y.merge(this.afters), args, ef);
+    // if (this.afterCount && !this.prevented && this.stopped < 2) {
+    if (subs[1] && !this.prevented && this.stopped < 2) {
+        // this._procSubs(Y.merge(this.afters), args, ef);
+        this._procSubs(subs[1], args, ef);
     }
 
     if (es.id === this.id) {
@@ -2045,7 +2116,7 @@ CEProto.halt = function(immediate) {
 Y.EventTarget.prototype.bubble = function(evt, args, target) {
 
     var targs = this._yuievt.targets, ret = true,
-        t, type, ce, i, bc;
+        t, type, ce, i, bc, ce2;
 
     if (!evt || ((!evt.stopped) && targs)) {
 
@@ -2054,16 +2125,24 @@ Y.EventTarget.prototype.bubble = function(evt, args, target) {
                 t = targs[i]; 
                 type = evt && evt.type;
                 ce = t.getEvent(type, true); 
+                ce2 = t.getSibling(type, ce);
+
+                if (ce2 && !ce) {
+                    ce = t.publish(type);
+                }
                     
                 // if this event was not published on the bubble target,
                 // publish it with sensible default properties
                 if (!ce) {
 
                     if (t._yuievt.hasTargets) {
-                        t.bubble.call(t, evt, args, target);
+                        // t.bubble.call(type, evt, args, target);
+                        t.bubble.apply(t, arguments);
                     }
 
                 } else {
+
+                    ce.sibling = ce2;
 
                     // set the original target to that the target payload on the
                     // facade is correct.

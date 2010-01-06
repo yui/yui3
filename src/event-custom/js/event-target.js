@@ -31,6 +31,10 @@ var L = Y.Lang,
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
 
+    _wildType = Y.cached(function(type) {
+        return type.replace(/(.*)(:)(.*)/, "*$2$3");
+    }),
+
     /**
      * If the instance has a prefix attribute and the
      * event type is not prefixed, the instance prefix is
@@ -518,17 +522,22 @@ ET.prototype = {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, a, ret, pre=this._yuievt.config.prefix;
+            ce, a, ret, pre=this._yuievt.config.prefix, ce2;
 
         t = (pre) ? _getType(t, pre) : t;
         ce = this.getEvent(t, true);
+        ce2 = this.getSibling(t, ce);
+
+        if (ce2 && !ce) {
+            ce = this.publish(t);
+        }
 
         // this event has not been published or subscribed to
         if (!ce) {
             
             if (this._yuievt.hasTargets) {
                 a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
-                return this.bubble({ type: type, target: this }, a, this);
+                return this.bubble({ type: t, target: this }, a, this);
             }
 
             // otherwise there is nothing to be done
@@ -536,14 +545,38 @@ ET.prototype = {
 
         } else {
 
+            ce.sibling = ce2;
+
             a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
             ret = ce.fire.apply(ce, a);
+
+            // if (ret) { }
 
             // clear target for next fire()
             ce.target = null;
         }
 
         return (this._yuievt.chain) ? this : ret;
+    },
+
+
+    getSibling: function(type, ce) {
+        var ce2;
+        // delegate to *:type events if there are subscribers
+        if (type.indexOf(PREFIX_DELIMITER) > -1) {
+            type = _wildType(type);
+            // console.log(type);
+            ce2 = this.getEvent(type, true);
+            if (ce2) {
+                // console.log("GOT ONE: " + type);
+                ce2.applyConfig(ce);
+                ce2.bubbles = false;
+                ce2.broadcast = 0;
+                // ret = ce2.fire.apply(ce2, a);
+            }
+        }
+
+        return ce2;
     },
 
     /**

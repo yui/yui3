@@ -743,6 +743,44 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 leaf.fire('test:foo', {}, leaf);
                 Y.Assert.areEqual(6, count);
 
+            },
+
+            testStarSubscriber: function() {
+                var count = 0,
+                    ret,
+                    config = {
+                        emitFacade: true,
+                        bubbles: true,
+                        prefix: 'stars'
+                    },
+                    a = new Y.EventTarget(config), 
+                    b = new Y.EventTarget(config);
+                    
+                b.addTarget(a);
+
+                a.on('*:foo', function(e) {
+                    count++;
+                    // we will fire this on the parent, so that should be the target
+                    Y.Assert.areEqual(b, e.target);
+                    Y.Assert.areEqual(a, e.currentTarget);
+                    console.log(e.type);
+                });
+
+                ret = b.fire('a:foo', {}, b);
+
+                Y.Assert.areEqual(1, count);
+                Y.Assert.isTrue(ret);
+
+                ret = b.fire('b:foo', {}, b);
+
+                Y.Assert.areEqual(2, count);
+                Y.Assert.isTrue(ret);
+
+                // if the event target is not configured with a prefix, this won't work by design.
+                ret = b.fire('foo', {}, b);
+                Y.Assert.areEqual(3, count);
+
+                Y.Assert.isTrue(ret);
             }
         });
         

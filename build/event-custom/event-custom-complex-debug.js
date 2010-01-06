@@ -108,7 +108,7 @@ Y.EventFacade = function(e, currentTarget) {
 };
 
 CEProto.fireComplex = function(args) {
-    var es = Y.Env._eventstack, ef, q, queue, ce, ret, events;
+    var es = Y.Env._eventstack, ef, q, queue, ce, ret, events, subs;
 
     if (es) {
         // queue this event if the current item in the queue bubbles
@@ -129,6 +129,8 @@ CEProto.fireComplex = function(args) {
         };
         es = Y.Env._eventstack;
     }
+
+    subs = this.getSubs();
 
     this.stopped = 0;
     this.prevented = 0;
@@ -166,8 +168,10 @@ CEProto.fireComplex = function(args) {
         args.unshift(ef);
     }
 
-    if (this.hasSubscribers) {
-        this._procSubs(Y.merge(this.subscribers), args, ef);
+    // if (subCount) {
+    if (subs[0]) {
+        // this._procSubs(Y.merge(this.subscribers), args, ef);
+        this._procSubs(subs[0], args, ef);
     }
 
     // bubble if this is hosted in an event target and propagation has not been stopped
@@ -192,8 +196,10 @@ CEProto.fireComplex = function(args) {
 
     // process after listeners.  If the default behavior was
     // prevented, the after events don't fire.
-    if (this.hasAfters && !this.prevented && this.stopped < 2) {
-        this._procSubs(Y.merge(this.afters), args, ef);
+    // if (this.afterCount && !this.prevented && this.stopped < 2) {
+    if (subs[1] && !this.prevented && this.stopped < 2) {
+        // this._procSubs(Y.merge(this.afters), args, ef);
+        this._procSubs(subs[1], args, ef);
     }
 
     if (es.id === this.id) {
@@ -322,7 +328,7 @@ CEProto.halt = function(immediate) {
 Y.EventTarget.prototype.bubble = function(evt, args, target) {
 
     var targs = this._yuievt.targets, ret = true,
-        t, type, ce, i, bc;
+        t, type, ce, i, bc, ce2;
 
     if (!evt || ((!evt.stopped) && targs)) {
 
@@ -332,16 +338,24 @@ Y.EventTarget.prototype.bubble = function(evt, args, target) {
                 t = targs[i]; 
                 type = evt && evt.type;
                 ce = t.getEvent(type, true); 
+                ce2 = t.getSibling(type, ce);
+
+                if (ce2 && !ce) {
+                    ce = t.publish(type);
+                }
                     
                 // if this event was not published on the bubble target,
                 // publish it with sensible default properties
                 if (!ce) {
 
                     if (t._yuievt.hasTargets) {
-                        t.bubble.call(t, evt, args, target);
+                        // t.bubble.call(type, evt, args, target);
+                        t.bubble.apply(t, arguments);
                     }
 
                 } else {
+
+                    ce.sibling = ce2;
 
                     // set the original target to that the target payload on the
                     // facade is correct.
