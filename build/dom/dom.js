@@ -834,12 +834,9 @@ Y.mix(Y_DOM, {
             current;
 
         if (style) {
-            if (val === null) { // normalize unsetting
+            if (val === null || val === '') { // normalize unsetting
                 val = '';
-            }
-
-            // number values may need a unit
-            if (!isNaN(new Number(val)) && re_unit.test(att)) {
+            } else if (!isNaN(new Number(val)) && re_unit.test(att)) { // number values may need a unit
                 val += Y_DOM.DEFAULT_UNIT;
             }
 
