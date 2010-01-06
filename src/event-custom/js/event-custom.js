@@ -273,6 +273,9 @@ Y.CustomEvent = function(type, o) {
      */
     this.signature = YUI3_SIGNATURE;
 
+    this.subCount = 0;
+    this.afterCount = 0;
+
     // this.hasSubscribers = false;
 
     // this.hasAfters = false;
@@ -293,6 +296,32 @@ Y.CustomEvent = function(type, o) {
 };
 
 Y.CustomEvent.prototype = {
+
+    hasSubs: function(when) {
+        var s = this.subCount, a = this.afterCount, sib = this.sibling;
+
+        if (sib) {
+            s += sib.subCount;
+            a += sib.afterCount;
+        }
+
+        if (when) {
+            return (when == 'after') ?  a : s;
+        }
+
+        return (s + a);
+    },
+
+    getSubs: function(when) {
+        var s = Y.merge(this.subscribers), a = Y.merge(this.afters), sib = this.sibling;
+
+        if (sib) {
+            Y.mix(s, sib.subscribers);
+            Y.mix(a, sib.afters);
+        }
+
+        return [s, a];
+    },
 
     /**
      * Apply configuration properties.  Only applies the CONFIG whitelist
@@ -322,10 +351,10 @@ Y.CustomEvent.prototype = {
 
         if (when == AFTER) {
             this.afters[s.id] = s;
-            this.hasAfters = true;
+            this.afterCount++;
         } else {
             this.subscribers[s.id] = s;
-            this.hasSubscribers = true;
+            this.subCount++;
         }
 
         return new Y.EventHandle(this, s);
@@ -484,8 +513,11 @@ Y.CustomEvent.prototype = {
     },
 
     fireSimple: function(args) {
-        if (this.hasSubscribers || this.hasAfters) {
-            this._procSubs(Y.merge(this.subscribers, this.afters), args);
+        if (this.hasSubs()) {
+            // this._procSubs(Y.merge(this.subscribers, this.afters), args);
+            var subs = this.getSubs();
+            this._procSubs(subs[0], args);
+            this._procSubs(subs[1], args);
         }
         this._broadcast(args);
         return this.stopped ? false : true;

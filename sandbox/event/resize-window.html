@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Example</title>
+</head>
+<body>
+
+<p>This is a test. <strong>This is a test</strong>. This is a test. This is a test. This is a test. This is a test. This is a test. This is a test. This is a test. This is a test. </p>
+
+<ul>
+    <li>Test</li>
+    <li>Test</li>
+    <li>Test</li>
+    <li>Test</li>
+    <li>Test</li>
+</ul>
+
+
+<script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
+<script>
+YUI({
+    debug: true
+}).use('node', 'event', function(Y) {
+    var fn = function(e) {
+        Y.log('window resize');
+    };
+
+    // var handle = Y.on('windowresize', fn);
+    // Y.detach('windowresize', fn);
+    // handle.detach('windowresize', fn);
+
+    var handle = Y.on('category|windowresize', fn);
+    // Y.detach('category|windowresize', fn);
+
+});
+</script>
+</body>
+</html>
+

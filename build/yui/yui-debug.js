@@ -1229,7 +1229,8 @@ L.isNumber = function(o) {
  * @return {boolean} true if o is an object
  */  
 L.isObject = function(o, failfn) {
-return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
+    var t = typeof o;
+    return (o && (t === OBJECT || (!failfn && (t === FUNCTION || L.isFunction(o))))) || false;
 };
     
 /**
@@ -1294,6 +1295,10 @@ L.isValue = function(o) {
 
 /**
  * Returns a string representing the type of the item passed in.
+ * Known issues:
+ *    typeof HTMLElementCollection returns function in Safari, but
+ *    Y.type() reports object, which could be a good thing --
+ *    but it actually caused the logic in Y.Lang.isObject to fail.
  * @method type
  * @param o the item to test
  * @return {string} the detected type
@@ -1342,7 +1347,8 @@ var L = Y.Lang, Native = Array.prototype,
  *   @return {Array} the resulting array
  */
 YArray = function(o, startIdx, al) {
-    var t = (al) ? 2 : Y.Array.test(o), i, l, a;
+    var t = (al) ? 2 : Y.Array.test(o), i, l, a, 
+        start = startIdx || 0;
 
     // switch (t) {
     //     case 1:
@@ -1355,11 +1361,11 @@ YArray = function(o, startIdx, al) {
 
     if (t) {
         try {
-            return Native.slice.call(o, startIdx || 0);
+            return Native.slice.call(o, start);
         // IE errors when trying to slice element collections
         } catch(e) {
             a=[];
-            for (i=0, l=o.length; i<l; i=i+1) {
+            for (i=start, l=o.length; i<l; i=i+1) {
                 a.push(o[i]);
             }
             return a;
@@ -3017,8 +3023,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
             if (Y.fire && !silent) {
                 if (!_published) {
                     Y.publish(LOGEVENT, {
-                        broadcast: 2,
-                        emitFacade: 1
+                        broadcast: 2
                     });
 
                     _published = 1;
