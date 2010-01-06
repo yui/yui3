@@ -1269,22 +1269,21 @@ ET.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
-        var evts = this._yuievt.events, i, ret,
+        var evts = this._yuievt.events, i,
             Node = Y.Node, isNode = Node && (this instanceof Node);
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
             for (i in evts) {
                 if (evts.hasOwnProperty(i)) {
-                    ret = evts[i].detach(fn, context);
+                    evts[i].detach(fn, context);
                 }
             }
             if (isNode) {
-
                 Y.Event.purgeElement(Node.getDOMNode(this));
             }
 
-            return ret;
+            return this;
         }
 
         var parts = _parseType(type, this._yuievt.config.prefix), 
@@ -1319,18 +1318,19 @@ ET.prototype = {
                     }
                 }
 
-                return (this._yuievt.chain) ? this : true;
+                return this;
             }
 
         // If this is an event handle, use it to detach
         } else if (L.isObject(type) && type.detach) {
-            ret = type.detach();
-            return (this._yuievt.chain) ? this : ret;
+            type.detach();
+            return this;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
             args = Y.Array(arguments, 0, true);
             args[2] = Node.getDOMNode(this);
-            return Y.detach.apply(Y, args);
+            Y.detach.apply(Y, args);
+            return this;
         }
 
         adapt = Y.Env.evt.plugins[shorttype];
@@ -1340,20 +1340,22 @@ ET.prototype = {
             args = Y.Array(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
-                return adapt.detach.apply(Y, args);
+                adapt.detach.apply(Y, args);
+                return this;
             // DOM event fork
             } else if (!type || (!adapt && Node && (type in Node.DOM_EVENTS))) {
                 args[0] = type;
-                return Y.Event.detach.apply(Y.Event, args);
+                Y.Event.detach.apply(Y.Event, args);
+                return this;
             }
         }
 
         ce = evts[type];
         if (ce) {
-            ret = ce.detach(fn, context);
+            ce.detach(fn, context);
         }
 
-        return (this._yuievt.chain) ? this : ret;
+        return this;
     },
 
     /**
