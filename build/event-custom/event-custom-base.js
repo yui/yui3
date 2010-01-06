@@ -556,6 +556,9 @@ Y.CustomEvent = function(type, o) {
     /**
      * Specifies whether or not a subscriber can stop the event propagation
      * via stopPropagation(), stopImmediatePropagation(), or halt()
+     *
+     * Events can only bubble if emitFacade is true.
+     *
      * @property bubbles
      * @type boolean
      * @default true
@@ -1406,6 +1409,7 @@ ET.prototype = {
      *    </li>
      *    <li>
      *   'bubbles': whether or not this event bubbles (true)
+     *              Events can only bubble if emitFacade is true.
      *    </li>
      *    <li>
      *   'context': the default execution context for the listeners (this)
@@ -1484,26 +1488,6 @@ ET.prototype = {
         return events[type];
     },
 
-    /**
-     * Registers another EventTarget as a bubble target.  Bubble order
-     * is determined by the order registered.  Multiple targets can
-     * be specified.
-     * @method addTarget
-     * @param o {EventTarget} the target to add
-     */
-    addTarget: function(o) {
-        this._yuievt.targets[Y.stamp(o)] = o;
-        this._yuievt.hasTargets = true;
-    },
-
-    /**
-     * Removes a bubble target
-     * @method removeTarget
-     * @param o {EventTarget} the target to remove
-     */
-    removeTarget: function(o) {
-        delete this._yuievt.targets[Y.stamp(o)];
-    },
 
    /**
      * Fire a custom event by name.  The callback functions will be executed

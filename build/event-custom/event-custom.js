@@ -556,6 +556,9 @@ Y.CustomEvent = function(type, o) {
     /**
      * Specifies whether or not a subscriber can stop the event propagation
      * via stopPropagation(), stopImmediatePropagation(), or halt()
+     *
+     * Events can only bubble if emitFacade is true.
+     *
      * @property bubbles
      * @type boolean
      * @default true
@@ -1406,6 +1409,7 @@ ET.prototype = {
      *    </li>
      *    <li>
      *   'bubbles': whether or not this event bubbles (true)
+     *              Events can only bubble if emitFacade is true.
      *    </li>
      *    <li>
      *   'context': the default execution context for the listeners (this)
@@ -1484,26 +1488,6 @@ ET.prototype = {
         return events[type];
     },
 
-    /**
-     * Registers another EventTarget as a bubble target.  Bubble order
-     * is determined by the order registered.  Multiple targets can
-     * be specified.
-     * @method addTarget
-     * @param o {EventTarget} the target to add
-     */
-    addTarget: function(o) {
-        this._yuievt.targets[Y.stamp(o)] = o;
-        this._yuievt.hasTargets = true;
-    },
-
-    /**
-     * Removes a bubble target
-     * @method removeTarget
-     * @param o {EventTarget} the target to remove
-     */
-    removeTarget: function(o) {
-        delete this._yuievt.targets[Y.stamp(o)];
-    },
 
    /**
      * Fire a custom event by name.  The callback functions will be executed
@@ -1800,7 +1784,8 @@ YUI.add('event-custom-complex', function(Y) {
 
 (function() {
 
-var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype;
+var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype,
+    ETProto = Y.EventTarget.prototype;
 
 /**
  * Wraps and protects a custom event for use when emitFacade is set to true.
@@ -2109,13 +2094,41 @@ CEProto.halt = function(immediate) {
 };
 
 /**
+ * Registers another EventTarget as a bubble target.  Bubble order
+ * is determined by the order registered.  Multiple targets can
+ * be specified.
+ *
+ * Events can only bubble if emitFacade is true.
+ *
+ * Included in the event-custom-complex submodule.
+ *
+ * @method addTarget
+ * @param o {EventTarget} the target to add
+ * @for EventTarget
+ */
+ETProto.addTarget = function(o) {
+    this._yuievt.targets[Y.stamp(o)] = o;
+    this._yuievt.hasTargets = true;
+};
+
+/**
+ * Removes a bubble target
+ * @method removeTarget
+ * @param o {EventTarget} the target to remove
+ * @for EventTarget
+ */
+ETProto.removeTarget = function(o) {
+    delete this._yuievt.targets[Y.stamp(o)];
+};
+
+/**
  * Propagate an event.  Requires the event-custom-complex module.
  * @method bubble
  * @param evt {Event.Custom} the custom event to propagate
  * @return {boolean} the aggregated return value from Event.Custom.fire
  * @for EventTarget
  */
-Y.EventTarget.prototype.bubble = function(evt, args, target) {
+ETProto.bubble = function(evt, args, target) {
 
     var targs = this._yuievt.targets, ret = true,
         t, type, ce, i, bc, ce2;

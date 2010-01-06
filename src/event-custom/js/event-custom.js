@@ -258,6 +258,9 @@ Y.CustomEvent = function(type, o) {
     /**
      * Specifies whether or not a subscriber can stop the event propagation
      * via stopPropagation(), stopImmediatePropagation(), or halt()
+     *
+     * Events can only bubble if emitFacade is true.
+     *
      * @property bubbles
      * @type boolean
      * @default true
