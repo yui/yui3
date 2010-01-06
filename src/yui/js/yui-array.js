@@ -8,7 +8,7 @@
 
 (function() {
 
-var L = Y.Lang, Native = Array.prototype,
+var L = Y.Lang, Native = Array.prototype, LENGTH = 'length',
 
 /**
  * Adds the following array utilities to the YUI instance.  Additional
@@ -32,38 +32,29 @@ var L = Y.Lang, Native = Array.prototype,
  * @static
  *   @param o the item to arrayify
  *   @param i {int} if an array or array-like, this is the start index
- *   @param al {boolean} if true, it forces the array-like fork.  This
- *   can be used to avoid multiple array.test calls.
+ *   @param arraylike {boolean} if true, it forces the array-like fork.  This
+ *   can be used to avoid multiple Array.test calls.
  *   @return {Array} the resulting array
  */
-YArray = function(o, startIdx, al) {
-    var t = (al) ? 2 : Y.Array.test(o), i, l, a, 
-        start = startIdx || 0;
-
-    // switch (t) {
-    //     case 1:
-    //         // return (startIdx) ? o.slice(startIdx) : o;
-    //     case 2:
-    //         return Native.slice.call(o, startIdx || 0);
-    //     default:
-    //         return [o];
-    // }
+YArray = function(o, startIdx, arraylike) {
+    var t = (arraylike) ? 2 : YArray.test(o), 
+        l, a, start = startIdx || 0;
 
     if (t) {
+        // IE errors when trying to slice HTMLElement collections
         try {
             return Native.slice.call(o, start);
-        // IE errors when trying to slice element collections
         } catch(e) {
-            a=[];
-            for (i=start, l=o.length; i<l; i=i+1) {
-                a.push(o[i]);
+            a = [];
+            l = o.length;
+            for (; start<l; start++) {
+                a.push(o[start]);
             }
             return a;
         }
     } else {
         return [o];
     }
-
 };
 
 Y.Array = YArray;
@@ -91,9 +82,8 @@ YArray.test = function(o) {
             r = 1; 
         } else {
             try {
-                // indexed, but no tagName (element) or alert (window)
-                if ("length" in o && !(o.tagName) && !(o.alert) && !(o.apply) &&
-                    (!Y.Lang.isFunction(o.size) || o.size() > 1)) {
+                // indexed, but no tagName (element) or alert (window), or functions without apply/call (Safari HTMLElementCollection bug)
+                if ((LENGTH in o) && !o.tagName && !o.alert && !o.apply) {
                     r = 2;
                 }
                     

@@ -84,7 +84,9 @@
             test_array: function() {
 
                 var els = document.getElementsByTagName('span'),
-                    a = Y.Array(els, 1);
+                    a = Y.Array(els, 1),
+                    nodes = Y.all('span'),
+                    b = Y.Array(nodes, 1);
 
                 Y.log('els length:' + els.length);
                 Y.log('a length:' + a.length);
@@ -105,14 +107,35 @@
 
                 Y.Assert.areEqual(2, a.length);
 
+                // @TODO NodeList will be wrapped rather than have the items coerced into an
+                // array.  If Array.test is adapted to handle NodeLists this could be made to
+                // work.
+                // Y.Assert.areEqual(2, b.length);
+
             },
-            test_array_test: function() {
 
-                Y.Assert.areEqual(0, Y.Array.test(function(){}));
+            test_array_test: function(arg1, arg2) {
 
+                Y.Assert.areEqual(0, Y.Array.test(function(){})); // functions should fail
+                Y.Assert.areEqual(0, Y.Array.test(Y.one('#btnRun'))); // single nodes should fail
+                Y.Assert.areEqual(0, Y.Array.test('string')); 
+                Y.Assert.areEqual(0, Y.Array.test(12345)); 
+                Y.Assert.areEqual(0, Y.Array.test(null)); 
+                Y.Assert.areEqual(0, Y.Array.test(undefined)); 
+                Y.Assert.areEqual(0, Y.Array.test(/regexp/)); 
+                Y.Assert.areEqual(0, Y.Array.test(new Date())); 
+                Y.Assert.areEqual(1, Y.Array.test([1, 2]));
+                Y.Assert.areEqual(1, Y.Array.test([]));
+                // Y.Assert.areEqual(1, Y.Array.test('string'.toCharArray())); 
+                Y.Assert.areEqual(2, Y.Array.test(arguments), 'arguments should be arraylike'); // arguments collection
+                Y.Assert.areEqual(2, Y.Array.test(document.getElementsByTagName('span')), 'htmlelement collections should be arraylike'); // HTMLElementsCollection
+
+                // @TODO figure out what to do with this.  A NodeList does not contain a collection of Nodes; it
+                // contains a collection of HTMLElements.  
+                // Y.Assert.areEqual(3, Y.Array.test(Y.all('#btnRun')), 'nodelists should be specifically identified as a special collection'); // NodeList
+                Y.Assert.areEqual(0, Y.Array.test(Y.all('span')), 'nodelists are not currently considered arraylike'); // NodeList
             }
 
-            
         });
         
 
