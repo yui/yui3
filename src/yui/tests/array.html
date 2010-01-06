@@ -92,12 +92,23 @@
                 Y.log('els alert:' + els.alert);
                 Y.log('els size:' + els.size);
                 Y.log('els array test:' + Y.Array.test(els));
+
+                // Y.Lang.type is broken for HTMLElementCollections in Safari.  isObject
+                // returns false because typeof returns function
+
                 Y.log('els isObject:' + Y.Lang.isObject(els)); // false in Safari
-                Y.log('els type:' + Y.Lang.type(els) + '+');
-                Y.log('els typeof:' + typeof els);
-                Y.log('els isFunction:' + Y.Lang.isFunction(els));
+                Y.log('els type:' + Y.Lang.type(els) + '+'); // object
+                Y.log('els typeof:' + typeof els); // function
+                Y.log('els isFunction:' + Y.Lang.isFunction(els)); // false
+                Y.log('els.call:' + els.call); 
+                Y.log('els.apply:' + els.apply); 
 
                 Y.Assert.areEqual(2, a.length);
+
+            },
+            test_array_test: function() {
+
+                Y.Assert.areEqual(0, Y.Array.test(function(){}));
 
             }
 
