@@ -1628,7 +1628,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
                 if (merge && L.isObject(r[i], true)) {
-                    Y.mix(r[i], s[i]); // recursive
+                    Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
                 // otherwise apply the property only if overwrite
                 // is specified or the receiver doesn't have one.
                 } else if (!arr && (ov || !(i in r))) {
