@@ -1717,7 +1717,7 @@ _extract = function(o, what) {
     var count = (what === 2), out = (count) ? 0 : [], i;
 
     for (i in o) {
-        if (o.hasOwnProperty(i)) {
+        if (owns(o, i)) {
             if (count) {
                 out++;
             } else {
@@ -1791,12 +1791,6 @@ O.hasValue = function(o, v) {
  * to the object instance.  Returns false if the property is not present
  * in the object, or was inherited from the prototype.
  *
- * @deprecated Safari 1.x support has been removed, so this is simply a 
- * wrapper for the native implementation.  Use the native implementation
- * directly instead.
- *
- * @TODO Remove
- *
  * @method owns
  * @static
  * @param o {any} The object being testing
@@ -1822,7 +1816,7 @@ O.each = function (o, f, c, proto) {
     var s = c || Y, i;
 
     for (i in o) {
-        if (proto || o.hasOwnProperty(i)) {
+        if (proto || owns(o, i)) {
             f.call(s, o[i], i, o);
         }
     }
@@ -1847,7 +1841,7 @@ O.some = function (o, f, c, proto) {
     var s = c || Y, i;
 
     for (i in o) {
-        if (proto || o.hasOwnProperty(i)) {
+        if (proto || owns(o, i)) {
             if (f.call(s, o[i], i, o)) {
                 return true;
             }
