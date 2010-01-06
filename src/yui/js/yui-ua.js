@@ -54,9 +54,10 @@ Y.UA = function() {
          * will be 0.  Example: 1.8
          * <pre>
          * Firefox 1.0.0.4: 1.7.8   <-- Reports 1.7
-         * Firefox 1.5.0.9: 1.8.0.9 <-- Reports 1.8
-         * Firefox 2.0.0.3: 1.8.1.3 <-- Reports 1.8
-         * Firefox 3 alpha: 1.9a4   <-- Reports 1.9
+         * Firefox 1.5.0.9: 1.8.0.9 <-- 1.8
+         * Firefox 2.0.0.3: 1.8.1.3 <-- 1.81
+         * Firefox 3.0   <-- 1.9
+         * Firefox 3.5   <-- 1.91
          * </pre>
          * @property gecko
          * @type float
