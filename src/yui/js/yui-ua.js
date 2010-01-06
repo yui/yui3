@@ -160,6 +160,8 @@ Y.UA = function() {
             o.os = 'windows';
         } else if ((/macintosh/i).test(ua)) {
             o.os = 'macintosh';
+        } else if ((/rhino/i).test(ua)) {
+            o.os = 'rhino';
         }
 
         // Modern KHTML browsers should qualify as Safari X-Grade
