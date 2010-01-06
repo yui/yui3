@@ -753,17 +753,29 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                         bubbles: true,
                         prefix: 'stars'
                     },
+                    z = new Y.EventTarget(config), 
                     a = new Y.EventTarget(config), 
                     b = new Y.EventTarget(config);
                     
                 b.addTarget(a);
+                a.addTarget(z);
 
-                a.on('*:foo', function(e) {
+                z.on('*:foo', function(e) {
                     count++;
-                    // we will fire this on the parent, so that should be the target
+                    // b -> a -> z -- the parent's parent should be the target
                     Y.Assert.areEqual(b, e.target);
-                    Y.Assert.areEqual(a, e.currentTarget);
-                    console.log(e.type);
+                    Y.Assert.areEqual(z, e.currentTarget);
+                    switch (count) {
+                        case 1:
+                            Y.Assert.areEqual('a:foo', e.type);
+                            break;
+                        case 2:
+                            Y.Assert.areEqual('b:foo', e.type);
+                            break;
+                        case 3:
+                            Y.Assert.areEqual('stars:foo', e.type);
+                            break;
+                    }
                 });
 
                 ret = b.fire('a:foo', {}, b);

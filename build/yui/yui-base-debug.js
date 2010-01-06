@@ -1229,7 +1229,8 @@ L.isNumber = function(o) {
  * @return {boolean} true if o is an object
  */  
 L.isObject = function(o, failfn) {
-return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
+    var t = typeof o;
+    return (o && (t === OBJECT || (!failfn && (t === FUNCTION || L.isFunction(o))))) || false;
 };
     
 /**
@@ -1294,6 +1295,10 @@ L.isValue = function(o) {
 
 /**
  * Returns a string representing the type of the item passed in.
+ * Known issues:
+ *    typeof HTMLElementCollection returns function in Safari, but
+ *    Y.type() reports object, which could be a good thing --
+ *    but it actually caused the logic in Y.Lang.isObject to fail.
  * @method type
  * @param o the item to test
  * @return {string} the detected type

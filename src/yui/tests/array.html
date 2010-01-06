@@ -6,16 +6,18 @@
 
 <body class="yui-skin-sam">
 <h1>Array Tests</h1>
+<span>test</span>
+<span>test</span>
+<span>test</span>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 <script type="text/javascript">
 
 (function() {
 
     YUI({
         base: "../../../build/",
-        filter: "debug",
         logExclude: {
             attribute: true, 
             dom: true, 
@@ -36,7 +38,7 @@
             Y.Test.Runner.run();
         }, button);
 
-        // var myConsole = new Y.Console().render();
+        var myConsole = new Y.Console().render();
 
         var testArray = new Y.Test.Case({
             name: "Array tests",
@@ -77,7 +79,28 @@
                 } else {
                     Y.log('No native Array.some support.');
                 }
+            },
+
+            test_array: function() {
+
+                var els = document.getElementsByTagName('span'),
+                    a = Y.Array(els, 1);
+
+                Y.log('els length:' + els.length);
+                Y.log('a length:' + a.length);
+                Y.log('els tagName:' + els.tagName);
+                Y.log('els alert:' + els.alert);
+                Y.log('els size:' + els.size);
+                Y.log('els array test:' + Y.Array.test(els));
+                Y.log('els isObject:' + Y.Lang.isObject(els)); // false in Safari
+                Y.log('els type:' + Y.Lang.type(els) + '+');
+                Y.log('els typeof:' + typeof els);
+                Y.log('els isFunction:' + Y.Lang.isFunction(els));
+
+                Y.Assert.areEqual(2, a.length);
+
             }
+
             
         });
         
