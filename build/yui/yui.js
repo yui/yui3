@@ -1697,6 +1697,10 @@ Y.Object = function(o) {
 
 var O = Y.Object,
 
+owns = function(o, k) {
+    return o.hasOwnProperty(k);
+},
+
 UNDEFINED = undefined,
 
 /**
@@ -1769,10 +1773,7 @@ O.size = function(o) {
  * @param k the key to query
  * @return {boolean} true if the object contains the key
  */
-O.hasKey = function(o, k) {
-    return (o.hasOwnProperty(k));
-};
-
+O.hasKey = owns;
 /**
  * Returns true if the object contains a given value
  * @method hasValue
@@ -1794,7 +1795,7 @@ O.hasValue = function(o, v) {
  * wrapper for the native implementation.  Use the native implementation
  * directly instead.
  *
- * @TODO Remove in B1
+ * @TODO Remove
  *
  * @method owns
  * @static
@@ -1802,9 +1803,7 @@ O.hasValue = function(o, v) {
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = function(o, k) {
-    return (o.hasOwnProperty(k));
-};
+O.owns = owns;
 
 /**
  * Executes a function on each item. The function
