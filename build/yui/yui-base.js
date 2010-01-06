@@ -1387,7 +1387,7 @@ YArray.test = function(o) {
         } else {
             try {
                 // indexed, but no tagName (element) or alert (window)
-                if ("length" in o && !("tagName" in o) && !("alert" in o) && 
+                if ("length" in o && !(o.tagName) && !(o.alert) && !(o.apply) &&
                     (!Y.Lang.isFunction(o.size) || o.size() > 1)) {
                     r = 2;
                 }
