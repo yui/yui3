@@ -246,7 +246,9 @@
 
                 // spaces after the comma or lack thereof should have
                 // no effect on the addition or removal of listeners
-                Y.detach('handle|test:event');
+                var ret = Y.detach('handle|test:event');
+
+                Y.Assert.areEqual(Y, ret);
 
                 // added both an on listener and an after listener,
                 // then detached both
