@@ -79,6 +79,10 @@
     <span class="nx">CATEGORY_DELIMITER</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span>
     <span class="nx">AFTER_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;~AFTER~&#39;</span><span class="p">,</span>
 
+    <span class="nx">_wildType</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">type</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/(.*)(:)(.*)/</span><span class="p">,</span> <span class="s2">&quot;*$2$3&quot;</span><span class="p">);</span>
+    <span class="p">}),</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * If the instance has a prefix attribute and the</span>
 <span class="cm">     * event type is not prefixed, the instance prefix is</span>
@@ -566,17 +570,22 @@
 
         <span class="kd">var</span> <span class="nx">typeIncluded</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">type</span><span class="p">),</span>
             <span class="nx">t</span> <span class="o">=</span> <span class="p">(</span><span class="nx">typeIncluded</span><span class="p">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="p">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="p">.</span><span class="nx">type</span><span class="p">),</span>
-            <span class="nx">ce</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">pre</span><span class="o">=</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">;</span>
+            <span class="nx">ce</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">pre</span><span class="o">=</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">,</span> <span class="nx">ce2</span><span class="p">;</span>
 
         <span class="nx">t</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pre</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_getType</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="o">:</span> <span class="nx">t</span><span class="p">;</span>
         <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">ce2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getSibling</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ce2</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+        <span class="p">}</span>
 
         <span class="c1">// this event has not been published or subscribed to</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
             
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">hasTargets</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">a</span> <span class="o">=</span> <span class="p">(</span><span class="nx">typeIncluded</span><span class="p">)</span> <span class="o">?</span> <span class="nx">arguments</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">).</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">bubble</span><span class="p">({</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">target</span><span class="o">:</span> <span class="k">this</span> <span class="p">},</span> <span class="nx">a</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">bubble</span><span class="p">({</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">t</span><span class="p">,</span> <span class="nx">target</span><span class="o">:</span> <span class="k">this</span> <span class="p">},</span> <span class="nx">a</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="c1">// otherwise there is nothing to be done</span>
@@ -584,14 +593,38 @@
 
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
 
+            <span class="nx">ce</span><span class="p">.</span><span class="nx">sibling</span> <span class="o">=</span> <span class="nx">ce2</span><span class="p">;</span>
+
             <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">(</span><span class="nx">typeIncluded</span><span class="p">)</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+
+            <span class="c1">// if (ret) { }</span>
 
             <span class="c1">// clear target for next fire()</span>
             <span class="nx">ce</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">chain</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="nx">ret</span><span class="p">;</span>
+    <span class="p">},</span>
+
+
+    <span class="nx">getSibling</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">ce2</span><span class="p">;</span>
+        <span class="c1">// delegate to *:type events if there are subscribers</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">PREFIX_DELIMITER</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="nx">_wildType</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
+            <span class="c1">// console.log(type);</span>
+            <span class="nx">ce2</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ce2</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// console.log(&quot;GOT ONE: &quot; + type);</span>
+                <span class="nx">ce2</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">ce</span><span class="p">);</span>
+                <span class="nx">ce2</span><span class="p">.</span><span class="nx">bubbles</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">ce2</span><span class="p">.</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="c1">// ret = ce2.fire.apply(ce2, a);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">ce2</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
