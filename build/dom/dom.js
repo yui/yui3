@@ -836,13 +836,6 @@ Y.mix(Y_DOM, {
         if (style) {
             if (val === null) { // normalize unsetting
                 val = '';
-            // allow increment/decrement prefix operator
-            } else if (/^\+|-/.test(val)) { // TODO: perf test vs charAt
-                current = parseFloat(Y_DOM.getStyle(node, att, style));
-                if (!current) { // in case of 'auto'
-                    current = 0;
-                }
-                val =  current + parseFloat(val);
             }
 
             // number values may need a unit

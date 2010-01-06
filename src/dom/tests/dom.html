@@ -288,35 +288,6 @@ form {
                     Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
                 },
 
-                test_styleIncrement: function() {
-                    var node = Y.DOM.byId('ft'),
-                        value = '25px',
-                        attr = 'width',
-                        incr = '+20';
-
-                    node.style.width = '5px';
-                    Y.DOM.setStyle(node, attr, incr);
-                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + incr);
-
-                    value = '20px';
-                    incr = '-5';
-
-                    Y.DOM.setStyle(node, attr, incr);
-                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + incr);
-
-                    value = '10px';
-                    incr = '-10px';
-
-                    Y.DOM.setStyle(node, attr, incr);
-                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + incr);
-
-                    value = '20px';
-                    incr = '+10px';
-
-                    Y.DOM.setStyle(node, attr, incr);
-                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + incr);
-                },
-
             test_create: function() {
                 var html = '';
                 var el = Y.DOM.create(html);
