@@ -1713,10 +1713,10 @@ _extract = function(o, what) {
     var count = (what === 2), out = (count) ? 0 : [], i;
 
     for (i in o) {
-        if (count) {
-            out++;
-        } else {
-            if (o.hasOwnProperty(i)) {
+        if (o.hasOwnProperty(i)) {
+            if (count) {
+                out++;
+            } else {
                 out.push((what) ? o[i] : i);
             }
         }
@@ -1770,8 +1770,7 @@ O.size = function(o) {
  * @return {boolean} true if the object contains the key
  */
 O.hasKey = function(o, k) {
-    // return (o.hasOwnProperty(k));
-    return (k in o);
+    return (o.hasOwnProperty(k));
 };
 
 /**
