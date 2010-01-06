@@ -1332,7 +1332,8 @@ var L = Y.Lang, Native = Array.prototype,
  *   @return {Array} the resulting array
  */
 YArray = function(o, startIdx, al) {
-    var t = (al) ? 2 : Y.Array.test(o), i, l, a;
+    var t = (al) ? 2 : Y.Array.test(o), i, l, a, 
+        start = startIdx || 0;
 
     // switch (t) {
     //     case 1:
@@ -1345,11 +1346,11 @@ YArray = function(o, startIdx, al) {
 
     if (t) {
         try {
-            return Native.slice.call(o, startIdx || 0);
+            return Native.slice.call(o, start);
         // IE errors when trying to slice element collections
         } catch(e) {
             a=[];
-            for (i=0, l=o.length; i<l; i=i+1) {
+            for (i=start, l=o.length; i<l; i=i+1) {
                 a.push(o[i]);
             }
             return a;
