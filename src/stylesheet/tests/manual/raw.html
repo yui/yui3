@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css" id="styleblock" class="highlight-ignore">
+        h1 {
+            font: normal 125%/1.4 Arial, sans-serif;
+        }
+        .yui-skin-sam .yui-console .yui-console-content {
+            font-size: 10px;
+            width: 32em;
+        }
+        .yui-skin-sam .yui-console .yui-console-bd {
+            height: 50em;
+        }
+        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+            background: #070;
+            color: #fff;
+        }
+        .yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+            background: #700;
+            color: #fff;
+        }
+        .yui-skin-sam .yui-console-entry-time {
+            display: none;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+<h1>Tests</h1>
+<div id="testbed"></div>
+
+<script src="http://yui.yahooapis.com/3.0.0/build/yui/yui.js"></script>
+<script>
+YUI({
+    filter : 'raw',
+    logInclude : { TestRunner: true }
+}).use('test','console', function (Y) {
+
+var d = document,
+    Assert = Y.Assert,
+    suite = new Y.Test.Suite("!important related Tests"),
+    sheet,
+    rules;
+
+function getCssText( allRules ) {
+    var content = [], rule, i, len;
+
+    for ( i = 0, len = allRules.length; i < len; ++i ) {
+        rule = allRules[i];
+        content.push(
+            (rule.selectorText || rule.tagName) +
+            ' { ' + rule.style.cssText + ' } ');
+    }
+
+    return content;
+}
+
+suite.add(new Y.Test.Case({
+    name: "!important",
+
+    test_new_sheet_with_important: function () {
+        var s = d.createElement('style'),
+            css;
+
+        css = "#foo { color: red !important; } #bar { height: 100px; }";
+        s.type = 'text/css';
+
+        if (s.styleSheet) {
+            s.styleSheet.cssText = css;
+        } else {
+            s.appendChild( d.createTextNode(css) );
+        }
+
+        d.getElementsByTagName('head')[0].appendChild( s );
+
+        sheet = s.sheet || s.styleSheet,
+        rules = sheet.cssRules || sheet.rules;
+
+        Assert.areEqual( 2, rules.length, "Missing the !important rule?" );
+
+        css = getCssText( rules );
+
+        Y.log( css.join("\n"), "info", "TestRunner" );
+
+        Assert.isTrue( /important/i.test( css.join('') ),
+            "No parsed rule reports !important in its cssText");
+    },
+
+    test_new_rule_with_important: function () {
+        if ( sheet.insertRule ) {
+            sheet.insertRule( ".foo { background-color: #000 !important; }", 2 );
+        } else {
+            sheet.addRule( ".foo", "background-color: #000 !important;", 2 );
+        }
+
+        var css = getCssText( rules ),
+            m   = css.join('').match( /important/gi ) || [];
+
+        Y.log( css.join("\n"), "info", "TestRunner" );
+
+        Assert.areEqual( 3, rules.length, "Missing the inserted !important rule?" );
+        Assert.areEqual( 2, m.length, "Not reporting !important in the cssText" );
+
+    },
+
+    test_new_property_with_important: function () {
+        var rule = rules[0] || Assert.fail("Unable to find a rule");
+
+        rule.style.paddingBottom = '10px !important';
+
+        Y.log( getCssText( rules ).join("\n"), "info", "TestRunner" );
+
+        Assert.areEqual( '10px !important', rule.style.paddingBottom );
+    },
+
+    test_existing_property_with_important: function () {
+        for ( var i = rules.length - 1, rule; i >= 0; --i ) {
+            rule = rules[i];
+
+            if ( /bar/.test( rule.selectorText ) ) {
+                rule.style.height = '5em !important';
+
+                Y.log( getCssText( rules ).join("\n"), "info", "TestRunner" );
+
+                Assert.areEqual( '5em !important', rule.style.height );
+
+                break;
+            }
+        }
+    },
+
+    test_off_dom_style_property_with_important: function () {
+        var p = d.createElement('p');
+
+        p.style.color = '#000';
+        p.style.textAlign = 'right !important';
+
+        Y.log( getCssText( [p] ).join("\n"), "info", "TestRunner" );
+
+        try {
+            Assert.areEqual( 'right !important', p.style.textAlign );
+        }
+        catch (e) {
+            Assert.areEqual( 'right', p.style.textAlign );
+        }
+    },
+
+    test_on_dom_style_property_with_important: function () {
+        d.body.style.color = '#000';
+        d.body.style.textAlign = 'right !important';
+
+        Y.log( getCssText( [d.body] ).join("\n"), "info", "TestRunner" );
+
+        try {
+            Assert.areEqual( 'right !important', d.body.style.textAlign );
+        }
+        catch (e) {
+            Assert.areEqual( 'right', d.body.style.textAlign );
+        }
+    }
+}));
+        
+var yconsole = new Y.Console({
+    contentBox:"log",
+    newestOnTop: false,
+    height: '600px'
+}).render();
+
+Y.Test.Runner.add(suite);
+
+Y.Test.Runner.run();
+
+});
+</script>
+</body>
+</html>

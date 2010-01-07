@@ -183,23 +183,49 @@ suite.add(new Y.Test.Case({
 
     _should : {
         error : {
-            test_remoteStyleSheet : true
+            "StyleSheet seeded with remote link should fail"          : true,
+            "getCssText on a remote StyleSheet should throw an error" : true,
+            "set(..) on a remote StyleSheet should throw an error"    : true,
+            "disabling a remote StyleSheet should throw an error"     : true
         }
     },
 
-    test_remoteStyleSheet : function () {
+    "StyleSheet seeded with remote link should fail" : function () {
+        // Each line should throw an exception
+        var sheet = Y.StyleSheet(this.remoteLink);
+
+        Y.log("StyleSheet creation allowed from remote file", "warn", "TestRunner");
+        throw Error("This is an informative test only");
+    },
+
+    "getCssText on a remote StyleSheet should throw an error" : function () {
         // Each line should throw an exception
         var sheet = Y.StyleSheet(this.remoteLink);
 
         sheet.getCssText();
 
+        Y.log("Getting cssText of a remote StyleSheet allowed", "warn", "TestRunner");
+        throw Error("This is an informative test only");
+    },
+
+    "set(..) on a remote StyleSheet should throw an error" : function () {
+        // Each line should throw an exception
+        var sheet = Y.StyleSheet(this.remoteLink);
+
         sheet.set('#target', { color: '#f00' });
 
-        sheet.unset('#target', 'color');
+        Y.log("Creating rules in a remote StyleSheet allowed", "warn", "TestRunner");
+        throw Error("This is an informative test only");
+    },
+
+    "disabling a remote StyleSheet should throw an error" : function () {
+        // Each line should throw an exception
+        var sheet = Y.StyleSheet(this.remoteLink);
 
         sheet.disable();
 
-        sheet.enable();
+        Y.log("Disabling a remote StyleSheet allowed", "warn", "TestRunner");
+        throw Error("This is an informative test only");
     }
 }));
 
@@ -285,6 +311,24 @@ suite.add(new Y.Test.Case({
                         Y.DOM.getStyle(
                             testbed.getElementsByTagName('pre')[0],'paddingLeft'),
                         "#target pre");
+    },
+
+    test_important: function () {
+        var target   = Y.one('#target'),
+            sheet    = Dom.getSheet(this.stylesheet.getId()),
+            original = target.get('offsetHeight');
+
+        if (!sheet) {
+            Assert.fail("Could not find this StyleSheet's node or sheet");
+        }
+
+        this.stylesheet.set('#target p', {
+            paddingBottom: '10px !important'
+        });
+
+        //Assert.areEqual(1,(sheet.cssRules || sheet.rules).length, "!important rule not added to the sheet");
+
+        Assert.areNotEqual(original, target.get('offsetHeight'));
     }
 }));
 
@@ -569,6 +613,16 @@ suite.add(new Y.Test.Case({
         Assert.areSame(true, /padding/i.test(css));
         Assert.areSame(true, /#target/i.test(css));
         Assert.areSame(true, /#target\s+p\s+\{/i.test(css));
+    },
+
+    test_important: function () {
+        this.stylesheet.set('#target p', {
+            paddingBottom: '10px !important'
+        });
+
+        var css = this.stylesheet.getCssText();
+
+        Assert.areEqual(true, /important/i.test(css));
     }
 }));
 
