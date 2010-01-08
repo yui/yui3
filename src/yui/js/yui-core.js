@@ -107,7 +107,8 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     if (wl && wl.length) {
         for (i = 0, l = wl.length; i < l; ++i) {
             p = wl[i];
-            if (p in s) {
+            // if (p in s) {
+            if (s.hasOwnProperty(p)) {
                 if (merge && L.isObject(r[p], true)) {
                     Y.mix(r[p], s[p]);
                 } else if (!arr && (ov || !(p in r))) {
@@ -120,6 +121,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     } else {
         for (i in s) { 
             // if (s.hasOwnProperty(i) && !(i in FROZEN)) {
+            if (s.hasOwnProperty(i)) {
                 // check white list if it was supplied
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
@@ -134,7 +136,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 } else if (arr) {
                     r.push(s[i]);
                 }
-            // }
+            }
         }
     
         if (Y.UA.ie) {

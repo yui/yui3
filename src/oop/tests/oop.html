@@ -77,6 +77,9 @@
             },
 
             test_merge: function() {
+
+                Object.prototype.foo = 'hello!';
+
                 var o1 = { one: "one" }, 
                     o2 = { two: "two" },
                     o3 = { two: "twofromthree", three: "three" },
@@ -85,6 +88,11 @@
 
                 ObjectAssert.areEqual(o123, o4);
                 Assert.areEqual(o123.two, o4.two);
+
+                // console.log(o123.foo);
+
+                Y.Assert.isFalse((o123.hasOwnProperty(foo)), 'prototype properties added to Object should not be iterable);
+
             },
             
             test_mix: function() {
