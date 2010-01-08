@@ -277,10 +277,15 @@ YUI.add('oop', function(Y) {
 
         // #2528250 don't try to clone element properties
         if (!o.addEventListener && !o.attachEvent) {
+
             Y.each(o, function(v, k) {
                 if (!f || (f.call(c || this, v, k, this, o) !== false)) {
                     if (k !== CLONE_MARKER) {
-                        this[k] = Y.clone(v, safe, f, c, owner || o, marked);
+                        if (o[k] === o) {
+                            this[k] = this;
+                        } else {
+                            this[k] = Y.clone(v, safe, f, c, owner || o, marked);
+                        }
                     }
                 }
             }, o2);

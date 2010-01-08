@@ -18,7 +18,7 @@
         useConsole: true,
         // logInclude: ['event', 'test']
         //logExclude: ['Dom', 'Selector', 'Node', 'attribute']
-        logExclude: {Dom:true, Selector:true, Node:true, attribute:true, event:true, base:true}
+        logExclude: {deprecated: true, Dom:true, Selector:true, Node:true, attribute:true, event:true, base:true}
     }).use("dump", "test", "console", function(Y) {
 
         var button = Y.get('#btnRun'),
@@ -91,7 +91,7 @@
 
                 // console.log(o123.foo);
 
-                Y.Assert.isFalse((o123.hasOwnProperty(foo)), 'prototype properties added to Object should not be iterable);
+                Y.Assert.isFalse((o123.hasOwnProperty(foo)), 'prototype properties added to Object should not be iterable');
 
             },
             
@@ -169,6 +169,8 @@
                 var a = {
                     node: Y.one('#header1'),
                     y: Y,
+                    w: window,
+                    d: document,
                     el: document.getElementById('header1')
                 };
 
