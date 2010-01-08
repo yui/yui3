@@ -19,7 +19,7 @@
         // logInclude: ['event', 'test']
         //logExclude: ['Dom', 'Selector', 'Node', 'attribute']
         logExclude: {deprecated: true, Dom:true, Selector:true, Node:true, attribute:true, event:true, base:true}
-    }).use("dump", "test", "console", function(Y) {
+    }).use("collection", "dump", "test", "console", function(Y) {
 
         var button = Y.get('#btnRun'),
             Assert = Y.Assert,
@@ -182,6 +182,8 @@
             },
 
             test_each: function() {
+                var count = 0;
+
                 Y.each(null, function(v, k) {
                     // should not throw
                 });
@@ -193,6 +195,18 @@
                 Y.each(12345, function(v, k) {
                     // should not throw
                 });
+
+                Y.each({ foo: 1 }, function(v, k) {
+                    count++;
+                });
+
+                Assert.areEqual(1, count);
+
+                Y.Array.each([1], function(v, k) {
+                    count++;
+                });
+
+                Assert.areEqual(2, count);
             }
 
         });

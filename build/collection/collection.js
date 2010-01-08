@@ -255,11 +255,16 @@ A.grep = function (a, pattern) {
 * rejected by the test function (or an empty array).
 */
 A.partition = function (a, f, o) {
-    var results = {matches: [], rejects: []};
+    var results = {
+        matches: [], 
+        rejects: []
+    };
+
     A.each(a, function (item, index) {
         var set = f.call(o, item, index, a) ? results.matches : results.rejects;
         set.push(item);
     });
+
     return results;
 };
 
@@ -282,6 +287,8 @@ A.zip = function (a, a2) {
     });
     return results;
 };
+
+A.forEach = A.each;
 
 
 }, '@VERSION@' );
