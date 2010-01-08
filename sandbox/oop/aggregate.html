@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>aggregate</title>
+<!--
+<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0/build/yui/yui-debug.js"></script>
+-->
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+
+</head>
+<body>
+<h1 id="header1">blah</h1>
+<script type="text/javascript">
+YUI({ filter: "debug" }).use('oop', 'dump', function (Y) {
+
+    var obj1 = { 
+                    name: "obj1", 
+                    prop1: ["one", "two"],
+                    child: {
+                        prop1: "prop1"
+                    }
+                };
+            
+
+    var obj2 = { 
+                    name: "obj2", 
+                    prop1: ["three", "four"], 
+                    child: {
+                        prop2: "prop2"
+                    }                             
+                };
+    
+
+    Y.aggregate(obj1, obj2);
+    
+    Y.log(obj1.prop1.length); // Should be four
+                
+    Y.log(Y.dump(obj1));
+    
+});
+</script>
+</body>
+</html>
+
