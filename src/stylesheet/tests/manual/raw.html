@@ -78,9 +78,13 @@ suite.add(new Y.Test.Case({
     },
 
     "test !important reported in cssText for <h1 style=>": function () {
-        Assert.isTrue(
-            !!/important/.test(
-                d.getElementById('testbed').style.cssText));
+        var x = d.getElementById('testbed').style;
+
+        Assert.isTrue(!!/important/.test(x.cssText));
+
+        // Opera refreshes cssTest after a style property is changed
+        x.color = '#111';
+        Assert.isTrue(!!/important/.test(x.cssText));
     },
 
     "test new sheet with important": function () {
@@ -176,6 +180,11 @@ suite.add(new Y.Test.Case({
         Assert.areEqual( 'right', p.style.textAlign );
 
         // but it should in cssText
+        Assert.isTrue(
+            /text-align\s*:\s*right !\s*important/i.test(p.style.cssText) );
+
+        // Opera refreshes cssTest after a style property is changed
+        p.style.color = '#111';
         Assert.isTrue(
             /text-align\s*:\s*right !\s*important/i.test(p.style.cssText) );
     },
