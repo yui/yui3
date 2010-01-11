@@ -21,7 +21,7 @@ var isFunction = Y.Lang.isFunction,
 // @DISCUSS: function (items, constructor/proto/whitelist, extras)? to allow
 // empty collections that match the API of a constructor/proto, and 'extras' to
 // have some extra or instance-specific override methods/properties?
-Y.collection = function (items) {
+Y.batch = function (items) {
     if (!Y.Lang.isArray(items)) {
         return isObject(items) ? items : null;
     }
