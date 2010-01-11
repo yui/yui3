@@ -12,33 +12,24 @@
         p, 
         i,
 
-        add = function () {
-            if (window.addEventListener) {
-                return function(el, type, fn, capture) {
-                    el.addEventListener(type, fn, (!!capture));
-                };
-            } else if (window.attachEvent) {
-                return function(el, type, fn) {
-                    el.attachEvent("on" + type, fn);
-                };
-            } else {
-                return function(){};
-            }
-        }(),
+        add = function(el, type, fn, capture) {
+            if (el && el.addEventListener) {
+                el.addEventListener(type, fn, (!!capture));
+            } else if (el && el.attachEvent) {
+                el.attachEvent("on" + type, fn);
+            } 
+            // else {
+            //     YUI.log('could not attach DOM event listener: ' + type + ' to ' + el);
+            // }
+        },
 
-        remove = function() {
-            if (window.removeEventListener) {
-                return function (el, type, fn, capture) {
-                    el.removeEventListener(type, fn, !!capture);
-                };
-            } else if (window.detachEvent) {
-                return function (el, type, fn) {
-                    el.detachEvent("on" + type, fn);
-                };
-            } else {
-                return function(){};
+        remove = function (el, type, fn, capture) {
+            if (el && el.removeEventListener) {
+                el.removeEventListener(type, fn, !!capture);
+            } else if (el && el.detachEvent) {
+                el.detachEvent("on" + type, fn);
             }
-        }(),
+        },
 
         globalListener = function() {
             YUI.Env.windowLoaded = true;
@@ -236,7 +227,23 @@ YUI.prototype = {
      * @private
      */
     _setup: function(o) {
-        this.use("yui-base");
+
+        var Y = this,
+            core = [],
+            mods = YUI.Env.mods,
+            extras = Y.config.core || ['get', 'loader', 'yui-log', 'yui-later'];
+
+
+        for (i=0; i<extras.length; i++) {
+            if (mods[extras[i]]) {
+                core.push(extras[i]);
+            }
+        }
+
+        Y.use('yui-base');
+        Y.use.apply(Y, core);
+
+        Y.log(Y.id + ' initialized', 'info', 'yui');
     },
 
     /**
@@ -2153,40 +2160,6 @@ Y.UA = function() {
     
     return o;
 }();
-/**
- * The YUI module contains the components required for building the YUI seed file.
- * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
- * @module yui
- * @submodule yui-base
- */
-
-(function() {
-
-    var min = ['yui-base'], core, C = Y.config, mods = YUI.Env.mods,
-        extras, i;
-
-    // apply the minimal required functionality
-    Y.use.apply(Y, min);
-
-    Y.log(Y.id + ' initialized', 'info', 'yui');
-
-    if (C.core) {
-        core = C.core;
-    } else {
-        core = [];
-        extras = ['get', 'loader', 'yui-log', 'yui-later'];
-
-        for (i=0; i<extras.length; i++) {
-            if (mods[extras[i]]) {
-                core.push(extras[i]);
-            }
-        }
-    }
-
-    Y.use.apply(Y, core);
-     
-})();
-
 
 
 }, '@VERSION@' );
