@@ -219,6 +219,18 @@ suite.add(new Y.Test.Case({
         Assert.isTrue(
             /text-align\s*:\s*right !\s*important/i.test(d.body.style.cssText),
             "value containing !important did not update cssText with !important");
+    },
+
+    "test setProperty + getPropertyPriority": function () {
+        d.body.style.setProperty("color", "#555", "important");
+
+        Assert.areEqual("important", d.body.style.getPropertyPriority("color"));
+    },
+
+    "test style.prop = x + getPropertyPriority": function () {
+        d.body.style.paddingLeft = "3px !important";
+
+        Assert.areEqual("important", d.body.style.getPropertyPriority("padding-left"));
     }
 }));
         
