@@ -159,7 +159,7 @@ YUI.add('pluginhost', function(Y) {
          * @private
          */
         _destroyPlugins: function() {
-            this._unplug();
+            this.unplug();
         },
 
         /**

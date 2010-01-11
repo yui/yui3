@@ -425,7 +425,29 @@
 
                     Y.ObjectAssert.ownsKey("three", h3);
                     Y.Assert.isInstanceOf(PluginThree, h3.three);
+                },
+                
+                testHostDestroy : function() {
+
+                    var h1 = new Host({
+                        plugins:[PluginOne, PluginTwo]
+                    });
+
+                    var destroyed = [];
+                    h1.one.after("destroy", function(e) {
+                        destroyed.push("one");             
+                    });
+                    h1.two.after("destroy", function(e) {
+                        destroyed.push("two");             
+                    });
+                    h1.destroy();
+
+                    Y.ArrayAssert.itemsAreEqual(["one", "two"], destroyed);
+
+                    Y.Assert.isUndefined(h1.one);
+                    Y.Assert.isUndefined(h1.two);
                 }
+
             };
     
             new Y.Console({
