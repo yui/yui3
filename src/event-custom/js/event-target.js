@@ -351,6 +351,7 @@ ET.prototype = {
      * @deprecated use detach
      */
     unsubscribe: function() {
+Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecated');
         return this.detach.apply(this, arguments);
     },
     
@@ -374,6 +375,7 @@ ET.prototype = {
      * @deprecated use detachAll
      */
     unsubscribeAll: function() {
+Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'deprecated');
         return this.detachAll.apply(this, arguments);
     },
 
@@ -622,7 +624,6 @@ ET.prototype = {
      *
      * @method before
      * @return detach handle
-     * @deprecated use the on method
      */
     before: function() { 
         return this.on.apply(this, arguments);
