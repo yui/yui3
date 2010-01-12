@@ -1378,6 +1378,7 @@ ET.prototype = {
      * @deprecated use detach
      */
     unsubscribe: function() {
+Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecated');
         return this.detach.apply(this, arguments);
     },
     
@@ -1401,6 +1402,7 @@ ET.prototype = {
      * @deprecated use detachAll
      */
     unsubscribeAll: function() {
+Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'deprecated');
         return this.detachAll.apply(this, arguments);
     },
 
@@ -1532,7 +1534,8 @@ ET.prototype = {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, a, ret, pre=this._yuievt.config.prefix, ce2;
+            ce, ret, pre=this._yuievt.config.prefix, ce2,
+            args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
         ce = this.getEvent(t, true);
@@ -1546,8 +1549,7 @@ ET.prototype = {
         if (!ce) {
             
             if (this._yuievt.hasTargets) {
-                a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
-                return this.bubble({ type: t, target: this }, a, this);
+                return this.bubble({ type: t }, args, this);
             }
 
             // otherwise there is nothing to be done
@@ -1557,10 +1559,7 @@ ET.prototype = {
 
             ce.sibling = ce2;
 
-            a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-            ret = ce.fire.apply(ce, a);
-
-            // if (ret) { }
+            ret = ce.fire.apply(ce, args);
 
             // clear target for next fire()
             ce.target = null;
@@ -1649,7 +1648,6 @@ ET.prototype = {
      *
      * @method before
      * @return detach handle
-     * @deprecated use the on method
      */
     before: function() { 
         return this.on.apply(this, arguments);
@@ -2142,7 +2140,8 @@ ETProto.removeTarget = function(o) {
 ETProto.bubble = function(evt, args, target) {
 
     var targs = this._yuievt.targets, ret = true,
-        t, type, ce, i, bc, ce2;
+        t, type = evt && evt.type, ce, i, bc, ce2,
+        originalTarget = target || (evt && evt.target) || this;
 
     if (!evt || ((!evt.stopped) && targs)) {
 
@@ -2150,7 +2149,6 @@ ETProto.bubble = function(evt, args, target) {
         for (i in targs) {
             if (targs.hasOwnProperty(i)) {
                 t = targs[i]; 
-                type = evt && evt.type;
                 ce = t.getEvent(type, true); 
                 ce2 = t.getSibling(type, ce);
 
@@ -2159,21 +2157,18 @@ ETProto.bubble = function(evt, args, target) {
                 }
                     
                 // if this event was not published on the bubble target,
-                // publish it with sensible default properties
+                // continue propagating the event.
                 if (!ce) {
-
                     if (t._yuievt.hasTargets) {
-                        // t.bubble.call(type, evt, args, target);
-                        t.bubble.apply(t, arguments);
+                        t.bubble(evt, args, originalTarget);
                     }
-
                 } else {
 
                     ce.sibling = ce2;
 
                     // set the original target to that the target payload on the
                     // facade is correct.
-                    ce.originalTarget = target || (evt && evt.target) || this;
+                    ce.originalTarget = originalTarget;
                     ce.currentTarget = t;
                     bc = ce.broadcast;
                     ce.broadcast = false;
