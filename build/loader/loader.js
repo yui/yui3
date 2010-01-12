@@ -636,7 +636,17 @@ var NOT_FOUND = {},
         },
 
         widget: {
-            requires: [ATTRIBUTE, 'event-focus', BASE, NODE, 'classnamemanager'],
+            submodules : {
+                'widget-base'  : {
+                    requires: [ATTRIBUTE, 'event-focus', BASE, NODE, 'classnamemanager']
+                },
+                'widget-htmlparser' : {
+                    requires: ['widget-base']
+                },
+                'widget-i18n' : {
+                    requires: ['widget-base']
+                }
+            },
             plugins: {
                 'widget-parent': { },
                 'widget-child': { },                
@@ -1553,42 +1563,44 @@ Y.Loader.prototype = {
     },
 
     getModule: function(name) {
-
-        var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, add = false;
-
-        // check the patterns library to see if we should automatically add
-        // the module with defaults
-        if (!m) {
-
-            for (i in patterns) {
-                p = patterns[i];
-                type = p.type;
-
-                // switch (type) {
-                    // case 'regex':
-                    //     break;
-                    // case 'function':
-                    //     break;
-                    // default: // prefix
-                    //     if (name.indexOf(i) > -1) {
-                    //         add = true;
-                    //     }
-                // }
-
-                // use the metadata supplied for the pattern
-                // as the module definition.
-                if (name.indexOf(i) > -1) {
-                    add = p;
+        //TODO: Remove name check - it's a quick hack to fix pattern WIP
+        if (name) {
+            var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, add = false;
+    
+            // check the patterns library to see if we should automatically add
+            // the module with defaults
+            if (!m) {
+    
+                for (i in patterns) {
+                    p = patterns[i];
+                    type = p.type;
+    
+                    // switch (type) {
+                        // case 'regex':
+                        //     break;
+                        // case 'function':
+                        //     break;
+                        // default: // prefix
+                        //     if (name.indexOf(i) > -1) {
+                        //         add = true;
+                        //     }
+                    // }
+    
+                    // use the metadata supplied for the pattern
+                    // as the module definition.
+                    if (name.indexOf(i) > -1) {
+                        add = p;
+                    }
+                }
+    
+                if (add) {
+                    // ext true or false?
+                    m = this.addModule(add, name);
                 }
             }
-
-            if (add) {
-                // ext true or false?
-                m = this.addModule(add, name);
-            }
+    
+            return m;
         }
-
-        return m;
     },
 
     /**
