@@ -1113,8 +1113,6 @@ Y.extend(Widget, Y.Base, {
 
                 var widget = Widget.getByNode(this);
 
-                widget.publish(evt.type);
-
                 //  Make the DOM event a property of the custom event
                 //  so that developers still have access to it.
                 widget.fire(evt.type, { domEvent: evt });
