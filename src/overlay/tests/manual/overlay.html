@@ -161,6 +161,12 @@
 
                 var fns = [
                     function() {
+                        widget.set("height", "20em");
+                    },
+                    function() {
+                        widget.set("bodyContent", "Height changed to 20em in previous step");
+                    },
+                    function() {
                         widget.move(0,0);
                         widget.set("bodyContent", "move(0,0)");
                     },
@@ -195,10 +201,6 @@
                     function() {
                         widget.set("width", "20em");
                         widget.set("bodyContent", "width, 20em");
-                    },
-                    function() {
-                        widget.set("height", "20em");
-                        widget.set("bodyContent", "height, 20em");
                     },
                     function() {
                         widget.set("fillHeight", "header");
