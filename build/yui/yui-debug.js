@@ -1722,7 +1722,7 @@ Y.Object = function(o) {
 var O = Y.Object,
 
 owns = function(o, k) {
-    return o.hasOwnProperty(k);
+    return o && o.hasOwnProperty && o.hasOwnProperty(k);
 },
 
 UNDEFINED = undefined,
