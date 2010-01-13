@@ -1521,7 +1521,8 @@ ET.prototype = {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, a, ret, pre=this._yuievt.config.prefix, ce2;
+            ce, ret, pre=this._yuievt.config.prefix, ce2,
+            args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
         ce = this.getEvent(t, true);
@@ -1535,8 +1536,7 @@ ET.prototype = {
         if (!ce) {
             
             if (this._yuievt.hasTargets) {
-                a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
-                return this.bubble({ type: t, target: this }, a, this);
+                return this.bubble({ type: t }, args, this);
             }
 
             // otherwise there is nothing to be done
@@ -1546,10 +1546,7 @@ ET.prototype = {
 
             ce.sibling = ce2;
 
-            a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-            ret = ce.fire.apply(ce, a);
-
-            // if (ret) { }
+            ret = ce.fire.apply(ce, args);
 
             // clear target for next fire()
             ce.target = null;
@@ -1638,7 +1635,6 @@ ET.prototype = {
      *
      * @method before
      * @return detach handle
-     * @deprecated use the on method
      */
     before: function() { 
         return this.on.apply(this, arguments);

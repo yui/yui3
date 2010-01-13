@@ -5,6 +5,9 @@ Development Master
 * Fixed setStdModContent("markupString", AFTER | BEFORE) so that it uses 
   node.append, node.prepend instead of innerHTML to maintain listeners.
 
+* fillHeight is now invoked when height is changed. Was not being invoked 
+  because of a typo in the event name.
+
 3.0.0
 * Cleaned up the way headerContent, bodyContent, footerContent are configured,
   so that the actual stored value is always accurate, without the need for a 

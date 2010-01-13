@@ -1113,7 +1113,7 @@ Y.extend(Widget, Y.Base, {
 
                 var widget = Widget.getByNode(this);
 
-                widget.publish(evt.type);
+                // widget.publish(evt.type);
 
                 //  Make the DOM event a property of the custom event
                 //  so that developers still have access to it.
@@ -1141,4 +1141,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{requires:['base', 'event-focus', 'node', 'classnamemanager']});
+}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base', 'node', 'classnamemanager']});
