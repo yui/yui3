@@ -1,62 +1,169 @@
-/*
- * This seems like a subset of NodeList functionality.  Maybe grounds for a
- * core collection structure with methods such as filter, each, indexOf, etc
- * extended into NodeList?  NodeList methods are applied to its _nodes array,
- * so a bit different.  And core should omit the weight of the extra methods
- * anyway.
- */
-var isFunction = Y.Lang.isFunction,
-    isObject   = Y.Lang.isObject;
+// Generic collection
+function Collection() {
+    this._construct.apply(this, arguments);
+}
 
-/**
- * Creates a wrapper object to a homogenous array of other objects.  The wrapper
- * is assigned methods with names mirroring those on the contained objects.
- * These methods are simple wrappers for iterative execution of the so named
- * method on each item.
- *
- * @method collection
- * @param items {Array} the items to encapsulate
- * @return {Object} an object with the same methods as its members
- */
-// @DISCUSS: function (items, constructor/proto/whitelist, extras)? to allow
-// empty collections that match the API of a constructor/proto, and 'extras' to
-// have some extra or instance-specific override methods/properties?
-Y.batch = function (items) {
-    if (!Y.Lang.isArray(items)) {
-        return isObject(items) ? items : null;
+Collection.prototype = {
+    _construct: function ( items ) {
+        this._items = Y.Lang.isArray( items ) ?
+            items :
+            Y.Array( items, 0, true );
+    },
+
+    item: function ( i ) {
+        return this._items[i];
+    },
+
+    each: function ( fn, context ) {
+        Y.Array.each( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            return fn.call( context || item, item, i, this );
+        }, this);
+
+        return this;
+    },
+
+    some: function ( fn, context ) {
+        return Y.Array.some( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            return fn.call( context || item, item, i, this );
+        }, this);
+    },
+
+    indexOf: function ( needle ) {
+        return Y.Array.indexOf( this._items, needle );
+    },
+
+    filter: function ( validator ) {
+        var items = [];
+
+        Y.Array.each( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            if ( validator( item ) ) {
+                items.push( item );
+            }
+        }, this);
+
+        return new this.constructor( items );
+    },
+
+    modulus: function ( n, r ) {
+        r = r || 0;
+
+        var items = [];
+
+        Y.Array.each( this._items, function ( item, i ) {
+            if ( i % n === r ) {
+                items.push( item );
+            }
+        }, this);
+
+        return new this.constructor( items );
+    },
+
+    odd: function () {
+        return this.modulus( 2, 1 );
+    },
+
+    even: function () {
+        return this.modulus( 2 );
+    },
+
+    size: function () {
+        return this._items.length;
+    },
+
+    isEmpty: function () {
+        return !this.size();
+    }/*,
+
+    add: function ( item ) {
+        this._items.push( item );
+
+        return this;
+    },
+
+    remove: function ( item ) {
+        var i = this.indexOf( item );
+
+        if (i > -1) {
+            this._items.splice(i,1);
+        }
+
+        return this;
     }
+    */
+};
+// Default implementation does not distinguish between public and private
+// item getter
+Collection.prototype._item = Collection.prototype.item;
 
-    items = items.slice();
+Y.Collection = Collection;
 
-    var first = items[0],
-        len   = items.length,
-        api   = isObject(first) ? {} : null,
-        fn;
+Y.mix( Collection, {
 
-    if (first) {
-        api._items = items;
-        api.length = len;
+    /**
+     * Core factory method for creating collection classes.
+     *
+     * @method build
+     * @param o {Function|Object} The seed constructor function or its prototype
+     * @param config {Object} optional configuration for tweaking class build
+     * @param proto {Object} optional prototype methods (will override)
+     * @param statics {Object} optional static members for the collection class
+     * @return {Function} the list class for the provided constructor
+     * @static
+     */
+    build: function (o, config, proto, statics) {
 
-        for (fn in first) {
-            // Not doing a hasOwnProperty check on purpose.
-            // Having the second param receive a constructor would allow
-            // capturing just the class methods up its superclass axis, but
-            // it's less code and little overhead to get the few methods from
-            // Object.prototype.
-            if (isFunction(first[fn])) {
-                api[fn] = (function (name) {
-                    return function () {
-                        // @DISCUSS: collect values or return last value?
-                        var ret = [], i;
-                        for (i = 0; i < len; ++i) {
-                            ret.push(items[i][name].apply(items[i], arguments));
-                        }
-                        return ret;
-                    };
-                })(fn);
+        function C() {
+            Y.Collection.apply( this, arguments );
+        }
+
+        var isFunction = Y.Lang.isFunction,
+            whitelist  = (config || {}).whitelist || o,
+            prototype  = {},
+            fn;
+
+        // Accept an object or constructor
+        o       = isFunction( o ) ? o.prototype : o;
+        proto   = proto   || {};
+        statics = statics || {};
+
+        if ( Y.Lang.isArray( whitelist ) ) {
+            whitelist = Y.Array.hash( whitelist );
+        }
+
+        for ( fn in whitelist ) {
+            if ( isFunction( o[fn] ) ) {
+                Collection._addMethod( o, fn, prototype );
             }
         }
-    }
 
-    return api;
-};
+        return Y.extend( C, Collection,      // superclass
+            Y.mix( prototype, proto, true ), // prototype
+            statics );                       // static members
+    },
+
+    _addMethod: function ( source, name, dest ) {
+
+        dest[name] = function () {
+            var args = Y.Array( arguments, 0, true ),
+                ret  = [];
+
+            Y.Array.each( this._items, function ( item, i ) {
+                item = this._item( i );
+
+                var result = item[name].apply( item, args );
+
+                if ( result !== undefined && result !== item ) {
+                    ret.push( result );
+                }
+            }, this);
+
+            return ret.length ? ret : this;
+        };
+    }
+});

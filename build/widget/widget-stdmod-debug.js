@@ -39,7 +39,7 @@ YUI.add('widget-stdmod', function(Y) {
         BodyChange = "bodyContentChange",
         FooterChange = "footerContentChange",
         FillHeightChange = "fillHeightChange",
-        HeightChange = "HeightChange",        
+        HeightChange = "heightChange",        
         ContentUpdate = "contentUpdate",
 
         RENDERUI = "renderUI",

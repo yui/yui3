@@ -1,3 +1,5 @@
+YUI.add('colly-nodelist', function(Y) {
+
 var NodeList = Y.Collection.build( Y.Node,
     // config
     {
@@ -202,3 +204,6 @@ Y.Node.all = function ( nodes ) {
 };
 
 Y.NodeList = NodeList;
+
+
+}, '@VERSION@' ,{requires:['node-base', 'colly']});
