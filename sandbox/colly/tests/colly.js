@@ -1,3 +1,5 @@
+YUI.add('colly', function(Y) {
+
 // Generic collection
 function Collection() {
     this._construct.apply(this, arguments);
@@ -167,3 +169,6 @@ Y.mix( Collection, {
         };
     }
 });
+
+
+}, '@VERSION@' );

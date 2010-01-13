@@ -4,6 +4,7 @@
     <title>Test Page</title>
     <style type="text/css" id="styleblock" class="highlight-ignore">
         h1 {
+            color: #000 !important;
             font: normal 125%/1.4 Arial, sans-serif;
         }
         .yui-skin-sam .yui-console .yui-console-content {
@@ -28,7 +29,7 @@
 </head>
 <body class="yui-skin-sam">
 <h1>Tests</h1>
-<div id="testbed"></div>
+<div id="testbed" style="color: #000 !important"></div>
 
 <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui.js"></script>
 <script>
@@ -59,7 +60,34 @@ function getCssText( allRules ) {
 suite.add(new Y.Test.Case({
     name: "!important",
 
-    test_new_sheet_with_important: function () {
+    "test !important reported in cssText for <style> block": function () {
+        var style = d.getElementById('styleblock'),
+            sheet = style.sheet || style.styleSheet,
+            rules = sheet.cssRules || sheet.rules,
+            found = false,
+            i;
+
+        for (i = rules.length - 1; i >= 0; --i) {
+            if (/important/.test(rules[i].style.cssText)) {
+                found = true;
+                break;
+            }
+        }
+
+        Assert.isTrue(found);
+    },
+
+    "test !important reported in cssText for <h1 style=>": function () {
+        var x = d.getElementById('testbed').style;
+
+        Assert.isTrue(!!/important/.test(x.cssText));
+
+        // Opera refreshes cssTest after a style property is changed
+        x.color = '#111';
+        Assert.isTrue(!!/important/.test(x.cssText));
+    },
+
+    "test new sheet with important": function () {
         var s = d.createElement('style'),
             css;
 
@@ -87,7 +115,7 @@ suite.add(new Y.Test.Case({
             "No parsed rule reports !important in its cssText");
     },
 
-    test_new_rule_with_important: function () {
+    "test new rule with important": function () {
         if ( sheet.insertRule ) {
             sheet.insertRule( ".foo { background-color: #000 !important; }", 2 );
         } else {
@@ -104,17 +132,22 @@ suite.add(new Y.Test.Case({
 
     },
 
-    test_new_property_with_important: function () {
-        var rule = rules[0] || Assert.fail("Unable to find a rule");
+    "test new property with important": function () {
+        var rule = rules[1] || Assert.fail("Unable to find a rule");
 
         rule.style.paddingBottom = '10px !important';
 
         Y.log( getCssText( rules ).join("\n"), "info", "TestRunner" );
 
-        Assert.areEqual( '10px !important', rule.style.paddingBottom );
+        // !important shouldn't show up in value
+        Assert.areEqual( '10px', rule.style.paddingBottom );
+
+        // but should be in the cssText
+        Assert.isTrue(
+            /padding.*?:\s*10px\s*!\s*important/i.test( rule.style.cssText ) );
     },
 
-    test_existing_property_with_important: function () {
+    "test existing property with important": function () {
         for ( var i = rules.length - 1, rule; i >= 0; --i ) {
             rule = rules[i];
 
@@ -123,14 +156,40 @@ suite.add(new Y.Test.Case({
 
                 Y.log( getCssText( rules ).join("\n"), "info", "TestRunner" );
 
-                Assert.areEqual( '5em !important', rule.style.height );
+                // !important shouldn't show up in value
+                Assert.areEqual( '5em', rule.style.height );
+
+                // but should be in the cssText
+                Assert.isTrue(
+                    /height.*?:\s*5em\s*!\s*important/i.test(
+                        rule.style.cssText ) );
 
                 break;
             }
         }
     },
 
-    test_off_dom_style_property_with_important: function () {
+    "test set property with important via cssText": function () {
+        var p = d.createElement('p');
+
+        p.style.cssText = 'text-align: right !important';
+
+        Y.log( getCssText( [p] ).join("\n"), "info", "TestRunner" );
+
+        // !important should not show up in property value
+        Assert.areEqual( 'right', p.style.textAlign );
+
+        // but it should in cssText
+        Assert.isTrue(
+            /text-align\s*:\s*right !\s*important/i.test(p.style.cssText) );
+
+        // Opera refreshes cssTest after a style property is changed
+        p.style.color = '#111';
+        Assert.isTrue(
+            /text-align\s*:\s*right !\s*important/i.test(p.style.cssText) );
+    },
+
+    "test off dom style property with important": function () {
         var p = d.createElement('p');
 
         p.style.color = '#000';
@@ -138,26 +197,40 @@ suite.add(new Y.Test.Case({
 
         Y.log( getCssText( [p] ).join("\n"), "info", "TestRunner" );
 
-        try {
-            Assert.areEqual( 'right !important', p.style.textAlign );
-        }
-        catch (e) {
-            Assert.areEqual( 'right', p.style.textAlign );
-        }
+        // !important should not show up in property value
+        Assert.areEqual( 'right', p.style.textAlign );
+
+        // but it should in cssText
+        Assert.isTrue(
+            /text-align\s*:\s*right !\s*important/i.test(p.style.cssText),
+            "value containing !important did not update cssText with !important");
     },
 
-    test_on_dom_style_property_with_important: function () {
+    "test on dom style property with important": function () {
         d.body.style.color = '#000';
         d.body.style.textAlign = 'right !important';
 
         Y.log( getCssText( [d.body] ).join("\n"), "info", "TestRunner" );
 
-        try {
-            Assert.areEqual( 'right !important', d.body.style.textAlign );
-        }
-        catch (e) {
-            Assert.areEqual( 'right', d.body.style.textAlign );
-        }
+        // !important should not show up in property value
+        Assert.areEqual( 'right', d.body.style.textAlign );
+
+        // but it should in cssText
+        Assert.isTrue(
+            /text-align\s*:\s*right !\s*important/i.test(d.body.style.cssText),
+            "value containing !important did not update cssText with !important");
+    },
+
+    "test setProperty + getPropertyPriority": function () {
+        d.body.style.setProperty("color", "#555", "important");
+
+        Assert.areEqual("important", d.body.style.getPropertyPriority("color"));
+    },
+
+    "test style.prop = x + getPropertyPriority": function () {
+        d.body.style.paddingLeft = "3px !important";
+
+        Assert.areEqual("important", d.body.style.getPropertyPriority("padding-left"));
     }
 }));
         

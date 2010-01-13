@@ -1135,7 +1135,7 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{requires:['base', 'event-focus', 'node', 'classnamemanager']});
+}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base', 'node', 'classnamemanager']});
 YUI.add('widget-htmlparser', function(Y) {
 
 var Widget = Y.Widget,
@@ -1448,5 +1448,5 @@ Y.mix(Widget.prototype, {
 }, '@VERSION@' ,{requires:['widget-base']});
 
 
-YUI.add('widget', function(Y){}, '@VERSION@' ,{use:['widget-base', 'widget-htmlparser', 'widget-localization']});
+YUI.add('widget', function(Y){}, '@VERSION@' ,{use:['widget-base', 'widget-htmlparser', 'widget-i18n']});
 

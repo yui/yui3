@@ -105,6 +105,7 @@ YUI.add('loader', function(Y) {
 YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
 
 var NOT_FOUND = {},
+    NO_REQUIREMENTS = [],
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED,
     BASE = 'base', 
@@ -636,7 +637,17 @@ var NOT_FOUND = {},
         },
 
         widget: {
-            requires: [ATTRIBUTE, 'event-focus', BASE, NODE, 'classnamemanager'],
+            submodules : {
+                'widget-base'  : {
+                    requires: [ATTRIBUTE, 'event-focus', BASE, NODE, 'classnamemanager']
+                },
+                'widget-htmlparser' : {
+                    requires: ['widget-base']
+                },
+                'widget-i18n' : {
+                    requires: ['widget-base']
+                }
+            },
             plugins: {
                 'widget-parent': { },
                 'widget-child': { },                
@@ -1321,6 +1332,7 @@ Y.Loader.prototype = {
 
         this.dirty = true;
 
+
         return o;
     },
 
@@ -1343,13 +1355,16 @@ Y.Loader.prototype = {
      */
     getRequires: function(mod) {
 
-        if (!mod) {
-            return [];
+        if (!mod || mod._parsed) {
+            return NO_REQUIREMENTS;
         }
 
         if (!this.dirty && mod.expanded) {
             return mod.expanded;
         }
+
+
+        mod._parsed = true;
 
         var i, d=[], r=mod.requires, o=mod.optional, 
             info=this.moduleInfo, m, j, add;
@@ -1385,6 +1400,8 @@ Y.Loader.prototype = {
                 }
             }
         }
+
+        mod._parsed = false;
 
         mod.expanded = Y.Object.keys(Y.Array.hash(d));
         return mod.expanded;
@@ -1440,8 +1457,7 @@ Y.Loader.prototype = {
             this._reduce();
             this._sort();
 
-
-            this.dirty = false;
+            // this.dirty = false;
         }
     },
 
@@ -1524,6 +1540,9 @@ Y.Loader.prototype = {
 
         var r = this.required, m, reqs;
 
+        // the setup phase is over, all modules have been created
+        this.dirty = false;
+
         Y.Object.each(r, function(v, name) {
 
             m = this.getModule(name);
@@ -1547,6 +1566,10 @@ Y.Loader.prototype = {
     },
 
     getModule: function(name) {
+        //TODO: Remove name check - it's a quick hack to fix pattern WIP
+        if (!name) {
+            return null;
+        }
 
         var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, add = false;
 

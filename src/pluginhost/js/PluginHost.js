@@ -157,7 +157,7 @@
          * @private
          */
         _destroyPlugins: function() {
-            this._unplug();
+            this.unplug();
         },
 
         /**
