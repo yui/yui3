@@ -1,13 +1,15 @@
+YUI.add('colly', function(Y) {
+
 // Generic collection
 function Collection() {
     this._construct.apply(this, arguments);
 }
 
 Collection.prototype = {
-    _construct: function (items) {
+    _construct: function ( items ) {
         this._items = Y.Lang.isArray( items ) ?
             items :
-            Y.Array( arguments, 0, true );
+            Y.Array( items, 0, true );
     },
 
     item: function ( i ) {
@@ -15,27 +17,21 @@ Collection.prototype = {
     },
 
     each: function ( fn, context ) {
-        var self = this;
+        Y.Array.each( this._items, function ( item, i ) {
+            item = this.item( i );
 
-        Y.Array.each( self._items, function ( item, i ) {
-            item = self.item( i );
+            return fn.call( context || item, item, i, this );
+        }, this);
 
-            return fn.call( context || item, item, i, self );
-        });
-
-        return self;
+        return this;
     },
 
-    some: function ( fn ) {
-        var self = this;
+    some: function ( fn, context ) {
+        return Y.Array.some( this._items, function ( item, i ) {
+            item = this.item( i );
 
-        Y.Array.some( self._items, function ( item, i ) {
-            item = self.item( i );
-
-            return fn.call( context || item, item, i, self );
-        });
-
-        return self;
+            return fn.call( context || item, item, i, this );
+        }, this);
     },
 
     indexOf: function ( needle ) {
@@ -45,11 +41,13 @@ Collection.prototype = {
     filter: function ( validator ) {
         var items = [];
 
-        this.each( function ( item ) {
+        Y.Array.each( this._items, function ( item, i ) {
+            item = this.item( i );
+
             if ( validator( item ) ) {
                 items.push( item );
             }
-        });
+        }, this);
 
         return new this.constructor( items );
     },
@@ -57,14 +55,13 @@ Collection.prototype = {
     modulus: function ( n, r ) {
         r = r || 0;
 
-        var items = [],
-            self  = this;
+        var items = [];
 
-        Y.Array.each( self._items, function ( item, i ) {
+        Y.Array.each( this._items, function ( item, i ) {
             if ( i % n === r ) {
-                items.push( self.item( i ) );
+                items.push( item );
             }
-        });
+        }, this);
 
         return new this.constructor( items );
     },
@@ -83,7 +80,7 @@ Collection.prototype = {
 
     isEmpty: function () {
         return !this.size();
-    },
+    }/*,
 
     add: function ( item ) {
         this._items.push( item );
@@ -100,11 +97,15 @@ Collection.prototype = {
 
         return this;
     }
+    */
 };
+// Default implementation does not distinguish between public and private
+// item getter
+Collection.prototype._item = Collection.prototype.item;
 
 Y.Collection = Collection;
 
-Y.Mix( Collection, {
+Y.mix( Collection, {
 
     /**
      * Core factory method for creating collection classes.
@@ -123,50 +124,51 @@ Y.Mix( Collection, {
             Y.Collection.apply( this, arguments );
         }
 
-        config  = config  || {};
+        var isFunction = Y.Lang.isFunction,
+            whitelist  = (config || {}).whitelist || o,
+            prototype  = {},
+            fn;
+
+        // Accept an object or constructor
+        o       = isFunction( o ) ? o.prototype : o;
         proto   = proto   || {};
         statics = statics || {};
 
-        var isFunction = Y.Lang.isFunction,
-            isObject   = Y.Lang.isObject,
-            whitelist  = config.methods,
-            prototype  = {},
-            fn, i, len;
-
-        // Passing a constructor function is ok, too
-        o = isFunction( o ) ? o.prototype : o;
-
         if ( Y.Lang.isArray( whitelist ) ) {
-            for ( i = 0, len = whitelist.length; i < len; ++i ) {
-                Y.Collection._addMethod( o, whitelist[i], prototype );
-            }
-        } else {
-            for ( fn in o ) {
-                if ( isFunction( o[fn] ) ) {
-                    Y.Collection._addMethod( o, fn, prototype );
-                }
+            whitelist = Y.Array.hash( whitelist );
+        }
+
+        for ( fn in whitelist ) {
+            if ( isFunction( o[fn] ) ) {
+                Collection._addMethod( o, fn, prototype );
             }
         }
 
-        return Y.extend( C, Y.Collection,    // superclass
+        return Y.extend( C, Collection,      // superclass
             Y.mix( prototype, proto, true ), // prototype
             statics );                       // static members
     },
 
     _addMethod: function ( source, name, dest ) {
+
         dest[name] = function () {
             var args = Y.Array( arguments, 0, true ),
                 ret  = [];
 
-            this.each( function ( item ) {
+            Y.Array.each( this._items, function ( item, i ) {
+                item = this._item( i );
+
                 var result = item[name].apply( item, args );
 
                 if ( result !== undefined && result !== item ) {
                     ret.push( result );
                 }
-            });
+            }, this);
 
             return ret.length ? ret : this;
         };
     }
 });
+
+
+}, '@VERSION@' );
