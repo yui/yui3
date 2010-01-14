@@ -1,4 +1,8 @@
-var NodeList = Y.Collection.build( Y.Node,
+var Node       = Y.Node,
+    getDOMNode = Node.getDOMNode,
+    Array_each = Y.Array.each,
+    
+    NodeList = Y.Collection.build( Node,
     // config
     {
         whitelist: [
@@ -20,12 +24,12 @@ var NodeList = Y.Collection.build( Y.Node,
             if ( typeof nodes === 'string' ) {
                 this._query = nodes;
                 nodes = Y.Selector.query( nodes );
-            } else if ( nodes.nodeType || nodes instanceof Y.Node ) {
-                nodes = [ Y.Node.getDOMNode( nodes ) ];
+            } else if ( nodes.nodeType || nodes instanceof Node ) {
+                nodes = [ getDOMNode( nodes ) ];
             } else {
                 // array of DOM nodes or Node instances
-                Y.Array.each( nodes, function ( node, i ) {
-                    nodes[i] = Y.Node.getDOMNode( node );
+                Array_each( nodes, function ( node, i ) {
+                    nodes[i] = getDOMNode( node );
                 });
             }
 
@@ -44,7 +48,7 @@ var NodeList = Y.Collection.build( Y.Node,
             var node = this._items[i] || null;
 
             if (node) {
-                node = Y.Node._instances[ node._yuid ] ||
+                node = Node._instances[ node._yuid ] ||
                        NodeList._getTempNode( node );
             }
 
@@ -52,7 +56,7 @@ var NodeList = Y.Collection.build( Y.Node,
         },
 
         indexOf: function ( node ) {
-            return Y.Array.indexOf( this._items, Y.Node.getDOMNode( node ) );
+            return Y.Array.indexOf( this._items, getDOMNode( node ) );
         },
 
         toFrag: function () {
@@ -126,13 +130,13 @@ var NodeList = Y.Collection.build( Y.Node,
         get: function ( attr ) {
             var nodes      = this._items,
                 isNodeList = false,
-                scrub      = Y.Node.scrubVal,
+                scrub      = Node.scrubVal,
                 ret        = [];
 
             if ( nodes[0] ) {
-                isNodeList = Y.Node.getDOMNode( this._item( 0 )._get( attr ) );
+                isNodeList = getDOMNode( this._item( 0 )._get( attr ) );
 
-                Y.Array.each( nodes, function ( node, i ) {
+                Array_each( nodes, function ( node, i ) {
                     node = this._item( i );
 
                     var val = node._get( attr );
@@ -145,32 +149,15 @@ var NodeList = Y.Collection.build( Y.Node,
             }
 
             return ( isNodeList ) ? Y.all( ret ) : ret;
-        }/*,
+        },
 
         add: function ( node ) {
-            node = Y.Node.getDOMNode( node );
-
-            if ( node && this.indexOf( node ) === -1 ) {
-                this._items.push( node );
-            }
-
-            return this;
+            return NodeList.superclass.add.call( this, getDOMNode( node ) );
         },
 
         remove: function ( node ) {
-            node = Y.Node.getDOMNode( node );
-
-            if ( node ) {
-                var i = this.indexOf( node );
-
-                if ( i >= 0 ) {
-                    this._items.splice( i, 1 );
-                }
-            }
-
-            return this;
+            return NodeList.superclass.remove.call( this, getDOMNode( node ) );
         }
-        */
     },
 
     // statics
@@ -187,7 +174,7 @@ var NodeList = Y.Collection.build( Y.Node,
             var tmp = NodeList._tempNode;
 
             if ( !tmp ) {
-                NodeList._tempNode = tmp = Y.Node.create('<div></div>');
+                NodeList._tempNode = tmp = Node.create('<div></div>');
             }
 
             tmp._node = tmp._stateProxy = el;
@@ -196,8 +183,8 @@ var NodeList = Y.Collection.build( Y.Node,
         }
     });
 
-Y.all =
-Y.Node.all = function ( nodes ) {
+Y.all    = // chained assigment
+Node.all = function ( nodes ) {
     return new NodeList( nodes );
 };
 
