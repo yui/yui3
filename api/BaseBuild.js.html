@@ -58,7 +58,17 @@
 <span class="cm">     */</span>
 
     <span class="kd">var</span> <span class="nx">Base</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span>
-        <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">;</span>
+        <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+
+        <span class="nx">mergeAttrs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">m</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * The build configuration for the Base class.</span>
@@ -74,7 +84,9 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">Base</span><span class="p">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="nx">aggregates</span> <span class="o">:</span> <span class="p">[</span><span class="s2">&quot;ATTRS&quot;</span><span class="p">,</span> <span class="s2">&quot;_PLUG&quot;</span><span class="p">,</span> <span class="s2">&quot;_UNPLUG&quot;</span><span class="p">]</span>
+        <span class="c1">// TODO: The name &quot;custBuild&quot; may change, not ready for public use.</span>
+        <span class="nx">custBuild</span> <span class="o">:</span> <span class="nx">mergeAttrs</span><span class="p">,</span>
+        <span class="nx">aggregates</span> <span class="o">:</span> <span class="p">[</span><span class="s2">&quot;_PLUG&quot;</span><span class="p">,</span> <span class="s2">&quot;_UNPLUG&quot;</span><span class="p">]</span>
     <span class="p">};</span>
 
     <span class="cm">/**</span>
@@ -117,12 +129,14 @@
 
         <span class="kd">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="nx">Base</span><span class="p">.</span><span class="nx">build</span><span class="p">,</span>
             <span class="nx">builtClass</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_getClass</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">),</span>
-            <span class="nx">aggregates</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_getAggregates</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">),</span>
+            <span class="nx">buildCfg</span> <span class="o">=</span> <span class="nx">build</span><span class="p">.</span><span class="nx">_getBuildCfg</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">),</span>
+            <span class="nx">aggregates</span> <span class="o">=</span> <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">,</span>
+            <span class="nx">custBuildSteps</span> <span class="o">=</span> <span class="nx">buildCfg</span><span class="p">.</span><span class="nx">custBuild</span><span class="p">,</span>
             <span class="nx">dynamic</span> <span class="o">=</span> <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">.</span><span class="nx">dynamic</span><span class="p">,</span>
-            <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">;</span>
+            <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">;</span>
 
         <span class="c1">// Shallow isolate aggregates</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">dynamic</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">dynamic</span> <span class="o">&amp;&amp;</span> <span class="nx">aggregates</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">aggregates</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">val</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
@@ -142,7 +156,13 @@
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">aggregates</span><span class="p">);</span>
             <span class="p">}</span>
 
-            <span class="c1">// Old augment</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">custBuildSteps</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">custBuildSteps</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">custBuildSteps</span><span class="p">[</span><span class="nx">j</span><span class="p">](</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="c1">// Old non-displacing augment</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">builtClass</span><span class="p">,</span> <span class="nx">extClass</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 
             <span class="nx">builtClass</span><span class="p">.</span><span class="nx">_yuibuild</span><span class="p">.</span><span class="nx">exts</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">extClass</span><span class="p">);</span>
@@ -204,17 +224,24 @@
 
             <span class="k">return</span> <span class="nx">builtClass</span><span class="p">;</span>
         <span class="p">},</span>
-
-        <span class="nx">_getAggregates</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">aggr</span> <span class="o">=</span> <span class="p">[],</span>
+        
+        <span class="nx">_getBuildCfg</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">main</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">aggr</span> <span class="o">=</span> <span class="p">[],</span> 
+                <span class="nx">steps</span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="nx">buildCfg</span><span class="p">,</span>
                 <span class="nx">cfgAggr</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">),</span>
-                <span class="nx">c</span> <span class="o">=</span> <span class="nx">main</span><span class="p">,</span>
-                <span class="nx">classAggr</span><span class="p">;</span>
+                <span class="nx">cfgCustBuild</span> <span class="o">=</span> <span class="p">(</span><span class="nx">cfg</span> <span class="o">&amp;&amp;</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">custBuild</span><span class="p">),</span>
+                <span class="nx">c</span> <span class="o">=</span> <span class="nx">main</span><span class="p">;</span>
 
             <span class="k">while</span> <span class="p">(</span><span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">prototype</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">classAggr</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">_buildCfg</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">_buildCfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">;</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">classAggr</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">classAggr</span><span class="p">);</span>
+                <span class="nx">buildCfg</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">_buildCfg</span><span class="p">;</span> 
+                <span class="k">if</span> <span class="p">(</span><span class="nx">buildCfg</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">buildCfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">buildCfg</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">buildCfg</span><span class="p">.</span><span class="nx">custBuild</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">steps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">buildCfg</span><span class="p">.</span><span class="nx">custBuild</span><span class="p">);</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
                 <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span>
@@ -222,8 +249,14 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">cfgAggr</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">aggr</span> <span class="o">=</span> <span class="nx">aggr</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">cfgAggr</span><span class="p">);</span>
             <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">cfgCustBuild</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">steps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">cfgBuild</span><span class="p">);</span>
+            <span class="p">}</span>
 
-            <span class="k">return</span> <span class="nx">aggr</span><span class="p">;</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="nx">aggregates</span><span class="o">:</span> <span class="nx">aggr</span><span class="p">,</span>
+                <span class="nx">custBuild</span><span class="o">:</span> <span class="nx">steps</span>
+            <span class="p">};</span>
         <span class="p">}</span>
     <span class="p">});</span>
 </pre></div>
