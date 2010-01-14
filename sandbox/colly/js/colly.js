@@ -1,13 +1,17 @@
+var YArray      = Y.Array,
+    YArray_each = YArray.each,
+    CollectionProto;
+
 // Generic collection
 function Collection() {
     this._construct.apply(this, arguments);
 }
 
-Collection.prototype = {
+CollectionProto = {
     _construct: function ( items ) {
         this._items = Y.Lang.isArray( items ) ?
             items :
-            Y.Array( items, 0, true );
+            YArray( items, 0, true );
     },
 
     item: function ( i ) {
@@ -15,7 +19,7 @@ Collection.prototype = {
     },
 
     each: function ( fn, context ) {
-        Y.Array.each( this._items, function ( item, i ) {
+        YArray_each( this._items, function ( item, i ) {
             item = this.item( i );
 
             return fn.call( context || item, item, i, this );
@@ -25,7 +29,7 @@ Collection.prototype = {
     },
 
     some: function ( fn, context ) {
-        return Y.Array.some( this._items, function ( item, i ) {
+        return YArray.some( this._items, function ( item, i ) {
             item = this.item( i );
 
             return fn.call( context || item, item, i, this );
@@ -33,13 +37,13 @@ Collection.prototype = {
     },
 
     indexOf: function ( needle ) {
-        return Y.Array.indexOf( this._items, needle );
+        return YArray.indexOf( this._items, needle );
     },
 
     filter: function ( validator ) {
         var items = [];
 
-        Y.Array.each( this._items, function ( item, i ) {
+        YArray_each( this._items, function ( item, i ) {
             item = this.item( i );
 
             if ( validator( item ) ) {
@@ -55,7 +59,7 @@ Collection.prototype = {
 
         var items = [];
 
-        Y.Array.each( this._items, function ( item, i ) {
+        YArray_each( this._items, function ( item, i ) {
             if ( i % n === r ) {
                 items.push( item );
             }
@@ -78,7 +82,7 @@ Collection.prototype = {
 
     isEmpty: function () {
         return !this.size();
-    }/*,
+    },
 
     add: function ( item ) {
         this._items.push( item );
@@ -95,11 +99,11 @@ Collection.prototype = {
 
         return this;
     }
-    */
 };
 // Default implementation does not distinguish between public and private
 // item getter
-Collection.prototype._item = Collection.prototype.item;
+CollectionProto._item = CollectionProto.item;
+Collection.prototype  = CollectionProto;
 
 Y.Collection = Collection;
 
@@ -119,7 +123,7 @@ Y.mix( Collection, {
     build: function (o, config, proto, statics) {
 
         function C() {
-            Y.Collection.apply( this, arguments );
+            Collection.apply( this, arguments );
         }
 
         var isFunction = Y.Lang.isFunction,
@@ -133,7 +137,7 @@ Y.mix( Collection, {
         statics = statics || {};
 
         if ( Y.Lang.isArray( whitelist ) ) {
-            whitelist = Y.Array.hash( whitelist );
+            whitelist = YArray.hash( whitelist );
         }
 
         for ( fn in whitelist ) {
@@ -150,10 +154,10 @@ Y.mix( Collection, {
     _addMethod: function ( source, name, dest ) {
 
         dest[name] = function () {
-            var args = Y.Array( arguments, 0, true ),
+            var args = YArray( arguments, 0, true ),
                 ret  = [];
 
-            Y.Array.each( this._items, function ( item, i ) {
+            YArray_each( this._items, function ( item, i ) {
                 item = this._item( i );
 
                 var result = item[name].apply( item, args );
