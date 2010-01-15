@@ -167,9 +167,11 @@ button {
 <script>
 YUI({ filter: 'raw' }).use('anim', 'console', 'test', 'colly-nodelist', function(Y) {
     /* In place hack to replicate node-class, node-style, and node-pluginhost */
-    Y.Array.each(['hasClass','addClass','removeClass','replaceClass','toggleClass', 'setStyle', 'setStyles', 'getStyle', 'getComputedStyle' ], function ( method ) {
-        Y.Collection._addMethod( Y.Node.prototype, method, Y.NodeList.prototype );
-    });
+    Y.NodeList.addMethod( [
+        'hasClass','addClass','removeClass','replaceClass','toggleClass',
+        'setStyle', 'setStyles', 'getStyle', 'getComputedStyle'
+    ] );
+
     Y.NodeList.prototype.plug = function () {
         var args = arguments;
         this.each( function ( node ) {
