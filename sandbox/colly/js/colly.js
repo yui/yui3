@@ -1,19 +1,17 @@
 var YArray      = Y.Array,
     YArray_each = YArray.each,
-    CollectionProto;
+    ArrayListProto;
 
-// Generic collection
-function Collection() {
-    this._construct.apply(this, arguments);
+function ArrayList( items ) {
+    if ( items !== undefined ) {
+        this._items = Y.Lang.isArray( items ) ? items : YArray( items );
+    } else {
+        // ||= to support lazy initialization from augment
+        this._items = this._items || [];
+    }
 }
 
-CollectionProto = {
-    _construct: function ( items ) {
-        this._items = Y.Lang.isArray( items ) ?
-            items :
-            YArray( items, 0, true );
-    },
-
+ArrayListProto = {
     item: function ( i ) {
         return this._items[i];
     },
@@ -54,120 +52,44 @@ CollectionProto = {
         return new this.constructor( items );
     },
 
-    modulus: function ( n, r ) {
-        r = r || 0;
-
-        var items = [];
-
-        YArray_each( this._items, function ( item, i ) {
-            if ( i % n === r ) {
-                items.push( item );
-            }
-        }, this);
-
-        return new this.constructor( items );
-    },
-
-    odd: function () {
-        return this.modulus( 2, 1 );
-    },
-
-    even: function () {
-        return this.modulus( 2 );
-    },
-
     size: function () {
         return this._items.length;
     },
 
     isEmpty: function () {
         return !this.size();
-    },
-
-    add: function ( item ) {
-        this._items.push( item );
-
-        return this;
-    },
-
-    remove: function ( item ) {
-        var i = this.indexOf( item );
-
-        if (i > -1) {
-            this._items.splice(i,1);
-        }
-
-        return this;
     }
 };
 // Default implementation does not distinguish between public and private
 // item getter
-CollectionProto._item = CollectionProto.item;
-Collection.prototype  = CollectionProto;
+ArrayListProto._item = ArrayListProto.item;
+ArrayList.prototype  = ArrayListProto;
 
-Y.Collection = Collection;
+Y.mix( ArrayList, {
 
-Y.mix( Collection, {
+    addMethod: function ( dest, names ) {
 
-    /**
-     * Core factory method for creating collection classes.
-     *
-     * @method build
-     * @param o {Function|Object} The seed constructor function or its prototype
-     * @param config {Object} optional configuration for tweaking class build
-     * @param proto {Object} optional prototype methods (will override)
-     * @param statics {Object} optional static members for the collection class
-     * @return {Function} the list class for the provided constructor
-     * @static
-     */
-    build: function (o, config, proto, statics) {
+        names = YArray( names );
 
-        function C() {
-            Collection.apply( this, arguments );
-        }
+        YArray_each( names, function ( name ) {
+            dest[ name ] = function () {
+                var args = YArray( arguments, 0, true ),
+                    ret  = [];
 
-        var isFunction = Y.Lang.isFunction,
-            whitelist  = (config || {}).whitelist || o,
-            prototype  = {},
-            fn;
+                YArray_each( this._items, function ( item, i ) {
+                    item = this._item( i );
 
-        // Accept an object or constructor
-        o       = isFunction( o ) ? o.prototype : o;
-        proto   = proto   || {};
-        statics = statics || {};
+                    var result = item[ name ].apply( item, args );
 
-        if ( Y.Lang.isArray( whitelist ) ) {
-            whitelist = YArray.hash( whitelist );
-        }
+                    if ( result !== undefined && result !== item ) {
+                        ret.push( result );
+                    }
+                }, this);
 
-        for ( fn in whitelist ) {
-            if ( isFunction( o[fn] ) ) {
-                Collection._addMethod( o, fn, prototype );
-            }
-        }
-
-        return Y.extend( C, Collection,      // superclass
-            Y.mix( prototype, proto, true ), // prototype
-            statics );                       // static members
-    },
-
-    _addMethod: function ( source, name, dest ) {
-
-        dest[name] = function () {
-            var args = YArray( arguments, 0, true ),
-                ret  = [];
-
-            YArray_each( this._items, function ( item, i ) {
-                item = this._item( i );
-
-                var result = item[name].apply( item, args );
-
-                if ( result !== undefined && result !== item ) {
-                    ret.push( result );
-                }
-            }, this);
-
-            return ret.length ? ret : this;
-        };
+                return ret.length ? ret : this;
+            };
+        } );
     }
-});
+} );
+
+Y.ArrayList = ArrayList;
