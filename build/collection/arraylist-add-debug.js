@@ -1,3 +1,5 @@
+YUI.add('arraylist-add', function(Y) {
+
 Y.mix( Y.ArrayList.prototype, {
 
     add: function ( item ) {
@@ -17,3 +19,6 @@ Y.mix( Y.ArrayList.prototype, {
     }
 
 });
+
+
+}, '@VERSION@' );

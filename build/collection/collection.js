@@ -1,4 +1,4 @@
-YUI.add('collection', function(Y) {
+YUI.add('array-extras', function(Y) {
 
 /**
  * Collection utilities beyond what is provided in the YUI core
@@ -132,8 +132,7 @@ A.every = (Native.every) ?
         return Native.every.call(a,f,o);
     } :
     function(a, f, o) {
-        var l = a.length;
-        for (var i = 0; i < l; i=i+1) {
+        for (var i = 0, l = a.length; i < l; i=i+1) {
             if (!f.call(o, a[i], i, a)) {
                 return false;
             }
@@ -212,8 +211,7 @@ A.reduce = (Native.reduce) ?
 * returns true for, or null if it never returns true
 */
 A.find = function(a, f, o) {
-    var l = a.length;
-    for(var i=0; i < l; i++) {
+    for(var i=0, l = a.length; i < l; i++) {
         if (f.call(o, a[i], i, a)) {
             return a[i];
         }
@@ -292,3 +290,149 @@ A.forEach = A.each;
 
 
 }, '@VERSION@' );
+YUI.add('arraylist', function(Y) {
+
+var YArray      = Y.Array,
+    YArray_each = YArray.each,
+    ArrayListProto;
+
+function ArrayList( items ) {
+    if ( items !== undefined ) {
+        this._items = Y.Lang.isArray( items ) ? items : YArray( items );
+    } else {
+        // ||= to support lazy initialization from augment
+        this._items = this._items || [];
+    }
+}
+
+ArrayListProto = {
+    item: function ( i ) {
+        return this._items[i];
+    },
+
+    each: function ( fn, context ) {
+        YArray_each( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            return fn.call( context || item, item, i, this );
+        }, this);
+
+        return this;
+    },
+
+    some: function ( fn, context ) {
+        return YArray.some( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            return fn.call( context || item, item, i, this );
+        }, this);
+    },
+
+    indexOf: function ( needle ) {
+        return YArray.indexOf( this._items, needle );
+    },
+
+    filter: function ( validator ) {
+        var items = [];
+
+        YArray_each( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            if ( validator( item ) ) {
+                items.push( item );
+            }
+        }, this);
+
+        return new this.constructor( items );
+    },
+
+    size: function () {
+        return this._items.length;
+    },
+
+    isEmpty: function () {
+        return !this.size();
+    }
+};
+// Default implementation does not distinguish between public and private
+// item getter
+ArrayListProto._item = ArrayListProto.item;
+ArrayList.prototype  = ArrayListProto;
+
+Y.mix( ArrayList, {
+
+    addMethod: function ( dest, names ) {
+
+        names = YArray( names );
+
+        YArray_each( names, function ( name ) {
+            dest[ name ] = function () {
+                var args = YArray( arguments, 0, true ),
+                    ret  = [];
+
+                YArray_each( this._items, function ( item, i ) {
+                    item = this._item( i );
+
+                    var result = item[ name ].apply( item, args );
+
+                    if ( result !== undefined && result !== item ) {
+                        ret.push( result );
+                    }
+                }, this);
+
+                return ret.length ? ret : this;
+            };
+        } );
+    }
+} );
+
+Y.ArrayList = ArrayList;
+
+
+}, '@VERSION@' );
+YUI.add('arraylist-add', function(Y) {
+
+Y.mix( Y.ArrayList.prototype, {
+
+    add: function ( item ) {
+        this._items.push( item );
+
+        return this;
+    },
+
+    remove: function ( item ) {
+        var i = this.indexOf( item );
+
+        if (i > -1) {
+            this._items.splice(i,1);
+        }
+
+        return this;
+    }
+
+});
+
+
+}, '@VERSION@' );
+YUI.add('array-invoke', function(Y) {
+
+Y.Array.invoke = function ( items, name ) {
+    var args       = Y.Array( arguments, 2, true ),
+        isFunction = Y.Lang.isFunction,
+        ret        = [];
+
+    Y.Array.each( Y.Array( items ), function ( item, i ) {
+        if ( isFunction( item[ name ] ) ) {
+            ret[i] = item[ name ].apply( item, args );
+        }
+    });
+
+    return ret;
+};
+
+
+}, '@VERSION@' );
+
+
+YUI.add('collection', function(Y){}, '@VERSION@' ,{use:['array-extras', 'arraylist', 'arraylist-add', 'array-invoke']});
+

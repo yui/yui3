@@ -1,0 +1,1 @@
+YUI.add("arraylist-add",function(A){A.mix(A.ArrayList.prototype,{add:function(B){this._items.push(B);return this;},remove:function(C){var B=this.indexOf(C);if(B>-1){this._items.splice(B,1);}return this;}});},"@VERSION@");

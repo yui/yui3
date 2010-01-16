@@ -1,3 +1,5 @@
+YUI.add('arraylist', function(Y) {
+
 var YArray      = Y.Array,
     YArray_each = YArray.each,
     ArrayListProto;
@@ -93,3 +95,6 @@ Y.mix( ArrayList, {
 } );
 
 Y.ArrayList = ArrayList;
+
+
+}, '@VERSION@' );

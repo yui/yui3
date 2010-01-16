@@ -1,3 +1,5 @@
+YUI.add('array-invoke', function(Y) {
+
 Y.Array.invoke = function ( items, name ) {
     var args       = Y.Array( arguments, 2, true ),
         isFunction = Y.Lang.isFunction,
@@ -11,3 +13,6 @@ Y.Array.invoke = function ( items, name ) {
 
     return ret;
 };
+
+
+}, '@VERSION@' );
