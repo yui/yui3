@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: collection   (YUI Library)</title>
+	<title>API: collection   arraylist-add.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_collection.html" title="collection">collection</a>
                 
-                
+                 &gt; arraylist-add.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,52 +43,80 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: collection
-                    
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Collection utilities beyond what is provided in the YUI core</span>
+<span class="cm"> * @module collection</span>
+<span class="cm"> * @submodule arraylist-add</span>
+<span class="cm"> */</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * Adds methods add and remove to Y.ArrayList</span>
+<span class="cm"> * @class ArrayList~add</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ArrayList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
 
-                    </h3>
-                    <div class="description summary">
-                        Collection utilities beyond what is provided in the YUI core
+    <span class="cm">/**</span>
+<span class="cm">     * Add a single item to the ArrayList.  Does not prevent duplicates.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method add</span>
+<span class="cm">     * @param item { mixed } Item presumably of the same type as others in the</span>
+<span class="cm">     *                       ArrayList</span>
+<span class="cm">     * @return {ArrayList} the instance</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">item</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="nx">item</span> <span class="p">);</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Removes first or all occurrences of an item to the ArrayList.  If a</span>
+<span class="cm">     * comparitor is not provided, uses itemsAreEqual method to determine</span>
+<span class="cm">     * matches.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method remove</span>
+<span class="cm">     * @param needle { mixed } Item to find and remove from the list</span>
+<span class="cm">     * @param all { Boolean } If true, remove all occurrences</span>
+<span class="cm">     * @param comparitor { Function } optional a/b function to test equivalence</span>
+<span class="cm">     * @return {ArrayList} the instance</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">needle</span><span class="p">,</span> <span class="nx">all</span><span class="p">,</span> <span class="nx">comparitor</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">comparitor</span> <span class="o">=</span> <span class="nx">comparitor</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">itemsAreEqual</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nx">comparitor</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span> <span class="k">this</span><span class="p">,</span> <span class="nx">needle</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span> <span class="nx">i</span> <span class="p">)</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span> <span class="nx">i</span><span class="p">,</span> <span class="mi">1</span> <span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">all</span> <span class="p">)</span> <span class="p">{</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Default comparitor for items stored in this list.  Used by remove().</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method itemsAreEqual</span>
+<span class="cm">     * @param a { mixed } item to test equivalence with</span>
+<span class="cm">     * @param b { mixed } other item to test equivalance</span>
+<span class="cm">     * @return { Boolean } true if items are deemed equivalent</span>
+<span class="cm">     */</span>
+    <span class="nx">itemsAreEqual</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">a</span> <span class="o">===</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">})</span>
+</pre></div>
+
                     </div>
-
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                            <p>This module contains the following classes:</p>
-                            <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Generic ArrayList class for managing lists of items and iterating operations\nover them.  The targeted use for this class is for augmentation onto a\nclass that is responsible for managing multiple instances of another class\n(e.g. NodeList for Nodes).  The recommended use is to augment your class with\nArrayList, then use ArrayList.addMethod to mirror the API of the constituent\nitems on the list's API.\nThe default implementation creates immutable lists, but mutability can be\nprovided via the arraylist-add submodule or by implementing mutation methods\ndirectly on the augmented class's prototype.", "guessedname": "ArrayList", "name": "ArrayList"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Adds methods add and remove to Y.ArrayList", "guessedname": "ArrayList~add", "name": "ArrayList~add"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Adds the following array utilities to the YUI instance\n(Y.Array).  This is in addition to the methods provided\nin the core.", "guessedname": "YUI~array~extras", "name": "YUI~array~extras"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Adds the <code>Y.Array.invoke( items, methodName )</code> utility method.", "guessedname": "YUI~array~invoke", "name": "YUI~array~invoke"}];
-                            </script>
-                            <div id="splash_classList">
-                                <ul>
-                                    <li><a href="ArrayList.html" title="ArrayList" id="class_0">ArrayList</a></li>
-                                    <li><a href="ArrayList~add.html" title="ArrayList~add" id="class_1">ArrayList~add</a></li>
-                                    <li><a href="YUI~array~extras.html" title="YUI~array~extras" id="class_2">YUI~array~extras</a></li>
-                                    <li><a href="YUI~array~invoke.html" title="YUI~array~invoke" id="class_3">YUI~array~invoke</a></li>
-                                </ul>
-                            </div>
-                    </div>
-                    <div class="yui-u">
-                                    <div class="submodules">
-                                        <h4>Submodules:</h4> 
-                                        <dl>
-                                            <dt><code>array-extras</code></dt>
-                                            <dd>Collection utilities beyond what is provided in the YUI core</dd>
-                                            <dt><code>arraylist-add</code></dt>
-                                            <dd>Collection utilities beyond what is provided in the YUI core</dd>
-                                            <dt><code>arraylist</code></dt>
-                                            <dd>Collection utilities beyond what is provided in the YUI core</dd>
-                                            <dt><code>array-invoke</code></dt>
-                                            <dd>Collection utilities beyond what is provided in the YUI core</dd>
-                                        </dl>
-                                    </div>
-
-                        </div>
-                </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -161,7 +189,7 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="array-extras.js.html" title="array-extras.js">array-extras.js</a></li>
-                                <li class=""><a href="arraylist-add.js.html" title="arraylist-add.js">arraylist-add.js</a></li>
+                                <li class="selected"><a href="arraylist-add.js.html" title="arraylist-add.js">arraylist-add.js</a></li>
                                 <li class=""><a href="arraylist.js.html" title="arraylist.js">arraylist.js</a></li>
                                 <li class=""><a href="invoke.js.html" title="invoke.js">invoke.js</a></li>
                         </ul>
