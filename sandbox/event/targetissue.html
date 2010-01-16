@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Event Target Test</title>
+    </head>
+<body>
+<!--
+    <script src="http://yui.yahooapis.com/3.0.0/build/yui/yui.js" type="text/javascript"></script>
+    -->
+    <script src="../../build/yui/yui.js" type="text/javascript"></script>
+
+    <script type="text/javascript" charset="utf-8">
+
+        YUI({filter:"raw"}).use("node", "event-custom-complex", function(Y) {
+
+            function log(m) {
+                Y.get(document.body).append('<div>' + m + '</div>');
+            }
+
+            var et1 = new Y.EventTarget({ emitFacade:true });
+            var et2 = new Y.EventTarget({ emitFacade:true });
+
+            et1.publish("test");
+            et1.NAME = "et1";
+
+            et2.publish("test");                
+            et2.NAME = "et2";
+
+            et1.addTarget(et2);
+
+            et1.on("test", function(e) {
+                log("et1 ON listener, target is: " + e.target.NAME);
+            });
+
+            et1.after("test", function(e) {
+                log("et1 AFTER listener #1, target is: " + e.target.NAME);
+            });
+
+            et2.after("test", function(e) {
+                log("et2 AFTER listener #1, target is: " + e.target.NAME);
+            });
+
+            et1.after("test", function(e) {
+                log("Firing et2's \"test\" event");
+                et2.fire("test");
+            });
+
+            et1.fire("test");
+
+        });
+        
+    </script>
+
+</body>
+</html>

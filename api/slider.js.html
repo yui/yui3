@@ -114,274 +114,10 @@
     <span class="nx">Slider</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Slider</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Slider</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Slider</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * The identity of the widget.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property Slider.NAME</span>
-<span class="cm">     * @type String</span>
-<span class="cm">     * @static</span>
-<span class="cm">     */</span>
-    <span class="nx">NAME</span> <span class="o">:</span> <span class="nx">SLIDER</span><span class="p">,</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Object property names used for respective X and Y axis Sliders (e.g.</span>
-<span class="cm">     * &amp;quot;left&amp;quot; vs. &amp;quot;top&amp;quot; for placing the thumb according to</span>
-<span class="cm">     * its representative value).</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property Slider._AXIS_KEYS</span>
-<span class="cm">     * @type Object</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     * @static</span>
-<span class="cm">     */</span>
-    <span class="nx">_AXIS_KEYS</span> <span class="o">:</span> <span class="p">{</span>
-        <span class="nx">x</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">dim</span>           <span class="o">:</span> <span class="nx">WIDTH</span><span class="p">,</span>
-            <span class="nx">offAxisDim</span>    <span class="o">:</span> <span class="nx">HEIGHT</span><span class="p">,</span>
-            <span class="nx">eventPageAxis</span> <span class="o">:</span> <span class="s1">&#39;pageX&#39;</span><span class="p">,</span>
-            <span class="nx">ddStick</span>       <span class="o">:</span> <span class="s1">&#39;stickX&#39;</span><span class="p">,</span>
-            <span class="nx">xyIndex</span>       <span class="o">:</span> <span class="mi">0</span>
-        <span class="p">},</span>
-        <span class="nx">y</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">dim</span>           <span class="o">:</span> <span class="nx">HEIGHT</span><span class="p">,</span>
-            <span class="nx">offAxisDim</span>    <span class="o">:</span> <span class="nx">WIDTH</span><span class="p">,</span>
-            <span class="nx">eventPageAxis</span> <span class="o">:</span> <span class="s1">&#39;pageY&#39;</span><span class="p">,</span>
-            <span class="nx">ddStick</span>       <span class="o">:</span> <span class="s1">&#39;stickY&#39;</span><span class="p">,</span>
-            <span class="nx">xyIndex</span>       <span class="o">:</span> <span class="mi">1</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Static Object hash used to capture existing markup for progressive</span>
-<span class="cm">     * enhancement.  Keys correspond to config attribute names and values</span>
-<span class="cm">     * are selectors used to inspect the contentBox for an existing node</span>
-<span class="cm">     * structure.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property Slider.HTML_PARSER</span>
-<span class="cm">     * @type Object</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     * @static</span>
-<span class="cm">     */</span>
-    <span class="nx">HTML_PARSER</span> <span class="o">:</span> <span class="p">{</span>
-        <span class="nx">rail</span>       <span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">C_RAIL</span><span class="p">,</span>
-        <span class="nx">thumb</span>      <span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">C_THUMB</span><span class="p">,</span>
-        <span class="nx">thumbImage</span> <span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">C_THUMB_IMAGE</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Static property used to define the default attribute configuration of</span>
-<span class="cm">     * the Widget.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @property Slider.ATTRS</span>
-<span class="cm">     * @type Object</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     * @static</span>
-<span class="cm">     */</span>
-    <span class="nx">ATTRS</span> <span class="o">:</span> <span class="p">{</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Axis upon which the Slider&#39;s thumb moves.  &amp;quot;x&amp;quot; for</span>
-<span class="cm">         * horizontal, &amp;quot;y&amp;quot; for vertical.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute axis</span>
-<span class="cm">         * @type String</span>
-<span class="cm">         * @default &amp;quot;x&amp;quot;</span>
-<span class="cm">         * @writeOnce</span>
-<span class="cm">         */</span>
-        <span class="nx">axis</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>
-            <span class="nx">writeOnce</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewAxis</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">},</span>
-            <span class="nx">setter</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setAxisFn</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Value associated with the left or top most position of the thumb on</span>
-<span class="cm">         * the rail.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute min</span>
-<span class="cm">         * @type Number</span>
-<span class="cm">         * @default 0</span>
-<span class="cm">         */</span>
-        <span class="nx">min</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewMin</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Value associated with the right or bottom most position of the thumb</span>
-<span class="cm">         * on the rail.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute max</span>
-<span class="cm">         * @type Number</span>
-<span class="cm">         * @default 100</span>
-<span class="cm">         */</span>
-        <span class="nx">max</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewMax</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * The current value of the Slider.  This value is interpretted into a</span>
-<span class="cm">         * position for the thumb along the Slider&#39;s rail.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute value</span>
-<span class="cm">         * @type Number</span>
-<span class="cm">         * @default 0</span>
-<span class="cm">         */</span>
-        <span class="nx">value</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewValue</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * The Node representing the Slider&#39;s rail, usually visualized as a</span>
-<span class="cm">         * bar of some sort using a background image, along which the thumb</span>
-<span class="cm">         * moves.  This Node contains the thumb Node.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute rail</span>
-<span class="cm">         * @type Node</span>
-<span class="cm">         * @default null</span>
-<span class="cm">         */</span>
-        <span class="nx">rail</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewRail</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">},</span>
-            <span class="nx">setter</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setRailFn</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;The Node representing the Slider&#39;s thumb, usually visualized as a</span>
-<span class="cm">         * pointer using a contained image Node (see thumbImage).  The current</span>
-<span class="cm">         * value of the Slider is calculated from the centerpoint of this</span>
-<span class="cm">         * Node in relation to the rail Node.  If provided, the thumbImage</span>
-<span class="cm">         * Node is contained within this Node.&lt;/p&gt;</span>
-<span class="cm">         *</span>
-<span class="cm">         * &lt;p&gt;If no thumbImage is provided and the Node passed as the thumb is</span>
-<span class="cm">         * an &lt;code&gt;img&lt;/code&gt; element, the assigned Node will be allocated to</span>
-<span class="cm">         * the thumbImage and the thumb container defaulted.&lt;/p&gt;</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute thumb</span>
-<span class="cm">         * @type Node</span>
-<span class="cm">         * @default null</span>
-<span class="cm">         */</span>
-        <span class="nx">thumb</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewThumb</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">},</span>
-            <span class="nx">setter</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setThumbFn</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;The Node representing the image element to use for the Slider&#39;s</span>
-<span class="cm">         * thumb.&lt;/p&gt;</span>
-<span class="cm">         *</span>
-<span class="cm">         * &lt;p&gt;Alternately, an image URL can be passed and an &lt;code&gt;img&lt;/code&gt;</span>
-<span class="cm">         * Node will be generated accordingly.&lt;/p&gt;</span>
-<span class="cm">         *</span>
-<span class="cm">         * &lt;p&gt;If no thumbImage is provided and the Node passed as the thumb is</span>
-<span class="cm">         * an &lt;code&gt;img&lt;/code&gt; element, the assigned Node will be allocated to</span>
-<span class="cm">         * the thumbImage and the thumb container defaulted.&lt;/p&gt;</span>
-<span class="cm">         *</span>
-<span class="cm">         * &lt;p&gt;If thumbImage is provided but its URL resolves to a 404, a default</span>
-<span class="cm">         * style will be applied to maintain basic functionality.&lt;/p&gt;</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute thumbImage</span>
-<span class="cm">         * @type Node|String</span>
-<span class="cm">         * @default null</span>
-<span class="cm">         */</span>
-        <span class="nx">thumbImage</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewThumbImage</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">},</span>
-            <span class="nx">setter</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setThumbImageFn</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * &lt;p&gt;The width or height of the rail element representing the physical</span>
-<span class="cm">         * space along which the thumb can move.  CSS size values (e.g. &#39;30em&#39;)</span>
-<span class="cm">         * accepted but converted to pixels during render.&lt;/p&gt;</span>
-<span class="cm">         *</span>
-<span class="cm">         * &lt;p&gt;Alternately, but not recommended, this attribute can be left</span>
-<span class="cm">         * unassigned in favor of specifying height or width.&lt;/p&gt;</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute railSize</span>
-<span class="cm">         * @type String</span>
-<span class="cm">         * @default &#39;0&#39;</span>
-<span class="cm">         */</span>
-        <span class="nx">railSize</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewRailSize</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Boolean indicating whether clicking and dragging on the rail will</span>
-<span class="cm">         * trigger thumb movement.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute railEnabled</span>
-<span class="cm">         * @type Boolean</span>
-<span class="cm">         * @default true</span>
-<span class="cm">         */</span>
-        <span class="nx">railEnabled</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="nx">isBoolean</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Like CSS padding, the distance in pixels from the inner top or left</span>
-<span class="cm">         * edge of the rail node within which the thumb can travel.  Negative</span>
-<span class="cm">         * values allow the edge of the thumb to escape the rail node</span>
-<span class="cm">         * boundaries.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute minGutter</span>
-<span class="cm">         * @type Number</span>
-<span class="cm">         * @default 0</span>
-<span class="cm">         */</span>
-        <span class="nx">minGutter</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="nx">isNumber</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Like CSS padding, the distance in pixels from the inner bottom or</span>
-<span class="cm">         * right edge of the rail node within which the thumb can travel.</span>
-<span class="cm">         * Negative values allow the edge of the thumb to escape the rail node</span>
-<span class="cm">         * boundaries.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute maxGutter</span>
-<span class="cm">         * @type Number</span>
-<span class="cm">         * @default 0</span>
-<span class="cm">         */</span>
-        <span class="nx">maxGutter</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="nx">validator</span> <span class="o">:</span> <span class="nx">isNumber</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">});</span>
-
-<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Slider</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span> <span class="p">{</span>
+<span class="c1">// Y.Slider prototype</span>
+<span class="p">{</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Collection of object property names from the appropriate hash set in</span>
@@ -469,10 +205,11 @@
     <span class="nx">initializer</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_key</span> <span class="o">=</span> <span class="nx">Slider</span><span class="p">.</span><span class="nx">_AXIS_KEYS</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;axis&#39;</span><span class="p">)];</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;minChange&#39;</span><span class="p">,</span>      <span class="k">this</span><span class="p">.</span><span class="nx">_afterMinChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;maxChange&#39;</span><span class="p">,</span>      <span class="k">this</span><span class="p">.</span><span class="nx">_afterMaxChange</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;railSizeChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterRailSizeChange</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">({</span>
+            <span class="nx">minChange</span>      <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMinChange</span><span class="p">,</span>
+            <span class="nx">maxChange</span>      <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMaxChange</span><span class="p">,</span>
+            <span class="nx">railSizeChange</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterRailSizeChange</span>
+        <span class="p">});</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Signals the beginning of a thumb drag operation.  Payload includes</span>
@@ -485,7 +222,6 @@
 <span class="cm">         *          &lt;dd&gt;&lt;code&gt;drag:start&lt;/code&gt; event from the managed DD.Drag instance&lt;/dd&gt;</span>
 <span class="cm">         *  &lt;/dl&gt;</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">SLIDE_START</span><span class="p">);</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Signals the end of a thumb drag operation.  Payload includes</span>
@@ -498,7 +234,6 @@
 <span class="cm">         *          &lt;dd&gt;&lt;code&gt;drag:end&lt;/code&gt; event from the managed DD.Drag instance&lt;/dd&gt;</span>
 <span class="cm">         *  &lt;/dl&gt;</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">SLIDE_END</span><span class="p">);</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Communicates a request to synchronize the Slider UI with the</span>
@@ -642,13 +377,15 @@
 <span class="cm">         *  &lt;/dl&gt;</span>
 <span class="cm">         * @preventable _defThumbDragFn</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">THUMB_DRAG</span><span class="p">,</span> <span class="p">{</span><span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defThumbDragFn</span><span class="p">});</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">THUMB_DRAG</span><span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defThumbDragFn</span> <span class="p">});</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_bindThumbDD</span><span class="p">();</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;valueChange&#39;</span><span class="p">,</span>      <span class="k">this</span><span class="p">.</span><span class="nx">_afterValueChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;thumbImageChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterThumbImageChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">DISABLED_CHANGE</span><span class="p">,</span>    <span class="k">this</span><span class="p">.</span><span class="nx">_afterDisabledChange</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">({</span>
+            <span class="nx">valueChange</span>      <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterValueChange</span><span class="p">,</span>
+            <span class="nx">thumbImageChange</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterThumbImageChange</span><span class="p">,</span>
+            <span class="nx">disabledChange</span>   <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterDisabledChange</span>
+        <span class="p">});</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -658,20 +395,20 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_bindThumbDD</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">ddConf</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">node</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">THUMB</span><span class="p">),</span>
-                <span class="nx">bubble</span> <span class="o">:</span> <span class="kc">false</span>
-            <span class="p">},</span>
-            <span class="nx">conConf</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">constrain2node</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RAIL</span><span class="p">)</span>
-            <span class="p">};</span>
-
+        <span class="kd">var</span> <span class="nx">conConf</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">constrain2node</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RAIL</span><span class="p">)</span>
+        <span class="p">};</span>
         <span class="nx">conConf</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">ddStick</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">Drag</span><span class="p">(</span><span class="nx">ddConf</span><span class="p">).</span><span class="nx">plug</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">DDConstrained</span><span class="p">,</span> <span class="nx">conConf</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:start&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDDStartDrag</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:drag&#39;</span><span class="p">,</span>  <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDDDrag</span><span class="p">,</span>      <span class="k">this</span><span class="p">));</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:end&#39;</span><span class="p">,</span>   <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDDEndDrag</span><span class="p">,</span>   <span class="k">this</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">Drag</span><span class="p">({</span>
+            <span class="nx">node</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">THUMB</span><span class="p">),</span>
+            <span class="nx">bubble</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nx">on</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s1">&#39;start&#39;</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDDStartDrag</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span>
+                <span class="s1">&#39;drag&#39;</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDDDrag</span><span class="p">,</span>      <span class="k">this</span><span class="p">),</span>
+                <span class="s1">&#39;end&#39;</span>  <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDDEndDrag</span><span class="p">,</span>   <span class="k">this</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}).</span><span class="nx">plug</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">DDConstrained</span><span class="p">,</span> <span class="nx">conConf</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_initRailDD</span><span class="p">();</span>
     <span class="p">},</span>
@@ -768,8 +505,10 @@
 
             <span class="nx">img</span>     <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">THUMB_IMAGE</span><span class="p">);</span>
             <span class="nx">handler</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_imageLoaded</span><span class="p">,</span><span class="k">this</span><span class="p">,</span><span class="nx">img</span><span class="p">);</span>
-            <span class="nx">img</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">handler</span><span class="p">);</span>
-            <span class="nx">img</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span><span class="nx">handler</span><span class="p">);</span>
+            <span class="nx">img</span><span class="p">.</span><span class="nx">on</span><span class="p">({</span>
+                <span class="nx">load</span> <span class="o">:</span> <span class="nx">handler</span><span class="p">,</span>
+                <span class="nx">error</span><span class="o">:</span> <span class="nx">handler</span>
+            <span class="p">});</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -1525,9 +1264,274 @@
         <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
     <span class="p">}</span>
 
-<span class="p">});</span>
+<span class="p">},</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Slider</span> <span class="o">=</span> <span class="nx">Slider</span><span class="p">;</span>
+<span class="c1">// Y.Slider static properties</span>
+<span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * The identity of the widget.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Slider.NAME</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">NAME</span> <span class="o">:</span> <span class="nx">SLIDER</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Object property names used for respective X and Y axis Sliders (e.g.</span>
+<span class="cm">     * &amp;quot;left&amp;quot; vs. &amp;quot;top&amp;quot; for placing the thumb according to</span>
+<span class="cm">     * its representative value).</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Slider._AXIS_KEYS</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">_AXIS_KEYS</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="nx">x</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">dim</span>           <span class="o">:</span> <span class="nx">WIDTH</span><span class="p">,</span>
+            <span class="nx">offAxisDim</span>    <span class="o">:</span> <span class="nx">HEIGHT</span><span class="p">,</span>
+            <span class="nx">eventPageAxis</span> <span class="o">:</span> <span class="s1">&#39;pageX&#39;</span><span class="p">,</span>
+            <span class="nx">ddStick</span>       <span class="o">:</span> <span class="s1">&#39;stickX&#39;</span><span class="p">,</span>
+            <span class="nx">xyIndex</span>       <span class="o">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="nx">y</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">dim</span>           <span class="o">:</span> <span class="nx">HEIGHT</span><span class="p">,</span>
+            <span class="nx">offAxisDim</span>    <span class="o">:</span> <span class="nx">WIDTH</span><span class="p">,</span>
+            <span class="nx">eventPageAxis</span> <span class="o">:</span> <span class="s1">&#39;pageY&#39;</span><span class="p">,</span>
+            <span class="nx">ddStick</span>       <span class="o">:</span> <span class="s1">&#39;stickY&#39;</span><span class="p">,</span>
+            <span class="nx">xyIndex</span>       <span class="o">:</span> <span class="mi">1</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Static Object hash used to capture existing markup for progressive</span>
+<span class="cm">     * enhancement.  Keys correspond to config attribute names and values</span>
+<span class="cm">     * are selectors used to inspect the contentBox for an existing node</span>
+<span class="cm">     * structure.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Slider.HTML_PARSER</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">HTML_PARSER</span> <span class="o">:</span> <span class="p">{</span>
+        <span class="nx">rail</span>       <span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">C_RAIL</span><span class="p">,</span>
+        <span class="nx">thumb</span>      <span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">C_THUMB</span><span class="p">,</span>
+        <span class="nx">thumbImage</span> <span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">C_THUMB_IMAGE</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Static property used to define the default attribute configuration of</span>
+<span class="cm">     * the Widget.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property Slider.ATTRS</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">ATTRS</span> <span class="o">:</span> <span class="p">{</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Axis upon which the Slider&#39;s thumb moves.  &amp;quot;x&amp;quot; for</span>
+<span class="cm">         * horizontal, &amp;quot;y&amp;quot; for vertical.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute axis</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @default &amp;quot;x&amp;quot;</span>
+<span class="cm">         * @writeOnce</span>
+<span class="cm">         */</span>
+        <span class="nx">axis</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>
+            <span class="nx">writeOnce</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewAxis</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setAxisFn</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Value associated with the left or top most position of the thumb on</span>
+<span class="cm">         * the rail.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute min</span>
+<span class="cm">         * @type Number</span>
+<span class="cm">         * @default 0</span>
+<span class="cm">         */</span>
+        <span class="nx">min</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewMin</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Value associated with the right or bottom most position of the thumb</span>
+<span class="cm">         * on the rail.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute max</span>
+<span class="cm">         * @type Number</span>
+<span class="cm">         * @default 100</span>
+<span class="cm">         */</span>
+        <span class="nx">max</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewMax</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The current value of the Slider.  This value is interpretted into a</span>
+<span class="cm">         * position for the thumb along the Slider&#39;s rail.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute value</span>
+<span class="cm">         * @type Number</span>
+<span class="cm">         * @default 0</span>
+<span class="cm">         */</span>
+        <span class="nx">value</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewValue</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * The Node representing the Slider&#39;s rail, usually visualized as a</span>
+<span class="cm">         * bar of some sort using a background image, along which the thumb</span>
+<span class="cm">         * moves.  This Node contains the thumb Node.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute rail</span>
+<span class="cm">         * @type Node</span>
+<span class="cm">         * @default null</span>
+<span class="cm">         */</span>
+        <span class="nx">rail</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewRail</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setRailFn</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;The Node representing the Slider&#39;s thumb, usually visualized as a</span>
+<span class="cm">         * pointer using a contained image Node (see thumbImage).  The current</span>
+<span class="cm">         * value of the Slider is calculated from the centerpoint of this</span>
+<span class="cm">         * Node in relation to the rail Node.  If provided, the thumbImage</span>
+<span class="cm">         * Node is contained within this Node.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;If no thumbImage is provided and the Node passed as the thumb is</span>
+<span class="cm">         * an &lt;code&gt;img&lt;/code&gt; element, the assigned Node will be allocated to</span>
+<span class="cm">         * the thumbImage and the thumb container defaulted.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute thumb</span>
+<span class="cm">         * @type Node</span>
+<span class="cm">         * @default null</span>
+<span class="cm">         */</span>
+        <span class="nx">thumb</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewThumb</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setThumbFn</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;The Node representing the image element to use for the Slider&#39;s</span>
+<span class="cm">         * thumb.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Alternately, an image URL can be passed and an &lt;code&gt;img&lt;/code&gt;</span>
+<span class="cm">         * Node will be generated accordingly.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;If no thumbImage is provided and the Node passed as the thumb is</span>
+<span class="cm">         * an &lt;code&gt;img&lt;/code&gt; element, the assigned Node will be allocated to</span>
+<span class="cm">         * the thumbImage and the thumb container defaulted.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;If thumbImage is provided but its URL resolves to a 404, a default</span>
+<span class="cm">         * style will be applied to maintain basic functionality.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute thumbImage</span>
+<span class="cm">         * @type Node|String</span>
+<span class="cm">         * @default null</span>
+<span class="cm">         */</span>
+        <span class="nx">thumbImage</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewThumbImage</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">},</span>
+            <span class="nx">setter</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setThumbImageFn</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;The width or height of the rail element representing the physical</span>
+<span class="cm">         * space along which the thumb can move.  CSS size values (e.g. &#39;30em&#39;)</span>
+<span class="cm">         * accepted but converted to pixels during render.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;Alternately, but not recommended, this attribute can be left</span>
+<span class="cm">         * unassigned in favor of specifying height or width.&lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute railSize</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         * @default &#39;0&#39;</span>
+<span class="cm">         */</span>
+        <span class="nx">railSize</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_validateNewRailSize</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Boolean indicating whether clicking and dragging on the rail will</span>
+<span class="cm">         * trigger thumb movement.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute railEnabled</span>
+<span class="cm">         * @type Boolean</span>
+<span class="cm">         * @default true</span>
+<span class="cm">         */</span>
+        <span class="nx">railEnabled</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="nx">isBoolean</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Like CSS padding, the distance in pixels from the inner top or left</span>
+<span class="cm">         * edge of the rail node within which the thumb can travel.  Negative</span>
+<span class="cm">         * values allow the edge of the thumb to escape the rail node</span>
+<span class="cm">         * boundaries.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute minGutter</span>
+<span class="cm">         * @type Number</span>
+<span class="cm">         * @default 0</span>
+<span class="cm">         */</span>
+        <span class="nx">minGutter</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="nx">isNumber</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Like CSS padding, the distance in pixels from the inner bottom or</span>
+<span class="cm">         * right edge of the rail node within which the thumb can travel.</span>
+<span class="cm">         * Negative values allow the edge of the thumb to escape the rail node</span>
+<span class="cm">         * boundaries.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute maxGutter</span>
+<span class="cm">         * @type Number</span>
+<span class="cm">         * @default 0</span>
+<span class="cm">         */</span>
+        <span class="nx">maxGutter</span> <span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nx">validator</span> <span class="o">:</span> <span class="nx">isNumber</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">});</span>
 </pre></div>
 
                     </div>
@@ -1575,6 +1579,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class="selected"><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
@@ -1611,12 +1616,12 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
+
     var ALL_YUI_PROPS = [{"access": "protected", "host": "Slider", "name": "_afterDisabledChange", "url": "Slider.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMaxChange", "url": "Slider.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMinChange", "url": "Slider.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterRailSizeChange", "url": "Slider.html#method__afterRailSizeChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbChange", "url": "Slider.html#method__afterThumbChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterThumbImageChange", "url": "Slider.html#method__afterThumbImageChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterValueChange", "url": "Slider.html#method__afterValueChange", "type": "method"}, {"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_bindThumbDD", "url": "Slider.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertOffsetToValue", "url": "Slider.html#method__convertOffsetToValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_convertValueToOffset", "url": "Slider.html#method__convertValueToOffset", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defPositionThumbFn", "url": "Slider.html#method__defPositionThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defSyncFn", "url": "Slider.html#method__defSyncFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defThumbDragFn", "url": "Slider.html#method__defThumbDragFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_disabled", "url": "Slider.html#property__disabled", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_factor", "url": "Slider.html#property__factor", "type": "property"}, {"access": "", "host": "Slider", "name": "getValue", "url": "Slider.html#method_getValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_handleRailMouseDown", "url": "Slider.html#method__handleRailMouseDown", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_imageLoaded", "url": "Slider.html#method__imageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRail", "url": "Slider.html#method__initRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initRailDD", "url": "Slider.html#method__initRailDD", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumb", "url": "Slider.html#method__initThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initThumbImage", "url": "Slider.html#method__initThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isDisplayNone", "url": "Slider.html#method__isDisplayNone", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoaded", "url": "Slider.html#method__isImageLoaded", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_isImageLoading", "url": "Slider.html#method__isImageLoading", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_key", "url": "Slider.html#property__key", "type": "property"}, {"access": "", "host": "Slider", "name": "max", "url": "Slider.html#config_max", "type": "config"}, {"access": "", "host": "Slider", "name": "maxChange", "url": "Slider.html#event_maxChange", "type": "event"}, {"access": "", "host": "Slider", "name": "maxGutter", "url": "Slider.html#config_maxGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "maxGutterChange", "url": "Slider.html#event_maxGutterChange", "type": "event"}, {"access": "", "host": "Slider", "name": "min", "url": "Slider.html#config_min", "type": "config"}, {"access": "", "host": "Slider", "name": "minChange", "url": "Slider.html#event_minChange", "type": "event"}, {"access": "", "host": "Slider", "name": "minGutter", "url": "Slider.html#config_minGutter", "type": "config"}, {"access": "", "host": "Slider", "name": "minGutterChange", "url": "Slider.html#event_minGutterChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_onDDDrag", "url": "Slider.html#method__onDDDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDEndDrag", "url": "Slider.html#method__onDDEndDrag", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_onDDStartDrag", "url": "Slider.html#method__onDDStartDrag", "type": "method"}, {"access": "", "host": "Slider", "name": "positionThumb", "url": "Slider.html#event_positionThumb", "type": "event"}, {"access": "", "host": "Slider", "name": "rail", "url": "Slider.html#config_rail", "type": "config"}, {"access": "", "host": "Slider", "name": "railChange", "url": "Slider.html#event_railChange", "type": "event"}, {"access": "", "host": "Slider", "name": "railEnabled", "url": "Slider.html#config_railEnabled", "type": "config"}, {"access": "", "host": "Slider", "name": "railEnabledChange", "url": "Slider.html#event_railEnabledChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_railSize", "url": "Slider.html#property__railSize", "type": "property"}, {"access": "", "host": "Slider", "name": "railSize", "url": "Slider.html#config_railSize", "type": "config"}, {"access": "", "host": "Slider", "name": "railSizeChange", "url": "Slider.html#event_railSizeChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_ready", "url": "Slider.html#method__ready", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_refresh", "url": "Slider.html#method__refresh", "type": "method"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_resetDDCacheRegion", "url": "Slider.html#method__resetDDCacheRegion", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_scheduleSync", "url": "Slider.html#method__scheduleSync", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxisFn", "url": "Slider.html#method__setAxisFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setDDGutter", "url": "Slider.html#method__setDDGutter", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setFactor", "url": "Slider.html#method__setFactor", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailFn", "url": "Slider.html#method__setRailFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setRailOffsetXY", "url": "Slider.html#method__setRailOffsetXY", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbFn", "url": "Slider.html#method__setThumbFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbImageFn", "url": "Slider.html#method__setThumbImageFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setThumbOffset", "url": "Slider.html#method__setThumbOffset", "type": "method"}, {"access": "", "host": "Slider", "name": "setValue", "url": "Slider.html#method_setValue", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "protected", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider._AXIS_KEYS", "url": "Slider.html#property_Slider._AXIS_KEYS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider.HTML_PARSER", "url": "Slider.html#property_Slider.HTML_PARSER", "type": "property"}, {"access": "", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_stall", "url": "Slider.html#property__stall", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_stallDisabledChange", "url": "Slider.html#method__stallDisabledChange", "type": "method"}, {"access": "", "host": "Slider", "name": "sync", "url": "Slider.html#event_sync", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumb", "url": "Slider.html#config_thumb", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbChange", "url": "Slider.html#event_thumbChange", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbDrag", "url": "Slider.html#event_thumbDrag", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbImage", "url": "Slider.html#config_thumbImage", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbImageChange", "url": "Slider.html#event_thumbImageChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_thumbOffset", "url": "Slider.html#property__thumbOffset", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_thumbSize", "url": "Slider.html#property__thumbSize", "type": "property"}, {"access": "protected", "host": "Slider", "name": "_uiPositionThumb", "url": "Slider.html#method__uiPositionThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetRailSize", "url": "Slider.html#method__uiSetRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_uiSetThumbSize", "url": "Slider.html#method__uiSetThumbSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewAxis", "url": "Slider.html#method__validateNewAxis", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMax", "url": "Slider.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMin", "url": "Slider.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRail", "url": "Slider.html#method__validateNewRail", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewRailSize", "url": "Slider.html#method__validateNewRailSize", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumb", "url": "Slider.html#method__validateNewThumb", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewThumbImage", "url": "Slider.html#method__validateNewThumbImage", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewValue", "url": "Slider.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "Slider", "name": "value", "url": "Slider.html#config_value", "type": "config"}, {"access": "", "host": "Slider", "name": "valueChange", "url": "Slider.html#event_valueChange", "type": "event"}];
-    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

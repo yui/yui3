@@ -60,7 +60,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a renodenode or viewport. It anode* supports tick based moves and XY axis constraints.
+                        Plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a node or viewport. It supports tick based moves and XY axis constraints.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -493,7 +493,7 @@
                                             <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_before">                                        
-                                            <a class=" deprecated" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class=" deprecated">,</span>
+                                            <a class="" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
                                             <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
@@ -1430,6 +1430,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
@@ -1538,12 +1539,12 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
+
     var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.DragConstrained", "name": "align", "url": "Plugin.DragConstrained.html#method_align", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_cacheRegion", "url": "Plugin.DragConstrained.html#method__cacheRegion", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "cacheRegion", "url": "Plugin.DragConstrained.html#config_cacheRegion", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "cacheRegionChange", "url": "Plugin.DragConstrained.html#event_cacheRegionChange", "type": "event"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_checkRegion", "url": "Plugin.DragConstrained.html#method__checkRegion", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_checkTicks", "url": "Plugin.DragConstrained.html#method__checkTicks", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "con", "url": "Plugin.DragConstrained.html#property_con", "type": "property"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2node", "url": "Plugin.DragConstrained.html#config_constrain2node", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2nodeChange", "url": "Plugin.DragConstrained.html#event_constrain2nodeChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2region", "url": "Plugin.DragConstrained.html#config_constrain2region", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2regionChange", "url": "Plugin.DragConstrained.html#event_constrain2regionChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2view", "url": "Plugin.DragConstrained.html#config_constrain2view", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "constrain2viewChange", "url": "Plugin.DragConstrained.html#event_constrain2viewChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "getRegion", "url": "Plugin.DragConstrained.html#method_getRegion", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "gutter", "url": "Plugin.DragConstrained.html#config_gutter", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "gutterChange", "url": "Plugin.DragConstrained.html#event_gutterChange", "type": "event"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_handleStart", "url": "Plugin.DragConstrained.html#method__handleStart", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "inRegion", "url": "Plugin.DragConstrained.html#method_inRegion", "type": "method"}, {"access": "private", "host": "Plugin.DragConstrained", "name": "_regionCache", "url": "Plugin.DragConstrained.html#property__regionCache", "type": "property"}, {"access": "", "host": "Plugin.DragConstrained", "name": "resetCache", "url": "Plugin.DragConstrained.html#method_resetCache", "type": "method"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickX", "url": "Plugin.DragConstrained.html#config_stickX", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickXChange", "url": "Plugin.DragConstrained.html#event_stickXChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickY", "url": "Plugin.DragConstrained.html#config_stickY", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "stickYChange", "url": "Plugin.DragConstrained.html#event_stickYChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickX", "url": "Plugin.DragConstrained.html#config_tickX", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXArray", "url": "Plugin.DragConstrained.html#config_tickXArray", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXArrayChange", "url": "Plugin.DragConstrained.html#event_tickXArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickXChange", "url": "Plugin.DragConstrained.html#event_tickXChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickY", "url": "Plugin.DragConstrained.html#config_tickY", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYArray", "url": "Plugin.DragConstrained.html#config_tickYArray", "type": "config"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYArrayChange", "url": "Plugin.DragConstrained.html#event_tickYArrayChange", "type": "event"}, {"access": "", "host": "Plugin.DragConstrained", "name": "tickYChange", "url": "Plugin.DragConstrained.html#event_tickYChange", "type": "event"}];
-    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

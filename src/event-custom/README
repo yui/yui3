@@ -1,6 +1,12 @@
 YUI Custom Events
     Custom event system
 
+3.1.0
+    - Wildcard prefix subscriptions supported: Y.on('*:click', ... will be notified
+      when 'tree:click', 'tab:click', etc are fired.
+    - EventTarget::detach returns the event target like the API docs 
+      already stated.
+
 3.0.0
     - Broken into core base and complex modules.
     - broadcast works for simple events.

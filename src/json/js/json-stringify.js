@@ -42,9 +42,11 @@ var _JSON     = Y.config.win.JSON,
     COLON     = ':',
     COLON_SP  = ': ',
     QUOTE     = '"',
+
     // Regex used to capture characters that need escaping before enclosing
     // their containing string in quotes.
     _SPECIAL_CHARS = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+
     // Character substitution map for common escapes and special characters.
     _CHARS = {
         '\b': '\\b',

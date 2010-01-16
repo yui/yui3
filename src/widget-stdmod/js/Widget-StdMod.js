@@ -37,7 +37,7 @@
         BodyChange = "bodyContentChange",
         FooterChange = "footerContentChange",
         FillHeightChange = "fillHeightChange",
-        HeightChange = "HeightChange",        
+        HeightChange = "heightChange",        
         ContentUpdate = "contentUpdate",
 
         RENDERUI = "renderUI",
@@ -589,8 +589,8 @@
         },
 
         /**
-         * Helper method to query the rendered contents of the contentBox to find the
-         * node for the given section if it exists.
+         * Helper method to to find the rendered node for the given section,
+         * if it exists.
          * 
          * @method _findStdModSection
          * @private

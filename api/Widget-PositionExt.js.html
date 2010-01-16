@@ -305,7 +305,7 @@
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VIEWPORT_REGION</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REGION</span><span class="p">);</span>
                     <span class="p">}</span>
@@ -491,6 +491,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
@@ -527,12 +528,12 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
+
     var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPositionExt", "name": "_afterAlignChange", "url": "WidgetPositionExt.html#method__afterAlignChange", "type": "method"}, {"access": "", "host": "WidgetPositionExt", "name": "align", "url": "WidgetPositionExt.html#method_align", "type": "method"}, {"access": "", "host": "WidgetPositionExt", "name": "align", "url": "WidgetPositionExt.html#config_align", "type": "config"}, {"access": "", "host": "WidgetPositionExt", "name": "alignChange", "url": "WidgetPositionExt.html#event_alignChange", "type": "event"}, {"access": "protected", "host": "WidgetPositionExt", "name": "_bindUIStack", "url": "WidgetPositionExt.html#method__bindUIStack", "type": "method"}, {"access": "", "host": "WidgetPositionExt", "name": "centered", "url": "WidgetPositionExt.html#method_centered", "type": "method"}, {"access": "", "host": "WidgetPositionExt", "name": "centered", "url": "WidgetPositionExt.html#config_centered", "type": "config"}, {"access": "", "host": "WidgetPositionExt", "name": "centeredChange", "url": "WidgetPositionExt.html#event_centeredChange", "type": "event"}, {"access": "private", "host": "WidgetPositionExt", "name": "_doAlign", "url": "WidgetPositionExt.html#method__doAlign", "type": "method"}, {"access": "protected", "host": "WidgetPositionExt", "name": "_setAlignCenter", "url": "WidgetPositionExt.html#method__setAlignCenter", "type": "method"}, {"access": "protected", "host": "WidgetPositionExt", "name": "_syncUIPosExtras", "url": "WidgetPositionExt.html#method__syncUIPosExtras", "type": "method"}, {"access": "protected", "host": "WidgetPositionExt", "name": "_uiSetAlign", "url": "WidgetPositionExt.html#method__uiSetAlign", "type": "method"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.ATTRS", "url": "WidgetPositionExt.html#property_WidgetPositionExt.ATTRS", "type": "property"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.BC", "url": "WidgetPositionExt.html#property_WidgetPositionExt.BC", "type": "property"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.BL", "url": "WidgetPositionExt.html#property_WidgetPositionExt.BL", "type": "property"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.BR", "url": "WidgetPositionExt.html#property_WidgetPositionExt.BR", "type": "property"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.CC", "url": "WidgetPositionExt.html#property_WidgetPositionExt.CC", "type": "property"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.LC", "url": "WidgetPositionExt.html#property_WidgetPositionExt.LC", "type": "property"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.RC", "url": "WidgetPositionExt.html#property_WidgetPositionExt.RC", "type": "property"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.TC", "url": "WidgetPositionExt.html#property_WidgetPositionExt.TC", "type": "property"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.TL", "url": "WidgetPositionExt.html#property_WidgetPositionExt.TL", "type": "property"}, {"access": "", "host": "WidgetPositionExt", "name": "WidgetPositionExt.TR", "url": "WidgetPositionExt.html#property_WidgetPositionExt.TR", "type": "property"}];
-    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

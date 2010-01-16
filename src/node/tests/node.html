@@ -3,16 +3,7 @@
 <head>
 <title>Node Test Suite</title>
 
-<link type="text/css" rel="stylesheet" href="../../../../yui2/build/logger/assets/logger.css">
-<link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
-
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-
-<script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/event/event.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/logger/logger-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/yuitest/yuitest.js"></script>
 
 <style type="text/css">
 body {
@@ -70,6 +61,15 @@ body {
 button {
     display:block;
 }
+
+.yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+    background: #070;
+    color: #fff;
+}
+.yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+    background: #700;
+    color: #fff;
+}
 </style>
 
 </head>
@@ -121,16 +121,18 @@ button {
             <option>baz</option>
         </select>
     </form>
-    <div id="test-nodes"> <ul> <li>item 1</li>
+    <div id="test-nodes">
+        <ul>
+            <li>item 1</li>
             <li>item 2</li>
             <li>item 3</li>
             <li>item 4</li>
         </ul>
         <ol>
-            <li>item 1</li>
+            <li class="bar">item 1</li>
             <li>item 2</li>
             <li>item 3</li>
-            <li>item 4</li>
+            <li class="bar">item 4</li>
         </ol>
     </div>
 
@@ -146,18 +148,26 @@ button {
     <h2>test</h2>
 </div>
 
+<ol id="test-swap">
+    <li>item 1</li>
+    <li>item 2</li>
+    <li>item 3</li>
+    <li>item 4</li>
+</ol>
+
 <div id="_funky:id{$400}">
     <h2>test</h2>
 </div>
+
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim', function(Y) {
-    var tool = YAHOO.tool,
-    suite = new tool.TestSuite("yuisuite");
+YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', function(Y) {
+    var Assert = Y.Assert,
+        ArrayAssert = Y.ArrayAssert,
+        suite = new Y.Test.Suite("yuisuite");
 
-    var Assert = YAHOO.util.Assert;
-    var ArrayAssert = YAHOO.util.ArrayAssert;
-    var logger = new tool.TestLogger('yui-log', { height: '800px', fontSize: '100%' });
+    window.Y = Y; // export Y global for Selenium
+    new Y.Console({node: '#yui-log', height: '80%' }).render('#yui-log');
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -165,7 +175,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
     var $ = Y.Selector.query;
 
-    suite.add( new tool.TestCase({
+    suite.add( new Y.Test.Case({
         name: 'Y.Node Instance',
 
         test_get: function() {
@@ -214,7 +224,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual(2, Y.all('form').size(), 'Y.get("form").size()');
             Assert.areEqual('FORM', Y.all('form').item(1).get('tagName'), 'Y.get("form").item(1)');
 
-            Assert.areEqual(1, Y.all('.bar').size(), 'Y.get(".bar")');
+            Assert.areEqual(3, Y.all('.bar').size(), 'Y.get(".bar")');
             Assert.areNotEqual(nodes, Y.all('#test-nodes *'), 'nodes === Y.all("#test-nodes")');
             Assert.areEqual(nodes.size(), Y.all('#test-nodes *').size(), 'nodes.size() === Y.all("#test-nodes").size()'); 
 
@@ -265,11 +275,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
         },
 
         test_indexOf: function() {
-            Assert.areEqual(0, Y.all('div').indexOf(Y.get('#test-append')),
-                "Y.all('div').indexOf(Y.get('#test-append'))");
+            Assert.areEqual(0, Y.all('body').indexOf(Y.get('body')),
+                "Y.all('body').indexOf(Y.get('body'))");
 
-            Assert.areEqual(1, Y.all('div').indexOf(Y.get('#test-xy')),
-                "Y.all('div').indexOf(Y.get('#test-xy'))");
+            Assert.areEqual(0, Y.all('div').indexOf(Y.one(document.getElementsByTagName('div')[0])),
+                "Y.all('div').indexOf(Y.one(document.getElementsByTagName('div')[0]))");
 
             Assert.areEqual(-1, Y.all('div').indexOf(Y.get('#test-')),
                 "Y.all('div').indexOf(Y.get('#test-'))");
@@ -429,6 +439,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             var parent = Y.Node.get(element.parentNode);
             var node = Y.Node.get('#test-prop');
 
+            Assert.isTrue(node.hasMethod('appendChild'), "node.hasMethod('appendChild')");
             //Assert.isTrue(element === Y.get(node), 'element === Y.get(node)');
             Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName'); 
             var insertNode = document.createElement('div');
@@ -487,6 +498,9 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.isNull(node.ancestor(function(el) {
                 return el.getAttribute('foo') !== '';
             }), 'ancestor');
+
+            Assert.areEqual(node.get('parentNode'), node.ancestor('div'));
+            Assert.areEqual(node, node.ancestor('div', true));
             Assert.areEqual('test-class', node.previous().get('id'), 'node.previous()');
 
             Assert.isTrue(Y.get(document.body).inDoc(document));
@@ -498,7 +512,13 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.isTrue(node.hasAttribute('id'), 'node.hasAttribute("id")');
             Assert.isTrue(node.hasAttribute('title'), 'node.hasAttribute("title")');
             Assert.isFalse(node.hasAttribute('foo'), 'node.hasAttribute("foo")');
-
+            Assert.isTrue(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex")');
+            node.removeAttribute('tabIndex');
+            Assert.isFalse(node.hasAttribute('tabIndex'), 'node.hasAttribute("tabIndex") (false)');
+            /*
+            Assert.areEqual(node.getAttribute('tabIndex'), node.get('tabIndex'),
+                "node.getAttribute('tabIndex') === node.get('tabIndex')");
+                */
             
             Assert.isFalse(Y.get('body').hasAttribute('title'), 'body.hasAttribute("title")');
             Assert.areEqual('0', Y.get('select[name=test-select] option:nth-child(1)').getAttribute('value'), 'option1.getAttribute("value") (from innerText)');
@@ -528,8 +548,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Assert.areEqual(document.documentElement.scrollLeft, newNode.get('docScrollX'), 'newNode.get("docScrollX")');
             Assert.areEqual(document.documentElement.scrollTop, node.get('docScrollY'), 'node.get("docScrollY")');
 
+            node = Y.one('#test-xy');
             node.setXY([100, 100]);
-            ArrayAssert.itemsAreEqual([100, 100], node.getXY(), 'Node.getXY("foo", "bar")');
+            var xy = node.getXY();
+            var x = Math.round(xy[0]);
+            var y = Math.round(xy[1]);
+            ArrayAssert.itemsAreEqual([100, 100], [x, y], 'Node.getXY("foo", "bar")');
         },
 
         test_region: function() {
@@ -570,6 +594,25 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
                 Assert.isFalse(n.hasClass('bar'));
             });
 
+        },
+
+        test_toggle: function() {
+            var node = Y.one('#test-class');
+
+            node.toggleClass('foo');
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo');
+            Assert.isFalse(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo', false);
+            Assert.isFalse(node.hasClass('foo'), "node.toggleClass('foo', false)");
+
+            node.toggleClass('foo');
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo')");
+
+            node.toggleClass('foo', true);
+            Assert.isTrue(node.hasClass('foo'), "node.toggleClass('foo', true)");
         },
 
         test_setStyle: function() {
@@ -899,6 +942,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
 
             node.remove();
             Assert.isTrue(parent !== domNode.parentNode, 'node.remove()');
+
+            // ensure remove doesnt fail when no parent
+            node = Y.Node.create('<div/>');
+            node.remove();
         },
 
         test_replace: function() {
@@ -955,11 +1002,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             Y.all('input').each(function(n) {
                 Assert.areEqual(undefined, n.fx, "Y.all('input').unplug(Y.Plugin.NodeFX)");
             });
-        }
-    }));
-
-    suite.add( new tool.TestCase({
-        name: 'Document Node',
+        },
 
         test_props: function() {
             var mask = document.createElement('div');
@@ -1013,24 +1056,66 @@ YUI({base: '../../../build/', filter: 'raw'}).use('node', 'selector-css3', 'anim
             ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
                 Y.one(node).all('h2')._nodes,
                 "Y.one(Y.DOM.byId('_funky:id{$400}')).all(h2)");
+        },
+
+        test_isEmpty: function() {
+            Assert.isFalse(Y.all('input').isEmpty());
+            Assert.isTrue(Y.all('.nomatch').isEmpty());
+        },
+
+        test_siblings: function() {
+            var parent = Y.one('#test-nodes > ol'),
+                children = parent.get('children');
+
+            ArrayAssert.itemsAreEqual(
+                [children.item(0)._node, children.item(1)._node, children.item(3)._node],
+                children.item(2).siblings()._nodes,
+                "children.item(2).siblings()"
+            );
+
+            ArrayAssert.itemsAreEqual(
+                [children.item(0)._node, children.item(1)._node, children.item(3)._node],
+                children.item(2).siblings('li')._nodes,
+                "children.item(2).siblings('li')"
+            );
+
+            children.addClass('bar');
+            children.item(1).removeClass('bar');
+
+            ArrayAssert.itemsAreEqual(
+                [children.item(0)._node, children.item(3)._node],
+                children.item(2).siblings('li.bar')._nodes,
+                "children.item(2).siblings('li.bar')"
+            );
+        },
+
+        test_swap: function() {
+            var elements = Y.DOM.byId('test-swap').getElementsByTagName('li'),
+                nodes = Y.all('#test-swap li');
+
+            Assert.areEqual(elements[0], nodes.item(0)._node);
+
+            nodes.item(0).swap(nodes.item(3));
+            Assert.areEqual(elements[0], nodes.item(3)._node, "nodes.item(0).swap(nodes.item(3))");
+
+            nodes.item(0).swap(nodes.item(3));
+            Assert.areEqual(elements[0], nodes.item(0)._node);
+            Assert.areEqual(elements[3], nodes.item(3)._node);
+
+            nodes.item(1).swap(nodes.item(2));
+            Assert.areEqual(elements[1], nodes.item(2)._node);
+            nodes.item(1).swap(nodes.item(2));
+            Assert.areEqual(elements[1], nodes.item(1)._node);
+            Assert.areEqual(elements[2], nodes.item(2)._node);
         }
     })); 
 
-    suite.add( new tool.TestCase({
-        name: 'Instance Y.NodeExtras',
-
-        test_methods: function() {
-            var node = byId('test-extras');
-            var element = Y.Node.get('#test-extras');
-        }
-
-    })); 
-    tool.TestRunner.add(suite);
+    Y.Test.Runner.add(suite);
 
     // allow window scroll event to happen post-onload
     Y.on('load', function() {
         setTimeout(function() {
-            tool.TestRunner.run();
+            Y.Test.Runner.run();
         }, 1);
     }, window);
 });

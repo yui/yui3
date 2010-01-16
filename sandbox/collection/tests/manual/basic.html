@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+  <title>Test Page</title>
+</head>
+<body class="yui-skin-sam">
+<div class="markup">
+  <p><input type="checkbox" name="a" id="a"> <label for="a">A</label></p>
+  <p><input type="checkbox" name="b" id="b"> <label for="b">B</label></p>
+  <p><input type="checkbox" name="c" id="c"> <label for="c">C</label></p>
+</div>
+<button type="button" id="see">getSelected()</button>
+<button type="button" id="change">deselect()</button>
+
+<script src="/yui3/build/yui/yui.js"></script>
+<script src="colly.js"></script>
+<!--script src="http://yui.yahooapis.com/3.0.0/build/yui/yui.js"></script-->
+<script>
+
+YUI({
+    filter: 'raw'
+}).use('node','base','colly',function (Y) {
+
+function Item() {
+    Item.superclass.constructor.apply(this, arguments);
+}
+Y.extend(Item, Y.Base, {
+    isSelected: function () {
+        return this.get('selected');
+    },
+    select: function () {
+        this.get('node').set('checked', true);
+        this.set('selected', true);
+    },
+    deselect: function () {
+        this.get('node').set('checked', false);
+        this.set('selected', false);
+    },
+    initializer: function () {
+        var n = this.get('node');
+
+        this.setAttrs({
+            name: n.get('name'),
+            selected: n.get('checked')
+        });
+
+        n.on('click', function (e) {
+            this.set('selected', e.target.get('checked'));
+        },this);
+    }
+}, {
+    NAME: 'item',
+    ATTRS: {
+        node: { setter: function (v) { return Y.one(v); } },
+        name: {},
+        selected: { value: false }
+    }
+});
+
+function Container() {
+    Container.superclass.constructor.apply(this, arguments);
+}
+Y.extend(Container, Y.Base, {
+    getSelected: function () {
+        var items = this.get('items'),
+            sel = [],
+            i;
+
+        for (i = items.length - 1; i >= 0; --i) {
+            if (items[i].get('selected')) {
+                sel.unshift(items[i]);
+            }
+        }
+
+        return Y.collection(sel);
+    }
+},{
+    NAME: 'container',
+    ATTRS: {
+        items: {}
+    }
+});
+
+var c = new Container({
+    items: [
+        new Item({ node: '#a' }),
+        new Item({ node: '#b' }),
+        new Item({ node: '#c' })
+    ]
+});
+
+Y.one('#see').on('click', function (e) {
+    console.log(c.getSelected().get('name'));
+});
+
+Y.one('#change').on('click', function (e) {
+    console.log(c.getSelected().deselect());
+});
+
+});
+</script>
+</body>
+</html>

@@ -1,12 +1,12 @@
 YUI.add('dd-drop', function(Y) {
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Provides the ability to create a Drop Target.
      * @module dd
      * @submodule dd-drop
      */     
     /**
-     * This class provides the ability to create a Drop Target.
+     * Provides the ability to create a Drop Target.
      * @class Drop
      * @extends Base
      * @constructor
@@ -77,7 +77,7 @@ YUI.add('dd-drop', function(Y) {
         */        
         node: {
             setter: function(node) {
-                var n = Y.Node.get(node);
+                var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
@@ -145,6 +145,28 @@ YUI.add('dd-drop', function(Y) {
     };
 
     Y.extend(Drop, Y.Base, {
+        /**
+        * @method addToGroup
+        * @description Add this Drop instance to a group, this should be used for on-the-fly group additions.
+        * @param {String} g The group to add this Drop Instance to.
+        * @return {Self}
+        * @chainable
+        */
+        addToGroup: function(g) {
+            this._groups[g] = true;
+            return this;
+        },
+        /**
+        * @method removeFromGroup
+        * @description Remove this Drop instance from a group, this should be used for on-the-fly group removals.
+        * @param {String} g The group to remove this Drop Instance from.
+        * @return {Self}
+        * @chainable
+        */
+        removeFromGroup: function(g) {
+            delete this._groups[g];
+            return this;
+        },
         /**
         * @private
         * @method _createEvents

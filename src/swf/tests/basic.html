@@ -32,13 +32,20 @@ var params = {version: "9.0.115",
 			  {flashvar1: "One word", flashvar2: "A word & another", flashvar3: "Three words - 100% done & done"}
 			 };
 
-var newswf = new Y.SWF("#testdiv", "assets/Simple.swf", params);
-newswf.on("swfReady", testFlash);
+var newswf = new Y.SWF("#testdiv", "assets/Simple.swf?x=" + Math.floor(Math.random()*100000), params);
+newswf.on("swfReady", talkToFlash);
 
 
-function testFlash () {
-	newswf.callSWF("addText", ["Hello world\n"]);
+function talkToFlash (e) {
+	newswf.callSWF("addText", ["\nExternalInterface bridge is working.\n"]);
+	
+	newswf.createInstance("mystr", "String", ["Hello world"]);
+	newswf.exposeMethod("mystr", "charAt", "mystr_charAt");
+	
+	alert(newswf.callSWF("mystr_charAt", [3]));
+	
 }
+
 });
 
 </script>

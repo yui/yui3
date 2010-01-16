@@ -48,7 +48,7 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Provides an extension enabling a Widget to be a child of another Widget.</span>
+<span class="cm"> * Extension enabling a Widget to be a child of another Widget.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @module widget-child</span>
 <span class="cm"> */</span>
@@ -105,15 +105,15 @@
         <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             
             <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">),</span>
-                <span class="nx">items</span><span class="p">,</span>
+                <span class="nx">children</span><span class="p">,</span>
                 <span class="nx">index</span><span class="p">;</span>
             
             <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
                 
-                <span class="nx">items</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;items&quot;</span><span class="p">);</span>
+                <span class="nx">children</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;children&quot;</span><span class="p">);</span>
                 
-                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">items</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="o">==</span> <span class="nx">items</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="o">==</span> <span class="nx">children</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
                         <span class="nx">index</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
                         <span class="k">break</span><span class="p">;</span>
                     <span class="p">}</span>
@@ -194,12 +194,12 @@
 
 <span class="nx">Child</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
 
-    <span class="c1">//  Override of Widget&#39;s implementation of _getRootNode() to ensure that </span>
+    <span class="c1">//  Override of Widget&#39;s implementation of _getUIEventNode() to ensure that </span>
     <span class="c1">//  all event listeners are bound to the Widget&#39;s topmost DOM element.</span>
     <span class="c1">//  This ensures that the firing of each type of Widget UI event (click,</span>
     <span class="c1">//  mousedown, etc.) is facilitated by a single, top-level, delegated DOM</span>
     <span class="c1">//  event listener.</span>
-    <span class="nx">_getRootNode</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">_getUIEventNode</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     
         <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;root&quot;</span><span class="p">),</span>
             <span class="nx">returnVal</span><span class="p">;</span>
@@ -256,7 +256,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">circular</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">sibling</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">item</span><span class="p">((</span><span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;items&quot;</span><span class="p">).</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span>
+            <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">item</span><span class="p">((</span><span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;children&quot;</span><span class="p">).</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">sibling</span><span class="p">;</span> 
@@ -435,6 +435,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
@@ -471,12 +472,12 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
+
     var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetChild", "name": "_afterChildSelectedChange", "url": "WidgetChild.html#method__afterChildSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_bindUIChild", "url": "WidgetChild.html#method__bindUIChild", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "depth", "url": "WidgetChild.html#config_depth", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "depthChange", "url": "WidgetChild.html#event_depthChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "index", "url": "WidgetChild.html#config_index", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "indexChange", "url": "WidgetChild.html#event_indexChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "isRoot", "url": "WidgetChild.html#method_isRoot", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "next", "url": "WidgetChild.html#method_next", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "parent", "url": "WidgetChild.html#config_parent", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "parentChange", "url": "WidgetChild.html#event_parentChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "previous", "url": "WidgetChild.html#method_previous", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "root", "url": "WidgetChild.html#config_root", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "rootChange", "url": "WidgetChild.html#event_rootChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "selected", "url": "WidgetChild.html#config_selected", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "selectedChange", "url": "WidgetChild.html#event_selectedChange", "type": "event"}, {"access": "protected", "host": "WidgetChild", "name": "_syncUIChild", "url": "WidgetChild.html#method__syncUIChild", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_uiSetChildSelected", "url": "WidgetChild.html#method__uiSetChildSelected", "type": "method"}];
-    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

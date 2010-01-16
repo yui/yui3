@@ -10,7 +10,8 @@ YUI.add('event-custom-complex', function(Y) {
 
 (function() {
 
-var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype;
+var FACADE, FACADE_KEYS, CEProto = Y.CustomEvent.prototype,
+    ETProto = Y.EventTarget.prototype;
 
 /**
  * Wraps and protects a custom event for use when emitFacade is set to true.
@@ -108,7 +109,7 @@ Y.EventFacade = function(e, currentTarget) {
 };
 
 CEProto.fireComplex = function(args) {
-    var es = Y.Env._eventstack, ef, q, queue, ce, ret, events;
+    var es = Y.Env._eventstack, ef, q, queue, ce, ret, events, subs;
 
     if (es) {
         // queue this event if the current item in the queue bubbles
@@ -129,6 +130,8 @@ CEProto.fireComplex = function(args) {
         };
         es = Y.Env._eventstack;
     }
+
+    subs = this.getSubs();
 
     this.stopped = 0;
     this.prevented = 0;
@@ -166,8 +169,10 @@ CEProto.fireComplex = function(args) {
         args.unshift(ef);
     }
 
-    if (this.hasSubscribers) {
-        this._procSubs(Y.merge(this.subscribers), args, ef);
+    // if (subCount) {
+    if (subs[0]) {
+        // this._procSubs(Y.merge(this.subscribers), args, ef);
+        this._procSubs(subs[0], args, ef);
     }
 
     // bubble if this is hosted in an event target and propagation has not been stopped
@@ -192,8 +197,10 @@ CEProto.fireComplex = function(args) {
 
     // process after listeners.  If the default behavior was
     // prevented, the after events don't fire.
-    if (this.hasAfters && !this.prevented && this.stopped < 2) {
-        this._procSubs(Y.merge(this.afters), args, ef);
+    // if (this.afterCount && !this.prevented && this.stopped < 2) {
+    if (subs[1] && !this.prevented && this.stopped < 2) {
+        // this._procSubs(Y.merge(this.afters), args, ef);
+        this._procSubs(subs[1], args, ef);
     }
 
     if (es.id === this.id) {
@@ -249,7 +256,10 @@ CEProto._getFacade = function() {
     // update the details field with the arguments
     // ef.type = this.type;
     ef.details = this.details;
-    ef.target = this.target;
+
+    // use the original target when the event bubbled to this target
+    ef.target = this.originalTarget || this.target;
+
     ef.currentTarget = this.currentTarget;
     ef.stopped = 0;
     ef.prevented = 0;
@@ -310,41 +320,77 @@ CEProto.halt = function(immediate) {
 };
 
 /**
+ * Registers another EventTarget as a bubble target.  Bubble order
+ * is determined by the order registered.  Multiple targets can
+ * be specified.
+ *
+ * Events can only bubble if emitFacade is true.
+ *
+ * Included in the event-custom-complex submodule.
+ *
+ * @method addTarget
+ * @param o {EventTarget} the target to add
+ * @for EventTarget
+ */
+ETProto.addTarget = function(o) {
+    this._yuievt.targets[Y.stamp(o)] = o;
+    this._yuievt.hasTargets = true;
+};
+
+/**
+ * Removes a bubble target
+ * @method removeTarget
+ * @param o {EventTarget} the target to remove
+ * @for EventTarget
+ */
+ETProto.removeTarget = function(o) {
+    delete this._yuievt.targets[Y.stamp(o)];
+};
+
+/**
  * Propagate an event.  Requires the event-custom-complex module.
  * @method bubble
  * @param evt {Event.Custom} the custom event to propagate
  * @return {boolean} the aggregated return value from Event.Custom.fire
  * @for EventTarget
  */
-Y.EventTarget.prototype.bubble = function(evt, args, target) {
+ETProto.bubble = function(evt, args, target) {
 
     var targs = this._yuievt.targets, ret = true,
-        t, type, ce, i, bc;
+        t, type = evt && evt.type, ce, i, bc, ce2,
+        originalTarget = target || (evt && evt.target) || this;
 
     if (!evt || ((!evt.stopped) && targs)) {
 
         for (i in targs) {
             if (targs.hasOwnProperty(i)) {
                 t = targs[i]; 
-                type = evt && evt.type;
                 ce = t.getEvent(type, true); 
+                ce2 = t.getSibling(type, ce);
+
+                if (ce2 && !ce) {
+                    ce = t.publish(type);
+                }
                     
                 // if this event was not published on the bubble target,
-                // publish it with sensible default properties
+                // continue propagating the event.
                 if (!ce) {
-
                     if (t._yuievt.hasTargets) {
-                        t.bubble.call(t, evt, args, target);
+                        t.bubble(evt, args, originalTarget);
                     }
-
                 } else {
-                    ce.target = target || (evt && evt.target) || this;
-                    ce.currentTarget = t;
 
+                    ce.sibling = ce2;
+
+                    // set the original target to that the target payload on the
+                    // facade is correct.
+                    ce.originalTarget = originalTarget;
+                    ce.currentTarget = t;
                     bc = ce.broadcast;
                     ce.broadcast = false;
                     ret = ret && ce.fire.apply(ce, args || evt.details || []);
                     ce.broadcast = bc;
+                    ce.originalTarget = null;
 
                     // stopPropagation() was called
                     if (ce.stopped) {

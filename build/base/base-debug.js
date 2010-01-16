@@ -184,6 +184,7 @@ YUI.add('base-base', function(Y) {
              */
             this.publish(INIT, {
                 queuable:false,
+                fireOnce:true,
                 defaultFn:this._defInitFn
             });
 
@@ -238,6 +239,7 @@ YUI.add('base-base', function(Y) {
              */
             this.publish(DESTROY, {
                 queuable:false,
+                fireOnce:true,
                 defaultFn: this._defDestroyFn
             });
             this.fire(DESTROY);
@@ -474,6 +476,8 @@ YUI.add('base-base', function(Y) {
 
                 this.addAttrs(this._filterAttrCfgs(constr, attrCfgs), userVals, lazy);
 
+                // Using INITIALIZER in hasOwnProperty check, for performance reasons (helps IE6 avoid GC thresholds when
+                // referencing string literals). Not using it in apply, again, for performance "." is faster. 
                 if (constrProto.hasOwnProperty(INITIALIZER)) {
                     constrProto.initializer.apply(this, arguments);
                 }
@@ -521,9 +525,6 @@ YUI.add('base-base', function(Y) {
     Base.prototype.constructor = Base;
 
     Y.Base = Base;
-
-    // Fix constructor
-    Base.prototype.constructor = Base;
 
 
 }, '@VERSION@' ,{requires:['attribute-base']});
@@ -576,7 +577,17 @@ YUI.add('base-build', function(Y) {
      */
 
     var Base = Y.Base,
-        L = Y.Lang;
+        L = Y.Lang,
+
+        mergeAttrs = function(m, e) {
+            if (!m.ATTRS && e.ATTRS) {
+                m.ATTRS = {};
+            }
+
+            if (e.ATTRS) {
+                Y.aggregate(m.ATTRS, e.ATTRS, true);
+            }
+        };
 
     /**
      * The build configuration for the Base class.
@@ -592,7 +603,9 @@ YUI.add('base-build', function(Y) {
      * @private
      */
     Base._buildCfg = {
-        aggregates : ["ATTRS", "_PLUG", "_UNPLUG"]
+        // TODO: The name "custBuild" may change, not ready for public use.
+        custBuild : mergeAttrs,
+        aggregates : ["_PLUG", "_UNPLUG"]
     };
 
     /**
@@ -635,12 +648,14 @@ YUI.add('base-build', function(Y) {
 
         var build = Base.build,
             builtClass = build._getClass(main, cfg),
-            aggregates = build._getAggregates(main, cfg),
+            buildCfg = build._getBuildCfg(main, cfg),
+            aggregates = buildCfg.aggregates,
+            custBuildSteps = buildCfg.custBuild,
             dynamic = builtClass._yuibuild.dynamic,
-            i, l, val, extClass;
+            i, l, j, val, extClass;
 
         // Shallow isolate aggregates
-        if (dynamic) {
+        if (dynamic && aggregates) {
             if (aggregates) {
                 for (i = 0, l = aggregates.length; i < l; ++i) {
                     val = aggregates[i];
@@ -660,7 +675,13 @@ YUI.add('base-build', function(Y) {
                 Y.aggregate(builtClass, extClass, true, aggregates);
             }
 
-            // Old augment
+            if (custBuildSteps) {
+                for (j = 0; j < custBuildSteps.length; j++) {
+                    custBuildSteps[j](builtClass, extClass);
+                }
+            }
+
+            // Old non-displacing augment
             Y.mix(builtClass, extClass, true, null, 1);
 
             builtClass._yuibuild.exts.push(extClass);
@@ -681,9 +702,7 @@ YUI.add('base-build', function(Y) {
         _template: function(main) {
 
             function BuiltClass() {
-
                 BuiltClass.superclass.constructor.apply(this, arguments);
-
                 return this;
             }
             Y.extend(BuiltClass, main);
@@ -724,17 +743,24 @@ YUI.add('base-build', function(Y) {
 
             return builtClass;
         },
-
-        _getAggregates : function(main, cfg) {
-            var aggr = [],
+        
+        _getBuildCfg : function(main, cfg) {
+            var aggr = [], 
+                steps = [],
+                buildCfg,
                 cfgAggr = (cfg && cfg.aggregates),
-                c = main,
-                classAggr;
+                cfgCustBuild = (cfg && cfg.custBuild),
+                c = main;
 
             while (c && c.prototype) {
-                classAggr = c._buildCfg && c._buildCfg.aggregates;
-                if (classAggr) {
-                    aggr = aggr.concat(classAggr);
+                buildCfg = c._buildCfg; 
+                if (buildCfg) {
+                    if (buildCfg.aggregates) {
+                        aggr = aggr.concat(buildCfg.aggregates);
+                    }
+                    if (buildCfg.custBuild) {
+                        steps.push(buildCfg.custBuild);
+                    }
                 }
                 c = c.superclass ? c.superclass.constructor : null;
             }
@@ -742,8 +768,14 @@ YUI.add('base-build', function(Y) {
             if (cfgAggr) {
                 aggr = aggr.concat(cfgAggr);
             }
+            if (cfgCustBuild) {
+                steps.push(cfg.cfgBuild);
+            }
 
-            return aggr;
+            return {
+                aggregates: aggr,
+                custBuild: steps
+            };
         }
     });
 

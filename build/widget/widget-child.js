@@ -1,7 +1,7 @@
 YUI.add('widget-child', function(Y) {
 
 /**
- * Provides an extension enabling a Widget to be a child of another Widget.
+ * Extension enabling a Widget to be a child of another Widget.
  *
  * @module widget-child
  */
@@ -58,15 +58,15 @@ Child.ATTRS = {
         getter: function () {
             
             var parent = this.get("parent"),
-                items,
+                children,
                 index;
             
             if (parent) {
                 
-                items = parent.get("items");
+                children = parent.get("children");
                 
-                for (var i=0, len = items.length; i < len; i++) {
-                    if (this == items[i]) {
+                for (var i=0, len = children.length; i < len; i++) {
+                    if (this == children[i]) {
                         index = i;
                         break;
                     }
@@ -147,12 +147,12 @@ Child.ATTRS = {
 
 Child.prototype = {
 
-    //  Override of Widget's implementation of _getRootNode() to ensure that 
+    //  Override of Widget's implementation of _getUIEventNode() to ensure that 
     //  all event listeners are bound to the Widget's topmost DOM element.
     //  This ensures that the firing of each type of Widget UI event (click,
     //  mousedown, etc.) is facilitated by a single, top-level, delegated DOM
     //  event listener.
-    _getRootNode: function () {
+    _getUIEventNode: function () {
     
         var root = this.get("root"),
             returnVal;
@@ -169,6 +169,8 @@ Child.prototype = {
 	/**
 	* @method next
 	* @description Returns the Widget's next sibling.
+    * @param {Boolean} circular Boolean indicating if the parent's first child 
+    * should be returned if the child has no next sibling.	
 	* @return {Widget} Widget instance. 
 	*/
     next: function (circular) {
@@ -190,8 +192,10 @@ Child.prototype = {
 
 
 	/**
-	* @method previous
+    * @method previous
 	* @description Returns the Widget's previous sibling.
+    * @param {Boolean} circular Boolean indicating if the parent's last child 
+    * should be returned if the child has no previous sibling.
 	* @return {Widget} Widget instance. 
 	*/
     previous: function (circular) {
@@ -205,7 +209,7 @@ Child.prototype = {
         }
 
         if (circular && !sibling) {
-            sibling = parent.item((parent.get("items").length - 1));
+            sibling = parent.item((parent.get("children").length - 1));
         }
 
         return sibling; 

@@ -26,6 +26,7 @@ var NODE_TYPE = 'nodeType',
     NEXT_SIBLING = 'nextSibling',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
+    EMPTY_STRING = '',
 
     documentElement = document.documentElement,
 
@@ -40,9 +41,8 @@ Y.DOM = {
      * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. 
      */
     byId: function(id, doc) {
-        doc = doc || Y.config.doc;
-        // TODO: IE Name
-        return doc.getElementById(id);
+        // handle dupe IDs and IE name collision
+        return Y.DOM.allById(id, doc)[0] || null;
     },
 
     // @deprecated
@@ -143,12 +143,16 @@ Y.DOM = {
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
      * If no function is given, the parentNode is returned.
-     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-     // TODO: optional stopAt node?
-    ancestor: function(element, fn, all) {
-        return Y.DOM.elementByAxis(element, PARENT_NODE, fn, all);
+    ancestor: function(element, fn, testSelf) {
+        var ret = null;
+        if (testSelf) {
+            ret = (!fn || fn(element)) ? element : null;
+
+        }
+        return ret || Y.DOM.elementByAxis(element, PARENT_NODE, fn, null);
     },
 
     /**
@@ -457,6 +461,12 @@ Y.DOM = {
             }
         }
 
+        // workaround for IE8 JSON stringify bug
+        // which converts empty string values to null
+        if (ret === EMPTY_STRING) {
+            ret = EMPTY_STRING; // for real
+        }
+
         return (typeof ret === 'string') ? ret : '';
     },
 
@@ -472,6 +482,26 @@ Y.DOM = {
                 node.value = val;
             }
         }
+    },
+
+    siblings: function(node, fn) {
+        var nodes = [],
+            sibling = node;
+
+        while ((sibling = sibling[PREVIOUS_SIBLING])) {
+            if (sibling[TAG_NAME] && (!fn || fn(sibling))) {
+                nodes.unshift(sibling);
+            }
+        }
+
+        sibling = node;
+        while ((sibling = sibling[NEXT_SIBLING])) {
+            if (sibling[TAG_NAME] && (!fn || fn(sibling))) {
+                nodes.push(sibling);
+            }
+        }
+
+        return nodes;
     },
 
     /**
@@ -554,13 +584,6 @@ Y.DOM = {
         }
 
         return ret.length ? ret : nodes;
-    },
-
-    _testElement: function(element, tag, fn) {
-        tag = (tag && tag !== '*') ? tag.toUpperCase() : null;
-        return (element && element[TAG_NAME] &&
-                (!tag || element[TAG_NAME].toUpperCase() === tag) &&
-                (!fn || fn(element)));
     },
 
     creators: {},
@@ -666,6 +689,7 @@ Y.DOM = {
                 options = node.options;
 
             if (options && val === '') {
+                // TODO: implement multipe select
                 if (node.multiple) {
                     Y.log('multiple select normalization not implemented', 'warn', 'DOM');
                 } else {
@@ -727,7 +751,7 @@ Y.mix(Y.DOM, {
      * Replace a class with another class for a given element.
      * If no oldClassName is present, the newClassName is simply added.
      * @method replaceClass  
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element 
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
      */
@@ -740,14 +764,19 @@ Y.mix(Y.DOM, {
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
      * @method toggleClass  
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled
+     * @param {Boolean} addClass optional boolean to indicate whether class
+     * should be added or removed regardless of current state
      */
-    toggleClass: function(node, className) {
-        if (hasClass(node, className)) {
-            removeClass(node, className);
-        } else {
+    toggleClass: function(node, className, force) {
+        var add = (force !== undefined) ? force :
+                !(hasClass(node, className));
+
+        if (add) {
             addClass(node, className);
+        } else {
+            removeClass(node, className);
         }
     }
 });

@@ -8,7 +8,7 @@ Y.mix(TabList, {
 
     ATTRS : {
 
-        defaultItemType: {  
+        defaultChildType: {  
             value: "Tab"
         },
 
@@ -73,6 +73,6 @@ Y.extend(TabList, Y.Widget, {
     
 });
 
-Y.Base.build(TabList.NAME, TabList, [Y.WidgetParent, Y.WidgetChild], { dynamic: false });
+Y.Base.build(TabList.NAME, TabList, [Y.WidgetParent], { dynamic: false });
 
 Y.TabList = TabList;

@@ -6,75 +6,69 @@
 
 (function() {
 
-
 // Unlike most of the library, this code has to be executed as soon as it is
 // introduced into the page -- and it should only be executed one time
 // regardless of the number of instances that use it.
 
 var GLOBAL_ENV = YUI.Env, 
-
-    C = YUI.config, 
-
-    D = C.doc, 
-
-    POLL_INTERVAL = C.pollInterval || 40,
+    config = YUI.config, 
+    doc = config.doc, 
+    docElement = doc.documentElement, 
+    doScrollCap = docElement.doScroll,
+    add = YUI.Env.add,
+    remove = YUI.Env.remove,
+    targetEvent = (doScrollCap) ? 'onreadystatechange' : 'DOMontentLoaded',
+    pollInterval = config.pollInterval || 40,
+    stateChangeListener,
 
     _ready = function(e) {
         GLOBAL_ENV._ready();
     };
 
-    if (!GLOBAL_ENV._ready) {
+if (!GLOBAL_ENV._ready) {
 
-        GLOBAL_ENV._ready = function() {
-            if (!GLOBAL_ENV.DOMReady) {
-                GLOBAL_ENV.DOMReady=true;
-
-                // Remove the DOMContentLoaded (FF/Opera/Safari)
-                if (D.removeEventListener) {
-                    D.removeEventListener("DOMContentLoaded", _ready, false);
-                }
-            }
-        };
-
-        // create custom event
+    GLOBAL_ENV._ready = function() {
+        if (!GLOBAL_ENV.DOMReady) {
+            GLOBAL_ENV.DOMReady = true;
+            // remove DOMContentLoaded listener
+            remove(doc, targetEvent, _ready);
+        }
+    };
 
 /*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
 
-        // Internet Explorer: use the readyState of a defered script.
-        // This isolates what appears to be a safe moment to manipulate
-        // the DOM prior to when the document's readyState suggests
-        // it is safe to do so.
-        if (navigator.userAgent.match(/MSIE/)) {
+// Internet Explorer: use the doScroll() method on the root element.  This isolates what 
+// appears to be a safe moment to manipulate the DOM prior to when the document's readyState 
+// suggests it is safe to do so.
+    if (doScrollCap) {
+        if (self !== self.top) {
+            stateChangeListener = function() {
+                if (doc.readyState == 'complete') {
+                    // remove onreadystatechange listener
+                    remove(doc, targetEvent, stateChangeListener);
+                    _ready();
+                }
+            };
 
-            if (self !== self.top) {
-                document.onreadystatechange = function() {
-                    if (document.readyState == 'complete') {
-                        document.onreadystatechange = null;
-                        _ready();
-                    }
-                };
-            } else {
+            // add onreadystatechange listener
+            add(doc, targetEvent, stateChangeListener);
 
-                GLOBAL_ENV._dri = setInterval(function() {
-                    try {
-                        // throws an error if doc is not ready
-                        document.documentElement.doScroll('left');
-                        clearInterval(GLOBAL_ENV._dri);
-                        GLOBAL_ENV._dri = null;
-                        _ready();
-                    } catch (ex) { 
-                    }
-                }, POLL_INTERVAL); 
-            }
-
-        // FireFox, Opera, Safari 3+: These browsers provide a event for this
-        // moment.
         } else {
-            D.addEventListener("DOMContentLoaded", _ready, false);
+            GLOBAL_ENV._dri = setInterval(function() {
+                try {
+                    docElement.doScroll('left');
+                    clearInterval(GLOBAL_ENV._dri);
+                    GLOBAL_ENV._dri = null;
+                    _ready();
+                } catch (domNotReady) { }
+            }, pollInterval); 
         }
-
-        /////////////////////////////////////////////////////////////
+// FireFox, Opera, Safari 3+ provide an event for this moment.
+    } else {
+        // add DOMContentLoaded listener
+        add(doc, targetEvent, _ready);
     }
+}
 
 })();
 YUI.add('event-base', function(Y) {
@@ -1447,7 +1441,7 @@ var Event = Y.Event,
 				matched = null;
 
 
-				if (target == el || Y.Selector.test(target, spec, el)) {
+				if (Y.Selector.test(target, spec, el)) {
 					matched = target;
 				}
 				else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {

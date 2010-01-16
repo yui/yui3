@@ -358,15 +358,14 @@ YUI.add('anim-base', function(Y) {
     var proto = {
         /**
          * Starts or resumes an animation.
-         * percent start time marker.
          * @method run
          * @chainable
          */    
         run: function() {
-            if (!this.get(RUNNING)) {
-                this._start();
-            } else if (this.get(PAUSED)) {
+            if (this.get(PAUSED)) {
                 this._resume();
+            } else if (!this.get(RUNNING)) {
+                this._start();
             }
             return this;
         },
@@ -517,11 +516,12 @@ YUI.add('anim-base', function(Y) {
         _initAnimAttr: function() {
             var from = this.get('from') || {},
                 to = this.get('to') || {},
-                dur = this.get('duration') * 1000,
-                node = this.get(NODE),
-                easing = this.get('easing') || {},
-                attr = {},
+                attr = {
+                    duration: this.get('duration') * 1000,
+                    easing: this.get('easing')
+                },
                 customAttr = Y.Anim.behaviors,
+                node = this.get(NODE), // implicit attr init
                 unit, begin, end;
 
             Y.each(to, function(val, name) {
@@ -558,9 +558,6 @@ YUI.add('anim-base', function(Y) {
                     to: end,
                     unit: unit
                 };
-
-                attr.duration = dur;
-                attr.easing = easing;
 
             }, this);
 

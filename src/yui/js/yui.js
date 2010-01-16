@@ -12,33 +12,24 @@
         p, 
         i,
 
-        add = function () {
-            if (window.addEventListener) {
-                return function(el, type, fn, capture) {
-                    el.addEventListener(type, fn, (!!capture));
-                };
-            } else if (window.attachEvent) {
-                return function(el, type, fn) {
-                    el.attachEvent("on" + type, fn);
-                };
-            } else {
-                return function(){};
-            }
-        }(),
+        add = function(el, type, fn, capture) {
+            if (el && el.addEventListener) {
+                el.addEventListener(type, fn, (!!capture));
+            } else if (el && el.attachEvent) {
+                el.attachEvent("on" + type, fn);
+            } 
+            // else {
+            //     YUI.log('could not attach DOM event listener: ' + type + ' to ' + el);
+            // }
+        },
 
-        remove = function() {
-            if (window.removeEventListener) {
-                return function (el, type, fn, capture) {
-                    el.removeEventListener(type, fn, !!capture);
-                };
-            } else if (window.detachEvent) {
-                return function (el, type, fn) {
-                    el.detachEvent("on" + type, fn);
-                };
-            } else {
-                return function(){};
+        remove = function (el, type, fn, capture) {
+            if (el && el.removeEventListener) {
+                el.removeEventListener(type, fn, !!capture);
+            } else if (el && el.detachEvent) {
+                el.detachEvent("on" + type, fn);
             }
-        }(),
+        },
 
         globalListener = function() {
             YUI.Env.windowLoaded = true;
@@ -50,7 +41,8 @@
 
         _APPLY_TO_WHITE_LIST = {
           'io.xdrReady': 1,
-          'io.xdrResponse':1
+          'io.xdrResponse':1,
+          'SWF.eventHandler':1
         },
 
         SLICE = Array.prototype.slice;
@@ -235,7 +227,23 @@ YUI.prototype = {
      * @private
      */
     _setup: function(o) {
-        this.use("yui-base");
+
+        var Y = this,
+            core = [],
+            mods = YUI.Env.mods,
+            extras = Y.config.core || ['get', 'loader', 'yui-log', 'yui-later'];
+
+
+        for (i=0; i<extras.length; i++) {
+            if (mods[extras[i]]) {
+                core.push(extras[i]);
+            }
+        }
+
+        Y.use('yui-base');
+        Y.use.apply(Y, core);
+
+        Y.log(Y.id + ' initialized', 'info', 'yui');
     },
 
     /**

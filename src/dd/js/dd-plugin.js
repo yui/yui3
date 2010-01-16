@@ -1,11 +1,11 @@
 
        /**
-        * This is a simple Drag plugin that can be attached to a Node via the plug method.
+        * Simple Drag plugin that can be attached to a Node via the plug method.
         * @module dd
         * @submodule dd-plugin
         */
        /**
-        * This is a simple Drag plugin that can be attached to a Node via the plug method.
+        * Simple Drag plugin that can be attached to a Node via the plug method.
         * @class Drag
         * @extends DD.Drag
         * @constructor

@@ -327,7 +327,11 @@
             <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">f</span> <span class="o">||</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">c</span> <span class="o">||</span> <span class="k">this</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">))</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">!==</span> <span class="nx">CLONE_MARKER</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">this</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">safe</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">owner</span> <span class="o">||</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">marked</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">===</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">this</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="k">this</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">safe</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">owner</span> <span class="o">||</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">marked</span><span class="p">);</span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">},</span> <span class="nx">o2</span><span class="p">);</span>
@@ -436,6 +440,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
@@ -472,12 +477,12 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
+
     var ALL_YUI_PROPS = [{"access": "", "host": "YUI~oop", "name": "aggregate", "url": "YUI~oop.html#method_aggregate", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "augment", "url": "YUI~oop.html#method_augment", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "bind", "url": "YUI~oop.html#method_bind", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "clone", "url": "YUI~oop.html#method_clone", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "each", "url": "YUI~oop.html#method_each", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "extend", "url": "YUI~oop.html#method_extend", "type": "method"}, {"access": "", "host": "YUI~oop", "name": "rbind", "url": "YUI~oop.html#method_rbind", "type": "method"}];
-    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

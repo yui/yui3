@@ -50,6 +50,7 @@
                         <div class="highlight"><pre><span class="cm">/**</span>
 <span class="cm"> * Collection utilities beyond what is provided in the YUI core</span>
 <span class="cm"> * @module collection</span>
+<span class="cm"> * @submodule array-extras</span>
 <span class="cm"> */</span>
 
 <span class="kd">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span> <span class="nx">Native</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">;</span>
@@ -179,8 +180,7 @@
         <span class="k">return</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">every</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">f</span><span class="p">,</span><span class="nx">o</span><span class="p">);</span>
     <span class="p">}</span> <span class="o">:</span>
     <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
@@ -259,8 +259,7 @@
 <span class="cm">* returns true for, or null if it never returns true</span>
 <span class="cm">*/</span>
 <span class="nx">A</span><span class="p">.</span><span class="nx">find</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
         <span class="p">}</span>
@@ -302,11 +301,16 @@
 <span class="cm">* rejected by the test function (or an empty array).</span>
 <span class="cm">*/</span>
 <span class="nx">A</span><span class="p">.</span><span class="nx">partition</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">{</span><span class="nx">matches</span><span class="o">:</span> <span class="p">[],</span> <span class="nx">rejects</span><span class="o">:</span> <span class="p">[]};</span>
+    <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">matches</span><span class="o">:</span> <span class="p">[],</span> 
+        <span class="nx">rejects</span><span class="o">:</span> <span class="p">[]</span>
+    <span class="p">};</span>
+
     <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">set</span> <span class="o">=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="o">?</span> <span class="nx">results</span><span class="p">.</span><span class="nx">matches</span> <span class="o">:</span> <span class="nx">results</span><span class="p">.</span><span class="nx">rejects</span><span class="p">;</span>
         <span class="nx">set</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
     <span class="p">});</span>
+
     <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -329,6 +333,8 @@
     <span class="p">});</span>
     <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
 <span class="p">};</span>
+
+<span class="nx">A</span><span class="p">.</span><span class="nx">forEach</span> <span class="o">=</span> <span class="nx">A</span><span class="p">.</span><span class="nx">each</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -376,6 +382,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
@@ -392,7 +399,10 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="ArrayList.html" title="ArrayList">ArrayList</a></li>
+                                <li class=""><a href="ArrayList~add.html" title="ArrayList~add">ArrayList~add</a></li>
                                 <li class=""><a href="YUI~array~extras.html" title="YUI~array~extras">YUI~array~extras</a></li>
+                                <li class=""><a href="YUI~array~invoke.html" title="YUI~array~invoke">YUI~array~invoke</a></li>
                         </ul>
                     </div>
 
@@ -400,6 +410,9 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class="selected"><a href="array-extras.js.html" title="array-extras.js">array-extras.js</a></li>
+                                <li class=""><a href="arraylist-add.js.html" title="arraylist-add.js">arraylist-add.js</a></li>
+                                <li class=""><a href="arraylist.js.html" title="arraylist.js">arraylist.js</a></li>
+                                <li class=""><a href="invoke.js.html" title="invoke.js">invoke.js</a></li>
                         </ul>
                     </div>
 
@@ -412,12 +425,12 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
-    var ALL_YUI_PROPS = [{"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "lastIndexOf", "url": "YUI~array~extras.html#property_lastIndexOf", "type": "property"}];
-    YAHOO.yuidoc.init();
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayList~add", "name": "add", "url": "ArrayList~add.html#method_add", "type": "method"}, {"access": "", "host": "ArrayList", "name": "addMethod", "url": "ArrayList.html#method_addMethod", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "ArrayList", "name": "each", "url": "ArrayList.html#method_each", "type": "method"}, {"access": "", "host": "ArrayList", "name": "filter", "url": "ArrayList.html#method_filter", "type": "method"}, {"access": "", "host": "ArrayList", "name": "indexOf", "url": "ArrayList.html#method_indexOf", "type": "method"}, {"access": "", "host": "YUI~array~invoke", "name": "invoke", "url": "YUI~array~invoke.html#method_invoke", "type": "method"}, {"access": "", "host": "ArrayList", "name": "isEmpty", "url": "ArrayList.html#method_isEmpty", "type": "method"}, {"access": "protected", "host": "ArrayList", "name": "_item", "url": "ArrayList.html#method__item", "type": "method"}, {"access": "", "host": "ArrayList", "name": "item", "url": "ArrayList.html#method_item", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "itemsAreEqual", "url": "ArrayList~add.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "lastIndexOf", "url": "YUI~array~extras.html#property_lastIndexOf", "type": "property"}, {"access": "", "host": "ArrayList~add", "name": "remove", "url": "ArrayList~add.html#method_remove", "type": "method"}, {"access": "", "host": "ArrayList", "name": "size", "url": "ArrayList.html#method_size", "type": "method"}];
 </script>
 </body>
 </html>

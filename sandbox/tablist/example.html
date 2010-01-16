@@ -33,16 +33,16 @@
             //  Three different ways to add a Tab
 
             //  1)  Via the constructor
-            var tablist = new Y.TabList({ items: [ 
+            var tablist = new Y.TabList({ children: [ 
             
-                    { label: "Tab One", content: "Tab one content" },
-                    { label: "Tab Two", content: "Tab two content" } 
+                    { type: "Tab", label: "Tab One", content: "Tab one content" },
+                    { type: Y.Tab, label: "Tab Two", content: "Tab two content" } 
             
                  ] });
 
             //  2)  Via creating a new instance of Y.Tab
-            var tab = new Y.Tab({ label: "Item Four", content: "Tab four content" });
-            tablist.add(tab);
+            // var tab = new Y.Tab({ label: "Item Four", content: "Tab four content" });
+            // tablist.add(tab);
 
             //  3)  Via passing the configuration for a Y.Tab instance
             //      directly to the add() method

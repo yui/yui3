@@ -12,33 +12,24 @@
         p, 
         i,
 
-        add = function () {
-            if (window.addEventListener) {
-                return function(el, type, fn, capture) {
-                    el.addEventListener(type, fn, (!!capture));
-                };
-            } else if (window.attachEvent) {
-                return function(el, type, fn) {
-                    el.attachEvent("on" + type, fn);
-                };
-            } else {
-                return function(){};
-            }
-        }(),
+        add = function(el, type, fn, capture) {
+            if (el && el.addEventListener) {
+                el.addEventListener(type, fn, (!!capture));
+            } else if (el && el.attachEvent) {
+                el.attachEvent("on" + type, fn);
+            } 
+            // else {
+            //     YUI.log('could not attach DOM event listener: ' + type + ' to ' + el);
+            // }
+        },
 
-        remove = function() {
-            if (window.removeEventListener) {
-                return function (el, type, fn, capture) {
-                    el.removeEventListener(type, fn, !!capture);
-                };
-            } else if (window.detachEvent) {
-                return function (el, type, fn) {
-                    el.detachEvent("on" + type, fn);
-                };
-            } else {
-                return function(){};
+        remove = function (el, type, fn, capture) {
+            if (el && el.removeEventListener) {
+                el.removeEventListener(type, fn, !!capture);
+            } else if (el && el.detachEvent) {
+                el.detachEvent("on" + type, fn);
             }
-        }(),
+        },
 
         globalListener = function() {
             YUI.Env.windowLoaded = true;
@@ -50,7 +41,8 @@
 
         _APPLY_TO_WHITE_LIST = {
           'io.xdrReady': 1,
-          'io.xdrResponse':1
+          'io.xdrResponse':1,
+          'SWF.eventHandler':1
         },
 
         SLICE = Array.prototype.slice;
@@ -235,7 +227,22 @@ YUI.prototype = {
      * @private
      */
     _setup: function(o) {
-        this.use("yui-base");
+
+        var Y = this,
+            core = [],
+            mods = YUI.Env.mods,
+            extras = Y.config.core || ['get', 'loader', 'yui-log', 'yui-later'];
+
+
+        for (i=0; i<extras.length; i++) {
+            if (mods[extras[i]]) {
+                core.push(extras[i]);
+            }
+        }
+
+        Y.use('yui-base');
+        Y.use.apply(Y, core);
+
     },
 
     /**
@@ -1213,7 +1220,8 @@ L.isNumber = function(o) {
  * @return {boolean} true if o is an object
  */  
 L.isObject = function(o, failfn) {
-return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
+    var t = typeof o;
+    return (o && (t === OBJECT || (!failfn && (t === FUNCTION || L.isFunction(o))))) || false;
 };
     
 /**
@@ -1278,6 +1286,10 @@ L.isValue = function(o) {
 
 /**
  * Returns a string representing the type of the item passed in.
+ * Known issues:
+ *    typeof HTMLElementCollection returns function in Safari, but
+ *    Y.type() reports object, which could be a good thing --
+ *    but it actually caused the logic in Y.Lang.isObject to fail.
  * @method type
  * @param o the item to test
  * @return {string} the detected type
@@ -1297,7 +1309,7 @@ L.type = function (o) {
 
 (function() {
 
-var L = Y.Lang, Native = Array.prototype,
+var L = Y.Lang, Native = Array.prototype, LENGTH = 'length',
 
 /**
  * Adds the following array utilities to the YUI instance.  Additional
@@ -1321,37 +1333,29 @@ var L = Y.Lang, Native = Array.prototype,
  * @static
  *   @param o the item to arrayify
  *   @param i {int} if an array or array-like, this is the start index
- *   @param al {boolean} if true, it forces the array-like fork.  This
- *   can be used to avoid multiple array.test calls.
+ *   @param arraylike {boolean} if true, it forces the array-like fork.  This
+ *   can be used to avoid multiple Array.test calls.
  *   @return {Array} the resulting array
  */
-YArray = function(o, startIdx, al) {
-    var t = (al) ? 2 : Y.Array.test(o), i, l, a;
-
-    // switch (t) {
-    //     case 1:
-    //         // return (startIdx) ? o.slice(startIdx) : o;
-    //     case 2:
-    //         return Native.slice.call(o, startIdx || 0);
-    //     default:
-    //         return [o];
-    // }
+YArray = function(o, startIdx, arraylike) {
+    var t = (arraylike) ? 2 : YArray.test(o), 
+        l, a, start = startIdx || 0;
 
     if (t) {
+        // IE errors when trying to slice HTMLElement collections
         try {
-            return Native.slice.call(o, startIdx || 0);
-        // IE errors when trying to slice element collections
+            return Native.slice.call(o, start);
         } catch(e) {
-            a=[];
-            for (i=0, l=o.length; i<l; i=i+1) {
-                a.push(o[i]);
+            a = [];
+            l = o.length;
+            for (; start<l; start++) {
+                a.push(o[start]);
             }
             return a;
         }
     } else {
         return [o];
     }
-
 };
 
 Y.Array = YArray;
@@ -1379,9 +1383,8 @@ YArray.test = function(o) {
             r = 1; 
         } else {
             try {
-                // indexed, but no tagName (element) or alert (window)
-                if ("length" in o && !("tagName" in o) && !("alert" in o) && 
-                    (!Y.Lang.isFunction(o.size) || o.size() > 1)) {
+                // indexed, but no tagName (element) or alert (window), or functions without apply/call (Safari HTMLElementCollection bug)
+                if ((LENGTH in o) && !o.tagName && !o.alert && !o.apply) {
                     r = 2;
                 }
                     
@@ -1604,7 +1607,8 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     if (wl && wl.length) {
         for (i = 0, l = wl.length; i < l; ++i) {
             p = wl[i];
-            if (p in s) {
+            // if (p in s) {
+            if (s.hasOwnProperty(p)) {
                 if (merge && L.isObject(r[p], true)) {
                     Y.mix(r[p], s[p]);
                 } else if (!arr && (ov || !(p in r))) {
@@ -1617,11 +1621,12 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     } else {
         for (i in s) { 
             // if (s.hasOwnProperty(i) && !(i in FROZEN)) {
+            if (s.hasOwnProperty(i)) {
                 // check white list if it was supplied
                 // if the receiver has this property, it is an object,
                 // and merge is specified, merge the two objects.
                 if (merge && L.isObject(r[i], true)) {
-                    Y.mix(r[i], s[i]); // recursive
+                    Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
                 // otherwise apply the property only if overwrite
                 // is specified or the receiver doesn't have one.
                 } else if (!arr && (ov || !(i in r))) {
@@ -1631,7 +1636,7 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                 } else if (arr) {
                     r.push(s[i]);
                 }
-            // }
+            }
         }
     
         if (Y.UA.ie) {
@@ -1700,6 +1705,10 @@ Y.Object = function(o) {
 
 var O = Y.Object,
 
+owns = function(o, k) {
+    return o && o.hasOwnProperty && o.hasOwnProperty(k);
+},
+
 UNDEFINED = undefined,
 
 /**
@@ -1716,10 +1725,10 @@ _extract = function(o, what) {
     var count = (what === 2), out = (count) ? 0 : [], i;
 
     for (i in o) {
-        if (count) {
-            out++;
-        } else {
-            if (o.hasOwnProperty(i)) {
+        if (owns(o, i)) {
+            if (count) {
+                out++;
+            } else {
                 out.push((what) ? o[i] : i);
             }
         }
@@ -1772,11 +1781,7 @@ O.size = function(o) {
  * @param k the key to query
  * @return {boolean} true if the object contains the key
  */
-O.hasKey = function(o, k) {
-    // return (o.hasOwnProperty(k));
-    return (k in o);
-};
-
+O.hasKey = owns;
 /**
  * Returns true if the object contains a given value
  * @method hasValue
@@ -1794,21 +1799,13 @@ O.hasValue = function(o, v) {
  * to the object instance.  Returns false if the property is not present
  * in the object, or was inherited from the prototype.
  *
- * @deprecated Safari 1.x support has been removed, so this is simply a 
- * wrapper for the native implementation.  Use the native implementation
- * directly instead.
- *
- * @TODO Remove in B1
- *
  * @method owns
  * @static
  * @param o {any} The object being testing
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = function(o, k) {
-    return (o.hasOwnProperty(k));
-};
+O.owns = owns;
 
 /**
  * Executes a function on each item. The function
@@ -1827,7 +1824,7 @@ O.each = function (o, f, c, proto) {
     var s = c || Y, i;
 
     for (i in o) {
-        if (proto || o.hasOwnProperty(i)) {
+        if (proto || owns(o, i)) {
             f.call(s, o[i], i, o);
         }
     }
@@ -1852,7 +1849,7 @@ O.some = function (o, f, c, proto) {
     var s = c || Y, i;
 
     for (i in o) {
-        if (proto || o.hasOwnProperty(i)) {
+        if (proto || owns(o, i)) {
             if (f.call(s, o[i], i, o)) {
                 return true;
             }
@@ -1977,9 +1974,10 @@ Y.UA = function() {
          * will be 0.  Example: 1.8
          * <pre>
          * Firefox 1.0.0.4: 1.7.8   <-- Reports 1.7
-         * Firefox 1.5.0.9: 1.8.0.9 <-- Reports 1.8
-         * Firefox 2.0.0.3: 1.8.1.3 <-- Reports 1.8
-         * Firefox 3 alpha: 1.9a4   <-- Reports 1.9
+         * Firefox 1.5.0.9: 1.8.0.9 <-- 1.8
+         * Firefox 2.0.0.3: 1.8.1.3 <-- 1.81
+         * Firefox 3.0   <-- 1.9
+         * Firefox 3.5   <-- 1.91
          * </pre>
          * @property gecko
          * @type float
@@ -2083,6 +2081,8 @@ Y.UA = function() {
             o.os = 'windows';
         } else if ((/macintosh/i).test(ua)) {
             o.os = 'macintosh';
+        } else if ((/rhino/i).test(ua)) {
+            o.os = 'rhino';
         }
 
         // Modern KHTML browsers should qualify as Safari X-Grade
@@ -2144,39 +2144,6 @@ Y.UA = function() {
     
     return o;
 }();
-/**
- * The YUI module contains the components required for building the YUI seed file.
- * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
- * @module yui
- * @submodule yui-base
- */
-
-(function() {
-
-    var min = ['yui-base'], core, C = Y.config, mods = YUI.Env.mods,
-        extras, i;
-
-    // apply the minimal required functionality
-    Y.use.apply(Y, min);
-
-
-    if (C.core) {
-        core = C.core;
-    } else {
-        core = [];
-        extras = ['get', 'loader', 'yui-log', 'yui-later'];
-
-        for (i=0; i<extras.length; i++) {
-            if (mods[extras[i]]) {
-                core.push(extras[i]);
-            }
-        }
-    }
-
-    Y.use.apply(Y, core);
-     
-})();
-
 
 
 }, '@VERSION@' );

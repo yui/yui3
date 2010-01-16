@@ -27,6 +27,10 @@ Y.Object = function(o) {
 
 var O = Y.Object,
 
+owns = function(o, k) {
+    return o && o.hasOwnProperty && o.hasOwnProperty(k);
+},
+
 UNDEFINED = undefined,
 
 /**
@@ -43,10 +47,10 @@ _extract = function(o, what) {
     var count = (what === 2), out = (count) ? 0 : [], i;
 
     for (i in o) {
-        if (count) {
-            out++;
-        } else {
-            if (o.hasOwnProperty(i)) {
+        if (owns(o, i)) {
+            if (count) {
+                out++;
+            } else {
                 out.push((what) ? o[i] : i);
             }
         }
@@ -99,11 +103,7 @@ O.size = function(o) {
  * @param k the key to query
  * @return {boolean} true if the object contains the key
  */
-O.hasKey = function(o, k) {
-    // return (o.hasOwnProperty(k));
-    return (k in o);
-};
-
+O.hasKey = owns;
 /**
  * Returns true if the object contains a given value
  * @method hasValue
@@ -121,21 +121,13 @@ O.hasValue = function(o, v) {
  * to the object instance.  Returns false if the property is not present
  * in the object, or was inherited from the prototype.
  *
- * @deprecated Safari 1.x support has been removed, so this is simply a 
- * wrapper for the native implementation.  Use the native implementation
- * directly instead.
- *
- * @TODO Remove in B1
- *
  * @method owns
  * @static
  * @param o {any} The object being testing
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = function(o, k) {
-    return (o.hasOwnProperty(k));
-};
+O.owns = owns;
 
 /**
  * Executes a function on each item. The function
@@ -154,7 +146,7 @@ O.each = function (o, f, c, proto) {
     var s = c || Y, i;
 
     for (i in o) {
-        if (proto || o.hasOwnProperty(i)) {
+        if (proto || owns(o, i)) {
             f.call(s, o[i], i, o);
         }
     }
@@ -179,7 +171,7 @@ O.some = function (o, f, c, proto) {
     var s = c || Y, i;
 
     for (i in o) {
-        if (proto || o.hasOwnProperty(i)) {
+        if (proto || owns(o, i)) {
             if (f.call(s, o[i], i, o)) {
                 return true;
             }

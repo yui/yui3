@@ -159,15 +159,20 @@
 <span class="cm">   	*</span>
 <span class="cm">   	* xdr: Defines the transport to be used for cross-domain requests.  By</span>
 <span class="cm">   	*      setting this property, the transaction will use the specified</span>
-<span class="cm">   	*      transport instead of XMLHttpRequest.  Currently, the only alternate</span>
-<span class="cm">   	*      transport supported is Flash (e.g., { xdr: &#39;flash&#39; }).</span>
+<span class="cm">   	*      transport instead of XMLHttpRequest.  Currently, the alternate</span>
+<span class="cm">   	*      transports supported are Flash and native, cross-site XHR support.</span>
+<span class="cm">   	*      The properties are:</span>
+<span class="cm">   	*      {</span>
+<span class="cm">    *        use: Specify the transport to be used -- &#39;flash&#39; or &#39;native&#39;.</span>
+<span class="cm">    *        datatype:</span>
+<span class="cm">    *</span>
 <span class="cm">   	*</span>
 <span class="cm">   	* form: This is a defined object used to process HTML form as data.  The</span>
 <span class="cm">   	*       properties are:</span>
 <span class="cm">   	*       {</span>
-<span class="cm">   	*	      id: object, //HTML form object or id of HTML form</span>
-<span class="cm">   	*         useDisabled: boolean, //Allow disabled HTML form field values</span>
-<span class="cm">   	*                      to be sent as part of the data.</span>
+<span class="cm">   	*	      id: Node object or id of HTML form.</span>
+<span class="cm">   	*         useDisabled: Boolean value to allow disabled HTML form field</span>
+<span class="cm">   	*                      values to be sent as part of the data.</span>
 <span class="cm">	*       }</span>
 <span class="cm">	*</span>
 <span class="cm">	* on: This is a defined object used to create and handle specific</span>
@@ -185,33 +190,31 @@
 <span class="cm">	*</span>
 <span class="cm">	*     The properties are:</span>
 <span class="cm">	*     {</span>
-<span class="cm">   	*       start: function(id, args){},</span>
-<span class="cm">   	*       complete: function(id, responseobject, args){},</span>
-<span class="cm">   	*       success: function(id, responseobject, args){},</span>
-<span class="cm">   	*       failure: function(id, responseobject, args){},</span>
-<span class="cm">   	*       end: function(id, args){}</span>
+<span class="cm">   	*       start: function(id, arguments){},</span>
+<span class="cm">   	*       complete: function(id, responseobject, arguments){},</span>
+<span class="cm">   	*       success: function(id, responseobject, arguments){},</span>
+<span class="cm">   	*       failure: function(id, responseobject, arguments){},</span>
+<span class="cm">   	*       end: function(id, arguments){}</span>
 <span class="cm">   	*     }</span>
 <span class="cm">   	*	  Each property can reference a function or be written as an</span>
 <span class="cm">   	*     inline function.</span>
 <span class="cm">   	*</span>
-<span class="cm">   	*     context: Object reference for all defined transaction event handlers</span>
-<span class="cm">   	*              when it is implemented as a method of a base object. Defining</span>
-<span class="cm">   	*              &quot;context&quot; will set the reference of &quot;this,&quot; used in the</span>
-<span class="cm">   	*              event handlers, to the context value.  In the case where</span>
-<span class="cm">   	*              different event handlers all have different contexts,</span>
-<span class="cm">   	*              use Y.bind() to set the execution context, bypassing this</span>
-<span class="cm">   	*              configuration.</span>
+<span class="cm">   	* context: Object reference for all defined transaction event handlers</span>
+<span class="cm">   	*          when it is implemented as a method of a base object. Defining</span>
+<span class="cm">   	*          &quot;context&quot; will set the reference of &quot;this,&quot; used in the</span>
+<span class="cm">   	*          event handlers, to the context value.  In the case where</span>
+<span class="cm">   	*          different event handlers all have different contexts,</span>
+<span class="cm">   	*          use Y.bind() to set the execution context, bypassing this</span>
+<span class="cm">   	*          configuration.</span>
 <span class="cm">   	*</span>
-<span class="cm">   	*     headers: This is a defined object of client headers, as many as.</span>
-<span class="cm">   	*              desired for the transaction.  The object</span>
-<span class="cm">   	*              pattern is:</span>
-<span class="cm">   	*              {</span>
-<span class="cm">   	*		         header: value</span>
-<span class="cm">   	*              }</span>
+<span class="cm">   	* headers: This is a defined object of client headers, as many as.</span>
+<span class="cm">   	*          desired for the transaction.  The object pattern is:</span>
+<span class="cm">   	*          { header: value }.</span>
 <span class="cm">   	*</span>
 <span class="cm">   	* timeout: This value, defined as milliseconds, is a time threshold for the</span>
 <span class="cm">   	*          transaction. When this threshold is reached, and the transaction&#39;s</span>
 <span class="cm">   	*          Complete event has not yet fired, the transaction will be aborted.</span>
+<span class="cm">   	*</span>
 <span class="cm">   	* arguments: Object, array, string, or number passed to all registered</span>
 <span class="cm">   	*            event handlers.  This value is available as the second</span>
 <span class="cm">   	*            argument in the &quot;start&quot; and &quot;abort&quot; event handlers; and, it is</span>
@@ -233,8 +236,11 @@
    			<span class="nx">m</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">:</span> <span class="s1">&#39;GET&#39;</span><span class="p">;</span>
    			<span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">sync</span><span class="p">;</span>
 
+		<span class="c1">//To serialize an object into a key-value string, add the</span>
+		<span class="c1">//QueryString module in the YUI instance&#39;s &#39;use&#39; method.</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Configuration property &quot;data&quot; is an object. The serialized value is: &#39;</span> <span class="o">+</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">)</span> <span class="p">{</span>
@@ -254,14 +260,12 @@
 		<span class="p">}</span>
 		<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;GET&#39;</span><span class="p">)</span> <span class="p">{</span>
 			<span class="nx">uri</span> <span class="o">=</span> <span class="nx">_concat</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;HTTP GET with configuration data.  The querystring is: &#39;</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
 		<span class="p">}</span>
 
    		<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">)</span> <span class="p">{</span>
 			<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;native&#39;</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">XDomainRequest</span> <span class="o">||</span> <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">use</span> <span class="o">===</span> <span class="s1">&#39;flash&#39;</span><span class="p">)</span> <span class="p">{</span>
    				<span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">xdr</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
-			<span class="p">}</span>
-			<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">credentials</span><span class="p">)</span> <span class="p">{</span>
-				<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">withCredentials</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 			<span class="p">}</span>
    		<span class="p">}</span>
 
@@ -271,6 +275,11 @@
 
    		<span class="k">try</span> <span class="p">{</span>
 			<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">m</span><span class="p">,</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">s</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">);</span>
+			<span class="c1">// Will work only in browsers that implement the</span>
+			<span class="c1">// Cross-Origin Resource Sharing draft.</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">.</span><span class="nx">credentials</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">withCredentials</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+			<span class="p">}</span>
    		<span class="p">}</span>
    		<span class="k">catch</span><span class="p">(</span><span class="nx">a</span><span class="p">){</span>
 			<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span><span class="p">)</span> <span class="p">{</span>
@@ -315,6 +324,7 @@
    		<span class="c1">// initialize timeout polling.</span>
    		<span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">)</span> <span class="p">{</span>
    			<span class="nx">_startTimeout</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">);</span>
+			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Configuration timeout set to: &#39;</span> <span class="o">+</span> <span class="nx">c</span><span class="p">.</span><span class="nx">timeout</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
    		<span class="p">}</span>
 
 		<span class="k">return</span> <span class="p">{</span>
@@ -344,7 +354,7 @@
    			<span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span><span class="p">,</span>
    			<span class="nx">cT</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">;</span>
 
-		<span class="nx">a</span> <span class="o">?</span> <span class="nx">eT</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">e</span><span class="p">],</span> <span class="nx">cT</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="o">:</span> <span class="nx">eT</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">e</span><span class="p">],</span> <span class="nx">cT</span><span class="p">);</span>
+		<span class="nx">a</span> <span class="o">?</span> <span class="nx">eT</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">e</span><span class="p">],</span> <span class="nx">cT</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="o">:</span> <span class="nx">eT</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">on</span><span class="p">[</span><span class="nx">e</span><span class="p">],</span> <span class="nx">cT</span><span class="p">);</span>
 
 		<span class="k">return</span> <span class="nx">eT</span><span class="p">;</span>
    	<span class="p">}</span>
@@ -847,6 +857,7 @@
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
@@ -887,12 +898,12 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
+
     var ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "_abort", "url": "io.html#method__abort", "type": "method"}, {"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_data", "url": "io.html#method__data", "type": "method"}, {"access": "private", "host": "io", "name": "_destroy", "url": "io.html#method__destroy", "type": "method"}, {"access": "private", "host": "io", "name": "_e", "url": "io.html#property__e", "type": "property"}, {"access": "private", "host": "io", "name": "f", "url": "io.html#method_f", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handle", "url": "io.html#method__handle", "type": "method"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "private", "host": "io", "name": "_isInProgress.", "url": "io.html#method__isInProgress.", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_remove", "url": "io.html#method__remove", "type": "method"}, {"access": "", "host": "io", "name": "remove", "url": "io.html#method_remove", "type": "method"}, {"access": "private", "host": "io", "name": "_resend", "url": "io.html#method__resend", "type": "method"}, {"access": "private", "host": "io", "name": "_resetAttrs", "url": "io.html#method__resetAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_rS", "url": "io.html#property__rS", "type": "property"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setAttrs", "url": "io.html#method__setAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_tE", "url": "io.html#method__tE", "type": "method"}, {"access": "private", "host": "io", "name": "_timeout", "url": "io.html#property__timeout", "type": "property"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "xdrResponse", "url": "io.html#method_xdrResponse", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_yQ", "url": "io.html#property__yQ", "type": "property"}];
-    YAHOO.yuidoc.init();
 </script>
 </body>
 </html>

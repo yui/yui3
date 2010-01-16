@@ -45,8 +45,6 @@ var PARENT_NODE = 'parentNode',
             return ret || [];
         },
 
-        _regexCache: {},
-
         _re: {
             //attr: /(\[.*\])/g,
             attr: /(\[[^\]]*\])/g,
@@ -112,8 +110,8 @@ var PARENT_NODE = 'parentNode',
                 // try ID first
                 if (id) {
                     nodes = Y.DOM.allById(id, root);
-                // try className if supported
-                } else if (className && root.getElementsByClassName) {
+                // try className
+                } else if (className) {
                     nodes = root.getElementsByClassName(className);
                 } else { // default to tagName
                     nodes = root.getElementsByTagName(tagName);
@@ -215,15 +213,6 @@ var PARENT_NODE = 'parentNode',
             return result;
         },
 
-        _getRegExp: function(str, flags) {
-            var regexCache = Selector._regexCache;
-            flags = flags || '';
-            if (!regexCache[str + flags]) {
-                regexCache[str + flags] = new RegExp(str, flags);
-            }
-            return regexCache[str + flags];
-        },
-
         combinators: {
             ' ': {
                 axis: 'parentNode'
@@ -253,7 +242,7 @@ var PARENT_NODE = 'parentNode',
                     // add prefiltering for ID and CLASS
                     if ((match[1] === 'id' && operator === '=') ||
                             (match[1] === 'className' &&
-                            document.getElementsByClassName &&
+                            document.documentElement.getElementsByClassName &&
                             (operator === '~=' || operator === '='))) {
                         token.prefilter = match[1];
                         token[match[1]] = match[3];
@@ -263,7 +252,7 @@ var PARENT_NODE = 'parentNode',
                     if (operator in operators) {
                         test = operators[operator];
                         if (typeof test === 'string') {
-                            test = Y.Selector._getRegExp(test.replace('{val}', match[3]));
+                            test = Y.DOM._getRegExp(test.replace('{val}', match[3]));
                         }
                         match[2] = test;
                     }
@@ -402,7 +391,7 @@ var PARENT_NODE = 'parentNode',
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
-                    selector = selector.replace(Selector._getRegExp(re, 'gi'), shorthand[re]);
+                    selector = selector.replace(Y.DOM._getRegExp(re, 'gi'), shorthand[re]);
                 }
             }
 

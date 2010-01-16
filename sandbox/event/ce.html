@@ -23,7 +23,7 @@
 //        throwFail: false,
         combine: false
 
-    }).use('dump', 'substitute', 'event-custom', function(Y) {
+    }).use('dump', 'substitute', 'event-custom', 'base', function(Y) {
 
         Y.log('instanceof: ' + (Y instanceof YUI));
         Y.log('constructor: ' + (Y.constructor == YUI));
@@ -38,7 +38,7 @@
 
 
 var handler = function () {                                                                                                                                                 
-    alert("here");                                                                                                                                                      
+    // alert("here");                                                                                                                                                      
 };                                                                                                                                                                          
                                                                                                                                                                             
 Y.on("myevent", handler);                                                                                                                                                   
@@ -290,6 +290,26 @@ var f = function(foo) {
 };
 
 f();
+
+function Test(config) {
+    Test.superclass.constructor.apply(this, arguments);
+}
+
+Y.mix(Test, {
+    NAME: 'test'
+});
+
+Y.extend(Test, Y.Base, {
+    initializer: function() {
+        var instance = this;
+
+        instance.after('init', function() {
+            console.log('after init Test');
+        });
+    }
+});
+
+new Test({});
 
 });
 

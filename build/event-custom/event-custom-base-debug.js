@@ -559,6 +559,9 @@ Y.CustomEvent = function(type, o) {
     /**
      * Specifies whether or not a subscriber can stop the event propagation
      * via stopPropagation(), stopImmediatePropagation(), or halt()
+     *
+     * Events can only bubble if emitFacade is true.
+     *
      * @property bubbles
      * @type boolean
      * @default true
@@ -573,6 +576,9 @@ Y.CustomEvent = function(type, o) {
      * @default 9
      */
     this.signature = YUI3_SIGNATURE;
+
+    this.subCount = 0;
+    this.afterCount = 0;
 
     // this.hasSubscribers = false;
 
@@ -594,6 +600,32 @@ Y.CustomEvent = function(type, o) {
 };
 
 Y.CustomEvent.prototype = {
+
+    hasSubs: function(when) {
+        var s = this.subCount, a = this.afterCount, sib = this.sibling;
+
+        if (sib) {
+            s += sib.subCount;
+            a += sib.afterCount;
+        }
+
+        if (when) {
+            return (when == 'after') ?  a : s;
+        }
+
+        return (s + a);
+    },
+
+    getSubs: function(when) {
+        var s = Y.merge(this.subscribers), a = Y.merge(this.afters), sib = this.sibling;
+
+        if (sib) {
+            Y.mix(s, sib.subscribers);
+            Y.mix(a, sib.afters);
+        }
+
+        return [s, a];
+    },
 
     /**
      * Apply configuration properties.  Only applies the CONFIG whitelist
@@ -617,15 +649,16 @@ Y.CustomEvent.prototype = {
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-            Y.later(0, this, Y.bind(this._notify, this, s, this.firedWith));
+            // Y.later(0, this, Y.bind(this._notify, this, s, this.firedWith));
+            setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
         }
 
         if (when == AFTER) {
             this.afters[s.id] = s;
-            this.hasAfters = true;
+            this.afterCount++;
         } else {
             this.subscribers[s.id] = s;
-            this.hasSubscribers = true;
+            this.subCount++;
         }
 
         return new Y.EventHandle(this, s);
@@ -784,8 +817,11 @@ Y.CustomEvent.prototype = {
     },
 
     fireSimple: function(args) {
-        if (this.hasSubscribers || this.hasAfters) {
-            this._procSubs(Y.merge(this.subscribers, this.afters), args);
+        if (this.hasSubs()) {
+            // this._procSubs(Y.merge(this.subscribers, this.afters), args);
+            var subs = this.getSubs();
+            this._procSubs(subs[0], args);
+            this._procSubs(subs[1], args);
         }
         this._broadcast(args);
         return this.stopped ? false : true;
@@ -1022,6 +1058,10 @@ var L = Y.Lang,
     CATEGORY_DELIMITER = '|',
     AFTER_PREFIX = '~AFTER~',
 
+    _wildType = Y.cached(function(type) {
+        return type.replace(/(.*)(:)(.*)/, "*$2$3");
+    }),
+
     /**
      * If the instance has a prefix attribute and the
      * event type is not prefixed, the instance prefix is
@@ -1243,22 +1283,21 @@ ET.prototype = {
      * @return {EventTarget} the host
      */
     detach: function(type, fn, context) {
-        var evts = this._yuievt.events, i, ret,
+        var evts = this._yuievt.events, i,
             Node = Y.Node, isNode = Node && (this instanceof Node);
 
         // detachAll disabled on the Y instance.
         if (!type && (this !== Y)) {
             for (i in evts) {
                 if (evts.hasOwnProperty(i)) {
-                    ret = evts[i].detach(fn, context);
+                    evts[i].detach(fn, context);
                 }
             }
             if (isNode) {
-
                 Y.Event.purgeElement(Node.getDOMNode(this));
             }
 
-            return ret;
+            return this;
         }
 
         var parts = _parseType(type, this._yuievt.config.prefix), 
@@ -1293,18 +1332,19 @@ ET.prototype = {
                     }
                 }
 
-                return (this._yuievt.chain) ? this : true;
+                return this;
             }
 
         // If this is an event handle, use it to detach
         } else if (L.isObject(type) && type.detach) {
-            ret = type.detach();
-            return (this._yuievt.chain) ? this : ret;
+            type.detach();
+            return this;
         // extra redirection so we catch adaptor events too.  take a look at this.
         } else if (isNode && ((!shorttype) || (shorttype in Node.DOM_EVENTS))) {
             args = Y.Array(arguments, 0, true);
             args[2] = Node.getDOMNode(this);
-            return Y.detach.apply(Y, args);
+            Y.detach.apply(Y, args);
+            return this;
         }
 
         adapt = Y.Env.evt.plugins[shorttype];
@@ -1314,20 +1354,22 @@ ET.prototype = {
             args = Y.Array(arguments, 0, true);
             // use the adaptor specific detach code if
             if (adapt && adapt.detach) {
-                return adapt.detach.apply(Y, args);
+                adapt.detach.apply(Y, args);
+                return this;
             // DOM event fork
             } else if (!type || (!adapt && Node && (type in Node.DOM_EVENTS))) {
                 args[0] = type;
-                return Y.Event.detach.apply(Y.Event, args);
+                Y.Event.detach.apply(Y.Event, args);
+                return this;
             }
         }
 
         ce = evts[type];
         if (ce) {
-            ret = ce.detach(fn, context);
+            ce.detach(fn, context);
         }
 
-        return (this._yuievt.chain) ? this : ret;
+        return this;
     },
 
     /**
@@ -1336,6 +1378,7 @@ ET.prototype = {
      * @deprecated use detach
      */
     unsubscribe: function() {
+Y.log('EventTarget unsubscribe() is deprecated, use detach()', 'warn', 'deprecated');
         return this.detach.apply(this, arguments);
     },
     
@@ -1359,6 +1402,7 @@ ET.prototype = {
      * @deprecated use detachAll
      */
     unsubscribeAll: function() {
+Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'deprecated');
         return this.detachAll.apply(this, arguments);
     },
 
@@ -1378,6 +1422,7 @@ ET.prototype = {
      *    </li>
      *    <li>
      *   'bubbles': whether or not this event bubbles (true)
+     *              Events can only bubble if emitFacade is true.
      *    </li>
      *    <li>
      *   'context': the default execution context for the listeners (this)
@@ -1456,26 +1501,6 @@ ET.prototype = {
         return events[type];
     },
 
-    /**
-     * Registers another EventTarget as a bubble target.  Bubble order
-     * is determined by the order registered.  Multiple targets can
-     * be specified.
-     * @method addTarget
-     * @param o {EventTarget} the target to add
-     */
-    addTarget: function(o) {
-        this._yuievt.targets[Y.stamp(o)] = o;
-        this._yuievt.hasTargets = true;
-    },
-
-    /**
-     * Removes a bubble target
-     * @method removeTarget
-     * @param o {EventTarget} the target to remove
-     */
-    removeTarget: function(o) {
-        delete this._yuievt.targets[Y.stamp(o)];
-    },
 
    /**
      * Fire a custom event by name.  The callback functions will be executed
@@ -1509,17 +1534,22 @@ ET.prototype = {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, a, ret, pre=this._yuievt.config.prefix;
+            ce, ret, pre=this._yuievt.config.prefix, ce2,
+            args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
         ce = this.getEvent(t, true);
+        ce2 = this.getSibling(t, ce);
+
+        if (ce2 && !ce) {
+            ce = this.publish(t);
+        }
 
         // this event has not been published or subscribed to
         if (!ce) {
             
             if (this._yuievt.hasTargets) {
-                a = (typeIncluded) ? arguments : Y.Array(arguments, 0, true).unshift(t);
-                return this.bubble({ type: type, target: this }, a, this);
+                return this.bubble({ type: t }, args, this);
             }
 
             // otherwise there is nothing to be done
@@ -1527,14 +1557,35 @@ ET.prototype = {
 
         } else {
 
-            a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
-            ret = ce.fire.apply(ce, a);
+            ce.sibling = ce2;
+
+            ret = ce.fire.apply(ce, args);
 
             // clear target for next fire()
             ce.target = null;
         }
 
         return (this._yuievt.chain) ? this : ret;
+    },
+
+
+    getSibling: function(type, ce) {
+        var ce2;
+        // delegate to *:type events if there are subscribers
+        if (type.indexOf(PREFIX_DELIMITER) > -1) {
+            type = _wildType(type);
+            // console.log(type);
+            ce2 = this.getEvent(type, true);
+            if (ce2) {
+                // console.log("GOT ONE: " + type);
+                ce2.applyConfig(ce);
+                ce2.bubbles = false;
+                ce2.broadcast = 0;
+                // ret = ce2.fire.apply(ce2, a);
+            }
+        }
+
+        return ce2;
     },
 
     /**
@@ -1597,7 +1648,6 @@ ET.prototype = {
      *
      * @method before
      * @return detach handle
-     * @deprecated use the on method
      */
     before: function() { 
         return this.on.apply(this, arguments);

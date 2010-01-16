@@ -47,6 +47,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #demo .yui-dd-drop-over {
             border: 2px solid green;
         }
+        #demo li.disabled {
+            opacity: .25;
+        }
 	</style>
 </head>
 <body class="yui-skin-sam">
@@ -56,7 +59,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <ul id="one">
 <?php
 foreach (range(1, $count) as $k) {
-    echo('  <li class="item list-item1">'.$k.'</li>'."\n");
+    echo('  <li class="item list-item1'.(($k % 2) ? ' disabled' : '').'">'.$k.'</li>'."\n");
 }
 ?>
 </ul>
@@ -67,16 +70,10 @@ foreach (range(1, $count) as $k) {
 }
 ?>
 </ul>
-<ul id="three">
-<?php
-foreach (range(1, $count) as $k) {
-    echo('  <li class="item list-item3">'.$k.'</li>'."\n");
-}
-?>
-</ul>
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/attribute/attribute-base-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -125,13 +122,15 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         cont: '#one',
         nodes: '.item',
         opacity: '.5',
-        moveType: 'copy'
+        moveType: 'move',
+        //invalid: '.disabled',
+        opacityNode: 'currentNode'
     });
     sel.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'
     });
 
-    console.log('sel: ', sel.get('id'));
+    //console.log('sel: ', sel.get('id'));
 
     
 
@@ -143,24 +142,12 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     sel2.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'
     });
-    console.log('sel2: ', sel2.get('id'));
+    //console.log('sel2: ', sel2.get('id'));
 
     //sel2.bindTo(sel);
     //sel2.bindWith(sel);
 
     sel.join(sel2, 'outer');
-    
-
-    var sel3 = new Y.Sortable({
-        cont: '#three',
-        nodes: '.item',
-        moveType: 'move'
-    });
-    sel3.plug(Y.Plugin.DDConstrained, {
-        constrain2node: '#demo'
-    });
-    console.log('sel3: ', sel3.get('id'));
-    sel3.join(sel);
 
     /*
     console.log(Y.DD.DDM.getDelegate(Y.one('#three')));

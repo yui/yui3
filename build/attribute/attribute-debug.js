@@ -760,13 +760,20 @@ YUI.add('attribute-base', function(Y) {
          * @param {EventFacade} e The event object for attribute change events.
          */
         _defAttrChangeFn : function(e) {
-            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
-                Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
-                // Prevent "after" listeners from being invoked since nothing changed.
-                e.stopImmediatePropagation();
-            } else {
-                e.newVal = this._getStateVal(e.attrName);
+
+            //  Temporary fix for bug #2528350
+            if (e.target === this) {
+
+                if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+                    Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
+                    // Prevent "after" listeners from being invoked since nothing changed.
+                    e.stopImmediatePropagation();
+                } else {
+                    e.newVal = this._getStateVal(e.attrName);
+                }
+                
             }
+
         },
 
         /**

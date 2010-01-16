@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<title>use('*')</title>
+    <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <script src="../../build/loader/loader-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <script type="text/javascript" charset="utf-8">                                                                                                                 
+        YUI({
+            // fetchCSS: 'force',
+            // bootstrap: false
+            gallerybase: '../../gallerybuild/'
+        }).use('gallery-mygal', function(Y) {
+            console.log(Y.Base);
+        });                                                                                                                                 
+        // console.log(A.Widget);                                                                                                                                  
+    </script>     
+<body>
+</body>
+</html>

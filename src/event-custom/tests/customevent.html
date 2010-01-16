@@ -14,6 +14,9 @@
 <script type="text/javascript">
 
 (function() {
+
+    var global_notified;
+
     //YUI.add("selector-native", function(){});
     YUI({
         filter: "debug",
@@ -32,7 +35,7 @@
             yui: true,
             attribute: true, 
             event: true, 
-            deprecated: true, 
+            // deprecated: true, 
             base: true, 
             loader: true, 
             widget: true
@@ -243,7 +246,9 @@
 
                 // spaces after the comma or lack thereof should have
                 // no effect on the addition or removal of listeners
-                Y.detach('handle|test:event');
+                var ret = Y.detach('handle|test:event');
+
+                Y.Assert.areEqual(Y, ret);
 
                 // added both an on listener and an after listener,
                 // then detached both
@@ -369,11 +374,14 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                     
                 b.addTarget(a);
 
-                // this should not be necessary
+                // this should not be necessary // fixed
                 // b.publish('test:foo');
                     
-                a.on('test:foo', function() {
+                a.on('test:foo', function(e) {
                     count++;
+                    // we will fire this on the parent, so that should be the target
+                    Y.Assert.areEqual(b, e.target);
+                    Y.Assert.areEqual(a, e.currentTarget);
                 });
 
                 ret = b.fire('test:foo', {}, b);
@@ -546,11 +554,20 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 Y.fire('fireonce', 'foo2', 'bar2');
                 Y.fire('fireonce', 'foo3', 'bar3');
 
+                global_notified = false;
 
                 Y.on('fireonce', function(arg1, arg2) {
                     Y.log('the notification is asynchronous, so I need to wait for this test');
                     Y.Assert.areEqual(1, notified, 'listener notified more than once.');
+                    global_notified = true;
                 });
+
+                Y.Assert.isFalse(global_notified, 'notification was not asynchronous');
+
+            },
+
+            test_async_fireonce: function() {
+                Y.Assert.isTrue(global_notified, 'asynchronous notification did not seem to work.');
             },
 
             test_node_publish: function() {
@@ -728,6 +745,82 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 leaf.fire('test:foo', {}, leaf);
                 Y.Assert.areEqual(6, count);
 
+            },
+
+            testStarSubscriber: function() {
+                var count = 0,
+                    ret,
+                    config = {
+                        emitFacade: true,
+                        bubbles: true,
+                        prefix: 'stars'
+                    },
+                    z = new Y.EventTarget(config), 
+                    a = new Y.EventTarget(config), 
+                    b = new Y.EventTarget(config);
+                    
+                b.addTarget(a);
+                a.addTarget(z);
+
+                z.on('*:foo', function(e) {
+                    count++;
+                    // b -> a -> z -- the parent's parent should be the target
+                    Y.Assert.areEqual(b, e.target);
+                    Y.Assert.areEqual(z, e.currentTarget);
+                    switch (count) {
+                        case 1:
+                            Y.Assert.areEqual('a:foo', e.type);
+                            break;
+                        case 2:
+                            Y.Assert.areEqual('b:foo', e.type);
+                            break;
+                        case 3:
+                            Y.Assert.areEqual('stars:foo', e.type);
+                            break;
+                    }
+                });
+
+                ret = b.fire('a:foo', {}, b);
+
+                Y.Assert.areEqual(1, count);
+                Y.Assert.isTrue(ret);
+
+                ret = b.fire('b:foo', {}, b);
+
+                Y.Assert.areEqual(2, count);
+                Y.Assert.isTrue(ret);
+
+                // if the event target is not configured with a prefix, this won't work by design.
+                ret = b.fire('foo', {}, b);
+                Y.Assert.areEqual(3, count);
+
+                Y.Assert.isTrue(ret);
+            },
+
+            testPreventBubble: function() {
+                var count = 0,
+                    ret,
+                    config = {
+                        emitFacade: true,
+                        bubbles: true,
+                        prefix: 'stars'
+                    },
+                    z = new Y.EventTarget(config), 
+                    a = new Y.EventTarget(config), 
+                    b = new Y.EventTarget(config);
+                    
+                b.addTarget(a);
+                a.addTarget(z);
+
+                z.on('*:foo', function(e) {
+
+                    // e.preventDefault();
+
+                });
+
+                ret = b.fire('a:foo', {}, b);
+
+                Y.Assert.areEqual(0, count);
             }
         });
         

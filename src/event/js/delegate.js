@@ -60,7 +60,7 @@ var Event = Y.Event,
 				matched = null;
 
 
-				if (target == el || Y.Selector.test(target, spec, el)) {
+				if (Y.Selector.test(target, spec, el)) {
 					matched = target;
 				}
 				else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {

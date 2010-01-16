@@ -2,12 +2,12 @@ YUI.add('dd-drag', function(Y) {
 
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Provides the ability to drag a Node.
      * @module dd
      * @submodule dd-drag
      */     
     /**
-     * This class provides the ability to drag a Node.
+     * Provides the ability to drag a Node.
      * @class Drag
      * @extends Base
      * @constructor
@@ -148,7 +148,7 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             setter: function(node) {
-                var n = Y.get(node);
+                var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid Node Given: ' + node);
                 } else {
@@ -164,7 +164,7 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             setter: function(node) {
-                var n = Y.Node.get(node);
+                var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid dragNode Given: ' + node);
                 }
@@ -718,7 +718,7 @@ YUI.add('dd-drag', function(Y) {
             }
             if (r) {
                 if (hTest) {
-                    els = ev.currentTarget.queryAll(hTest);
+                    els = ev.currentTarget.all(hTest);
                     set = false;
                     els.each(function(n, i) {
                         if ((n.contains(tar) || n.compareTo(tar)) && !set) {
@@ -882,7 +882,7 @@ YUI.add('dd-drag', function(Y) {
         */
         start: function() {
             if (!this.get('lock') && !this.get(DRAGGING)) {
-                var node = this.get(NODE), ow = node.get(OFFSET_WIDTH), oh = node.get(OFFSET_HEIGHT);
+                var node = this.get(NODE), ow = node.get(OFFSET_WIDTH), oh = node.get(OFFSET_HEIGHT), xy;
                 this._startTime = (new Date()).getTime();
 
                 DDM._start();
@@ -892,7 +892,7 @@ YUI.add('dd-drag', function(Y) {
                     pageY: this.nodeXY[1],
                     startTime: this._startTime
                 });
-                var xy = this.nodeXY;
+                xy = this.nodeXY;
 
                 
                 this.region = {

@@ -26,6 +26,7 @@ var NODE_TYPE = 'nodeType',
     NEXT_SIBLING = 'nextSibling',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
+    EMPTY_STRING = '',
 
     documentElement = document.documentElement,
 
@@ -40,9 +41,8 @@ Y.DOM = {
      * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. 
      */
     byId: function(id, doc) {
-        doc = doc || Y.config.doc;
-        // TODO: IE Name
-        return doc.getElementById(id);
+        // handle dupe IDs and IE name collision
+        return Y.DOM.allById(id, doc)[0] || null;
     },
 
     // @deprecated
@@ -143,12 +143,16 @@ Y.DOM = {
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current DOM node being tested as its only argument.
      * If no function is given, the parentNode is returned.
-     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-     // TODO: optional stopAt node?
-    ancestor: function(element, fn, all) {
-        return Y.DOM.elementByAxis(element, PARENT_NODE, fn, all);
+    ancestor: function(element, fn, testSelf) {
+        var ret = null;
+        if (testSelf) {
+            ret = (!fn || fn(element)) ? element : null;
+
+        }
+        return ret || Y.DOM.elementByAxis(element, PARENT_NODE, fn, null);
     },
 
     /**
@@ -456,6 +460,12 @@ Y.DOM = {
             }
         }
 
+        // workaround for IE8 JSON stringify bug
+        // which converts empty string values to null
+        if (ret === EMPTY_STRING) {
+            ret = EMPTY_STRING; // for real
+        }
+
         return (typeof ret === 'string') ? ret : '';
     },
 
@@ -471,6 +481,26 @@ Y.DOM = {
                 node.value = val;
             }
         }
+    },
+
+    siblings: function(node, fn) {
+        var nodes = [],
+            sibling = node;
+
+        while ((sibling = sibling[PREVIOUS_SIBLING])) {
+            if (sibling[TAG_NAME] && (!fn || fn(sibling))) {
+                nodes.unshift(sibling);
+            }
+        }
+
+        sibling = node;
+        while ((sibling = sibling[NEXT_SIBLING])) {
+            if (sibling[TAG_NAME] && (!fn || fn(sibling))) {
+                nodes.push(sibling);
+            }
+        }
+
+        return nodes;
     },
 
     /**
@@ -553,13 +583,6 @@ Y.DOM = {
         }
 
         return ret.length ? ret : nodes;
-    },
-
-    _testElement: function(element, tag, fn) {
-        tag = (tag && tag !== '*') ? tag.toUpperCase() : null;
-        return (element && element[TAG_NAME] &&
-                (!tag || element[TAG_NAME].toUpperCase() === tag) &&
-                (!fn || fn(element)));
     },
 
     creators: {},
@@ -665,6 +688,7 @@ Y.DOM = {
                 options = node.options;
 
             if (options && val === '') {
+                // TODO: implement multipe select
                 if (node.multiple) {
                 } else {
                     val = Y.DOM.getValue(options[node.selectedIndex], 'value');
@@ -725,7 +749,7 @@ Y.mix(Y.DOM, {
      * Replace a class with another class for a given element.
      * If no oldClassName is present, the newClassName is simply added.
      * @method replaceClass  
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element 
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
      */
@@ -737,14 +761,19 @@ Y.mix(Y.DOM, {
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
      * @method toggleClass  
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled
+     * @param {Boolean} addClass optional boolean to indicate whether class
+     * should be added or removed regardless of current state
      */
-    toggleClass: function(node, className) {
-        if (hasClass(node, className)) {
-            removeClass(node, className);
-        } else {
+    toggleClass: function(node, className, force) {
+        var add = (force !== undefined) ? force :
+                !(hasClass(node, className));
+
+        if (add) {
             addClass(node, className);
+        } else {
+            removeClass(node, className);
         }
     }
 });
@@ -779,10 +808,15 @@ var DOCUMENT_ELEMENT = 'documentElement',
     DOCUMENT = Y.config.doc,
     UNDEFINED = undefined,
 
-    re_color = /color$/i;
+    Y_DOM = Y.DOM,
+
+    re_color = /color$/i,
+    re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
 
-Y.mix(Y.DOM, {
+Y.mix(Y_DOM, {
+    DEFAULT_UNIT: 'px',
+
     CUSTOM_STYLES: {
     },
 
@@ -796,12 +830,16 @@ Y.mix(Y.DOM, {
      */
     setStyle: function(node, att, val, style) {
         style = style || node.style;
-        var CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
+        var CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES,
+            current;
 
         if (style) {
-            if (val === null) {
-                val = ''; // normalize for unsetting
+            if (val === null || val === '') { // normalize unsetting
+                val = '';
+            } else if (!isNaN(new Number(val)) && re_unit.test(att)) { // number values may need a unit
+                val += Y_DOM.DEFAULT_UNIT;
             }
+
             if (att in CUSTOM_STYLES) {
                 if (CUSTOM_STYLES[att].set) {
                     CUSTOM_STYLES[att].set(node, val, style);
@@ -820,9 +858,9 @@ Y.mix(Y.DOM, {
      * @param {HTMLElement} An HTMLElement to get the style from.
      * @param {String} att The style property to get. 
      */
-    getStyle: function(node, att) {
-        var style = node[STYLE],
-            CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES,
+    getStyle: function(node, att, style) {
+        style = style || node.style;
+        var CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES,
             val = '';
 
         if (style) {
@@ -835,7 +873,7 @@ Y.mix(Y.DOM, {
             }
             val = style[att];
             if (val === '') { // TODO: is empty string sufficient?
-                val = Y.DOM[GET_COMPUTED_STYLE](node, att);
+                val = Y_DOM[GET_COMPUTED_STYLE](node, att);
             }
         }
 
@@ -851,8 +889,8 @@ Y.mix(Y.DOM, {
     setStyles: function(node, hash) {
         var style = node.style;
         Y.each(hash, function(v, n) {
-            Y.DOM.setStyle(node, n, v, style);
-        }, Y.DOM);
+            Y_DOM.setStyle(node, n, v, style);
+        }, Y_DOM);
     },
 
     /**
@@ -875,14 +913,14 @@ Y.mix(Y.DOM, {
 
 // normalize reserved word float alternatives ("cssFloat" or "styleFloat")
 if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== UNDEFINED) {
-    Y.DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
+    Y_DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
 } else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== UNDEFINED) {
-    Y.DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
+    Y_DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
 }
 
 // fix opera computedStyle default color unit (convert to rgb)
 if (Y.UA.opera) {
-    Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
+    Y_DOM[GET_COMPUTED_STYLE] = function(node, att) {
         var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
             val = view[GET_COMPUTED_STYLE](node, '')[att];
 
@@ -897,7 +935,7 @@ if (Y.UA.opera) {
 
 // safari converts transparent to rgba(), others use "transparent"
 if (Y.UA.webkit) {
-    Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
+    Y_DOM[GET_COMPUTED_STYLE] = function(node, att) {
         var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
             val = view[GET_COMPUTED_STYLE](node, '')[att];
 
@@ -964,11 +1002,11 @@ Y.Color = {
 
             for (var i = 0; i < val.length; i++) {
                 if (val[i].length < 2) {
-                    val[i] = val[i].replace(Y.Color.re_hex3, '$1$1');
+                    val[i] = '0' + val[i];
                 }
             }
 
-            val = '#' + val.join('');
+            val = val.join('');
         }
 
         if (val.length < 6) {
@@ -979,7 +1017,7 @@ Y.Color = {
             val = '#' + val;
         }
 
-        return val.toLowerCase();
+        return val.toUpperCase();
     }
 };
 })(Y);
@@ -1323,18 +1361,20 @@ var DOCUMENT_ELEMENT = 'documentElement',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
     GET_COMPUTED_STYLE = 'getComputedStyle',
 
+    Y_DOM = Y.DOM,
+
     // TODO: how about thead/tbody/tfoot/tr?
     // TODO: does caption matter?
     RE_TABLE = /^t(?:able|d|h)$/i;
 
-Y.mix(Y.DOM, {
+Y.mix(Y_DOM, {
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
      * @method winHeight
      * @return {Number} The current height of the viewport.
      */
     winHeight: function(node) {
-        var h = Y.DOM._getWinSize(node).height;
+        var h = Y_DOM._getWinSize(node).height;
         return h;
     },
 
@@ -1344,7 +1384,7 @@ Y.mix(Y.DOM, {
      * @return {Number} The current width of the viewport.
      */
     winWidth: function(node) {
-        var w = Y.DOM._getWinSize(node).width;
+        var w = Y_DOM._getWinSize(node).width;
         return w;
     },
 
@@ -1354,8 +1394,8 @@ Y.mix(Y.DOM, {
      * @return {Number} The current height of the document.
      */
     docHeight:  function(node) {
-        var h = Y.DOM._getDocSize(node).height;
-        return Math.max(h, Y.DOM._getWinSize(node).height);
+        var h = Y_DOM._getDocSize(node).height;
+        return Math.max(h, Y_DOM._getWinSize(node).height);
     },
 
     /**
@@ -1364,8 +1404,8 @@ Y.mix(Y.DOM, {
      * @return {Number} The current width of the document.
      */
     docWidth:  function(node) {
-        var w = Y.DOM._getDocSize(node).width;
-        return Math.max(w, Y.DOM._getWinSize(node).width);
+        var w = Y_DOM._getDocSize(node).width;
+        return Math.max(w, Y_DOM._getWinSize(node).width);
     },
 
     /**
@@ -1374,7 +1414,7 @@ Y.mix(Y.DOM, {
      * @return {Number} The current amount the screen is scrolled horizontally.
      */
     docScrollX: function(node) {
-        var doc = Y.DOM._getDoc(node);
+        var doc = Y_DOM._getDoc(node);
         return Math.max(doc[DOCUMENT_ELEMENT].scrollLeft, doc.body.scrollLeft);
     },
 
@@ -1384,7 +1424,7 @@ Y.mix(Y.DOM, {
      * @return {Number} The current amount the screen is scrolled vertically.
      */
     docScrollY:  function(node) {
-        var doc = Y.DOM._getDoc(node);
+        var doc = Y_DOM._getDoc(node);
         return Math.max(doc[DOCUMENT_ELEMENT].scrollTop, doc.body.scrollTop);
     },
 
@@ -1411,19 +1451,19 @@ Y.mix(Y.DOM, {
                     doc;
 
                 if (node) {
-                    if (Y.DOM.inDoc(node)) {
-                        scrollLeft = Y.DOM.docScrollX(node);
-                        scrollTop = Y.DOM.docScrollY(node);
+                    if (Y_DOM.inDoc(node)) {
+                        scrollLeft = Y_DOM.docScrollX(node);
+                        scrollTop = Y_DOM.docScrollY(node);
                         box = node[GET_BOUNDING_CLIENT_RECT]();
-                        doc = Y.DOM._getDoc(node);
+                        doc = Y_DOM._getDoc(node);
                         xy = [box.left, box.top];
 
                             if (Y.UA.ie) {
                                 off1 = 2;
                                 off2 = 2;
                                 mode = doc[COMPAT_MODE];
-                                bLeft = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH);
-                                bTop = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
+                                bLeft = Y_DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH);
+                                bTop = Y_DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
 
                                 if (Y.UA.ie === 6) {
                                     if (mode !== _BACK_COMPAT) {
@@ -1451,7 +1491,7 @@ Y.mix(Y.DOM, {
                             xy[1] += scrollTop;
                         }
                     } else { // default to current offsets
-                        xy = Y.DOM._getOffset(node);
+                        xy = Y_DOM._getOffset(node);
                     }
                 }
                 return xy;                   
@@ -1466,7 +1506,7 @@ Y.mix(Y.DOM, {
                     scrollLeft;
 
                 if (node) {
-                    if (Y.DOM.inDoc(node)) {
+                    if (Y_DOM.inDoc(node)) {
                         xy = [node.offsetLeft, node.offsetTop];
                         parentNode = node;
                         // TODO: refactor with !! or just falsey
@@ -1477,12 +1517,12 @@ Y.mix(Y.DOM, {
                             xy[0] += parentNode.offsetLeft;
                             xy[1] += parentNode.offsetTop;
                             if (bCheck) {
-                                xy = Y.DOM._calcBorders(parentNode, xy);
+                                xy = Y_DOM._calcBorders(parentNode, xy);
                             }
                         }
 
                         // account for any scrolled ancestors
-                        if (Y.DOM.getStyle(node, POSITION) != FIXED) {
+                        if (Y_DOM.getStyle(node, POSITION) != FIXED) {
                             parentNode = node;
 
                             while ((parentNode = parentNode.parentNode)) {
@@ -1490,8 +1530,8 @@ Y.mix(Y.DOM, {
                                 scrollLeft = parentNode.scrollLeft;
 
                                 //Firefox does something funky with borders when overflow is not visible.
-                                if (Y.UA.gecko && (Y.DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
-                                        xy = Y.DOM._calcBorders(parentNode, xy);
+                                if (Y.UA.gecko && (Y_DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
+                                        xy = Y_DOM._calcBorders(parentNode, xy);
                                 }
                                 
 
@@ -1500,16 +1540,16 @@ Y.mix(Y.DOM, {
                                     xy[1] -= scrollTop;
                                 }
                             }
-                            xy[0] += Y.DOM.docScrollX(node);
-                            xy[1] += Y.DOM.docScrollY(node);
+                            xy[0] += Y_DOM.docScrollX(node);
+                            xy[1] += Y_DOM.docScrollY(node);
 
                         } else {
                             //Fix FIXED position -- add scrollbars
-                            xy[0] += Y.DOM.docScrollX(node);
-                            xy[1] += Y.DOM.docScrollY(node);
+                            xy[0] += Y_DOM.docScrollX(node);
+                            xy[1] += Y_DOM.docScrollY(node);
                         }
                     } else {
-                        xy = Y.DOM._getOffset(node);
+                        xy = Y_DOM._getOffset(node);
                     }
                 }
 
@@ -1523,21 +1563,21 @@ Y.mix(Y.DOM, {
             xy = null;
 
         if (node) {
-            pos = Y.DOM.getStyle(node, POSITION);
+            pos = Y_DOM.getStyle(node, POSITION);
             xy = [
-                parseInt(Y.DOM[GET_COMPUTED_STYLE](node, LEFT), 10),
-                parseInt(Y.DOM[GET_COMPUTED_STYLE](node, TOP), 10)
+                parseInt(Y_DOM[GET_COMPUTED_STYLE](node, LEFT), 10),
+                parseInt(Y_DOM[GET_COMPUTED_STYLE](node, TOP), 10)
             ];
 
             if ( isNaN(xy[0]) ) { // in case of 'auto'
-                xy[0] = parseInt(Y.DOM.getStyle(node, LEFT), 10); // try inline
+                xy[0] = parseInt(Y_DOM.getStyle(node, LEFT), 10); // try inline
                 if ( isNaN(xy[0]) ) { // default to offset value
                     xy[0] = (pos === RELATIVE) ? 0 : node.offsetLeft || 0;
                 }
             } 
 
             if ( isNaN(xy[1]) ) { // in case of 'auto'
-                xy[1] = parseInt(Y.DOM.getStyle(node, TOP), 10); // try inline
+                xy[1] = parseInt(Y_DOM.getStyle(node, TOP), 10); // try inline
                 if ( isNaN(xy[1]) ) { // default to offset value
                     xy[1] = (pos === RELATIVE) ? 0 : node.offsetTop || 0;
                 }
@@ -1558,7 +1598,7 @@ Y.mix(Y.DOM, {
      */
 
     getX: function(node) {
-        return Y.DOM.getXY(node)[0];
+        return Y_DOM.getXY(node)[0];
     },
 
     /**
@@ -1571,7 +1611,7 @@ Y.mix(Y.DOM, {
      */
 
     getY: function(node) {
-        return Y.DOM.getXY(node)[1];
+        return Y_DOM.getXY(node)[1];
     },
 
     /**
@@ -1583,23 +1623,23 @@ Y.mix(Y.DOM, {
      * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
      */
     setXY: function(node, xy, noRetry) {
-        var setStyle = Y.DOM.setStyle,
+        var setStyle = Y_DOM.setStyle,
             pos,
             delta,
             newXY,
             currentXY;
 
         if (node && xy) {
-            pos = Y.DOM.getStyle(node, POSITION);
+            pos = Y_DOM.getStyle(node, POSITION);
 
-            delta = Y.DOM._getOffset(node);       
+            delta = Y_DOM._getOffset(node);       
 
             if (pos == 'static') { // default to relative
                 pos = RELATIVE;
                 setStyle(node, POSITION, pos);
             }
 
-            currentXY = Y.DOM.getXY(node);
+            currentXY = Y_DOM.getXY(node);
 
             if (xy[0] !== null) {
                 setStyle(node, LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
@@ -1610,9 +1650,9 @@ Y.mix(Y.DOM, {
             }
 
             if (!noRetry) {
-                newXY = Y.DOM.getXY(node);
+                newXY = Y_DOM.getXY(node);
                 if (newXY[0] !== xy[0] || newXY[1] !== xy[1]) {
-                    Y.DOM.setXY(node, xy, true); 
+                    Y_DOM.setXY(node, xy, true); 
                 }
             }
           
@@ -1628,7 +1668,7 @@ Y.mix(Y.DOM, {
      * @param {Int} x The X values for new position (coordinates are page-based)
      */
     setX: function(node, x) {
-        return Y.DOM.setXY(node, [x, null]);
+        return Y_DOM.setXY(node, [x, null]);
     },
 
     /**
@@ -1639,12 +1679,25 @@ Y.mix(Y.DOM, {
      * @param {Int} y The Y values for new position (coordinates are page-based)
      */
     setY: function(node, y) {
-        return Y.DOM.setXY(node, [null, y]);
+        return Y_DOM.setXY(node, [null, y]);
+    },
+
+    /**
+     * @method swapXY
+     * @description Swap the xy position with another node
+     * @param {Node} node The node to swap with
+     * @param {Node} otherNode The other node to swap with
+     * @return {Node}
+     */
+    swapXY: function(node, otherNode) {
+        var xy = Y_DOM.getXY(node);
+        Y_DOM.setXY(node, Y_DOM.getXY(otherNode));
+        Y_DOM.setXY(otherNode, xy);
     },
 
     _calcBorders: function(node, xy2) {
-        var t = parseInt(Y.DOM[GET_COMPUTED_STYLE](node, BORDER_TOP_WIDTH), 10) || 0,
-            l = parseInt(Y.DOM[GET_COMPUTED_STYLE](node, BORDER_LEFT_WIDTH), 10) || 0;
+        var t = parseInt(Y_DOM[GET_COMPUTED_STYLE](node, BORDER_TOP_WIDTH), 10) || 0,
+            l = parseInt(Y_DOM[GET_COMPUTED_STYLE](node, BORDER_LEFT_WIDTH), 10) || 0;
         if (Y.UA.gecko) {
             if (RE_TABLE.test(node.tagName)) {
                 t = 0;
@@ -1657,7 +1710,7 @@ Y.mix(Y.DOM, {
     },
 
     _getWinSize: function(node) {
-        var doc = Y.DOM._getDoc(),
+        var doc = Y_DOM._getDoc(),
             win = doc.defaultView || doc.parentWindow,
             mode = doc[COMPAT_MODE],
             h = win.innerHeight,
@@ -1675,7 +1728,7 @@ Y.mix(Y.DOM, {
     },
 
     _getDocSize: function(node) {
-        var doc = Y.DOM._getDoc(),
+        var doc = Y_DOM._getDoc(),
             root = doc[DOCUMENT_ELEMENT];
 
         if (doc[COMPAT_MODE] != 'CSS1Compat') {
@@ -2094,6 +2147,21 @@ var Selector = {
         }
 
         return ret;
+    },
+
+    /**
+     * A convenience function to emulate Y.Node's aNode.ancestor(selector).
+     * @param {HTMLElement} element An HTMLElement to start the query from.
+     * @param {String} selector The CSS selector to test the node against.
+     * @return {HTMLElement} The ancestor node matching the selector, or null.
+     * @param {Boolean} testSelf optional Whether or not to include the element in the scan 
+     * @static
+     * @method ancestor
+     */
+    ancestor: function (element, selector, testSelf) {
+        return Y.DOM.ancestor(element, function(n) {
+            return Y.Selector.test(n, selector);
+        }, testSelf);
     }
 };
 
@@ -2149,8 +2217,6 @@ var PARENT_NODE = 'parentNode',
 
             return ret || [];
         },
-
-        _regexCache: {},
 
         _re: {
             //attr: /(\[.*\])/g,
@@ -2217,8 +2283,8 @@ var PARENT_NODE = 'parentNode',
                 // try ID first
                 if (id) {
                     nodes = Y.DOM.allById(id, root);
-                // try className if supported
-                } else if (className && root.getElementsByClassName) {
+                // try className
+                } else if (className) {
                     nodes = root.getElementsByClassName(className);
                 } else { // default to tagName
                     nodes = root.getElementsByTagName(tagName);
@@ -2320,15 +2386,6 @@ var PARENT_NODE = 'parentNode',
             return result;
         },
 
-        _getRegExp: function(str, flags) {
-            var regexCache = Selector._regexCache;
-            flags = flags || '';
-            if (!regexCache[str + flags]) {
-                regexCache[str + flags] = new RegExp(str, flags);
-            }
-            return regexCache[str + flags];
-        },
-
         combinators: {
             ' ': {
                 axis: 'parentNode'
@@ -2358,7 +2415,7 @@ var PARENT_NODE = 'parentNode',
                     // add prefiltering for ID and CLASS
                     if ((match[1] === 'id' && operator === '=') ||
                             (match[1] === 'className' &&
-                            document.getElementsByClassName &&
+                            document.documentElement.getElementsByClassName &&
                             (operator === '~=' || operator === '='))) {
                         token.prefilter = match[1];
                         token[match[1]] = match[3];
@@ -2368,7 +2425,7 @@ var PARENT_NODE = 'parentNode',
                     if (operator in operators) {
                         test = operators[operator];
                         if (typeof test === 'string') {
-                            test = Y.Selector._getRegExp(test.replace('{val}', match[3]));
+                            test = Y.DOM._getRegExp(test.replace('{val}', match[3]));
                         }
                         match[2] = test;
                     }
@@ -2506,7 +2563,7 @@ var PARENT_NODE = 'parentNode',
 
             for (re in shorthand) {
                 if (shorthand.hasOwnProperty(re)) {
-                    selector = selector.replace(Selector._getRegExp(re, 'gi'), shorthand[re]);
+                    selector = selector.replace(Y.DOM._getRegExp(re, 'gi'), shorthand[re]);
                 }
             }
 

@@ -63,8 +63,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
             if (Y.fire && !silent) {
                 if (!_published) {
                     Y.publish(LOGEVENT, {
-                        broadcast: 2,
-                        emitFacade: 1
+                        broadcast: 2
                     });
 
                     _published = 1;

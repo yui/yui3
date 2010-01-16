@@ -150,7 +150,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         _setupListeners: function() {
             this._active = true;
-            var doc = Y.get(document);
+            var doc = Y.one(document);
             doc.on('mousemove', Y.bind(this._move, this));
             //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
             doc.on('mouseup', Y.bind(this._end, this));
@@ -250,7 +250,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         getDrag: function(node) {
             var drag = false,
-                n = Y.get(node);
+                n = Y.one(node);
             if (n instanceof Y.Node) {
                 Y.each(this._drags, function(v, k) {
                     if (n.compareTo(v.get('node'))) {
@@ -414,7 +414,7 @@ YUI.add('dd-ddm', function(Y) {
         */
         _pg_size: function() {
             if (this.activeDrag) {
-                var b = Y.get('body'),
+                var b = Y.one('body'),
                 h = b.get('docHeight'),
                 w = b.get('docWidth');
                 this._pg.setStyles({
@@ -430,7 +430,7 @@ YUI.add('dd-ddm', function(Y) {
         */
         _createPG: function() {
             var pg = Y.Node.create('<div></div>'),
-            bd = Y.get('body');
+            bd = Y.one('body'), win;
             pg.setStyles({
                 top: '0',
                 left: '0',
@@ -453,7 +453,7 @@ YUI.add('dd-ddm', function(Y) {
             this._pg.on('mouseup', Y.bind(this._end, this));
             this._pg.on('mousemove', Y.bind(this._move, this));
             
-            var win = Y.get(window);
+            win = Y.one(window);
             Y.on('window:resize', Y.bind(this._pg_size, this));
             win.on('scroll', Y.bind(this._pg_size, this));
         }   
@@ -854,7 +854,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         getDrop: function(node) {
             var drop = false,
-                n = Y.Node.get(node);
+                n = Y.one(node);
             if (n instanceof Y.Node) {
                 Y.each(this.targets, function(v, k) {
                     if (n.compareTo(v.get('node'))) {
@@ -877,12 +877,12 @@ YUI.add('dd-drag', function(Y) {
 
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Provides the ability to drag a Node.
      * @module dd
      * @submodule dd-drag
      */     
     /**
-     * This class provides the ability to drag a Node.
+     * Provides the ability to drag a Node.
      * @class Drag
      * @extends Base
      * @constructor
@@ -1023,7 +1023,7 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             setter: function(node) {
-                var n = Y.get(node);
+                var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid Node Given: ' + node);
                 } else {
@@ -1039,7 +1039,7 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             setter: function(node) {
-                var n = Y.Node.get(node);
+                var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drag: Invalid dragNode Given: ' + node);
                 }
@@ -1593,7 +1593,7 @@ YUI.add('dd-drag', function(Y) {
             }
             if (r) {
                 if (hTest) {
-                    els = ev.currentTarget.queryAll(hTest);
+                    els = ev.currentTarget.all(hTest);
                     set = false;
                     els.each(function(n, i) {
                         if ((n.contains(tar) || n.compareTo(tar)) && !set) {
@@ -1757,7 +1757,7 @@ YUI.add('dd-drag', function(Y) {
         */
         start: function() {
             if (!this.get('lock') && !this.get(DRAGGING)) {
-                var node = this.get(NODE), ow = node.get(OFFSET_WIDTH), oh = node.get(OFFSET_HEIGHT);
+                var node = this.get(NODE), ow = node.get(OFFSET_WIDTH), oh = node.get(OFFSET_HEIGHT), xy;
                 this._startTime = (new Date()).getTime();
 
                 DDM._start();
@@ -1767,7 +1767,7 @@ YUI.add('dd-drag', function(Y) {
                     pageY: this.nodeXY[1],
                     startTime: this._startTime
                 });
-                var xy = this.nodeXY;
+                xy = this.nodeXY;
 
                 
                 this.region = {
@@ -1970,12 +1970,12 @@ YUI.add('dd-proxy', function(Y) {
 
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.
      * @module dd
      * @submodule dd-proxy
      */
     /**
-     * This plugin for dd-drag is for creating a proxy drag node, instead of dragging the original node.
+     * Plugin for dd-drag for creating a proxy drag node, instead of dragging the original node.
      * @class DDProxy
      * @extends Base
      * @constructor
@@ -1985,11 +1985,10 @@ YUI.add('dd-proxy', function(Y) {
         NODE = 'node',
         DRAG_NODE = 'dragNode',
         HOST = 'host',
-        TRUE = true;
-
-    var P = function(config) {
-        P.superclass.constructor.apply(this, arguments);
-    };
+        TRUE = true, proto,
+        P = function(config) {
+            P.superclass.constructor.apply(this, arguments);
+        };
     
     P.NAME = 'DDProxy';
     /**
@@ -2047,7 +2046,7 @@ YUI.add('dd-proxy', function(Y) {
         }
     };
 
-    var proto = {
+    proto = {
         /**
         * @private
         * @property _hands
@@ -2067,7 +2066,7 @@ YUI.add('dd-proxy', function(Y) {
             if (!this._hands) {
                 this._hands = [];
             }
-            var i, h, h1, host = this.get(HOST), dnode = host.get(DRAG_NODE);
+            var h, h1, host = this.get(HOST), dnode = host.get(DRAG_NODE);
             if (dnode.compareTo(host.get(NODE))) {
                 if (DDM._proxy) {
                     host.set(DRAG_NODE, DDM._proxy);
@@ -2139,7 +2138,7 @@ YUI.add('dd-proxy', function(Y) {
                 DDM._proxy = TRUE;
 
                 var p = Y.Node.create('<div></div>'),
-                b = Y.Node.get('body');
+                b = Y.one('body');
 
                 p.setStyles({
                     position: 'absolute',
@@ -2213,7 +2212,7 @@ YUI.add('dd-constrain', function(Y) {
      * @submodule dd-constrain
      */
     /**
-     * This is a plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a renodenode or viewport. It anode* supports tick based moves and XY axis constraints.
+     * Plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a node or viewport. It supports tick based moves and XY axis constraints.
      * @class DragConstrained
      * @extends Base
      * @constructor
@@ -2233,11 +2232,10 @@ YUI.add('dd-constrain', function(Y) {
         RIGHT = 'right',
         BOTTOM = 'bottom',
         LEFT = 'left',
-        proto = null;
-
-    var C = function(config) {
-        C.superclass.constructor.apply(this, arguments);
-    };
+        proto = null,
+        C = function(config) {
+            C.superclass.constructor.apply(this, arguments);
+        };
     
     C.NAME = 'DragConstrained';
     /**
@@ -2349,7 +2347,7 @@ YUI.add('dd-constrain', function(Y) {
             value: false,
             setter: function(n) {
                 if (!this.get(CON_2_REGION)) {
-                    var node = Y.Node.get(n);
+                    var node = Y.one(n);
                     if (node) {
                         return node;
                     }
@@ -2643,12 +2641,13 @@ YUI.add('dd-scroll', function(Y) {
 
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
+     * This class should not be called on it's own, it's designed to be a plugin.
      * @module dd
      * @submodule dd-scroll
      */
     /**
-     * This class is the base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
+     * Base scroller class used to create the Plugin.DDNodeScroll and Plugin.DDWinScroll.
      * This class should not be called on it's own, it's designed to be a plugin.
      * @class Scroll
      * @extends Base
@@ -2660,6 +2659,7 @@ YUI.add('dd-scroll', function(Y) {
         S.superclass.constructor.apply(this, arguments);
 
     },
+    WS, NS,
     HOST = 'host',
     BUFFER = 'buffer',
     PARENT_SCROLL = 'parentScroll',
@@ -2770,27 +2770,23 @@ YUI.add('dd-scroll', function(Y) {
         * @description Sets the _vpRegionCache property with an Object containing the dims from the viewport.
         */        
         _getVPRegion: function() {
-            var r = {};
-            //if (!this._vpRegionCache) {
-                var n = this.get(PARENT_SCROLL),
-                b = this.get(BUFFER),
-                ws = this.get(WINDOW_SCROLL),
-                xy = ((ws) ? [] : n.getXY()),
-                w = ((ws) ? 'winWidth' : OFFSET_WIDTH),
-                h = ((ws) ? 'winHeight' : OFFSET_HEIGHT),
-                t = ((ws) ? n.get(SCROLL_TOP) : xy[1]),
-                l = ((ws) ? n.get(SCROLL_LEFT) : xy[0]);
+            var r = {},
+                n = this.get(PARENT_SCROLL),
+            b = this.get(BUFFER),
+            ws = this.get(WINDOW_SCROLL),
+            xy = ((ws) ? [] : n.getXY()),
+            w = ((ws) ? 'winWidth' : OFFSET_WIDTH),
+            h = ((ws) ? 'winHeight' : OFFSET_HEIGHT),
+            t = ((ws) ? n.get(SCROLL_TOP) : xy[1]),
+            l = ((ws) ? n.get(SCROLL_LEFT) : xy[0]);
 
-                r = {
-                    top: t + b,
-                    right: (n.get(w) + l) - b,
-                    bottom: (n.get(h) + t) - b,
-                    left: l + b
-                };
-                this._vpRegionCache = r;
-            //} else {
-            //    r = this._vpRegionCache;
-            //}
+            r = {
+                top: t + b,
+                right: (n.get(w) + l) - b,
+                bottom: (n.get(h) + t) - b,
+                left: l + b
+            };
+            this._vpRegionCache = r;
             return r;
         },
         initializer: function() {
@@ -2800,7 +2796,7 @@ YUI.add('dd-scroll', function(Y) {
             h.on('drag:align', Y.bind(this.align, this));
 
             //TODO - This doesn't work yet??
-            Y.get(window).on('scroll', Y.bind(function() {
+            Y.one(window).on('scroll', Y.bind(function() {
                 this._vpRegionCache = null;
             }, this));
         },
@@ -2969,7 +2965,7 @@ YUI.add('dd-scroll', function(Y) {
      * @namespace Plugin
      * @constructor
      */
-    var WS = function() {
+    WS = function() {
         WS.superclass.constructor.apply(this, arguments);
     };
     WS.ATTRS = Y.merge(S.ATTRS, {
@@ -2982,7 +2978,7 @@ YUI.add('dd-scroll', function(Y) {
             value: true,
             setter: function(scroll) {
                 if (scroll) {
-                    this.set(PARENT_SCROLL, Y.get(window));
+                    this.set(PARENT_SCROLL, Y.one(window));
                 }
                 return scroll;
             }
@@ -3005,7 +3001,7 @@ YUI.add('dd-scroll', function(Y) {
      * @namespace Plugin
      * @constructor
      */
-    var NS = function() {
+    NS = function() {
         NS.superclass.constructor.apply(this, arguments);
 
     };
@@ -3018,7 +3014,7 @@ YUI.add('dd-scroll', function(Y) {
         node: {
             value: false,
             setter: function(node) {
-                var n = Y.get(node);
+                var n = Y.one(node);
                 if (!n) {
                     if (node !== false) {
                         Y.error('DDNodeScroll: Invalid Node Given: ' + node);
@@ -3049,12 +3045,12 @@ YUI.add('dd-plugin', function(Y) {
 
 
        /**
-        * This is a simple Drag plugin that can be attached to a Node via the plug method.
+        * Simple Drag plugin that can be attached to a Node via the plug method.
         * @module dd
         * @submodule dd-plugin
         */
        /**
-        * This is a simple Drag plugin that can be attached to a Node via the plug method.
+        * Simple Drag plugin that can be attached to a Node via the plug method.
         * @class Drag
         * @extends DD.Drag
         * @constructor
@@ -3095,12 +3091,12 @@ YUI.add('dd-drop', function(Y) {
 
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Provides the ability to create a Drop Target.
      * @module dd
      * @submodule dd-drop
      */     
     /**
-     * This class provides the ability to create a Drop Target.
+     * Provides the ability to create a Drop Target.
      * @class Drop
      * @extends Base
      * @constructor
@@ -3171,7 +3167,7 @@ YUI.add('dd-drop', function(Y) {
         */        
         node: {
             setter: function(node) {
-                var n = Y.Node.get(node);
+                var n = Y.one(node);
                 if (!n) {
                     Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
@@ -3239,6 +3235,28 @@ YUI.add('dd-drop', function(Y) {
     };
 
     Y.extend(Drop, Y.Base, {
+        /**
+        * @method addToGroup
+        * @description Add this Drop instance to a group, this should be used for on-the-fly group additions.
+        * @param {String} g The group to add this Drop Instance to.
+        * @return {Self}
+        * @chainable
+        */
+        addToGroup: function(g) {
+            this._groups[g] = true;
+            return this;
+        },
+        /**
+        * @method removeFromGroup
+        * @description Remove this Drop instance from a group, this should be used for on-the-fly group removals.
+        * @param {String} g The group to remove this Drop Instance from.
+        * @return {Self}
+        * @chainable
+        */
+        removeFromGroup: function(g) {
+            delete this._groups[g];
+            return this;
+        },
         /**
         * @private
         * @method _createEvents
@@ -3588,12 +3606,12 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
        /**
-        * This is a simple Drop plugin that can be attached to a Node via the plug method.
+        * Simple Drop plugin that can be attached to a Node via the plug method.
         * @module dd
         * @submodule dd-drop-plugin
         */
        /**
-        * This is a simple Drop plugin that can be attached to a Node via the plug method.
+        * Simple Drop plugin that can be attached to a Node via the plug method.
         * @class Drop
         * @extends DD.Drop
         * @constructor
@@ -3633,12 +3651,12 @@ YUI.add('dd-delegate', function(Y) {
 
 
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @module dd
      * @submodule dd-delegate
      */     
     /**
-     * This class provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
+     * Provides the ability to drag multiple nodes under a container element using only one Y.DD.Drag instance as a delegate.
      * @class Delegate
      * @extends Base
      * @constructor
@@ -3649,6 +3667,8 @@ YUI.add('dd-delegate', function(Y) {
     var D = function(o) {
         D.superclass.constructor.apply(this, arguments);
     },
+    CONT = 'cont',
+    NODES = 'nodes',
     _tmpNode = Y.Node.create('<div>Temp Node</div>');
 
     D.NAME = 'delegate';
@@ -3669,6 +3689,14 @@ YUI.add('dd-delegate', function(Y) {
         */        
         nodes: {
             value: '.dd-draggable'
+        },
+        /**
+        * @attribute invalid
+        * @description A selector query to test a node to see if it's an invalid item.
+        * @type String
+        */        
+        invalid: {
+            value: ''
         },
         /**
         * @attribute lastNode
@@ -3717,6 +3745,14 @@ YUI.add('dd-delegate', function(Y) {
         */        
         dragConfig: {
             value: null
+        },
+        /**
+        * @attribute handles
+        * @description The handles config option added to the temp DD instance.
+        * @type Array
+        */        
+        handles: {
+            value: null
         }
     };
 
@@ -3748,11 +3784,12 @@ YUI.add('dd-delegate', function(Y) {
         * @param {Event} e The Event.
         */
         _handleDragEnd: function(e) {
-            Y.DD.DDM._noShim = this._shimState;
-            this.set('lastNode', this.dd.get('node'));
-            this.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
-            this.dd._unprep();
-            this.dd.set('node', _tmpNode);
+            var self = this;
+            Y.DD.DDM._noShim = self._shimState;
+            self.set('lastNode', self.dd.get('node'));
+            self.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
+            self.dd._unprep();
+            self.dd.set('node', _tmpNode);
         },
         /**
         * @private
@@ -3761,18 +3798,20 @@ YUI.add('dd-delegate', function(Y) {
         * @param {Event} e The MouseDown Event.
         */
         _handleDelegate: function(e) {
-            if (e.currentTarget.test(this.get('nodes'))) {
-                this._shimState = Y.DD.DDM._noShim;
+            var tar = e.currentTarget,
+                self = this, dd = self.dd;
+            if (tar.test(self.get(NODES)) && !tar.test(self.get('invalid'))) {
+                self._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
-                this.set('currentNode', e.currentTarget);
-                this.dd.set('node', e.currentTarget);
-                if (this.dd.proxy) {
-                    this.dd.set('dragNode', Y.DD.DDM._proxy);
+                self.set('currentNode', tar);
+                dd.set('node', tar);
+                if (dd.proxy) {
+                    dd.set('dragNode', Y.DD.DDM._proxy);
                 } else {
-                    this.dd.set('dragNode', e.currentTarget);
+                    dd.set('dragNode', tar);
                 }
-                this.dd._prep();
-                this.dd.fire.call(this.dd, 'drag:mouseDown', { ev: e });
+                dd._prep();
+                dd.fire.call(dd, 'drag:mouseDown', { ev: e });
             }
         },
         /**
@@ -3796,28 +3835,33 @@ YUI.add('dd-delegate', function(Y) {
         },
         initializer: function() {
             //Create a tmp DD instance under the hood.
-            var conf = this.get('dragConfig') || {};
-            conf.node = _tmpNode.cloneNode(true);
-            conf.bubbles = this;
+            var conf = this.get('dragConfig') || {},
+                self = this, cont = self.get(CONT);
 
-            this.dd = new Y.DD.Drag(conf);
+            conf.node = _tmpNode.cloneNode(true);
+            conf.bubbles = self;
+            if (self.get('handles')) {
+                conf.handles = self.get('handles');
+            }
+
+            self.dd = new Y.DD.Drag(conf);
 
             //Set this as the target
-            this.addTarget(Y.DD.DDM);
+            self.addTarget(Y.DD.DDM);
 
             //On end drag, detach the listeners
-            this.dd.after('drag:end', Y.bind(this._handleDragEnd, this));
-            this.dd.on('dragNodeChange', Y.bind(this._handleNodeChange, this));
+            self.dd.after('drag:end', Y.bind(self._handleDragEnd, self));
+            self.dd.on('dragNodeChange', Y.bind(self._handleNodeChange, self));
 
             //Attach the delegate to the container
-            Y.delegate('mousedown', Y.bind(this._handleDelegate, this), this.get('cont'), this.get('nodes'));
+            Y.delegate('mousedown', Y.bind(self._handleDelegate, self), cont, self.get(NODES));
 
-            Y.on('mouseenter', Y.bind(this._handleMouseEnter, this), this.get('cont'));
+            Y.on('mouseenter', Y.bind(self._handleMouseEnter, self), cont);
 
-            Y.on('mouseleave', Y.bind(this._handleMouseLeave, this), this.get('cont'));
+            Y.on('mouseleave', Y.bind(self._handleMouseLeave, self), cont);
 
-            this.syncTargets();
-            Y.DD.DDM.regDelegate(this);
+            self.syncTargets();
+            Y.DD.DDM.regDelegate(self);
         },
         /**
         * @method syncTargets
@@ -3828,22 +3872,23 @@ YUI.add('dd-delegate', function(Y) {
         */        
         syncTargets: function(group) {
             if (!Y.Plugin.Drop) {
-                Y.error('DD.Delegate: Drop Plugin Not Found');
                 return;
             }
-            if (this.get('target')) {
-                var items = Y.one(this.get('cont')).all(this.get('nodes')),
-                    groups = this.dd.get('groups');
+            var items, groups, self = this;
+
+            if (self.get('target')) {
+                items = Y.one(self.get(CONT)).all(self.get(NODES));
+                groups = self.dd.get('groups');
 
                 if (group) {
                     groups = [group];
                 }
 
                 items.each(function(i) {
-                    this.createDrop(i, groups);
-                }, this);
+                    self.createDrop(i, groups);
+                });
             }
-            return this;
+            return self;
         },
         /**
         * @method createDrop
@@ -3864,17 +3909,12 @@ YUI.add('dd-delegate', function(Y) {
             node.drop.set('groups', groups);
             return node;
         },
-        //TODO
-        plugdd: function(cls, conf) {
-            this.dd.plug(cls, conf);
-            return this;
-        },
         destructor: function() {
             if (this.dd) {
                 this.dd.destroy();
             }
             if (Y.Plugin.Drop) {
-                var targets = Y.one(this.get('cont')).all(this.get('nodes'));
+                var targets = Y.one(this.get(CONT)).all(this.get(NODES));
                 targets.each(function(node) {
                     node.drop.destroy();
                     node.unplug(Y.Plugin.Drop);
@@ -3910,7 +3950,7 @@ YUI.add('dd-delegate', function(Y) {
             var del = null;
             node = Y.one(node);
             Y.each(this._delegates, function(v) {
-                if (node.test(v.get('cont'))) {
+                if (node.test(v.get(CONT))) {
                     del = v;
                 }
             }, this);

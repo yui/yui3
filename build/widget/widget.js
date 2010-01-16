@@ -1,4 +1,4 @@
-YUI.add('widget', function(Y) {
+YUI.add('widget-base', function(Y) {
 
 /**
  * Provides the base Widget class
@@ -6,12 +6,18 @@ YUI.add('widget', function(Y) {
  * @module widget
  */
 
-// Local Constants
 var L = Y.Lang,
-    O = Y.Object,
     Node = Y.Node,
     ClassNameManager = Y.ClassNameManager,
 
+    _getClassName = ClassNameManager.getClassName,
+    _getWidgetClassName,
+    
+    _toInitialCap = Y.cached(function(str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }),
+
+    // K-Weight, IE GC optimizations
     CONTENT = "content",
     VISIBLE = "visible",
     HIDDEN = "hidden",
@@ -19,36 +25,44 @@ var L = Y.Lang,
     FOCUSED = "focused",
     WIDTH = "width",
     HEIGHT = "height",
-    EMPTY = "",
-    HYPHEN = "-",
     BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
     PARENT_NODE = "parentNode",
     OWNER_DOCUMENT = "ownerDocument",
+    OFFSET_HEIGHT = "offsetHeight",
+    AUTO = "auto",
     SRC_NODE = "srcNode",
     BODY = "body",
 	TAB_INDEX = "tabIndex",
-    LOCALE = "locale",
-    INIT_VALUE = "initValue",
     ID = "id",
     RENDER = "render",
     RENDERED = "rendered",
     DESTROYED = "destroyed",
-
+    STRINGS = "strings",
+    DIV = "<div></div>",
     CHANGE = "Change",
-    _AFTER = "_after",
     _UISET = "_uiSet",
+
+    EMPTY_STR = "",
+    EMPTY_FN = function() {},
+
+    UI_EVENT_REGEX = /(\w+):(\w+)/,
+    UI_EVENT_REGEX_REPLACE = "$2",
+
+    TRUE = true,
+    FALSE = false,
+
+    UI,
+    ATTRS = {},
+    UI_ATTRS = [VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED],
+
+    WEBKIT = Y.UA.webkit,
+    IE = Y.UA.ie,
 
     ContentUpdate = "contentUpdate",
 
     // Widget nodeguid-to-instance map.
-    _instances = {},
-
-    // Map used to keep track of delegated DOM event listeners used to fire
-    // Custom Events of the same type/name (e.g. "click", "mouseover") for 
-    // Widget instances.
-    _delegates = {};
-    
+    _instances = {};
 
 /**
  * A base class for widgets, providing:
@@ -61,8 +75,7 @@ var L = Y.Lang,
  *        disabled, focused, strings</li>
  * </ul>
  *
- * @param config {Object} Object literal specifying widget configuration 
- * properties.
+ * @param config {Object} Object literal specifying widget configuration properties.
  *
  * @class Widget
  * @constructor
@@ -70,35 +83,19 @@ var L = Y.Lang,
  */
 function Widget(config) {
 
-    this._strings = {};
+    this._strs = {};
 
     Widget.superclass.constructor.apply(this, arguments);
 
     var render = this.get(RENDER), parentNode;
     if (render) {
-        if (render !== true) {
+        // Render could be a node or boolean
+        if (render !== TRUE) {
             parentNode = render;
         }
         this.render(parentNode);
     }
 }
-
-/**
- * The build configuration for the Widget class.
- * <p>
- * Defines the static fields which need to be aggregated,
- * when this class is used as the main class passed to 
- * the <a href="Base.html#method_build">Base.build</a> method.
- * </p>
- * @property _buildCfg
- * @type Object
- * @static
- * @final
- * @private
- */
-Widget._buildCfg = {
-    aggregates : ["HTML_PARSER"]
-};
 
 /**
  * Static property provides a string to identify the class.
@@ -122,9 +119,7 @@ Widget.NAME = "widget";
  * @static
  * @final
  */
-Widget.UI_SRC = "ui";
-
-var UI = Widget.UI_SRC;
+UI = Widget.UI_SRC = "ui";
 
 /**
  * Static property used to define the default attribute 
@@ -134,195 +129,157 @@ var UI = Widget.UI_SRC;
  * @type Object
  * @static
  */
-Widget.ATTRS = {
+Widget.ATTRS = ATTRS;
 
-    /**
-     * @attribute id
-     * @writeOnce
-     * @default Generated using guid()
-     * @type String
-     */
-    id: {
-        valueFn: "_guid",
-        writeOnce: true
-    },
+// Trying to optimize kweight by setting up attrs this way saves about 0.4K min'd
 
-    /**
-     * Flag indicating whether or not this Widget
-     * has been through the render lifecycle phase.
-     *
-     * @attribute rendered
-     * @readOnly
-     * @default false
-     * @type boolean
-     */
-    rendered: {
-        value:false,
-        readOnly: true
-    },
+/**
+ * @attribute id
+ * @writeOnce
+ * @default Generated using guid()
+ * @type String
+ */
 
-    /**
-    * @attribute boundingBox
-    * @description The outermost DOM node for the Widget, used for sizing and positioning 
-    * of a Widget as well as a containing element for any decorator elements used 
-    * for skinning.
-    * @type String | Node
-    * @writeOnce
-    */
-    boundingBox: {
-        value:null,
-        setter: "_setBoundingBox",
-        writeOnce: true
-    },
+ATTRS[ID] = {
+    valueFn: "_guid",
+    writeOnce: TRUE
+};
 
-    /**
-    * @attribute contentBox
-    * @description A DOM node that is a direct descendent of a Widget's bounding box that 
-    * houses its content.
-    * @type String | Node
-    * @writeOnce
-    */
-    contentBox: {
-        value:null,
-        setter: "_setContentBox",
-        writeOnce: true
-    },
+/**
+ * Flag indicating whether or not this Widget
+ * has been through the render lifecycle phase.
+ *
+ * @attribute rendered
+ * @readOnly
+ * @default false
+ * @type boolean
+ */
+ATTRS[RENDERED] = {
+    value:FALSE,
+    readOnly: TRUE
+};
 
-    /**
-    * @attribute tabIndex
-    * @description Number (between -32767 to 32767) indicating the widget's 
-	* position in the default tab flow.  The value is used to set the 
-	* "tabIndex" attribute on the widget's bounding box.  Negative values allow
-	* the widget to receive DOM focus programmatically (by calling the focus
-	* method), while being removed from the default tab flow.  A value of 
-	* null removes the "tabIndex" attribute from the widget's bounding box.
-    * @type Number
-	* @default 0
-    */
-    tabIndex: {
-		value: 0,
-		validator: "_validTabIndex"
-    },
+/**
+ * @attribute boundingBox
+ * @description The outermost DOM node for the Widget, used for sizing and positioning 
+ * of a Widget as well as a containing element for any decorator elements used 
+ * for skinning.
+ * @type String | Node
+ * @writeOnce
+ */
+ATTRS[BOUNDING_BOX] = {
+    value:null,
+    setter: "_setBB",
+    writeOnce: TRUE
+};
 
-    /**
-    * @attribute focused
-    * @description Boolean indicating if the Widget, or one of its descendants, 
-	* has focus.
-    * @readOnly
-    * @default false
-    * @type boolean
-    */
-    focused: {
-        value: false,
-        readOnly:true
-    },
+/**
+ * @attribute contentBox
+ * @description A DOM node that is a direct descendent of a Widget's bounding box that 
+ * houses its content.
+ * @type String | Node
+ * @writeOnce
+ */
+ATTRS[CONTENT_BOX] = {
+    value:null,
+    setter: "_setCB",
+    writeOnce: TRUE
+};
 
-    /**
-    * @attribute disabled
-    * @description Boolean indicating if the Widget should be disabled. The disabled implementation
-    * is left to the specific classes extending widget.
-    * @default false
-    * @type boolean
-    */
-    disabled: {
-        value: false
-    },
+/**
+ * @attribute tabIndex
+ * @description Number (between -32767 to 32767) indicating the widget's 
+ * position in the default tab flow.  The value is used to set the 
+ * "tabIndex" attribute on the widget's bounding box.  Negative values allow
+ * the widget to receive DOM focus programmatically (by calling the focus
+ * method), while being removed from the default tab flow.  A value of 
+ * null removes the "tabIndex" attribute from the widget's bounding box.
+ * @type Number
+ * @default 0
+ */
+ATTRS[TAB_INDEX] = {
+	value: 0,
+	validator: "_validTabIndex"
+};
 
-    /**
-    * @attribute visible
-    * @description Boolean indicating weather or not the Widget is visible.
-    * @default true
-    * @type boolean
-    */
-    visible: {
-        value: true
-    },
+/**
+ * @attribute focused
+ * @description Boolean indicating if the Widget, or one of its descendants, 
+ * has focus.
+ * @readOnly
+ * @default false
+ * @type boolean
+ */
+ATTRS[FOCUSED] = {
+    value: FALSE,
+    readOnly:TRUE
+};
 
-    /**
-    * @attribute height
-    * @description String with units, or number, representing the height of the Widget. If a number is provided,
-    * the default unit, defined by the Widgets DEF_UNIT, property is used.
-    * @default ""
-    * @type {String | Number}
-    */
-    height: {
-        value: EMPTY
-    },
+/**
+ * @attribute disabled
+ * @description Boolean indicating if the Widget should be disabled. The disabled implementation
+ * is left to the specific classes extending widget.
+ * @default false
+ * @type boolean
+ */
+ATTRS[DISABLED] = {
+    value: FALSE
+};
 
-    /**
-    * @attribute width
-    * @description String with units, or number, representing the width of the Widget. If a number is provided,
-    * the default unit, defined by the Widgets DEF_UNIT, property is used.
-    * @default ""
-    * @type {String | Number}
-    */
-    width: {
-        value: EMPTY
-    },
+/**
+ * @attribute visible
+ * @description Boolean indicating weather or not the Widget is visible.
+ * @default TRUE
+ * @type boolean
+ */
+ATTRS[VISIBLE] = {
+    value: TRUE
+};
 
-    /**
-     * @attribute moveStyles
-     * @description Flag defining whether or not style properties from the content box
-     * should be moved to the bounding box when wrapped (as defined by the WRAP_STYLES property)
-     * @default false
-     * @type boolean
-     */
-    moveStyles: {
-        value: false
-    },
+/**
+ * @attribute height
+ * @description String with units, or number, representing the height of the Widget. If a number is provided,
+ * the default unit, defined by the Widgets DEF_UNIT, property is used.
+ * @default EMPTY_STR
+ * @type {String | Number}
+ */
+ATTRS[HEIGHT] = {
+    value: EMPTY_STR
+};
 
-    /**
-     * @attribute locale
-     * @description
-     * The default locale for the widget. NOTE: Using get/set on the "strings" attribute will
-     * return/set strings for this locale.
-     * @default "en"
-     * @type String
-     */
-    locale : {
-        value: "en"
-    },
+/**
+ * @attribute width
+ * @description String with units, or number, representing the width of the Widget. If a number is provided,
+ * the default unit, defined by the Widgets DEF_UNIT, property is used.
+ * @default EMPTY_STR
+ * @type {String | Number}
+ */
+ATTRS[WIDTH] = {
+    value: EMPTY_STR
+};
 
-    /**
-     * @attribute strings
-     * @description Collection of strings used to label elements of the Widget's UI.
-     * @default null
-     * @type Object
-     */
-    strings: {
-        setter: function(val) {
-            return this._setStrings(val, this.get(LOCALE));
-        },
+/**
+ * @attribute strings
+ * @description Collection of strings used to label elements of the Widget's UI.
+ * @default null
+ * @type Object
+ */
+ATTRS[STRINGS] = {
+    value: {},
+    setter: "_strSetter",
+    getter: "_strGetter"
+};
 
-        getter: function() {
-            return this.getStrings(this.get(LOCALE));
-        }
-    },
-
-    /**
-     * Whether or not to render the widget automatically after init, and optionally, to which parent node.
-     *
-     * @attribute render
-     * @type boolean | Node
-     * @writeOnce
-     */
-    render: {
-        value:false,
-        writeOnce:true
-    },
-
-    /**
-     * The DOM node to parse for configuration values, passed to the Widget's HTML_PARSER definition
-     *
-     * @attribute srcNode
-     * @type String | Node
-     * @writeOnce
-     */
-    srcNode: {
-        value: null,
-        setter: Y.Node.one,
-        writeOnce: true
-    }
+/**
+ * Whether or not to render the widget automatically after init, and optionally, to which parent node.
+ *
+ * @attribute render
+ * @type boolean | Node
+ * @writeOnce
+ */
+ATTRS[RENDER] = {
+    value:FALSE,
+    writeOnce:TRUE
 };
 
 /**
@@ -348,10 +305,11 @@ Widget._NAME = Widget.NAME.toLowerCase();
  * @param {String*} args* 0..n strings which should be concatenated, using the default separator defined by ClassNameManager, to create the class name
  */
 Widget.getClassName = function() {
-	var args = Y.Array(arguments, 0, true);
-	args.splice(0, 0, this._NAME);
-	return ClassNameManager.getClassName.apply(ClassNameManager, args);
+    // arguments needs to be array'fied to concat
+    return _getClassName.apply(ClassNameManager, [Widget._NAME].concat(Y.Array(arguments)));
 };
+
+_getWidgetClassName = Widget.getClassName;
 
 /**
  * Returns the widget instance whose bounding box contains, or is, the given node. 
@@ -367,176 +325,20 @@ Widget.getClassName = function() {
  */
 Widget.getByNode = function(node) {
     var widget,
-        widgetMarker = Widget.getClassName();
+        widgetMarker = _getWidgetClassName();
 
     node = Node.one(node);
     if (node) {
         node = (node.hasClass(widgetMarker)) ? node : node.ancestor("." + widgetMarker);
         if (node) {
-            widget = _instances[Y.stamp(node, true)];
+            widget = _instances[Y.stamp(node, TRUE)];
         }
     }
 
     return widget || null;
 };
 
-/**
- * Object hash, defining how attribute values are to be parsed from
- * markup contained in the widget's content box. e.g.:
- * <pre>
- *   {
- *       // Set single Node references using selector syntax 
- *       // (selector is run through node.query)
- *       titleNode: "span.yui-title",
- *       // Set NodeList references using selector syntax 
- *       // (array indicates selector is to be run through node.queryAll)
- *       listNodes: ["li.yui-item"],
- *       // Set other attribute types, using a parse function. 
- *       // Context is set to the widget instance.
- *       label: function(contentBox) {
- *           return contentBox.query("span.title").get("innerHTML");
- *       }
- *   }
- * </pre>
- * 
- * @property Widget.HTML_PARSER
- * @type Object
- * @static
- */
-Widget.HTML_PARSER = {};
-
 Y.extend(Widget, Y.Base, {
-
-    /*
-    * Map of DOM events that should be fired as Custom Events by the  
-    * Widget instance.
-    * 
-    * @property DOM_EVENTS
-    * @type Object
-    */
-    DOM_EVENTS: {
-        click: true,
-        contextmenu: true,
-        dblclick: true,
-        keydown: true,
-        keypress: true,
-        keyup: true,
-        mousedown: true,
-        mousemove: true,
-        mouseout: true, 
-        mouseover: true, 
-        mouseup: true,
-        mouseenter: true,
-        mouseleave: true
-    },
-
-    /*
-    * Returns the outtermost DOM element for the Widget instance.
-    * 
-    * @method _getRootNode
-    * @protected     
-    */
-    _getRootNode: function () {
-        return this.get(BOUNDING_BOX);
-    },
-
-	/**
-	 * Binds a delegated DOM event listener of the specified type to the 
-	 * Widget's outtermost DOM element to facilitate the firing of a Custom
-	 * Event of the same type for the Widget instance.  
-	 *
-	 * @method _createDelegate
-	 * @param type {String} String representing the name of the event
-	 */    
-    _createDelegate: function (type) {
-
-        var rootNode = this._getRootNode(),
-            delegates,
-            guid;
-
-
-
-        if (rootNode) {
-
-            guid = Y.stamp(rootNode, true);
-
-            if (!_delegates[guid]) {
-                _delegates[guid] = {};
-            }
-
-            delegates = _delegates[guid];
-
-
-            if (!delegates[type]) {
-
-                delegates[type] = rootNode.delegate(type, function (event) {
-
-                    var widget = Y.Widget.getByNode(this);
-
-                    if (widget) {
-                        
-                        //  Can lazy publish the event simply by firing it 
-                        //  since at this point the default configuration 
-                        //  has everything we need:
-                        //  emitFacade is true (set by Attribute)
-                        //  bubbles is true (EventTarget default)
-                        //  preventable is true (EventTarget default)
-                        //  queuable is false (EventTarget default)
-                        
-                        //  TO DO: talk to Adam about why this step is 
-                        //  necessary when EventTargets are supposed to 
-                        //  lazy publish
-
-                        widget.publish(event.type);
-
-                        //  Make the DOM event a property of the custom event
-                        //  so that developers still have access to it.
-
-                        widget.fire(event.type, { domEvent: event });
-
-                    }
-
-
-                }, ("." + Widget.getClassName()));
-                
-            }
-            
-        }
-        
-    },
-    
-    //  Override of on from Base to facilitate the firing of Widget events
-    //  based on DOM events of the same name/type (e.g. "click", "mouseover").
-    on: function (type) {
-
-        var sType;
-
-        if (L.isString(type)) {
-
-            sType = type.replace(/(\w+):(\w+)/, "$2");
-
-            if (this.DOM_EVENTS[sType]) {
-        
-                if (this.get(RENDERED)) {
-                    this._createDelegate(sType);
-                }
-                else {
-        
-                    this.after(RENDER, function () {
-        
-                        this._createDelegate(sType);  
-        
-                    }, this);
-        
-                }
-        
-            }
-            
-        }
-        
-        return Widget.superclass.on.apply(this, arguments);
-
-    },
 
 	/**
 	 * Returns a class name prefixed with the the value of the 
@@ -557,9 +359,7 @@ Y.extend(Widget, Y.Base, {
 	 * @param {String}+ One or more classname bits to be joined and prefixed
 	 */
 	getClassName: function () {
-		var args = Y.Array(arguments, 0, true);
-		args.splice(0, 0, this._name);
-		return ClassNameManager.getClassName.apply(ClassNameManager, args);
+        return _getClassName.apply(ClassNameManager, [this._name].concat(Y.Array(arguments)));
 	},
 
     /**
@@ -571,8 +371,6 @@ Y.extend(Widget, Y.Base, {
      * @param  config {Object} Configuration object literal for the widget
      */
     initializer: function(config) {
-        var srcNode, parsedConfig;
-
 
         this._name = this.constructor.NAME.toLowerCase();
 
@@ -584,16 +382,16 @@ Y.extend(Widget, Y.Base, {
          * behavior and cannot be prevented, so the "on" or "after"
          * moments are effectively equivalent (with on listeners being invoked before 
          * after listeners).
-         * 
+         *
          * @event widget:contentUpdate
          * @preventable false
          * @param {EventFacade} e The Event Facade
          */
-        this.publish(ContentUpdate, { preventable:false });
+        this.publish(ContentUpdate, { preventable:FALSE });
 
-        srcNode = this._getSrcNode();
-        parsedConfig = this._parseNode(srcNode);
-        config = this._applyParsedConfig(srcNode, config, parsedConfig);
+        if (this._applyParser) {
+            this._applyParser(config);
+        }
     },
 
     /**
@@ -607,15 +405,14 @@ Y.extend(Widget, Y.Base, {
     destructor: function() {
 
         var boundingBox = this.get(BOUNDING_BOX),
-            guid = Y.stamp(boundingBox, true);
+            guid = Y.stamp(boundingBox, TRUE);
 
-        if (guid && guid in _instances) {
+        if (guid in _instances) {
             delete _instances[guid];
         }
 
         this._unbindUI(boundingBox);
-
-        boundingBox.remove(true);
+        boundingBox.remove(TRUE);
     },
 
     /**
@@ -646,37 +443,31 @@ Y.extend(Widget, Y.Base, {
      */
     render: function(parentNode) {
 
-        if (this.get(DESTROYED)) {
-            return;
-        }
-
-        if (!this.get(RENDERED)) {
+        if (!this.get(DESTROYED) && !this.get(RENDERED)) {
              /**
-             * Lifcyle event for the render phase, fired prior to rendering the UI 
-             * for the widget (prior to invoking the widgets renderer method).
-             * <p>
-             * Subscribers to the "on" moment of this event, will be notified 
-             * before the widget is rendered.
-             * </p>
-             * <p>
-             * Subscribers to the "after" moment of this event, will be notified
-             * after rendering is complete.
-             * </p>
-             *
-             * @event widget:render
-             * @preventable _defRenderFn
-             * @param {EventFacade} e The Event Facade
-             */
-            this.publish(RENDER, {queuable:false, defaultFn: this._defRenderFn});
+              * Lifcyle event for the render phase, fired prior to rendering the UI 
+              * for the widget (prior to invoking the widget's renderer method).
+              * <p>
+              * Subscribers to the "on" moment of this event, will be notified 
+              * before the widget is rendered.
+              * </p>
+              * <p>
+              * Subscribers to the "after" moment of this event, will be notified
+              * after rendering is complete.
+              * </p>
+              *
+              * @event widget:render
+              * @preventable _defRenderFn
+              * @param {EventFacade} e The Event Facade
+              */
+            this.publish(RENDER, {
+                queuable:FALSE,
+                fireOnce:TRUE,
+                defaultFn: this._defRenderFn
+            });
 
-            parentNode = (parentNode) ? Node.one(parentNode) : null;
-            if (parentNode && !parentNode.inDoc()) {
-                parentNode = null;
-            }
-
-            this.fire(RENDER, {parentNode: parentNode});
+            this.fire(RENDER, {parentNode: (parentNode) ? Node.one(parentNode) : null});
         }
-
         return this;
     },
 
@@ -689,27 +480,26 @@ Y.extend(Widget, Y.Base, {
      * @param {Node} parentNode The parent node to render to, if passed in to the <code>render</code> method
      */
     _defRenderFn : function(e) {
-
+        // TODO: Remove target check, once fix/config is in event. 
+        // Currently prevents _defRenderFn from being called at all 
+        // levels in the heirarchy if events are bubbled.
         if (e.target === this) {
-
             this._renderUI(e.parentNode);
             this._bindUI();
             this._syncUI();
 
             this.renderer();
 
-            this._set(RENDERED, true);
-            
+            this._set(RENDERED, TRUE);
         }
-
     },
 
-    /** 
+    /**
      * Creates DOM (or manipulates DOM for progressive enhancement)
      * This method is invoked by render() and is not chained 
-     * automatically for the class hierarchy (like initializer, destructor) 
+     * automatically for the class hierarchy (unlike initializer, destructor) 
      * so it should be chained manually for subclasses if required.
-     * 
+     *
      * @method renderer
      * @protected
      */
@@ -728,7 +518,7 @@ Y.extend(Widget, Y.Base, {
      * @method bindUI
      * @protected
      */
-    bindUI: function() {},
+    bindUI: EMPTY_FN,
 
     /**
      * Adds nodes to the DOM 
@@ -739,7 +529,7 @@ Y.extend(Widget, Y.Base, {
      * @method renderUI
      * @protected
      */
-    renderUI: function() {},
+    renderUI: EMPTY_FN,
 
     /**
      * Refreshes the rendered UI, based on Widget State
@@ -748,232 +538,113 @@ Y.extend(Widget, Y.Base, {
      * automatically for the class hierarchy.
      *
      * @method syncUI
-     * 
+     * @protected
+     *
      */
-    syncUI: function() {},
+    syncUI: EMPTY_FN,
 
     /**
-    * @method hide
-    * @description Hides the Widget by setting the "visible" attribute to "false".
-    */
+     * @method hide
+     * @description Hides the Widget by setting the "visible" attribute to "false".
+     * @chainable
+     */
     hide: function() {
-        return this.set(VISIBLE, false);
+        return this.set(VISIBLE, FALSE);
     },
 
     /**
-    * @method show
-    * @description Shows the Widget by setting the "visible" attribute to "true".
-    */
+     * @method show
+     * @description Shows the Widget by setting the "visible" attribute to "true".
+     * @chainable
+     */
     show: function() {
-        return this.set(VISIBLE, true);
+        return this.set(VISIBLE, TRUE);
     },
 
     /**
-    * @method focus
-    * @description Causes the Widget to receive the focus by setting the "focused" 
-    * attribute to "true".
-    */
+     * @method focus
+     * @description Causes the Widget to receive the focus by setting the "focused" 
+     * attribute to "true".
+     * @chainable
+     */
     focus: function () {
-        return this._set(FOCUSED, true);
+        return this._set(FOCUSED, TRUE);
     },
 
     /**
-    * @method blur
-    * @description Causes the Widget to lose focus by setting the "focused" attribute 
-    * to "false"
-    */
+     * @method blur
+     * @description Causes the Widget to lose focus by setting the "focused" attribute 
+     * to "false"
+     * @chainable
+     */
     blur: function () {
-        return this._set(FOCUSED, false);
+        return this._set(FOCUSED, FALSE);
     },
 
     /**
-    * @method enable
-    * @description Set the Widget's "disabled" attribute to "false".
-    */
+     * @method enable
+     * @description Set the Widget's "disabled" attribute to "false".
+     * @chainable
+     */
     enable: function() {
-        return this.set(DISABLED, false);
+        return this.set(DISABLED, FALSE);
     },
 
     /**
-    * @method disable
-    * @description Set the Widget's "disabled" attribute to "true".
-    */
+     * @method disable
+     * @description Set the Widget's "disabled" attribute to "true".
+     * @chainable
+     */
     disable: function() {
-        return this.set(DISABLED, true);
+        return this.set(DISABLED, TRUE);
     },
 
     /**
-     * Utilitity method used to apply the <code>HTML_PARSER</code> configuration for the 
-     * instance, to retrieve config data values.
-     *
-     * @method _parseNode
-     * @private 
-     * @param  node {Node} Root node to use to parse markup for configuration data
-     * @return config {Object} configuration object, with values found in the HTML, populated
-     */
-    _parseNode : function(node) {
- 
-        var schema = this._getHtmlParser(),
-            data,
-            val;
-
-        if (schema && node) {
-
-            O.each(schema, function(v, k, o) {
-                val = null;
-
-                if (L.isFunction(v)) {
-                    val = v.call(this, node);
-                } else {
-                    if (L.isArray(v)) {
-                        val = node.all(v[0]);
-                    } else {
-                        val = node.one(v);
-                    }
-                }
-
-                if (val !== null && val !== undefined) {
-                    data = data || {};
-                    data[k] = val;
-                }
-
-            }, this);
-        }
-        return data;
-    },
-
-    /**
-     * @method _getSrcNode
-     * @protected
-     * @return {Node} The Node to apply HTML_PARSER to
-     */
-    _getSrcNode : function() {
-        return this.get(SRC_NODE) || this.get(CONTENT_BOX);
-    },
-
-    /**
-     * @method _applyParsedConfig
-     * @protected
-     * @return {Object} The merged configuration literal
-     */
-    _applyParsedConfig : function(node, cfg, parsedCfg) {
-        return (parsedCfg) ? Y.aggregate(cfg, parsedCfg, false) : cfg;
-    },
-
-    /**
-     * Moves a pre-defined set of style rules (WRAP_STYLES) from one node to another.
-     *
-     * @method _moveStyles
-     * @private
-     * @param {Node} nodeFrom The node to gather the styles from
-     * @param {Node} nodeTo The node to apply the styles to
-     */
-    _moveStyles: function(nodeFrom, nodeTo) {
-
-        var styles = this.WRAP_STYLES,
-            pos = nodeFrom.getStyle('position'),
-            contentBox = this.get(CONTENT_BOX),
-            xy = [0,0],
-            h, w;
-
-        if (!this.get('height')) {
-            h = contentBox.get('offsetHeight');
-        }
-
-        if (!this.get('width')) {
-            w = contentBox.get('offsetWidth');
-        }
-
-        if (pos === 'absolute') {
-            xy = nodeFrom.getXY();
-            nodeTo.setStyles({
-                right: 'auto',
-                bottom: 'auto'
-            });
-
-            nodeFrom.setStyles({
-                right: 'auto',
-                bottom: 'auto'
-            });
-        }
-
-        Y.each(styles, function(v, k) {
-            var s = nodeFrom.getStyle(k);
-            nodeTo.setStyle(k, s);
-            if (v === false) {
-                nodeFrom.setStyle(k, '');
-            } else {
-                nodeFrom.setStyle(k, v);
-            }
-        });
-
-        if (pos === 'absolute') {
-            nodeTo.setXY(xy);
-        }
-
-        if (h) {
-            this.set('height', h);
-        }
-
-        if (w) {
-            this.set('width', w);
-        }
-    },
-
-    /**
-     *
-     * @method _uiExpandContentBox
+     * @method _uiSizeCB
      * @protected
      * @param {boolean} expand
      */
-
-     // TODO: Currently only required for height, but could be easily mirrored for width if required. 
-    _uiExpandContentBox : function(expand) {
+    _uiSizeCB : function(expand) {
 
         var bb = this.get(BOUNDING_BOX),
             cb = this.get(CONTENT_BOX),
 
-            cbExpanded = Widget.getClassName("content", "expanded"),
-            bbTempExpanding = Widget.getClassName("tmp", "forcesize"),
+            bbTempExpanding = _getWidgetClassName("tmp", "forcesize"),
 
             borderBoxSupported = this._bbs,
-            heightReallyMinHeight = Y.UA.ie && Y.UA.ie < 7;
+            heightReallyMinHeight = IE && IE < 7;
 
-        if (expand) {
-            if (borderBoxSupported) {
-                cb.addClass(cbExpanded);
-            } else {
+        if (borderBoxSupported) {
+            cb.toggleClass(_getWidgetClassName(CONTENT, "expanded"), expand);
+        } else {
+            if (expand) {
                 if (heightReallyMinHeight) {
                     bb.addClass(bbTempExpanding);
                 }
 
-                cb.set("offsetHeight", bb.get("offsetHeight"));
+                cb.set(OFFSET_HEIGHT, bb.get(OFFSET_HEIGHT));
 
                 if (heightReallyMinHeight) {
                     bb.removeClass(bbTempExpanding);
                 }
-            }
-        } else {
-            if (!borderBoxSupported) {
-                cb.removeClass(cbExpanded);
             } else {
-                cb.setStyle("height", "");
+                cb.setStyle(HEIGHT, EMPTY_STR);
             }
         }
     },
 
     /**
-    * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not
-    * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used 
-    * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and
-    * the contentBox are not currently in the document, and no parentNode is provided, the widget will be rendered 
-    * to the current document's body.
-    *
-    * @method _renderBox
-    * @private
-    * @param {Node} parentNode The parentNode to render the widget to. If not provided, and both the boundingBox and
-    * the contentBox are not currently in the document, the widget will be rendered to the current document's body.
-    */
+     * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not
+     * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used 
+     * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and
+     * the contentBox are not currently in the document, and no parentNode is provided, the widget will be rendered 
+     * to the current document's body.
+     *
+     * @method _renderBox
+     * @private
+     * @param {Node} parentNode The parentNode to render the widget to. If not provided, and both the boundingBox and
+     * the contentBox are not currently in the document, the widget will be rendered to the current document's body.
+     */
     _renderBox: function(parentNode) {
 
         // TODO: Performance Optimization [ More effective algo to reduce Node refs, compares, replaces? ]
@@ -982,8 +653,7 @@ Y.extend(Widget, Y.Base, {
             boundingBox = this.get(BOUNDING_BOX),
             srcNode = this.get(SRC_NODE),
 
-            doc = (srcNode && srcNode.get(OWNER_DOCUMENT)) || boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT),
-            body;
+            doc = (srcNode && srcNode.get(OWNER_DOCUMENT)) || boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT);
 
         // If srcNode (assume it's always in doc), have contentBox take its place (widget render responsible for re-use of srcNode contents)
         if (srcNode && !srcNode.compareTo(contentBox) && !contentBox.inDoc(doc)) {
@@ -991,9 +661,6 @@ Y.extend(Widget, Y.Base, {
         }
 
         if (!boundingBox.compareTo(contentBox.get(PARENT_NODE)) && !boundingBox.compareTo(contentBox)) {
-            if (this.get('moveStyles')) {
-                this._moveStyles(contentBox, boundingBox);
-            }
 
             // If contentBox box is already in the document, have boundingBox box take it's place
             if (contentBox.inDoc(doc)) {
@@ -1002,44 +669,38 @@ Y.extend(Widget, Y.Base, {
             boundingBox.appendChild(contentBox);
         }
 
-        if (!boundingBox.inDoc(doc) && !parentNode) {
+        if (parentNode) {
+            parentNode.appendChild(boundingBox);
+        } else if (!boundingBox.inDoc(doc)) {
             // Special case when handling body as default (no parentNode), always try to insert.
-            body = Node.one(BODY).insert(boundingBox, 0);
-        } else {
-            if (parentNode && !parentNode.compareTo(boundingBox.get(PARENT_NODE))) {
-                parentNode.appendChild(boundingBox);
-            }
+            Node.one(BODY).insert(boundingBox, 0);
         }
 
-        this._bbs = !(Y.UA.ie && Y.UA.ie < 8 && doc.compatMode != "BackCompat");
+        this._bbs = !(IE && IE < 8 && doc.compatMode != "BackCompat");
     },
 
     /**
-    * Setter for the boundingBox attribute
-    *
-    * @method _setBoundingBox
-    * @private
-    * @param Node/String
-    * @return Node
-    */
-    _setBoundingBox: function(node) {
+     * Setter for the boundingBox attribute
+     *
+     * @method _setBB
+     * @private
+     * @param Node/String
+     * @return Node
+     */
+    _setBB: function(node) {
         return this._setBox(this.get(ID), node, this.BOUNDING_TEMPLATE);
     },
 
     /**
-    * Setter for the contentBox attribute
-    *
-    * @method _setContentBox
-    * @private
-    * @param {Node|String} node
-    * @return Node
-    */
-    _setContentBox: function(node) {
-        if (this.CONTENT_TEMPLATE === null) {
-            return this.get(BOUNDING_BOX);
-        } else {
-            return this._setBox(null, node, this.CONTENT_TEMPLATE);
-        }
+     * Setter for the contentBox attribute
+     *
+     * @method _setCB
+     * @private
+     * @param {Node|String} node
+     * @return Node
+     */
+    _setCB: function(node) {
+        return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE);
     },
 
     /**
@@ -1057,8 +718,7 @@ Y.extend(Widget, Y.Base, {
     _setBox : function(id, node, template) {
         node = Node.one(node) || Node.create(template);
         if (!node.get(ID)) {
-            id = id || Y.guid();
-            node.set(ID, id);
+            node.set(ID, id || Y.guid());
         }
         return node;
     },
@@ -1076,29 +736,25 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-      * Applies standard class names to the boundingBox and contentBox
-      *
-      * @method _renderBoxClassNames
-      * @protected
-      */
+     * Applies standard class names to the boundingBox and contentBox
+     *
+     * @method _renderBoxClassNames
+     * @protected
+     */
     _renderBoxClassNames : function() {
         var classes = this._getClasses(),
             boundingBox = this.get(BOUNDING_BOX),
-            contentBox = this.get(CONTENT_BOX),
-            name, i;
+            i;
 
-        boundingBox.addClass(Widget.getClassName());
+        boundingBox.addClass(_getWidgetClassName());
 
         // Start from Widget Sub Class
         for (i = classes.length-3; i >= 0; i--) {
-            name = classes[i].NAME;
-            if (name) {
-                boundingBox.addClass(ClassNameManager.getClassName(name.toLowerCase()));
-            }
+            boundingBox.addClass(ClassNameManager.getClassName(classes[i].NAME.toLowerCase()));
         }
 
         // Use instance based name for content box
-        contentBox.addClass(this.getClassName(CONTENT));
+        this.get(CONTENT_BOX).addClass(this.getClassName(CONTENT));
     },
 
     /**
@@ -1108,68 +764,48 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _bindUI: function() {
-        this._bindAttrUI([VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED]);
-        this._bindDOMListeners();
+        this._bindAttrUI(this._BIND_UI_ATTRS);
+        this._bindDOM();
     },
 
     /**
-     * TODO: Protected? on "destroy"?
-     * 
-     * @private
      * @method _unbindUI
+     * @protected
      */
     _unbindUI : function(boundingBox) {
-        this._unbindAttrUI([VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED]);
-        this._unbindDOMListeners(boundingBox);
+        this._unbindAttrUI(this._BIND_UI_ATTRS);
+        this._unbindDOM(boundingBox);
     },
- 
+
     /**
      * Sets up DOM listeners, on elements rendered by the widget.
      * 
-     * @method _bindDOMListeners
+     * @method _bindDOM
      * @protected
      */
-    _bindDOMListeners : function() {
-
+    _bindDOM : function() {
 		var oDocument = this.get(BOUNDING_BOX).get(OWNER_DOCUMENT);
 
         // TODO: Perf Optimization: Use Widget.getByNode delegation, to get by 
-        // with just one _onFocus subscription per sandbox, instead of one per widget
-
-		this._hDocFocus = oDocument.on("focus", this._onFocus, this);
+        // with just one _onDocFocus subscription per sandbox, instead of one per widget
+		this._hDocFocus = oDocument.on("focus", this._onDocFocus, this);
 
 		//	Fix for Webkit:
 		//	Document doesn't receive focus in Webkit when the user mouses 
 		//	down on it, so the "focused" attribute won't get set to the 
 		//	correct value.
-		if (Y.UA.webkit) {
+		if (WEBKIT) {
 			this._hDocMouseDown = oDocument.on("mousedown", this._onDocMouseDown, this);
 		}
     },
 
     /**
-     * TODO: Protected?
-     * 
-     * @private
-     * @method _unbindDOMListeners
+     * @method _unbindDOM
+     * @protected
      */   
-    _unbindDOMListeners : function(boundingBox) {
-
-        //  Node's "remove" method will purge all of the delegated DOM event 
-        //  listeners, the following cleans up references to detach handles
-        //  for delegated event listeners.
-        var rootNode = this._getRootNode(), 
-            guid = Y.stamp(rootNode, true);
-
-        if (_delegates[guid] && rootNode == boundingBox) {
-            delete _delegates[guid];
-        }
-
-        if (this._hDocFocus) {
-            this._hDocFocus.detach();
-        }
-
-        if (this._hDocMouseDown) {
+    _unbindDOM : function(boundingBox) {
+        this._hDocFocus.detach();
+        if (WEBKIT) {
             this._hDocMouseDown.detach();
         }
     },
@@ -1181,63 +817,19 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _syncUI: function() {
-        this._syncAttrUI([VISIBLE, DISABLED, HEIGHT, WIDTH, FOCUSED, TAB_INDEX]);
-    },
-
-    // TODO: Sugar method. Optimize Perf. Edge Case checks
-    /**
-     * @method _bindAttrUI
-     * @protected
-     * @param {Object} attrs
-     */
-    _bindAttrUI : function(attrs) {
-        for (var i = 0, l = attrs.length; i < l; i++) {
-            var attr = attrs[i];
-            this.after(attr + CHANGE, this[_AFTER + attr.substring(0, 1).toUpperCase() + attr.substring(1) + CHANGE]);
-        }
-    },
-
-    /**
-     * TODO: Protected? on "destroy"?
-     *
-     * @method _unbindAttrUI
-     * @private
-     * @param {Object} attrs
-     */
-    _unbindAttrUI : function(attrs) {
-        for (var i = 0, l = attrs.length; i < l; i++) {
-            var attr = attrs[i];
-            this.detach(attr + CHANGE, this[_AFTER + attr.substring(0, 1).toUpperCase() + attr.substring(1) + CHANGE]);
-        }
-    },
-
-    // TODO: Sugar method. Optimize Perf. Edge Case checks
-    /**
-     * @method _syncAttrUI
-     * @protected
-     * @param {Object} attrs
-     */
-    _syncAttrUI : function(attrs) {
-        for (var i = 0, l = attrs.length; i < l; i++) {
-            var attr = attrs[i];
-            this[_UISET + attr.substring(0, 1).toUpperCase() + attr.substring(1)](this.get(attr));
-        }
+        this._syncAttrUI(this._SYNC_UI_ATTRS);
     },
 
     /**
      * Sets the height on the widget's bounding box element
-     * 
+     *
      * @method _uiSetHeight
      * @protected
      * @param {String | Number} val
      */
     _uiSetHeight: function(val) {
-        if (L.isNumber(val)) {
-            val = val + this.DEF_UNIT;
-        }
-        this.get(BOUNDING_BOX).setStyle(HEIGHT, val);
-
-        this._uiExpandContentBox((val !== "" && val !== "auto"));
+        this._uiSetDim(HEIGHT, val);
+        this._uiSizeCB((val !== EMPTY_STR && val !== AUTO));
     },
 
     /**
@@ -1248,10 +840,17 @@ Y.extend(Widget, Y.Base, {
      * @param {String | Number} val
      */
     _uiSetWidth: function(val) {
-        if (L.isNumber(val)) {
-            val = val + this.DEF_UNIT;
-        }
-        this.get(BOUNDING_BOX).setStyle(WIDTH, val);
+        this._uiSetDim(WIDTH, val);
+    },
+
+    /**
+     * @method _uiSetDim
+     * @private
+     * @param {String} dim The dimension - "width" or "height"
+     * @param {Number | String} val The value to set
+     */
+    _uiSetDim: function(dimension, val) {
+        this.get(BOUNDING_BOX).setStyle(dimension, L.isNumber(val) ? val + this.DEF_UNIT : val);
     },
 
     /**
@@ -1262,53 +861,17 @@ Y.extend(Widget, Y.Base, {
      * @param {boolean} val
      */
     _uiSetVisible: function(val) {
-
-        var box = this.get(BOUNDING_BOX), 
-            sClassName = this.getClassName(HIDDEN);
-
-        if (val) { 
-            box.removeClass(sClassName); 
-        } else {
-            box.addClass(sClassName); 
-        }
+        this.get(BOUNDING_BOX).toggleClass(this.getClassName(HIDDEN), !val);
     },
 
     /**
      * Sets the disabled state for the UI
-     * 
+     *
      * @protected
      * @param {boolean} val
      */
     _uiSetDisabled: function(val) {
-
-        var box = this.get(BOUNDING_BOX), 
-            sClassName = this.getClassName(DISABLED);
-
-        if (val) {
-            box.addClass(sClassName);
-        } else {
-            box.removeClass(sClassName);
-        }
-    },
-
-    /**
-    * Set the tabIndex on the widget's rendered UI
-    *
-    * @method _uiSetTabIndex
-    * @protected
-    * @param Number
-    */
-    _uiSetTabIndex: function(index) {
-
-		var boundingBox = this.get(BOUNDING_BOX);
-
-		if (L.isNumber(index)) {
-			boundingBox.set(TAB_INDEX, index);
-		}
-		else {
-			boundingBox.removeAttribute(TAB_INDEX);
-		}
-
+        this.get(BOUNDING_BOX).toggleClass(this.getClassName(DISABLED), val);
     },
 
     /**
@@ -1320,107 +883,60 @@ Y.extend(Widget, Y.Base, {
      * the UI.     
      */
     _uiSetFocused: function(val, src) {
+         var boundingBox = this.get(BOUNDING_BOX);
 
-        var box = this.get(BOUNDING_BOX),
-            sClassName = this.getClassName(FOCUSED);
-
-        if (val) {
-            box.addClass(sClassName);
-            if (src !== UI) {
-                box.focus();
+         boundingBox.toggleClass(this.getClassName(FOCUSED), val);
+         if (src !== UI) {
+            if (val) {
+                boundingBox.focus();  
+            } else {
+                boundingBox.blur();
             }
-        } else {
-            box.removeClass(sClassName);
-            if (src !== UI) {
-                box.blur();
-            }
-        }
+         }
     },
 
     /**
-     * Default visible attribute state change handler
+     * Set the tabIndex on the widget's rendered UI
      *
-     * @method _afterVisibleChange
+     * @method _uiSetTabIndex
      * @protected
-     * @param {EventFacade} evt The event facade for the attribute change
+     * @param Number
      */
-    _afterVisibleChange: function(evt) {
-        this._uiSetVisible(evt.newVal);
-    },
+    _uiSetTabIndex: function(index) {
+		var boundingBox = this.get(BOUNDING_BOX);
 
-    /**
-     * Default disabled attribute state change handler
-     * 
-     * @method _afterDisabledChange
-     * @protected
-     * @param {EventFacade} evt The event facade for the attribute change
-     */
-    _afterDisabledChange: function(evt) {
-        this._uiSetDisabled(evt.newVal);
-    },
-
-    /**
-     * Default height attribute state change handler
-     * 
-     * @method _afterHeightChange
-     * @protected
-     * @param {EventFacade} evt The event facade for the attribute change
-     */
-    _afterHeightChange: function(evt) {
-        this._uiSetHeight(evt.newVal);
-    },
-
-    /**
-     * Default widget attribute state change handler
-     * 
-     * @method _afterWidthChange
-     * @protected
-     * @param {EventFacade} evt The event facade for the attribute change
-     */
-    _afterWidthChange: function(evt) {
-        this._uiSetWidth(evt.newVal);
-    },
-
-    /**
-     * Default focused attribute state change handler
-     * 
-     * @method _afterFocusedChange
-     * @protected
-     * @param {EventFacade} evt The event facade for the attribute change
-     */
-    _afterFocusedChange: function(evt) {
-        this._uiSetFocused(evt.newVal, evt.src);
+		if (L.isNumber(index)) {
+			boundingBox.set(TAB_INDEX, index);
+		} else {
+			boundingBox.removeAttribute(TAB_INDEX);
+		}
     },
 
 	/**
-	* @method _onDocMouseDown
-	* @description "mousedown" event handler for the owner document of the 
-	* widget's bounding box.
-	* @protected
-    * @param {EventFacade} evt The event facade for the DOM focus event
-	*/
+	 * @method _onDocMouseDown
+	 * @description "mousedown" event handler for the owner document of the 
+	 * widget's bounding box.
+	 * @protected
+     * @param {EventFacade} evt The event facade for the DOM focus event
+	 */
 	_onDocMouseDown: function (evt) {
 		if (this._hasDOMFocus) {
- 			this._onFocus(evt);
+ 			this._onDocFocus(evt);
 		}
 	},
 
     /**
      * DOM focus event handler, used to sync the state of the Widget with the DOM
      * 
-     * @method _onFocus
+     * @method _onDocFocus
      * @protected
      * @param {EventFacade} evt The event facade for the DOM focus event
      */
-    _onFocus: function (evt) {
-
-		var target = evt.target,
-			boundingBox = this.get(BOUNDING_BOX),
-			bFocused = (boundingBox.compareTo(target) || boundingBox.contains(target));
+    _onDocFocus: function (evt) {
+		var bFocused = this.get(BOUNDING_BOX).contains(evt.target); // contains() checks invoking node also
 
 		this._hasDOMFocus = bFocused;
         this._set(FOCUSED, bFocused, { src: UI });
-
     },
 
     /**
@@ -1448,7 +964,7 @@ Y.extend(Widget, Y.Base, {
      * @property CONTENT_TEMPLATE
      * @type String
      */
-    CONTENT_TEMPLATE : "<div></div>",
+    CONTENT_TEMPLATE : DIV,
 
     /**
      * Property defining the markup template for bounding box.
@@ -1456,184 +972,7 @@ Y.extend(Widget, Y.Base, {
      * @property BOUNDING_TEMPLATE
      * @type String
      */
-    BOUNDING_TEMPLATE : "<div></div>",
-
-    /**
-     * Static property listing the styles that are mimiced on the bounding box from the content box.
-     *
-     * @property WRAP_STYLES
-     * @type Object
-     */
-    WRAP_STYLES : {
-        height: '100%',
-        width: '100%',
-        zIndex: false,
-        position: 'static',
-        top: '0',
-        left: '0',
-        bottom: '',
-        right: '',
-        padding: '',
-        margin: ''
-    },
-
-    /**
-     * Sets strings for a particular locale, merging with any existing
-     * strings which may already be defined for the locale.
-     *
-     * @method _setStrings
-     * @protected
-     * @param {Object} strings The hash of string key/values to set
-     * @param {Object} locale The locale for the string values being set
-     */
-    _setStrings : function(strings, locale) {
-        var strs = this._strings;
-        locale = locale.toLowerCase();
-
-        if (!strs[locale]) {
-            strs[locale] = {};
-        }
-
-        Y.aggregate(strs[locale], strings, true);
-        return strs[locale];
-    },
-
-    /**
-     * Returns the strings key/value hash for a paricular locale, without locale lookup applied.
-     *
-     * @method _getStrings
-     * @protected
-     * @param {Object} locale
-     */
-    _getStrings : function(locale) {
-        return this._strings[locale.toLowerCase()];
-    },
-
-    /**
-     * Gets the entire strings hash for a particular locale, performing locale lookup.
-     * <p>
-     * If no values of the key are defined for a particular locale the value for the 
-     * default locale (in initial locale set for the class) is returned.
-     * </p>
-     * @method getStrings
-     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.
-     */
-    // TODO: Optimize/Cache. Clear cache on _setStrings call.
-    getStrings : function(locale) {
-
-        locale = (locale || this.get(LOCALE)).toLowerCase();
-
-
-        var defLocale = this.getDefaultLocale().toLowerCase(),
-            defStrs = this._getStrings(defLocale),
-            strs = (defStrs) ? Y.merge(defStrs) : {},
-            localeSegments = locale.split(HYPHEN);
-
-        // If locale is different than the default, or needs lookup support
-        if (locale !== defLocale || localeSegments.length > 1) {
-            var lookup = "";
-            for (var i = 0, l = localeSegments.length; i < l; ++i) {
-                lookup += localeSegments[i];
-
-
-                var localeStrs = this._getStrings(lookup);
-                if (localeStrs) {
-                    Y.aggregate(strs, localeStrs, true);
-                }
-                lookup += HYPHEN;
-            }
-        }
-
-        return strs;
-    },
-
-    /**
-     * Gets the string for a particular key, for a particular locale, performing locale lookup.
-     * <p>
-     * If no values if defined for the key, for the given locale, the value for the 
-     * default locale (in initial locale set for the class) is returned.
-     * </p>
-     * @method getString
-     * @param {String} key The key.
-     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.
-     */
-    getString : function(key, locale) {
-
-        locale = (locale || this.get(LOCALE)).toLowerCase();
-
-
-        var defLocale = (this.getDefaultLocale()).toLowerCase(),
-            strs = this._getStrings(defLocale) || {},
-            str = strs[key],
-            idx = locale.lastIndexOf(HYPHEN);
-
-        // If locale is different than the default, or needs lookup support
-        if (locale !== defLocale || idx != -1) {
-            do {
-
-                strs = this._getStrings(locale);
-                if (strs && key in strs) {
-                    str = strs[key];
-                    break;
-                }
-                idx = locale.lastIndexOf(HYPHEN);
-                // Chop of last locale segment
-                if (idx != -1) {
-                    locale = locale.substring(0, idx);
-                }
-
-            } while (idx != -1);
-        }
-
-        return str;
-    },
-
-    /**
-     * Returns the default locale for the widget (the locale value defined by the
-     * widget class, or provided by the user during construction).
-     *
-     * @method getDefaultLocale
-     * @return {String} The default locale for the widget
-     */
-    getDefaultLocale : function() {
-        return this._conf.get(LOCALE, INIT_VALUE);
-    },
-
-    /**
-     * Private stings hash, used to store strings in locale specific buckets.
-     *
-     * @property _strings
-     * @private
-     * @type Object
-     */
-    _strings: null,
-
-    /**
-     * Gets the HTML_PARSER definition for this instance, by merging HTML_PARSER
-     * definitions across the class hierarchy.
-     *
-     * @private
-     * @method _getHtmlParser
-     * @return {Object} HTML_PARSER definition for this instance
-     */
-    _getHtmlParser : function() {
-        if (!this._HTML_PARSER) {
-            var classes = this._getClasses(),
-                parser = {},
-                i, p;
-
-            for (i = classes.length - 1; i >= 0; i--) {
-                p = classes[i].HTML_PARSER;
-                if (p) {
-                    Y.mix(parser, p, true);
-                }
-            }
-
-            this._HTML_PARSER = parser;
-        }
-
-        return this._HTML_PARSER;
-    },
+    BOUNDING_TEMPLATE : DIV,
 
     /**
      * @method _guid
@@ -1650,10 +989,466 @@ Y.extend(Widget, Y.Base, {
      */
     _validTabIndex : function (tabIndex) {
         return (L.isNumber(tabIndex) || L.isNull(tabIndex));
+    },
+
+    /**
+     * @method _bindAttrUI
+     * @protected
+     * @param {Object} attrs
+     */
+    _bindAttrUI : function(attrs) {
+        this._doBindAttrUI(attrs, TRUE);
+    },
+
+    /**
+     * @method _unbindAttrUI
+     * @protected
+     * @param {Object} attrs
+     */
+    _unbindAttrUI : function(attrs) {
+        this._doBindAttrUI(attrs, FALSE);
+    },
+
+    /**
+     * @method _syncAttrUI
+     * @protected
+     * @param {Object} attrs
+     */
+    _syncAttrUI : function(attrs) {
+        var i, l = attrs.length, attr;
+        for (i = 0; i < l; i++) {
+            attr = attrs[i];
+            this[_UISET + _toInitialCap(attr)](this.get(attr));
+        }
+    },
+
+    /**
+     * @method _doBindAttrUI
+     * @private
+     * @param {Array} attrs Array of attribute to bind/unbind
+     * @param {boolean} bind If true, bind, else unbind
+     */
+    _doBindAttrUI : function(attrs, bind) {
+        var i, 
+            l = attrs.length, 
+            methodName = (bind) ? "after" : "detach";
+
+        for (i = 0; i < l; i++) {
+            this[methodName](attrs[i] + CHANGE, this._setAttrUI);
+        }
+    },
+
+    _setAttrUI : function(e) {
+        this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
+    },
+
+    _strSetter : function(strings) {
+        return Y.merge(this.get(STRINGS), strings);
+    },
+
+    getString : function(key) {
+        return this.get(STRINGS)[key];
+    },
+
+    getStrings : function() {
+        return this.get(STRINGS);
+    },
+
+    _BIND_UI_ATTRS : UI_ATTRS,
+    _SYNC_UI_ATTRS : UI_ATTRS.concat(TAB_INDEX),
+
+    /**
+     * Map of DOM events that should be fired as Custom Events by the  
+     * Widget instance.
+     *
+     * @property UI_EVENTS
+     * @type Object
+     */
+    UI_EVENTS: {
+        click: TRUE,
+        contextmenu: TRUE,
+        dblclick: TRUE,
+        keydown: TRUE,
+        keypress: TRUE,
+        keyup: TRUE,
+        mousedown: TRUE,
+        mousemove: TRUE,
+        mouseout: TRUE,
+        mouseover: TRUE,
+        mouseup: TRUE,
+        mouseenter: TRUE,
+        mouseleave: TRUE
+    },
+
+    /**
+     * Returns the node on which to bind delegate listeners.
+     *
+     * @method _getUIEventNode
+     * @protected
+     */
+    _getUIEventNode: function () {
+        return this.get(BOUNDING_BOX);
+    },
+
+    /**
+     * Binds a delegated DOM event listener of the specified type to the 
+     * Widget's outtermost DOM element to facilitate the firing of a Custom
+     * Event of the same type for the Widget instance.  
+     *
+     * @private
+     * @method _createUIEvent
+     * @param type {String} String representing the name of the event
+     */
+    _createUIEvent: function (type) {
+
+        var uiEvtNode = this._getUIEventNode(),
+            uiEvts = this._uiEvts || {};
+
+        if (!uiEvts[type]) {
+            uiEvts[type] = uiEvtNode.get(PARENT_NODE).delegate(type, function (evt) {
+
+                var widget = Widget.getByNode(this);
+
+                // widget.publish(evt.type);
+
+                //  Make the DOM event a property of the custom event
+                //  so that developers still have access to it.
+                widget.fire(evt.type, { domEvent: evt });
+            }, "." + _getWidgetClassName());
+
+            this._uiEvts = uiEvts;
+        }
+    },
+
+    //  Override of on from Base to facilitate the firing of Widget events
+    //  based on DOM events of the same name/type (e.g. "click", "mouseover").
+    on: function (type) {
+        if (L.isString(type)) {
+            var sType = type.replace(UI_EVENT_REGEX, UI_EVENT_REGEX_REPLACE);
+            if (this.UI_EVENTS[sType]) {
+                this.after(RENDER, function() { this._createUIEvent(sType); });
+            }
+        }
+        return Widget.superclass.on.apply(this, arguments);
     }
+
 });
 
 Y.Widget = Widget;
 
 
 }, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base', 'node', 'classnamemanager']});
+YUI.add('widget-htmlparser', function(Y) {
+
+var Widget = Y.Widget,
+    Node = Y.Node,
+    Lang = Y.Lang,
+
+    SRC_NODE = "srcNode",
+    CONTENT_BOX = "contentBox";
+
+/**
+ * Object hash, defining how attribute values are to be parsed from
+ * markup contained in the widget's content box. e.g.:
+ * <pre>
+ *   {
+ *       // Set single Node references using selector syntax 
+ *       // (selector is run through node.one)
+ *       titleNode: "span.yui-title",
+ *       // Set NodeList references using selector syntax 
+ *       // (array indicates selector is to be run through node.all)
+ *       listNodes: ["li.yui-item"],
+ *       // Set other attribute types, using a parse function. 
+ *       // Context is set to the widget instance.
+ *       label: function(contentBox) {
+ *           return contentBox.one("span.title").get("innerHTML");
+ *       }
+ *   }
+ * </pre>
+ * 
+ * @property Widget.HTML_PARSER
+ * @type Object
+ * @static
+ */
+Widget.HTML_PARSER = {};
+
+/**
+ * The build configuration for the Widget class.
+ * <p>
+ * Defines the static fields which need to be aggregated,
+ * when this class is used as the main class passed to 
+ * the <a href="Base.html#method_build">Base.build</a> method.
+ * </p>
+ * @property _buildCfg
+ * @type Object
+ * @static
+ * @final
+ * @private
+ */
+Widget._buildCfg = {
+    aggregates : ["HTML_PARSER"]
+};
+
+/**
+ * The DOM node to parse for configuration values, passed to the Widget's HTML_PARSER definition
+ *
+ * @attribute srcNode
+ * @type String | Node
+ * @writeOnce
+ */
+Widget.ATTRS[SRC_NODE] = {
+    value: null,
+    setter: Node.one,
+    getter: "_getSrcNode",
+    writeOnce: true
+};
+
+Y.mix(Widget.prototype, {
+
+    /**
+     * @method _getSrcNode
+     * @protected
+     * @return {Node} The Node to apply HTML_PARSER to
+     */
+    _getSrcNode : function(val) {
+        return val || this.get(CONTENT_BOX);
+    },
+
+    /**
+     * @method _applyParsedConfig
+     * @protected
+     * @return {Object} The merged configuration literal
+     */
+    _applyParsedConfig : function(node, cfg, parsedCfg) {
+        return (parsedCfg) ? Y.aggregate(cfg, parsedCfg, false) : cfg;
+    },
+
+    /**
+     * Utilitity method used to apply the <code>HTML_PARSER</code> configuration for the 
+     * instance, to retrieve config data values.
+     *
+     * @method _applyParser
+     * @private
+     * @param config {Object} User configuration object (will be populated with values from Node) 
+     */
+    _applyParser : function(config) {
+
+        var widget = this,
+            srcNode = widget.get(SRC_NODE),
+            schema = widget._getHtmlParser(),
+            parsedConfig,
+            val;
+
+        if (schema && srcNode) {
+            Y.Object.each(schema, function(v, k, o) {
+                val = null;
+
+                if (Lang.isFunction(v)) {
+                    val = v.call(widget, srcNode);
+                } else {
+                    if (Lang.isArray(v)) {
+                        val = srcNode.all(v[0]);
+                    } else {
+                        val = srcNode.one(v);
+                    }
+                }
+
+                if (val !== null && val !== undefined) {
+                    parsedConfig = parsedConfig || {};
+                    parsedConfig[k] = val;
+                }
+            });
+        }
+        config = widget._applyParsedConfig(srcNode, config, parsedConfig);
+    },
+
+    /**
+     * Gets the HTML_PARSER definition for this instance, by merging HTML_PARSER
+     * definitions across the class hierarchy.
+     *
+     * @private
+     * @method _getHtmlParser
+     * @return {Object} HTML_PARSER definition for this instance
+     */
+    _getHtmlParser : function() {
+        // Removed caching for kweight. This is a private method
+        // and only called once so don't need to cache HTML_PARSER
+        var classes = this._getClasses(),
+            parser = {},
+            i, p;
+
+        for (i = classes.length - 1; i >= 0; i--) {
+            p = classes[i].HTML_PARSER;
+            if (p) {
+                Y.mix(parser, p, true);
+            }
+        }
+        return parser;
+    }
+});
+
+
+}, '@VERSION@' ,{requires:['widget-base']});
+YUI.add('widget-i18n', function(Y) {
+
+var TRUE = true,
+    LOCALE = "locale",
+    INIT_VALUE = "initValue",
+    HYPHEN = "-",
+    EMPTY_STR = "",
+    Widget = Y.Widget;
+
+/**
+ * @attribute locale
+ * @description
+ * The default locale for the widget. NOTE: Using get/set on the "strings" attribute will
+ * return/set strings for this locale.
+ * @default "en"
+ * @type String
+ */
+Widget.ATTRS[LOCALE] = {
+    value: "en"
+};
+
+Y.mix(Widget.prototype, {
+
+    /**
+     * Sets strings for a particular locale, merging with any existing
+     * strings which may already be defined for the locale.
+     *
+     * @method _setStrings
+     * @protected
+     * @param {Object} strings The hash of string key/values to set
+     * @param {Object} locale The locale for the string values being set
+     */
+    _setStrings : function(strings, locale) {
+        var strs = this._strs;
+        locale = locale.toLowerCase();
+
+        if (!strs[locale]) {
+            strs[locale] = {};
+        }
+
+        Y.aggregate(strs[locale], strings, TRUE);
+        return strs[locale];
+    },
+
+    /**
+     * Returns the strings key/value hash for a paricular locale, without locale lookup applied.
+     *
+     * @method _getStrings
+     * @protected
+     * @param {Object} locale
+     */
+    _getStrings : function(locale) {
+        return this._strs[locale.toLowerCase()];
+    },
+
+    /**
+     * Gets the entire strings hash for a particular locale, performing locale lookup.
+     * <p>
+     * If no values of the key are defined for a particular locale the value for the 
+     * default locale (in initial locale set for the class) is returned.
+     * </p>
+     * @method getStrings
+     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.
+     */
+    // TODO: Optimize/Cache. Clear cache on _setStrings call.
+    getStrings : function(locale) {
+    
+        locale = (locale || this.get(LOCALE)).toLowerCase();
+    
+    
+        var defLocale = this.getDefaultLocale().toLowerCase(),
+            defStrs = this._getStrings(defLocale),
+            strs = (defStrs) ? Y.merge(defStrs) : {},
+            localeSegments = locale.split(HYPHEN),
+            localeStrs,
+            i, l,
+            lookup;
+    
+        // If locale is different than the default, or needs lookup support
+        if (locale !== defLocale || localeSegments.length > 1) {
+            lookup = EMPTY_STR;
+            for (i = 0, l = localeSegments.length; i < l; ++i) {
+                lookup += localeSegments[i];
+    
+    
+                localeStrs = this._getStrings(lookup);
+                if (localeStrs) {
+                    Y.aggregate(strs, localeStrs, TRUE);
+                }
+                lookup += HYPHEN;
+            }
+        }
+    
+        return strs;
+    },
+    
+    /**
+     * Gets the string for a particular key, for a particular locale, performing locale lookup.
+     * <p>
+     * If no values if defined for the key, for the given locale, the value for the 
+     * default locale (in initial locale set for the class) is returned.
+     * </p>
+     * @method getString
+     * @param {String} key The key.
+     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.
+     */
+    getString : function(key, locale) {
+
+        locale = (locale || this.get(LOCALE)).toLowerCase();
+    
+    
+        var defLocale = (this.getDefaultLocale()).toLowerCase(),
+            strs = this._getStrings(defLocale) || {},
+            str = strs[key],
+            idx = locale.lastIndexOf(HYPHEN);
+    
+        // If locale is different than the default, or needs lookup support
+        if (locale !== defLocale || idx != -1) {
+            do {
+    
+                strs = this._getStrings(locale);
+                if (strs && key in strs) {
+                    str = strs[key];
+                    break;
+                }
+                idx = locale.lastIndexOf(HYPHEN);
+                // Chop of last locale segment
+                if (idx != -1) {
+                    locale = locale.substring(0, idx);
+                }
+    
+            } while (idx != -1);
+        }
+    
+        return str;
+    },
+
+    /**
+     * Returns the default locale for the widget (the locale value defined by the
+     * widget class, or provided by the user during construction).
+     *
+     * @method getDefaultLocale
+     * @return {String} The default locale for the widget
+     */
+    getDefaultLocale : function() {
+        return this._state.get(LOCALE, INIT_VALUE);
+    },
+    
+    _strSetter : function(val) {
+        return this._setStrings(val, this.get(LOCALE));
+    },
+
+    _strGetter : function(val) {
+        return this._getStrings(this.get(LOCALE));
+    }
+}, true);
+
+
+}, '@VERSION@' ,{requires:['widget-base']});
+
+
+YUI.add('widget', function(Y){}, '@VERSION@' ,{use:['widget-base', 'widget-htmlparser', 'widget-i18n']});
+

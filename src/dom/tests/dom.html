@@ -31,6 +31,7 @@ form {
 }
 
 #ft {
+    height:200px;
     opacity: 0.75;
 }
 .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
@@ -83,7 +84,9 @@ form {
             </div>
             <form id="test-form" class="test-class" action="#">
                 <input id="test-text-value" value="text value">
-                <input id="test-text-novalue">
+                <input id="test-text-novalue" name=>
+                <input id="test-text-emptyvalue">
+
 
                 <textarea id="test-textarea-value" value="textarea value"></textarea>
                 <textarea id="test-textarea-novalue"></textarea>
@@ -112,6 +115,9 @@ form {
                     <option value=""></option>
                 </select>
             </form>
+            <form id="test-names">
+                <input id="test-name-id1" name="test-name-id2" >
+                <input id="test-name-id2" name="test-name-id1">
             <div id="test-add">test</div>
         </div>
         <div id="ft">
@@ -146,11 +152,24 @@ form {
             name: 'DOM',
 
             test_byId: function() {
+                var inputs = document.getElementById('test-names').getElementsByTagName('input');
+
                 Assert.areEqual(doc, Y.DOM.byId('doc'), 'byId("doc")');
                 Assert.isNull(Y.DOM.byId('fake-id'), 'byId("fake-id")');
                 Assert.isNull(Y.DOM.byId(null), 'byId(null)');
                 Assert.isNull(Y.DOM.byId(), 'byId()');
 
+                Assert.areEqual(
+                    inputs[0],
+                    Y.DOM.byId('test-name-id1'),
+                    "Y.DOM.byId('test-name-id1')"
+                );
+
+                Assert.areEqual(
+                    inputs[1],
+                    Y.DOM.byId('test-name-id2'),
+                    "Y.DOM.byId('test-name-id2')"
+                );
             },
 
             test_getText: function() {
@@ -215,13 +234,13 @@ form {
                 try {
                     Y.DOM.setStyle(ft, 'width', '-1');
                 } catch(e) {
-                    Assert.isFalse(1, 'setStyle invalid width error');
+                    Assert.fail('setStyle invalid width error');
                 }
 
                 try {
                     Y.DOM.setStyle(ft, 'height', '-1');
                 } catch(e) {
-                    Assert.isFalse(1, 'setStyle invalid height error');
+                    Assert.fail('setStyle invalid height error');
                 }
 
                 Y.DOM.setStyle(ft, 'display', 'none');
@@ -239,7 +258,49 @@ form {
                 Y.DOM.setStyle(ft, 'opacity', 0);
                 Y.DOM.setStyle(ft, 'opacity', '');
                 Assert.areEqual(0.75, Y.DOM.getStyle(ft, 'opacity'), "Y.DOM.setStyle(ft, 'opacity', '')");
-           },
+
+                Y.DOM.setStyle(ft, 'height', '100');
+                Assert.areEqual('100px', Y.DOM.getStyle(ft, 'height'),
+                    "Y.DOM.setStyle(ft, 'height', '100')");
+
+                try {
+                    Y.DOM.setStyle(ft, 'height', '');
+                } catch(e) {
+                    Assert.fail('error thrown setting height: ""');
+                }
+
+                Assert.areEqual('200px', Y.DOM.getStyle(ft, 'height'),
+                    "Y.DOM.setStyle(ft, 'height', '')");
+            },
+
+                test_styleDefaultUnit: function() {
+                    var node = Y.DOM.byId('ft'),
+                        value = '20px',
+                        attr = 'width',
+                        num = 20;
+
+                    attr = 'borderTopWidth';
+                    Y.DOM.setStyle(node, attr, num);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
+
+                    attr = 'opacity';
+                    value = 0.5;
+                    num = 0.5;
+                    Y.DOM.setStyle(node, attr, num);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
+
+                    attr = 'borderTopWidth';
+                    value = '5px';
+                    num = 5;
+                    Y.DOM.setStyle(node, attr, num);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
+
+                    attr = 'paddingTop';
+                    num = '5';
+                    value = '5px';
+                    Y.DOM.setStyle(node, attr, num);
+                    Assert.areEqual(value, Y.DOM.getStyle(node, attr), attr + ': ' + num);
+                },
 
             test_create: function() {
                 var html = '';
@@ -439,6 +500,7 @@ form {
                 Assert.areEqual(doc, Y.DOM.ancestor(bd), 'ancestor(bd)');
                 Assert.areEqual(doc, Y.DOM.ancestor(bd), 'ancestor(bd)');
                 Assert.areEqual(document.body, Y.DOM.ancestor(bd, function(node) { return node.tagName === 'BODY';}), 'ancestor(bd, fn)');
+                Assert.areEqual(bd, Y.DOM.ancestor(bd, null, true), 'ancestor(bd, true)');
             },
 
 
@@ -586,6 +648,10 @@ form {
 
                 Y.DOM.setValue(Y.DOM.byId(id), 'new value');
                 Assert.areEqual('new value', Y.DOM.getValue(Y.DOM.byId(id)), id);
+
+                id = 'test-text-emptyvalue';
+                Assert.areEqual('""', Y.JSON.stringify(Y.DOM.getValue(Y.DOM.byId(id))),
+                    "Y.JSON.stringify(Y.DOM.getValue(Y.DOM.byId(" + id + ")))");
             },
 
             test_position: function() { // basic position tests
@@ -688,6 +754,49 @@ form {
                 Assert.isNull(Y.DOM.firstByTag(tag, root),
                     "Y.DOM.firstByTag(" + tag + " , " + root + ")"
                 );
+            },
+
+            testToHex: function() {
+                var rgb = 'rgb(97, 11, 11)',
+                    hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#610B0B", hex, 'toHex(' + rgb + ')');
+
+                rgb = 'rgb(255, 255, 255)';
+                hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#FFFFFF", hex, 'toHex(' + rgb + ')');
+
+                rgb = '#fff';
+                hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#FFFFFF", hex, 'toHex(' + rgb + ')');
+
+                rgb = 'fff';
+                hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#FFFFFF", hex, 'toHex(' + rgb + ')');
+
+                rgb = '000';
+                hex = Y.Color.toHex(rgb);
+
+                Assert.areEqual("#000000", hex, 'toHex(' + rgb + ')');
+
+                rgb = "rgb(97, 56, 11)" ;
+                hex = Y.Color.toHex(rgb);
+                Assert.areSame(hex, "#61380B", " shoudl be #61380B"); 
+
+                rgb = "rgb(11, 97, 11)" ; // 0B610B
+                hex = Y.Color.toHex(rgb);
+                Assert.areSame(hex, "#0B610B", " shoudl be #0B610B"); 
+
+                rgb = "rgb(56, 11, 97)" ; //380B61
+                hex = Y.Color.toHex(rgb);
+                Assert.areSame(hex, "#380B61", " shoudl be #380B61"); 
+
+                rgb = "rgb(97, 11, 56)" ; //610B38
+                hex = Y.Color.toHex(rgb);
+                Assert.areSame(hex, "#610B38", " shoudl be #610B38");
             }
 
         })); 

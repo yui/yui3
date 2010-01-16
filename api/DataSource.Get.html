@@ -84,28 +84,14 @@
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:property" resource="#property__tId">
-                                    <h4><a name="property__tId" property="yui:name">_tId</a>
-                                        - <code>private static <span property="yui:type">Number</span></code>
+                                    <div class="protected" rel="yui:property" resource="#property__last">
+                                    <h4><a name="property__last" property="yui:name">_last</a>
+                                        - <code>protected <span property="yui:type">{String}</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Unique ID to track requests.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_callbacks">
-                                    <h4><a name="property_callbacks" property="yui:name">callbacks</a>
-                                        - <code>static <span property="yui:type">Function[]</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Global array of callback functions, one for each request sent.
+                                            Stores the most recent request id for validation against stale
+response handling.
                                         </div>
                                     </div>
      
@@ -224,6 +210,61 @@ response is received asynchronously.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__generateRequest">
+                                    <h4>
+                                        <a name="method__generateRequest">_generateRequest</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_generateRequest</strong>
+                                           (
+                                                
+                                                        
+                                                         self
+                                                    
+                                                
+                                                        , 
+                                                         guid
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default method for adding callback param to url.  See
+generateRequestCallback attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">self</span>
+                                                        &lt;<span property="yui:type">DataSource.Get</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the current instance</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">guid</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  unique identifier for callback function wrapper</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -245,7 +286,7 @@ response is received asynchronously.
                                             <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_before">                                        
-                                            <a class=" deprecated" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class=" deprecated">,</span>
+                                            <a class="" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
                                             <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
@@ -711,11 +752,14 @@ response is received asynchronously.
                                             Defines request/response management in the following manner:
 <dl>
 <!--<dt>queueRequests</dt>
-<dd>If a request is already in progress, wait until response is returned before sending the next request.</dd>
+<dd>If a request is already in progress, wait until response is
+returned before sending the next request.</dd>
 <dt>cancelStaleRequests</dt>
-<dd>If a request is already in progress, cancel it before sending the next request.</dd>-->
+<dd>If a request is already in progress, cancel it before
+sending the next request.</dd>-->
 <dt>ignoreStaleResponses</dt>
-<dd>Send all requests, but handle only the response for the most recently sent request.</dd>
+<dd>Send all requests, but handle only the response for the most
+recently sent request.</dd>
 <dt>allowAll</dt>
 <dd>Send all requests and handle all responses.</dd>
 </dl>
@@ -858,6 +902,7 @@ requests are sent to
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
@@ -906,8 +951,7 @@ requests are sent to
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#property__tId" title="_tId">_tId</a></li>
-                                <li class=""><a href="#property_callbacks" title="callbacks">callbacks</a></li>
+                                <li class="protected"><a href="#property__last" title="_last">_last</a></li>
                                 <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
                         </ul>
                     </div>
@@ -916,6 +960,7 @@ requests are sent to
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class="protected"><a href="#method__defRequestFn" title="_defRequestFn">_defRequestFn</a></li>
+                                <li class="protected"><a href="#method__generateRequest" title="_generateRequest">_generateRequest</a></li>
                         </ul>
                     </div>
 
@@ -944,12 +989,12 @@ requests are sent to
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
-    var ALL_YUI_PROPS = [{"access": "", "host": "DataSource.Get", "name": "asyncMode", "url": "DataSource.Get.html#config_asyncMode", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "asyncModeChange", "url": "DataSource.Get.html#event_asyncModeChange", "type": "event"}, {"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefRequestFn", "url": "DataSourceCache.html#method__beforeDefRequestFn", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefResponseFn", "url": "DataSourceCache.html#method__beforeDefResponseFn", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "callbacks", "url": "DataSource.Get.html#property_callbacks", "type": "property"}, {"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_defRequestFn", "url": "DataSource.Get.html#method__defRequestFn", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallback", "url": "DataSource.Get.html#config_generateRequestCallback", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallbackChange", "url": "DataSource.Get.html#event_generateRequestCallbackChange", "type": "event"}, {"access": "", "host": "DataSource.Get", "name": "get", "url": "DataSource.Get.html#config_get", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "getChange", "url": "DataSource.Get.html#event_getChange", "type": "event"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceCache", "name": "initializer", "url": "DataSourceCache.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NAME", "url": "DataSourceCache.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "NAME", "url": "DataSource.Get.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NS", "url": "DataSourceCache.html#property_NS", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParam", "url": "DataSource.Get.html#config_scriptCallbackParam", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParamChange", "url": "DataSource.Get.html#event_scriptCallbackParamChange", "type": "event"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}, {"access": "private", "host": "DataSource.Get", "name": "_tId", "url": "DataSource.Get.html#property__tId", "type": "property"}];
-    YAHOO.yuidoc.init();
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "DataSource.Get", "name": "asyncMode", "url": "DataSource.Get.html#config_asyncMode", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "asyncModeChange", "url": "DataSource.Get.html#event_asyncModeChange", "type": "event"}, {"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefRequestFn", "url": "DataSourceCache.html#method__beforeDefRequestFn", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefResponseFn", "url": "DataSourceCache.html#method__beforeDefResponseFn", "type": "method"}, {"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_defRequestFn", "url": "DataSource.Get.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_generateRequest", "url": "DataSource.Get.html#method__generateRequest", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallback", "url": "DataSource.Get.html#config_generateRequestCallback", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallbackChange", "url": "DataSource.Get.html#event_generateRequestCallbackChange", "type": "event"}, {"access": "", "host": "DataSource.Get", "name": "get", "url": "DataSource.Get.html#config_get", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "getChange", "url": "DataSource.Get.html#event_getChange", "type": "event"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceCache", "name": "initializer", "url": "DataSourceCache.html#method_initializer", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_last", "url": "DataSource.Get.html#property__last", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NAME", "url": "DataSourceCache.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "NAME", "url": "DataSource.Get.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NS", "url": "DataSourceCache.html#property_NS", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParam", "url": "DataSource.Get.html#config_scriptCallbackParam", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParamChange", "url": "DataSource.Get.html#event_scriptCallbackParamChange", "type": "event"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}];
 </script>
 </body>
 </html>

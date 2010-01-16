@@ -112,15 +112,20 @@ YUI.add('io-base', function(Y) {
    	*
    	* xdr: Defines the transport to be used for cross-domain requests.  By
    	*      setting this property, the transaction will use the specified
-   	*      transport instead of XMLHttpRequest.  Currently, the only alternate
-   	*      transport supported is Flash (e.g., { xdr: 'flash' }).
+   	*      transport instead of XMLHttpRequest.  Currently, the alternate
+   	*      transports supported are Flash and native, cross-site XHR support.
+   	*      The properties are:
+   	*      {
+    *        use: Specify the transport to be used -- 'flash' or 'native'.
+    *        datatype:
+    *
    	*
    	* form: This is a defined object used to process HTML form as data.  The
    	*       properties are:
    	*       {
-   	*	      id: object, //HTML form object or id of HTML form
-   	*         useDisabled: boolean, //Allow disabled HTML form field values
-   	*                      to be sent as part of the data.
+   	*	      id: Node object or id of HTML form.
+   	*         useDisabled: Boolean value to allow disabled HTML form field
+   	*                      values to be sent as part of the data.
 	*       }
 	*
 	* on: This is a defined object used to create and handle specific
@@ -138,33 +143,31 @@ YUI.add('io-base', function(Y) {
 	*
 	*     The properties are:
 	*     {
-   	*       start: function(id, args){},
-   	*       complete: function(id, responseobject, args){},
-   	*       success: function(id, responseobject, args){},
-   	*       failure: function(id, responseobject, args){},
-   	*       end: function(id, args){}
+   	*       start: function(id, arguments){},
+   	*       complete: function(id, responseobject, arguments){},
+   	*       success: function(id, responseobject, arguments){},
+   	*       failure: function(id, responseobject, arguments){},
+   	*       end: function(id, arguments){}
    	*     }
    	*	  Each property can reference a function or be written as an
    	*     inline function.
    	*
-   	*     context: Object reference for all defined transaction event handlers
-   	*              when it is implemented as a method of a base object. Defining
-   	*              "context" will set the reference of "this," used in the
-   	*              event handlers, to the context value.  In the case where
-   	*              different event handlers all have different contexts,
-   	*              use Y.bind() to set the execution context, bypassing this
-   	*              configuration.
+   	* context: Object reference for all defined transaction event handlers
+   	*          when it is implemented as a method of a base object. Defining
+   	*          "context" will set the reference of "this," used in the
+   	*          event handlers, to the context value.  In the case where
+   	*          different event handlers all have different contexts,
+   	*          use Y.bind() to set the execution context, bypassing this
+   	*          configuration.
    	*
-   	*     headers: This is a defined object of client headers, as many as.
-   	*              desired for the transaction.  The object
-   	*              pattern is:
-   	*              {
-   	*		         header: value
-   	*              }
+   	* headers: This is a defined object of client headers, as many as.
+   	*          desired for the transaction.  The object pattern is:
+   	*          { header: value }.
    	*
    	* timeout: This value, defined as milliseconds, is a time threshold for the
    	*          transaction. When this threshold is reached, and the transaction's
    	*          Complete event has not yet fired, the transaction will be aborted.
+   	*
    	* arguments: Object, array, string, or number passed to all registered
    	*            event handlers.  This value is available as the second
    	*            argument in the "start" and "abort" event handlers; and, it is
@@ -186,8 +189,11 @@ YUI.add('io-base', function(Y) {
    			m = c.method ? c.method.toUpperCase() : 'GET';
    			s = c.sync;
 
+		//To serialize an object into a key-value string, add the
+		//QueryString module in the YUI instance's 'use' method.
         if (Y.Lang.isObject(c.data)) {
             c.data = Y.QueryString.stringify(c.data);
+            Y.log('Configuration property "data" is an object. The serialized value is: ' + c.data, 'info', 'io');
         }
 
         if (c.form) {
@@ -207,14 +213,12 @@ YUI.add('io-base', function(Y) {
 		}
 		else if (c.data && m === 'GET') {
 			uri = _concat(uri, c.data);
+			Y.log('HTTP GET with configuration data.  The querystring is: ' + uri, 'info', 'io');
 		}
 
    		if (c.xdr) {
 			if (c.xdr.use === 'native' && window.XDomainRequest || c.xdr.use === 'flash') {
    				return Y.io.xdr(uri, o, c);
-			}
-			if (c.xdr.credentials) {
-				o.c.withCredentials = true;
 			}
    		}
 
@@ -224,6 +228,11 @@ YUI.add('io-base', function(Y) {
 
    		try {
 			o.c.open(m, uri, s ? false : true);
+			// Will work only in browsers that implement the
+			// Cross-Origin Resource Sharing draft.
+			if (c.xdr && c.xdr.credentials) {
+				o.c.withCredentials = true;
+			}
    		}
    		catch(a){
 			if (c.xdr) {
@@ -268,6 +277,7 @@ YUI.add('io-base', function(Y) {
    		// initialize timeout polling.
    		if (c.timeout) {
    			_startTimeout(o, c.timeout);
+			Y.log('Configuration timeout set to: ' + c.timeout, 'info', 'io');
    		}
 
 		return {
@@ -297,7 +307,7 @@ YUI.add('io-base', function(Y) {
    			a = c.arguments,
    			cT = c.context || Y;
 
-		a ? eT.subscribe(c.on[e], cT, a) : eT.subscribe(c.on[e], cT);
+		a ? eT.on(c.on[e], cT, a) : eT.on(c.on[e], cT);
 
 		return eT;
    	}
@@ -756,4 +766,4 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base','querystring-stringify-simple']});
+}, '@VERSION@' ,{requires:['event-custom-base']});

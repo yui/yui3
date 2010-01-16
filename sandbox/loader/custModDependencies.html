@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.0.0/build/yui/yui-min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            YUI.add('mywidget', function(Y) {
+
+                function MyWidget(config) {
+                    MyWidget.superclass.constructor.apply(this, arguments);
+                }
+
+                MyWidget.NAME = "mywidget";
+                MyWidget.ATTRS = {};
+
+                Y.extend(MyWidget, Y.Widget);
+
+                Y.MyWidget = MyWidget;
+
+            }, '3.0.0b1', {requires:['widget']});
+        </script>
+
+        <div id="my"/>
+
+        <script type="text/javascript">
+
+            // Works
+            YUI().use('widget', function(Y) {
+                new Y.Widget().render();
+                Y.log("use 'widget' - No Exceptions");
+            })
+
+            // Broken
+            YUI().use('mywidget', function(Y) {
+                new Y.MyWidget().render();
+                Y.log("use 'mywidget', custom module - No Exceptions");
+            })
+
+        </script>
+    </body>
+</html>

@@ -21,10 +21,15 @@ var DOCUMENT_ELEMENT = 'documentElement',
     DOCUMENT = Y.config.doc,
     UNDEFINED = undefined,
 
-    re_color = /color$/i;
+    Y_DOM = Y.DOM,
+
+    re_color = /color$/i,
+    re_unit = /width|height|top|left|right|bottom|margin|padding/i;
 
 
-Y.mix(Y.DOM, {
+Y.mix(Y_DOM, {
+    DEFAULT_UNIT: 'px',
+
     CUSTOM_STYLES: {
     },
 
@@ -38,12 +43,16 @@ Y.mix(Y.DOM, {
      */
     setStyle: function(node, att, val, style) {
         style = style || node.style;
-        var CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
+        var CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES,
+            current;
 
         if (style) {
-            if (val === null) {
-                val = ''; // normalize for unsetting
+            if (val === null || val === '') { // normalize unsetting
+                val = '';
+            } else if (!isNaN(new Number(val)) && re_unit.test(att)) { // number values may need a unit
+                val += Y_DOM.DEFAULT_UNIT;
             }
+
             if (att in CUSTOM_STYLES) {
                 if (CUSTOM_STYLES[att].set) {
                     CUSTOM_STYLES[att].set(node, val, style);
@@ -62,9 +71,9 @@ Y.mix(Y.DOM, {
      * @param {HTMLElement} An HTMLElement to get the style from.
      * @param {String} att The style property to get. 
      */
-    getStyle: function(node, att) {
-        var style = node[STYLE],
-            CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES,
+    getStyle: function(node, att, style) {
+        style = style || node.style;
+        var CUSTOM_STYLES = Y_DOM.CUSTOM_STYLES,
             val = '';
 
         if (style) {
@@ -77,7 +86,7 @@ Y.mix(Y.DOM, {
             }
             val = style[att];
             if (val === '') { // TODO: is empty string sufficient?
-                val = Y.DOM[GET_COMPUTED_STYLE](node, att);
+                val = Y_DOM[GET_COMPUTED_STYLE](node, att);
             }
         }
 
@@ -93,8 +102,8 @@ Y.mix(Y.DOM, {
     setStyles: function(node, hash) {
         var style = node.style;
         Y.each(hash, function(v, n) {
-            Y.DOM.setStyle(node, n, v, style);
-        }, Y.DOM);
+            Y_DOM.setStyle(node, n, v, style);
+        }, Y_DOM);
     },
 
     /**
@@ -117,14 +126,14 @@ Y.mix(Y.DOM, {
 
 // normalize reserved word float alternatives ("cssFloat" or "styleFloat")
 if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== UNDEFINED) {
-    Y.DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
+    Y_DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
 } else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== UNDEFINED) {
-    Y.DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
+    Y_DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
 }
 
 // fix opera computedStyle default color unit (convert to rgb)
 if (Y.UA.opera) {
-    Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
+    Y_DOM[GET_COMPUTED_STYLE] = function(node, att) {
         var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
             val = view[GET_COMPUTED_STYLE](node, '')[att];
 
@@ -139,7 +148,7 @@ if (Y.UA.opera) {
 
 // safari converts transparent to rgba(), others use "transparent"
 if (Y.UA.webkit) {
-    Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
+    Y_DOM[GET_COMPUTED_STYLE] = function(node, att) {
         var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
             val = view[GET_COMPUTED_STYLE](node, '')[att];
 
@@ -206,11 +215,11 @@ Y.Color = {
 
             for (var i = 0; i < val.length; i++) {
                 if (val[i].length < 2) {
-                    val[i] = val[i].replace(Y.Color.re_hex3, '$1$1');
+                    val[i] = '0' + val[i];
                 }
             }
 
-            val = '#' + val.join('');
+            val = val.join('');
         }
 
         if (val.length < 6) {
@@ -221,7 +230,7 @@ Y.Color = {
             val = '#' + val;
         }
 
-        return val.toLowerCase();
+        return val.toUpperCase();
     }
 };
 })(Y);
