@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: collection   (YUI Library)</title>
+	<title>API: collection   invoke.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_collection.html" title="collection">collection</a>
                 
-                
+                 &gt; invoke.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,52 +43,51 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: collection
-                    
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Collection utilities beyond what is provided in the YUI core</span>
+<span class="cm"> * @module collection</span>
+<span class="cm"> * @submodule array-invoke</span>
+<span class="cm"> */</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * Adds the &lt;code&gt;Y.Array.invoke( items, methodName )&lt;/code&gt; utility method.</span>
+<span class="cm"> * @class YUI~array~invoke</span>
+<span class="cm"> */</span>
 
-                    </h3>
-                    <div class="description summary">
-                        Collection utilities beyond what is provided in the YUI core
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;Execute a named method on an array of objects.  Items in the list that do</span>
+<span class="cm"> * not have a so named function will be skipped.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;The return values from each call are stored in an array and returned.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method invoke</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @param items { Array } Array of objects supporting the named method</span>
+<span class="cm"> * @param name { String } the name of the method to execute on each item</span>
+<span class="cm"> * @param args* { mixed } Any number of additional args are passed as</span>
+<span class="cm"> *                        parameters to the execution of the named method.</span>
+<span class="cm"> * @return { Array } All return values, indexed according to item index.</span>
+<span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">invoke</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">items</span><span class="p">,</span> <span class="nx">name</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">args</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span> <span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span> <span class="p">),</span>
+        <span class="nx">isFunction</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">,</span>
+        <span class="nx">ret</span>        <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span> <span class="nx">items</span> <span class="p">),</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="nx">isFunction</span><span class="p">(</span> <span class="nx">item</span><span class="p">[</span> <span class="nx">name</span> <span class="p">]</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ret</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span><span class="p">[</span> <span class="nx">name</span> <span class="p">].</span><span class="nx">apply</span><span class="p">(</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">args</span> <span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
                     </div>
-
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                            <p>This module contains the following classes:</p>
-                            <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Generic ArrayList class for managing lists of items and iterating operations\nover them.  The targeted use for this class is for augmentation onto a\nclass that is responsible for managing multiple instances of another class\n(e.g. NodeList for Nodes).  The recommended use is to augment your class with\nArrayList, then use ArrayList.addMethod to mirror the API of the constituent\nitems on the list's API.\nThe default implementation creates immutable lists, but mutability can be\nprovided via the arraylist-add submodule or by implementing mutation methods\ndirectly on the augmented class's prototype.", "guessedname": "ArrayList", "name": "ArrayList"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Adds methods add and remove to Y.ArrayList", "guessedname": "ArrayList~add", "name": "ArrayList~add"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Adds the following array utilities to the YUI instance\n(Y.Array).  This is in addition to the methods provided\nin the core.", "guessedname": "YUI~array~extras", "name": "YUI~array~extras"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Adds the <code>Y.Array.invoke( items, methodName )</code> utility method.", "guessedname": "YUI~array~invoke", "name": "YUI~array~invoke"}];
-                            </script>
-                            <div id="splash_classList">
-                                <ul>
-                                    <li><a href="ArrayList.html" title="ArrayList" id="class_0">ArrayList</a></li>
-                                    <li><a href="ArrayList~add.html" title="ArrayList~add" id="class_1">ArrayList~add</a></li>
-                                    <li><a href="YUI~array~extras.html" title="YUI~array~extras" id="class_2">YUI~array~extras</a></li>
-                                    <li><a href="YUI~array~invoke.html" title="YUI~array~invoke" id="class_3">YUI~array~invoke</a></li>
-                                </ul>
-                            </div>
-                    </div>
-                    <div class="yui-u">
-                                    <div class="submodules">
-                                        <h4>Submodules:</h4> 
-                                        <dl>
-                                            <dt><code>array-extras</code></dt>
-                                            <dd>Collection utilities beyond what is provided in the YUI core</dd>
-                                            <dt><code>arraylist-add</code></dt>
-                                            <dd>Collection utilities beyond what is provided in the YUI core</dd>
-                                            <dt><code>arraylist</code></dt>
-                                            <dd>Collection utilities beyond what is provided in the YUI core</dd>
-                                            <dt><code>array-invoke</code></dt>
-                                            <dd>Collection utilities beyond what is provided in the YUI core</dd>
-                                        </dl>
-                                    </div>
-
-                        </div>
-                </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -163,7 +162,7 @@
                                 <li class=""><a href="array-extras.js.html" title="array-extras.js">array-extras.js</a></li>
                                 <li class=""><a href="arraylist-add.js.html" title="arraylist-add.js">arraylist-add.js</a></li>
                                 <li class=""><a href="arraylist.js.html" title="arraylist.js">arraylist.js</a></li>
-                                <li class=""><a href="invoke.js.html" title="invoke.js">invoke.js</a></li>
+                                <li class="selected"><a href="invoke.js.html" title="invoke.js">invoke.js</a></li>
                         </ul>
                     </div>
 
