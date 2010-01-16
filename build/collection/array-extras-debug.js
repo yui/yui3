@@ -3,6 +3,7 @@ YUI.add('array-extras', function(Y) {
 /**
  * Collection utilities beyond what is provided in the YUI core
  * @module collection
+ * @submodule array-extras
  */
 
 var L = Y.Lang, Native = Array.prototype, A = Y.Array;

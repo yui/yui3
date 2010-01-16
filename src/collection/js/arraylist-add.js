@@ -47,7 +47,7 @@ Y.mix( Y.ArrayList.prototype, {
                     break;
                 }
             }
-        });
+        }
 
         return this;
     },
@@ -64,4 +64,4 @@ Y.mix( Y.ArrayList.prototype, {
         return a === b;
     }
 
-})
+} );
