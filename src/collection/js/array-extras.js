@@ -1,6 +1,7 @@
 /**
  * Collection utilities beyond what is provided in the YUI core
  * @module collection
+ * @submodule array-extras
  */
 
 var L = Y.Lang, Native = Array.prototype, A = Y.Array;
@@ -130,8 +131,7 @@ A.every = (Native.every) ?
         return Native.every.call(a,f,o);
     } :
     function(a, f, o) {
-        var l = a.length;
-        for (var i = 0; i < l; i=i+1) {
+        for (var i = 0, l = a.length; i < l; i=i+1) {
             if (!f.call(o, a[i], i, a)) {
                 return false;
             }
@@ -210,8 +210,7 @@ A.reduce = (Native.reduce) ?
 * returns true for, or null if it never returns true
 */
 A.find = function(a, f, o) {
-    var l = a.length;
-    for(var i=0; i < l; i++) {
+    for(var i=0, l = a.length; i < l; i++) {
         if (f.call(o, a[i], i, a)) {
             return a[i];
         }

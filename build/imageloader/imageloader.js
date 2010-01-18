@@ -550,7 +550,7 @@ YUI.add('imageloader', function(Y) {
 				// bg url
 				if (this.get('isPng') && Y.UA.ie && Y.UA.ie <= 6) {
 					// png for which to apply AlphaImageLoader
-					el.setStyle('filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="' + this.get('url') + '", sizingMethod="' + this.get('sizingMethod') + '", enabled="' + this.get('enabled') + '")');
+					el.setStyle('filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="' + this.get('bgUrl') + '", sizingMethod="' + this.get('sizingMethod') + '", enabled="' + this.get('enabled') + '")');
 				}
 				else {
 					// regular bg image

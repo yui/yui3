@@ -7,6 +7,11 @@ Development Master
 * Dynamic and non-dynamically built classes now have their 
   extensions instantiated the same way - during _initHierarchy.
 
+* Updated ATTRS handling for Base.build, so that ATTRS are 
+  also aggregated at the attribute configuration object level, 
+  allowing extensions to add to, or overwrite, attribute 
+  configuration properties on the host.
+
 3.0.0
 
 * Fixed hasImpl method on built classes, to look up the class

@@ -1,0 +1,469 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: sortable   sortable.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>sortable&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_sortable.html" title="sortable">sortable</a>
+                
+                 &gt; sortable.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * Sortable List.</span>
+<span class="cm">     * @module sortable</span>
+<span class="cm">     */</span>     
+    <span class="cm">/**</span>
+<span class="cm">     * Sortable Lists.</span>
+<span class="cm">     * @class Sortable</span>
+<span class="cm">     * @extends Base</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     */</span>
+
+
+    <span class="kd">var</span> <span class="nx">S</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">S</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">},</span>
+    <span class="nx">CURRENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;currentNode&#39;</span><span class="p">,</span>
+    <span class="nx">OPACITY_NODE</span> <span class="o">=</span> <span class="s1">&#39;opacityNode&#39;</span><span class="p">,</span>
+    <span class="nx">ID</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+    <span class="nx">OPACITY</span> <span class="o">=</span> <span class="s1">&#39;opacity&#39;</span><span class="p">,</span>
+    <span class="nx">PARENT_NODE</span> <span class="o">=</span> <span class="s1">&#39;parentNode&#39;</span><span class="p">,</span>
+    <span class="nx">NODE</span> <span class="o">=</span> <span class="s1">&#39;node&#39;</span><span class="p">;</span>
+
+    <span class="nx">S</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;sortable&#39;</span><span class="p">;</span>
+
+    <span class="nx">S</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute cont</span>
+<span class="cm">        * @description A selector query to get the container to listen for mousedown events on. All &quot;nodes&quot; should be a child of this container.</span>
+<span class="cm">        * @type String</span>
+<span class="cm">        */</span>    
+        <span class="nx">cont</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;body&#39;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute nodes</span>
+<span class="cm">        * @description A selector query to get the children of the &quot;container&quot; to make draggable elements from.</span>
+<span class="cm">        * @type String</span>
+<span class="cm">        */</span>        
+        <span class="nx">nodes</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;.dd-draggable&#39;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute opacity</span>
+<span class="cm">        * @description The ocpacity to test the proxy item to when dragging.</span>
+<span class="cm">        * @type String</span>
+<span class="cm">        */</span>        
+        <span class="nx">opacity</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;.75&#39;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute opacityNode</span>
+<span class="cm">        * @description The node to set opacity on when dragging (dragNode or currentNode). Default: currentNode.</span>
+<span class="cm">        * @type String</span>
+<span class="cm">        */</span>        
+        <span class="nx">opacityNode</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;currentNode&#39;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute id</span>
+<span class="cm">        * @description The id of this sortable, used to get a reference to this sortable list from another list.</span>
+<span class="cm">        * @type String</span>
+<span class="cm">        */</span>        
+        <span class="nx">id</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute moveType</span>
+<span class="cm">        * @description How should an item move to another list: swap, move, copy. Default: swap</span>
+<span class="cm">        * @type String</span>
+<span class="cm">        */</span>        
+        <span class="nx">moveType</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;swap&#39;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @attribute invalid</span>
+<span class="cm">        * @description A selector string to test if a list item is invalid and not sortable</span>
+<span class="cm">        * @type String</span>
+<span class="cm">        */</span>        
+        <span class="nx">invalid</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @property _sortables</span>
+<span class="cm">    * @private</span>
+<span class="cm">    * @type Array</span>
+<span class="cm">    * @description Hash map of all Sortables on the page.</span>
+<span class="cm">    */</span>
+    <span class="nx">S</span><span class="p">.</span><span class="nx">_sortables</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="cm">/**</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @method getSortable</span>
+<span class="cm">    * @param {String|Node} node The node instance or selector string to use to find a Sortable instance.</span>
+<span class="cm">    * @description Get a sortable instance back from a node reference or a selector string.</span>
+<span class="cm">    */</span>
+    <span class="nx">S</span><span class="p">.</span><span class="nx">getSortable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">S</span><span class="p">.</span><span class="nx">_sortables</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cont&#39;</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="nx">s</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
+    <span class="p">};</span>
+    <span class="cm">/**</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @method regSortable</span>
+<span class="cm">    * @param Sortable s A Sortable instance.</span>
+<span class="cm">    * @description Register a Sortable instance with the singleton to allow lookups later.</span>
+<span class="cm">    */</span>
+    <span class="nx">S</span><span class="p">.</span><span class="nx">regSortable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">S</span><span class="p">.</span><span class="nx">_sortables</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">    * @static</span>
+<span class="cm">    * @method unregSortable</span>
+<span class="cm">    * @param Sortable s A Sortable instance.</span>
+<span class="cm">    * @description Unregister a Sortable instance with the singleton.</span>
+<span class="cm">    */</span>
+    <span class="nx">S</span><span class="p">.</span><span class="nx">unregSortable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">S</span><span class="p">.</span><span class="nx">_sortables</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">v</span> <span class="o">===</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">S</span><span class="p">.</span><span class="nx">_sortables</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                <span class="k">delete</span> <span class="nx">S</span><span class="p">.</span><span class="nx">_sortables</span><span class="p">[</span><span class="nx">k</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+    <span class="p">};</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">S</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @property delegate</span>
+<span class="cm">        * @type DD.Delegate</span>
+<span class="cm">        * @description A reference to the DD.Delegate instance.</span>
+<span class="cm">        */</span>
+        <span class="nx">delegate</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;sortable-&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">({}),</span> <span class="nx">c</span><span class="p">,</span>
+                <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span>
+                <span class="nx">del</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">Delegate</span><span class="p">({</span>
+                    <span class="nx">cont</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cont&#39;</span><span class="p">),</span>
+                    <span class="nx">nodes</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">),</span>
+                    <span class="nx">target</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="nx">invalid</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;invalid&#39;</span><span class="p">),</span>
+                    <span class="nx">dragConfig</span><span class="o">:</span> <span class="p">{</span>
+                        <span class="nx">groups</span><span class="o">:</span> <span class="p">[</span> <span class="nx">id</span> <span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">});</span>
+
+            <span class="nx">self</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ID</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+
+            <span class="nx">del</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">plug</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">DDProxy</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">moveOnEnd</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="nx">cloneNode</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">});</span>
+
+            <span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">Drop</span><span class="p">({</span>
+                <span class="nx">node</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;cont&#39;</span><span class="p">),</span>
+                <span class="nx">bubbles</span><span class="o">:</span> <span class="nx">del</span><span class="p">,</span>
+                <span class="nx">groups</span><span class="o">:</span> <span class="nx">del</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;groups&#39;</span><span class="p">)</span>
+            <span class="p">}).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drop:over&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">_handleDropOver</span><span class="p">,</span> <span class="nx">self</span><span class="p">));</span>
+
+            <span class="nx">del</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:start&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">_handleDragStart</span><span class="p">,</span> <span class="nx">self</span><span class="p">));</span>
+            <span class="nx">del</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:end&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">_handleDragEnd</span><span class="p">,</span> <span class="nx">self</span><span class="p">));</span>
+            <span class="nx">del</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:over&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">_handleDragOver</span><span class="p">,</span> <span class="nx">self</span><span class="p">));</span>
+
+            <span class="nx">self</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="nx">del</span><span class="p">;</span>
+            <span class="nx">S</span><span class="p">.</span><span class="nx">regSortable</span><span class="p">(</span><span class="nx">self</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _handleDropOver</span>
+<span class="cm">        * @param Event e The Event Object</span>
+<span class="cm">        * @description Handles the DropOver event to append a drop node to an empty target</span>
+<span class="cm">        */</span>
+        <span class="nx">_handleDropOver</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">test</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">all</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">));</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _handleDragOver</span>
+<span class="cm">        * @param Event e The Event Object</span>
+<span class="cm">        * @description Handles the DragOver event that moves the object in the list or to another list.</span>
+<span class="cm">        */</span>
+        <span class="nx">_handleDragOver</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">test</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nodes&#39;</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">)</span> <span class="o">==</span> <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;moveType&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="s1">&#39;swap&#39;</span><span class="o">:</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">swapNode</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;move&#39;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s1">&#39;copy&#39;</span><span class="o">:</span>
+                    <span class="kd">var</span> <span class="nx">dropsort</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Sortable</span><span class="p">.</span><span class="nx">getSortable</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">)),</span>
+                        <span class="nx">oldNode</span><span class="p">,</span> <span class="nx">newNode</span><span class="p">;</span>
+
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">getDrop</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">)).</span><span class="nx">addToGroup</span><span class="p">(</span><span class="nx">dropsort</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">));</span>
+
+                    <span class="c1">//Same List</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">).</span><span class="nx">contains</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">)))</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">swapNode</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;moveType&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;copy&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="c1">//New List</span>
+                            <span class="nx">oldNode</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">);</span>
+                            <span class="nx">newNode</span> <span class="o">=</span> <span class="nx">oldNode</span><span class="p">.</span><span class="nx">cloneNode</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+
+                            <span class="nx">newNode</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ID</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                            <span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">NODE</span><span class="p">,</span> <span class="nx">newNode</span><span class="p">);</span>
+                            <span class="nx">dropsort</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">createDrop</span><span class="p">(</span><span class="nx">newNode</span><span class="p">,</span> <span class="p">[</span><span class="nx">dropsort</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">)]);</span>
+                            <span class="nx">oldNode</span><span class="p">.</span><span class="nx">setStyles</span><span class="p">({</span>
+                                <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                                <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+                            <span class="p">});</span>
+                        <span class="p">}</span>
+                        <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">PARENT_NODE</span><span class="p">).</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span> <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">));</span>
+                    <span class="p">}</span>
+                    <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _handleDragStart</span>
+<span class="cm">        * @param Event e The Event Object</span>
+<span class="cm">        * @description Handles the DragStart event and initializes some settings.</span>
+<span class="cm">        */</span>
+        <span class="nx">_handleDragStart</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;lastNode&#39;</span><span class="p">).</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;zIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OPACITY_NODE</span><span class="p">)).</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">OPACITY</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OPACITY</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CURRENT_NODE</span><span class="p">).</span><span class="nx">setStyle</span><span class="p">(</span><span class="s1">&#39;zIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;999&#39;</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _handleDragEnd</span>
+<span class="cm">        * @param Event e The Event Object</span>
+<span class="cm">        * @description Handles the DragEnd event that cleans up the settings in the drag:start event.</span>
+<span class="cm">        */</span>
+        <span class="nx">_handleDragEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">OPACITY_NODE</span><span class="p">)).</span><span class="nx">setStyle</span><span class="p">(</span><span class="nx">OPACITY</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CURRENT_NODE</span><span class="p">).</span><span class="nx">setStyles</span><span class="p">({</span>
+                <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+            <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @method plug</span>
+<span class="cm">        * @param Class cls The class to plug</span>
+<span class="cm">        * @param Object config The class config</span>
+<span class="cm">        * @description Passthrough to the DD.Delegate.ddplug method</span>
+<span class="cm">        * @chainable</span>
+<span class="cm">        */</span>
+        <span class="nx">plug</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cls</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">plug</span><span class="p">(</span><span class="nx">cls</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @method plug</span>
+<span class="cm">        * @description Passthrough to the DD.Delegate syncTargets method.</span>
+<span class="cm">        * @chainable</span>
+<span class="cm">        */</span>
+        <span class="nx">sync</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">syncTargets</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+            <span class="nx">S</span><span class="p">.</span><span class="nx">unregSortable</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @method join</span>
+<span class="cm">        * @param Sortable sel The sortable list to join with</span>
+<span class="cm">        * @param String type The type of join to do: full, inner, outer. Default: full</span>
+<span class="cm">        * @description Join this Sortable with another Sortable instance.</span>
+<span class="cm">        * &lt;ul&gt;</span>
+<span class="cm">        *   &lt;li&gt;Full: Exchange nodes with both lists.&lt;/li&gt;</span>
+<span class="cm">        *   &lt;li&gt;Inner: Items can go into this list from the joined list.&lt;/li&gt;</span>
+<span class="cm">        *   &lt;li&gt;Outer: Items can go out of the joined list into this list.&lt;/li&gt;</span>
+<span class="cm">        * &lt;/ul&gt;</span>
+<span class="cm">        * @chainable</span>
+<span class="cm">        */</span>
+        <span class="nx">join</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sel</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">sel</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Sortable</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Sortable: join needs a Sortable Instance&#39;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;full&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">type</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="s1">&#39;none&#39;</span><span class="o">:</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">removeFromGroup</span><span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
+                    <span class="nx">sel</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">removeFromGroup</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;out&#39;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s1">&#39;outside&#39;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s1">&#39;outter&#39;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s1">&#39;outer&#39;</span><span class="o">:</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">addToGroup</span><span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;in&#39;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s1">&#39;inside&#39;</span><span class="o">:</span>
+                <span class="k">case</span> <span class="s1">&#39;inner&#39;</span><span class="o">:</span>
+                    <span class="nx">sel</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">addToGroup</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">default</span><span class="o">:</span> <span class="c1">//full</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">addToGroup</span><span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
+                    <span class="nx">sel</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">dd</span><span class="p">.</span><span class="nx">addToGroup</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ID</span><span class="p">));</span>
+                    <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Sortable</span> <span class="o">=</span> <span class="nx">S</span><span class="p">;</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
+                                <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
+                                <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
+                                <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
+                                <li class=""><a href="module_dd.html" title="dd">dd</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
+                                <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_event.html" title="event">event</a></li>
+                                <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
+                                <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
+                                <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_io.html" title="io">io</a></li>
+                                <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
+                                <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
+                                <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
+                                <li class=""><a href="module_oop.html" title="oop">oop</a></li>
+                                <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
+                                <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class="selected"><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
+                                <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
+                                <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yui.html" title="yui">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Sortable.html" title="Sortable">Sortable</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="sortable.js.html" title="sortable.js">sortable.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"access": "", "host": "Sortable", "name": "cont", "url": "Sortable.html#config_cont", "type": "config"}, {"access": "", "host": "Sortable", "name": "contChange", "url": "Sortable.html#event_contChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "delegate", "url": "Sortable.html#property_delegate", "type": "property"}, {"access": "", "host": "Sortable", "name": "getSortable", "url": "Sortable.html#method_getSortable", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDragEnd", "url": "Sortable.html#method__handleDragEnd", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDragOver", "url": "Sortable.html#method__handleDragOver", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDragStart", "url": "Sortable.html#method__handleDragStart", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDropOver", "url": "Sortable.html#method__handleDropOver", "type": "method"}, {"access": "", "host": "Sortable", "name": "id", "url": "Sortable.html#config_id", "type": "config"}, {"access": "", "host": "Sortable", "name": "idChange", "url": "Sortable.html#event_idChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "invalid", "url": "Sortable.html#config_invalid", "type": "config"}, {"access": "", "host": "Sortable", "name": "invalidChange", "url": "Sortable.html#event_invalidChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "join", "url": "Sortable.html#method_join", "type": "method"}, {"access": "", "host": "Sortable", "name": "moveType", "url": "Sortable.html#config_moveType", "type": "config"}, {"access": "", "host": "Sortable", "name": "moveTypeChange", "url": "Sortable.html#event_moveTypeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "nodes", "url": "Sortable.html#config_nodes", "type": "config"}, {"access": "", "host": "Sortable", "name": "nodesChange", "url": "Sortable.html#event_nodesChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "opacity", "url": "Sortable.html#config_opacity", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityChange", "url": "Sortable.html#event_opacityChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "opacityNode", "url": "Sortable.html#config_opacityNode", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityNodeChange", "url": "Sortable.html#event_opacityNodeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "plug", "url": "Sortable.html#method_plug", "type": "method"}, {"access": "", "host": "Sortable", "name": "regSortable", "url": "Sortable.html#method_regSortable", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_sortables", "url": "Sortable.html#property__sortables", "type": "property"}, {"access": "", "host": "Sortable", "name": "unregSortable", "url": "Sortable.html#method_unregSortable", "type": "method"}];
+</script>
+</body>
+</html>

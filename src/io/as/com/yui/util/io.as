@@ -24,13 +24,12 @@ package com.yui.util
 
 		public function io() {
 			yId = root.loaderInfo.parameters.yid;
-			var a:Array = [yId];
 
 			Security.allowDomain("*");
 			ExternalInterface.addCallback("send", send);
 			ExternalInterface.addCallback("abort", ioAbort);
 			ExternalInterface.addCallback("isInProgress", isInProgress);
-			ExternalInterface.call('YUI.applyTo', yId, 'io.xdrReady', a);
+			ExternalInterface.call('YUI.applyTo', yId, 'io.xdrReady', [yId]);
 		}
 
 		public function send(uri:String, cfg:Object, id:uint):void {
@@ -38,17 +37,25 @@ package com.yui.util
 				request:URLRequest = new URLRequest(uri),
 				d:Object = { id:id, cfg:cfg },
 				timer:Timer,
-				prop:String;
+				k:String,
+				p:String;
 
-			for (prop in cfg) {
-				switch (prop) {
+			for (p in cfg) {
+				switch (p) {
 					case "method":
 						if(cfg.method === 'POST') {
 							request.method = URLRequestMethod.POST;
 						}
 						break;
 					case "data":
-						request.data = cfg.data;
+						if (cfg.method === 'POST') {
+							request.data = cfg.data;
+						}
+						else {
+							for (k in cfg.data) {
+								request.data = new URLVariables(k + "=" + cfg.data[k]);
+							}
+						}
 						break;
 					case "headers":
 						setRequestHeaders(request, cfg.headers);
