@@ -344,6 +344,36 @@ be removed.</span>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__destroyChildren">
+                                    <h4>
+                                        <a name="method__destroyChildren">_destroyChildren</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_destroyChildren</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Destroys all child Widgets.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__renderUIParent">
                                     <h4>
                                         <a name="method__renderUIParent">_renderUIParent</a></h4>
@@ -1086,7 +1116,7 @@ direct descendants.
                                     </div>        
                                     <div class="" rel="yui:attribute" resource="#config_defaultChildType">
                                     <h4><a name="config_defaultChildType">defaultChildType</a>
-                                        <code>- <span property="yui:type">String</span></code>
+                                        <code>- <span property="yui:type">{String|Object}</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -1222,6 +1252,7 @@ are selected, will return null.
                                 <li class="protected"><a href="#method__createChild" title="_createChild">_createChild</a></li>
                                 <li class="protected"><a href="#method__defChildAdded" title="_defChildAdded">_defChildAdded</a></li>
                                 <li class="protected"><a href="#method__defChildRemoved" title="_defChildRemoved">_defChildRemoved</a></li>
+                                <li class="protected"><a href="#method__destroyChildren" title="_destroyChildren">_destroyChildren</a></li>
                                 <li class="protected"><a href="#method__renderUIParent" title="_renderUIParent">_renderUIParent</a></li>
                                 <li class="protected"><a href="#method__setSelection" title="_setSelection">_setSelection</a></li>
                                 <li class="protected"><a href="#method__updateActiveItem" title="_updateActiveItem">_updateActiveItem</a></li>
@@ -1267,7 +1298,7 @@ are selected, will return null.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeItem", "url": "WidgetParent.html#config_activeItem", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeItemChange", "url": "WidgetParent.html#event_activeItemChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "childAdded", "url": "WidgetParent.html#event_childAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "childRemoved", "url": "WidgetParent.html#event_childRemoved", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "children", "url": "WidgetParent.html#config_children", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "childrenChange", "url": "WidgetParent.html#event_childrenChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defChildAdded", "url": "WidgetParent.html#method__defChildAdded", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defChildRemoved", "url": "WidgetParent.html#method__defChildRemoved", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "item", "url": "WidgetParent.html#method_item", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderUIParent", "url": "WidgetParent.html#method__renderUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveItem", "url": "WidgetParent.html#method__updateActiveItem", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeItem", "url": "WidgetParent.html#config_activeItem", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeItemChange", "url": "WidgetParent.html#event_activeItemChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "childAdded", "url": "WidgetParent.html#event_childAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "childRemoved", "url": "WidgetParent.html#event_childRemoved", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "children", "url": "WidgetParent.html#config_children", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "childrenChange", "url": "WidgetParent.html#event_childrenChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defChildAdded", "url": "WidgetParent.html#method__defChildAdded", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defChildRemoved", "url": "WidgetParent.html#method__defChildRemoved", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_destroyChildren", "url": "WidgetParent.html#method__destroyChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "item", "url": "WidgetParent.html#method_item", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderUIParent", "url": "WidgetParent.html#method__renderUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveItem", "url": "WidgetParent.html#method__updateActiveItem", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
 </script>
 </body>
 </html>

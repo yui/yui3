@@ -47,7 +47,20 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="cm">/**</span>
+                        <div class="highlight"><pre><span class="c1">//  Stamp the documentElement (HTML) with a class of &quot;yui-loaded&quot; to </span>
+<span class="c1">//  enable styles that need to key off of JS being enabled.</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="sr">/(?:^|\\s+)yui-js-enabled(?:\\s+|$)/gi</span><span class="p">,</span>
+    <span class="nx">docEl</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
+    <span class="nx">docElClass</span> <span class="o">=</span> <span class="nx">docEl</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">re</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">docElClass</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">docEl</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="p">(</span><span class="nx">docElClass</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\s+|\s+$/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; yui-js-enabled&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="p">}());</span>
+
+
+<span class="cm">/**</span>
 <span class="cm"> * The YUI module contains the components required for building the YUI seed file.</span>
 <span class="cm"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
 <span class="cm"> * @module yui</span>
