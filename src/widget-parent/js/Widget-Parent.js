@@ -13,20 +13,87 @@ var Lang = Y.Lang;
  * @class WidgetParent
  * @param {Object} config User configuration object.
  */
-function Parent() {
+function Parent(config) {
+
+    /**
+    * Fires when a Widget is add as a child.
+    * <p>
+    * Subscribers to the "on" moment of this event, will be notified 
+    * before a child is added.
+    * </p>
+    * <p>
+    * Subscribers to the "after" moment of this event, will be notified
+    * after a child is added.
+    * </p>
+    *
+    * @event childAdded
+    * @preventable _defChildAdded
+    * @param {EventFacade} e The Event Facade
+    */
+    this.publish("childAdded", { defaultFn: this._defChildAdded });
+
+    /**
+    * Fires when a child Widget is removed.
+    * <p>
+    * Subscribers to the "on" moment of this event, will be notified 
+    * before a child is removed.
+    * </p>
+    * <p>
+    * Subscribers to the "after" moment of this event, will be notified
+    * after a child is removed.
+    * </p>
+    *
+    * @event childRemoved
+    * @preventable _defChildRemoved
+    * @param {EventFacade} e The Event Facade
+    */
+    this.publish("childRemoved", { defaultFn: this._defChildRemoved });
+
+
+    var children;
+
+    if (config && config.children) {
+
+        children = config.children;
+        
+        this.after("initializedChange", function (e) {
+            this.add(children);
+        });
+
+    }
+
+
+    Y.after(this._renderUIParent, this, "renderUI");
+    
+    this.after("destroy", this._destroyChildren);
+    this.after("selectionChange", this._afterSelectionChange);
+    this.after("selectedChange", this._afterParentSelectedChange);
+
 }
 
 Parent.ATTRS = {
 
     /**
      * @attribute defaultChildType
-     * @type String
+     * @type {String|Object}
      *
      * @description String representing the default type of the children 
      * managed by this Widget.  Can also supply default type as a constructor
      * reference.
      */
     defaultChildType: {
+        setter: function (val) {
+            
+            var returnVal = Y.Attribute.INVALID_VALUE,
+                FnConstructor = Lang.isString(val) ? Y[val] : val;
+            
+            if (Lang.isFunction(FnConstructor)) {
+                returnVal = FnConstructor;
+            }
+            
+            return returnVal;
+            
+        }
     },
 
 
@@ -273,26 +340,32 @@ Parent.prototype = {
      */
     _createChild: function (config) {
 
-        var type = config.type || this.get("defaultChildType"),
+        var defaultType = this.get("defaultChildType"),
+            altType = config.type,
             child,
+            Fn,
             FnConstructor;
-            
-        if (type) {
 
-            if (Lang.isString(type)) {
-                FnConstructor = Y[type];
-            }
-            else if (Lang.isFunction(type)) {
-                FnConstructor = type;
+
+        if (altType) {
+
+            Fn = Lang.isString(altType) ? Y[altType] : altType;
+
+            if (Lang.isFunction(Fn)) {
+                FnConstructor = Fn;
             }
 
         }
+        else if (defaultType) {
+            FnConstructor = defaultType;
+        }
+
 
         if (FnConstructor) {
             child = new FnConstructor(config);
         }
         else {
-            Y.error("Could not create a child instance using the supplied type.");
+            Y.error("Could not create a child instance because its constructor is either undefined or invalid.");
         }
 
         return child;
@@ -518,52 +591,18 @@ Parent.prototype = {
         });
         
     },
-    
-    initializer: function (config) {
-
-        /**
-        * Fires when a Widget is add as a child.
-        * <p>
-        * Subscribers to the "on" moment of this event, will be notified 
-        * before a child is added.
-        * </p>
-        * <p>
-        * Subscribers to the "after" moment of this event, will be notified
-        * after a child is added.
-        * </p>
-        *
-        * @event childAdded
-        * @preventable _defChildAdded
-        * @param {EventFacade} e The Event Facade
-        */
-        this.publish("childAdded", { defaultFn: this._defChildAdded });
-
-        /**
-        * Fires when a child Widget is removed.
-        * <p>
-        * Subscribers to the "on" moment of this event, will be notified 
-        * before a child is removed.
-        * </p>
-        * <p>
-        * Subscribers to the "after" moment of this event, will be notified
-        * after a child is removed.
-        * </p>
-        *
-        * @event childRemoved
-        * @preventable _defChildRemoved
-        * @param {EventFacade} e The Event Facade
-        */
-        this.publish("childRemoved", { defaultFn: this._defChildRemoved });
 
 
-        if (config && config.children) {
-            this.add(config.children);
-        }
+    /**
+     * Destroys all child Widgets.
+     * @method _destroyChildren
+     * @protected
+     */    
+    _destroyChildren: function () {
 
-        Y.after(this._renderUIParent, this, "renderUI");
-
-        this.after("selectionChange", this._afterSelectionChange);
-        this.after("selectedChange", this._afterParentSelectedChange);
+        Y.each(this.get("children"), function (child) {
+            child.destroy();
+        });
         
     }
 
