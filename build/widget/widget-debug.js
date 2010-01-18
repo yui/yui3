@@ -41,6 +41,7 @@ var L = Y.Lang,
     STRINGS = "strings",
     DIV = "<div></div>",
     CHANGE = "Change",
+    LOADING = "loading",
     _UISET = "_uiSet",
 
     EMPTY_STR = "",
@@ -60,6 +61,10 @@ var L = Y.Lang,
     IE = Y.UA.ie,
 
     ContentUpdate = "contentUpdate",
+
+    //  Map of Node instances serving as a delegation containers for a specific
+    //  event type to Widget instances using that delegation container.
+    _delegates = {},
 
     // Widget nodeguid-to-instance map.
     _instances = {};
@@ -96,6 +101,7 @@ function Widget(config) {
         }
         this.render(parentNode);
     }
+    
 }
 
 /**
@@ -408,11 +414,26 @@ Y.extend(Widget, Y.Base, {
         Y.log('destructor called', 'life', 'widget');
 
         var boundingBox = this.get(BOUNDING_BOX),
-            guid = Y.stamp(boundingBox, TRUE);
+            bbGuid = Y.stamp(boundingBox, TRUE),
+            widgetGuid = Y.stamp(this, TRUE);
 
-        if (guid in _instances) {
-            delete _instances[guid];
+        if (bbGuid in _instances) {
+            delete _instances[bbGuid];
         }
+
+        Y.each(_delegates, function (info) {
+            if (info.instances[widgetGuid]) {
+                //  Unregister this Widget instance as needing this delegated
+                //  event listener.
+                delete info.instances[widgetGuid];
+
+                //  There are no more Widget instances using this delegated 
+                //  event listener, so detach it.
+                if (Y.Object.size(info.instances) === 0) {
+                    info.handle.detach();
+                }
+            }
+        });
 
         this._unbindUI(boundingBox);
         boundingBox.remove(TRUE);
@@ -495,6 +516,9 @@ Y.extend(Widget, Y.Base, {
             this.renderer();
 
             this._set(RENDERED, TRUE);
+            
+            this._removeLoadingClassNames();
+            
         }
     },
 
@@ -760,6 +784,24 @@ Y.extend(Widget, Y.Base, {
         // Use instance based name for content box
         this.get(CONTENT_BOX).addClass(this.getClassName(CONTENT));
     },
+
+
+    /**
+     * Removes class names representative of the widget's loading state from 
+     * the boundingBox.
+     *
+     * @method _removeLoadingClassNames
+     * @protected
+     */
+    _removeLoadingClassNames: function () {
+
+        var boundingBox = this.get(BOUNDING_BOX);
+
+        boundingBox.removeClass(_getWidgetClassName(LOADING));
+        boundingBox.removeClass(this.getClassName(LOADING));
+        
+    },
+
 
     /**
      * Sets up DOM and CustomEvent listeners for the widget.
@@ -1068,21 +1110,7 @@ Y.extend(Widget, Y.Base, {
      * @property UI_EVENTS
      * @type Object
      */
-    UI_EVENTS: {
-        click: TRUE,
-        contextmenu: TRUE,
-        dblclick: TRUE,
-        keydown: TRUE,
-        keypress: TRUE,
-        keyup: TRUE,
-        mousedown: TRUE,
-        mousemove: TRUE,
-        mouseout: TRUE,
-        mouseover: TRUE,
-        mouseup: TRUE,
-        mouseenter: TRUE,
-        mouseleave: TRUE
-    },
+    UI_EVENTS: Y.Node.DOM_EVENTS,
 
     /**
      * Returns the node on which to bind delegate listeners.
@@ -1106,32 +1134,113 @@ Y.extend(Widget, Y.Base, {
     _createUIEvent: function (type) {
 
         var uiEvtNode = this._getUIEventNode(),
-            uiEvts = this._uiEvts || {};
+            parentNode = uiEvtNode.get(PARENT_NODE),
+            key = (Y.stamp(parentNode) + type),
+            info = _delegates[key],
+            handle;
 
-        if (!uiEvts[type]) {
-            uiEvts[type] = uiEvtNode.get(PARENT_NODE).delegate(type, function (evt) {
+        //  For each Node instance: Ensure that there is only one delegated 
+        //  event listener used to fire Widget UI events.
+
+        if (!info) {
+
+            Y.log("Creating delegate for the " + type + " event.", "info", "widget");
+
+            handle = parentNode.delegate(type, function (evt) {
 
                 var widget = Widget.getByNode(this);
 
                 //  Make the DOM event a property of the custom event
                 //  so that developers still have access to it.
                 widget.fire(evt.type, { domEvent: evt });
+
             }, "." + _getWidgetClassName());
 
-            this._uiEvts = uiEvts;
+            _delegates[key] = info = { instances: {}, handle: handle };
+
+        }
+
+        //  Register this Widget as using this Node as a delegation container.
+        info.instances[Y.stamp(this)] = 1;
+
+    },
+
+    /**
+     * Determines if the specified event is a UI event.
+     * 
+     * @private
+     * @method _isUIEvent
+     * @param type {String} String representing the name of the event
+     * @return {String} Event Returns the name of the UI Event, otherwise 
+     * undefined.
+     */
+    _getUIEvent: function (type) {
+        if (L.isString(type)) {
+            var sType = type.replace(UI_EVENT_REGEX, UI_EVENT_REGEX_REPLACE),
+                returnVal;
+
+            if (this.UI_EVENTS[sType]) {
+                returnVal = sType;
+            }
+
+            return returnVal;
+        }        
+    },
+
+    /**
+     * Sets up infastructure required to fire a UI event.
+     * 
+     * @private
+     * @method _initUIEvent
+     * @param type {String} String representing the name of the event
+     * @return {String}     
+     */
+    _initUIEvent: function (type) {
+        var sType = this._getUIEvent(type),
+            queue = this._uiEvtsInitQueue || {};
+
+        if (sType && !queue[sType]) {
+
+            Y.log("Deferring creation of " + type + " delegate until render.", "info", "widget");
+
+            this.after(RENDER, function() { 
+                this._createUIEvent(sType);
+                delete this._uiEvtsInitQueue[sType];
+            });
+            
+            this._uiEvtsInitQueue = queue[sType] = 1;
+
         }
     },
 
-    //  Override of on from Base to facilitate the firing of Widget events
+    //  Override of "on" from Base to facilitate the firing of Widget events
     //  based on DOM events of the same name/type (e.g. "click", "mouseover").
+    //  Temporary solution until we have the ability to listen to when 
+    //  someone adds an event listener (bug 2528230)
     on: function (type) {
-        if (L.isString(type)) {
-            var sType = type.replace(UI_EVENT_REGEX, UI_EVENT_REGEX_REPLACE);
-            if (this.UI_EVENTS[sType]) {
-                this.after(RENDER, function() { this._createUIEvent(sType); });
-            }
-        }
+        this._initUIEvent(type);
         return Widget.superclass.on.apply(this, arguments);
+    },
+
+    //  Override of "after" from Base to facilitate the firing of Widget events
+    //  based on DOM events of the same name/type (e.g. "click", "mouseover").    
+    //  Temporary solution until we have the ability to listen to when 
+    //  someone adds an event listener (bug 2528230)    
+    after: function (type) {
+        this._initUIEvent(type);
+        return Widget.superclass.after.apply(this, arguments);
+    },
+
+    //  Override of "publish" from Base to facilitate the firing of Widget events
+    //  based on DOM events of the same name/type (e.g. "click", "mouseover").    
+    //  Temporary solution until we have the ability to listen to when 
+    //  someone publishes an event (bug 2528230)     
+    publish: function (type, config) {
+        var sType = this._getUIEvent(type);
+        if (sType && config && config.defaultFn) {
+            this._initUIEvent(sType);
+        }        
+        return Widget.superclass.publish.apply(this, arguments);
     }
 
 });
