@@ -8,6 +8,7 @@ The YUI Global
         get
 
 3.next
+* The document element (HTML) is now stamped with a class name (yui-js-enabled) indicating that JS is enabled allowing for the creation of JS-aware CSS style rules for Progressive Enhancement.
 * Added the ability to define a global configuration object (YUI_config).
 * Added Object.some().
 * Chrome detection
