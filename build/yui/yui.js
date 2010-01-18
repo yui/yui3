@@ -1,3 +1,16 @@
+//  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
+//  enable styles that need to key off of JS being enabled.
+(function() {
+var re = /(?:^|\\s+)yui-js-enabled(?:\\s+|$)/gi,
+    docEl = document.documentElement,
+    docElClass = docEl.className;
+
+if (!re.test(docElClass)) {
+    docEl.className = (docElClass.replace(/^\s+|\s+$/g, '') + ' yui-js-enabled');
+}
+}());
+
+
 /**
  * The YUI module contains the components required for building the YUI seed file.
  * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
