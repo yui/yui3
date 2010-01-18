@@ -29,17 +29,6 @@ Y.mix(TabList, {
 
 Y.extend(TabList, Y.Widget, {
 
-    _onTabClick: function (event) {
-
-        //  Prevent the browser from navigating to the URL specified by the 
-        //  anchor's href attribute.
-
-        event.domEvent.preventDefault();
-
-        event.target.set("selected", 1);
-        
-    },
-
     bindUI: function() {
 
         //  Use the Node Focus Manager to add keyboard support:
@@ -54,8 +43,6 @@ Y.extend(TabList, Y.Widget, {
                         circular: true
 
                     });
-        
-        this.on("tab:click", this._onTabClick);
 
     },
     
@@ -192,8 +179,31 @@ Y.extend(Tab, Y.Widget,{
         panel.set("id", sID);
         contentBox.set("href", ("#" + sID));
 
-    }
+    },
+    
+    initializer: function () {
 
+         this.publish("click", { 
+
+             defaultFn: function (event) {
+
+                 if (event.target == this) {
+
+                     //  Prevent the browser from navigating to the URL specified by the 
+                     //  anchor's href attribute.
+
+                     event.domEvent.preventDefault();
+
+                     event.target.set("selected", 1);
+
+                 }
+
+             }
+
+          });
+        
+    }
+    
 });
 
 Y.Base.build(Tab.NAME, Tab, [Y.WidgetChild], { dynamic: false });
