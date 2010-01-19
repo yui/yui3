@@ -63,15 +63,15 @@ var Event = Y.Event,
 				if (Y.Selector.test(target, spec, el)) {
 					matched = target;
 				}
-				else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
-						
-					//	The target is a descendant of an element matching 
-					//	the selector, so crawl up to find the ancestor that 
-					//	matches the selector
-					
-					matched = getMatch(target, spec, el);
-					
-				}
+                else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
+                     
+                 //  The target is a descendant of an element matching 
+                 //  the selector, so crawl up to find the ancestor that 
+                 //  matches the selector
+                 
+                 matched = getMatch(target, spec, el);
+                 
+                }
 
 
 				if (matched) {
@@ -132,53 +132,6 @@ var Event = Y.Event,
         return str.replace(/[|,:]/g, '~');
     });
 
-/**
- * Sets up event delegation on a container element.  The delegated event
- * will use a supplied selector to test if the target or one of the
- * descendants of the target match it.  The supplied callback function 
- * will only be executed if a match was encountered, and, in fact, 
- * will be executed for each element that matches if you supply an 
- * ambiguous selector.
- *
- * The event object for the delegated event is supplied to the callback
- * function.  It is modified slightly in order to support all properties
- * that may be needed for event delegation.  'currentTarget' is set to
- * the element that matched the delegation specifcation.  'container' is
- * set to the element that the listener is bound to (this normally would
- * be the 'currentTarget').
- *
- * @event delegate
- * @param type {string} 'delegate'
- * @param fn {function} the callback function to execute.  This function
- * will be provided the event object for the delegated event.
- * @param el {string|node} the element that is the delegation container
- * @param delegateType {string} the event type to delegate
- * @param spec {string} a selector that must match the target of the
- * event.
- * @param context optional argument that specifies what 'this' refers to.
- * @param args* 0..n additional arguments to pass on to the callback function.
- * These arguments will be added after the event object.
- * @return {EventHandle} the detach handle
- * @for YUI
- * @deprecated use Y.delegate
- */
-Y.Env.evt.plugins.delegate = {
-
-    on: function(type, fn, el, delegateType, spec) {
-
-        Y.log('delegate event is deprecated, use Y.delegate()', 'warn', 'deprecated');
-
-		var args = Y.Array(arguments, 0, true);
-		
-		args.splice(3, 1);
-		
-		args[0] = delegateType;
-
-		return Y.delegate.apply(Y, args);
-
-    }
-
-};
 
 
 /**
