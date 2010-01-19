@@ -62,20 +62,87 @@
 <span class="cm"> * @class WidgetParent</span>
 <span class="cm"> * @param {Object} config User configuration object.</span>
 <span class="cm"> */</span>
-<span class="kd">function</span> <span class="nx">Parent</span><span class="p">()</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">Parent</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">    * Fires when a Widget is add as a child.</span>
+<span class="cm">    * &lt;p&gt;</span>
+<span class="cm">    * Subscribers to the &quot;on&quot; moment of this event, will be notified </span>
+<span class="cm">    * before a child is added.</span>
+<span class="cm">    * &lt;/p&gt;</span>
+<span class="cm">    * &lt;p&gt;</span>
+<span class="cm">    * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
+<span class="cm">    * after a child is added.</span>
+<span class="cm">    * &lt;/p&gt;</span>
+<span class="cm">    *</span>
+<span class="cm">    * @event childAdded</span>
+<span class="cm">    * @preventable _defChildAdded</span>
+<span class="cm">    * @param {EventFacade} e The Event Facade</span>
+<span class="cm">    */</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;childAdded&quot;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defChildAdded</span> <span class="p">});</span>
+
+    <span class="cm">/**</span>
+<span class="cm">    * Fires when a child Widget is removed.</span>
+<span class="cm">    * &lt;p&gt;</span>
+<span class="cm">    * Subscribers to the &quot;on&quot; moment of this event, will be notified </span>
+<span class="cm">    * before a child is removed.</span>
+<span class="cm">    * &lt;/p&gt;</span>
+<span class="cm">    * &lt;p&gt;</span>
+<span class="cm">    * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
+<span class="cm">    * after a child is removed.</span>
+<span class="cm">    * &lt;/p&gt;</span>
+<span class="cm">    *</span>
+<span class="cm">    * @event childRemoved</span>
+<span class="cm">    * @preventable _defChildRemoved</span>
+<span class="cm">    * @param {EventFacade} e The Event Facade</span>
+<span class="cm">    */</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;childRemoved&quot;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defChildRemoved</span> <span class="p">});</span>
+
+
+    <span class="kd">var</span> <span class="nx">children</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">children</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="nx">children</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">children</span><span class="p">;</span>
+        
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;initializedChange&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">children</span><span class="p">);</span>
+        <span class="p">});</span>
+
+    <span class="p">}</span>
+
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_renderUIParent</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s2">&quot;renderUI&quot;</span><span class="p">);</span>
+    
+    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;destroy&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_destroyChildren</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectionChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterSelectionChange</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterParentSelectedChange</span><span class="p">);</span>
+
 <span class="p">}</span>
 
 <span class="nx">Parent</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * @attribute defaultChildType</span>
-<span class="cm">     * @type String</span>
+<span class="cm">     * @type {String|Object}</span>
 <span class="cm">     *</span>
 <span class="cm">     * @description String representing the default type of the children </span>
 <span class="cm">     * managed by this Widget.  Can also supply default type as a constructor</span>
 <span class="cm">     * reference.</span>
 <span class="cm">     */</span>
     <span class="nx">defaultChildType</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            
+            <span class="kd">var</span> <span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">INVALID_VALUE</span><span class="p">,</span>
+                <span class="nx">FnConstructor</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">[</span><span class="nx">val</span><span class="p">]</span> <span class="o">:</span> <span class="nx">val</span><span class="p">;</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">FnConstructor</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">returnVal</span> <span class="o">=</span> <span class="nx">FnConstructor</span><span class="p">;</span>
+            <span class="p">}</span>
+            
+            <span class="k">return</span> <span class="nx">returnVal</span><span class="p">;</span>
+            
+        <span class="p">}</span>
     <span class="p">},</span>
 
 
@@ -322,26 +389,32 @@
 <span class="cm">     */</span>
     <span class="nx">_createChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">type</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;defaultChildType&quot;</span><span class="p">),</span>
+        <span class="kd">var</span> <span class="nx">defaultType</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;defaultChildType&quot;</span><span class="p">),</span>
+            <span class="nx">altType</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span>
             <span class="nx">child</span><span class="p">,</span>
+            <span class="nx">Fn</span><span class="p">,</span>
             <span class="nx">FnConstructor</span><span class="p">;</span>
-            
-        <span class="k">if</span> <span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">FnConstructor</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">type</span><span class="p">))</span> <span class="p">{</span>
-                <span class="nx">FnConstructor</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">altType</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="nx">Fn</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">altType</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">[</span><span class="nx">altType</span><span class="p">]</span> <span class="o">:</span> <span class="nx">altType</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">Fn</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">FnConstructor</span> <span class="o">=</span> <span class="nx">Fn</span><span class="p">;</span>
             <span class="p">}</span>
 
         <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">defaultType</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">FnConstructor</span> <span class="o">=</span> <span class="nx">defaultType</span><span class="p">;</span>
+        <span class="p">}</span>
+
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">FnConstructor</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">child</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FnConstructor</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;Could not create a child instance using the supplied type.&quot;</span><span class="p">);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s2">&quot;Could not create a child instance because its constructor is either undefined or invalid.&quot;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">child</span><span class="p">;</span>
@@ -567,52 +640,18 @@
         <span class="p">});</span>
         
     <span class="p">},</span>
-    
-    <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="cm">/**</span>
-<span class="cm">        * Fires when a Widget is add as a child.</span>
-<span class="cm">        * &lt;p&gt;</span>
-<span class="cm">        * Subscribers to the &quot;on&quot; moment of this event, will be notified </span>
-<span class="cm">        * before a child is added.</span>
-<span class="cm">        * &lt;/p&gt;</span>
-<span class="cm">        * &lt;p&gt;</span>
-<span class="cm">        * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
-<span class="cm">        * after a child is added.</span>
-<span class="cm">        * &lt;/p&gt;</span>
-<span class="cm">        *</span>
-<span class="cm">        * @event childAdded</span>
-<span class="cm">        * @preventable _defChildAdded</span>
-<span class="cm">        * @param {EventFacade} e The Event Facade</span>
-<span class="cm">        */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;childAdded&quot;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defChildAdded</span> <span class="p">});</span>
-
-        <span class="cm">/**</span>
-<span class="cm">        * Fires when a child Widget is removed.</span>
-<span class="cm">        * &lt;p&gt;</span>
-<span class="cm">        * Subscribers to the &quot;on&quot; moment of this event, will be notified </span>
-<span class="cm">        * before a child is removed.</span>
-<span class="cm">        * &lt;/p&gt;</span>
-<span class="cm">        * &lt;p&gt;</span>
-<span class="cm">        * Subscribers to the &quot;after&quot; moment of this event, will be notified</span>
-<span class="cm">        * after a child is removed.</span>
-<span class="cm">        * &lt;/p&gt;</span>
-<span class="cm">        *</span>
-<span class="cm">        * @event childRemoved</span>
-<span class="cm">        * @preventable _defChildRemoved</span>
-<span class="cm">        * @param {EventFacade} e The Event Facade</span>
-<span class="cm">        */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">&quot;childRemoved&quot;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defChildRemoved</span> <span class="p">});</span>
 
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">children</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">children</span><span class="p">);</span>
-        <span class="p">}</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Destroys all child Widgets.</span>
+<span class="cm">     * @method _destroyChildren</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>    
+    <span class="nx">_destroyChildren</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_renderUIParent</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s2">&quot;renderUI&quot;</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectionChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterSelectionChange</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterParentSelectedChange</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;children&quot;</span><span class="p">),</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">child</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+        <span class="p">});</span>
         
     <span class="p">}</span>
 
@@ -708,7 +747,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeItem", "url": "WidgetParent.html#config_activeItem", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeItemChange", "url": "WidgetParent.html#event_activeItemChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "childAdded", "url": "WidgetParent.html#event_childAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "childRemoved", "url": "WidgetParent.html#event_childRemoved", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "children", "url": "WidgetParent.html#config_children", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "childrenChange", "url": "WidgetParent.html#event_childrenChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defChildAdded", "url": "WidgetParent.html#method__defChildAdded", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defChildRemoved", "url": "WidgetParent.html#method__defChildRemoved", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "item", "url": "WidgetParent.html#method_item", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderUIParent", "url": "WidgetParent.html#method__renderUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveItem", "url": "WidgetParent.html#method__updateActiveItem", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeItem", "url": "WidgetParent.html#config_activeItem", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeItemChange", "url": "WidgetParent.html#event_activeItemChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "childAdded", "url": "WidgetParent.html#event_childAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "childRemoved", "url": "WidgetParent.html#event_childRemoved", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "children", "url": "WidgetParent.html#config_children", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "childrenChange", "url": "WidgetParent.html#event_childrenChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defChildAdded", "url": "WidgetParent.html#method__defChildAdded", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defChildRemoved", "url": "WidgetParent.html#method__defChildRemoved", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_destroyChildren", "url": "WidgetParent.html#method__destroyChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "item", "url": "WidgetParent.html#method_item", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderUIParent", "url": "WidgetParent.html#method__renderUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveItem", "url": "WidgetParent.html#method__updateActiveItem", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
 </script>
 </body>
 </html>
