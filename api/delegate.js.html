@@ -112,15 +112,15 @@
 				<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">spec</span><span class="p">,</span> <span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
 					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">target</span><span class="p">;</span>
 				<span class="p">}</span>
-				<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="p">((</span><span class="nx">spec</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/,/gi</span><span class="p">,</span> <span class="s2">&quot; *,&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; *&quot;</span><span class="p">),</span> <span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
-						
-					<span class="c1">//	The target is a descendant of an element matching </span>
-					<span class="c1">//	the selector, so crawl up to find the ancestor that </span>
-					<span class="c1">//	matches the selector</span>
-					
-					<span class="nx">matched</span> <span class="o">=</span> <span class="nx">getMatch</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">spec</span><span class="p">,</span> <span class="nx">el</span><span class="p">);</span>
-					
-				<span class="p">}</span>
+                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="p">((</span><span class="nx">spec</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/,/gi</span><span class="p">,</span> <span class="s2">&quot; *,&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; *&quot;</span><span class="p">),</span> <span class="nx">el</span><span class="p">))</span> <span class="p">{</span>
+                     
+                 <span class="c1">//  The target is a descendant of an element matching </span>
+                 <span class="c1">//  the selector, so crawl up to find the ancestor that </span>
+                 <span class="c1">//  matches the selector</span>
+                 
+                 <span class="nx">matched</span> <span class="o">=</span> <span class="nx">getMatch</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">spec</span><span class="p">,</span> <span class="nx">el</span><span class="p">);</span>
+                 
+                <span class="p">}</span>
 
 
 				<span class="k">if</span> <span class="p">(</span><span class="nx">matched</span><span class="p">)</span> <span class="p">{</span>
@@ -181,53 +181,6 @@
         <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/[|,:]/g</span><span class="p">,</span> <span class="s1">&#39;~&#39;</span><span class="p">);</span>
     <span class="p">});</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Sets up event delegation on a container element.  The delegated event</span>
-<span class="cm"> * will use a supplied selector to test if the target or one of the</span>
-<span class="cm"> * descendants of the target match it.  The supplied callback function </span>
-<span class="cm"> * will only be executed if a match was encountered, and, in fact, </span>
-<span class="cm"> * will be executed for each element that matches if you supply an </span>
-<span class="cm"> * ambiguous selector.</span>
-<span class="cm"> *</span>
-<span class="cm"> * The event object for the delegated event is supplied to the callback</span>
-<span class="cm"> * function.  It is modified slightly in order to support all properties</span>
-<span class="cm"> * that may be needed for event delegation.  &#39;currentTarget&#39; is set to</span>
-<span class="cm"> * the element that matched the delegation specifcation.  &#39;container&#39; is</span>
-<span class="cm"> * set to the element that the listener is bound to (this normally would</span>
-<span class="cm"> * be the &#39;currentTarget&#39;).</span>
-<span class="cm"> *</span>
-<span class="cm"> * @event delegate</span>
-<span class="cm"> * @param type {string} &#39;delegate&#39;</span>
-<span class="cm"> * @param fn {function} the callback function to execute.  This function</span>
-<span class="cm"> * will be provided the event object for the delegated event.</span>
-<span class="cm"> * @param el {string|node} the element that is the delegation container</span>
-<span class="cm"> * @param delegateType {string} the event type to delegate</span>
-<span class="cm"> * @param spec {string} a selector that must match the target of the</span>
-<span class="cm"> * event.</span>
-<span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
-<span class="cm"> * These arguments will be added after the event object.</span>
-<span class="cm"> * @return {EventHandle} the detach handle</span>
-<span class="cm"> * @for YUI</span>
-<span class="cm"> * @deprecated use Y.delegate</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="p">{</span>
-
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">delegateType</span><span class="p">,</span> <span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;delegate event is deprecated, use Y.delegate()&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;deprecated&#39;</span><span class="p">);</span>
-
-		<span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-		
-		<span class="nx">args</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-		
-		<span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">delegateType</span><span class="p">;</span>
-
-		<span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">delegate</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
-
-    <span class="p">}</span>
-
-<span class="p">};</span>
 
 
 <span class="cm">/**</span>
