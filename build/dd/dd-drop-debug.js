@@ -453,12 +453,15 @@ YUI.add('dd-drop', function(Y) {
                     DDM.activeDrag.fire('drag:over', { drop: this, drag: DDM.activeDrag });
                     this.fire(EV_DROP_OVER, { drop: this, drag: DDM.activeDrag });
                 } else {
-                    this.overTarget = true;
-                    this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
-                    DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
-                    DDM.activeDrag.get(NODE).addClass(DDM.CSS_PREFIX + '-drag-over');
-                    //TODO - Is this needed??
-                    //DDM._handleTargetOver();
+                    //Prevent an enter before a start..
+                    if (DDM.activeDrag.get('dragging')) {
+                        this.overTarget = true;
+                        this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
+                        DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
+                        DDM.activeDrag.get(NODE).addClass(DDM.CSS_PREFIX + '-drag-over');
+                        //TODO - Is this needed??
+                        //DDM._handleTargetOver();
+                    }
                 }
             } else {
                 this._handleOut();
@@ -512,4 +515,4 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-drop', 'dd-drag']});
