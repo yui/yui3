@@ -1,6 +1,10 @@
 YUI Event Utility
     DOM event utilities
 
+Development Master
+    - Removed deprecated 'delegate' custom event.  As of 3.1 use the delegate 
+    method on a Node instance or Y instance.
+
 3.0.0
     - Added onreadystatechange fork in domready to handle the event in IE when YUI is hosted in an iframe.
     - Added mousewheel support.

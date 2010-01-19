@@ -50,12 +50,12 @@
 					
 					var foo = false, t, ct, boundEl;
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo = true;
 						t = e.target;
 						ct = e.currentTarget;
 						boundEl = e.container;
-					}, '#mod1', 'click', 'a');
+					}, '#mod1', 'a');
 					
 					Y.Event.simulate (document.getElementById('firstlink'), 'click');
 					Y.Assert.isTrue(foo, "simple delegation fails, mod1 should pickup the event and test target [firstlink]");
@@ -71,12 +71,12 @@
 
 					var foo = false, t, ct, boundEl;
 
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo = true;
 						t = e.target;
 						ct = e.currentTarget;
 						boundEl = e.container;
-					}, '#mod1', 'click', '.hd,.bd');					
+					}, '#mod1', '.hd,.bd');					
 					
 
 					Y.Event.simulate(document.getElementById('mod-header'), 'click');
@@ -93,12 +93,12 @@
 
 					var foo = false, t, ct, boundEl;
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo = true;
 						t = e.target;
 						ct = e.currentTarget;
 						boundEl = e.container;
-					}, Y.get('#mod1').get('ownerDocument'), 'click', 'a');
+					}, Y.get('#mod1').get('ownerDocument'), 'a');
 					
 					Y.Event.simulate (document.getElementById('firstlink'), 'click');
 					Y.Assert.isTrue(foo, "simple delegation fails, mod1 should pickup the event and test target [firstlink]");
@@ -113,12 +113,12 @@
 					
 					var foo = false, t, ct, boundEl;
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo = true;
 						t = e.target;
 						ct = e.currentTarget;
 						boundEl = e.container;
-					}, '#mod1', 'click', 'a');
+					}, '#mod1', 'a');
 					
 					Y.Event.simulate (document.getElementById('fakeimage'), 'click');
 					Y.Assert.isTrue(foo, "delegation fails for an image within an anchor, mod1 should pickup the event and test target [secondlink]");
@@ -137,10 +137,10 @@
 					
 					var foo = false, t;
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo = true;
 						t = e.target;
-					}, '#mod1', 'click', '#mod1 a');
+					}, '#mod1', '#mod1 a');
 					
 					Y.Event.simulate (document.getElementById('firstlink'), 'click');
 					Y.Assert.isFalse(foo, "delegation fails, the container (specified in the on) can not be part of the selectors");
@@ -151,10 +151,10 @@
 					
 					var foo = false, t;
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo = true;
 						t = e.target;
-					}, '#mod1', 'click');
+					}, '#mod1');
 					
 					Y.Event.simulate (document.getElementById('firstlink'), 'click');
 					Y.Assert.isFalse(foo, "delegation fails, delegation without at least one selector should never trigger an event");
@@ -164,10 +164,10 @@
 					
 					var foo = false, t;
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo = true;
 						t = e.target;
-					}, '#mod1', 'click', 'a,a span');
+					}, '#mod1', 'a,a span');
 					
 					Y.Event.simulate (document.getElementById('firstlink'), 'click');
 					Y.Assert.isTrue(foo, "multiple selectors fails, delegate should be able to match different selectors");
@@ -179,17 +179,17 @@
 					
 					var foo1 = false, foo2 = false, t1, t2, ct1, ct2;
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo1 = true;
 						t1 = e.target;
 						ct1 = e.currentTarget;
-					}, '#mod1', 'click', 'a');
+					}, '#mod1', 'a');
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo2 = true;
 						t2 = e.target;
 						ct2 = e.currentTarget;
-					}, '#mod1', 'click', 'a span');
+					}, '#mod1', 'a span');
 					
 					Y.Event.simulate (document.getElementById('spanwithinlink'), 'click');
 					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
@@ -205,11 +205,11 @@
 					
 					var foo1 = false, foo2 = false, t1, t2, ct;
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo1 = true;
 						t1 = e.target;
 						ct = e.currentTarget;
-					}, '#mod1', 'click', 'a');
+					}, '#mod1', 'a');
 					
 					Y.on('click', function(e) {
 						foo2 = true;
@@ -232,10 +232,10 @@
 					
 					var foo1 = false, foo2 = false;
 					
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						foo1 = true;
 						e.halt();
-					}, '#mod1', 'click', 'a');
+					}, '#mod1', 'a');
 					
 					Y.on('click', function(e) {
 						foo2 = true;
@@ -251,9 +251,9 @@
 					var bHandler1Called = false,
 						bHandler2Called = false;
 				
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						bHandler1Called = true;
-					}, '#mod1', 'click', 'a');
+					}, '#mod1', 'a');
 
 					Y.Event.purgeElement('#mod1');
 
@@ -267,9 +267,9 @@
 					//	Test #2: Make sure second handler is called after 
 					//	calling Y.Event.purgeElement
 
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						bHandler2Called = true;
-					}, '#mod1', 'click', 'a');
+					}, '#mod1', 'a');
 
 					Y.Event.simulate(document.getElementById('firstlink'), 'click');
 					Y.Assert.isFalse(bHandler1Called, "The first listener should not be be called.");
@@ -315,9 +315,9 @@
 					var bHandler1Called = false,
 						bHandler2Called = false;
 
-					var handle = Y.on('delegate', function(e) {
+					var handle = Y.delegate('click', function(e) {
 						bHandler1Called = true;
-					}, '#mod1', 'click', 'a');
+					}, '#mod1', 'a');
 
 					handle.detach();
 
@@ -331,9 +331,9 @@
 					//	Test #2: Make sure second handler is called after 
 					//	detaching the first.
 
-					Y.on('delegate', function(e) {
+					Y.delegate('click', function(e) {
 						bHandler2Called = true;
-					}, '#mod1', 'click', 'a');
+					}, '#mod1', 'a');
 
 					Y.Event.simulate(document.getElementById('firstlink'), 'click');
 					Y.Assert.isFalse(bHandler1Called, "The first listener should not be be called.");
