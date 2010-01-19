@@ -220,9 +220,13 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @description Clear the cache and activate the shims of all the targets
         */
         _activateTargets: function() {
+            this._noShim = true;
             this.clearCache();
             Y.each(this.targets, function(v, k) {
                 v._activateShim.apply(v, []);
+                if (v.get('noShim') == true) {
+                    this._noShim = false;
+                }
             }, this);
             this._handleTargetOver();
             
