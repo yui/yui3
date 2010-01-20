@@ -1,0 +1,226 @@
+.yui-skin-sam .yui-button,
+.yui-skin-sam .yui-checkbox,
+.yui-skin-sam .yui-radio  {
+
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: #808080;
+    background: url(sprite.png) repeat-x 0 0;
+    margin: auto .25em;
+    
+    
+    font-size: 93%;  /* 12px */
+    line-height: 2;  /* ~24px */
+    *line-height: 1.7; /* For IE */
+    min-height: 2em; /* For Gecko */
+    *min-height: auto; /* For IE */
+    
+}
+
+.yui-skin-sam .yui-button input,
+.yui-skin-sam .yui-checkbox input,
+.yui-skin-sam .yui-radio input {
+
+    *line-height: 1.7;
+
+}
+
+.yui-skin-sam .yui-radio,
+.yui-skin-sam .yui-checkbox {
+
+    *line-height: 2;
+
+}
+
+
+.yui-skin-sam .yui-button span,
+.yui-skin-sam .yui-checkbox span,
+.yui-skin-sam .yui-radio span {
+
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #808080;
+    margin: 0 -1px;
+    *position: relative;    /* Necessary to get negative margins working in IE */
+    *left: -1px;
+
+}
+
+.yui-skin-sam .yui-button input,
+.yui-skin-sam .yui-button button,
+.yui-skin-sam .yui-button a,
+.yui-skin-sam .yui-button label,
+.yui-skin-sam .yui-checkbox label,
+.yui-skin-sam .yui-radio label {
+
+    padding: 0 10px;
+    color: #000; 
+
+}
+
+.yui-skin-sam .yui-radio input,
+.yui-skin-sam .yui-checkbox input {
+
+	position: absolute;
+	left: -1000px;
+
+}
+
+
+/* Focus state */
+
+
+.yui-skin-sam .yui-button-focus, 
+.yui-skin-sam .yui-checkbox-focus,
+.yui-skin-sam .yui-radio-focus {
+
+    border-color: #7D98B8;
+    background-position: 0 -1300px;
+
+}
+
+.yui-skin-sam .yui-button-focus span,
+.yui-skin-sam .yui-checkbox-focus span,
+.yui-skin-sam .yui-radio-focus span {
+
+    border-color: #7D98B8;
+
+}
+
+.yui-skin-sam .yui-button-focus button, 
+.yui-skin-sam .yui-button-focus input, 
+.yui-skin-sam .yui-button-focus a,
+.yui-skin-sam .yui-button-focus label,
+.yui-skin-sam .yui-checkbox-focus label,
+.yui-skin-sam .yui-radio-focus label {
+
+    color: #000;
+
+}
+
+
+
+
+/* Hover state */
+
+.yui-skin-sam .yui-button-hover,
+.yui-skin-sam .yui-checkbox-hover,
+.yui-skin-sam .yui-radio-hover {
+
+    border-color: #7D98B8;
+    background-position: 0 -1300px;
+
+}
+
+.yui-skin-sam .yui-button-hover span,
+.yui-skin-sam .yui-checkbox-hover span,
+.yui-skin-sam .yui-radio-hover span {
+
+    border-color: #7D98B8;
+
+}
+
+.yui-skin-sam .yui-button-hover button, 
+.yui-skin-sam .yui-button-hover input, 
+.yui-skin-sam .yui-button-hover a, 
+.yui-skin-sam .yui-button-hover label,
+.yui-skin-sam .yui-checkbox-hover label,
+.yui-skin-sam .yui-radio-hover label {
+
+    color: #000;
+
+}
+
+
+
+
+/* Active state */
+
+.yui-skin-sam .yui-button-active,
+.yui-skin-sam .yui-checkbox-active,
+.yui-skin-sam .yui-radio-active {
+    
+    border-color: #7D98B8;
+    background-position: 0 -1700px;
+    
+}
+
+.yui-skin-sam .yui-button-active span,
+.yui-skin-sam .yui-checkbox-active span,
+.yui-skin-sam .yui-radio-active span {
+
+    border-color: #7D98B8;
+
+}
+
+.yui-skin-sam .yui-button-active button, 
+.yui-skin-sam .yui-button-active input, 
+.yui-skin-sam .yui-button-active a, 
+.yui-skin-sam .yui-button-active label,
+.yui-skin-sam .yui-checkbox-active label,
+.yui-skin-sam .yui-radio-active label {
+
+    color: #000;
+
+}
+
+
+
+
+/* Disabled state */
+
+.yui-skin-sam .yui-button-disabled,
+.yui-skin-sam .yui-checkbox-disabled,
+.yui-skin-sam .yui-radio-disabled {
+    
+    border-color: #ccc;
+    background-position: 0 -1500px;
+    
+}
+
+.yui-skin-sam .yui-button-disabled span,
+.yui-skin-sam .yui-checkbox-disabled span,
+.yui-skin-sam .yui-radio-disabled span {
+
+    border-color: #ccc;
+
+}
+
+.yui-skin-sam .yui-button-disabled button, 
+.yui-skin-sam .yui-button-disabled input, 
+.yui-skin-sam .yui-button-disabled label,
+.yui-skin-sam .yui-checkbox-disabled label,
+.yui-skin-sam .yui-radio-disabled label {
+
+    color: #A6A6A6;
+    cursor: default;
+
+}
+
+
+
+
+
+/* Checked state */
+
+.yui-skin-sam .yui-radio-checked,
+.yui-skin-sam .yui-checkbox-checked {
+    
+    border-color: #304369;
+    background-position: 0 -1400px;
+    
+}
+
+.yui-skin-sam .yui-radio-checked span,
+.yui-skin-sam .yui-checkbox-checked span {
+
+    border-color: #304369;
+
+}
+
+.yui-skin-sam .yui-radio-checked label,
+.yui-skin-sam .yui-checkbox-checked label { 
+
+    color: #fff;
+
+}
