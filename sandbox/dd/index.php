@@ -328,6 +328,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
     dd4.plug(Y1.Plugin.DDConstrained, {
         //tickX: 25,
         //tickY: 25,
+        //cacheRegion: false,
         constrain2node: '#drag4Cont',
         gutter:  '-20'
     });

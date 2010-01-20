@@ -194,9 +194,7 @@ YUI.add('dd-constrain', function(Y) {
         * @description Get's the region and caches it, called from window.resize and when the cache is null
         */
         _cacheRegion: function() {
-            if (this.get('cacheRegion')) {
-                this._regionCache = this.get(CON_2_NODE).get('region');
-            }
+            this._regionCache = this.get(CON_2_NODE).get('region');
         },
         /**
         * @method resetCache
@@ -222,6 +220,9 @@ YUI.add('dd-constrain', function(Y) {
                     this._cacheRegion();
                 }
                 r = Y.clone(this._regionCache);
+                if (!this.get('cacheRegion')) {
+                    this.resetCache();
+                }
             } else if (this.get(CON_2_REGION)) {
                 r = this.get(CON_2_REGION);
             } else if (this.get('constrain2view')) {

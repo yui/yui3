@@ -25,7 +25,8 @@ YUI({
     }
 }).use('dd', 'console', 'test', 'substitute', function(Y) {
         var myConsole = new Y.Console({
-            height: Y.one(window).get('winHeight') + 'px'
+            height: Y.one(window).get('winHeight') + 'px',
+            width: '375px'
         }).render();    
             
         var _count = {},

@@ -254,7 +254,10 @@ Y.DOM = {
                     }
                 }
             }
+        } else {
+            ret = [Y.DOM._getDoc(root).getElementById(id)];
         }
+    
         return ret;
    },
 
