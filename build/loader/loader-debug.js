@@ -1,6 +1,7 @@
 YUI.add('loader', function(Y) {
 
 (function() {
+
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -106,6 +107,9 @@ YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
 
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],
+
+    MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
+
     GLOBAL_ENV = YUI.Env,
     GLOBAL_LOADED,
     BASE = 'base', 
@@ -858,6 +862,28 @@ Y.Loader = function(o) {
      * @default true if a base dir isn't in the config
      */
     this.combine = o.base && (o.base.indexOf( this.comboBase.substr(0, 20)) > -1);
+
+    /**
+     * Max url length for combo urls.  The default is 2048 for
+     * internet explorer, and 8192 otherwise.  This is the URL
+     * limit for the Yahoo! hosted combo servers.  If consuming
+     * a different combo service that has a different URL limit
+     * it is possible to override this default by supplying 
+     * the maxURLLength config option.  The config option will
+     * only take effect if lower than the default.
+     *
+     * Browsers:
+     *    IE: 2048
+     *    Other A-Grade Browsers: Higher that what is typically supported 
+     *    'Capable' mobile browsers: @TODO
+     *
+     * Servers:
+     *    Apache: 8192
+     *
+     * @property maxURLLength
+     * @type int
+     */
+    this.maxURLLength = (o.maxURLLength) ? Math.min(MAX_URL_LENGTH, o.maxURLLength) : MAX_URL_LENGTH;
 
     /**
      * Ignore modules registered on the YUI global
@@ -2047,50 +2073,63 @@ Y.Loader.prototype = {
             return;
         }
 
-        var s, len, i, m, url, self=this, type=this.loadType, fn, msg, attr,
+        var s, len, i, m, url, type=this.loadType, fn, msg, attr,
+            combining, urls, comboBase, frag, self = this,
+
             callback=function(o) {
                 Y.log('Combo complete: ' + o.data, "info", "loader");
-                this._combineComplete[type] = true;
-
-                var c=this._combining, len=c.length, i;
+                self._combineComplete[type] = true;
+                var len=combining.length, i;
 
                 for (i=0; i<len; i=i+1) {
-                    this.inserted[c[i]] = true;
+                    self.inserted[combining[i]] = true;
                 }
 
-                this.loadNext(o.data);
+                self.loadNext(o.data);
             },
+
             onsuccess=function(o) {
                 // Y.log('loading next, just loaded' + o.data);
                 self.loadNext(o.data);
             };
 
-        // @TODO this will need to handle the two phase insert when
-        // CSS support is added
         if (this.combine && (!this._combineComplete[type])) {
 
-            this._combining = []; 
-            s=this.sorted;
-            len=s.length;
-            url=this.comboBase;
+            combining = [];
+
+            this._combining = combining; 
+            s = this.sorted;
+            len = s.length;
+            comboBase = this.comboBase;
+            url = comboBase;
+            urls = [];
 
 
-            for (i=0; i<len; i=i+1) {
+            for (i=0; i<len; i++) {
                 m = this.getModule(s[i]);
                 // Do not try to combine non-yui JS
                 if (m && (m.type === type) && !m.ext) {
-                    url += this.root + m.path;
-                    if (i < len-1) {
+                    frag = this.root + m.path;
+
+                    if ((url !== comboBase) && (i < (len - 1)) && ((frag.length + url.length) > this.maxURLLength)) {
+                        urls.push(this._filter(url));
+                        url = comboBase;
+                    }
+
+                    url += frag;
+                    if (i < (len - 1)) {
                         url += '&';
                     }
 
-                    this._combining.push(s[i]);
+                    combining.push(s[i]);
                 }
             }
 
-            if (this._combining.length) {
+            if (combining.length) {
 
-Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
+                urls.push(this._filter(url));
+
+Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
                 // if (m.type === CSS) {
                 if (type === CSS) {
@@ -2102,7 +2141,7 @@ Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
                 }
 
                 // @TODO get rid of the redundant Get code
-                fn(this._filter(url), {
+                fn(urls, {
                     data: this._loading,
                     onSuccess: callback,
                     onFailure: this._onFailure,
@@ -2112,7 +2151,7 @@ Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
                     attributes: attr,
                     timeout: this.timeout,
                     autopurge: false,
-                    context: self 
+                    context: this
                 });
 
                 return;
@@ -2144,8 +2183,6 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
                         data: this.data
                     });
             }
-
-
         }
 
         s=this.sorted;
@@ -2197,7 +2234,7 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
                     attr = this.jsAttributes;
                 }
 
-                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i], this.galleryBase || m.base);
+                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i], m.base);
 
                 fn(url, {
                     data: s[i],
