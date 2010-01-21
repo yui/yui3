@@ -8,6 +8,8 @@ function NodeList( nodes ) {
         nodes = Y.Selector.query( nodes );
     } else if ( nodes.nodeType || nodes instanceof Node ) {
         nodes = [ getDOMNode( nodes ) ];
+    } else if ( nodes instanceof NodeList ) {
+        return nodes;
     } else {
         // array of DOM nodes or Node instances
         Array_each( nodes, function ( node, i ) {
