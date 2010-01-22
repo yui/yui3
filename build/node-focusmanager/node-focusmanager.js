@@ -1038,6 +1038,10 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 		this._initDescendants();
 		
+		if (!this._eventHandlers) {
+			this._attachEventHandlers();		    
+		}
+		
 	}
 	
 });
