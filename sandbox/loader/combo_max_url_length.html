@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <title>Multiple combo urls for long requests</title>
+        <!--
+        <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+        -->
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0/build/yui/yui-debug.js"></script>
+        <script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
+    </head>
+    <body>
+
+        <script>
+        YUI({
+
+            filter:"raw",
+            maxURLLength: 300
+
+        }).use('slider', 'dump', 'substitute', 'console', function(Y) {
+
+
+        });
+        </script>
+
+    </body>
+</html>

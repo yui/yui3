@@ -1,0 +1,106 @@
+Support the ability to package and deliver localized string bundles, separately from code.
+
+Building/Packaging
+
+    * Module/SubModule centric
+
+    * Loader MetaData
+
+       "mymodule" : {
+          requires: ["oop", "node"],
+          lang: ["en", "en-US", "fr-CA"]
+       }
+
+      - We need "submodule" level support [ DataType for example, XML won't have resources, but Date will ]
+
+    * Build packaging
+
+       /build/mymodule/lang
+
+                      /I18N or, 
+		      /Intl
+
+       /build/mymodule/lang/mymodule_en-US.js
+       /build/mymodule/lang/mymodule_fr-CA.js
+       /build/mymodule/lang/mymodule_en.js
+
+       /build/mymodule/lang/mysubmodule_en-US.js
+       /build/mymodule/lang/mysubmodule_en.js
+       /build/mymodule/lang/mysubmodule_fr-CA.js
+
+      - Usually delivered to translators through a tool,
+        so physical location should not matter.
+
+Loading
+
+    // Global preferred languages
+    YUI_config = {
+	...
+	lang : ["en-US", "en"]
+        ...
+    };
+
+    // Overridable per instance
+    YUI({
+	lang:["fr-CA", "fr-FR", "en"]
+    });
+
+    Y.I18N.lookupBestLang(lang, availLangs), will be used by Loader to perform BCP 47 
+    lookup (fr-CA to fr to en) for each module to find the closest bundle available, 
+    matching the requested language.
+
+    Or, of course, the user can load a specific bundle independently
+
+    <script src="build/mymodule/lang/mymodule_en-US.js">
+
+Using
+
+    Using the module pulls down the closest-match language file if module has "lang" defined
+
+    YUI({ lang: ["fr-CA"] }).use("calendar", "datatable", function(Y) {
+
+	// Pull down/Switch to another language
+	Y.use("lang:en-US", function() {
+
+	});
+
+    });
+
+Runtime
+
+    // Registration boiler plate in bundle files...
+    Y.I18N.add(module, lang, {
+	... strings ...
+    });
+    Y.I18N._setLang(module, lang);
+
+    // Component code usage...
+    var singleModuleStr = Y.I18N.get(module, key [, lang]);
+    var allModuleStrs = Y.I18N.get(module [,null , lang]);
+
+I18N API
+
+    Y.I18N.lookupBestLang(lang, availLangs);
+
+    Y.I18N.add(module, lang, strings, merge); // "merge" for sub-module support (add more strings to the module)
+
+    Y.I18N.getLang(module);
+    Y.I18N.getAvailLangs(module);
+
+    // lang defaults to getLang();
+
+    Y.I18N.get(module);
+    Y.I18N.get(module, key);
+    Y.I18N.get(module, key, lang);
+
+Widget Interface
+
+    Widget would add simple wrappers on top of the above infrastructure...
+
+    MyWidget.ATTRS = {
+	...
+        strings : Y.I18N.get("mymodule"),
+        ...
+    }
+
+    And drop it's client side BCP 47 lookup implemenation (widget instances won't hold onto multiple bundles. If anything does it'll be Y.I18N).
