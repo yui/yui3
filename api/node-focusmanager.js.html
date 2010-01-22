@@ -1088,6 +1088,10 @@
 
 		<span class="k">this</span><span class="p">.</span><span class="nx">_initDescendants</span><span class="p">();</span>
 		
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_eventHandlers</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_attachEventHandlers</span><span class="p">();</span>		    
+		<span class="p">}</span>
+		
 	<span class="p">}</span>
 	
 <span class="p">});</span>
