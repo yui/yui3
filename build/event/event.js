@@ -2041,8 +2041,18 @@ var UA = Y.UA,
 
 	attach = function (args, config) {
 
-	    var a = Y.Array(args, 0, true);
-		a[0] = eventNames[a[0]];
+	    var a = Y.Array(args, 0, true),
+            el = args[2];
+        
+        if (el) {
+            if (Y.DOM.isWindow(el)) {
+                config.capture = false;
+            }
+            else {
+		        a[0] = eventNames[a[0]];
+		    }
+        }
+
 	    return Event._attach(a, config);
 
 	},
