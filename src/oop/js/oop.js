@@ -14,7 +14,7 @@
         SOME = 'some',
 
         dispatch = function(o, f, c, proto, action) {
-            if (o && o[action] && o.item) {
+            if (o && o[action] && o !== Y) {
                 return o[action].call(o, f, c);
             } else {
                 switch (A.test(o)) {
@@ -69,7 +69,7 @@
 
             // sequester all of the functions in the supplier and replace with
             // one that will restore all of them.
-            Y.each(sProto, function(v, k) {
+            Y.Object.each(sProto, function(v, k) {
                 replacements[k] = function() {
 
 // Y.log('sequestered function "' + k + '" executed.  Initializing EventTarget');
@@ -102,7 +102,6 @@
                         // Y.log('augment() applying non-function: ' + k);
                         this[k] = v;
                     }
-
                 }
 
             }, newProto, true);
@@ -275,7 +274,7 @@
 
         // #2528250 don't try to clone element properties
         if (!o.addEventListener && !o.attachEvent) {
-            Y.each(o, function(v, k) {
+            Y.Object.each(o, function(v, k) {
                 if (!f || (f.call(c || this, v, k, this, o) !== false)) {
                     if (k !== CLONE_MARKER) {
                         if (o[k] === o) {
@@ -289,7 +288,7 @@
         }
 
         if (!cloned) {
-            Y.each(marked, function(v, k) {
+            Y.Object.each(marked, function(v, k) {
                 delete v[CLONE_MARKER];
             });
             marked = null;
