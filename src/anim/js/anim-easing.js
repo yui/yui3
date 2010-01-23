@@ -24,6 +24,7 @@ Y.Easing = {
 
     /**
      * Uniform speed between points.
+     * @for Easing
      * @method easeNone
      * @param {Number} t Time value used to compute current value
      * @param {Number} b Starting value
@@ -243,7 +244,7 @@ Y.Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     backIn: function (t, b, c, d, s) {
-        if (s == undefined) {
+        if (s === undefined) {
             s = 1.70158;
         }
         if (t === d) {

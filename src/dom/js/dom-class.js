@@ -1,13 +1,4 @@
-/** 
- * The DOM utility provides a cross-browser abtraction layer
- * normalizing DOM tasks, and adds extra helper functionality
- * for other common tasks. 
- * @module dom
- * @submodule dom-base
- * @for DOM
- */
-
-var CLASS_NAME = 'className';
+var addClass, hasClass, removeClass;
 
 Y.mix(Y.DOM, {
     /**
@@ -19,7 +10,7 @@ Y.mix(Y.DOM, {
      */
     hasClass: function(node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
-        return re.test(node[CLASS_NAME]);
+        return re.test(node.className);
     },
 
     /**
@@ -30,7 +21,7 @@ Y.mix(Y.DOM, {
      */
     addClass: function(node, className) {
         if (!Y.DOM.hasClass(node, className)) { // skip if already present 
-            node[CLASS_NAME] = Y.Lang.trim([node[CLASS_NAME], className].join(' '));
+            node.className = Y.Lang.trim([node.className, className].join(' '));
         }
     },
 
@@ -41,12 +32,12 @@ Y.mix(Y.DOM, {
      * @param {String} className the class name to remove from the class attribute
      */
     removeClass: function(node, className) {
-        if (className && Y.DOM.hasClass(node, className)) {
-            node[CLASS_NAME] = Y.Lang.trim(node[CLASS_NAME].replace(Y.DOM._getRegExp('(?:^|\\s+)' +
+        if (className && hasClass(node, className)) {
+            node.className = Y.Lang.trim(node.className.replace(Y.DOM._getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' '));
 
-            if ( Y.DOM.hasClass(node, className) ) { // in case of multiple adjacent
-                Y.DOM.removeClass(node, className);
+            if ( hasClass(node, className) ) { // in case of multiple adjacent
+                removeClass(node, className);
             }
         }                 
     },
@@ -55,28 +46,37 @@ Y.mix(Y.DOM, {
      * Replace a class with another class for a given element.
      * If no oldClassName is present, the newClassName is simply added.
      * @method replaceClass  
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element 
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
      */
     replaceClass: function(node, oldC, newC) {
         //Y.log('replaceClass replacing ' + oldC + ' with ' + newC, 'info', 'Node');
-        Y.DOM.addClass(node, newC);
-        Y.DOM.removeClass(node, oldC);
+        addClass(node, newC);
+        removeClass(node, oldC);
     },
 
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
      * @method toggleClass  
-     * @param {HTMLElement} element The DOM element. 
+     * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled
+     * @param {Boolean} addClass optional boolean to indicate whether class
+     * should be added or removed regardless of current state
      */
-    toggleClass: function(node, className) {
-        if (Y.DOM.hasClass(node, className)) {
-            Y.DOM.removeClass(node, className);
+    toggleClass: function(node, className, force) {
+        var add = (force !== undefined) ? force :
+                !(hasClass(node, className));
+
+        if (add) {
+            addClass(node, className);
         } else {
-            Y.DOM.addClass(node, className);
+            removeClass(node, className);
         }
     }
 });
+
+hasClass = Y.DOM.hasClass;
+removeClass = Y.DOM.removeClass;
+addClass = Y.DOM.addClass;
 

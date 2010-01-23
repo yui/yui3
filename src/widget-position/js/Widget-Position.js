@@ -57,6 +57,7 @@
             setter: function(val) {
                 this._setX(val);
             },
+            lazyAdd:false,
             getter: function() {
                 return this._getX();
             }
@@ -74,11 +75,12 @@
             setter: function(val) {
                 this._setY(val);
             },
+            lazyAdd: false,
             getter: function() {
                 return this._getY();
             }
         },
-
+        
         /**
          * @attribute xy
          * @type Array
@@ -88,6 +90,7 @@
          */
         xy: {
             value:[0,0],
+
             validator: function(val) {
                 return this._validateXY(val);
             }
@@ -192,7 +195,7 @@
          * @param {Number} val The X page co-ordinate value
          */
         _setX : function(val) {
-            this.set(XY_COORD, [val, this.get(XY_COORD)[0]]);
+            this.set(XY_COORD, [val, this.get(XY_COORD)[1]]);
         },
 
         /**
@@ -203,7 +206,7 @@
          * @param {Number} val The Y page co-ordinate value
          */
         _setY : function(val) {
-            this.set(XY_COORD, [this.get(XY_COORD)[1], val]);
+            this.set(XY_COORD, [this.get(XY_COORD)[0], val]);
         },
 
         /**
@@ -234,7 +237,7 @@
          * 
          * @method _afterXYChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterXYChange : function(e) {
             if (e.src != UI) {

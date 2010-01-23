@@ -6,6 +6,7 @@ YUI.add('dd-ddm', function(Y) {
      * @module dd
      * @submodule dd-ddm
      * @for DDM
+     * @namespace DD
      */
     Y.mix(Y.DD.DDM, {
         /**
@@ -72,7 +73,7 @@ YUI.add('dd-ddm', function(Y) {
         */
         _pg_size: function() {
             if (this.activeDrag) {
-                var b = Y.Node.get('body'),
+                var b = Y.one('body'),
                 h = b.get('docHeight'),
                 w = b.get('docWidth');
                 this._pg.setStyles({
@@ -87,38 +88,38 @@ YUI.add('dd-ddm', function(Y) {
         * @description Creates the shim and adds it's listeners to it.
         */
         _createPG: function() {
-            //var pg = Y.Node.create(['div']),
             var pg = Y.Node.create('<div></div>'),
-            bd = Y.Node.get('body');
+            bd = Y.one('body'), win;
             pg.setStyles({
                 top: '0',
                 left: '0',
                 position: 'absolute',
                 zIndex: '9999',
                 overflow: 'hidden',
-                //opacity: '0',
                 backgroundColor: 'red',
                 display: 'none',
                 height: '5px',
                 width: '5px'
             });
+            pg.set('id', Y.stamp(pg));
+            pg.addClass('yui-dd-shim');
             if (bd.get('firstChild')) {
                 bd.insertBefore(pg, bd.get('firstChild'));
             } else {
                 bd.appendChild(pg);
             }
             this._pg = pg;
-            this._pg.on('mouseup', this._end, this, true);
-            this._pg.on('mousemove', this._move, this, true);
+            this._pg.on('mouseup', Y.bind(this._end, this));
+            this._pg.on('mousemove', Y.bind(this._move, this));
             
-            
-            Y.on('resize', this._pg_size, window, this, true);
-            Y.on('scroll', this._pg_size, window, this, true);
+            win = Y.one(window);
+            Y.on('window:resize', Y.bind(this._pg_size, this));
+            win.on('scroll', Y.bind(this._pg_size, this));
         }   
     }, true);
 
-    Y.DD.DDM._createPG();    
+    Y.on('domready', Y.bind(Y.DD.DDM._createPG, Y.DD.DDM));
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm-base', 'event-resize'], skinnable:false});

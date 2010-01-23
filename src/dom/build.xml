@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <description>DOM - Build All Modules</description>
+
+    <target name="local">
+	<ant antfile="build.dom.xml" target="local" />
+	<ant antfile="build.selector-css3.xml" target="local" />
+    </target>
+
+    <target name="deploy">
+	<ant antfile="build.dom.xml" target="deploy" />
+	<ant antfile="build.selector-css3.xml" target="deploy" />
+    </target>
+
+    <target name="all">
+	<ant antfile="build.dom.xml" target="all" />
+	<ant antfile="build.selector-css3.xml" target="all" />
+    </target>
+
+</project>

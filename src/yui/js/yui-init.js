@@ -1,26 +1,34 @@
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
+
 (function() {
 
-    // var min = ['yui-base', 'log', 'lang', 'array', 'core'], core, C = Y.config;
-    var min = ['yui-base'], core, C = Y.config;
+    // // var min = ['yui-base'], 
+    // var core, C = Y.config, mods = YUI.Env.mods, extras, i;
 
-    // apply the minimal required functionality
-    Y.use.apply(Y, min);
+    // // apply the minimal required functionality
+    // // Y.use.apply(Y, min);
 
-    Y.log(Y.id + ' initialized', 'info', 'yui');
+    // if (C.core) {
+    //     core = C.core;
+    // } else {
+    //     core = [];
+    //     extras = ['get', 'loader', 'yui-log', 'yui-later'];
 
-    if (C.core) {
+    //     for (i=0; i<extras.length; i++) {
+    //         if (mods[extras[i]]) {
+    //             core.push(extras[i]);
+    //         }
+    //     }
+    // }
 
-        core = C.core;
+    // Y.use.apply(Y, core);
 
-    } else {
-
-        // core = ["object", "ua", "later"];
-        // core.push("get", "loader");
-        
-        core = ["get", "loader"];
-    }
-
-    Y.use.apply(Y, core);
-
+    // Y.log(Y.id + ' initialized', 'info', 'yui');
      
 })();
+

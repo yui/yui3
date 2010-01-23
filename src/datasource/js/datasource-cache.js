@@ -6,7 +6,7 @@
  */
 
 /**
- * Adds cacheability to the YUI DataSource utility.
+ * Adds cacheability to the DataSource Utility.
  * @class DataSourceCache
  * @extends Cache
  */    
@@ -34,9 +34,9 @@ Y.mix(DataSourceCache, {
      * @type String
      * @static
      * @final
-     * @value "DataSourceCache"
+     * @value "dataSourceCache"
      */
-    NAME: "DataSourceCache",
+    NAME: "dataSourceCache",
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -71,6 +71,7 @@ Y.extend(DataSourceCache, Y.Cache, {
      * <dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
      * <dt>request (Object)</dt> <dd>The request.</dd>
      * <dt>callback (Object)</dt> <dd>The callback object.</dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
@@ -78,7 +79,7 @@ Y.extend(DataSourceCache, Y.Cache, {
         // Is response already in the Cache?
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
-            this._owner.fire("response", Y.mix({response: entry.response}, e));
+            this.get("host").fire("response", Y.mix({response: entry.response}, e));
             return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
         }
     },
@@ -95,24 +96,28 @@ Y.extend(DataSourceCache, Y.Cache, {
      *     <dl>
      *         <dt>success (Function)</dt> <dd>Success handler.</dd>
      *         <dt>failure (Function)</dt> <dd>Failure handler.</dd>
-     *         <dt>scope (Object)</dt> <dd>Execution context.</dd>
      *     </dl>
      * </dd>
      * <dt>data (Object)</dt> <dd>Raw data.</dd>
-     * <dt>response (Object)</dt> <dd>Normalized resopnse object with the following properties:
+     * <dt>response (Object)</dt> <dd>Normalized response object with the following properties:
      *     <dl>
+     *         <dt>cached (Object)</dt> <dd>True when response is cached.</dd>
      *         <dt>results (Object)</dt> <dd>Parsed results.</dd>
      *         <dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
      *         <dt>error (Object)</dt> <dd>Error object.</dd>
      *     </dl>
      * </dd>
+     * <dt>cfg (Object)</dt> <dd>Configuration object.</dd>
      * </dl>
      * @protected
      */
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
-        this.add(e.request, e.response, (e.callback && e.callback.argument));
+        if(e.response && !e.response.cached) {
+            e.response.cached = true;
+            this.add(e.request, e.response, (e.callback && e.callback.argument));
+        }
      }
 });
 
-Y.namespace('plugin').DataSourceCache = DataSourceCache;
+Y.namespace('Plugin').DataSourceCache = DataSourceCache;

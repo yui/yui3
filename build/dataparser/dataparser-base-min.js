@@ -1,1 +1,0 @@
-YUI.add("dataparser-base",function(B){var A={toString:function(){return"DataParser.Base";},parse:function(C,D){return D;}};B.namespace("DataParser").Base=A;},"@VERSION@",{requires:["base"]});

@@ -1,0 +1,279 @@
+./anim/js/anim-node-plugin.js:Y.extend(NodeFX, Y.Anim);
+./anim/js/anim.js:    Y.extend(Y.Anim, Y.Base, proto);
+./attribute/tests/attribute.html:            Y.extend(AttrHost, Y.Base);
+./attribute/tests/attribute.html:            Y.extend(ExtendedAttrHost, AttrHost);
+./attribute/tests/attribute.html:                    Y.extend(Test, Y.Base, {
+./base/js/BaseBuild.js:            Y.extend(BuiltClass, main);
+./base/tests/baseBuild.html:            Y.extend(MainPlugin, Y.Plugin);
+./base/tests/baseBuild.html:            Y.extend(Main, Y.Base, {
+./base/tests/baseBuild.html:            Y.extend(ExtOnePlugin, Y.Plugin);
+./base/tests/baseBuild.html:            Y.extend(ExtTwoPlugin, Y.Plugin);
+./base/tests/basePerf.html:    Y.extend(Test, Y.Base, {
+./base/tests/plugins.html:            Y.extend(PluginOne, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(PluginTwo, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(PluginThree, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(PluginFour, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(Host, Y.Base, {
+./base/tests/plugins.html:            Y.extend(ExtendedHost, Host, {
+./cache/js/cache.js:Y.extend(Cache, Y.Plugin.Base, {
+./compat/js/yui-compat.js:    // extend: Y.bind(Y.extend, Y), 
+./compat/js/yui-compat.js:    extend: Y.extend,
+./compat/js/yui-compat.js:    Y.extend(CE, Y.CustomEvent, {
+./compat/js/yui-compat.js:    Y.extend(EP, Y.Event.Target, {
+./console/build_tmp/console-debug.js:Y.extend(Console,Y.Widget,{
+./console/build_tmp/console.js:Y.extend(Console,Y.Widget,{
+./console/js/console.js:Y.extend(Console,Y.Widget,{
+./console/js/filter.js:Y.extend(ConsoleFilters, Y.Plugin.Base, {
+./datasource/js/datasource-arrayschema.js:Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
+./datasource/js/datasource-cache.js:Y.extend(DataSourceCache, Y.Cache, {
+./datasource/js/datasource-function.js:Y.extend(DSFn, Y.DataSource.Local, {
+./datasource/js/datasource-jsonschema.js:Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
+./datasource/js/datasource-local.js:Y.extend(DSLocal, Y.Base, {
+./datasource/js/datasource-scriptnode.js:Y.extend(DSSN, Y.DataSource.Local, {
+./datasource/js/datasource-textschema.js:Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
+./datasource/js/datasource-xhr.js:Y.extend(DSXHR, Y.DataSource.Local, {
+./datasource/js/datasource-xmlschema.js:Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
+./dd/js/constrain.js:    Y.extend(C, Y.Base, proto);
+./dd/js/dd-drop-plugin.js:        Y.extend(Drop, Y.DD.Drop);
+./dd/js/dd-plugin.js:        Y.extend(Drag, Y.DD.Drag);
+./dd/js/ddm-base.js:    Y.extend(DDMBase, Y.Base, {
+./dd/js/drag.js:    Y.extend(Drag, Y.Base, {
+./dd/js/drop.js:    Y.extend(Drop, Y.Base, {
+./dd/js/proxy.js:    Y.extend(P, Y.Base, proto);
+./dd/js/scroll.js:    Y.extend(S, Y.Base, {
+./dd/js/scroll.js:    Y.extend(WS, S);
+./dd/js/scroll.js:    Y.extend(NS, S);
+./event-custom/tests/aop.html:                Y.extend(Base, Y.Event.Target, {
+./event-custom/tests/customevent.html:                Y.extend(Base, Y.EventTarget, {
+./event-simulate/tests/event-simulate.html:        Y.extend(GenericEventTestCase, Y.Test.Case, {
+./event-simulate/tests/event-simulate.html:        Y.extend(MouseButtonEventTestCase, GenericEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(MouseMovementEventTestCase, MouseButtonEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(KeyEventTestCase, GenericEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(KeyDirectionEventTestCase, KeyEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(TextEventTestCase, KeyEventTestCase, {
+./imageloader/js/imageloader.js:	Y.extend(Y.ImgLoadGroup, Y.Base, groupProto);
+./imageloader/js/imageloader.js:	Y.extend(Y.ImgLoadImgObj, Y.Base, imgProto);
+./node/build_rollup_tmp/node-debug.js:Y.extend(Node, Y.Base);
+./node/build_rollup_tmp/node-debug.js:Y.extend(NodeList, Y.Base);
+./node/build_rollup_tmp/node.js:Y.extend(Node, Y.Base);
+./node/build_rollup_tmp/node.js:Y.extend(NodeList, Y.Base);
+./node/js/node.js:Y.extend(Node, Y.Base);
+./node/js/nodelist.js:Y.extend(NodeList, Y.Base);
+./node-focusmanager/js/node-focusmanager.js:Y.extend(NodeFocusManager, Y.Plugin.Base, {
+./node-menunav/js/node-menunav.js:Y.extend(NodeMenuNav, Y.Plugin.Base, {
+./oop/build_tmp/oop-debug.js:    Y.extend = function(r, s, px, sx) {
+./oop/build_tmp/oop.js:    Y.extend = function(r, s, px, sx) {
+./oop/js/oop.js:    Y.extend = function(r, s, px, sx) {
+./oop/tests/oop.html:                Y.extend(Base, Y.Event.Target, {
+./oop/tests/oop.html:                Y.extend(Extended, Base, {
+./plugin/js/plugin.js:        Y.extend(Plugin, Y.Base, {
+./profiler/tests/profiler.html:        Y.extend(root.SubType, root.SuperType, {    
+./slider/js/slider.js:Y.extend(Slider, Y.Widget, {
+./test/build_tmp/test-debug.js:        Y.extend(TestRunner, Y.Event.Target, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.Error, Error, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.ComparisonFailure, Y.Assert.Error, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.UnexpectedValue, Y.Assert.Error, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.ShouldFail, Y.Assert.Error);
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.ShouldError, Y.Assert.Error);
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
+./test/build_tmp/test.js:        Y.extend(TestRunner, Y.Event.Target, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.Error, Error, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.ComparisonFailure, Y.Assert.Error, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.UnexpectedValue, Y.Assert.Error, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.ShouldFail, Y.Assert.Error);
+./test/build_tmp/test.js:    Y.extend(Y.Assert.ShouldError, Y.Assert.Error);
+./test/build_tmp/test.js:    Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
+./test/js/Assert.js:    Y.extend(Y.Assert.Error, Error, {
+./test/js/Assert.js:    Y.extend(Y.Assert.ComparisonFailure, Y.Assert.Error, {
+./test/js/Assert.js:    Y.extend(Y.Assert.UnexpectedValue, Y.Assert.Error, {
+./test/js/Assert.js:    Y.extend(Y.Assert.ShouldFail, Y.Assert.Error);
+./test/js/Assert.js:    Y.extend(Y.Assert.ShouldError, Y.Assert.Error);
+./test/js/Assert.js:    Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
+./test/js/TestRunner.js:        Y.extend(TestRunner, Y.Event.Target, {
+./widget/js/Widget.js:Y.extend(Widget, Y.Base, {
+./anim/js/anim-node-plugin.js:Y.extend(NodeFX, Y.Anim);
+./anim/js/anim.js:    Y.extend(Y.Anim, Y.Base, proto);
+./anim/js/anim-node-plugin.js:Y.extend(NodeFX, Y.Anim);
+./anim/js/anim.js:    Y.extend(Y.Anim, Y.Base, proto);
+./attribute/tests/attribute.html:            Y.extend(AttrHost, Y.Base);
+./attribute/tests/attribute.html:            Y.extend(ExtendedAttrHost, AttrHost);
+./attribute/tests/attribute.html:                    Y.extend(Test, Y.Base, {
+./attribute/tests/attribute.html:            Y.extend(AttrHost, Y.Base);
+./attribute/tests/attribute.html:            Y.extend(ExtendedAttrHost, AttrHost);
+./attribute/tests/attribute.html:                    Y.extend(Test, Y.Base, {
+./base/js/BaseBuild.js:            Y.extend(BuiltClass, main);
+./base/tests/baseBuild.html:            Y.extend(MainPlugin, Y.Plugin);
+./base/tests/baseBuild.html:            Y.extend(Main, Y.Base, {
+./base/tests/baseBuild.html:            Y.extend(ExtOnePlugin, Y.Plugin);
+./base/tests/baseBuild.html:            Y.extend(ExtTwoPlugin, Y.Plugin);
+./base/tests/basePerf.html:    Y.extend(Test, Y.Base, {
+./base/tests/plugins.html:            Y.extend(PluginOne, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(PluginTwo, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(PluginThree, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(PluginFour, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(Host, Y.Base, {
+./base/tests/plugins.html:            Y.extend(ExtendedHost, Host, {
+./base/js/BaseBuild.js:            Y.extend(BuiltClass, main);
+./base/tests/baseBuild.html:            Y.extend(MainPlugin, Y.Plugin);
+./base/tests/baseBuild.html:            Y.extend(Main, Y.Base, {
+./base/tests/baseBuild.html:            Y.extend(ExtOnePlugin, Y.Plugin);
+./base/tests/baseBuild.html:            Y.extend(ExtTwoPlugin, Y.Plugin);
+./base/tests/basePerf.html:    Y.extend(Test, Y.Base, {
+./base/tests/plugins.html:            Y.extend(PluginOne, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(PluginTwo, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(PluginThree, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(PluginFour, Y.Plugin.Base, {
+./base/tests/plugins.html:            Y.extend(Host, Y.Base, {
+./base/tests/plugins.html:            Y.extend(ExtendedHost, Host, {
+./cache/js/cache.js:Y.extend(Cache, Y.Plugin.Base, {
+./cache/js/cache.js:Y.extend(Cache, Y.Plugin.Base, {
+./compat/js/yui-compat.js:    // extend: Y.bind(Y.extend, Y), 
+./compat/js/yui-compat.js:    extend: Y.extend,
+./compat/js/yui-compat.js:    Y.extend(CE, Y.CustomEvent, {
+./compat/js/yui-compat.js:    Y.extend(EP, Y.Event.Target, {
+./compat/js/yui-compat.js:    // extend: Y.bind(Y.extend, Y), 
+./compat/js/yui-compat.js:    extend: Y.extend,
+./compat/js/yui-compat.js:    Y.extend(CE, Y.CustomEvent, {
+./compat/js/yui-compat.js:    Y.extend(EP, Y.Event.Target, {
+./console/build_tmp/console-debug.js:Y.extend(Console,Y.Widget,{
+./console/build_tmp/console.js:Y.extend(Console,Y.Widget,{
+./console/js/console.js:Y.extend(Console,Y.Widget,{
+./console/js/filter.js:Y.extend(ConsoleFilters, Y.Plugin.Base, {
+./console/build_tmp/console-debug.js:Y.extend(Console,Y.Widget,{
+./console/build_tmp/console.js:Y.extend(Console,Y.Widget,{
+./console/js/console.js:Y.extend(Console,Y.Widget,{
+./console/js/filter.js:Y.extend(ConsoleFilters, Y.Plugin.Base, {
+./datasource/js/datasource-arrayschema.js:Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
+./datasource/js/datasource-cache.js:Y.extend(DataSourceCache, Y.Cache, {
+./datasource/js/datasource-function.js:Y.extend(DSFn, Y.DataSource.Local, {
+./datasource/js/datasource-jsonschema.js:Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
+./datasource/js/datasource-local.js:Y.extend(DSLocal, Y.Base, {
+./datasource/js/datasource-scriptnode.js:Y.extend(DSSN, Y.DataSource.Local, {
+./datasource/js/datasource-textschema.js:Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
+./datasource/js/datasource-xhr.js:Y.extend(DSXHR, Y.DataSource.Local, {
+./datasource/js/datasource-xmlschema.js:Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
+./datasource/js/datasource-arrayschema.js:Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
+./datasource/js/datasource-cache.js:Y.extend(DataSourceCache, Y.Cache, {
+./datasource/js/datasource-function.js:Y.extend(DSFn, Y.DataSource.Local, {
+./datasource/js/datasource-jsonschema.js:Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
+./datasource/js/datasource-local.js:Y.extend(DSLocal, Y.Base, {
+./datasource/js/datasource-scriptnode.js:Y.extend(DSSN, Y.DataSource.Local, {
+./datasource/js/datasource-textschema.js:Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
+./datasource/js/datasource-xhr.js:Y.extend(DSXHR, Y.DataSource.Local, {
+./datasource/js/datasource-xmlschema.js:Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
+./dd/js/constrain.js:    Y.extend(C, Y.Base, proto);
+./dd/js/dd-drop-plugin.js:        Y.extend(Drop, Y.DD.Drop);
+./dd/js/dd-plugin.js:        Y.extend(Drag, Y.DD.Drag);
+./dd/js/ddm-base.js:    Y.extend(DDMBase, Y.Base, {
+./dd/js/drag.js:    Y.extend(Drag, Y.Base, {
+./dd/js/drop.js:    Y.extend(Drop, Y.Base, {
+./dd/js/proxy.js:    Y.extend(P, Y.Base, proto);
+./dd/js/scroll.js:    Y.extend(S, Y.Base, {
+./dd/js/scroll.js:    Y.extend(WS, S);
+./dd/js/scroll.js:    Y.extend(NS, S);
+./dd/js/constrain.js:    Y.extend(C, Y.Base, proto);
+./dd/js/dd-drop-plugin.js:        Y.extend(Drop, Y.DD.Drop);
+./dd/js/dd-plugin.js:        Y.extend(Drag, Y.DD.Drag);
+./dd/js/ddm-base.js:    Y.extend(DDMBase, Y.Base, {
+./dd/js/drag.js:    Y.extend(Drag, Y.Base, {
+./dd/js/drop.js:    Y.extend(Drop, Y.Base, {
+./dd/js/proxy.js:    Y.extend(P, Y.Base, proto);
+./dd/js/scroll.js:    Y.extend(S, Y.Base, {
+./dd/js/scroll.js:    Y.extend(WS, S);
+./dd/js/scroll.js:    Y.extend(NS, S);
+./event-custom/tests/aop.html:                Y.extend(Base, Y.Event.Target, {
+./event-custom/tests/customevent.html:                Y.extend(Base, Y.EventTarget, {
+./event-custom/tests/aop.html:                Y.extend(Base, Y.Event.Target, {
+./event-custom/tests/customevent.html:                Y.extend(Base, Y.EventTarget, {
+./event-simulate/tests/event-simulate.html:        Y.extend(GenericEventTestCase, Y.Test.Case, {
+./event-simulate/tests/event-simulate.html:        Y.extend(MouseButtonEventTestCase, GenericEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(MouseMovementEventTestCase, MouseButtonEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(KeyEventTestCase, GenericEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(KeyDirectionEventTestCase, KeyEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(TextEventTestCase, KeyEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(GenericEventTestCase, Y.Test.Case, {
+./event-simulate/tests/event-simulate.html:        Y.extend(MouseButtonEventTestCase, GenericEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(MouseMovementEventTestCase, MouseButtonEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(KeyEventTestCase, GenericEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(KeyDirectionEventTestCase, KeyEventTestCase, {
+./event-simulate/tests/event-simulate.html:        Y.extend(TextEventTestCase, KeyEventTestCase, {
+./imageloader/js/imageloader.js:	Y.extend(Y.ImgLoadGroup, Y.Base, groupProto);
+./imageloader/js/imageloader.js:	Y.extend(Y.ImgLoadImgObj, Y.Base, imgProto);
+./imageloader/js/imageloader.js:	Y.extend(Y.ImgLoadGroup, Y.Base, groupProto);
+./imageloader/js/imageloader.js:	Y.extend(Y.ImgLoadImgObj, Y.Base, imgProto);
+./node/build_rollup_tmp/node-debug.js:Y.extend(Node, Y.Base);
+./node/build_rollup_tmp/node-debug.js:Y.extend(NodeList, Y.Base);
+./node/build_rollup_tmp/node.js:Y.extend(Node, Y.Base);
+./node/build_rollup_tmp/node.js:Y.extend(NodeList, Y.Base);
+./node/js/node.js:Y.extend(Node, Y.Base);
+./node/js/nodelist.js:Y.extend(NodeList, Y.Base);
+./node/build_rollup_tmp/node-debug.js:Y.extend(Node, Y.Base);
+./node/build_rollup_tmp/node-debug.js:Y.extend(NodeList, Y.Base);
+./node/build_rollup_tmp/node.js:Y.extend(Node, Y.Base);
+./node/build_rollup_tmp/node.js:Y.extend(NodeList, Y.Base);
+./node/js/node.js:Y.extend(Node, Y.Base);
+./node/js/nodelist.js:Y.extend(NodeList, Y.Base);
+./node-focusmanager/js/node-focusmanager.js:Y.extend(NodeFocusManager, Y.Plugin.Base, {
+./node-focusmanager/js/node-focusmanager.js:Y.extend(NodeFocusManager, Y.Plugin.Base, {
+./node-menunav/js/node-menunav.js:Y.extend(NodeMenuNav, Y.Plugin.Base, {
+./node-menunav/js/node-menunav.js:Y.extend(NodeMenuNav, Y.Plugin.Base, {
+./oop/build_tmp/oop-debug.js:    Y.extend = function(r, s, px, sx) {
+./oop/build_tmp/oop.js:    Y.extend = function(r, s, px, sx) {
+./oop/js/oop.js:    Y.extend = function(r, s, px, sx) {
+./oop/tests/oop.html:                Y.extend(Base, Y.Event.Target, {
+./oop/tests/oop.html:                Y.extend(Extended, Base, {
+./oop/build_tmp/oop-debug.js:    Y.extend = function(r, s, px, sx) {
+./oop/build_tmp/oop.js:    Y.extend = function(r, s, px, sx) {
+./oop/js/oop.js:    Y.extend = function(r, s, px, sx) {
+./oop/tests/oop.html:                Y.extend(Base, Y.Event.Target, {
+./oop/tests/oop.html:                Y.extend(Extended, Base, {
+./plugin/js/plugin.js:        Y.extend(Plugin, Y.Base, {
+./plugin/js/plugin.js:        Y.extend(Plugin, Y.Base, {
+./profiler/tests/profiler.html:        Y.extend(root.SubType, root.SuperType, {    
+./profiler/tests/profiler.html:        Y.extend(root.SubType, root.SuperType, {    
+./slider/js/slider.js:Y.extend(Slider, Y.Widget, {
+./slider/js/slider.js:Y.extend(Slider, Y.Widget, {
+./test/build_tmp/test-debug.js:        Y.extend(TestRunner, Y.Event.Target, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.Error, Error, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.ComparisonFailure, Y.Assert.Error, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.UnexpectedValue, Y.Assert.Error, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.ShouldFail, Y.Assert.Error);
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.ShouldError, Y.Assert.Error);
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
+./test/build_tmp/test.js:        Y.extend(TestRunner, Y.Event.Target, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.Error, Error, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.ComparisonFailure, Y.Assert.Error, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.UnexpectedValue, Y.Assert.Error, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.ShouldFail, Y.Assert.Error);
+./test/build_tmp/test.js:    Y.extend(Y.Assert.ShouldError, Y.Assert.Error);
+./test/build_tmp/test.js:    Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
+./test/js/Assert.js:    Y.extend(Y.Assert.Error, Error, {
+./test/js/Assert.js:    Y.extend(Y.Assert.ComparisonFailure, Y.Assert.Error, {
+./test/js/Assert.js:    Y.extend(Y.Assert.UnexpectedValue, Y.Assert.Error, {
+./test/js/Assert.js:    Y.extend(Y.Assert.ShouldFail, Y.Assert.Error);
+./test/js/Assert.js:    Y.extend(Y.Assert.ShouldError, Y.Assert.Error);
+./test/js/Assert.js:    Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
+./test/js/TestRunner.js:        Y.extend(TestRunner, Y.Event.Target, {
+./test/build_tmp/test-debug.js:        Y.extend(TestRunner, Y.Event.Target, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.Error, Error, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.ComparisonFailure, Y.Assert.Error, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.UnexpectedValue, Y.Assert.Error, {
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.ShouldFail, Y.Assert.Error);
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.ShouldError, Y.Assert.Error);
+./test/build_tmp/test-debug.js:    Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
+./test/build_tmp/test.js:        Y.extend(TestRunner, Y.Event.Target, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.Error, Error, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.ComparisonFailure, Y.Assert.Error, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.UnexpectedValue, Y.Assert.Error, {
+./test/build_tmp/test.js:    Y.extend(Y.Assert.ShouldFail, Y.Assert.Error);
+./test/build_tmp/test.js:    Y.extend(Y.Assert.ShouldError, Y.Assert.Error);
+./test/build_tmp/test.js:    Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
+./test/js/Assert.js:    Y.extend(Y.Assert.Error, Error, {
+./test/js/Assert.js:    Y.extend(Y.Assert.ComparisonFailure, Y.Assert.Error, {
+./test/js/Assert.js:    Y.extend(Y.Assert.UnexpectedValue, Y.Assert.Error, {
+./test/js/Assert.js:    Y.extend(Y.Assert.ShouldFail, Y.Assert.Error);
+./test/js/Assert.js:    Y.extend(Y.Assert.ShouldError, Y.Assert.Error);
+./test/js/Assert.js:    Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
+./test/js/TestRunner.js:        Y.extend(TestRunner, Y.Event.Target, {
+./widget/js/Widget.js:Y.extend(Widget, Y.Base, {
+./widget/js/Widget.js:Y.extend(Widget, Y.Base, {

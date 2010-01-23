@@ -9,7 +9,7 @@ if (!$_GET['quirks']) {
     <style type="text/css" media="screen">
         
         html {
-            Xborder: 10px solid #000;
+            border: 0px solid #000;
         }
         
         body {
@@ -202,6 +202,8 @@ if (!$_GET['quirks']) {
     <script type="text/javascript" src="../../../build/event-simulate/event-simulate.js?<?php echo rand(1, 999) ?>"></script>
     <script type="text/javascript" src="../../../build/event/event.js?<?php echo rand(1, 999) ?>"></script>
     <script type="text/javascript" src="../../../build/dom/dom.js?<?php echo rand(1, 999) ?>"></script>
+    <script type="text/javascript" src="../../../build/base/base.js?<?php echo rand(1, 999) ?>"></script>
+    <script type="text/javascript" src="../../../build/attribute/attribute.js?<?php echo rand(1, 999) ?>"></script>
     <script type="text/javascript" src="../../../build/node/node.js?<?php echo rand(1, 999) ?>"></script>
 
 <script type="text/javascript">
@@ -272,8 +274,8 @@ YUI(yConfig).use('*', function(Y) {
             var test = Y.Node.get('document').query('#test_' + id);
             var xy1 = n.getXY();
 
-            xy1[0] = Math.ceil(xy1[0]);
-            xy1[1] = Math.ceil(xy1[1]);
+            xy1[0] = Math.round(xy1[0]);
+            xy1[1] = Math.round(xy1[1]);
 
             var xy2 = [test.get('offsetLeft'), test.get('offsetTop')];
             if (xy1[0] !== xy2[0]) {

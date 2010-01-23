@@ -5,6 +5,7 @@ YUI.add('dd-ddm-drop', function(Y) {
      * @module dd
      * @submodule dd-ddm-drop
      * @for DDM
+     * @namespace DD
      */
 
     //TODO CSS class name for the bestMatch..
@@ -171,18 +172,28 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         isOverTarget: function(drop) {
             if (this.activeDrag && drop) {
-                var xy = this.activeDrag.mouseXY;
-                if (xy) {
-                    if (this.activeDrag.get('dragMode') == this.STRICT) {
-                        return this.activeDrag.get('dragNode').inRegion(drop.region, true, this.activeDrag.region);
+                var xy = this.activeDrag.mouseXY, r, dMode = this.activeDrag.get('dragMode'),
+                    aRegion, node = drop.shim;
+                if (xy && this.activeDrag) {
+                    aRegion = this.activeDrag.region;
+                    if (dMode == this.STRICT) {
+                        return this.activeDrag.get('dragNode').inRegion(drop.region, true, aRegion);
                     } else {
                         if (drop && drop.shim) {
-                            return drop.shim.intersect({
-                                top: xy[1],
-                                bottom: xy[1],
-                                left: xy[0], 
-                                right: xy[0]
-                            }, drop.region).inRegion;
+                            if ((dMode == this.INTERSECT) && this._noShim) {
+                                r = ((aRegion) ? aRegion : this.activeDrag.get('node'));
+                                return drop.get('node').intersect(r).inRegion;
+                            } else {
+                                if (this._noShim) {
+                                    node = drop.get('node');
+                                }
+                                return node.intersect({
+                                    top: xy[1],
+                                    bottom: xy[1],
+                                    left: xy[0], 
+                                    right: xy[0]
+                                }, drop.region).inRegion;
+                            }
                         } else {
                             return false;
                         }
@@ -209,9 +220,13 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @description Clear the cache and activate the shims of all the targets
         */
         _activateTargets: function() {
+            this._noShim = true;
             this.clearCache();
             Y.each(this.targets, function(v, k) {
                 v._activateShim.apply(v, []);
+                if (v.get('noShim') == true) {
+                    this._noShim = false;
+                }
             }, this);
             this._handleTargetOver();
             
@@ -225,7 +240,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         getBestMatch: function(drops, all) {
             var biggest = null, area = 0, out;
-
+            
             Y.each(drops, function(v, k) {
                 var inter = this.activeDrag.get('dragNode').intersect(v.get('node'));
                 v.region.area = inter.area;
@@ -374,7 +389,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         getDrop: function(node) {
             var drop = false,
-                n = Y.Node.get(node);
+                n = Y.one(node);
             if (n instanceof Y.Node) {
                 Y.each(this.targets, function(v, k) {
                     if (n.compareTo(v.get('node'))) {

@@ -1,5 +1,6 @@
 YUI.add('dom-screen', function(Y) {
 
+(function(Y) {
 
 /**
  * Adds position and region management functionality to DOM.
@@ -8,88 +9,85 @@ YUI.add('dom-screen', function(Y) {
  * @for DOM
  */
 
-var OFFSET_TOP = 'offsetTop',
-
-    DOCUMENT_ELEMENT = 'documentElement',
+var DOCUMENT_ELEMENT = 'documentElement',
     COMPAT_MODE = 'compatMode',
-    OFFSET_LEFT = 'offsetLeft',
-    OFFSET_PARENT = 'offsetParent',
     POSITION = 'position',
     FIXED = 'fixed',
     RELATIVE = 'relative',
     LEFT = 'left',
     TOP = 'top',
-    SCROLL_LEFT = 'scrollLeft',
-    SCROLL_TOP = 'scrollTop',
     _BACK_COMPAT = 'BackCompat',
     MEDIUM = 'medium',
-    HEIGHT = 'height',
-    WIDTH = 'width',
     BORDER_LEFT_WIDTH = 'borderLeftWidth',
     BORDER_TOP_WIDTH = 'borderTopWidth',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
     GET_COMPUTED_STYLE = 'getComputedStyle',
 
+    Y_DOM = Y.DOM,
+
     // TODO: how about thead/tbody/tfoot/tr?
     // TODO: does caption matter?
     RE_TABLE = /^t(?:able|d|h)$/i;
 
-Y.mix(Y.DOM, {
+Y.mix(Y_DOM, {
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
      * @method winHeight
-
+     * @return {Number} The current height of the viewport.
      */
     winHeight: function(node) {
-        var h = Y.DOM._getWinSize(node)[HEIGHT];
+        var h = Y_DOM._getWinSize(node).height;
         return h;
     },
 
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
      * @method winWidth
-
+     * @return {Number} The current width of the viewport.
      */
     winWidth: function(node) {
-        var w = Y.DOM._getWinSize(node)[WIDTH];
+        var w = Y_DOM._getWinSize(node).width;
         return w;
     },
 
     /**
      * Document height 
      * @method docHeight
-
+     * @return {Number} The current height of the document.
      */
     docHeight:  function(node) {
-        var h = Y.DOM._getDocSize(node)[HEIGHT];
-        return Math.max(h, Y.DOM._getWinSize(node)[HEIGHT]);
+        var h = Y_DOM._getDocSize(node).height;
+        return Math.max(h, Y_DOM._getWinSize(node).height);
     },
 
     /**
      * Document width 
      * @method docWidth
+     * @return {Number} The current width of the document.
      */
     docWidth:  function(node) {
-        var w = Y.DOM._getDocSize(node)[WIDTH];
-        return Math.max(w, Y.DOM._getWinSize(node)[WIDTH]);
-    },
-
-    /**
-     * Amount page has been scroll vertically 
-     * @method docScrollX
-     */
-    docScrollX: function(node) {
-        var doc = Y.DOM._getDoc(node);
-        return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
+        var w = Y_DOM._getDocSize(node).width;
+        return Math.max(w, Y_DOM._getWinSize(node).width);
     },
 
     /**
      * Amount page has been scroll horizontally 
+     * @method docScrollX
+     * @return {Number} The current amount the screen is scrolled horizontally.
+     */
+    docScrollX: function(node) {
+        var doc = Y_DOM._getDoc(node);
+        return Math.max(doc[DOCUMENT_ELEMENT].scrollLeft, doc.body.scrollLeft);
+    },
+
+    /**
+     * Amount page has been scroll vertically 
      * @method docScrollY
+     * @return {Number} The current amount the screen is scrolled vertically.
      */
     docScrollY:  function(node) {
-        var doc = Y.DOM._getDoc(node);
-        return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
+        var doc = Y_DOM._getDoc(node);
+        return Math.max(doc[DOCUMENT_ELEMENT].scrollTop, doc.body.scrollTop);
     },
 
     /**
@@ -100,117 +98,157 @@ Y.mix(Y.DOM, {
      * @param element The target element
      * @return {Array} The XY position of the element
 
-     TODO: test inDocument/display
+     TODO: test inDocument/display?
      */
     getXY: function() {
         if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
             return function(node) {
-                if (!node) {
-                    return false;
-                }
-                var scrollLeft = Y.DOM.docScrollX(node),
-                    scrollTop = Y.DOM.docScrollY(node),
-                    box = node[GET_BOUNDING_CLIENT_RECT](),
-                    doc = Y.DOM._getDoc(node),
-                    //Round the numbers so we get sane data back
-                    xy = [Math.floor(box[LEFT]), Math.floor(box[TOP])];
+                var xy = null,
+                    scrollLeft,
+                    scrollTop,
+                    box,
+                    off1, off2,
+                    bLeft, bTop,
+                    mode,
+                    doc;
 
-                    if (Y.UA.ie) {
-                        var off1 = 2, off2 = 2,
-                        mode = doc[COMPAT_MODE],
-                        bLeft = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH),
-                        bTop = Y.DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
+                if (node) {
+                    if (Y_DOM.inDoc(node)) {
+                        scrollLeft = Y_DOM.docScrollX(node);
+                        scrollTop = Y_DOM.docScrollY(node);
+                        box = node[GET_BOUNDING_CLIENT_RECT]();
+                        doc = Y_DOM._getDoc(node);
+                        xy = [box.left, box.top];
 
-                        if (Y.UA.ie === 6) {
-                            if (mode !== _BACK_COMPAT) {
-                                off1 = 0;
-                                off2 = 0;
+                            if (Y.UA.ie) {
+                                off1 = 2;
+                                off2 = 2;
+                                mode = doc[COMPAT_MODE];
+                                bLeft = Y_DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH);
+                                bTop = Y_DOM[GET_COMPUTED_STYLE](doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
+
+                                if (Y.UA.ie === 6) {
+                                    if (mode !== _BACK_COMPAT) {
+                                        off1 = 0;
+                                        off2 = 0;
+                                    }
+                                }
+                                
+                                if ((mode == _BACK_COMPAT)) {
+                                    if (bLeft !== MEDIUM) {
+                                        off1 = parseInt(bLeft, 10);
+                                    }
+                                    if (bTop !== MEDIUM) {
+                                        off2 = parseInt(bTop, 10);
+                                    }
+                                }
+                                
+                                xy[0] -= off1;
+                                xy[1] -= off2;
+
                             }
+
+                        if ((scrollTop || scrollLeft)) {
+                            xy[0] += scrollLeft;
+                            xy[1] += scrollTop;
                         }
-                        
-                        if ((mode == _BACK_COMPAT)) {
-                            if (bLeft !== MEDIUM) {
-                                off1 = parseInt(bLeft, 10);
-                            }
-                            if (bTop !== MEDIUM) {
-                                off2 = parseInt(bTop, 10);
-                            }
-                        }
-                        
-                        xy[0] -= off1;
-                        xy[1] -= off2;
-
+                    } else { // default to current offsets
+                        xy = Y_DOM._getOffset(node);
                     }
-
-                if ((scrollTop || scrollLeft)) {
-                    xy[0] += scrollLeft;
-                    xy[1] += scrollTop;
                 }
-
-                // gecko may return sub-pixel (non-int) values
-                xy[0] = Math.floor(xy[0]);
-                xy[1] = Math.floor(xy[1]);
-
                 return xy;                   
             };
         } else {
             return function(node) { // manually calculate by crawling up offsetParents
                 //Calculate the Top and Left border sizes (assumes pixels)
-                var xy = [node[OFFSET_LEFT], node[OFFSET_TOP]],
-                    parentNode = node,
-                    // TODO: refactor with !! or just falsey
-                    bCheck = ((Y.UA.gecko || Y.UA.webkit > 519) ? true : false);
+                var xy = null,
+                    parentNode,
+                    bCheck,
+                    scrollTop,
+                    scrollLeft;
 
-                // TODO: worth refactoring for TOP/LEFT only?
-                while ((parentNode = parentNode[OFFSET_PARENT])) {
-                    xy[0] += parentNode[OFFSET_LEFT];
-                    xy[1] += parentNode[OFFSET_TOP];
-                    if (bCheck) {
-                        xy = Y.DOM._calcBorders(parentNode, xy);
+                if (node) {
+                    if (Y_DOM.inDoc(node)) {
+                        xy = [node.offsetLeft, node.offsetTop];
+                        parentNode = node;
+                        // TODO: refactor with !! or just falsey
+                        bCheck = ((Y.UA.gecko || Y.UA.webkit > 519) ? true : false);
+
+                        // TODO: worth refactoring for TOP/LEFT only?
+                        while ((parentNode = parentNode.offsetParent)) {
+                            xy[0] += parentNode.offsetLeft;
+                            xy[1] += parentNode.offsetTop;
+                            if (bCheck) {
+                                xy = Y_DOM._calcBorders(parentNode, xy);
+                            }
+                        }
+
+                        // account for any scrolled ancestors
+                        if (Y_DOM.getStyle(node, POSITION) != FIXED) {
+                            parentNode = node;
+
+                            while ((parentNode = parentNode.parentNode)) {
+                                scrollTop = parentNode.scrollTop;
+                                scrollLeft = parentNode.scrollLeft;
+
+                                //Firefox does something funky with borders when overflow is not visible.
+                                if (Y.UA.gecko && (Y_DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
+                                        xy = Y_DOM._calcBorders(parentNode, xy);
+                                }
+                                
+
+                                if (scrollTop || scrollLeft) {
+                                    xy[0] -= scrollLeft;
+                                    xy[1] -= scrollTop;
+                                }
+                            }
+                            xy[0] += Y_DOM.docScrollX(node);
+                            xy[1] += Y_DOM.docScrollY(node);
+
+                        } else {
+                            //Fix FIXED position -- add scrollbars
+                            xy[0] += Y_DOM.docScrollX(node);
+                            xy[1] += Y_DOM.docScrollY(node);
+                        }
+                    } else {
+                        xy = Y_DOM._getOffset(node);
                     }
                 }
-
-                // account for any scrolled ancestors
-                if (Y.DOM.getStyle(node, POSITION) != FIXED) {
-                    parentNode = node;
-                    var scrollTop, scrollLeft;
-
-                    while ((parentNode = parentNode.parentNode)) {
-                        scrollTop = parentNode[SCROLL_TOP];
-                        scrollLeft = parentNode[SCROLL_LEFT];
-
-                        //Firefox does something funky with borders when overflow is not visible.
-                        if (Y.UA.gecko && (Y.DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
-                                xy = Y.DOM._calcBorders(parentNode, xy);
-                        }
-                        
-
-                        if (scrollTop || scrollLeft) {
-                            xy[0] -= scrollLeft;
-                            xy[1] -= scrollTop;
-                        }
-                    }
-                    xy[0] += Y.DOM.docScrollX(node);
-                    xy[1] += Y.DOM.docScrollY(node);
-
-                } else {
-                    //Fix FIXED position -- add scrollbars
-                    if (Y.UA.opera) {
-                        xy[0] -= Y.DOM.docScrollX(node);
-                        xy[1] -= Y.DOM.docScrollY(node);
-                    } else if (Y.UA.webkit || Y.UA.gecko) {
-                        xy[0] += Y.DOM.docScrollX(node);
-                        xy[1] += Y.DOM.docScrollY(node);
-                    }
-                }
-                //Round the numbers so we get sane data back
-                xy[0] = Math.floor(xy[0]);
-                xy[1] = Math.floor(xy[1]);
 
                 return xy;                
             };
         }
     }(),// NOTE: Executing for loadtime branching
+
+    _getOffset: function(node) {
+        var pos,
+            xy = null;
+
+        if (node) {
+            pos = Y_DOM.getStyle(node, POSITION);
+            xy = [
+                parseInt(Y_DOM[GET_COMPUTED_STYLE](node, LEFT), 10),
+                parseInt(Y_DOM[GET_COMPUTED_STYLE](node, TOP), 10)
+            ];
+
+            if ( isNaN(xy[0]) ) { // in case of 'auto'
+                xy[0] = parseInt(Y_DOM.getStyle(node, LEFT), 10); // try inline
+                if ( isNaN(xy[0]) ) { // default to offset value
+                    xy[0] = (pos === RELATIVE) ? 0 : node.offsetLeft || 0;
+                }
+            } 
+
+            if ( isNaN(xy[1]) ) { // in case of 'auto'
+                xy[1] = parseInt(Y_DOM.getStyle(node, TOP), 10); // try inline
+                if ( isNaN(xy[1]) ) { // default to offset value
+                    xy[1] = (pos === RELATIVE) ? 0 : node.offsetTop || 0;
+                }
+            } 
+        }
+
+        return xy;
+
+    },
 
     /**
      * Gets the current X position of an element based on page coordinates. 
@@ -222,7 +260,7 @@ Y.mix(Y.DOM, {
      */
 
     getX: function(node) {
-        return Y.DOM.getXY(node)[0];
+        return Y_DOM.getXY(node)[0];
     },
 
     /**
@@ -235,7 +273,7 @@ Y.mix(Y.DOM, {
      */
 
     getY: function(node) {
-        return Y.DOM.getXY(node)[1];
+        return Y_DOM.getXY(node)[1];
     },
 
     /**
@@ -247,50 +285,41 @@ Y.mix(Y.DOM, {
      * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
      */
     setXY: function(node, xy, noRetry) {
-        var pos = Y.DOM.getStyle(node, POSITION),
-            setStyle = Y.DOM.setStyle,
+        var setStyle = Y_DOM.setStyle,
+            pos,
+            delta,
+            newXY,
+            currentXY;
 
-            delta = [ // assuming pixels; if not we will have to retry
-                parseInt( Y.DOM[GET_COMPUTED_STYLE](node, LEFT), 10 ),
-                parseInt( Y.DOM[GET_COMPUTED_STYLE](node, TOP), 10 )
-            ];
-    
-        if (pos == 'static') { // default to relative
-            pos = RELATIVE;
-            setStyle(node, POSITION, pos);
+        if (node && xy) {
+            pos = Y_DOM.getStyle(node, POSITION);
+
+            delta = Y_DOM._getOffset(node);       
+
+            if (pos == 'static') { // default to relative
+                pos = RELATIVE;
+                setStyle(node, POSITION, pos);
+            }
+
+            currentXY = Y_DOM.getXY(node);
+
+            if (xy[0] !== null) {
+                setStyle(node, LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
+            }
+
+            if (xy[1] !== null) {
+                setStyle(node, TOP, xy[1] - currentXY[1] + delta[1] + 'px');
+            }
+
+            if (!noRetry) {
+                newXY = Y_DOM.getXY(node);
+                if (newXY[0] !== xy[0] || newXY[1] !== xy[1]) {
+                    Y_DOM.setXY(node, xy, true); 
+                }
+            }
+          
+        } else {
         }
-
-        var currentXY = Y.DOM.getXY(node);
-
-        if (currentXY === false) { // has to be part of doc to have xy
-            return false; 
-        }
-        
-        if ( isNaN(delta[0]) ) {// in case of 'auto'
-            delta[0] = (pos == RELATIVE) ? 0 : node[OFFSET_LEFT];
-        } 
-        if ( isNaN(delta[1]) ) { // in case of 'auto'
-            delta[1] = (pos == RELATIVE) ? 0 : node[OFFSET_TOP];
-        } 
-
-        if (xy[0] !== null) {
-            setStyle(node, LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
-        }
-
-        if (xy[1] !== null) {
-            setStyle(node, TOP, xy[1] - currentXY[1] + delta[1] + 'px');
-        }
-      
-        if (!noRetry) {
-            var newXY = Y.DOM.getXY(node);
-
-            // if retry is true, try one more time if we miss 
-           if ( (xy[0] !== null && newXY[0] != xy[0]) || 
-                (xy[1] !== null && newXY[1] != xy[1]) ) {
-               Y.DOM.setXY(node, xy, true);
-           }
-        }        
-
     },
 
     /**
@@ -301,7 +330,7 @@ Y.mix(Y.DOM, {
      * @param {Int} x The X values for new position (coordinates are page-based)
      */
     setX: function(node, x) {
-        return Y.DOM.setXY(node, [x, null]);
+        return Y_DOM.setXY(node, [x, null]);
     },
 
     /**
@@ -312,12 +341,25 @@ Y.mix(Y.DOM, {
      * @param {Int} y The Y values for new position (coordinates are page-based)
      */
     setY: function(node, y) {
-        return Y.DOM.setXY(node, [null, y]);
+        return Y_DOM.setXY(node, [null, y]);
+    },
+
+    /**
+     * @method swapXY
+     * @description Swap the xy position with another node
+     * @param {Node} node The node to swap with
+     * @param {Node} otherNode The other node to swap with
+     * @return {Node}
+     */
+    swapXY: function(node, otherNode) {
+        var xy = Y_DOM.getXY(node);
+        Y_DOM.setXY(node, Y_DOM.getXY(otherNode));
+        Y_DOM.setXY(otherNode, xy);
     },
 
     _calcBorders: function(node, xy2) {
-        var t = parseInt(Y.DOM[GET_COMPUTED_STYLE](node, BORDER_TOP_WIDTH), 10) || 0,
-            l = parseInt(Y.DOM[GET_COMPUTED_STYLE](node, BORDER_LEFT_WIDTH), 10) || 0;
+        var t = parseInt(Y_DOM[GET_COMPUTED_STYLE](node, BORDER_TOP_WIDTH), 10) || 0,
+            l = parseInt(Y_DOM[GET_COMPUTED_STYLE](node, BORDER_LEFT_WIDTH), 10) || 0;
         if (Y.UA.gecko) {
             if (RE_TABLE.test(node.tagName)) {
                 t = 0;
@@ -330,7 +372,7 @@ Y.mix(Y.DOM, {
     },
 
     _getWinSize: function(node) {
-        var doc = Y.DOM._getDoc(),
+        var doc = Y_DOM._getDoc(),
             win = doc.defaultView || doc.parentWindow,
             mode = doc[COMPAT_MODE],
             h = win.innerHeight,
@@ -348,7 +390,7 @@ Y.mix(Y.DOM, {
     },
 
     _getDocSize: function(node) {
-        var doc = Y.DOM._getDoc(),
+        var doc = Y_DOM._getDoc(),
             root = doc[DOCUMENT_ELEMENT];
 
         if (doc[COMPAT_MODE] != 'CSS1Compat') {
@@ -358,36 +400,29 @@ Y.mix(Y.DOM, {
         return { height: root.scrollHeight, width: root.scrollWidth };
     }
 });
-/**
- * Adds position and region management functionality to DOM.
- * @module dom
- * @submodule dom-screen
- * @for DOM
- */
-
-var OFFSET_WIDTH = 'offsetWidth',
-    OFFSET_HEIGHT = 'offsetHeight',
-    TOP = 'top',
+})(Y);
+(function(Y) {
+var TOP = 'top',
     RIGHT = 'right',
     BOTTOM = 'bottom',
     LEFT = 'left',
-    TAG_NAME = 'tagName';
 
-var getOffsets = function(r1, r2) {
-    var t = Math.max(r1[TOP], r2[TOP]),
-        r = Math.min(r1[RIGHT], r2[RIGHT]),
-        b = Math.min(r1[BOTTOM], r2[BOTTOM]),
-        l = Math.max(r1[LEFT], r2[LEFT]),
-        ret = {};
-    
-    ret[TOP] = t;
-    ret[RIGHT] = r;
-    ret[BOTTOM] = b;
-    ret[LEFT] = l;
-    return ret;
-};
+    getOffsets = function(r1, r2) {
+        var t = Math.max(r1[TOP], r2[TOP]),
+            r = Math.min(r1[RIGHT], r2[RIGHT]),
+            b = Math.min(r1[BOTTOM], r2[BOTTOM]),
+            l = Math.max(r1[LEFT], r2[LEFT]),
+            ret = {};
+        
+        ret[TOP] = t;
+        ret[RIGHT] = r;
+        ret[BOTTOM] = b;
+        ret[LEFT] = l;
+        return ret;
+    },
 
-var DOM = DOM || Y.DOM;
+    DOM = Y.DOM;
+
 Y.mix(DOM, {
     /**
      * Returns an Object literal containing the following about this element: (top, right, bottom, left)
@@ -396,20 +431,16 @@ Y.mix(DOM, {
      @return {Object} Object literal containing the following about this element: (top, right, bottom, left)
      */
     region: function(node) {
-        var x = DOM.getXY(node),
+        var xy = DOM.getXY(node),
             ret = false;
         
-        if (x) {
-            ret = {
-                '0': x[0],
-                '1': x[1],
-                top: x[1],
-                right: x[0] + node[OFFSET_WIDTH],
-                bottom: x[1] + node[OFFSET_HEIGHT],
-                left: x[0],
-                height: node[OFFSET_HEIGHT],
-                width: node[OFFSET_WIDTH]
-            };
+        if (node && xy) {
+            ret = DOM._getRegion(
+                xy[1], // top
+                xy[0] + node.offsetWidth, // right
+                xy[1] + node.offsetHeight, // bottom
+                xy[0] // left
+            );
         }
 
         return ret;
@@ -424,10 +455,11 @@ Y.mix(DOM, {
      @return {Object} Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)
      */
     intersect: function(node, node2, altRegion) {
-        var r = altRegion || DOM.region(node), region = {};
+        var r = altRegion || DOM.region(node), region = {},
+            n = node2,
+            off;
 
-        var n = node2;
-        if (n[TAG_NAME]) {
+        if (n.tagName) {
             region = DOM.region(n);
         } else if (Y.Lang.isObject(node2)) {
             region = node2;
@@ -435,7 +467,7 @@ Y.mix(DOM, {
             return false;
         }
         
-        var off = getOffsets(region, r);
+        off = getOffsets(region, r);
         return {
             top: off[TOP],
             right: off[RIGHT],
@@ -458,10 +490,11 @@ Y.mix(DOM, {
      */
     inRegion: function(node, node2, all, altRegion) {
         var region = {},
-            r = altRegion || DOM.region(node);
+            r = altRegion || DOM.region(node),
+            n = node2,
+            off;
 
-        var n = node2;
-        if (n[TAG_NAME]) {
+        if (n.tagName) {
             region = DOM.region(n);
         } else if (Y.Lang.isObject(node2)) {
             region = node2;
@@ -476,7 +509,7 @@ Y.mix(DOM, {
                 r[TOP]    >= region[TOP]    && 
                 r[BOTTOM] <= region[BOTTOM]  );
         } else {
-            var off = getOffsets(region, r);
+            off = getOffsets(region, r);
             if (off[BOTTOM] >= off[TOP] && off[RIGHT] >= off[LEFT]) {
                 return true;
             } else {
@@ -499,6 +532,19 @@ Y.mix(DOM, {
             
     },
 
+    _getRegion: function(t, r, b, l) {
+        var region = {};
+
+        region[TOP] = region[1] = t;
+        region[LEFT] = region[0] = l;
+        region[BOTTOM] = b;
+        region[RIGHT] = r;
+        region.width = region[RIGHT] - region[LEFT];
+        region.height = region[BOTTOM] - region[TOP];
+
+        return region;
+    },
+
     /**
      * Returns an Object literal containing the following about the visible region of viewport: (top, right, bottom, left)
      * @method viewportRegion
@@ -506,15 +552,24 @@ Y.mix(DOM, {
      */
     viewportRegion: function(node) {
         node = node || Y.config.doc.documentElement;
-        var r = {};
-        r[TOP] = DOM.docScrollY(node);
-        r[RIGHT] = DOM.winWidth(node) + DOM.docScrollX(node);
-        r[BOTTOM] = (DOM.docScrollY(node) + DOM.winHeight(node));
-        r[LEFT] = DOM.docScrollX(node);
+        var ret = false,
+            scrollX,
+            scrollY;
 
-        return r;
+        if (node) {
+            scrollX = DOM.docScrollX(node);
+            scrollY = DOM.docScrollY(node);
+
+            ret = DOM._getRegion(scrollY, // top
+                DOM.winWidth(node) + scrollX, // right
+                scrollY + DOM.winHeight(node), // bottom
+                scrollX); // left
+        }
+
+        return ret;
     }
 });
+})(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
+}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});

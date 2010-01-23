@@ -7,6 +7,7 @@ YUI.add('widget-stdmod', function(Y) {
  */
     var L = Y.Lang,
         Node = Y.Node,
+        NodeList = Y.NodeList,
         UA = Y.UA,
         Widget = Y.Widget,
 
@@ -20,15 +21,15 @@ YUI.add('widget-stdmod', function(Y) {
         FILL_HEIGHT = "fillHeight",
         STDMOD = "stdmod",
 
-        PX = "px",
         NODE_SUFFIX = "Node",
         CONTENT_SUFFIX = "Content",
         INNER_HTML = "innerHTML",
         FIRST_CHILD = "firstChild",
         CHILD_NODES = "childNodes",
+        CREATE_DOCUMENT_FRAGMENT = "createDocumentFragment",
+        OWNER_DOCUMENT = "ownerDocument",
 
         CONTENT_BOX = "contentBox",
-        BOUNDING_BOX = "boundingBox",
 
         HEIGHT = "height",
         OFFSET_HEIGHT = "offsetHeight",
@@ -38,12 +39,14 @@ YUI.add('widget-stdmod', function(Y) {
         BodyChange = "bodyContentChange",
         FooterChange = "footerContentChange",
         FillHeightChange = "fillHeightChange",
-        HeightChange = "HeightChange",        
+        HeightChange = "heightChange",        
         ContentUpdate = "contentUpdate",
 
         RENDERUI = "renderUI",
         BINDUI = "bindUI",
-        SYNCUI = "syncUI";
+        SYNCUI = "syncUI",
+
+        UI = Y.Widget.UI_SRC;
 
     /**
      * Widget extension, which can be used to add Standard Module support to the 
@@ -149,12 +152,9 @@ YUI.add('widget-stdmod', function(Y) {
          * in the header. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         headerContent: {
-            getter: function(val) {
-                var live = this._getStdModContent(STD_HEADER);
-                return (live === null) ? val : live;
-            }
+            value:null
         },
-        
+
         /**
          * @attribute footerContent
          * @type {String | Node}
@@ -163,10 +163,7 @@ YUI.add('widget-stdmod', function(Y) {
          * in the footer. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         footerContent: {
-            getter: function(val) {
-                var live = this._getStdModContent(STD_FOOTER);
-                return (live === null) ? val : live;
-            }
+            value:null
         },
         
         /**
@@ -177,10 +174,7 @@ YUI.add('widget-stdmod', function(Y) {
          * in the body. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         bodyContent: {
-            getter: function(val) {
-                var live = this._getStdModContent(STD_BODY);
-                return (live === null) ? val : live;
-            }
+            value:null
         },
         
         /**
@@ -256,17 +250,6 @@ YUI.add('widget-stdmod', function(Y) {
         footer : '<div class="' + StdMod.SECTION_CLASS_NAMES[STD_FOOTER] + '"></div>'
     };
 
-    /**
-     * Stores nodes created from the WidgetStdMod.TEMPLATES strings,
-     * which are cloned to create new header, footer, body sections for
-     * new instances.
-     *
-     * @property WidgetStdMod._TEMPLATES
-     * @static
-     * @private
-     */
-    StdMod._TEMPLATES = {};
-
     StdMod.prototype = {
 
         /**
@@ -324,10 +307,12 @@ YUI.add('widget-stdmod', function(Y) {
          *
          * @method _afterHeaderChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterHeaderChange : function(e) {
-            this._uiSetStdMod(STD_HEADER, e.newVal, e.stdModPosition);
+            if (e.src !== UI) {
+                this._uiSetStdMod(STD_HEADER, e.newVal, e.stdModPosition);
+            }
         },
 
         /**
@@ -336,10 +321,12 @@ YUI.add('widget-stdmod', function(Y) {
          *
          * @method _afterBodyChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterBodyChange : function(e) {
-            this._uiSetStdMod(STD_BODY, e.newVal, e.stdModPosition);
+            if (e.src !== UI) {
+                this._uiSetStdMod(STD_BODY, e.newVal, e.stdModPosition);
+            }
         },
 
         /**
@@ -348,10 +335,12 @@ YUI.add('widget-stdmod', function(Y) {
          *
          * @method _afterFooterChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterFooterChange : function(e) {
-            this._uiSetStdMod(STD_FOOTER, e.newVal, e.stdModPosition);
+            if (e.src !== UI) {
+                this._uiSetStdMod(STD_FOOTER, e.newVal, e.stdModPosition);
+            }
         },
 
         /**
@@ -360,7 +349,7 @@ YUI.add('widget-stdmod', function(Y) {
          * 
          * @method _afterFillHeightChange
          * @protected
-         * @param {Event.Facade} e The event facade for the attribute change
+         * @param {EventFacade} e The event facade for the attribute change
          */
         _afterFillHeightChange: function (e) {
             this._uiSetFillHeight(e.newVal);
@@ -437,11 +426,12 @@ YUI.add('widget-stdmod', function(Y) {
         _uiSetStdMod : function(section, content, where) {
             if (content) {
                 var node = this.getStdModNode(section) || this._renderStdMod(section);
-                if (content instanceof Node) {
+                if (content instanceof Node || content instanceof NodeList) {
                     this._addNodeRef(node, content, where);
                 } else {
                     this._addNodeHTML(node, content, where);
                 }
+                this.set(section + CONTENT_SUFFIX, this._getStdModContent(section), {src:UI});
                 this.fire(ContentUpdate);
             }
         },
@@ -487,7 +477,6 @@ YUI.add('widget-stdmod', function(Y) {
                 if (section === STD_HEADER) {
                     contentBox.insertBefore(sectionNode, fc);
                 } else {
-                    // BODY
                     var footer = this[STD_FOOTER + NODE_SUFFIX];
                     if (footer) {
                         contentBox.insertBefore(sectionNode, footer);
@@ -508,12 +497,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {Node} The new Node instance for the section
          */
         _getStdModTemplate : function(section) {
-            var template = StdMod._TEMPLATES[section];
-
-            if (!template) {
-                StdMod._TEMPLATES[section] = template = Node.create(StdMod.TEMPLATES[section]);
-            }
-            return template.cloneNode(true);
+            return Node.create(StdMod.TEMPLATES[section], this._stdModNode.get(OWNER_DOCUMENT));
         },
 
         /**
@@ -531,11 +515,11 @@ YUI.add('widget-stdmod', function(Y) {
          */
         _addNodeHTML : function(node, html, where) {
             if (where == AFTER) {
-                node.set(INNER_HTML, node.get(INNER_HTML) + html);
+                node.append(html);
             } else if (where == BEFORE) {
-                node.set(INNER_HTML, html + node.get(INNER_HTML));
+                node.prepend(html);
             } else {
-                node.set(INNER_HTML, html);
+                node.setContent(html);
             }
         },
 
@@ -548,27 +532,37 @@ YUI.add('widget-stdmod', function(Y) {
          * @private
          * 
          * @param {Node} node The section Node to be updated.
-         * @param {Node} child The new content Node to be added to section Node provided.
+         * @param {Node|NodeList} children The new content Node, or NodeList to be added to section Node provided.
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
          * If not provided, the content will replace existing content in the Node.
          */
         _addNodeRef : function(node, children, where) {
             var append = true, 
                 i, s;
-
+            
             if (where == BEFORE) {
-                if (node.get(FIRST_CHILD)) {
-                    for (i = node.size() - 1; i >=0; --i) {
-                        node.insertBefore(children.item(i), node.get(FIRST_CHILD));
+                var n = node.get(FIRST_CHILD);
+                if (n) {
+                    if (children instanceof NodeList) {
+                        for (i = children.size() - 1; i >=0; --i) {
+                            node.insertBefore(children.item(i), n);
+                        }
+                    } else {
+                        node.insertBefore(children, n);
                     }
                     append = false;
                 }
             } else if (where != AFTER) { // replace
                 node.set(INNER_HTML, EMPTY);
             }
+
             if (append) {
-                for (i = 0, s = children.size(); i < s; ++i) {
-                    node.appendChild(children.item(i));
+                if (children instanceof NodeList) {
+                    for (i = 0, s = children.size(); i < s; ++i) {
+                        node.appendChild(children.item(i));
+                    }
+                } else {
+                    node.appendChild(children);
                 }
             }
         },
@@ -597,8 +591,8 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * Helper method to query the rendered contents of the contentBox to find the
-         * node for the given section if it exists.
+         * Helper method to to find the rendered node for the given section,
+         * if it exists.
          * 
          * @method _findStdModSection
          * @private
@@ -606,7 +600,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {Node} The rendered node for the given section, or null if not found.
          */
         _findStdModSection: function(section) {
-            return this.get(CONTENT_BOX).query("> ." + StdMod.SECTION_CLASS_NAMES[section]);
+            return this.get(CONTENT_BOX).one("> ." + StdMod.SECTION_CLASS_NAMES[section]);
         },
 
         /**
@@ -619,8 +613,26 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {String} Inner HTML string with the contents of the section
          */
         _parseStdModHTML : function(section) {
-            var node = this._findStdModSection(section);
-            return (node) ? node.get(INNER_HTML) : "";
+            var node = this._findStdModSection(section),
+                docFrag, children;
+
+            if (node) {
+                docFrag = node.get(OWNER_DOCUMENT).invoke(CREATE_DOCUMENT_FRAGMENT);
+                children = node.get(CHILD_NODES);
+
+                for (var i = children.size() - 1; i >= 0; i--) {
+                    var fc = docFrag.get(FIRST_CHILD);
+                    if (fc) {
+                        docFrag.insertBefore(children.item(i), fc);
+                    } else {
+                        docFrag.appendChild(children.item(i));
+                    }
+                }
+
+                return docFrag;
+            }
+
+            return null;
         },
 
         /**
@@ -682,12 +694,13 @@ YUI.add('widget-stdmod', function(Y) {
          */
         fillHeight : function(node) {
             if (node) {
-                var boundingBox = this.get(BOUNDING_BOX),
+                var contentBox = this.get(CONTENT_BOX),
                     stdModNodes = [this.headerNode, this.bodyNode, this.footerNode],
                     stdModNode,
-                    total = 0,
+                    cbContentHeight,
                     filled = 0,
                     remaining = 0,
+
                     validNode = false;
 
                 for (var i = 0, l = stdModNodes.length; i < l; i++) {
@@ -704,22 +717,19 @@ YUI.add('widget-stdmod', function(Y) {
                 if (validNode) {
                     if (UA.ie || UA.opera) {
                         // Need to set height to 0, to allow height to be reduced
-                        node.setStyle(HEIGHT, 0 + PX);
+                        node.set(OFFSET_HEIGHT, 0);
                     }
 
-                    total = parseInt(boundingBox.getComputedStyle(HEIGHT), 10);
-                    if (L.isNumber(total)) {
-                        remaining = total - filled;
+                    cbContentHeight = contentBox.get(OFFSET_HEIGHT) -
+                            parseInt(contentBox.getComputedStyle("paddingTop"), 10) - 
+                            parseInt(contentBox.getComputedStyle("paddingBottom"), 10) - 
+                            parseInt(contentBox.getComputedStyle("borderBottomWidth"), 10) - 
+                            parseInt(contentBox.getComputedStyle("borderTopWidth"), 10);
 
+                    if (L.isNumber(cbContentHeight)) {
+                        remaining = cbContentHeight - filled;
                         if (remaining >= 0) {
-                            node.setStyle(HEIGHT, remaining + PX);
-                        }
-
-                        // Re-adjust height if required, to account for el padding and border
-                        var offsetHeight = this.get(CONTENT_BOX).get(OFFSET_HEIGHT); 
-                        if (offsetHeight != total) {
-                            remaining = remaining - (offsetHeight - total);
-                            node.setStyle(HEIGHT, remaining + PX);
+                            node.set(OFFSET_HEIGHT, remaining);
                         }
                     }
                 }
@@ -728,7 +738,6 @@ YUI.add('widget-stdmod', function(Y) {
     };
 
     Y.WidgetStdMod = StdMod;
-
 
 
 }, '@VERSION@' ,{requires:['widget']});

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YuiBuildImageLoader" default="local">
+    <description>ImageLoader Build File</description>
+    <property file="build.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+</project>

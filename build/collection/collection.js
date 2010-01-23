@@ -1,40 +1,19 @@
-YUI.add('collection', function(Y) {
+YUI.add('array-extras', function(Y) {
 
 /**
  * Collection utilities beyond what is provided in the YUI core
- * @module yui
+ * @module collection
+ * @submodule array-extras
  */
-
 
 var L = Y.Lang, Native = Array.prototype, A = Y.Array;
 
 /**
- * Executes the supplied function on each item in the array.
- * Returning true from the processing function will stop the 
- * processing of the remaining
- * items.
- * @method Array.some
- * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
- * @param o Optional context object
- * @static
- * @return {boolean} true if the function returns true on
- * any of the items in the array
+ * Adds the following array utilities to the YUI instance
+ * (Y.Array).  This is in addition to the methods provided
+ * in the core.
+ * @class YUI~array~extras
  */
- A.some = (Native.some) ?
-    function (a, f, o) { 
-        return Native.some.call(a, f, o);
-    } :
-    function (a, f, o) {
-        var l = a.length, i;
-        for (i=0; i<l; i=i+1) {
-            if (f.call(o, a[i], i, a)) {
-                return true;
-            }
-        }
-        return false;
-    };
-
 
 /**
  * Returns the index of the last item in the array
@@ -68,33 +47,29 @@ A.lastIndexOf = (Native.lastIndexOf) ?
  * @return {Array} a copy of the array with duplicate entries removed
  */
 A.unique = function(a, sort) {
-    var s = L.isValue(sort) ? sort : false,
-        b = a.slice(), i = 0, n = -1, item = null;
-    if (s) {
-        while (i < b.length) {
-            if (b[i] === item) {
-                n = (n == -1 ? i : n);
-                i += 1;
-            } else if (n !== -1) {
-                b.splice(n, i-n);
-                i = n;                
-                n = -1;
-            } else {
-                item = b[i];
-                i += 1;
-            }
+    var b = a.slice(), i = 0, n = -1, item = null;
+
+    while (i < b.length) {
+        item = b[i];
+        while ((n = A.lastIndexOf(b, item)) !== i) {
+            b.splice(n, 1);
         }
-        return b;
-    } else {
-        while (i < b.length) {
-            item = b[i];
-            while ((n = b.lastIndexOf(item)) !== i) {
-                b.splice(n, 1);
-            }
-            i += 1;
-        }
-        return b;
+        i += 1;
     }
+
+    // Note: the sort option doesn't really belong here... I think it was added
+    // because there was a way to fast path the two operations together.  That
+    // implementation was not working, so I replaced it with the following.
+    // Leaving it in so that the API doesn't get broken.
+    if (sort) {
+        if (L.isNumber(b[0])) {
+            b.sort(A.numericSort);
+        } else {
+            b.sort();
+        }
+    }
+
+    return b;
 };
 
 /**
@@ -158,8 +133,7 @@ A.every = (Native.every) ?
         return Native.every.call(a,f,o);
     } :
     function(a, f, o) {
-        var l = a.length;
-        for (var i = 0; i < l; i=i+1) {
+        for (var i = 0, l = a.length; i < l; i=i+1) {
             if (!f.call(o, a[i], i, a)) {
                 return false;
             }
@@ -238,8 +212,7 @@ A.reduce = (Native.reduce) ?
 * returns true for, or null if it never returns true
 */
 A.find = function(a, f, o) {
-    var l = a.length;
-    for(var i=0; i < l; i++) {
+    for(var i=0, l = a.length; i < l; i++) {
         if (f.call(o, a[i], i, a)) {
             return a[i];
         }
@@ -281,11 +254,16 @@ A.grep = function (a, pattern) {
 * rejected by the test function (or an empty array).
 */
 A.partition = function (a, f, o) {
-    var results = {matches: [], rejects: []};
+    var results = {
+        matches: [], 
+        rejects: []
+    };
+
     A.each(a, function (item, index) {
         var set = f.call(o, item, index, a) ? results.matches : results.rejects;
         set.push(item);
     });
+
     return results;
 };
 
@@ -309,5 +287,348 @@ A.zip = function (a, a2) {
     return results;
 };
 
+A.forEach = A.each;
+
 
 }, '@VERSION@' );
+YUI.add('arraylist', function(Y) {
+
+/**
+ * Collection utilities beyond what is provided in the YUI core
+ * @module collection
+ * @submodule arraylist
+ */
+
+var YArray      = Y.Array,
+    YArray_each = YArray.each,
+    ArrayListProto;
+
+/**
+ * Generic ArrayList class for managing lists of items and iterating operations
+ * over them.  The targeted use for this class is for augmentation onto a
+ * class that is responsible for managing multiple instances of another class
+ * (e.g. NodeList for Nodes).  The recommended use is to augment your class with
+ * ArrayList, then use ArrayList.addMethod to mirror the API of the constituent
+ * items on the list's API.
+ *
+ * The default implementation creates immutable lists, but mutability can be
+ * provided via the arraylist-add submodule or by implementing mutation methods
+ * directly on the augmented class's prototype.
+ *
+ * @class ArrayList
+ * @constructor
+ * @param items { Array } array of items this list will be responsible for
+ */
+function ArrayList( items ) {
+    if ( items !== undefined ) {
+        this._items = Y.Lang.isArray( items ) ? items : YArray( items );
+    } else {
+        // ||= to support lazy initialization from augment
+        this._items = this._items || [];
+    }
+}
+
+ArrayListProto = {
+    /**
+     * Get an item by index from the list.  Override this method if managing a
+     * list of objects that have a different public representation (e.g. Node
+     * instances vs DOM nodes).  The iteration methods that accept a user
+     * function will use this method for access list items for operation.
+     *
+     * @method item
+     * @param i { Integer } index to fetch
+     * @return { mixed } the item at the requested index
+     */
+    item: function ( i ) {
+        return this._items[i];
+    },
+
+    /**
+     * <p>Execute a function on each item of the list, optionally providing a
+     * custom execution context.  Default context is the item.</p>
+     *
+     * <p>The callback signature is <code>callback( item, index )</code>.</p>
+     *
+     * @method each
+     * @param fn { Function } the function to execute
+     * @param context { mixed } optional override 'this' in the function
+     * @return { ArrayList } this instance
+     * @chainable
+     */
+    each: function ( fn, context ) {
+        YArray_each( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            fn.call( context || item, item, i, this );
+        }, this);
+
+        return this;
+    },
+
+    /**
+     * <p>Execute a function on each item of the list, optionally providing a
+     * custom execution context.  Default context is the item.</p>
+     *
+     * <p>The callback signature is <code>callback( item, index )</code>.</p>
+     *
+     * <p>Unlike <code>each</code>, if the callback returns true, the
+     * iteratation will stop.</p>
+     *
+     * @method each
+     * @param fn { Function } the function to execute
+     * @param context { mixed } optional override 'this' in the function
+     * @return { Boolean } True if the function returned true on an item
+     */
+    some: function ( fn, context ) {
+        return YArray.some( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            return fn.call( context || item, item, i, this );
+        }, this);
+    },
+
+    /**
+     * Finds the first index of the needle in the managed array of items.
+     *
+     * @method indexOf
+     * @param needle { mixed } The item to search for
+     * @return { Integer } Array index if found.  Otherwise -1
+     */
+    indexOf: function ( needle ) {
+        return YArray.indexOf( this._items, needle );
+    },
+
+    /**
+     * <p>Create a new ArrayList (or augmenting class instance) from a subset
+     * of items as determined by the boolean function passed as the
+     * argument.  The original ArrayList is unchanged.</p>
+     *
+     * <p>The validator signature is <code>validator( item )</code>.</p>
+     *
+     * @method filter
+     * @param validator { Function } Boolean function to determine in or out
+     * @return { ArrayList } New instance based on who passed the validator
+     */
+    filter: function ( validator ) {
+        var items = [];
+
+        YArray_each( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            if ( validator( item ) ) {
+                items.push( item );
+            }
+        }, this);
+
+        return new this.constructor( items );
+    },
+
+    /**
+     * How many items are in this list?
+     *
+     * @method size
+     * @return { Integer } Number of items in the list
+     */
+    size: function () {
+        return this._items.length;
+    },
+
+    /** 
+     * Is this instance managing any items?
+     *
+     * @method isEmpty
+     * @return { Boolean } true if 1 or more items are being managed
+     */
+    isEmpty: function () {
+        return !this.size();
+    }
+};
+// Default implementation does not distinguish between public and private
+// item getter
+/**
+ * Protected method for optimizations that may be appropriate for API
+ * mirroring. Similar in functionality to <code>item</code>, but is used by
+ * methods added with <code>ArrayList.addMethod()</code>.
+ *
+ * @method _item
+ * @protected
+ * @param i { Integer } Index of item to fetch
+ * @return { mixed } The item appropriate for pass through API methods
+ */
+ArrayListProto._item = ArrayListProto.item;
+
+ArrayList.prototype  = ArrayListProto;
+
+Y.mix( ArrayList, {
+
+    /**
+     * <p>Adds a pass through method to dest (typically the prototype of a list
+     * class) that calls the named method on each item in the list with
+     * whatever parameters are passed in.  Allows for API indirection via list
+     * instances.</p>
+     *
+     * <p>Accepts a single string name or an array of string names.</p>
+     *
+     * <pre><code>list.each( function ( item ) {
+     *     item.methodName( 1, 2, 3 );
+     * } );
+     * // becomes
+     * list.methodName( 1, 2, 3 );</code></pre>
+     * 
+     * <p>Additionally, the pass through methods use the item retrieved by the
+     * <code>_item</code> method in case there is any special behavior that is
+     * appropriate for API mirroring.</p>
+     *
+     * @method addMethod
+     * @static
+     * @param dest { Object } Object or prototype to receive the iterator method
+     * @param name { String | Array } Name of method of methods to create
+     */
+    addMethod: function ( dest, names ) {
+
+        names = YArray( names );
+
+        YArray_each( names, function ( name ) {
+            dest[ name ] = function () {
+                var args = YArray( arguments, 0, true ),
+                    ret  = [];
+
+                YArray_each( this._items, function ( item, i ) {
+                    item = this._item( i );
+
+                    var result = item[ name ].apply( item, args );
+
+                    if ( result !== undefined && result !== item ) {
+                        ret.push( result );
+                    }
+                }, this);
+
+                return ret.length ? ret : this;
+            };
+        } );
+    }
+} );
+
+Y.ArrayList = ArrayList;
+
+
+}, '@VERSION@' );
+YUI.add('arraylist-add', function(Y) {
+
+/**
+ * Collection utilities beyond what is provided in the YUI core
+ * @module collection
+ * @submodule arraylist-add
+ */
+
+/**
+ * Adds methods add and remove to Y.ArrayList
+ * @class ArrayList~add
+ */
+Y.mix( Y.ArrayList.prototype, {
+
+    /**
+     * Add a single item to the ArrayList.  Does not prevent duplicates.
+     *
+     * @method add
+     * @param item { mixed } Item presumably of the same type as others in the
+     *                       ArrayList
+     * @return {ArrayList} the instance
+     * @chainable
+     */
+    add: function ( item ) {
+        this._items.push( item );
+
+        return this;
+    },
+
+    /**
+     * Removes first or all occurrences of an item to the ArrayList.  If a
+     * comparitor is not provided, uses itemsAreEqual method to determine
+     * matches.
+     *
+     * @method remove
+     * @param needle { mixed } Item to find and remove from the list
+     * @param all { Boolean } If true, remove all occurrences
+     * @param comparitor { Function } optional a/b function to test equivalence
+     * @return {ArrayList} the instance
+     * @chainable
+     */
+    remove: function ( needle, all, comparitor ) {
+        comparitor = comparitor || this.itemsAreEqual;
+
+        for (var i = this._items.length - 1; i >= 0; --i) {
+            if ( comparitor.call( this, needle, this.item( i ) ) ) {
+                this._items.splice( i, 1 );
+                if ( !all ) {
+                    break;
+                }
+            }
+        }
+
+        return this;
+    },
+
+    /**
+     * Default comparitor for items stored in this list.  Used by remove().
+     *
+     * @method itemsAreEqual
+     * @param a { mixed } item to test equivalence with
+     * @param b { mixed } other item to test equivalance
+     * @return { Boolean } true if items are deemed equivalent
+     */
+    itemsAreEqual: function ( a, b ) {
+        return a === b;
+    }
+
+} );
+
+
+}, '@VERSION@' ,{requires:['arraylist']});
+YUI.add('array-invoke', function(Y) {
+
+/**
+ * Collection utilities beyond what is provided in the YUI core
+ * @module collection
+ * @submodule array-invoke
+ */
+
+/**
+ * Adds the <code>Y.Array.invoke( items, methodName )</code> utility method.
+ * @class YUI~array~invoke
+ */
+
+/**
+ * <p>Execute a named method on an array of objects.  Items in the list that do
+ * not have a so named function will be skipped.</p>
+ *
+ * <p>The return values from each call are stored in an array and returned.</p>
+ *
+ * @method invoke
+ * @static
+ * @param items { Array } Array of objects supporting the named method
+ * @param name { String } the name of the method to execute on each item
+ * @param args* { mixed } Any number of additional args are passed as
+ *                        parameters to the execution of the named method.
+ * @return { Array } All return values, indexed according to item index.
+ */
+Y.Array.invoke = function ( items, name ) {
+    var args       = Y.Array( arguments, 2, true ),
+        isFunction = Y.Lang.isFunction,
+        ret        = [];
+
+    Y.Array.each( Y.Array( items ), function ( item, i ) {
+        if ( isFunction( item[ name ] ) ) {
+            ret[i] = item[ name ].apply( item, args );
+        }
+    });
+
+    return ret;
+};
+
+
+}, '@VERSION@' );
+
+
+YUI.add('collection', function(Y){}, '@VERSION@' ,{use:['array-extras', 'arraylist', 'arraylist-add', 'array-invoke']});
+

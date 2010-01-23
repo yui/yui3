@@ -10,7 +10,25 @@ YUI.add('oop', function(Y) {
 
     var L  = Y.Lang, 
         A  = Y.Array,
-        OP = Object.prototype;
+        OP = Object.prototype,
+        CLONE_MARKER = "_~yuim~_",
+        EACH = 'each',
+        SOME = 'some',
+
+        dispatch = function(o, f, c, proto, action) {
+            if (o && o[action] && o !== Y) {
+                return o[action].call(o, f, c);
+            } else {
+                switch (A.test(o)) {
+                    case 1:
+                        return A[action](o, f, c);
+                    case 2:
+                        return A[action](Y.Array(o, 0, true), f, c);
+                    default:
+                        return Y.Object[action](o, f, c, proto);
+                }
+            }
+        };
 
     /**
      * The following methods are added to the YUI instance
@@ -53,7 +71,7 @@ YUI.add('oop', function(Y) {
 
             // sequester all of the functions in the supplier and replace with
             // one that will restore all of them.
-            Y.each(sProto, function(v, k) {
+            Y.Object.each(sProto, function(v, k) {
                 replacements[k] = function() {
 
 // overwrite the prototype with all of the sequestered functions,
@@ -82,7 +100,6 @@ YUI.add('oop', function(Y) {
                     } else {
                         this[k] = v;
                     }
-
                 }
 
             }, newProto, true);
@@ -174,41 +191,44 @@ YUI.add('oop', function(Y) {
      * @return {YUI} the YUI instance
      */
     Y.each = function(o, f, c, proto) {
+        return dispatch(o, f, c, proto, EACH);
+    };
 
-        if (o.each && o.item) {
-            return o.each.call(o, f, c);
-        } else {
-            switch (A.test(o)) {
-                case 1:
-                    return A.each(o, f, c);
-                case 2:
-                    return A.each(Y.Array(o, 0, true), f, c);
-                default:
-                    return Y.Object.each(o, f, c, proto);
-            }
-        }
-
-        // return Y.Object.each(o, f, c);
+    /*
+     * Executes the supplied function for each item in
+     * a collection.  The operation stops if the function
+     * returns true. Supports arrays, objects, and
+     * Y.NodeLists.
+     * @method some
+     * @param o the object to iterate
+     * @param f the function to execute.  This function
+     * receives the value, key, and object as parameters
+     * @param proto if true, prototype properties are
+     * iterated on objects
+     * @return {boolean} true if the function ever returns true, false otherwise
+     */
+    Y.some = function(o, f, c, proto) {
+        return dispatch(o, f, c, proto, SOME);
     };
 
     /**
-     * Deep obj/array copy.  Functions will are cloned with Y.bind.
+     * Deep obj/array copy.  Functions are cloned with Y.bind.
      * Array-like objects are treated as arrays.
-     * primitives are returned untouched.  Optionally a
+     * Primitives are returned untouched.  Optionally, a
      * function can be provided to handle other data types,
      * filter keys, validate values, etc.
      *
      * @method clone
      * @param o what to clone
      * @param safe {boolean} if true, objects will not have prototype
-     * items from the source.  If false, it does.  In this case, the
-     * original is initally protected, but the clone is not completely immune
+     * items from the source.  If false, they will.  In this case, the
+     * original is initially protected, but the clone is not completely immune
      * from changes to the source object prototype.  Also, cloned prototype
      * items that are deleted from the clone will result in the value
-     * of the source prototype to be exposed.  If operating on a non-safe
+     * of the source prototype being exposed.  If operating on a non-safe
      * clone, items should be nulled out rather than deleted.
      * @TODO review
-     * @param f optional function to apply to each item in a collection
+     * @param f optional function to apply to each item in a collection;
      *          it will be executed prior to applying the value to
      *          the new object.  Return false to prevent the copy.
      * @param c optional execution context for f
@@ -216,13 +236,13 @@ YUI.add('oop', function(Y) {
      * object.  Used to set up context for cloned functions.
      * @return {Array|Object} the cloned object
      */
-    Y.clone = function(o, safe, f, c, owner) {
+    Y.clone = function(o, safe, f, c, owner, cloned) {
 
         if (!L.isObject(o)) {
             return o;
         }
 
-        var o2;
+        var o2, marked = cloned || {}, stamp;
 
         switch (L.type(o)) {
             case 'date':
@@ -236,14 +256,41 @@ YUI.add('oop', function(Y) {
                 o2 = [];
                 break;
             default:
+
+                // #2528250 only one clone of a given object should be created.
+                if (o[CLONE_MARKER]) {
+                    return marked[o[CLONE_MARKER]];
+                }
+
+                stamp = Y.guid();
+
                 o2 = (safe) ? {} : Y.Object(o);
+
+                o[CLONE_MARKER] = stamp;
+                marked[stamp] = o;
         }
 
-        Y.each(o, function(v, k) {
-            if (!f || (f.call(c || this, v, k, this, o) !== false)) {
-                this[k] =  Y.clone(v, safe, f, c, this);
-            }
-        }, o2);
+        // #2528250 don't try to clone element properties
+        if (!o.addEventListener && !o.attachEvent) {
+            Y.Object.each(o, function(v, k) {
+                if (!f || (f.call(c || this, v, k, this, o) !== false)) {
+                    if (k !== CLONE_MARKER) {
+                        if (o[k] === o) {
+                            this[k] = this;
+                        } else {
+                            this[k] = Y.clone(v, safe, f, c, owner || o, marked);
+                        }
+                    }
+                }
+            }, o2);
+        }
+
+        if (!cloned) {
+            Y.Object.each(marked, function(v, k) {
+                delete v[CLONE_MARKER];
+            });
+            marked = null;
+        }
 
         return o2;
     };
@@ -264,10 +311,11 @@ YUI.add('oop', function(Y) {
      * @return {function} the wrapped function
      */
     Y.bind = function(f, c) {
-        var a = Y.Array(arguments, 2, true);
+        var xargs = arguments.length > 2 ? Y.Array(arguments, 2, true) : null;
         return function () {
-            var fn = L.isString(f) ? c[f] : f;
-            return fn.apply(c || fn, a.concat(Y.Array(arguments, 0, true)));
+            var fn = L.isString(f) ? c[f] : f, 
+                args = (xargs) ? xargs.concat(Y.Array(arguments, 0, true)) : arguments;
+            return fn.apply(c || fn, args);
         };
     };
     
@@ -286,10 +334,11 @@ YUI.add('oop', function(Y) {
      * @return {function} the wrapped function
      */
     Y.rbind = function(f, c) {
-        var a = Y.Array(arguments, 2, true);
+        var xargs = arguments.length > 2 ? Y.Array(arguments, 2, true) : null;
         return function () {
-            var fn = L.isString(f) ? c[f] : f;
-            return fn.apply(c || fn, Y.Array(arguments, 0, true).concat(a));
+            var fn = L.isString(f) ? c[f] : f, 
+                args = (xargs) ? Y.Array(arguments, 0, true).concat(xargs) : arguments;
+            return fn.apply(c || fn, args);
         };
     };
 

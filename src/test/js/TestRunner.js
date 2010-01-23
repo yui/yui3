@@ -16,7 +16,7 @@
          * @constructor
          * @private
          */
-        function TestNode(testObject /*:Variant*/){
+        function TestNode(testObject){
         
             /**
              * The TestSuite, TestCase, or test function represented by this node.
@@ -30,7 +30,7 @@
              * @type TestNode
              * @property firstChild
              */        
-            this.firstChild /*:TestNode*/ = null;
+            this.firstChild = null;
             
             /**
              * Pointer to this node's last child.
@@ -58,11 +58,12 @@
              * @type object
              * @property results
              */                
-            this.results /*:Object*/ = {
+            this.results = {
                 passed : 0,
                 failed : 0,
                 total : 0,
-                ignored : 0
+                ignored : 0,
+                duration: 0
             };
             
             //initialize results
@@ -84,7 +85,7 @@
              * @param {Variant} testObject A TestSuite, TestCase, or the name of a test function.
              * @return {Void}
              */
-            appendChild : function (testObject /*:Variant*/) /*:Void*/{
+            appendChild : function (testObject){
                 var node = new TestNode(testObject);
                 if (this.firstChild === null){
                     this.firstChild = this.lastChild = node;
@@ -116,7 +117,7 @@
              * @static
              * @private
              */
-            this.masterSuite /*:Y.Test.Suite*/ = new Y.Test.Suite("YUI Test Results");        
+            this.masterSuite /*:Y.Test.Suite*/ = new Y.Test.Suite("yuitests" + (new Date()).getTime());        
     
             /**
              * Pointer to the current node in the test tree.
@@ -144,6 +145,35 @@
              * @static
              */
             this._log = true;
+            
+            /**
+             * Indicates if the TestRunner is waiting as a result of
+             * wait() being called.
+             * @type Boolean
+             * @property _waiting
+             * @private
+             * @static
+             */
+            this._waiting = false;
+            
+            /**
+             * Indicates if the TestRunner is currently running tests.
+             * @type Boolean
+             * @private
+             * @property _running
+             * @static
+             */
+            this._running = false;
+            
+            /**
+             * Holds copy of the results object generated when all tests are
+             * complete.
+             * @type Object
+             * @private
+             * @property _lastResults
+             * @static
+             */
+            this._lastResults = null;            
             
             //create events
             var events = [
@@ -175,14 +205,14 @@
              * @event testcasebegin
              * @static
              */         
-            TEST_CASE_BEGIN_EVENT /*:String*/ : "testcasebegin",
+            TEST_CASE_BEGIN_EVENT : "testcasebegin",
             
             /**
              * Fires when all tests in a test case have been executed.
              * @event testcasecomplete
              * @static
              */        
-            TEST_CASE_COMPLETE_EVENT /*:String*/ : "testcasecomplete",
+            TEST_CASE_COMPLETE_EVENT : "testcasecomplete",
             
             /**
              * Fires when a test suite is opened but before the first 
@@ -190,7 +220,7 @@
              * @event testsuitebegin
              * @static
              */        
-            TEST_SUITE_BEGIN_EVENT /*:String*/ : "testsuitebegin",
+            TEST_SUITE_BEGIN_EVENT : "testsuitebegin",
             
             /**
              * Fires when all test cases in a test suite have been
@@ -198,42 +228,42 @@
              * @event testsuitecomplete
              * @static
              */        
-            TEST_SUITE_COMPLETE_EVENT /*:String*/ : "testsuitecomplete",
+            TEST_SUITE_COMPLETE_EVENT : "testsuitecomplete",
             
             /**
              * Fires when a test has passed.
              * @event pass
              * @static
              */        
-            TEST_PASS_EVENT /*:String*/ : "pass",
+            TEST_PASS_EVENT : "pass",
             
             /**
              * Fires when a test has failed.
              * @event fail
              * @static
              */        
-            TEST_FAIL_EVENT /*:String*/ : "fail",
+            TEST_FAIL_EVENT : "fail",
             
             /**
              * Fires when a test has been ignored.
              * @event ignore
              * @static
              */        
-            TEST_IGNORE_EVENT /*:String*/ : "ignore",
+            TEST_IGNORE_EVENT : "ignore",
             
             /**
              * Fires when all test suites and test cases have been completed.
              * @event complete
              * @static
              */        
-            COMPLETE_EVENT /*:String*/ : "complete",
+            COMPLETE_EVENT : "complete",
             
             /**
              * Fires when the run() method is called.
              * @event begin
              * @static
              */        
-            BEGIN_EVENT /*:String*/ : "begin",    
+            BEGIN_EVENT : "begin",    
             
             //-------------------------------------------------------------------------
             // Logging-Related Methods
@@ -273,8 +303,8 @@
             _logEvent: function(event){
                 
                 //data variables
-                var message /*:String*/ = "";
-                var messageType /*:String*/ = "";
+                var message = "";
+                var messageType = "";
                 
                 switch(event.type){
                     case this.BEGIN_EVENT:
@@ -289,7 +319,7 @@
                         break;
                         
                     case this.TEST_FAIL_EVENT:
-                        message = event.testName + ": " + event.error.getMessage();
+                        message = event.testName + ": failed.\n" + event.error.getMessage();
                         messageType = "fail";
                         break;
                         
@@ -348,14 +378,16 @@
              * @private
              * @method _addTestCaseToTestTree
              */
-           _addTestCaseToTestTree : function (parentNode /*:TestNode*/, testCase /*:Y.Test.Case*/) /*:Void*/{
+           _addTestCaseToTestTree : function (parentNode, testCase /*:Y.Test.Case*/){
                 
                 //add the test suite
-                var node = parentNode.appendChild(testCase);
+                var node = parentNode.appendChild(testCase),
+                    prop,
+                    testName;
                 
                 //iterate over the items in the test case
-                for (var prop in testCase){
-                    if (prop.indexOf("test") === 0 && Y.Lang.isFunction(testCase[prop])){
+                for (prop in testCase){
+                    if ((prop.indexOf("test") === 0 || (prop.toLowerCase().indexOf("should") > -1 && prop.indexOf(" ") > -1 ))&& Y.Lang.isFunction(testCase[prop])){
                         node.appendChild(prop);
                     }
                 }
@@ -371,7 +403,7 @@
              * @private
              * @method _addTestSuiteToTestTree
              */
-            _addTestSuiteToTestTree : function (parentNode /*:TestNode*/, testSuite /*:Y.Test.Suite*/) /*:Void*/ {
+            _addTestSuiteToTestTree : function (parentNode, testSuite /*:Y.Test.Suite*/) {
                 
                 //add the test suite
                 var node = parentNode.appendChild(testSuite);
@@ -395,10 +427,10 @@
              * @private
              * @method _buildTestTree
              */
-            _buildTestTree : function () /*:Void*/ {
+            _buildTestTree : function () {
             
                 this._root = new TestNode(this.masterSuite);
-                this._cur = this._root;
+                //this._cur = this._root;
                 
                 //iterate over the items in the master suite
                 for (var i=0; i < this.masterSuite.items.length; i++){
@@ -423,18 +455,21 @@
              * @method _handleTestObjectComplete
              * @private
              */
-            _handleTestObjectComplete : function (node /*:TestNode*/) /*:Void*/ {
+            _handleTestObjectComplete : function (node) {
                 if (Y.Lang.isObject(node.testObject)){
                     node.parent.results.passed += node.results.passed;
                     node.parent.results.failed += node.results.failed;
                     node.parent.results.total += node.results.total;                
-                    node.parent.results.ignored += node.results.ignored;                
+                    node.parent.results.ignored += node.results.ignored;       
+                    //node.parent.results.duration += node.results.duration;
                     node.parent.results[node.testObject.name] = node.results;
                 
                     if (node.testObject instanceof Y.Test.Suite){
                         node.testObject.tearDown();
+                        node.results.duration = (new Date()) - node._start;
                         this.fire(this.TEST_SUITE_COMPLETE_EVENT, { testSuite: node.testObject, results: node.results});
                     } else if (node.testObject instanceof Y.Test.Case){
+                        node.results.duration = (new Date()) - node._start;
                         this.fire(this.TEST_CASE_COMPLETE_EVENT, { testCase: node.testObject, results: node.results});
                     }      
                 } 
@@ -451,9 +486,11 @@
              * @static
              * @method _next
              */
-            _next : function () /*:TestNode*/ {
+            _next : function () {
             
-                if (this._cur.firstChild) {
+                if (this._cur === null){
+                    this._cur = this._root;
+                } else if (this._cur.firstChild) {
                     this._cur = this._cur.firstChild;
                 } else if (this._cur.next) {
                     this._cur = this._cur.next;            
@@ -466,8 +503,10 @@
                     if (this._cur == this._root){
                         this._cur.results.type = "report";
                         this._cur.results.timestamp = (new Date()).toLocaleString();
-                        this._cur.results.duration = (new Date()) - this._cur.results.duration;                            
-                        this.fire(this.COMPLETE_EVENT, { results: this._cur.results});
+                        this._cur.results.duration = (new Date()) - this._cur._start;   
+                        this._lastResults = this._cur.results;
+                        this._running = false;                         
+                        this.fire(this.COMPLETE_EVENT, { results: this._lastResults});
                         this._cur = null;
                     } else {
                         this._handleTestObjectComplete(this._cur);               
@@ -486,24 +525,33 @@
              * @method _run
              * @static
              */
-            _run : function () /*:Void*/ {
+            _run : function () {
             
                 //flag to indicate if the TestRunner should wait before continuing
-                var shouldWait /*:Boolean*/ = false;
+                var shouldWait = false;
                 
                 //get the next test node
                 var node = this._next();
                 
                 if (node !== null) {
+                
+                    //set flag to say the testrunner is running
+                    this._running = true;
+                    
+                    //eliminate last results
+                    this._lastResult = null;                  
+                
                     var testObject = node.testObject;
                     
                     //figure out what to do
                     if (Y.Lang.isObject(testObject)){
                         if (testObject instanceof Y.Test.Suite){
                             this.fire(this.TEST_SUITE_BEGIN_EVENT, { testSuite: testObject });
+                            node._start = new Date();
                             testObject.setUp();
                         } else if (testObject instanceof Y.Test.Case){
                             this.fire(this.TEST_CASE_BEGIN_EVENT, { testCase: testObject });
+                            node._start = new Date();
                         }
                         
                         //some environments don't support setTimeout
@@ -521,10 +569,13 @@
                 }
             },
             
-            _resumeTest : function (segment /*:Function*/) /*:Void*/ {
+            _resumeTest : function (segment) {
             
                 //get relevant information
-                var node /*:TestNode*/ = this._cur;
+                var node = this._cur;                
+                
+                //we know there's no more waiting now
+                this._waiting = false;
                 
                 //if there's no node, it probably means a wait() was called after resume()
                 if (!node){
@@ -534,7 +585,7 @@
                     return;
                 }
                 
-                var testName /*:String*/ = node.testObject;
+                var testName = node.testObject;
                 var testCase /*:Y.Test.Case*/ = node.parent.testObject;
             
                 //cancel other waits if available
@@ -544,12 +595,12 @@
                 }
 
                 //get the "should" test cases
-                var shouldFail /*:Object*/ = (testCase._should.fail || {})[testName];
-                var shouldError /*:Object*/ = (testCase._should.error || {})[testName];
+                var shouldFail = (testCase._should.fail || {})[testName];
+                var shouldError = (testCase._should.error || {})[testName];
                 
                 //variable to hold whether or not the test failed
-                var failed /*:Boolean*/ = false;
-                var error /*:Error*/ = null;
+                var failed = false;
+                var error = null;
                     
                 //try the test
                 try {
@@ -566,7 +617,7 @@
                         failed = true;
                     }
                                
-                } catch (thrown /*:Error*/){
+                } catch (thrown){
 
                     //cancel any pending waits, the test already failed
                     if (testCase.__yui_wait){
@@ -590,6 +641,7 @@
                                     testCase.__yui_wait = setTimeout(function(){
                                         Y.Test.Runner._resumeTest(thrown.segment);
                                     }, thrown.delay);
+                                    this._waiting = true;
                                 } else {
                                     throw new Error("Asynchronous tests not supported in this environment.");
                                 }
@@ -646,12 +698,16 @@
                 //run the tear down
                 testCase.tearDown();
                 
+                //calculate duration
+                var duration = (new Date()) - node._start;
+                
                 //update results
                 node.parent.results[testName] = { 
                     result: failed ? "fail" : "pass",
                     message: error ? error.getMessage() : "Test passed",
                     type: "test",
-                    name: testName
+                    name: testName,
+                    duration: duration
                 };
                 
                 if (failed){
@@ -671,6 +727,31 @@
                 }
             
             },
+            
+            /**
+             * Handles an error as if it occurred within the currently executing
+             * test. This is for mock methods that may be called asynchronously
+             * and therefore out of the scope of the TestRunner. Previously, this
+             * error would bubble up to the browser. Now, this method is used
+             * to tell TestRunner about the error. This should never be called
+             * by anyplace other than the Mock object.
+             * @param {Error} error The error object.
+             * @return {Void}
+             * @method _handleError
+             * @private
+             * @static
+             */
+            _handleError: function(error){
+            
+                if (this._waiting){
+                    this._resumeTest(function(){
+                        throw error;
+                    });
+                } else {
+                    throw error;
+                }           
+            
+            },
                     
             /**
              * Runs a single test based on the data provided in the node.
@@ -680,15 +761,15 @@
              * @private
              * @name _runTest
              */
-            _runTest : function (node /*:TestNode*/) /*:Void*/ {
+            _runTest : function (node) {
             
                 //get relevant information
-                var testName /*:String*/ = node.testObject;
+                var testName = node.testObject;
                 var testCase /*:Y.Test.Case*/ = node.parent.testObject;
-                var test /*:Function*/ = testCase[testName];
+                var test = testCase[testName];
                 
                 //get the "should" test cases
-                var shouldIgnore /*:Object*/ = (testCase._should.ignore || {})[testName];
+                var shouldIgnore = (testCase._should.ignore || {})[testName];
                 
                 //figure out if the test should be ignored or not
                 if (shouldIgnore){
@@ -717,6 +798,9 @@
     
                 } else {
                 
+                    //mark the start time
+                    node._start = new Date();
+                
                     //run the setup
                     testCase.setUp();
                     
@@ -724,7 +808,31 @@
                     this._resumeTest(test);                
                 }
     
-            },        
+            },            
+
+            //-------------------------------------------------------------------------
+            // Misc Methods
+            //-------------------------------------------------------------------------   
+
+            /**
+             * Retrieves the name of the current result set.
+             * @return {String} The name of the result set.
+             * @method getName
+             */
+            getName: function(){
+                return this.masterSuite.name;
+            },         
+
+            /**
+             * The name assigned to the master suite of the TestRunner. This is the name
+             * that is output as the root's name when results are retrieved.
+             * @param {String} name The name of the result set.
+             * @return {Void}
+             * @method setName
+             */
+            setName: function(name){
+                this.masterSuite.name = name;
+            },            
             
             //-------------------------------------------------------------------------
             // Protected Methods
@@ -740,7 +848,7 @@
              * @static
              * @protected
              */
-            fire : function (type /*:String*/, data /*:Object*/) /*:Void*/ {
+            fire : function (type, data) {
                 data = data || {};
                 data.type = type;
                 TestRunner.superclass.fire.call(this, type, data);
@@ -757,8 +865,9 @@
              * @method add
              * @static
              */
-            add : function (testObject /*:Object*/) /*:Void*/ {
+            add : function (testObject) {
                 this.masterSuite.add(testObject);
+                return this;
             },
             
             /**
@@ -767,8 +876,71 @@
              * @method clear
              * @static
              */
-            clear : function () /*:Void*/ {
-                this.masterSuite.items = [];
+            clear : function () {
+                this.masterSuite = new Y.Test.Suite("yuitests" + (new Date()).getTime());
+            },
+            
+            /**
+             * Indicates if the TestRunner is waiting for a test to resume
+             * @return {Boolean} True if the TestRunner is waiting, false if not.
+             * @method isWaiting
+             * @static
+             */
+            isWaiting: function() {
+                return this._waiting;
+            },
+            
+            /**
+             * Indicates that the TestRunner is busy running tests and therefore can't
+             * be stopped and results cannot be gathered.
+             * @return {Boolean} True if the TestRunner is running, false if not.
+             * @method isRunning
+             */
+            isRunning: function(){
+                return this._running;
+            },
+            
+            /**
+             * Returns the last complete results set from the TestRunner. Null is returned
+             * if the TestRunner is running or no tests have been run.
+             * @param {Function} format (Optional) A test format to return the results in.
+             * @return {Object|String} Either the results object or, if a test format is 
+             *      passed as the argument, a string representing the results in a specific
+             *      format.
+             * @method getResults
+             */
+            getResults: function(format){
+                if (!this._running && this._lastResults){
+                    if (Y.Lang.isFunction(format)){
+                        return format(this._lastResults);                    
+                    } else {
+                        return this._lastResults;
+                    }
+                } else {
+                    return null;
+                }
+            },            
+            
+            /**
+             * Returns the coverage report for the files that have been executed.
+             * This returns only coverage information for files that have been
+             * instrumented using YUI Test Coverage and only those that were run
+             * in the same pass.
+             * @param {Function} format (Optional) A coverage format to return results in.
+             * @return {Object|String} Either the coverage object or, if a coverage
+             *      format is specified, a string representing the results in that format.
+             * @method getCoverage
+             */
+            getCoverage: function(format){
+                if (!this._running && typeof _yuitest_coverage == "object"){
+                    if (Y.Lang.isFunction(format)){
+                        return format(_yuitest_coverage);                    
+                    } else {
+                        return _yuitest_coverage;
+                    }
+                } else {
+                    return null;
+                }            
             },
             
             /**
@@ -779,26 +951,33 @@
              * @method resume
              * @static
              */
-            resume : function (segment /*:Function*/) /*:Void*/ {
+            resume : function (segment) {
                 this._resumeTest(segment || function(){});
             },
         
             /**
              * Runs the test suite.
+             * @param {Boolean} oldMode (Optional) Specifies that the <= 2.8 way of
+             *      internally managing test suites should be used.             
              * @return {Void}
              * @method run
              * @static
              */
-            run : function (testObject /*:Object*/) /*:Void*/ {
+            run : function (oldMode) {
                 
                 //pointer to runner to avoid scope issues 
                 var runner = Y.Test.Runner;
+                
+                //if there's only one suite on the masterSuite, move it up
+                if (!oldMode && this.masterSuite.items.length == 1 && this.masterSuite.items[0] instanceof Y.Test.Suite){
+                    this.masterSuite = this.masterSuite.items[0];
+                }                
     
                 //build the test tree
                 runner._buildTestTree();
                             
                 //set when the test started
-                runner._root.results.duration = (new Date()).valueOf();
+                runner._root._start = new Date();
                 
                 //fire the begin event
                 runner.fire(runner.BEGIN_EVENT);

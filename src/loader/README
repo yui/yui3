@@ -1,0 +1,12 @@
+YUI Loader
+    Processes dependencies and dynamically loads script and css for YUI and external modules.
+
+3.1.0
+  * Added a 'patterns' property.  Modules that are not predefined will be created with the
+    default values if it matches one of the patterns defined for the instance.
+
+3.0.0
+  * Extracted from the YUI seed.  Now fetched dynamically if
+    there are missing dependencies if not included.
+  * Reads metadata from on-page modules registered via Y.add if the module is not already known.
+  * Many new modules, many modules reorganized, dependency information has been tuned.

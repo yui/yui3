@@ -6,26 +6,42 @@ YUI.add('dd-constrain', function(Y) {
      * @submodule dd-constrain
      */
     /**
-     * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
-     * supports tick based moves and XY axis constraints.
+     * Plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a node or viewport. It supports tick based moves and XY axis constraints.
      * @class DragConstrained
-     * @extends Drag
+     * @extends Base
      * @constructor
+     * @namespace Plugin     
      */
 
     var DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',
+        HOST = 'host',
+        CON_2_REGION = 'constrain2region',
+        CON_2_NODE = 'constrain2node',
+        TICK_X_ARRAY = 'tickXArray',
+        TICK_Y_ARRAY = 'tickYArray',
+        DDM = Y.DD.DDM,
+        TOP = 'top',
+        RIGHT = 'right',
+        BOTTOM = 'bottom',
+        LEFT = 'left',
         proto = null,
-
-    C = function() {
-        C.superclass.constructor.apply(this, arguments);
-
-    };
+        C = function(config) {
+            C.superclass.constructor.apply(this, arguments);
+        };
     
-    C.NAME = 'drag';
+    C.NAME = 'DragConstrained';
+    /**
+    * @property con
+    * @description The Constrained instance will be placed on the Drag instance under the con namespace.
+    * @type {String}
+    */
+    C.NS = 'con';
 
     C.ATTRS = {
+        host: {
+        },
         /**
         * @attribute stickX
         * @description Stick the drag movement to the X-Axis. Default: false
@@ -92,7 +108,7 @@ YUI.add('dd-constrain', function(Y) {
             },
             setter: function (r) {
                 if (Y.Lang.isObject(r)) {
-                    if (Y.Lang.isNumber(r.top) && Y.Lang.isNumber(r.right) && Y.Lang.isNumber(r.left) && Y.Lang.isNumber(r.bottom)) {
+                    if (Y.Lang.isNumber(r[TOP]) && Y.Lang.isNumber(r[RIGHT]) && Y.Lang.isNumber(r[LEFT]) && Y.Lang.isNumber(r[BOTTOM])) {
                         var o = {};
                         Y.mix(o, r);
                         return o;
@@ -118,36 +134,52 @@ YUI.add('dd-constrain', function(Y) {
         },
         /**
         * @attribute constrain2node
-        * @description Will attempt to constrain the drag node to the bounderies of this node.
+        * @description Will attempt to constrain the drag node to the boundaries of this node.
         * @type Object
         */
         constrain2node: {
             value: false,
             setter: function(n) {
-                if (!this.get('constrain2region')) {
-                    var node = Y.Node.get(n);
+                if (!this.get(CON_2_REGION)) {
+                    var node = Y.one(n);
                     if (node) {
                         return node;
                     }
-                } else if (this.get('constrain2region') !== false) {
+                } else if (this.get(CON_2_REGION) !== false) {
                 }
                 return false;
             }
         },
         /**
         * @attribute constrain2view
-        * @description Will attempt to constrain the drag node to the bounderies of the viewport region.
+        * @description Will attempt to constrain the drag node to the boundaries of the viewport region.
         * @type Object
         */
         constrain2view: {
             value: false
+        },
+        /**
+        * @attribute cacheRegion
+        * @description Should the region be cached for performace. Default: true
+        * @type Boolean
+        */
+        cacheRegion: {
+            value: true
         }
     };
 
     proto = {
-        start: function() {
-            C.superclass.start.apply(this, arguments);
-            this._regionCache = null;
+        initializer: function() {
+            this.get(HOST).on('drag:start', Y.bind(this._handleStart, this));
+            this.get(HOST).after('drag:align', Y.bind(this.align, this));
+        },
+        /**
+        * @private
+        * @method _handleStart
+        * @description Fires on drag:start and clears the _regionCache
+        */
+        _handleStart: function() {
+            this.resetCache();
         },
         /**
         * @private
@@ -162,7 +194,14 @@ YUI.add('dd-constrain', function(Y) {
         * @description Get's the region and caches it, called from window.resize and when the cache is null
         */
         _cacheRegion: function() {
-            this._regionCache = this.get('constrain2node').get('region');
+            this._regionCache = this.get(CON_2_NODE).get('region');
+        },
+        /**
+        * @method resetCache
+        * @description Reset the internal region cache.
+        */
+        resetCache: function() {
+            this._regionCache = null;
         },
         /**
         * @method getRegion
@@ -172,62 +211,67 @@ YUI.add('dd-constrain', function(Y) {
         */
         getRegion: function(inc) {
             var r = {}, oh = null, ow = null,
-                g = this.get('gutter');
+                g = this.get('gutter'),
+                host = this.get(HOST);
 
-            if (this.get('constrain2node')) {
+            if (this.get(CON_2_NODE)) {
                 if (!this._regionCache) {
-                    Y.on('resize', this._cacheRegion, this, true, window);
+                    Y.on('resize', Y.bind(this._cacheRegion, this), window);
                     this._cacheRegion();
                 }
                 r = Y.clone(this._regionCache);
-            } else if (this.get('constrain2region')) {
-                r = this.get('constrain2region');
+                if (!this.get('cacheRegion')) {
+                    this.resetCache();
+                }
+            } else if (this.get(CON_2_REGION)) {
+                r = this.get(CON_2_REGION);
             } else if (this.get('constrain2view')) {
-                r = this.get('node').get('viewportRegion');
+                r = host.get(DRAG_NODE).get('viewportRegion');
             } else {
                 return false;
             }
 
             Y.each(g, function(i, n) {
-                if ((n == 'right') || (n == 'bottom')) {
+                if ((n == RIGHT) || (n == BOTTOM)) {
                     r[n] -= i;
                 } else {
                     r[n] += i;
                 }
             });
             if (inc) {
-                oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT);
-                ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
-                r.right = r.right - ow;
-                r.bottom = r.bottom - oh;
+                oh = host.get(DRAG_NODE).get(OFFSET_HEIGHT);
+                ow = host.get(DRAG_NODE).get(OFFSET_WIDTH);
+                r[RIGHT] = r[RIGHT] - ow;
+                r[BOTTOM] = r[BOTTOM] - oh;
             }
             return r;
         },
         /**
         * @private
         * @method _checkRegion
-        * @description
+        * @description Check if xy is inside a given region, if not change to it be inside.
         * @param {Array} _xy The XY to check if it's in the current region, if it isn't inside the region, it will reset the xy array to be inside the region.
         * @return {Array} The new XY that is inside the region
         */
         _checkRegion: function(_xy) {
             var oxy = _xy,
                 r = this.getRegion(),
-                oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
-                ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
+                host = this.get(HOST),
+                oh = host.get(DRAG_NODE).get(OFFSET_HEIGHT),
+                ow = host.get(DRAG_NODE).get(OFFSET_WIDTH);
             
-                if (oxy[1] > (r.bottom - oh)) {
-                    _xy[1] = (r.bottom - oh);
+                if (oxy[1] > (r[BOTTOM] - oh)) {
+                    _xy[1] = (r[BOTTOM] - oh);
                 }
-                if (r.top > oxy[1]) {
-                    _xy[1] = r.top;
+                if (r[TOP] > oxy[1]) {
+                    _xy[1] = r[TOP];
 
                 }
-                if (oxy[0] > (r.right - ow)) {
-                    _xy[0] = (r.right - ow);
+                if (oxy[0] > (r[RIGHT] - ow)) {
+                    _xy[0] = (r[RIGHT] - ow);
                 }
-                if (r.left > oxy[0]) {
-                    _xy[0] = r.left;
+                if (r[LEFT] > oxy[0]) {
+                    _xy[0] = r[LEFT];
                 }
 
             return _xy;
@@ -239,7 +283,7 @@ YUI.add('dd-constrain', function(Y) {
         * @return {Boolean} True if the XY is inside the region, false otherwise.
         */
         inRegion: function(xy) {
-            xy = xy || this.get(DRAG_NODE).getXY();
+            xy = xy || this.get(HOST).get(DRAG_NODE).getXY();
 
             var _xy = this._checkRegion([xy[0], xy[1]]),
                 inside = false;
@@ -249,32 +293,67 @@ YUI.add('dd-constrain', function(Y) {
             return inside;
         },
         /**
-        * @private
-        * @method _align
-        * @description Override of Drag _align to account for region checking and tick checking
-        * @param {Array} xy The XY to check for ticks and region
-        * @return {Array} The modified XY coords.
+        * @method align
+        * @description Modifies the Drag.actXY method from the after drag:align event. This is where the constraining happens.
         */
-        _align: function(xy) {
-            var _xy = C.superclass._align.apply(this, arguments),
+        align: function() {
+            var host = this.get(HOST),
+                _xy = host.actXY,
                 r = this.getRegion(true);
 
             if (this.get('stickX')) {
-                _xy[1] = (this.startXY[1] - this.deltaXY[1]);
+                _xy[1] = (host.startXY[1] - host.deltaXY[1]);
             }
             if (this.get('stickY')) {
-                _xy[0] = (this.startXY[0] - this.deltaXY[0]);
+                _xy[0] = (host.startXY[0] - host.deltaXY[0]);
             }
-
 
             if (r) {
                 _xy = this._checkRegion(_xy);
             }
                 
             _xy = this._checkTicks(_xy, r);
-            return _xy;
+            host.actXY = _xy;
         },
         /**
+        * @private
+        * @method _checkTicks
+        * @description This method delegates the proper helper method for tick calculations
+        * @param {Array} xy The XY coords for the Drag
+        * @param {Object} r The optional region that we are bound to.
+        * @return {Array} The calced XY coords
+        */
+        _checkTicks: function(xy, r) {
+            var host = this.get(HOST),
+                lx = (host.startXY[0] - host.deltaXY[0]),
+                ly = (host.startXY[1] - host.deltaXY[1]),
+                xt = this.get('tickX'),
+                yt = this.get('tickY');
+                if (xt && !this.get(TICK_X_ARRAY)) {
+                    xy[0] = DDM._calcTicks(xy[0], lx, xt, r[LEFT], r[RIGHT]);
+                }
+                if (yt && !this.get(TICK_Y_ARRAY)) {
+                    xy[1] = DDM._calcTicks(xy[1], ly, yt, r[TOP], r[BOTTOM]);
+                }
+                if (this.get(TICK_X_ARRAY)) {
+                    xy[0] = DDM._calcTickArray(xy[0], this.get(TICK_X_ARRAY), r[LEFT], r[RIGHT]);
+                }
+                if (this.get(TICK_Y_ARRAY)) {
+                    xy[1] = DDM._calcTickArray(xy[1], this.get(TICK_Y_ARRAY), r[TOP], r[BOTTOM]);
+                }
+
+            return xy;
+        }
+    };
+
+    Y.namespace('Plugin');
+    Y.extend(C, Y.Base, proto);
+    Y.Plugin.DDConstrained = C;
+
+    Y.mix(DDM, {
+        /**
+        * @for DDM
+        * @namespace DD
         * @private
         * @method _calcTicks
         * @description Helper method to calculate the tick offsets for a given position
@@ -305,6 +384,8 @@ YUI.add('dd-constrain', function(Y) {
                 return pos;
         },
         /**
+        * @for DDM
+        * @namespace DD
         * @private
         * @method _calcTickArray
         * @description This method is used with the tickXArray and tickYArray config options
@@ -344,41 +425,8 @@ YUI.add('dd-constrain', function(Y) {
                 }
                 return ticks[ticks.length - 1];
             }
-        },
-        /**
-        * @private
-        * @method _checkTicks
-        * @description This method delegates the proper helper method for tick calculations
-        * @param {Array} xy The XY coords for the Drag
-        * @param {Object} r The optional region that we are bound to.
-        * @return {Array} The calced XY coords
-        */
-        _checkTicks: function(xy, r) {
-            var lx = (this.startXY[0] - this.deltaXY[0]),
-                ly = (this.startXY[1] - this.deltaXY[1]),
-                xt = this.get('tickX'),
-                yt = this.get('tickY');
-                if (xt && !this.get('tickXArray')) {
-                    xy[0] = this._calcTicks(xy[0], lx, xt, r.left, r.right);
-                }
-                if (yt && !this.get('tickYArray')) {
-                    xy[1] = this._calcTicks(xy[1], ly, yt, r.top, r.bottom);
-                }
-                if (this.get('tickXArray')) {
-                    xy[0] = this._calcTickArray(xy[0], this.get('tickXArray'), r.left, r.right);
-                }
-                if (this.get('tickYArray')) {
-                    xy[1] = this._calcTickArray(xy[1], this.get('tickYArray'), r.top, r.bottom);
-                }
-
-            return xy;
         }
-    };
-    //Extend DD.Drag
-    Y.extend(C, Y.DD.Drag, proto);
-    //Set this to DD.Drag for other extensions
-    Y.DD.Drag = C;
-
+    });
 
 
 }, '@VERSION@' ,{optional:['dd-proxy'], requires:['dd-drag'], skinnable:false});

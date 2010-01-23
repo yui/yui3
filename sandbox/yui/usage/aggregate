@@ -1,0 +1,33 @@
+./base/js/BaseBuild.js:                Y.aggregate(builtClass, main, true, aggregates);
+./base/js/BaseBuild.js:                Y.aggregate(builtClass, extClass, true, aggregates);
+./oop/build_tmp/oop-debug.js:    Y.aggregate = function(r, s, ov, wl) {
+./oop/build_tmp/oop.js:    Y.aggregate = function(r, s, ov, wl) {
+./oop/js/oop.js:    Y.aggregate = function(r, s, ov, wl) {
+./widget/js/Widget.js:            Y.aggregate(config, htmlConfig, false);
+./widget/js/Widget.js:        Y.aggregate(strs[locale], strings, true);
+./widget/js/Widget.js:                    Y.aggregate(strs, localeStrs, true);
+./yui/build_rollup_tmp/yui-debug.js: * Used by Y.aggregate
+./yui/build_rollup_tmp/yui.js: * Used by Y.aggregate
+./yui/js/yui-core.js: * Used by Y.aggregate
+./base/js/BaseBuild.js:                Y.aggregate(builtClass, main, true, aggregates);
+./base/js/BaseBuild.js:                Y.aggregate(builtClass, extClass, true, aggregates);
+./base/js/BaseBuild.js:                Y.aggregate(builtClass, main, true, aggregates);
+./base/js/BaseBuild.js:                Y.aggregate(builtClass, extClass, true, aggregates);
+./oop/build_tmp/oop-debug.js:    Y.aggregate = function(r, s, ov, wl) {
+./oop/build_tmp/oop.js:    Y.aggregate = function(r, s, ov, wl) {
+./oop/js/oop.js:    Y.aggregate = function(r, s, ov, wl) {
+./oop/build_tmp/oop-debug.js:    Y.aggregate = function(r, s, ov, wl) {
+./oop/build_tmp/oop.js:    Y.aggregate = function(r, s, ov, wl) {
+./oop/js/oop.js:    Y.aggregate = function(r, s, ov, wl) {
+./widget/js/Widget.js:            Y.aggregate(config, htmlConfig, false);
+./widget/js/Widget.js:        Y.aggregate(strs[locale], strings, true);
+./widget/js/Widget.js:                    Y.aggregate(strs, localeStrs, true);
+./widget/js/Widget.js:            Y.aggregate(config, htmlConfig, false);
+./widget/js/Widget.js:        Y.aggregate(strs[locale], strings, true);
+./widget/js/Widget.js:                    Y.aggregate(strs, localeStrs, true);
+./yui/build_rollup_tmp/yui-debug.js: * Used by Y.aggregate
+./yui/build_rollup_tmp/yui.js: * Used by Y.aggregate
+./yui/js/yui-core.js: * Used by Y.aggregate
+./yui/build_rollup_tmp/yui-debug.js: * Used by Y.aggregate
+./yui/build_rollup_tmp/yui.js: * Used by Y.aggregate
+./yui/js/yui-core.js: * Used by Y.aggregate

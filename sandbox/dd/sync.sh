@@ -7,8 +7,6 @@ cp ./js/*.js ../../src/dd/js/
 wait
 cd ../../src/dd/js/
 wait
-rm scroll.js
-wait
 files=`ls *.js`
 echo "****************************************"
 echo "Processing files"

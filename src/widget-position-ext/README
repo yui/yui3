@@ -1,0 +1,17 @@
+3.0.0
+
+No Changes
+
+3.0.0 beta 1
+
+No Changes
+
+3.0.0PR2 - Initial release
+
+Module Name: "widget-position-ext"
+
+An extension, which can be used with Base.build to add extended XY 
+positioning support to a Widget class. It adds viewport 
+or element based alignment and centering. It requires the "widget-position"
+extension, which provides basic XY support, to be added to the class first.
+

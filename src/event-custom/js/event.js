@@ -1,6 +1,6 @@
-(function() {
 /**
- * Custom event engine
+ * Custom event engine, DOM event listener abstraction layer, synthetic DOM
+ * events.
  * @module event-custom
  */
 
@@ -9,8 +9,3 @@ Y.Env.evt = {
     plugins: {}
 };
 
-// Y.Env.eventHandles  = {};
-// Y.Env.eventAdaptors = {};
-
-
-})();

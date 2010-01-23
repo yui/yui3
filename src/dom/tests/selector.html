@@ -3,34 +3,113 @@
 <head>
 <title>Selector Test Suite</title>
 
-<link type="text/css" rel="stylesheet" href="../../../../yui2/build/logger/assets/logger.css">
-<link type="text/css" rel="stylesheet" href="../../../../yui2/build/yuitest/assets/testlogger.css">     
-
+<style type="text/css">
+.yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+    background: #070;
+    color: #fff;
+}
+.yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+    background: #700;
+    color: #fff;
+}
+</style>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
-<script type="text/javascript" src="../../../build/event/event.js"></script>
-<script type="text/javascript" src="../../../build/oop/oop.js"></script>
-<script type="text/javascript" src="../../../build/dom/dom-debug.js"></script>
-<script type="text/javascript" src="../../../build/dom/selector-css3.js"></script>
-<script type="text/javascript" src="../../../build/base/base-debug.js"></script>
-<script type="text/javascript" src="../../../build/attribute/attribute-debug.js"></script>
-<script type="text/javascript" src="../../../build/node/node-debug.js"></script>
-
-<script type="text/javascript" src="../../../../yui2/build/yahoo/yahoo-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/dom/dom-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/event/event.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/logger/logger-min.js"></script>
-<script type="text/javascript" src="../../../../yui2/build/yuitest/yuitest.js"></script>
 
 <script>
 onload = function() {
-    YUI().use('*', function(Y) {
-        Y.Dom = YAHOO.util.Dom;
-        var logger = new YAHOO.tool.TestLogger(null, {height:'2000px'});
-        var suite = new YAHOO.tool.TestSuite("Selector Suite");
+    YUI({filter: 'raw'}).use('node', 'selector-css3', 'console', 'test', function(Y) {
+        Y.Dom = {
+            get: function (id) {
+                return document.getElementById(id);
+            },
+            getChildren: function (el) {
+                el = typeof el === 'string' ? document.getElementById(el) : el;
+
+                var children = [],
+                    i, len;
+
+                for (i = 0, len = el.childNodes.length; i < len; ++i) {
+                    if (el.childNodes[i].nodeType === 1) {
+                        children.push(el.childNodes[i]);
+                    }
+                }
+                
+                return children;
+            },
+            getElementsByClassName: function (clz, tag, root) {
+                root = typeof root === 'string' ?
+                            document.getElementById(root) : root || document;
+
+                var els = root.getElementsByTagName(tag || '*'),
+                    nodes = [],
+                    S = ' ',
+                    i, len;
+
+                clz = S + clz + S;
+
+                for (i = 0, len = els.length; i < len; ++i) {
+                    if ((S + els[i].className + S).indexOf(clz)) {
+                        nodes.push(els[i]);
+                    }
+                }
+
+                return nodes;
+            },
+            getFirstChild: function (el) {
+                el = typeof el === 'string' ? document.getElementById(el) : el;
+
+                var node = el.firstChild;
+                while (node && node.nodeType !== 1) {
+                    node = node.nextSibling;
+                }
+                return node;
+            },
+            getLastChild: function (el) {
+                el = typeof el === 'string' ? document.getElementById(el) : el;
+
+                var node = el.lastChild;
+                while (node && node.nodeType !== 1) {
+                    node = node.previousSibling;
+                }
+                return node;
+            },
+            addClass: function (els, clz) {
+                var S = ' ',
+                    i, len;
+
+                if (typeof els === 'string') {
+                    els = [ document.getElementById( els ) ];
+                } else if (els.nodeType === 1) {
+                    els = [ els ];
+                } else if (({}).toString.call(els) === '[object Array]') {
+                    for (i = els.length - 1; i >= 0; --i) {
+                        if (typeof els[i] === 'string') {
+                            els[i] = document.getElementById(els[i]);
+                            if (!els[i]) {
+                                els.splice(i,1);
+                            }
+                        }
+                    }
+                } else {
+                    els = [];
+                }
+
+                clz = S + clz + S;
+
+                for (i = 0, len = els.length; i < len; ++i) {
+                    if ((S + els[i].className + S).indexOf(clz)) {
+                        els[i].className += clz.replace(/\s+$/,'');
+                    }
+                }
+            }
+        };
+
+        new Y.Console({height:'90%'}).render();
+
+        var suite = new Y.Test.Suite("Selector Suite");
         var Selector = Y.Selector;
-        var Assert = YAHOO.util.Assert;
-        var ArrayAssert = YAHOO.util.ArrayAssert;
+        var Assert = Y.Assert;
+        var ArrayAssert = Y.ArrayAssert;
 
         var $ = Selector.query;
         var demo = Y.Dom.get('demo');
@@ -38,7 +117,7 @@ onload = function() {
         var demoFirstChild = children[0];
         var demoLastChild = children[children.length - 1];
 
-        var selectorQueryAll = new YAHOO.tool.TestCase({
+        var selectorQueryAll = new Y.Test.Case({
             name: 'Query All',
 
             testFilter: function() {
@@ -67,6 +146,32 @@ onload = function() {
                 Assert.isFalse(Selector.test(Y.Dom.get('radio-unchecked'), ':checked'), ':checked (radio) false pos');
                 Assert.isFalse(Selector.test(Y.Dom.get('checkbox-unchecked'), '[type=checkbox]:checked'), 'type=checkbox:checked false pos');
                 Assert.isTrue(Selector.test(Y.Dom.get('checkbox-unchecked'), '[type=checkbox]:not(:checked)'), 'type=checkbox:not(:checked)');
+
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[0], 'dd'), 'dd (dd1)');
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[1], 'dd'), 'dd (dd2)');
+
+                Assert.isFalse(Selector.test(document.getElementsByTagName('dd')[0], '.test-dd2'), '.test-dd2 (dd1)');
+                Assert.isFalse(Selector.test(document.getElementsByTagName('dd')[1], '.test-dd1'), '.test-dd1 (dd2)');
+
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[0], '.test-dd1'), '.test-dd1');
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[1], '.test-dd2'), '.test-dd2');
+
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[0], 'dd'), 'dd (dd1)');
+                Assert.isTrue(Selector.test(document.getElementsByTagName('dd')[1], 'dd'), 'dd (dd2)');
+
+                // with optional root arg
+                var form = Y.DOM.byId('form-root');
+                var input = form.getElementsByTagName('input')[0];
+                Assert.isTrue(Selector.test(input, 'input', form));
+                Assert.isFalse(Selector.test(Y.DOM.byId('foo-bar'), 'input#foo-bar', form));
+
+                var form = Y.DOM.byId('test-inputs');
+                Assert.isFalse(Selector.test(input, 'input', form));
+                Assert.isFalse(Selector.test(form, 'form', form));
+                Assert.isTrue(Selector.test(form, 'form', form.parentNode));
+                Assert.isTrue(Selector.test(Y.DOM.byId('foo-bar'), 'input#foo-bar', form));
+                Assert.isFalse(Selector.test(Y.DOM.byId('foo-bar'), '#test-inputs input#foo-bar', form));
+                Assert.isTrue(Selector.test(Y.DOM.byId('foo-bar'), '#test-inputs input#foo-bar', form.parentNode));
             },
 
             testRootQuery: function() {
@@ -76,20 +181,29 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(all, $('#root-test li'), 'document');
                 ArrayAssert.itemsAreEqual([], $('#root-tes li', Y.DOM.byId('demo')), 'false id document');
 
+                Assert.areEqual(
+                    $('a span, a', Y.DOM.byId('mod1')).length,
+                    $('a, a span', Y.DOM.byId('mod1')).length,
+                    "$('a, a span') === $('a span, a')"); 
+
+                var node = document.createElement('div');
+                node.innerHTML = '<li><em>foo</em></li>';
+                Assert.areEqual(node.getElementsByTagName('em')[0], $('li em', node, true), 'off-dom: li em');
+                Assert.isNull($('div li em', node, true), 'off-dom: div li em');
+
+                Assert.areEqual(Y.DOM.byId('test:colon').getElementsByTagName('h2')[0], 
+                    $('h2', Y.DOM.byId('test:colon'), true),
+                    "$('h2', Y.DOM.byId('test:colon'), true)");
+
                 // standard: no element-scoped query
                 //ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('p'), $('body p', document.body), "$('body p', document.body)");
 
-                /* no longer supporting string input for element
-                ArrayAssert.itemsAreEqual([], $('li', 'nth-tes'), 'id as root false pos');
-                ArrayAssert.itemsAreEqual(all, $('li', Y.Dom.get('nth-test')), 'node as root');
-                ArrayAssert.itemsAreEqual(all, $('#nth-test li', Y.Dom.get('root-test')), 'id selector w/root node ref');
-                Assert.areEqual(all[0], $('#nth-test li', 'root-test', true), 'id selector w/root string, firstOnly');
-                */
                 // based on non-standard behavior
                 ArrayAssert.itemsAreEqual([], $('body p', document.body), "$('body p', document.body)");
                 ArrayAssert.itemsAreEqual([], $('#root-test li', Y.Dom.get('nth-test')), 'id selector w/root false pos');
 
             },
+            /*
             testNthLastChild: function() {
                 var all = Y.Dom.get('nth-test').getElementsByTagName('li');
                 var odd = Y.Dom.getElementsByClassName('even', 'li', 'nth-test');
@@ -103,6 +217,7 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(odd, $('li:nth-last-child(2n+1)'), '2n+1');
                 ArrayAssert.itemsAreEqual(four1, $('li:nth-last-child(4n+1)'), '4n+1');
             },
+            */
             testNthType: function() {
                 var all = Y.Dom.get('nth-test').getElementsByTagName('li');
                 var odd = Y.Dom.getElementsByClassName('odd', 'li', 'nth-test');
@@ -112,7 +227,20 @@ onload = function() {
                 var four2 = Y.Dom.getElementsByClassName('four-2', 'li', 'nth-test');
                 var four3 = Y.Dom.getElementsByClassName('four-3', 'li', 'nth-test');
                 var four4 = Y.Dom.getElementsByClassName('four-4', 'li', 'nth-test');
-                ArrayAssert.itemsAreEqual(odd, $('li:nth-of-type(odd)'), 'odd');
+                //ArrayAssert.itemsAreEqual(odd, $('li:nth-of-type(odd)'), 'odd');
+
+                all = Y.Dom.get('nth-type-test').getElementsByTagName('div');
+                even = Y.Dom.getElementsByClassName('even', 'div', 'nth-type-test');
+
+                //ArrayAssert.itemsAreEqual(all[2], $('#nth-type-test div:nth-of-type(3)'),
+                    //"$('#nth-type-test div:nth-of-type(3)')");
+
+                //ArrayAssert.itemsAreEqual(even, $('#nth-type-test div:nth-of-type(even)'),
+                    //"$('#nth-type-test div:nth-of-type(even)')");
+
+                //ArrayAssert.itemsAreEqual(even, $('#nth-type-test div:nth-of-type(2n)'),
+                    //"$('#nth-type-test div:nth-of-type(2n)')");
+
             },
             testNthChild: function() {
                 var all = Y.Dom.get('nth-test').getElementsByTagName('li');
@@ -124,12 +252,13 @@ onload = function() {
                 var four3 = Y.Dom.getElementsByClassName('four-3', 'li', 'nth-test');
                 var four4 = Y.Dom.getElementsByClassName('four-4', 'li', 'nth-test');
 
-                ArrayAssert.itemsAreEqual(even[1], $('li:nth-child(2)'), '2');
-                ArrayAssert.itemsAreEqual(even[1], $('li:nth-child(0n+2)'), '0n+2');
-                ArrayAssert.itemsAreEqual(three1, $('li:nth-child(3n+1)'), '3n+1');
+                //ArrayAssert.itemsAreEqual(even[1], $('li:nth-child(2)'), '2');
+                //ArrayAssert.itemsAreEqual(even[1], $('li:nth-child(0n+2)'), '0n+2');
+                //ArrayAssert.itemsAreEqual(three1, $('li:nth-child(3n+1)'), '3n+1');
                 ArrayAssert.itemsAreEqual(all, $('li:nth-child(n+1)'), 'n+1');
 
                 //from http://www.w3.org/TR/css3-selectors/#nth-child-pseudo examples
+                /*
                 ArrayAssert.itemsAreEqual(odd, $('li:nth-child(2n+1)'), '2n+1');
                 ArrayAssert.itemsAreEqual(odd, $('li:nth-child(odd)'), 'odd');
                 ArrayAssert.itemsAreEqual(even, $('li:nth-child(2n+0)'), '2n+0');
@@ -143,6 +272,7 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(even[0], $('li:nth-child(1)'), '1');
                 ArrayAssert.itemsAreEqual(all, $('li:nth-child(1n+0)'), '1n+0');
                 ArrayAssert.itemsAreEqual(all, $('li:nth-child(n+0)'), 'n+0');
+                */
 
             },
 
@@ -156,28 +286,64 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(Y.Dom.get('demo').getElementsByTagName('p'), $('.foo p'), '.foo p');
                 ArrayAssert.itemsAreEqual(Y.Dom.get('demo').getElementsByTagName('p'), $('#demo p'), '#demo p');
                 ArrayAssert.itemsAreEqual($('p > em'), [Y.Dom.getFirstChild('demo-first-child')], 'p > em');
-                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para'), $('[class~=para]'), '[class~=para]');
-                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para'), $('[class~="para"]'), '[class~="para"]');
+                //ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para'), $('[class~=para]'), '[class~=para]');
+                //ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para'), $('[class~="para"]'), '[class~="para"]');
                 ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('p'), $('body div p'), 'body div p');
                 ArrayAssert.itemsAreEqual([], $('#demo .madeup'), '#demo .madeup');
-                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para', 'p'), $('div .para'), 'div .para');
-                ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('first', null, Y.DOM.byId(demo)), $('#demo .first'), '#demo .first');
-                ArrayAssert.itemsAreEqual(document.getElementsByTagName('div'), $('div'), 'div');
+                //ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('para', 'p'), $('div .para'), 'div .para');
+                //ArrayAssert.itemsAreEqual(Y.Dom.getElementsByClassName('first', null, Y.DOM.byId(demo)), $('#demo .first'), '#demo .first');
+                //ArrayAssert.itemsAreEqual(document.getElementsByTagName('div'), $('div'), 'div');
                 ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('div'), $('body div'), 'body div');
-                ArrayAssert.itemsAreEqual([demoFirstChild, Y.DOM.next(demoFirstChild)], $('#demo > p:not(.last)'), '#demo > p:not(.last)');
                 ArrayAssert.itemsAreEqual([Y.Dom.get('class-bar')], $('.Bar'), '.Bar');
                 //ArrayAssert.itemsAreEqual([], $(null), 'null input');
                 ArrayAssert.itemsAreEqual([], $('#fake-id-not-in-doc'), 'id false positive');
                 Y.Dom.addClass($('li'), 'first-child');
                 Assert.areEqual(document.getElementById('label-checkbox-unchecked'), $('label[for=checkbox-unchecked]', null, true), 'for attribute');
-                ArrayAssert.itemsAreEqual($('.not-button', Y.DOM.byId('test-inputs')), $('input:not([type=button])', Y.DOM.byId('test-inputs')), 'input[type=radio], input[type=checkbox] = input:not([type=button])');
+                var root = Y.DOM.byId('test-inputs');
+                Assert.areEqual($('.not-button', root).length, $('input:not([type=button])', root).length, '.not-button = input:not([type=button]) - root query');
                 //ArrayAssert.itemsAreEqual(Y.Dom.get('demo2').getElementsByTagName('div'), $('div:contains(child of demo2)', Y.DOM.byId('demo2')), 'div:contains:(child of demo2) ');
                 //Assert.areEqual(document.getElementById('contains-special'), $(':contains(contains "\' & ])'), 'contains "\' & ]');
                 Assert.areEqual(Y.DOM.byId('test-select'), $('#test-select', null, true), "($('#test-select'), null, true)");
+                Assert.areEqual(document.getElementsByTagName('link')[0], $('[rel^=style]', null, true), "($('[rel^=style]), null, true)");
+                Assert.areEqual(Y.DOM.byId('test-rel-div'), $('div[rel^=foo2]', null, true), "($('[rel^=foo2]), null, true)");
+                Assert.areEqual(Y.DOM.byId('test-rel-div'), $("div[rel^='foo2']", null, true), "($('[rel^=\'foo2\']), null, true)");
+                Assert.areEqual(Y.DOM.byId('foo-bar'), $("input[name='foo.bar']", null, true), "input[name='foo.bar'], null, true)");
+
+                ArrayAssert.itemsAreEqual([demoFirstChild, Y.DOM.next(demoFirstChild)], $('#demo > p:not(.last)'), '#demo > p:not(.last)');
+                Assert.areEqual(Y.DOM.byId('foo-bar'), $("[id^='foo-']", null, true), "[id^='foo-'], null, true");
+                Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("#test-custom-attr[foo=bar]", null, true), "#test-custom-attr[foo=bar], null, true");
+                Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("div[foo=bar]", null, true), "div[foo=bar], null, true");
+                Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("div#test-custom-attr[foo=bar]", null, true), "div#test-custom-attr[foo=bar], null, true");
+
+                Assert.areEqual(Y.DOM.byId('test-custom-attr'), $("div[foo]", null, true), "div[foo], null, true");
+                ArrayAssert.itemsAreEqual([Y.DOM.byId('test-custom-attr')], $("[foo]"), "[foo]");
+
+                Assert.areEqual(document.body, $('body, div', null, true), "$('body, div', null, true)");
+
+                Assert.areEqual(document.getElementById('foo-bar'),
+                    $('[id=foo-bar]', null, true),
+                    "$('[id=foo-bar]', null, true)");
+
+                Assert.areEqual(document.getElementById('test-custom-attr'),
+                    $('[foo-bar]', null, true),
+                    "$('[foo-bar]', null, true)");
+
+                Assert.areEqual(document.getElementById('foo-bar'),
+                    $('[aria-controls]', null, true),
+                    "$('[aria-controls]', null, true)");
+
+                Assert.areEqual(document.getElementById('foo-bar'),
+                    $('[-hyphen-start]', null, true),
+                    "$('[-hyphen-start]', null, true)");
+
+                Assert.areEqual(Y.DOM.byId('test:colon'), 
+                    $('#test\\:colon', null, true),
+                    "$('#test\\:colon', null, true)");
             }
+
         });
 
-        var simpleTest = new YAHOO.tool.TestCase({
+        var simpleTest = new Y.Test.Case({
             name: 'Simple Node Test',
 
             testPseudo: function() {
@@ -187,7 +353,6 @@ onload = function() {
                 Assert.isFalse(Selector.test(Y.Dom.getFirstChild('demo'), ':first-child.last'), 'first-child class false pos');
                 Assert.isTrue(Selector.test(Y.Dom.getFirstChild('demo'), ':first-child.first'), 'first-child class');
                 Assert.isFalse(Selector.test(Y.Dom.getFirstChild('demo'), ':only-child'), 'only-child');
-                Assert.isFalse(Selector.test(Y.Dom.get('demo'), ':not(.foo)'), 'not(.foo)');
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), ':not(p)'), 'not(p)');
                 Assert.isTrue(Selector.test(demoFirstChild, ':not(.last)'), 'not(.last)');
                 Assert.isTrue(Selector.test(Y.Dom.getFirstChild('demo'), ':first-of-type'), 'first-of-type');
@@ -195,6 +360,7 @@ onload = function() {
                 Assert.isFalse(Selector.test(Y.Dom.getFirstChild('demo'), ':only-of-type'), 'only-of-type false pos');
                 Assert.isFalse(Selector.test(Y.Dom.get('demo2'), ':empty'), 'empty false pos');
                 Assert.isTrue(Selector.test(Y.Dom.get('empty'), ':empty'), 'empty');
+                Assert.isFalse(Selector.test(Y.Dom.get('demo'), ':not(.foo)'), 'not(.foo)');
 
                 /* non-standard
                 Assert.isTrue(Selector.test(Y.Dom.get('demo2'), ':contains(demo2)'), 'contains(demo2)');
@@ -249,10 +415,18 @@ onload = function() {
             },
 
             testTag: function() {
-                Assert.isTrue(Selector.test(Y.Dom.get('demo'), 'div'), 'tag match');
+                Assert.isTrue(Selector.test(Y.Dom.get('demo'), 'div'), 'div');
+                Assert.isTrue(Selector.test(Y.Dom.get('demo'), 'body div'), 'body div');
                 Assert.isFalse(Selector.test(Y.Dom.get('demo'), 'span'), 'tag false positive');
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), '*'), 'universal tag');
             },
+
+            /*
+            testIframe: function() {
+                var frameDoc = Y.DOM.byId('test-frame').contentWindow.document;
+                Assert.areEqual('iframe foo', $('#demo li', frameDoc, true).innerHTML, "Y.get('#demo li', frameDoc, true)");
+            },
+            */
 
 
             // to support:
@@ -260,15 +434,12 @@ onload = function() {
             // $('+ p', myNode) === ('#my-node-id + p');
             // $('~ p', myNode) === ('#my-node-id ~ p');
             testScoped: function() {
-                var paraChildren = Y.DOM._childrenByTag(Y.DOM.byId('demo'), 'p');
-
-                var someChildren = Y.DOM.children(Y.DOM.byId('demo'), function(child) {
-                    return (child.tagName === 'P' &&
-                            Y.DOM.firstChild(child.parentNode) !== child);
-                });
-
-                var bodyDivs = Y.DOM.children(document.body, function(child) {
-                    return (child.tagName === 'DIV' && child.id != 'demo'); 
+                var demo = Y.DOM.byId('demo'),
+                    paraChildren = [];
+                Y.each(demo.getElementsByTagName('p'), function(el) {
+                    if (el.parentNode === demo) {
+                        paraChildren.push(el);
+                    }
                 });
 
                 ArrayAssert.itemsAreEqual(paraChildren, $('> p', Y.DOM.byId('demo')), '#demo > p');
@@ -276,17 +447,22 @@ onload = function() {
 
                 //ArrayAssert.itemsAreEqual([Y.Dom.get('demo2')], $('+ div', Y.DOM.byId('demo')), '#demo + div');
                 //ArrayAssert.itemsAreEqual($('#demo-first-child ~ p'), $('~ p', Y.DOM.byId('demo-first-child')), '#demo-first-child ~ div');
-                //ArrayAssert.itemsAreEqual($('#demo-first-child ~ p'), someChildren, 'someChildren');
-                //ArrayAssert.itemsAreEqual(someChildren, $('~ p', Y.DOM.byId('demo-first-child')), '~ p');
-                //ArrayAssert.itemsAreEqual(bodyDivs, $('~ div', Y.DOM.byId('demo')), '#demo ~ div');
+            },
+
+            testAncestor: function() {
+                var node = Y.DOM.byId('demo-first-child');
+                Assert.isNull(Y.Selector.ancestor(node, 'p'));
+                Assert.areEqual(node, Y.Selector.ancestor(node, 'p', true));
+                Assert.areEqual(document.body, Y.Selector.ancestor(node, 'body', true));
+                Assert.areEqual(node.parentNode, Y.Selector.ancestor(node, 'div'));
             }
 
         });
 
         suite.add(selectorQueryAll);
         suite.add(simpleTest);
-        YAHOO.tool.TestRunner.add(suite);
-        YAHOO.tool.TestRunner.run();
+        Y.Test.Runner.add(suite);
+        Y.Test.Runner.run();
     });
 };
 </script>
@@ -294,7 +470,7 @@ onload = function() {
 
 </style>
 </head>
-<body>
+<body class="yui-skin-sam">
     <div id="demo" class="foo" title="this is a demo">
         <p class="para first" id="demo-first-child"><em>lorem ipsum</em></p>
         <p class="para">lorem ipsum</p>
@@ -328,6 +504,15 @@ onload = function() {
             <li class="even three-1 four-2 last-four-1" lang="en" id="test-lang-en">foo</li>
         </ol>
     </div>
+    <div id="nth-type-test">
+        <span>span</span>
+        <div>first div</div>
+        <span>span</span>
+        <div class="even">second div</div>
+        <div>third div</div>
+        <div class="even">fourth div</div> 
+        <span>span</span>
+    </div>
     <a id="href-test" href="foo.html">foo</a>
     <form id="test-inputs">
         <label for="checkbox-unchecked" id="label-checkbox-unchecked">label</label>
@@ -337,8 +522,33 @@ onload = function() {
         <input type="radio" id="radio-unchecked" class="not-button">
         <input type="radio" checked="true" id="radio-checked" class="not-button">
         <input type="button" value="foo">
+        <input id="foo-bar" name="foo.bar" class="not-button" aria-controls="foo-bar" -hyphen-start="true">
     </form>
+
+    <form id="form-root">
+        <input type="button" value="foo">
+        <input name="foo" class="text-input">
+    </form>
+
+    <div id="mod1">
+            <div><h3>H3 - Title</h3></div>
+            <div><p>lorem ipsum dolor sit <a href="#"><span>link</span></a></p></div>
+    </div>
+
     <div class="Bar" id="class-bar"></div>
     <div id="contains-special">contains "' & ]</div>
+    <div id="test-rel-div" rel="foo2"></div>
+    <iframe src="test-frame.html" id="test-frame"></iframe>
+
+    <dl id="test-dl">
+        <dt>Window size</dt>
+        <dd class="test-dd1">dd1</dd>
+        <dt>Document size</dt>
+        <dd class="test-dd2">dd2</dd>
+
+    </dl>
+    <div id="test:colon"><h2>test</h2></div>
+    <div id="test-custom-attr" foo="bar" foo-bar="bar">custom attribute</div>
+
 </body>
 </html>

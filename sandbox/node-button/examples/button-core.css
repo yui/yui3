@@ -1,0 +1,41 @@
+.yui-button,
+.yui-checkbox,
+.yui-radio {
+
+    display: inline-block; /* IE, Opera and Safari */
+    
+}
+
+.yui-button span,
+.yui-checkbox span,
+.yui-radio span {
+
+    display: block;
+    *display: inline-block; /* IE */
+
+}
+
+.yui-button label,
+.yui-checkbox label,
+.yui-radio label {
+
+    display: block;
+    *display: inline-block; /* IE */
+
+}
+
+.yui-button button,
+.yui-button input,
+.yui-checkbox input,
+.yui-radio input {
+
+    border: none;
+    margin: 0;
+    font-size: 100%;
+    font-weight: normal;
+    background-color: transparent;
+    *overflow: visible; /* Remove superfluous padding for IE */
+    cursor: pointer;
+    outline: none;
+    
+}

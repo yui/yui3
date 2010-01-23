@@ -15,20 +15,28 @@ YUI.add('io-form', function(Y) {
         * @method _serialize
         * @private
         * @static
-        * @param {object} o - HTML form object or id.
+        * @param {object} c - YUI form node or HTML form id.
+        * @param {string} s - Transaction data defined in the configuration.
         * @return string
         */
-        _serialize: function(o) {
-            var f = (typeof o.id === 'object') ? o.id : Y.config.doc.getElementById(o.id),
-            eUC = encodeURIComponent,
-            data = [],
-            useDf = o.useDisabled || false,
-            item = 0,
-            e, n, v, d, i, ilen, j, jlen, o;
+        _serialize: function(c, s) {
+			var eUC = encodeURIComponent,
+            	data = [],
+            	useDf = c.useDisabled || false,
+            	item = 0,
+            	id = (typeof c.id === 'string') ? c.id : c.id.getAttribute('id'),
+            	e, f, n, v, d, i, il, j, jl, o;
+
+            	if (!id) {
+					id = Y.guid('io:');
+					c.id.setAttribute('id', id);
+				}
+
+            	f = Y.config.doc.getElementById(id);
 
             // Iterate over the form elements collection to construct the
             // label-value pairs.
-            for (i = 0, ilen = f.elements.length; i < ilen; ++i) {
+            for (i = 0, il = f.elements.length; i < il; ++i) {
                 e = f.elements[i];
                 d = e.disabled;
                 n = e.name;
@@ -38,7 +46,7 @@ YUI.add('io-form', function(Y) {
                     v = encodeURIComponent(e.value);
 
                     switch (e.type) {
-                        // Safari, Opera, FF all default opt.value from .text if
+                        // Safari, Opera, FF all default options.value from .text if
                         // value attribute not specified in markup
                         case 'select-one':
                             if (e.selectedIndex > -1) {
@@ -48,10 +56,10 @@ YUI.add('io-form', function(Y) {
                             break;
                         case 'select-multiple':
                             if (e.selectedIndex > -1) {
-                                for (j = e.selectedIndex, jlen = e.options.length; j < jlen; ++j) {
+                                for (j = e.selectedIndex, jl = e.options.length; j < jl; ++j) {
                                     o = e.options[j];
                                     if (o.selected) {
-                                      data[item++] = n + eUC((o.attributes.value && opt.attributes.value.specified) ? o.value : o.text);
+                                      data[item++] = n + eUC((o.attributes.value && o.attributes.value.specified) ? o.value : o.text);
                                     }
                                 }
                             }
@@ -72,17 +80,16 @@ YUI.add('io-form', function(Y) {
                             // stub case for input type button elements.
                             break;
                         case 'submit':
-                            break;
                         default:
                             data[item++] = n + v;
                     }
                 }
             }
             Y.log('HTML form serialized. The value is: ' + data.join('&'), 'info', 'io');
-            return data.join('&');
+            return s ? data.join('&') + "&" + s : data.join('&');
         }
     }, true);
 
 
 
-}, '@VERSION@' ,{requires:['io-base']});
+}, '@VERSION@' ,{requires:['io-base','node-base']});

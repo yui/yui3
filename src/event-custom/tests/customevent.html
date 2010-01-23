@@ -1,24 +1,57 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>YUI Event Tests</title>
+<title>YUI3 Custom Event Tests</title>
+<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 </head>
 
 <body class="yui-skin-sam">
 <h1>Event Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
+<div id="adiv">a div</div>
 
-<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
 <script type="text/javascript">
 
 (function() {
+
+    var global_notified;
+
+    //YUI.add("selector-native", function(){});
     YUI({
-        base: "../../../build/",
         filter: "debug",
+        // combine: false,
         useConsole: true,
+        onCSS: function(Y) {
+            Y.log('CSS is done loading', 'info', 'testcase');
+        },
         // logInclude: ['event', 'test']
-        logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
-    }).use("dump", "test", "console", "event-custom", function(Y) {
+        logExclude: {
+            'deprecated': 1,
+            get: true,
+            Dom: true, 
+            Selector: true, 
+            Node: true, 
+            yui: true,
+            attribute: true, 
+            event: true, 
+            // deprecated: true, 
+            base: true, 
+            loader: true, 
+            widget: true
+        },
+
+        filters: {
+            base: 'raw',
+            // dom: null,
+            attribute: 'min'
+        }
+    }).use("dump", "test", "console", function(Y) {
+
+
+        // Y.Global.on('yui:log', function(e) {
+        //     console.log('GLOBAL LOG: ' + e.msg);
+        // });
 
         var button = Y.get('#btnRun');
 
@@ -28,10 +61,12 @@
             Y.Test.Runner.run();
         }, button);
 
+
         var myConsole = new Y.Console().render();
+        Y.log('{}');
  
         var testEventTarget = new Y.Test.Case({
-            name: "Event.Target tests",
+            name: "Custom event tests",
         
             testAugment: function() {
 
@@ -48,9 +83,9 @@
                     }
                 }
 
-                // pass configuration info into Event.Target with the following
+                // pass configuration info into EventTarget with the following
                 // construct
-                Y.augment(O, Y.Event.Target, null, null, {
+                Y.augment(O, Y.EventTarget, null, null, {
                     emitFacade: true
                 });
 
@@ -92,7 +127,7 @@
                     arguments.callee.superclass.constructor.apply(this, arguments);
                 }
 
-                Y.extend(Base, Y.Event.Target, {
+                Y.extend(Base, Y.EventTarget, {
                     base: function() {
                         Y.log('all your base...');
                     }
@@ -127,9 +162,9 @@
                     }
                 }
 
-                // pass configuration info into Event.Target with the following
+                // pass configuration info into EventTarget with the following
                 // construct
-                Y.augment(O, Y.Event.Target, null, null, {
+                Y.augment(O, Y.EventTarget, null, null, {
                     emitFacade: true,
                     prefix: 'prefix'
                 });
@@ -163,7 +198,7 @@
                 var fired1 = false,
                     fired2 = false;
 
-                Y.on('handle, test:event', function() {
+                Y.on('handle|test:event', function() {
                     fired1 = true;
                 });
 
@@ -172,12 +207,12 @@
                 Y.Assert.isTrue(fired1);
                 Y.Assert.isFalse(fired2);
 
-                Y.detach('handle, test:event');
+                Y.detach('handle|test:event');
 
                 fired1 = false;
                 fired2 = false;
 
-                Y.on('handle, test:event', function() {
+                Y.on('handle|test:event', function() {
                     fired2 = true;
                 });
 
@@ -186,36 +221,63 @@
                 Y.Assert.isFalse(fired1);
                 Y.Assert.isTrue(fired2);
 
-                Y.detach('handle,test:event');
+                Y.detach('handle|test:event');
                 fired1 = false;
                 fired2 = false;
 
-                Y.after('handle, test:event', function() {
+                Y.after('handle|test:event', function(arg1) {
+                    Y.Assert.areEqual('orange', arg1);
                     Y.Assert.isTrue(fired1);
                     fired2 = true;
                 });
 
                 // comma or pipe
-                Y.on('handle|test:event', function() {
+                Y.on('handle|test:event', function(arg1) {
+                    Y.Assert.areEqual('orange', arg1);
                     Y.Assert.isFalse(fired2);
                     fired1 = true;
                 });
 
                 // testing on and after order
-                Y.fire('test:event');
+                Y.fire('test:event', 'orange');
 
                 fired1 = false;
                 fired2 = false;
 
                 // spaces after the comma or lack thereof should have
                 // no effect on the addition or removal of listeners
-                Y.detach('handle,test:event');
+                var ret = Y.detach('handle|test:event');
+
+                Y.Assert.areEqual(Y, ret);
 
                 // added both an on listener and an after listener,
                 // then detached both
-                Y.fire('test:event');
+                Y.fire('test:event', 'orange');
                 Y.Assert.isFalse(fired1);
                 Y.Assert.isFalse(fired2);
+
+            },
+
+            testDetachAllByKey: function() {
+
+                var fired1 = false,
+                    fired2 = false;
+
+                Y.after('handle|event2', function() {
+                    fired2 = true;
+                });
+
+                Y.on('handle|event2', function() {
+                    fired1 = true;
+                });
+
+                // detachAll
+                Y.detach('handle|*');
+
+                Y.fire('event2');
+
+                Y.Assert.isFalse(fired1, 'fired1, the after listener should not have fired.');
+                Y.Assert.isFalse(fired2, 'fired2, the on listener should not have fired.');
 
             },
 
@@ -256,7 +318,12 @@
                 };
 
                 // configure chaining via global default or on the event target
-                YUI({ /* chain: true */ }).use('*', function(Y2) {
+                YUI({ /* chain: true */ 
+                    base:'../../../build/',
+                    logInclude: {
+                        test: true
+                    }
+                }).use('*', function(Y2) {
 
                     var o = new Y2.EventTarget({
                         prefix: 'foo',
@@ -278,9 +345,9 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                     Y.Assert.isTrue(fired5);  // verifies custom prefix
                     
                 });
+
             },
 
-            
             testObjType: function() {
                 var f1, f2;
                 Y.on({
@@ -295,34 +362,483 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 Y.Assert.isTrue(f2);
             },
 
+            testBubble: function() {
+                var count = 0,
+                    ret,
+                    config = {
+                        emitFacade: true,
+                        bubbles: true
+                    },
+                    a = new Y.EventTarget(config), 
+                    b = new Y.EventTarget(config);
+                    
+                b.addTarget(a);
+
+                // this should not be necessary // fixed
+                // b.publish('test:foo');
+                    
+                a.on('test:foo', function(e) {
+                    count++;
+                    // we will fire this on the parent, so that should be the target
+                    Y.Assert.areEqual(b, e.target);
+                    Y.Assert.areEqual(a, e.currentTarget);
+                });
+
+                ret = b.fire('test:foo', {}, b);
+
+                Y.Assert.areEqual(1, count);
+                Y.Assert.isTrue(ret);
+
+                b.on('test:foo', function(e) {
+                    e.stopPropagation();
+                });
+
+                ret = b.fire('test:foo', {}, b);
+
+                Y.Assert.areEqual(1, count);
+                Y.Assert.isFalse(ret);
+            },
+
+
             testPreventFnOnce: function() {
                 var count = 0;
-                Y.publish('y:foo', {
+                Y.publish('y:foo1', {
                     emitFacade: true,
                     preventedFn: function() {
-                        count++
+                        count++;
+                        Y.Assert.isTrue(this instanceof YUI);
                     }
                 });
 
-                Y.on('y:foo', function(e) {
+                Y.on('y:foo1', function(e) {
                     e.preventDefault();
                 });
 
-                Y.on('y:foo', function(e) {
+                Y.on('y:foo1', function(e) {
                     e.preventDefault();
                 });
+
+                Y.fire('y:foo1');
+
+                Y.Assert.areEqual(1, count);
+            },
+
+            testDetachHandle: function() {
+                var count = 0, handle, handle2;
+                Y.publish('y:foo', {
+                    emitFacade: true
+                });
+
+                Y.on('y:foo', function(e) {
+                    count++;
+                    handle2.detach();
+                });
+
+                handle = Y.on('y:foo', function(e) {
+                    count += 100;
+                });
+
+                handle2 = Y.on('y:foo', function(e) {
+                    count += 1000;
+                });
+
+                Y.detach(handle);
 
                 Y.fire('y:foo');
 
                 Y.Assert.areEqual(1, count);
-            }
 
+                count = 0;
+
+                var handle3 = Y.on('y:click', function() {
+                    count++;
+                    handle3.detach();
+                });
+
+                Y.fire('y:click');
+                Y.fire('y:click');
+
+                var o = new Y.EventTarget();
+
+                count = 0;
+
+                o.on('foo', function(e) {
+                    count++;
+                });
+
+                o.on('foo', function(e) {
+                    count++;
+                });
+
+                o.detachAll();
+
+                o.fire('foo');
+
+                Y.Assert.areEqual(0, count);
+
+                var handle3 = Y.on('y:click', function() {
+                    count++;
+                });
+
+                // detachAll can't be allowed to work on the YUI instance.
+                Y.detachAll();
+
+                Y.fire('y:click');
+
+                Y.Assert.areEqual(1, count);
+            },
+
+            testBroadcast: function() {
+                var o = new Y.EventTarget(), s1, s2, s3, s4;
+
+                o.publish('y:foo2', {
+                    emitFacade: true,
+                    broadcast: 1
+                });
+
+                Y.on('y:foo2', function() {
+                    Y.log('Y foo2 executed');
+                    s1 = 1;
+                });
+
+                Y.Global.on('y:foo2', function() {
+                    Y.log('GLOBAL foo2 executed');
+                    s2 = 1;
+                });
+
+                o.fire('y:foo2');
+
+                Y.Assert.areEqual(1, s1);
+                Y.Assert.areNotEqual(1, s2);
+
+                s1 = 0;
+                s2 = 0;
+
+                o.publish('y:bar', {
+                    emitFacade: true,
+                    broadcast: 2
+                });
+
+                Y.on('y:bar', function() {
+                    Y.log('Y bar executed');
+                    s3 = 1;
+                });
+
+                Y.Global.on('y:bar', function() {
+                    Y.log('GLOBAL bar executed');
+                    s4 = 1;
+                });
+
+                o.fire('y:bar');
+
+                Y.Assert.areEqual(1, s3);
+                Y.Assert.areEqual(1, s4);
+            },
+
+            test_fire_once: function() {
+
+                var notified = 0;
+
+                Y.publish('fireonce', {
+                    fireOnce: true
+                });
+
+                Y.fire('fireonce', 'foo', 'bar');
+
+                Y.on('fireonce', function(arg1, arg2) {
+                    notified++;
+                    Y.Assert.areEqual('foo', arg1, 'arg1 not correct for lazy fireOnce listener')
+                    Y.Assert.areEqual('bar', arg2, 'arg2 not correct for lazy fireOnce listener')
+                });
+
+                Y.fire('fireonce', 'foo2', 'bar2');
+                Y.fire('fireonce', 'foo3', 'bar3');
+
+                global_notified = false;
+
+                Y.on('fireonce', function(arg1, arg2) {
+                    Y.log('the notification is asynchronous, so I need to wait for this test');
+                    Y.Assert.areEqual(1, notified, 'listener notified more than once.');
+                    global_notified = true;
+                });
+
+                Y.Assert.isFalse(global_notified, 'notification was not asynchronous');
+
+            },
+
+            test_async_fireonce: function() {
+                Y.Assert.isTrue(global_notified, 'asynchronous notification did not seem to work.');
+            },
+
+            test_node_publish: function() {
+                var node = Y.one('#adiv');
+
+                var preventCount = 0, heard = 0;
+                node.publish('foo1', {
+                    emitFacade: true,
+                    // should only be called once
+                    preventedFn: function() {
+                        preventCount++;
+                        Y.Assert.isTrue(this instanceof Y.Node);
+                    }
+                });
+
+                node.on('foo1', function(e) {
+                    Y.Assert.areEqual('faking foo', e.type);
+                    Y.Assert.areEqual('foo1', e._type);
+                    heard++;
+                    e.preventDefault();
+                });
+
+                node.on('foo1', function(e) {
+                    heard++;
+                    e.preventDefault();
+                });
+
+                node.fire('foo1', {
+                    type: 'faking foo'
+                });
+
+                Y.Assert.areEqual(1, preventCount);
+                Y.Assert.areEqual(2, heard);
+            },
+
+            // SRC, ON
+            // BUBBLE, ON
+            // BUBBLE, DEFAULT BEHAVIOR
+            // BUBBLE, AFTER
+            // SRC, DEFAULT BEHAVIOR
+            // SRC, AFTER
+            testBubbleSequence300GA: function() {
+                var count = 0,
+                    called = null,
+                    fn = function() {
+                        called = this.name;
+                    },
+                    config = {
+                        emitFacade: true,
+                        bubbles: true
+                    },
+                    leaf = new Y.EventTarget(config), 
+                    branch = new Y.EventTarget(config), 
+                    root = new Y.EventTarget(config);
+
+                leaf.name = 'leaf';
+                branch.name = 'branch';
+                root.name = 'root';
+                    
+                leaf.addTarget(branch);
+                branch.addTarget(root);
+
+                leaf.publish('test:foo', { defaultFn: fn});
+                branch.publish('test:foo', { defaultFn: fn});
+                root.publish('test:foo', { defaultFn: fn});
+
+                leaf.on('test:foo', function(e) {
+                    Y.Assert.areEqual(0, count, 'leaf.on should be first');
+                    Y.Assert.isNull(called, 'leaf.on should be executed before any default function');
+                    count++;
+                });
+
+                branch.on('test:foo', function() {
+                    Y.Assert.areEqual(1, count, 'branch.on should be second');
+                    Y.Assert.isNull(called, 'branch.on should be executed before any default function');
+                    count++;
+                });
+
+                root.on('test:foo', function() {
+                    Y.Assert.areEqual(2, count, 'root.on should be third');
+                    Y.Assert.isNull(called, 'root.on should be executed before any default function');
+                    count++;
+                });
+
+                root.after('test:foo', function() {
+                    Y.Assert.areEqual(3, count, 'root.after should be fourth');
+                    Y.Assert.areEqual('root', called, 'root.after should be executed after the root default function');
+                    count++;
+                });
+
+                branch.after('test:foo', function() {
+                    Y.Assert.areEqual(4, count, 'branch.after should be fifth');
+                    Y.Assert.areEqual('branch', called, 'branch.after should be executed after the branch default function');
+                    count++;
+                });
+
+                leaf.after('test:foo', function(e) {
+                    Y.Assert.areEqual(5, count, 'leaf.after should be sixth and last');
+                    Y.Assert.areEqual('leaf', called, 'leaf.after should be executed after the leaf default function');
+                    count++;
+                });
+
+                leaf.fire('test:foo', {}, leaf);
+                Y.Assert.areEqual(6, count);
+
+            },
+
+            // SRC, ON
+            // BUBBLE, ON
+            // SRC, DEFAULT BEHAVIOR
+            // BUBBLE, DEFAULT BEHAVIOR (unless configured to only execute the default function on the target)
+            // SRC, AFTER
+            // BUBBLE, AFTER
+            ___testAlternativeSequencePost300GA: function() {
+                var count = 0,
+                    called = null,
+                    fn = function() {
+                        called = this.name;
+                    },
+                    config = {
+                        emitFacade: true,
+                        bubbles: true
+                    },
+                    leaf = new Y.EventTarget(config), 
+                    branch = new Y.EventTarget(config), 
+                    root = new Y.EventTarget(config);
+
+                leaf.name = 'leaf';
+                branch.name = 'branch';
+                root.name = 'root';
+                    
+                leaf.addTarget(branch);
+                branch.addTarget(root);
+
+                leaf.publish('test:foo', { defaultFn: fn});
+                branch.publish('test:foo', { defaultFn: fn});
+                root.publish('test:foo', { defaultFn: fn});
+
+                leaf.on('test:foo', function(e) {
+                    Y.Assert.areEqual(0, count, 'leaf.on should be first');
+                    Y.Assert.isNull(called, 'leaf.on should be executed before any default function');
+                    count++;
+                });
+
+                branch.on('test:foo', function() {
+                    Y.Assert.areEqual(1, count, 'branch.on should be second');
+                    Y.Assert.isNull(called, 'branch.on should be executed before any default function');
+                    count++;
+                });
+
+                root.on('test:foo', function() {
+                    Y.Assert.areEqual(2, count, 'root.on should be third');
+                    Y.Assert.isNull(called, 'root.on should be executed before any default function');
+                    count++;
+                });
+
+                leaf.after('test:foo', function(e) {
+                    Y.Assert.areEqual(3, count, 'leaf.after should be fourth');
+                    Y.Assert.areEqual('root', called, 'leaf.after should be executed after the root default function');
+                    count++;
+                });
+
+                branch.after('test:foo', function() {
+                    Y.Assert.areEqual(4, count, 'branch.after should be fifth');
+                    Y.Assert.areEqual('root', called, 'leaf.after should be executed after the root default function');
+                    count++;
+                });
+
+                root.after('test:foo', function() {
+                    Y.Assert.areEqual(5, count, 'root.after should be sixth and last');
+                    Y.Assert.areEqual('root', called, 'leaf.after should be executed after the root default function');
+                    count++;
+                });
+
+                leaf.fire('test:foo', {}, leaf);
+                Y.Assert.areEqual(6, count);
+
+            },
+
+            testStarSubscriber: function() {
+                var count = 0,
+                    ret,
+                    config = {
+                        emitFacade: true,
+                        bubbles: true,
+                        prefix: 'stars'
+                    },
+                    z = new Y.EventTarget(config), 
+                    a = new Y.EventTarget(config), 
+                    b = new Y.EventTarget(config);
+                    
+                b.addTarget(a);
+                a.addTarget(z);
+
+                z.on('*:foo', function(e) {
+                    count++;
+                    // b -> a -> z -- the parent's parent should be the target
+                    Y.Assert.areEqual(b, e.target);
+                    Y.Assert.areEqual(z, e.currentTarget);
+                    switch (count) {
+                        case 1:
+                            Y.Assert.areEqual('a:foo', e.type);
+                            break;
+                        case 2:
+                            Y.Assert.areEqual('b:foo', e.type);
+                            break;
+                        case 3:
+                            Y.Assert.areEqual('stars:foo', e.type);
+                            break;
+                    }
+                });
+
+                ret = b.fire('a:foo', {}, b);
+
+                Y.Assert.areEqual(1, count);
+                Y.Assert.isTrue(ret);
+
+                ret = b.fire('b:foo', {}, b);
+
+                Y.Assert.areEqual(2, count);
+                Y.Assert.isTrue(ret);
+
+                // if the event target is not configured with a prefix, this won't work by design.
+                ret = b.fire('foo', {}, b);
+                Y.Assert.areEqual(3, count);
+
+                Y.Assert.isTrue(ret);
+            },
+
+            testPreventBubble: function() {
+                var count = 0,
+                    ret,
+                    config = {
+                        emitFacade: true,
+                        bubbles: true,
+                        prefix: 'stars'
+                    },
+                    z = new Y.EventTarget(config), 
+                    a = new Y.EventTarget(config), 
+                    b = new Y.EventTarget(config);
+                    
+                b.addTarget(a);
+                a.addTarget(z);
+
+                z.on('*:foo', function(e) {
+
+                    // e.preventDefault();
+
+                });
+
+                ret = b.fire('a:foo', {}, b);
+
+                Y.Assert.areEqual(0, count);
+            }
         });
         
-
         Y.Test.Runner.add(testEventTarget);
         Y.Test.Runner.run();
     });
+
+   //  YUI({
+   //      base: "../../../build/",
+   //      filter: "debug",
+   //      combine: false,
+   //      useConsole: true,
+   //      logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, loader: true, get: true, widget: true}
+   //  }).use("datasource", function(Y) {
+   //      Y.log('loaded datasource: ' + Y.DataSource);
+   //  });
+
+
 })();
 </script>
 </body>

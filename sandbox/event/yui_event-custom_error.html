@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+<title>YUI3 GA Test Case</title>
+<style type="text/css">
+#description { border-bottom:2px solid #ccc; margin-right:305px }
+#description h1 { margin-bottom:0; }
+#version { margin:0;font-size:92%;font-style:italic }
+#version-number { font-style:normal }
+
+/* Begin style here. */
+
+</style>
+<script src="../../build/yui/yui.js"></script>
+
+    <div id="description">
+        <h1>Error in EventTarget::detach()</h1>
+        <p id="version">YUI version: <span id="version-number">3.0.0</span></p>
+
+        <p>First,
+in FF have Firebug break on all errors. Call EventTarget::detach() when
+Node has not been included, and there is an error caused by (instanceof
+Y.Node) when Y.Node is undefined.</p>
+    </div>
+
+    <!-- Begin markup here. -->
+
+
+<!-- Beta1 -->
+<script>
+YUI({ filter: "RAW" }).use('event-custom', function(Y) {
+    window.Y = Y;
+
+    function log(/* strings */) {
+        var id = "__logger",
+            logger = document.getElementById(id);
+
+        if (!logger) {
+            var d = document.createElement("div");
+            d.id = id;
+            d.style.cssText = "position:absolute;top:0;right:0;height:200px;width:300px;overflow:auto;font-family:arial;font-size:11px;padding:5px;background-color:#eee;"
+            logger = document.body.appendChild(d);
+        }
+                
+        logger.innerHTML += "<p style='border-bottom:1px Solid #ccc;padding:4px;margin:0'>" + Array.prototype.slice.call(arguments).join(" ") + "</p>";
+        logger.scrollTop = logger.scrollHeight;
+    } 
+
+    //
+    // Begin test code here. Some code copped from a developer.yahoo.com example
+    //
+
+    // define a constructor:
+    function Publisher() {
+        // create a custom event.  it is not necessary to explicitly publish an event
+        // unless you need to override the default configuration
+        this.publish("publisher:testEvent", {
+            // configuration options for this event
+        });
+    }
+    // augment the Publisher with EventTarget:
+    Y.augment(Publisher, Y.EventTarget, null, null, {
+        // this argument is provided to EventTarget's constructor, and
+        // lets you set up default configuration values for every event
+        // published on this event target.
+    });
+    
+    // if you accept the default configuration, augmenting EventTarget looks like this:
+    // Y.augment(Publisher, Y.EventTarget);
+
+    log("before EventTarget::detach()");
+
+    function myHandler() {
+    };
+
+    var publisher = new Publisher();
+    publisher.on("publisher:testEvent", myHandler);
+    publisher.detach("publisher:testEvent", myHandler);
+
+    log("after EventTarget::detach()");
+
+});
+</script>
+
+</html>

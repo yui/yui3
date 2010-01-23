@@ -8,7 +8,7 @@
      */
     Y.ObjectAssert = {
     
-        areEqual: function(expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+        areEqual: function(expected, actual, message) {
             Y.Assert._increment();               
             Y.Object.each(expected, function(value, name){
                 if (expected[name] != actual[name]){
@@ -22,31 +22,31 @@
          * @param {String} propertyName The name of the property to test.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
-         * @method has
+         * @method hasKey
          * @static
          */    
-        has : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        hasKey: function (propertyName, object, message) {
             Y.Assert._increment();               
-            if (!(propertyName in object)){
-                Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
+            if (!Y.Object.hasKey(object, propertyName)){
+                Y.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
             }    
         },
         
         /**
          * Asserts that an object has all properties of a reference object.
-         * @param {Object} refObject The object whose properties should be on the object to test.
+         * @param {Array} properties An array of property names that should be on the object.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
-         * @method hasAll
+         * @method hasKeys
          * @static
          */    
-        hasAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-            Y.Assert._increment();               
-            Y.Object.each(refObject, function(value, name){
-                if (!(name in object)){
-                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object."));
-                }    
-            });
+        hasKeys: function (properties, object, message) {
+            Y.Assert._increment();  
+            for (var i=0; i < properties.length; i++){
+                if (!Y.Object.hasKey(object, properties[i])){
+                    Y.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object."));
+                }      
+            }
         },
         
         /**
@@ -54,30 +54,48 @@
          * @param {String} propertyName The name of the property to test.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
-         * @method owns
+         * @method ownsKey
          * @static
          */    
-        owns : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+        ownsKey: function (propertyName, object, message) {
             Y.Assert._increment();               
             if (!object.hasOwnProperty(propertyName)){
-                Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
+                Y.fail(Y.Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
             }     
         },
         
         /**
-         * Asserts that all properties on a given object also exist on an object instance (not on its prototype).
-         * @param {Object} refObject The object whose properties should be owned by the object to test.
+         * Asserts that all properties exist on an object instance (not on its prototype).
+         * @param {Array} properties An array of property names that should be on the object.
          * @param {Object} object The object to search.
          * @param {String} message (Optional) The message to display if the assertion fails.
-         * @method ownsAll
+         * @method ownsKeys
          * @static
          */    
-        ownsAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-            Y.Assert._increment();               
-            Y.Object.each(refObject, function(value, name){
-                if (!object.hasOwnProperty(name)){
-                    Y.Assert.fail(Y.Assert._formatMessage(message, "Property '" + name + "' not found on object instance."));
-                }     
-            });
-        }
+        ownsKeys: function (properties, object, message) {
+            Y.Assert._increment();        
+            for (var i=0; i < properties.length; i++){
+                if (!object.hasOwnProperty(properties[i])){
+                    Y.fail(Y.Assert._formatMessage(message, "Property '" + properties[i] + "' not found on object instance."));
+                }      
+            }
+        },
+        
+        /**
+         * Asserts that an object owns no properties.
+         * @param {Object} object The object to check.
+         * @param {String} message (Optional) The message to display if the assertion fails.
+         * @method ownsNoKeys
+         * @static
+         */    
+        ownsNoKeys : function (object, message) {
+            Y.Assert._increment();  
+
+            var keys = Y.Object.keys(object);
+            
+            if (keys.length > 0){
+                Y.fail(Y.Assert._formatMessage(message, "Object owns " + keys.length + " properties but should own none."));
+            }
+
+        }     
     };

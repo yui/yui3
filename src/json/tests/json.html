@@ -2,8 +2,6 @@
 <html>
 <head>
     <title>Test Page</title>
-    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <link type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css">
     <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
     <style type="text/css" id="styleblock" class="highlight-ignore">
         h1 {
@@ -11,10 +9,6 @@
         }
         .yui-skin-sam .yui-console .yui-console-content {
             font-size: 10px;
-            width: 32em;
-        }
-        .yui-skin-sam .yui-console .yui-console-bd {
-            height: 50em;
         }
         .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
             background: #070;
@@ -30,6 +24,9 @@
             width: 650px;
         }
         .highlight-example h2 {
+            display: none;
+        }
+        .yui-skin-sam .yui-console-entry-time {
             display: none;
         }
     </style>
@@ -62,7 +59,7 @@
     <button id="button_submit_with_value" type="submit" value="submit button value">content and value</button>
     <input type="button" id="input_button" value="input button">
     <input type="submit" id="input_submit" value="input submit">
-    <input type="image" id="input_image" src="404.png" value="input image">
+    <!--input type="image" id="input_image" src="404.png" value="input image"-->
 </form>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
@@ -73,7 +70,7 @@
 YUI({
     base : '../../../build/',
     filter : 'debug',
-    //useBrowserConsole : false,
+    useBrowserConsole : false,
     logInclude : { TestRunner: true, json: true, JSON: true }
 }).use('test','console','json',function (Y) {
 
@@ -144,6 +141,8 @@ JSON_STRING = '[\
 /*****************************/
 /*     Tests begin here      */
 /*****************************/
+// wrapped in a function to allow repeating tests with native behavior disabled
+function addTests() {
 suite.add(new Y.Test.Case({
     name : "parse",
 
@@ -498,9 +497,11 @@ suite.add(new Y.Test.Case({
     },
 
     test_stringifyDate : function () {
-        // This assumes Pacific Time Zone (GMT -7:00)
-        Y.Assert.areSame('{"dt":"1946-07-06T07:00:00Z"}',
-            Y.JSON.stringify({dt : new Date(1946,6,6)}));
+        // native toJSON method should be called if available
+        var d = new Date(Date.UTC(1946,6,6)),
+            ref = d.toJSON ? d.toJSON() : "1946-07-06T00:00:00Z";
+
+        Y.Assert.areSame('{"dt":"'+ref+'"}', Y.JSON.stringify({dt : d}));
     },
 
     test_stringifyFormValue : function () {
@@ -517,13 +518,15 @@ suite.add(new Y.Test.Case({
             textarea                : $('textarea').value,
             select                  : $('select').value,
             multiple_select         : $('multiple_select').value,
-            button                  : $('button').value,
-            button_with_value       : $('button_with_value').value,
-            button_submit           : $('button_submit').value,
-            button_submit_with_value: $('button_submit_with_value').value,
+            // Buttons commented out for now because IE reports values
+            // differently
+            //button                  : $('button').value,
+            //button_with_value       : $('button_with_value').value,
+            //button_submit           : $('button_submit').value,
+            //button_submit_with_value: $('button_submit_with_value').value,
             input_button            : $('input_button').value,
-            input_submit            : $('input_submit').value,
-            input_image             : $('input_image').value
+            input_submit            : $('input_submit').value//,
+            //input_image             : $('input_image').value
         };
 
         Y.Assert.areSame('{'+
@@ -537,13 +540,13 @@ suite.add(new Y.Test.Case({
             '"textarea":"textarea",'+
             '"select":"selected",'+
             '"multiple_select":"selected",'+
-            '"button":"",'+
-            '"button_with_value":"button value",'+
-            '"button_submit":"",'+
-            '"button_submit_with_value":"submit button value",'+
+            //'"button":"",'+
+            //'"button_with_value":"button value",'+
+            //'"button_submit":"",'+
+            //'"button_submit_with_value":"submit button value",'+
             '"input_button":"input button",'+
-            '"input_submit":"input submit",'+
-            '"input_image":"input image"}',
+            '"input_submit":"input submit"}',
+            //'"input_image":"input image"}',
             Y.JSON.stringify(data));
     }
 
@@ -636,6 +639,8 @@ suite.add(new Y.Test.Case({
                 }]
             },null,0));
 
+        /* Commented out because FF3.5 has infinite loop bug for neg indents
+         * Fixed in FF for next version.
         Y.Assert.areSame('{"foo-4":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
                 "foo-4" : [ 2, {
@@ -646,6 +651,7 @@ suite.add(new Y.Test.Case({
                     }]
                 }]
             },null,-4));
+        */
 
         Y.Assert.areSame('{"foo_false":[2,{"bar":[4,{"baz":[6,{"deep enough":7}]}]}]}',
             Y.JSON.stringify({
@@ -773,6 +779,34 @@ suite.add(new Y.Test.Case({
 }));
 
 suite.add(new Y.Test.Case({
+    name : "toJSON",
+
+    test_toJSON_on_object: function () {
+        Y.Assert.areSame('"toJSON"',
+            Y.JSON.stringify({ toJSON: function () { return "toJSON" } }));
+
+        // TODO: complex object with toJSON
+    },
+
+    test_toJSON_on_proto: function () {
+        function A() {}
+        A.prototype.toJSON = function () { return "A" };
+        
+        function B() {}
+        B.prototype = new A();
+
+        function C() {
+            this.x = "X";
+            this.y = "Y";
+            this.z = "Z";
+        }
+        C.prototype = new B();
+
+        Y.Assert.areSame('"A"', Y.JSON.stringify(new C()));
+    }
+}));
+
+suite.add(new Y.Test.Case({
     name : "replacer",
 
     test_replacer : function () {
@@ -859,6 +893,32 @@ suite.add(new Y.Test.Case({
                         return v;
                     }
                 },'_'));
+    },
+
+    test_replacer_after_toJSON : function () {
+        Y.Assert.areSame('{"a":"ABC"}',
+            Y.JSON.stringify({a:{ toJSON: function () { return "abc"; } } },
+                function (k,v) {
+                    return typeof v === 'string' ? v.toUpperCase() : v;
+                }));
+
+        // Date instances in ES5 have toJSON that outputs toISOString, which
+        // means the replacer should never receive a Date instance
+        var str = Y.JSON.stringify([new Date()], function (k,v) {
+            return (v instanceof Date) ? "X" : v;
+        });
+        Y.Assert.areSame(-1, str.indexOf("X"), "Date incorrectly received by replacer");
+    },
+
+    test_replacer_returning_Date : function () {
+        var d = new Date(),
+            ref = Y.JSON.stringify(d);
+
+        Y.Assert.areSame('{"dt":'+ref+',"date_from_replacer":{}}',
+            Y.JSON.stringify({ dt: d, date_from_replacer: 1 },
+                function (k,v) {
+                    return typeof v === 'number' ? d : v;
+                }));
     }
 }));
 
@@ -871,50 +931,28 @@ suite.add(new Y.Test.Case({
     },
 }));
 */
-
-Y.Console.prototype.printLogEntry = function (m) {
-    m = Y.merge(
-        this._htmlEscapeMessage(m),
-        Y.Console.ENTRY_CLASSES,
-        {
-            cat_class : this.getClassName('entry',m.category),
-            src_class : this.getClassName('entry',m.source)
-        });
-    
-    var n = Y.Node.create(this.get('entryTemplate').replace(/\{([\w-]+)\}/g,
-            function (_,k) { return k in m ? m[k] : ''; }));
-    
-    this._addToConsole(n);
-    
-    return this;
-};
+}
 
 var yconsole = new Y.Console({
     contentBox:"log",
     newestOnTop: false,
-    height: '600px'
+    height: '580px'
 }).render();
 
 //yconsole.hideCategory('info');
-yconsole.printLogEntry = function (m) {
-    if (m.category === 'section') {
-        this._addToConsole(Y.Node.create("<h3>"+m.message+"</h3>"));
-        return this;
-    } else if (m.category === "break") {
-        this._addToConsole(Y.Node.create("<br>"));
-        return this;
-    } else if (m.category === "info") {
-        return this;
-    } else {
-        return Y.Console.prototype.printLogEntry.call(this,m);
-    }
-};
 
-if (Object.prototype.toString.call(window.JSON) === '[object JSON]') {
-    Y.log("Browser has native JSON implementation","info","TestRunner");
+addTests();
+// If native JSON is available, run the tests again without native calls
+if (Y.JSON.useNativeParse) {
+    suite.add(new Y.Test.Case({
+        test_disableNative : function () {
+            Y.JSON.useNativeParse = false;
+            Y.JSON.useNativeStringify = false;
+            Y.log("Rerunning tests without native JSON API","section","TestRunner");
+        }
+    }));
+    addTests();
 }
-
-Y.log("Tests","section","TestRunner");
 
 Y.Test.Runner.add(suite);
 
@@ -922,7 +960,5 @@ Y.Test.Runner.run();
 
 });
 </script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
 </body>
 </html>

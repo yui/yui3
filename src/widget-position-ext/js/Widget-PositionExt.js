@@ -21,12 +21,17 @@
 
         /**
          * Widget extension, which can be used to add extended XY positioning support to the base Widget class,
-         * through the <a href="Base.html#method_build">Base.build</a> method.
+         * through the <a href="Base.html#method_build">Base.build</a> method. This extension requires that 
+         * the WidgetPosition extension be added to the Widget (before WidgetPositionExt, if part of the same 
+         * extension list passed to Base.build).
          *
          * @class WidgetPositionExt
          * @param {Object} User configuration object
          */
         function PositionExt(config) {
+            if (!this._posNode) {
+                Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added"); 
+            }
             Y.after(this._syncUIPosExtras, this, SYNCUI);
             Y.after(this._bindUIPosExtras, this, BINDUI);
         }
@@ -82,6 +87,7 @@
                 setter: function(val) {
                     return this._setAlignCenter(val);
                 },
+                lazyAdd:false,
                 value:false
             }
         };
@@ -224,7 +230,7 @@
              * 
              * @method _afterAlignChange
              * @protected
-             * @param {Event.Facade} e The event facade for the attribute change
+             * @param {EventFacade} e The event facade for the attribute change
              */
             _afterAlignChange : function(e) {
                 if (e.newVal) {
@@ -250,7 +256,7 @@
                 if (!node) {
                     nodeRegion = this._posNode.get(VIEWPORT_REGION);
                 } else {
-                    node = Y.Node.get(node);
+                    node = Y.Node.one(node);
                     if (node) {
                         nodeRegion = node.get(REGION);
                     }

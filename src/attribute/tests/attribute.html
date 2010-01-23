@@ -5,6 +5,12 @@
     <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
     <style type="text/css">
+        #console .yui-console-entry {
+            padding:2px;
+            margin:0px;
+            min-height:0;
+        }
+        
         #console .yui-console-entry-fail .yui-console-entry-cat {
             background-color:red;
         }
@@ -13,35 +19,165 @@
             background-color:green;
         }
 
+        #console .yui-console-entry-perf .yui-console-entry-cat {
+            background-color:blue;
+        }
+
         #console {
             position:static;
+        }
+
+        html, body {
+            height:100%;
         }
     </style>
 
     <script type="text/javascript">
 
-        YUI({base:"../../../build/", filter:"raw", useBrowserConsole:false}).use("base", "console", "test", function(Y) {
+        YUI({filter:"raw", useBrowserConsole:false}).use("dump", "attribute-complex", "base", "console", "test", function(Y) {
 
             function areObjectsReallyEqual(o1, o2) {
                 Y.ObjectAssert.areEqual(o1, o2);
                 Y.ObjectAssert.areEqual(o2, o1);
             }
 
+            function Test(cfg, lazy, silentInit) {
+                this._lazyAddAttrs = lazy;
+                this._silentInit = silentInit;
+                Test.superclass.constructor.apply(this, arguments);
+            };
+
+            Test.NAME = 'test';
+
+            Test.ATTRS = {
+
+                attr1: {
+                    value: "Foo",
+                    setter: function(n) {
+                        return n;
+                    }
+                },
+
+                attr2: {
+                    value: "Bar",
+                    setter: function(n) {
+                        return n;
+                    }
+                },
+        
+                attr3: {
+                    value: true
+                },
+        
+                attr4: {
+                    value: 3
+                },
+        
+                attr5: {
+                    value: 3
+                },
+        
+                attr6: {
+                    value: false,
+                    setter: function(lock) {
+                        return lock;
+                    }
+                },
+        
+                attr7: {
+                    value: false
+                },
+        
+                attr8: {
+                    value: true
+                },
+        
+                attr9: {
+                    value: true
+                },
+        
+                attr10: {
+                    value: false
+                },
+        
+                attr11: {
+                    value: true
+                },
+        
+                attr12: {
+                    value: false
+                },
+        
+                attr13: {
+                    value: false
+                },
+        
+                attr14: {
+                    value: false,
+                    setter: function(val) {
+                        return val;
+                    }
+                },
+        
+                attr15: {
+                    value: null,
+                    setter: function(val) {
+                        return false;
+                    }
+                },
+        
+                attr16: {
+                    value: ['default'],
+        
+                    getter: function() {
+                        return false;
+                    },
+        
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr17: {
+                    value: null,
+                    setter: function(g) {
+                        return g;
+                    }
+                },
+                attr18: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr19: {
+                    writeOnce: true,
+                    value: null
+                },
+                attr20: {
+                    writeOnce: true,
+                    value: null
+                }
+            };
+        
+            Y.extend(Test, Y.Base, {
+                foo: function() {}
+            });
+
             function AttrHost(config) {
                 AttrHost.superclass.constructor.apply(this, arguments);
             }
-            AttrHost.NAME = "attHost";
+            AttrHost.NAME = "attrHost";
 
             AttrHost.ATTRS = {
                 A: {
                     value:"AVal",
-                    validator: Y.Lang.isString
+                    validator: Y.Lang.isString,
+                    broadcast:1
                 },
 
                 B: {
                     validator: function(value) {
                         return (value === undefined || Y.Lang.isString(value) || Y.Lang.isNumber(value));
-                    }
+                    },
+                    broadcast:2
                 },
 
                 C: {
@@ -130,10 +266,76 @@
                     setter: function(val) { // Should be ignored. Can't set setters for complex sub vals
                         return val + 10000;
                     }
+                },
+
+                G : {
+                    valueFn:function(val) {
+                        // Referring to H before it's set up
+                        return this.get("H") + 10;
+                    }
+                },
+
+                H: {
+                    value:5,
+                    getter: function(val) {
+                        return val*5;
+                    }
+                },
+
+                I : {
+                    value:{
+                        a: 5
+                    },
+                    getter: "_getI",
+                    setter: "_setI",
+                    validator: "_validateI"
+                },
+
+                PassThrough : {
+                    value: "passthrough",
+                    getter: function(val) {
+                        return this._passthrough;
+                    },
+                    setter: function(val) {
+                        this._passthrough = val;
+                    }
+                },
+                
+                Z : {
+                    value: "z",
+                    getter: function(val) {
+                        return val.toUpperCase();
+                    }
                 }
             };
 
-            Y.extend(ExtendedAttrHost, AttrHost);
+            Y.extend(ExtendedAttrHost, AttrHost, {
+                _validateI : function(val, name) {
+                        if (name.indexOf(".") == -1) {
+                            Y.Assert.areEqual("I", name);
+                        } else {
+                            Y.Assert.areEqual("I.a", name);
+                        }
+                        return true;
+                },
+                
+                _getI : function(val, name) {
+                    if (name.indexOf(".") == -1) {
+                        Y.Assert.areEqual("I", name);
+                    } else {
+                        Y.Assert.areEqual("I.a", name);
+                    }
+                    return val;
+               },
+
+               _setI : function(val, name) {
+                    if (name.indexOf(".") == -1) {
+                        Y.Assert.areEqual("I", name);
+                    } else {
+                        Y.Assert.areEqual("I.a", name);
+                    }
+               }
+            });
 
             //---
 
@@ -285,7 +487,19 @@
                 testEventSameValue : function() {
                     var h = this.createHost({A:"MyAVal"});
 
-                    var expectedEvents = ["BeforeAChange", "BeforeAChange", "BeforeAChange", "AfterAChange", "BeforeComplexChange", "BeforeComplexChange", "AfterComplexChange", "BeforeComplexChange", "AfterComplexChange", "BeforeComplexChange", "AfterComplexChange"];
+                    var expectedEvents = ["BeforeAChange", 
+                                          "BeforeAChange", 
+                                          "BeforeAChange", "AfterAChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange", 
+                                          "BeforeComplexChange", "AfterComplexChange",
+                                          "BeforePassThroughChange", "AfterPassThroughChange",
+                                          "BeforePassThroughChange",
+                                          "BeforePassThroughChange", "AfterPassThroughChange"
+                                          ];
                     var actualEvents = [];
 
                     h.on("AChange", function(e) {
@@ -307,15 +521,65 @@
                             Y.Assert.areNotSame(e.newVal, e.preVal, "Should not fire after event if object values are same");
                         }
                     });
+                    
+                    h.on("PassThroughChange", function(e) {
+                        actualEvents.push("BeforePassThroughChange");
+                    });
+
+                    h.after("PassThroughChange", function(e) {
+                        actualEvents.push("AfterPassThroughChange");
+                    });
 
                     h.set("A", h.get("A"));     // No Change
                     h.set("A", "MyAVal");       // No Change
-                    h.set("A", "MyNewAVal");    // Change
 
-                    h.set("complex", h.get("complex"));          // No Change
+                    h.set("A", "MyNewAVal");                     // Change
+
+                    h.set("complex", h.get("complex"));          // Change, we don't know if something changed inside the object
                     h.set("complex.Z.A", 3);                     // Change, even though value of complex is unchanged, we don't deep compare objects.
                     h.set("complex", Y.clone(h.get("complex"))); // Change, obj reference differs
                     h.set("complex", {A:1, B:2, C:3});           // Change, obj reference differs
+
+                    var a = ["A"];
+                    h.set("complex", a);                         // Change, value changed
+
+                    a.push("B");
+                    h.set("complex", a);                         // Change, same object ref, but we don't know if contents changed, so fire event
+
+                    h.set("PassThrough", "MyPassThrough");
+                    h.set("PassThrough", "MyPassThrough");
+                    h.set("PassThrough", "MyNewPassThrough");
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testEventRegistrationThroughConstructor : function() {
+                    // Initial Set does not fire events
+                    var expectedEvents = ["OnInit", "AfterInit", "OnAChange", "AfterAChange"];
+                    var actualEvents = [];
+                    var h = this.createHost({
+                        on: {
+                            "AChange" : function() {
+                                actualEvents.push("OnAChange");
+                            },
+
+                            "init" : function() {
+                                actualEvents.push("OnInit");
+                            }
+                        },
+
+                        after: {
+                            "AChange" : function() {
+                                actualEvents.push("AfterAChange");
+                            },
+
+                            "init" : function() {
+                                actualEvents.push("AfterInit");
+                            }
+                        }
+                    });
+
+                    h.set("A", "Foo");
 
                     Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
                 }
@@ -379,6 +643,23 @@
                     Y.Assert.areEqual("EVal", h.get("E"));   // Write Once
 
                     Y.Assert.areEqual("MyNewDEVal", h.get("DE"));
+                },
+
+                testAdHocGetSet : function() {
+                    var h = this.createHost();
+
+                    Y.Assert.areEqual(undefined, h.get("AdHoc"));
+                    h.set("AdHoc", "TestAdHoc");
+                    Y.Assert.areEqual("TestAdHoc", h.get("AdHoc"));
+                    
+                    h.addAttr("AdHoc", {
+                        setter: function(val) {
+                            return val.toUpperCase();
+                        }
+                    });
+
+                    h.set("AdHoc", "TestAdHocConfigured");
+                    Y.Assert.areEqual("TESTADHOCCONFIGURED", h.get("AdHoc"));
                 },
 
                 testReset : function() {
@@ -639,6 +920,138 @@
                     h.set("complex.Y.A", 2222);
                     h.set("complex.Y", 2223);
                     h.set("complex.W.A", 3333);
+                },
+
+                testBroadcast : function() {
+
+                    var h = this.createHost();
+
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast", "On BChange Y Broadcast", "After BChange Y Broadcast", "On BChange YUI Broadcast", "After BChange YUI Broadcast", "On CChange", "After CChange"];
+                    var actualEvents = [];
+
+                    Y.Global.on("attrHost:AChange", function() {
+                        actualEvents.push("On AChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("attrHost:AChange", function() {
+                        actualEvents.push("After AChange YUI Broadcast");
+                    });
+
+                    Y.on("attrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("attrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    Y.Global.on("attrHost:BChange", function() {
+                        actualEvents.push("On BChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("attrHost:BChange", function() {
+                        actualEvents.push("After BChange YUI Broadcast");
+                    });
+
+                    Y.on("attrHost:BChange", function() {
+                        actualEvents.push("On BChange Y Broadcast");
+                    });
+
+                    h.on("CChange", function() {
+                        actualEvents.push("On CChange");
+                    });
+
+                    h.after("CChange", function() {
+                        actualEvents.push("After CChange");
+                    });
+
+                    Y.after("attrHost:BChange", function() {
+                        actualEvents.push("After BChange Y Broadcast");
+                    });
+
+                    Y.Global.on("attrHost:CChange", function() {
+                        actualEvents.push("On CChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("attrHost:CChange", function() {
+                        actualEvents.push("After CChange YUI Broadcast");
+                    });
+
+                    Y.on("attrHost:CChange", function() {
+                        actualEvents.push("On CChange Y Broadcast");
+                    });
+
+                    Y.after("attrHost:CChange", function() {
+                        actualEvents.push("After CChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+                    h.set("B", "NewB");
+                    h.set("C", "NewC");
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testInitialValidation: function() {
+                    var h = this.createHost({A:5});
+                    Y.Assert.areEqual("AVal", h.get("A")); // Numerical value validation failure should revert to default value
+                },
+
+                testModifyAttr : function() {
+                    var h = this.createHost();
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast"]
+                    var actualEvents = [];
+
+                    Y.on("attrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("attrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+
+                    h.modifyAttr("A", {
+                        getter: function(val, name) {
+                            return val.toUpperCase();
+                        },
+                        setter: function(val, name) {
+                            Y.Assert.fail("Setter should not be called");
+                        },
+                        validator: function(val, name) {
+                            Y.Assert.fail("Validator should not be called");
+                        },
+                        broadcast:0
+                    });
+
+                    h.set("A", "NewAAfterGetterBroadCast");
+                    h.set("A", 5);
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+
+                    h.modifyAttr("A", {
+                        readOnly:true
+                    });
+
+                    h.set("A", "NewAAfterReadOnly");
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+
+                },
+
+                testProtect : function() {
+                    var h = this.createHost();
+                    var q = h._protectAttrs(AttrHost.ATTRS);
+
+                    Y.Assert.areNotSame(AttrHost.ATTRS, q);
+                    Y.Assert.areEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
+
+                    q.A.newprop = "new prop value";
+                    q.A.value = "modified value";
+
+                    Y.Assert.areNotEqual(Y.dump(AttrHost.ATTRS), Y.dump(q));
                 }
             };
 
@@ -707,6 +1120,14 @@
                     Y.Assert.areEqual("MyNewDEVal", h.get("DE"));
                 },
 
+                testAdHocGetSet : function() {
+                    var h = this.createHost();
+
+                    Y.Assert.areEqual(undefined, h.get("AdHoc"));
+                    h.set("AdHoc", "TestAdHoc");
+                    Y.Assert.areEqual("TestAdHoc", h.get("AdHoc"));
+                },
+
                 testReset : function() {
                     var h = this.createHost({A:"MyAVal", B:"MyBVal", C:"MyCVal", D:"MyDVal", E:"MyEVal", F:"MyFVal", DE:"MyDEVal"});
 
@@ -754,7 +1175,10 @@
                         "E": "MyNewEVal",
                         "F": "MyNewFVal",
                         "DE": "MyNewDEVal",
-                        complex: "MyNewComplexVal"
+                        complex: "MyNewComplexVal",
+                        "I" : "MyNewIVal",
+                        "PassThrough" : "MyPassThrough",
+                        "Z" : "MyZ"
                     });
 
                     var expectedVals = {
@@ -766,6 +1190,11 @@
                         F: "MyNewFVal",
                         DE: "MyNewDEVal",
                         complex: "MyNewComplexVal",
+                        G: 35,
+                        H: 25,
+                        I: "MyNewIVal",
+                        PassThrough: "MyPassThrough",
+                        Z: "MYZ",
                         initialized:true,
                         destroyed:false
                     };
@@ -828,7 +1257,7 @@
                 testPrivateSet : function() {
                     var h = this.createHost();
 
-                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "AfterTryEAgain" /* e.newVal is not "get" normalized */ ];
+                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "AfterTryEAgain"  ]; // Last entry: e.newVal is not "get" normalized 
                     var actualEvents = [];
 
                     h.on("DChange", function(e) {
@@ -981,15 +1410,236 @@
                     h.set("complex.Y.A", 22222);
                     h.set("complex.Y", 22233);
                     h.set("complex.W.A", 33333);
+                },
+
+                testOnDemandInit : function() {
+                    var h = this.createHost();
+
+                    Y.Assert.areEqual(35, h.get("G"));
+                    Y.Assert.areEqual(25, h.get("H"));
+                },
+
+                testGetterSetterValidatorNameArg : function() {
+                    var h = this.createHost();
+                    h.set("I.a", 6);
+                    h.set("I", {a:7, b:8});
+                },
+
+                testBroadcast : function() {
+                    var h = this.createHost();
+
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast", "On BChange Y Broadcast", "After BChange Y Broadcast", "On BChange YUI Broadcast", "After BChange YUI Broadcast", "On CChange", "After CChange"];
+                    var actualEvents = [];
+
+                    Y.Global.on("extendedAttrHost:AChange", function() {
+                        actualEvents.push("On AChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("extendedAttrHost:AChange", function() {
+                        actualEvents.push("After AChange YUI Broadcast");
+                    });
+
+                    Y.on("extendedAttrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("extendedAttrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    // ---
+
+                    Y.Global.on("extendedAttrHost:BChange", function() {
+                        actualEvents.push("On BChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("extendedAttrHost:BChange", function() {
+                        actualEvents.push("After BChange YUI Broadcast");
+                    });
+
+                    Y.on("extendedAttrHost:BChange", function() {
+                        actualEvents.push("On BChange Y Broadcast");
+                    });
+
+                    Y.after("extendedAttrHost:BChange", function() {
+                        actualEvents.push("After BChange Y Broadcast");
+                    });
+
+                    // --
+
+                    h.on("CChange", function() {
+                        actualEvents.push("On CChange");
+                    });
+
+                    h.after("CChange", function() {
+                        actualEvents.push("After CChange");
+                    });
+
+                    Y.Global.on("extendedAttrHost:CChange", function() {
+                        actualEvents.push("On CChange YUI Broadcast");
+                    });
+
+                    Y.Global.after("extendedAttrHost:CChange", function() {
+                        actualEvents.push("After CChange YUI Broadcast");
+                    });
+
+                    Y.on("extendedAttrHost:CChange", function() {
+                        actualEvents.push("On CChange Y Broadcast");
+                    });
+
+                    Y.after("extendedAttrHost:CChange", function() {
+                        actualEvents.push("After CChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+                    h.set("B", "NewB");
+                    h.set("C", "NewC");
+
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testModifyAttr : function() {
+                    var h = this.createHost();
+                    var expectedEvents = ["On AChange Y Broadcast", "After AChange Y Broadcast"]
+                    var actualEvents = [];
+
+                    Y.on("extendedAttrHost:AChange", function() {
+                        actualEvents.push("On AChange Y Broadcast");
+                    });
+
+                    Y.after("extendedAttrHost:AChange", function() {
+                        actualEvents.push("After AChange Y Broadcast");
+                    });
+
+                    h.set("A", "NewA");
+
+                    h.modifyAttr("A", {
+                        getter: function(val, name) {
+                            return val.toUpperCase();
+                        },
+                        setter: function(val, name) {
+                            Y.Assert.fail("Setter should not be called");
+                        },
+                        validator: function(val, name) {
+                            Y.Assert.fail("Validator should not be called");
+                        },
+                        broadcast:0
+                    });
+
+                    h.set("A", "NewAAfterGetterBroadCast");
+                    h.set("A", 5);
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+
+                    h.modifyAttr("A", {
+                        readOnly:true
+                    });
+
+                    h.set("A", "NewAAfterReadOnly");
+
+                    Y.Assert.areEqual("NEWAAFTERGETTERBROADCAST", h.get("A"));
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
+                },
+
+                testEventSameValueExt : function() {
+                    var h = this.createHost();
+                    var expectedEvents = ["BeforeZChange", "AfterZChange", "BeforeZChange", "AfterZChange"];
+                    var actualEvents = [];
+
+                    h.on("ZChange", function() {
+                        actualEvents.push("BeforeZChange");
+                    });
+                    
+                    h.after("ZChange", function() {
+                        actualEvents.push("AfterZChange");
+                    });
+                    
+                    h.set("Z", "MyZ");
+                    h.set("Z", "MYZ");
+                    
+                    Y.ArrayAssert.itemsAreEqual(expectedEvents, actualEvents);
                 }
             };
 
             extendedTemplate = Y.merge(extendedTemplate, sharedEventTests);
 
+            var perfTemplate = {
+
+                testTimeConstruction: function() {
+                    var start, end, n = 20, t, i;
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test(null, false);
+                        t.getAttrs();
+                        t = null;
+                    }
+                    end = new Date().getTime();
+                    Y.log("Construction Time Populated (upfront): " + ((end-start)/n), "perf");
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test();
+                        t.getAttrs();
+                        t = null;
+                    }
+                    end = new Date().getTime();
+                    Y.log("Construction Time Populated (lazy): " + ((end-start)/n), "perf");
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test(null, false);
+                        t = null;
+                    }
+                    end = new Date().getTime();
+                    Y.log("Construction Time (upfront): " + ((end-start)/n), "perf");
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test();
+                        t = null;
+                    }
+                    end = new Date().getTime();
+
+                    var time = (end-start)/n;
+                    var expectedTime = (Y.UA.ie && Y.UA.ie <= 6) ? 15 : 10;
+
+                    Y.log("Construction Time (lazy): " + time, "perf");
+
+                    start = new Date().getTime();
+                    for (i = 0; i < n; i++) {
+                        t = new Test(null, true, true);
+                        t = null;
+                    }
+                    end = new Date().getTime();
+                    Y.log("Construction Time (lazy and silent init): " + ((end-start)/n), "perf");
+
+                    Y.Assert.isTrue((time < expectedTime));
+                },
+
+                testStateForPerfSwitches : function() {
+
+                    // Lazy
+                    t = new Test();
+                    var x = t.getAttrs();
+
+                    // Non Lazy (Upfront)
+                    t = new Test(null, false);
+                    var y = t.getAttrs();
+
+                    // Lazy and Silent
+                    t = new Test(null, true, true);
+                    var z = t.getAttrs();
+
+                    Y.Assert.areEqual(Y.dump(x), Y.dump(y), "Lazy vs. Upfront: attr state is not equal");
+                    Y.Assert.areEqual(Y.dump(y), Y.dump(z), "Upfront vs. Lazy and Silent: attr state is not equal");
+                }
+            }
+
             //create the console
             new Y.Console({
                 width:"100%",
-                height:"50em",
+                height:"95%",
                 boundingBox:"#console",
                 verbose : false,
                 printTimeout: 0,
@@ -1008,6 +1658,8 @@
 
             Y.Test.Runner.add(new Y.Test.Case(basicTemplate));     // Running again, to make sure static attributes aren't modified
             Y.Test.Runner.add(new Y.Test.Case(extendedTemplate));  // Running again, to make sure static attributes aren't modified
+
+            Y.Test.Runner.add(new Y.Test.Case(perfTemplate));
 
             Y.Test.Runner.run();
 

@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+        div {
+            margin: 1em 0;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+<div id="outer">
+    <div id="inner">
+        <button type="button" class="go">Do it</button>
+        <button type="button" class="go">Do it</button>
+        <button type="button" class="go">Do it</button>
+    </div>
+</div>
+<div>
+    <button type="button" id="attach">attach</button>
+    <button type="button" id="attach_handle">attach + handle</button>
+    <button type="button" id="attach_cat">attach + category</button>
+    <button type="button" id="detach">detach by signature</button>
+    <button type="button" id="detach_handle">detach by handle</button>
+    <button type="button" id="detach_cat">detach by category</button>
+    <button type="button" id="detach_nofn">detach without fn</button>
+    <button type="button" id="remove">remove buttons</button>
+</div>
+<ul id="output"></ul>
+
+<script src="../../../../build/yui/yui.js"></script>
+<!--script src="../../../../build/event-synthetic/event-synthetic.js"></script-->
+<script src="event-synthetic.js"></script>
+<script>
+YUI({
+    useBrowserConsole: false,
+    filter: 'raw'
+}).use('event-synthetic', function (Y) {
+
+Y.on('yui:log', function (e) {
+    Y.one("#output").append("<li>" + e.msg + "</li>");
+});
+
+Y.Event.define('test', {
+    on: function (node, sub, ce) {
+        sub._cat = Y.guid();
+        node.on(sub._cat + '|click', function (e) {
+            ce.fire();
+        });
+        Y.log('Subscribed');
+    },
+    detach: function (node, sub, ce) {
+        node.detach(sub._cat + '|*');
+        Y.log("Detached");
+    }
+});
+
+var outer = Y.one('#outer'),
+    inner = Y.one('#inner'),
+    mode  = 2,
+    handle;
+
+function notify() {
+    //console.log('Fired', this, arguments);
+    Y.log('Fired');
+}
+
+Y.one('#attach').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').on('test', notify); break;
+        case 2: Y.all('.go').on('test', notify); break;
+        case 3: Y.on('test', notify, '.go');
+    }
+});
+
+Y.one('#attach_handle').on('click', function (e) {
+    switch(mode) {
+        case 1: handle = Y.one('.go').on('test', notify); break;
+        case 2: handle = Y.all('.go').on('test', notify); break;
+        case 3: handle = Y.on('test', notify, '.go');
+    }
+});
+
+Y.one('#attach_cat').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').on('foo|test', notify); break;
+        case 2: Y.all('.go').on('foo|test', notify); break;
+        case 3: Y.on('foo|test', notify, '.go');
+    }
+});
+
+Y.one('#detach').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').detach('test', notify); break;
+        case 2: Y.all('.go').detach('test', notify); break;
+        case 3: Y.detach('test', notify, '.go');
+    }
+});
+
+Y.one('#detach_handle').on('click', function (e) {
+    handle.detach();
+});
+
+Y.one('#detach_cat').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').detach('foo|test'); break;
+        case 2: Y.all('.go').detach('foo|test'); break;
+        case 3: Y.detach('foo|test');
+    }
+});
+
+Y.one('#detach_nofn').on('click', function (e) {
+    switch (mode) {
+        case 1: Y.one('.go').detach('test'); break;
+        case 2: all('.go').detach('test'); break;
+        case 3: Y.detach('foo|*');
+    }
+});
+
+Y.one('#remove').on('click', function (e) {
+    inner.remove(true);
+    Y.log('Detached');
+});
+
+});
+</script>
+</body>
+</html>

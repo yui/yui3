@@ -9,14 +9,14 @@
      * @class DDM
      * @extends Base
      * @constructor
+     * @namespace DD
      */
     
     var DDMBase = function() {
-        //debugger;
         DDMBase.superclass.constructor.apply(this, arguments);
     };
 
-    DDMBase.NAME = 'dragDropMgr';
+    DDMBase.NAME = 'ddm';
 
     DDMBase.ATTRS = {
         /**
@@ -59,6 +59,12 @@
     };
 
     Y.extend(DDMBase, Y.Base, {
+        /**
+        * @property _active
+        * @description flag set when we activate our first drag, so DDM can start listening for events.
+        * @type {Boolean}
+        */
+        _active: null,
         /**
         * @private
         * @method _setDragMode
@@ -110,7 +116,15 @@
         * @param {Drag} d The Drag object
         */
         _regDrag: function(d) {
-            this._drags[this._drags.length] = d;
+            if (this.getDrag(d.get('node'))) {
+                return false;
+            }
+            
+            if (!this._active) {
+                this._setupListeners();
+            }
+            this._drags.push(d);
+            return true;
         },
         /**
         * @private
@@ -129,24 +143,24 @@
         },
         /**
         * @private
-        * @method _init
-        * @description DDM's init method
+        * @method _setupListeners
+        * @description Add the document listeners.
         */
-        initializer: function() {
-            Y.Node.get('document').on('mousemove', this._move, this, true);
-            Y.Node.get('document').on('mouseup', this._end, this, true);
+        _setupListeners: function() {
+            this._active = true;
+            var doc = Y.one(document);
+            doc.on('mousemove', Y.bind(this._move, this));
+            //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
+            doc.on('mouseup', Y.bind(this._end, this));
         },
         /**
         * @private
         * @method _start
         * @description Internal method used by Drag to signal the start of a drag operation
-        * @param {Number} x The x position of the drag element
-        * @param {Number} y The y position of the drag element
-        * @param {Number} w The width of the drag element
-        * @param {Number} h The height of the drag element
         */
-        _start: function(x, y, w, h) {
-            this._startDrag.apply(this, arguments);
+        _start: function() {
+            this.fire('ddm:start');
+            this._startDrag();
         },
         /**
         * @private
@@ -171,10 +185,9 @@
         * @description Internal method used by Drag to signal the end of a drag operation
         */
         _end: function() {
-            //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
-            //Add as a config option??
             if (this.activeDrag) {
                 this._endDrag();
+                this.fire('ddm:end');
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;
             }
@@ -195,36 +208,13 @@
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
-        * @param {Event} ev The Dom mousemove Event
+        * @param {Event.Facade} ev The Dom mousemove Event
         */
         _move: function(ev) {
             if (this.activeDrag) {
-                this.activeDrag._move.apply(this.activeDrag, arguments);
+                this.activeDrag._move.call(this.activeDrag, ev);
                 this._dropMove();
             }
-        },
-        /**
-        * @method setXY
-        * @description A simple method to set the top and left position from offsets instead of page coordinates
-        * @param {Object} node The node to set the position of 
-        * @param {Array} xy The Array of left/top position to be set.
-        */
-        setXY: function(node, xy) {
-            var t = parseInt(node.getStyle('top'), 10),
-            l = parseInt(node.getStyle('left'), 10),
-            pos = node.getStyle('position');
-
-            if (pos === 'static') {
-                node.setStyle('position', 'relative');
-            }
-
-            // in case of 'auto'
-            if (isNaN(t)) { t = 0; }
-            if (isNaN(l)) { l = 0; }
-            
-            node.setStyle('top', (xy[1] + t) + 'px');
-            node.setStyle('left', (xy[0] + l) + 'px');
-            
         },
         /**
         * //TODO Private, rename??...
@@ -258,7 +248,7 @@
         */
         getDrag: function(node) {
             var drag = false,
-                n = Y.Node.get(node);
+                n = Y.one(node);
             if (n instanceof Y.Node) {
                 Y.each(this._drags, function(v, k) {
                     if (n.compareTo(v.get('node'))) {
@@ -267,11 +257,79 @@
                 });
             }
             return drag;
+        },
+        /**
+        * @method swapPosition
+        * @description Swap the position of 2 nodes based on their CSS positioning.
+        * @param {Node} n1 The first node to swap
+        * @param {Node} n2 The first node to swap
+        * @return {Node}
+        */
+        swapPosition: function(n1, n2) {
+            n1 = Y.DD.DDM.getNode(n1);
+            n2 = Y.DD.DDM.getNode(n2);
+            var xy1 = n1.getXY(),
+                xy2 = n2.getXY();
+
+            n1.setXY(xy2);
+            n2.setXY(xy1);
+            return n1;
+        },
+        /**
+        * @method getNode
+        * @description Return a node instance from the given node, selector string or Y.Base extended object.
+        * @param {Node/Object/String} n The node to resolve.
+        * @return {Node}
+        */
+        getNode: function(n) {
+            if (n && n.get) {
+                if (Y.Widget && (n instanceof Y.Widget)) {
+                    n = n.get('boundingBox');
+                } else {
+                    n = n.get('node');
+                }
+            } else {
+                n = Y.one(n);
+            }
+            return n;
+        },
+        /**
+        * @method swapNode
+        * @description Swap the position of 2 nodes based on their DOM location.
+        * @param {Node} n1 The first node to swap
+        * @param {Node} n2 The first node to swap
+        * @return {Node}
+        */
+        swapNode: function(n1, n2) {
+            n1 = Y.DD.DDM.getNode(n1);
+            n2 = Y.DD.DDM.getNode(n2);
+            var p = n2.get('parentNode'),
+                s = n2.get('nextSibling');
+
+            if (s == n1) {
+                p.insertBefore(n1, n2);
+            } else if (n2 == n1.get('nextSibling')) {
+                p.insertBefore(n2, n1);
+            } else {
+                n1.get('parentNode').replaceChild(n2, n1);
+                p.insertBefore(n1, s);
+            }
+            return n1;
         }
     });
 
     Y.namespace('DD');
     Y.DD.DDM = new DDMBase();
 
+    /**
+    * @event ddm:start
+    * @description Fires from the DDM before all drag events fire.
+    * @type {Event.Custom}
+    */
+    /**
+    * @event ddm:end
+    * @description Fires from the DDM after the DDM finishes, before the drag end events.
+    * @type {Event.Custom}
+    */
 
 

@@ -1,0 +1,17 @@
+3.0.0
+
+No changes
+
+3.0.0 beta 1
+
+* Moved Y.Plugin to Y.Plugin.Base
+
+* Host/Owner object now available through public "host" attribute, 
+  as opposed to protected _owner property (this.get("host"))
+
+3.0.0PR2 - Initial release
+
+Module Name: "plugin"
+Documentation: http://developer.yahoo.com/yui/3/plugin
+
+Provides the base class for Plugins, which can be added to a PluginHost. 

@@ -1,0 +1,47 @@
+<html debug="true">
+    <head>
+        <title>YUI 3.0</title>
+        <!--
+        <script type='text/javascript' src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+        -->
+        <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+        <script>
+
+        YUI.add("myapp-base", function(Y){
+
+    Y.MyApplication = function () {};
+
+    // Class definition
+    Y.MyApplication.prototype = {
+       //...
+    };
+
+}, "3.0.0", {requires:["node"]});
+
+// Submodule definition
+YUI.add("myapp-submodule", function(Y){
+ //...
+}, "3.0.0", {requires:["myapp-base"]});
+
+// Rollup definition
+YUI.add("myapp", function(Y){}, "3.0.0", {use: ["myapp-base", "myapp-submodule"]});
+
+YUI({
+    base: '/my/local/yui3/build/',
+    modules:{
+        myapp:{
+            requires:["node"] // should be unnecessary, but fails even without this
+        }
+    }
+}).use("myapp", function(Y) {
+    // Node is NOT loaded
+    debugger;
+});
+
+
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

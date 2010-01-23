@@ -31,7 +31,6 @@
      * in the YUI module.
      *
      * @method substitute
-     * @for YUI
      * @param s {string} The string that will be modified.
      * @param o An object containing the replacement values
      * @param f {function} An optional function that can be used to
@@ -40,11 +39,13 @@
      *                     the key inside of the braces.
      * @return {string} the substituted string
      */
-    substitute = function (s, o, f) {
-        var i, j, k, key, v, meta, saved=[], token, dump;
+
+    substitute = function (s, o, f, recurse) {
+        var i, j, k, key, v, meta, saved=[], token, dump,
+            lidx = s.length;
 
         for (;;) {
-            i = s.lastIndexOf(LBRACE);
+            i = s.lastIndexOf(LBRACE, lidx);
             if (i < 0) {
                 break;
             }
@@ -105,12 +106,15 @@
 
             s = s.substring(0, i) + v + s.substring(j + 1);
 
+            if (!recurse) {
+                lidx = i-1;
+            }
 
         }
 
         // restore saved {block}s
         for (i=saved.length-1; i>=0; i=i-1) {
-            s = s.replace(new RegExp("~-" + i + "-~"), "{"  + saved[i] + "}", "g");
+            s = s.replace(new RegExp("~-" + i + "-~"), LBRACE  + saved[i] + RBRACE, "g");
         }
 
         return s;

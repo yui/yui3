@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.0.0b1/build/cssfonts/fonts-min.css">
+    <style>
+    body {
+        font-size:16px;
+    }
+    .demoified {
+        font-size:200%;
+        border:10px solid red;
+    }
+    script.mine {
+        clear:left;
+        white-space:pre;
+        display:block;
+        font-family:monospace;
+        background:#eef;
+    }
+    script::before, script::after {
+        content:"<script>";
+    }
+    script::after {
+        content:"</script>";
+    }
+    script[src]::before {
+        content:"<script src=\"" attr(src) "\">";
+        white-space:nowrap;
+    }
+    script[src] {
+        background:#fff;
+    }
+    </style>
+    
+    <title>autocomplete exploration</title>
+</head>
+<body class="yui-skin-sam">
+
+<form>
+    <label for="ac">
+        INPUT!
+    </label>
+    <input name="ac" id="ac" type="text">
+    <input type="submit" id="log" value="Show times">
+</form>
+<script class="mine" src="../../build/yui/yui.js"></script>
+<script class="mine">
+// watch typing events, log "fetch" signals
+YUI({
+    debug: true,
+    base: "../../build/",
+    filter: 'raw'
+}).use(
+    'node', 'console', 'console-filters', "datasource",
+    'log', 'pluginhost', 'node-pluginhost', function (Y) {
+    
+    Y.one = Y.one || Y.get;
+    
+    new Y.Console({
+        plugins : [ Y.Plugin.ConsoleFilters ],
+        newestOnTop : false,
+        useBrowserConsole : true
+    }).render();
+    
+    // Create a very demonstrative plugin.
+    
+    function DemoPlugin () {
+        Y.log("Starting DemoPlugin ctor, about to call parent ctor");
+        DemoPlugin.superclass.constructor.apply(this, arguments);
+        Y.log("Done with DemoPlugin ctor, returning");
+    };
+    
+    // define attributes as static properties on the class.
+    DemoPlugin.ATTRS = {
+        onlyForReading : {
+            value : "cannot be changed",
+            readOnly : true
+        },
+        hasGetter : {
+            getter : function () {
+                Y.log("Get the 'hasGetter' property");
+                return "got";
+            }
+        },
+        hasSetter : {
+            setter : function (k) {
+                Y.log("Setting the 'hasSetter' property to "+k);
+                Y.log("About to return " + (k+k));
+                return k + k;
+            }
+        },
+        simpleValue : {
+            value : "simple"
+        },
+        hasGetterAndSetter : {
+            getter : function () {
+                Y.log("Get on hasGetterAndSetter");
+                return "Return from get";
+            },
+            setter : function () {
+                Y.log("Set on hasGetterAndSetter");
+                return "Return from set";
+            }
+        },
+        incrementor : (function () {
+            var i = 0;
+            return {
+                getter : function () {
+                    Y.log("Getting incrementor: "+i);
+                    return i ++;
+                },
+                setter : function (j) {
+                    Y.log("Setting incrementor: "+j);
+                    return i = j;
+                }
+            };
+        })()
+    };
+    Y.extend(DemoPlugin, Y.Plugin.Base, {
+        _privateMember : "pretend-private",
+        _privateMethod : function () {
+            Y.log("Called _privateMethod (which is only pretend-private.)");
+        },
+        publicMember : "public",
+        publicMethod : function () {
+            Y.log("Called publicMethod");
+        },
+        getTheHost : function () {
+            Y.log("My host is: "+this.get("host"));
+            return this.get("host");
+        },
+        initializer : function (config) {
+            Y.log("Initializing: "+config);
+            this._privateMethod();
+            Y.log("Done initializing");
+        }
+    });
+    
+    DemoPlugin.NAME = "demoName";
+    DemoPlugin.NS = "demoNS";
+    
+    Y.namespace("Plugin").DemoPlugin = DemoPlugin;
+    
+    // Now let's plug it into something.
+    
+    window.myNode = Y.one("#ac");
+    myNode.plug(Y.Plugin.DemoPlugin);
+    
+    myNode.demoNS.set("hasSetter", 10);
+    Y.log("getting hasGetter: "+myNode.demoNS.get("hasGetter"));
+
+    Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
+    Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
+    Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
+    Y.log("Incrementor: "+myNode.demoNS.get("incrementor"));
+    
+    myNode.demoNS.set("hasGetterAndSetter", 10);
+    Y.log("now getting... "+myNode.demoNS.get("hasGetterAndSetter"));
+    
+    myNode.demoNS.getTheHost().set("className", "demoified");
+    
+    Y.log("My eyes! Ze underscores do nussing! "+myNode.demoNS._privateMember);
+    Y.log("Not get()able, since it's not an ATTR: "+myNode.demoNS.get("_privateMember"));
+    Y.log("Get it out in the open: "+myNode.demoNS.publicMember);
+    Y.log("Not get()able, since it's not an ATTR: "+myNode.demoNS.get("publicMember"));
+    
+    myOtherNode = Y.one("#log");
+    Y.log("Hasn't been plugged, so demoNS on other node is: "+myOtherNode.demoNS);
+    myOtherNode.plug(Y.Plugin.DemoPlugin);
+    Y.log("Now it's been plugged, so: "+myOtherNode.demoNS);
+});
+
+</script>
+</body>
+</html>

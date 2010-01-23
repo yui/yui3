@@ -61,9 +61,10 @@
 .yui-skin-sam .yui-menu .yui-menu li {
 
     /*
-        For and IE 6 (Strict Mode and Quirks Mode) and IE 7 (Quirks Mode only): Used to collapse 
-        superfluous white space between <li> elements that is triggered by the "display" property 
-        of the <a> elements being set to "block" by node-menunav-core.css file.
+        For and IE 6 (Strict Mode and Quirks Mode) and IE 7 (Quirks Mode only): 
+		Used to collapse superfluous white space between <li> elements that is 
+		triggered by the "display" property of the <a> elements being set to 
+		"block" by node-menunav-core.css file.
     */
 
     _border-bottom: solid 1px #fff;
@@ -110,8 +111,8 @@
     cursor: default;
 
 	/*
-		Necessary specify values for border, position and margin to override values specified in 
-		the selectors that follow. 
+		Necessary specify values for border, position and margin to override 
+		values specified in the selectors that follow. 
 	*/
 
 	float: none;
@@ -129,8 +130,9 @@
     border-width: 1px 0;
     margin: -1px 0;
 
-    float: left; 	/*	Ensures that menu labels clear floated descendents. Also gets negative 
-    					margins working in IE 7 (Strict Mode). */
+    float: left; 	/*	Ensures that menu labels clear floated descendents. 
+    					Also gets negative margins working in IE 7 
+						(Strict Mode). */
     width: auto;
 
 }
@@ -218,8 +220,8 @@
     background-color: #B3D4FF;
     
     /*
-    	Undo values set for "border-left-width" and "margin-left" when the root menu has a class of
-    	"yui-menubuttonnav" or "yui-splitbuttonnav" applied.
+    	Undo values set for "border-left-width" and "margin-left" when the root 
+    	menu has a class of "yui-menubuttonnav" or "yui-splitbuttonnav" applied.
     */
 
 	border-left-width: 0;

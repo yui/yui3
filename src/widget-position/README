@@ -1,0 +1,14 @@
+3.0.0
+
+* Fixed ability to set individual x, y values.
+
+3.0.0 beta 1
+
+No Changes
+
+3.0.0PR2 - Initial release
+
+Module Name: "widget-position"
+
+An extension, which can be used with Base.build to add basic XY page based positioning to a Widget class
+

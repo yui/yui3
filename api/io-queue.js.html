@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>io&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>io&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_io.html" title="io">io</a>
                 
@@ -47,257 +47,220 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-<div class="highlight" ><pre>   <span class="c">/*</span>
-<span class="c">    * Extends the IO base class to include basic queue interfaces for transaction</span>
-<span class="c">    * queuing.</span>
-<span class="c">	* @module io-base</span>
-<span class="c">	* @submodule io-queue</span>
-<span class="c">	*/</span>
+                        <div class="highlight"><pre>   <span class="cm">/**</span>
+<span class="cm">    * Extends the IO base class to implement Queue for synchronous</span>
+<span class="cm">    * transaction processing.</span>
+<span class="cm">	* @module io</span>
+<span class="cm">	* @submodule io-queue</span>
+<span class="cm">	*/</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Array of transactions queued for processing</span>
-<span class="c">	*</span>
-<span class="c">	* @property _q</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @type array</span>
-<span class="c">	*/</span>
-	<span class="k">var</span> <span class="nx">_q</span> <span class="o">=</span> <span class="o">[],</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Array of transactions queued for processing</span>
+<span class="cm">	*</span>
+<span class="cm">	* @property _yQ</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @type Object</span>
+<span class="cm">	*/</span>
+	<span class="kd">var</span> <span class="nx">_q</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Queue</span><span class="p">(),</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Property to determine whether the queue is set to</span>
-<span class="c">	* 1 (active) or 0 (inactive).  When inactive, transactions</span>
-<span class="c">	* will be stored in the queue until the queue is set to active.</span>
-<span class="c">	*</span>
-<span class="c">	* @property _qState</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @type int</span>
-<span class="c">	*/</span>
-	<span class="nx">_qState</span> <span class="o">=</span> <span class="m">1</span><span class="o">,</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Reference to &quot;io:complete&quot; event handler.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @property _e</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @type Object</span>
+<span class="cm">	*/</span>
+	<span class="nx">_e</span><span class="p">,</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Queue property to set a maximum queue storage size.  When</span>
-<span class="c">	* this property is set, the queue will not store any more transactions</span>
-<span class="c">	* until the queue size os reduced below this threshold. There is no</span>
-<span class="c">	* maximum queue size until it is explicitly set.</span>
-<span class="c">	*</span>
-<span class="c">	* @property _qMaxSize</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @type int</span>
-<span class="c">	*/</span>
-	<span class="nx">_qMaxSize</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+	<span class="nx">_activeId</span><span class="p">,</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Property to determine whether the queue is set to</span>
+<span class="cm">	* 1 (active) or 0 (inactive).  When inactive, transactions</span>
+<span class="cm">	* will be stored in the queue until the queue is set to active.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @property _qState</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @type int</span>
+<span class="cm">	*/</span>
+	<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for requesting a transaction, and queueing the</span>
-<span class="c">	* request before it is sent to the resource.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _queue</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return int</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_queue</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for requesting a transaction, and queueing the</span>
+<span class="cm">	* request before it is sent to the resource.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _queue</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return Object</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_queue</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">uri</span><span class="o">:</span> <span class="nx">uri</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">_id</span><span class="p">(),</span> <span class="nx">cfg</span><span class="o">:</span><span class="nx">c</span> <span class="p">};</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">_qMaxSize</span> <span class="o">===</span> <span class="kc">false</span> <span class="o">||</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="nx">_qMaxSize</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">.</span><span class="nx">_id</span><span class="o">();</span>
-			<span class="nx">_q</span><span class="o">.</span><span class="nx">push</span><span class="o">({</span> <span class="nx">uri</span><span class="o">:</span> <span class="nx">uri</span><span class="o">,</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">id</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">:</span><span class="nx">c</span> <span class="o">});</span>
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="o">{</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Unable to queue transaction object.  Maximum queue size reached.&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-			<span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-		<span class="o">}</span>
+		<span class="nx">_q</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">_qState</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">_shift</span><span class="p">();</span>
+		<span class="p">}</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">_qState</span> <span class="o">===</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">_shift</span><span class="o">();</span>
-		<span class="o">}</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Object queued.  Transaction id is&#39;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+		<span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+	<span class="p">}</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Object queued.  Transaction id is&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-		<span class="k">return</span> <span class="nx">id</span><span class="o">;</span>
-	<span class="o">};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method Process the first transaction from the</span>
+<span class="cm">	* queue in FIFO order.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _shift</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_shift</span><span class="p">()</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">_q</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for promoting a transaction to the top of the queue.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _unshift</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_unshift</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">r</span><span class="o">;</span>
+		<span class="nx">_activeId</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+		<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">cfg</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+	<span class="p">}</span>
 
-		<span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-			<span class="k">if</span> <span class="o">(</span><span class="nx">_q</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-				<span class="nx">r</span> <span class="o">=</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">i</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
-				<span class="k">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">r</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-				<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Object promoted to top of queue.  Transaction id is&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-				<span class="k">break</span><span class="o">;</span>
-			<span class="o">}</span>
-		<span class="o">}</span>
-	<span class="o">};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for promoting a transaction to the top of the queue.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _unshift</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_unshift</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">_q</span><span class="p">.</span><span class="nx">promote</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for removing a transaction from the top of the</span>
-<span class="c">	* queue, and sending the transaction to _io().</span>
-<span class="c">	*</span>
-<span class="c">	* @method _shift</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_shift</span><span class="o">()</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">cfg</span><span class="o">,</span> <span class="nx">c</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
-	<span class="o">};</span>
+	<span class="kd">function</span> <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">_activeId</span> <span class="o">===</span> <span class="nx">id</span> <span class="o">&amp;&amp;</span> <span class="nx">_q</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">_shift</span><span class="p">();</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method to query the current size of the queue, or to</span>
-<span class="c">	* set a maximum queue size.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _size</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return int</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_size</span><span class="o">(</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">if</span> <span class="o">(</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-			<span class="nx">_qMaxSize</span> <span class="o">=</span> <span class="nx">i</span><span class="o">;</span>
-			<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Queue size set to &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-			<span class="k">return</span> <span class="nx">i</span><span class="o">;</span>
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="o">{</span>
-			<span class="k">return</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
-		<span class="o">}</span>
-	<span class="o">};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for removing a specific, pending transaction from</span>
+<span class="cm">	* the queue.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _remove</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_remove</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">_q</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+	<span class="p">}</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for setting the queue to active. If there are</span>
-<span class="c">	* transactions pending in the queue, they will be processed from the</span>
-<span class="c">	* queue in FIFO order.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _start</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_start</span><span class="o">()</span> <span class="o">{</span>
-		<span class="k">var</span> <span class="nx">len</span> <span class="o">=</span> <span class="o">(</span><span class="nx">_q</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="nx">_qMaxSize</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">?</span> <span class="nx">_qMaxSize</span> <span class="o">:</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+	<span class="kd">function</span> <span class="nx">_start</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-		<span class="k">if</span> <span class="o">(</span><span class="nx">len</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-			<span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-				<span class="nx">_shift</span><span class="o">();</span>
-			<span class="o">}</span>
-		<span class="o">}</span>
-		<span class="k">else</span> <span class="o">{</span>
-			<span class="nx">_shift</span><span class="o">();</span>
-		<span class="o">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nx">_q</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">_shift</span><span class="p">();</span>
+		<span class="p">}</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Queue started.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+	<span class="p">}</span>
 
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Queue started.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-	<span class="o">};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for setting queue processing to inactive.</span>
+<span class="cm">	* Transaction requests to YUI.io.queue() will be stored in the queue, but</span>
+<span class="cm">	* not processed until the queue is reset to &quot;active&quot;.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _stop</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return void</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_stop</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">_qState</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Queue stopped.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
+	<span class="p">};</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for setting queue processing to inactive.</span>
-<span class="c">	* Transaction requests to YUI.io.queue() will be stored in the queue, but</span>
-<span class="c">	* not processed until the queue is reset to &quot;active&quot;.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _stop</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_stop</span><span class="o">()</span> <span class="o">{</span>
-		<span class="nx">_qState</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-		<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Queue stopped.&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-	<span class="o">};</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method to query the current size of the queue.</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method _size</span>
+<span class="cm">	* @private</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @return int</span>
+<span class="cm">	*/</span>
+	<span class="kd">function</span> <span class="nx">_size</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">_q</span><span class="p">.</span><span class="nx">size</span><span class="p">();</span>
+	<span class="p">};</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for removing a specific, pending transaction from</span>
-<span class="c">	* the queue.</span>
-<span class="c">	*</span>
-<span class="c">	* @method _purge</span>
-<span class="c">	* @private</span>
-<span class="c">	* @static</span>
-<span class="c">	* @return void</span>
-<span class="c">	*/</span>
-	<span class="k">function</span> <span class="nx">_purge</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">id</span><span class="o">))</span> <span class="o">{</span>
-			<span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">_q</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-				<span class="k">if</span> <span class="o">(</span><span class="nx">_q</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-					<span class="nx">_q</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="nx">i</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
-					<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Object purged from queue.  Transaction id is&#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;io&#39;</span><span class="o">);</span>
-					<span class="k">break</span><span class="o">;</span>
-				<span class="o">}</span>
-			<span class="o">}</span>
-		<span class="o">}</span>
-	<span class="o">};</span>
+	<span class="nx">_e</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;io:complete&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span> <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span> <span class="p">},</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">);</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method to query the current size of the queue, or to</span>
-<span class="c">	* set a maximum queue size.  This is the interface for _size().</span>
-<span class="c">	*</span>
-<span class="c">	* @method size</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {number} i - Specified maximum size of queue.</span>
-<span class="c">    * @return number</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">size</span> <span class="o">=</span> <span class="nx">_size</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method to query the current size of the queue, or to</span>
+<span class="cm">	* set a maximum queue size.  This is the interface for _size().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method size</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {number} i - Specified maximum size of queue.</span>
+<span class="cm">    * @return number</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="nx">_size</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for setting the queue to &quot;active&quot;. If there are</span>
-<span class="c">	* transactions pending in the queue, they will be processed from the</span>
-<span class="c">	* queue in FIFO order. This is the interface for _start().</span>
-<span class="c">	*</span>
-<span class="c">	* @method start</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">    * @return void</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">start</span> <span class="o">=</span> <span class="nx">_start</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for setting the queue to active. If there are</span>
+<span class="cm">	* transactions pending in the queue, they will be processed from the</span>
+<span class="cm">	* queue in FIFO order. This is the interface for _start().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method start</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">    * @return void</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="nx">_start</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for setting queue processing to inactive.</span>
-<span class="c">	* Transaction requests to YUI.io.queue() will be stored in the queue, but</span>
-<span class="c">	* not processed until the queue is set to &quot;active&quot;. This is the</span>
-<span class="c">	* interface for _stop().</span>
-<span class="c">	*</span>
-<span class="c">	* @method stop</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">    * @return void</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="nx">_stop</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for setting queue processing to inactive.</span>
+<span class="cm">	* Transaction requests to YUI.io.queue() will be stored in the queue, but</span>
+<span class="cm">	* not processed until the queue is restarted. This is the</span>
+<span class="cm">	* interface for _stop().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method stop</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">    * @return void</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="nx">_stop</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for promoting a transaction to the top of the queue.</span>
-<span class="c">	* This is the interface for _unshift().</span>
-<span class="c">	*</span>
-<span class="c">	* @method promote</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {number} i - ID of queued transaction.</span>
-<span class="c">    * @return void</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">promote</span> <span class="o">=</span> <span class="nx">_unshift</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for promoting a transaction to the top of the queue.</span>
+<span class="cm">	* This is the interface for _unshift().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method promote</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {Object} o - Reference to queued transaction.</span>
+<span class="cm">    * @return void</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">promote</span> <span class="o">=</span> <span class="nx">_unshift</span><span class="p">;</span>
 
-   <span class="c">/**</span>
-<span class="c">	* @description Method for removing a specific, pending transaction from</span>
-<span class="c">	* the queue. This is the interface for _purge().</span>
-<span class="c">	*</span>
-<span class="c">	* @method purge</span>
-<span class="c">	* @public</span>
-<span class="c">	* @static</span>
-<span class="c">	* @param {number} i - ID of queued transaction.</span>
-<span class="c">    * @return void</span>
-<span class="c">	*/</span>
-	<span class="nx">_queue</span><span class="o">.</span><span class="nx">purge</span> <span class="o">=</span> <span class="nx">_purge</span><span class="o">;</span>
+   <span class="cm">/**</span>
+<span class="cm">	* @description Method for removing a specific, pending transaction from</span>
+<span class="cm">	* the queue. This is the interface for _remove().</span>
+<span class="cm">	*</span>
+<span class="cm">	* @method remove</span>
+<span class="cm">	* @public</span>
+<span class="cm">	* @static</span>
+<span class="cm">	* @param {Object} o - Reference to queued transaction.</span>
+<span class="cm">    * @return void</span>
+<span class="cm">	*/</span>
+	<span class="nx">_queue</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">_remove</span><span class="p">;</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">io</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">,</span> <span class="p">{</span>
 		<span class="nx">queue</span><span class="o">:</span> <span class="nx">_queue</span>
-    <span class="o">},</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 </pre></div>
+
                     </div>
 			</div>
 		</div>
@@ -307,36 +270,53 @@
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class="selected"><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -367,11 +347,12 @@
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_purge", "url": "io.html#method__purge", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_q", "url": "io.html#property__q", "type": "property"}, {"access": "private", "host": "io", "name": "_qMaxSize", "url": "io.html#property__qMaxSize", "type": "property"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "private", "host": "io", "name": "_start", "url": "io.html#method__start", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}];
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "_abort", "url": "io.html#method__abort", "type": "method"}, {"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_data", "url": "io.html#method__data", "type": "method"}, {"access": "private", "host": "io", "name": "_destroy", "url": "io.html#method__destroy", "type": "method"}, {"access": "private", "host": "io", "name": "_e", "url": "io.html#property__e", "type": "property"}, {"access": "private", "host": "io", "name": "f", "url": "io.html#method_f", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handle", "url": "io.html#method__handle", "type": "method"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "private", "host": "io", "name": "_isInProgress.", "url": "io.html#method__isInProgress.", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_remove", "url": "io.html#method__remove", "type": "method"}, {"access": "", "host": "io", "name": "remove", "url": "io.html#method_remove", "type": "method"}, {"access": "private", "host": "io", "name": "_resend", "url": "io.html#method__resend", "type": "method"}, {"access": "private", "host": "io", "name": "_resetAttrs", "url": "io.html#method__resetAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_rS", "url": "io.html#property__rS", "type": "property"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setAttrs", "url": "io.html#method__setAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_tE", "url": "io.html#method__tE", "type": "method"}, {"access": "private", "host": "io", "name": "_timeout", "url": "io.html#property__timeout", "type": "property"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "xdrResponse", "url": "io.html#method_xdrResponse", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_yQ", "url": "io.html#property__yQ", "type": "property"}];
 </script>
 </body>
 </html>

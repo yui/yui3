@@ -29,9 +29,9 @@
             Y.Test.Runner.run();
         }, button);
 
-        var myConsole = new Y.Console().render();
+        // var myConsole = new Y.Console().render();
 
-        var testObject = new Y.Test.Case({
+        var testNamespace = new Y.Test.Case({
             name: "Namespace tests",
 
 
@@ -59,7 +59,7 @@
     });
         
 
-        Y.Test.Runner.add(testObject);
+        Y.Test.Runner.add(testNamespace);
         Y.Test.Runner.run();
     });
 })();

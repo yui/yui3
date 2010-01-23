@@ -2,7 +2,10 @@
 <html>
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<!--
+<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0b1/build/yui/yui-debug.js"></script>
+-->
+<script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 <style>
 .dd {
             padding-left: 20px;
@@ -32,7 +35,7 @@ top: 200px;
 
 <script type="text/javascript">
 YUI({
-        base: '../../build/'
+//        base: '../../build/'
     }).use('node', function(Y) {
     var node = Y.get('#demo');
     var used = [];
@@ -42,6 +45,20 @@ YUI({
     used.sort();
     node.set('innerHTML', '<strong>Modules Loaded:</strong> ' + used.join(', '));
 });
+
+YUI().use(function (Y1) {
+Y1.config.doc.createElement('div'); // works
+
+YUI(Y1.config).use(function (Y2) {
+Y2.config.doc.createElement('div'); // boom. Y2.config.doc is undefined
+console.log('ok');
+});
+
+// since the object reference was passed and is updated directly, this now fails as well
+Y1.config.doc.createElement('div'); // boom
+console.log('ok');
+});
+
 
 </script>
 

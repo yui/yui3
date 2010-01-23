@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>MouseEnter and MouseLeave Event Tests</title>
+	
+	<style type="text/css">
+	
+		ul {
+			background-color: #999;
+			list-style: none;
+			padding: 10px;
+			width: 200px;
+		}
+	
+		ul.highlight {
+			background-color: orange;			
+		}
+	
+		li {
+			background-color: #ccc;
+			border: solid 1px #000;
+			margin: 10px 0;
+		}
+		
+		li.first-child { 
+			border: none;
+		}
+		
+		li.highlight {
+			background-color: yellow;
+		}
+		
+		em {
+			display: block;
+			background-color: #333;
+			margin: 5px;
+			color: #fff;
+		}
+
+		li.first-child em { 
+			margin: 0;
+		}
+	
+	</style>
+	
+</head>
+<body class="yui-skin-sam">
+
+<div id="demo"><input value="foo">
+</div>
+
+<ul id="list-1">
+	<li class="first-child"><em>One</em></li>
+	<li><em>Two</em></li>
+	<li><em>Three</em></li>
+	<li><em>Four</em></li>
+	<li><input value="five"></li>
+</ul>
+
+<script src="../../build/yui/yui.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+	YUI({base:"../../build/", filter: 'raw', timeout: 10000 }).use("event", function(Y) {
+	
+		Y.on("contentready", function () {
+
+			// Y.on('mouseenter', Y.rbind(function (e, arg1, arg2, arg3) {
+			// 
+			// 	e.currentTarget.addClass("highlight");
+			// 
+			// 	Y.log("currentTarget: " + e.currentTarget + ", arguments: " + arg1 + ", " + arg2 + ", " + arg3);
+			// 	
+			// }, Y, "one", "two", "three"), this);
+
+			Y.on('mouseenter', function (e) {
+
+				console.log('mouseenter');
+
+			}, "#list-1, #demo");
+			
+			Y.on('mouseleave', function (e) {
+			
+				console.log('mouseleave');
+				
+			}, "#list-1, #demo");
+			
+			// 
+			// Y.on('mouseenter', Y.rbind(function (e, arg1, arg2, arg3) {
+			// 
+			// 	Y.log(arguments.length);	//	Should be 4
+			// 
+			// 	Y.log("currentTarget: " + e.currentTarget + ", arguments: " + arg1 + ", " + arg2 + ", " + arg3);
+			// 
+			// 	//	Target of the event will be the element that matched the
+			// 	//	specified CSS selector
+			// 	
+			// 	e.currentTarget.addClass("highlight");
+			// 	
+			// }, Y, "one", "two", "three"), this, '>li');
+			// 
+			// Y.on('mouseleave', function (e) {
+			// 
+			// 	e.currentTarget.removeClass("highlight");
+			// 	
+			// }, this, '>li');		
+	
+		}, "#list-1");
+	
+	});
+
+</script>
+
+</body>
+</html>

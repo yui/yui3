@@ -1,0 +1,12 @@
+**** YUI 3.0.0 ***
+
+* No change
+
+**** YUI 3.0.0 beta 1 ***
+
+* Now uses Y.cached
+* All white space is stripped from incoming arguments
+
+**** version 3.0.0 PR2 ***
+
+* Initial 3.0 revision

@@ -1,13 +1,14 @@
 /**
  *  Binds an Anim instance to a Node instance
  * @module anim
- * @namespace plugin
+ * @class Plugin.NodeFX
+ * @extends Base
  * @submodule anim-node-plugin
  */
 
 var NodeFX = function(config) {
     config = (config) ? Y.merge(config) : {};
-    config.node = config.owner;
+    config.node = config.host;
     NodeFX.superclass.constructor.apply(this, arguments);
 };
 
@@ -16,5 +17,5 @@ NodeFX.NS = "fx";
 
 Y.extend(NodeFX, Y.Anim);
 
-Y.namespace('plugin');
-Y.plugin.NodeFX = NodeFX;
+Y.namespace('Plugin');
+Y.Plugin.NodeFX = NodeFX;

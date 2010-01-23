@@ -53,6 +53,13 @@
         .yui-skin-sam .yui-console-bd {
             height: auto !important;
         }
+
+        #del {
+            display: none;
+        }
+        #del li.disabled {
+            opacity: .5;
+        }
     </style>
 
 </head>
@@ -60,6 +67,17 @@
     <div id="wrap">
         <div id="drag"></div>
         <div id="drop"></div>
+    </div>
+    <div id="del">
+        <ul>
+            <li>item</li>
+            <li>item</li>
+            <li>item</li>
+            <li>item</li>
+            <li>item</li>
+            <li class="disabled">item</li>
+            <li>item</li>
+        </ul>
     </div>
 <script type="text/javascript" src="dd.js"></script>
 </body>

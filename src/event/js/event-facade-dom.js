@@ -4,12 +4,13 @@
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
  * @module event
+ * @submodule event-base
  */
 
 /**
  * Wraps a DOM event, properties requiring browser abstraction are
  * fixed here.  Provids a security layer when required.
- * @class EventFacade
+ * @class DOMEventFacade
  * @param ev {Event} the DOM event
  * @param currentTarget {HTMLElement} the element the listener was attached to
  * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
@@ -67,22 +68,7 @@ var whitelist = {
 
 */
 
-var whitelist = {
-    altKey          : 1,
-    cancelBubble    : 1,
-    ctrlKey         : 1,
-    clientX         : 1, // needed?
-    clientY         : 1, // needed?
-    detail          : 1, // not fully implemented
-    keyCode         : 1,
-    metaKey         : 1,
-    shiftKey        : 1,
-    type            : 1,
-    x               : 1,
-    y               : 1
-},
-
-    ua = Y.UA,
+    var ua = Y.UA,
 
     /**
      * webkit key remapping required for Safari < 3.1
@@ -96,30 +82,39 @@ var whitelist = {
         63235: 39, // right
         63276: 33, // page up
         63277: 34, // page down
-        25: 9      // SHIFT-TAB (Safari provides a different key code in
+        25:     9, // SHIFT-TAB (Safari provides a different key code in
                    // this case, even though the shiftKey modifier is set)
+		63272: 46, // delete
+		63273: 36, // home
+		63275: 35  // end
     },
 
     /**
      * Returns a wrapped node.  Intended to be used on event targets,
      * so it will return the node's parent if the target is a text
-     * node
+     * node.
+     *
+     * If accessing a property of the node throws an error, this is
+     * probably the anonymous div wrapper Gecko adds inside text
+     * nodes.  This likely will only occur when attempting to access
+     * the relatedTarget.  In this case, we now return null because
+     * the anonymous div is completely useless and we do not know
+     * what the related target was because we can't even get to
+     * the element's parent node.
+     *
      * @method resolve
      * @private
      */
     resolve = function(n) {
-
-        if (!n) {
+        try {
+            if (n && 3 == n.nodeType) {
+                n = n.parentNode;
+            }
+        } catch(e) { 
             return null;
         }
 
-        try {
-            if (ua.webkit && 3 == n.nodeType) {
-                n = n.parentNode;
-            } 
-        } catch(ex) { }
-
-        return Y.Node.get(n);
+        return Y.one(n);
     };
 
 
@@ -129,20 +124,20 @@ var whitelist = {
 // include only DOM2 spec properties?
 // provide browser-specific facade?
 
-Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
+Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 
-    // @TODO the document should be the target's owner document
+    wrapper = wrapper || {};
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT), i, c, t;
+        x = e.pageX, y = e.pageY, c, t;
 
-    // copy all primitives ... this is slow in FF
-    for (i in whitelist) {
-        // if (!Y.Lang.isObject(e[i])) {
-        if (whitelist.hasOwnProperty(i)) {
-            this[i] = e[i];
-        }
-    }
+    this.altKey   = e.altKey;
+    this.ctrlKey  = e.ctrlKey;
+    this.metaKey  = e.metaKey;
+    this.shiftKey = e.shiftKey;
+    this.type     = e.type;
+    this.clientX  = e.clientX;
+    this.clientY  = e.clientY;
 
     //////////////////////////////////////////////////////
 
@@ -157,6 +152,12 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
     }
 
     this._yuifacade = true;
+
+    /**
+     * The native event
+     * @property _event
+     */
+    this._event = e;
 
     /**
      * The X location of the event on the page (including scroll)
@@ -174,11 +175,6 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
 
     //////////////////////////////////////////////////////
 
-    /**
-     * The keyCode for key events.  Uses charCode if keyCode is not available
-     * @property keyCode
-     * @type int
-     */
     c = e.keyCode || e.charCode || 0;
 
     if (ua.webkit && (c in webkitKeymap)) {
@@ -215,39 +211,21 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
      */
     this.which = this.button;
 
-    /**
-     * The event details.  Currently supported for Custom
-     * Events only, where it contains the arguments that
-     * were passed to fire().
-     * @property details
-     * @type Array
-     */
-    this.details = details;
-
     //////////////////////////////////////////////////////
 
-    /**
-     * Timestamp for the event
-     * @property time
-     * @type Date
-     */
-    this.time = e.time || new Date().getTime();
-
-    //////////////////////////////////////////////////////
-    
     /**
      * Node reference for the targeted element
      * @propery target
      * @type Node
      */
-    this.target = (isCE) ? e.target : resolve(e.target || e.srcElement);
+    this.target = resolve(e.target || e.srcElement);
 
     /**
      * Node reference for the element that the listener was attached to.
      * @propery currentTarget
      * @type Node
      */
-    this.currentTarget = (isCE) ? ot :  resolve(ot);
+    this.currentTarget = resolve(ot);
 
     t = e.relatedTarget;
 
@@ -264,8 +242,18 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
      * @propery relatedTarget
      * @type Node
      */
-    this.relatedTarget = (isCE) ? t : resolve(t);
-    
+    this.relatedTarget = resolve(t);
+
+    /**
+     * Number representing the direction and velocity of the movement of the mousewheel.
+     * Negative is down, the higher the number, the faster.  Applies to the mousewheel event.
+     * @property wheelDelta
+     * @type int
+     */
+    if (e.type == "mousewheel" || e.type == "DOMMouseScroll") {
+        this.wheelDelta = (e.detail) ? (e.detail * -1) : Math.round(e.wheelDelta / 80) || ((e.wheelDelta < 0) ? -1 : 1);
+    }
+
     //////////////////////////////////////////////////////
     // methods
 
@@ -279,9 +267,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
         } else {
             e.cancelBubble = true;
         }
-        if (wrapper) {
-            wrapper.stopPropagation();
-        }
+        wrapper.stopped = 1;
     };
 
     /**
@@ -291,32 +277,27 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
      * @method stopImmediatePropagation
      */
     this.stopImmediatePropagation = function() {
-
         if (e.stopImmediatePropagation) {
             e.stopImmediatePropagation();
         } else {
             this.stopPropagation();
         }
-
-        if (wrapper) {
-            wrapper.stopImmediatePropagation();
-        }
-
+        wrapper.stopped = 2;
     };
 
     /**
      * Prevents the event's default behavior
      * @method preventDefault
+     * @param returnValue {string} sets the returnValue of the event to this value
+     * (rather than the default false value).  This can be used to add a customized 
+     * confirmation query to the beforeunload event).
      */
-    this.preventDefault = function() {
+    this.preventDefault = function(returnValue) {
         if (e.preventDefault) {
             e.preventDefault();
-        } else {
-            e.returnValue = false;
         }
-        if (wrapper) {
-            wrapper.preventDefault();
-        }
+        e.returnValue = returnValue || false;
+        wrapper.prevented = 1;
     };
 
     /**
@@ -332,6 +313,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper, details) {
         } else {
             this.stopPropagation();
         }
+
         this.preventDefault();
     };
 

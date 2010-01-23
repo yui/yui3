@@ -22,6 +22,8 @@
         logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
+        Y.log(typeof NaN);
+
         var button = Y.get('#btnRun'),
             Assert = Y.Assert;
 
@@ -31,7 +33,7 @@
             Y.Test.Runner.run();
         }, button);
 
-        var myConsole = new Y.Console().render();
+        // var myConsole = new Y.Console().render();
 
         var testObject = new Y.Test.Case({
             name: "Lang tests",
@@ -138,7 +140,7 @@
             Assert.areEqual(Y.Lang.trim({}), "[object Object]");
         },
 
-        test_isValue: function() {
+        test_is_value: function() {
             Assert.isFalse(Y.Lang.isValue(null), "null should be false");
             Assert.isFalse(Y.Lang.isValue(undefined), "undefined should be false");
             Assert.isFalse(Y.Lang.isValue(parseInt("adsf", 10)), "NaN should be false");
@@ -148,16 +150,20 @@
             Assert.isTrue(Y.Lang.isValue(false), "false should be true");
         },
 
-        test_isDate: function() {
+        test_is_date: function() {
             Assert.isFalse(Y.Lang.isDate(null), "null should be false");
             Assert.isFalse(Y.Lang.isDate(undefined), "undefined should be false");
             Assert.isFalse(Y.Lang.isDate(parseInt("adsf", 10)), "NaN should be false");
             Assert.isFalse(Y.Lang.isDate(1/0), "undefined numbers and infinity should be false");
+            Assert.isFalse(Y.Lang.isDate(NaN), "NaN should be false");
             Assert.isTrue(Y.Lang.isDate(new Date()), "date should be true");
             Assert.isFalse(Y.Lang.isDate(""), "Empty string should be false");
             Assert.isFalse(Y.Lang.isDate(false), "false should be false");
             Assert.isFalse(Y.Lang.isDate(xframe.fun), "Cross frame function should be false");
             Assert.isTrue(Y.Lang.isDate(xframe.dat), "Cross frame date should be true");
+
+            var badDateObj = new Date('junk');
+            Assert.isFalse(Y.Lang.isDate(badDateObj), "A date object containing and invalid date should be false.");
         }
             
         });

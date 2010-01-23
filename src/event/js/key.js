@@ -1,3 +1,8 @@
+/**
+ * Functionality to listen for one or more specific key combinations.
+ * @module event
+ * @submodule event-key
+ */
 
 /**
  * Add a key listener.  The listener will only be notified if the
@@ -9,28 +14,25 @@
  * @event key
  * @for YUI
  * @param type {string} 'key'
- * @param fn {string} the function to execute
- * @param id {string} the element(s) to bind
+ * @param fn {function} the function to execute
+ * @param id {string|HTMLElement|collection} the element(s) to bind
  * @param spec {string} the keyCode and modifier specification
  * @param o optional context object
- * @param args 0..n additional arguments that should be provided 
- * to the listener.
+ * @param args 0..n additional arguments to provide to the listener.
  * @return {Event.Handle} the detach handle
  */
 Y.Env.evt.plugins.key = {
 
     on: function(type, fn, id, spec, o) {
-        var a = Y.Array(arguments, 0, true),
-            parsed, etype, criteria, ename;
+        var a = Y.Array(arguments, 0, true), parsed, etype, criteria, ename;
 
+        parsed = spec && spec.split(':');
 
-        if (!spec || spec.indexOf(':') == -1) {
+        if (!spec || spec.indexOf(':') == -1 || !parsed[1]) {
 Y.log('Illegal key spec, creating a regular keypress listener instead.', 'info', 'event');
-            a[0] = 'keypress';
+            a[0] = 'key' + ((parsed && parsed[0]) || 'press');
             return Y.on.apply(Y, a);
         }
-
-        parsed = spec.split(':');
 
         // key event type: 'down', 'up', or 'press'
         etype = parsed[0];

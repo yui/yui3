@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="collection" default="local">
+    <property file="array-invoke.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+</project>

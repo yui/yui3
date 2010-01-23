@@ -2,30 +2,87 @@
 <html>
 <head>
     <title>Test Page</title>
-    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <link type="text/css" rel="stylesheet" href="../../../build/slider/assets/skins/sam/slider.css">
     <style type="text/css">
-        .yui-slider {
-            border: 1px solid red;
-            margin: 10px;
-        }
-
         .markup { 
-            margin-left: 300px;
+            margin: 10px 0 0 300px;
         }
     </style>
 </head>
 <body class="yui-skin-sam">
 <div class="markup">
-    <div id="slider">
+    <!--div id="slider_v_js"></div-->
+    <div id="slider_h_js"></div>
+
+    <!--div id="slider_v_railonly">
+        <div class="yui-slider-rail"></div>
+    </div>
+    <div id="slider_h_railonly">
+        <div class="yui-slider-rail"></div>
+    </div>
+
+    <div id="slider_v_thumbonly">
+        <div class="yui-slider-thumb"></div>
+    </div>
+    <div id="slider_h_thumbonly">
+        <div class="yui-slider-thumb"></div>
+    </div>
+
+    <div id="slider_v_thumbimgonly">
+        <img class="yui-slider-thumb-image" src="../../../build/slider/assets/skins/sam/thumb-classic-y.png">
+    </div>
+    <div id="slider_h_thumbimgonly">
+        <img class="yui-slider-thumb-image" src="../../../build/slider/assets/skins/sam/thumb-classic-x.png">
+    </div>
+
+    <div id="slider_v_thumbasimgonly">
+        <img class="yui-slider-thumb" src="../../../build/slider/assets/skins/sam/thumb-classic-y.png">
+    </div>
+    <div id="slider_h_thumbasimgonly">
+        <img class="yui-slider-thumb" src="../../../build/slider/assets/skins/sam/thumb-classic-x.png">
+    </div>
+
+    <div id="slider_v_railandthumb">
+        <div class="yui-slider-rail">
+            <div class="yui-slider-thumb"></div>
+        </div>
+    </div>
+    <div id="slider_h_railandthumb">
+        <div class="yui-slider-rail">
+            <div class="yui-slider-thumb"></div>
+        </div>
+    </div>
+
+    <div id="slider_v_imgthumb">
+        <div class="yui-slider-rail">
+            <img class="yui-slider-thumb" src="../../../build/slider/assets/skins/sam/thumb-classic-y.png">
+        </div>
+    </div>
+    <div id="slider_h_imgthumb">
         <div class="yui-slider-rail">
             <img class="yui-slider-thumb" src="../../../build/slider/assets/skins/sam/thumb-classic-x.png">
         </div>
     </div>
 
-    <input type="button" id="size" value="Change size">
-    <input type="button" id="val" value="Set Value">
-    <input type="button" id="disable" value="Disable">
+    <div id="slider_v_full">
+        <div class="yui-slider-rail">
+            <div class="yui-slider-thumb">
+                <img class="yui-slider-thumb-image" src="../../../build/slider/assets/skins/sam/thumb-classic-y.png">
+            </div>
+        </div>
+    </div>
+    <div id="slider_h_full">
+        <div class="yui-slider-rail">
+            <div class="yui-slider-thumb">
+                <img class="yui-slider-thumb-image" src="../../../build/slider/assets/skins/sam/thumb-classic-x.png">
+            </div>
+        </div>
+    </div-->
+
+    <p>
+        <input type="button" id="size" value="Change size">
+        <input type="button" id="val" value="Set Value">
+        <input type="button" id="disable" value="Disable">
+    </p>
     <div id="report">0</div>
 </div>
 
@@ -33,12 +90,12 @@
 <script type="text/javascript">
 YUI({
     base:'../../../build/',
-    filter: 'debug',
-    logExclude:{
-        base:true,
-        event:true,
-        attribute:true
+    filter: 'raw'/*,
+    logInclude:{
+        slider:true,
+        dd:true
     }
+    */
 }).use('slider',function (Y) {
 
 var report = Y.get('#report');
@@ -46,14 +103,16 @@ var report = Y.get('#report');
 //Y.DD.DDM._debugShim = true;
 
 var s = new Y.Slider({
-    contentBox : '#slider',
-    //axis : 'y',
-    width: '318px',
-    //railSize: '318px',
+    contentBox : '#slider_h_js',
+    axis : 'y',
+    //width: '318px',
+    railSize: '350px',
     min : 37,
     max : -218,
-    value : -136
-    //thumbImage : Y.config.base+'slider/assets/skins/sam/thumb-classic-x.png'
+    value : -136,
+    thumbImage : Y.config.base+'slider/assets/skins/sam/thumb-classic-y.png'
+    //minGutter : -7,
+    //maxGutter : -30
     //thumb: '#t'
 });
 //s._uiPositionThumb = function () {}
@@ -80,7 +139,5 @@ Y.get('#disable').on('click',function () {
 
 });
 </script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
 </body>
 </html>

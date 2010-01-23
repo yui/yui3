@@ -1,17 +1,23 @@
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
 (function() {
 
 /**
  * Adds the following Object utilities to the YUI instance
- * @class YUI~object
+ * @class Object
  */
 
 /**
  * Y.Object(o) returns a new object based upon the supplied object.  
  * @TODO Use native Object.create() when available
- * @method Object
+ * @method ()
  * @static
  * @param o the supplier object
- * @return {object} the new object
+ * @return {Object} the new object
  */
 Y.Object = function(o) {
     var F = function() {};
@@ -21,6 +27,12 @@ Y.Object = function(o) {
 
 var O = Y.Object,
 
+owns = function(o, k) {
+    return o && o.hasOwnProperty && o.hasOwnProperty(k);
+},
+
+UNDEFINED = undefined,
+
 /**
  * Extracts the keys, values, or size from an object
  * 
@@ -28,16 +40,17 @@ var O = Y.Object,
  * @param o the object
  * @param what what to extract (0: keys, 1: values, 2: size)
  * @return {boolean|Array} the extracted info
+ * @static
  * @private
  */
 _extract = function(o, what) {
     var count = (what === 2), out = (count) ? 0 : [], i;
 
     for (i in o) {
-        if (count) {
-            out++;
-        } else {
-            if (o.hasOwnProperty(i)) {
+        if (owns(o, i)) {
+            if (count) {
+                out++;
+            } else {
                 out.push((what) ? o[i] : i);
             }
         }
@@ -49,7 +62,7 @@ _extract = function(o, what) {
 /**
  * Returns an array containing the object's keys
  * @TODO use native Object.keys() if available
- * @method Object.keys
+ * @method keys
  * @static
  * @param o an object
  * @return {string[]} the keys
@@ -61,7 +74,7 @@ O.keys = function(o) {
 /**
  * Returns an array containing the object's values
  * @TODO use native Object.values() if available
- * @method Object.values
+ * @method values
  * @static
  * @param o an object
  * @return {Array} the values
@@ -73,7 +86,7 @@ O.values = function(o) {
 /**
  * Returns the size of an object
  * @TODO use native Object.size() if available
- * @method Object.size
+ * @method size
  * @static
  * @param o an object
  * @return {int} the size
@@ -84,20 +97,16 @@ O.size = function(o) {
 
 /**
  * Returns true if the object contains a given key
- * @method Object.hasKey
+ * @method hasKey
  * @static
  * @param o an object
  * @param k the key to query
  * @return {boolean} true if the object contains the key
  */
-O.hasKey = function(o, k) {
-    // return (o.hasOwnProperty(k));
-    return (k in o);
-};
-
+O.hasKey = owns;
 /**
  * Returns true if the object contains a given value
- * @method Object.hasValue
+ * @method hasValue
  * @static
  * @param o an object
  * @param v the value to query
@@ -112,30 +121,23 @@ O.hasValue = function(o, v) {
  * to the object instance.  Returns false if the property is not present
  * in the object, or was inherited from the prototype.
  *
- * @deprecated Safari 1.x support has been removed, so this is simply a 
- * wrapper for the native implementation.  Use the native implementation
- * directly instead.
- *
- * @TODO Remove in B1
- *
- * @method Object.owns
+ * @method owns
  * @static
  * @param o {any} The object being testing
  * @param p {string} the property to look for
  * @return {boolean} true if the object has the property on the instance
  */
-O.owns = function(o, k) {
-    return (o.hasOwnProperty(k));
-};
+O.owns = owns;
 
 /**
  * Executes a function on each item. The function
  * receives the value, the key, and the object
  * as paramters (in that order).
- * @method Object.each
+ * @method each
  * @static
  * @param o the object to iterate
- * @param f {function} the function to execute
+ * @param f {Function} the function to execute on each item. The function 
+ * receives three arguments: the value, the the key, the full object.
  * @param c the execution context
  * @param proto {boolean} include proto
  * @return {YUI} the YUI instance
@@ -144,13 +146,39 @@ O.each = function (o, f, c, proto) {
     var s = c || Y, i;
 
     for (i in o) {
-        if (proto || o.hasOwnProperty(i)) {
+        if (proto || owns(o, i)) {
             f.call(s, o[i], i, o);
         }
     }
     return Y;
 };
 
+/*
+ * Executes a function on each item, but halts if the
+ * function returns true.  The function
+ * receives the value, the key, and the object
+ * as paramters (in that order).
+ * @method some
+ * @static
+ * @param o the object to iterate
+ * @param f {Function} the function to execute on each item. The function 
+ * receives three arguments: the value, the the key, the full object.
+ * @param c the execution context
+ * @param proto {boolean} include proto
+ * @return {boolean} true if any execution of the function returns true, false otherwise
+ */
+O.some = function (o, f, c, proto) {
+    var s = c || Y, i;
+
+    for (i in o) {
+        if (proto || owns(o, i)) {
+            if (f.call(s, o[i], i, o)) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
 
 /**
  * Retrieves the sub value at the provided path,
@@ -160,13 +188,18 @@ O.each = function (o, f, c, proto) {
  * @param o The object from which to extract the property value
  * @param path {Array} A path array, specifying the object traversal path
  * from which to obtain the sub value.
- * @return {Any} The value stored in the path, undefined if not found.
- * Returns the source object if an empty path is provided.
+ * @return {Any} The value stored in the path, undefined if not found,
+ * undefined if the source is not an object.  Returns the source object 
+ * if an empty path is provided.
  */
 O.getValue = function (o, path) {
+    if (!Y.Lang.isObject(o)) {
+        return UNDEFINED;
+    }
+
     var p=Y.Array(path), l=p.length, i;
 
-    for (i=0; o !== undefined && i < l; i=i+1) {
+    for (i=0; o !== UNDEFINED && i < l; i=i+1) {
         o = o[p[i]];
     }
 
@@ -191,14 +224,14 @@ O.setValue = function(o, path, val) {
     var p=Y.Array(path), leafIdx=p.length-1, i, ref=o;
 
     if (leafIdx >= 0) {
-        for (i=0; ref !== undefined && i < leafIdx; i=i+1) {
+        for (i=0; ref !== UNDEFINED && i < leafIdx; i=i+1) {
             ref = ref[p[i]];
         }
 
-        if (ref !== undefined) {
+        if (ref !== UNDEFINED) {
             ref[p[i]] = val;
         } else {
-            return undefined;
+            return UNDEFINED;
         }
     }
 

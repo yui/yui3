@@ -1,9 +1,11 @@
-(function() {
+
 /**
  * Custom event engine, DOM event listener abstraction layer, synthetic DOM 
  * events.
- * @module event
+ * @module event-custom
+ * @submodule event-custom-base
  */
+(function() {
 
 /**
  * Allows for the insertion of methods that are executed before or after
@@ -141,8 +143,6 @@ Y.Do.Method = function(obj, sFn) {
     this.obj = obj;
     this.methodName = sFn;
     this.method = obj[sFn];
-    // this.before = [];
-    // this.after = [];
     this.before = {};
     this.after = {};
 };
@@ -156,10 +156,8 @@ Y.Do.Method = function(obj, sFn) {
  */
 Y.Do.Method.prototype.register = function (sid, fn, when) {
     if (when) {
-        // this.after.push(fn);
         this.after[sid] = fn;
     } else {
-        // this.before.push(fn);
         this.before[sid] = fn;
     }
 };
@@ -279,7 +277,7 @@ Y.Do.Prevent = function(msg) {
  * Return an Error object when you want to terminate the execution
  * of all subsequent method calls.
  * @class Do.Error
- * @deprecated
+ * @deprecated use Y.Do.Halt or Y.Do.Prevent
  */
 Y.Do.Error = Y.Do.Halt;
 

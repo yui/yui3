@@ -1,3 +1,9 @@
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
 (function() {
 /**
  * Provides the language utilites and extensions used by the library
@@ -31,7 +37,10 @@ TYPES     = {
     '[object Array]'    : ARRAY,
     '[object Date]'     : DATE,
     '[object Error]'    : ERROR 
-};
+},
+
+TRIMREGEX = /^\s+|\s+$/g,
+EMPTYSTRING = '';
 
 /**
  * Determines whether or not the provided item is an array.
@@ -90,7 +99,7 @@ L.isFunction = function(o) {
  */
 L.isDate = function(o) {
     // return o instanceof Date;
-    return L.type(o) === DATE;
+    return L.type(o) === DATE && o.toString() !== 'Invalid Date' && !isNaN(o);
 };
 
 /**
@@ -125,7 +134,8 @@ L.isNumber = function(o) {
  * @return {boolean} true if o is an object
  */  
 L.isObject = function(o, failfn) {
-return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
+    var t = typeof o;
+    return (o && (t === OBJECT || (!failfn && (t === FUNCTION || L.isFunction(o))))) || false;
 };
     
 /**
@@ -160,7 +170,7 @@ L.isUndefined = function(o) {
  */
 L.trim = function(s){
     try {
-        return s.replace(/^\s+|\s+$/g, "");
+        return s.replace(TRIMREGEX, EMPTYSTRING);
     } catch(e) {
         return s;
     }
@@ -190,12 +200,16 @@ L.isValue = function(o) {
 
 /**
  * Returns a string representing the type of the item passed in.
+ * Known issues:
+ *    typeof HTMLElementCollection returns function in Safari, but
+ *    Y.type() reports object, which could be a good thing --
+ *    but it actually caused the logic in Y.Lang.isObject to fail.
  * @method type
  * @param o the item to test
  * @return {string} the detected type
  */
 L.type = function (o) {
-    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
+    return  TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? OBJECT : NULL);
 };
 
 })();

@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>YUI: DragDrop</title>
+    <style>
+        #demo {
+            height: 100px;
+            width: 100px;
+            border: 1px solid black;
+            background-color: red;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+
+<a href="#" id="one">Test 1</a> - <a href="#" id="two">Test 2</a> 
+
+<div id="demo"></div>
+<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+
+<script>
+var yConfig = {
+    base: '../../../build/',
+    allowRollup: false,
+    filter: 'DEBUG',
+    logExclude: {
+        'YUI': true,
+        Event: true,
+        Base: true,
+        Attribute: true,
+        augment: true
+    },
+    throwFail: true,
+    debug: false
+};
+var yConfig2 = {
+    base: '../../../build/',
+    allowRollup: false,
+    filter: 'DEBUG',
+    logExclude: {
+        'YUI': true,
+        Event: true,
+        Base: true,
+        Attribute: true,
+        augment: true
+    },
+    throwFail: true,
+    debug: false
+};
+
+YUI(yConfig).use('node', function(Y) {
+    Y.DOM.getComputedStyle = function(node, att) {
+        var val = '',
+            doc = node.ownerDocument;
+
+        if (node.style) {
+            val = doc.defaultView.getComputedStyle(node, '')[att];
+        }
+        return val;
+    };
+
+    Y.DOM.getStyle = function(node, att) {
+        var style = node.style,
+            CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES,
+            val = '';
+
+        if (style) {
+            if (att in CUSTOM_STYLES) {
+                if (CUSTOM_STYLES[att].get) {
+                    return CUSTOM_STYLES[att].get(node, att, style); // NOTE: return
+                } else if (typeof CUSTOM_STYLES[att] === 'string') {
+                    att = CUSTOM_STYLES[att];
+                }
+            }
+            val = style[att];
+            if (val === '') { // TODO: is empty string sufficient?
+                val = Y.DOM.getComputedStyle(node, att);
+            }
+        }
+
+        return val;
+    };
+
+
+    Y.get('#one').on('click', function(e) {
+        e.halt();
+        var node = Y.get('#demo');
+        for (var i = 0; i < 30000; i++) {
+            node.getStyle('border');
+        }
+    });
+});
+YUI(yConfig2).use('node', function(Y) {
+
+    Y.get('#two').on('click', function(e) {
+        e.halt();
+        var node = Y.get('#demo');
+        for (var i = 0; i < 30000; i++) {
+            node.getStyle('border');
+        }
+    });
+});
+</script>
+</body>
+</html>

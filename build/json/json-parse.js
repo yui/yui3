@@ -1,24 +1,34 @@
 YUI.add('json-parse', function(Y) {
 
 /**
- * The JSON Utility provides methods to serialize JavaScript objects into
- * JSON strings and parse JavaScript objects from strings containing JSON data.
- * Three modules are available for inclusion:
- * <ol>
- * <li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>
- * <li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>
- * <li>3. <code>json</code> for both parsing and stringification</li>
- * </ol>
+ * <p>The JSON module adds support for serializing JavaScript objects into
+ * JSON strings and parsing JavaScript objects from strings in JSON format.</p>
+ *
+ * <p>The JSON namespace is added to your YUI instance including static methods
+ * Y.JSON.parse(..) and Y.JSON.stringify(..).</p>
+ *
+ * <p>The functionality and method signatures follow the ECMAScript 5
+ * specification.  In browsers with native JSON support, the native
+ * implementation is used.</p>
+ *
+ * <p>The <code>json</code> module is a rollup of <code>json-parse</code> and
+ * <code>json-stringify</code>.</p>
  * 
- * Both <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).
+ * <p>As their names suggest, <code>json-parse</code> adds support for parsing
+ * JSON data (Y.JSON.parse) and <code>json-stringify</code> for serializing
+ * JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to
+ * include either of the submodules individually if you don't need the
+ * complementary functionality, or include the rollup for both.</p>
+ *
  * @module json
  * @class JSON
  * @static
  */
 
 /**
- * Provides Y.JSON.parse method to take JSON strings and return native
+ * Provides Y.JSON.parse method to accept JSON strings and return native
  * JavaScript objects.
+ *
  * @module json
  * @submodule json-parse
  * @for JSON
@@ -29,14 +39,15 @@ YUI.add('json-parse', function(Y) {
 // All internals kept private for security reasons
 
 
-    /*
+    /**
      * Alias to native browser implementation of the JSON object if available.
      *
      * @property Native
      * @type {Object}
      * @private
      */
-var Native = Y.config.win.JSON,
+var _JSON  = Y.config.win.JSON,
+    Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
 
     /**
      * Replace certain Unicode characters that JavaScript may handle incorrectly
@@ -44,6 +55,7 @@ var Native = Y.config.win.JSON,
      * endings--with escape sequences.
      * IMPORTANT NOTE: This regex will be used to modify the input if a match is
      * found.
+     *
      * @property _UNICODE_EXCEPTIONS
      * @type {RegExp}
      * @private
@@ -52,8 +64,9 @@ var Native = Y.config.win.JSON,
 
 
     /**
-     * First step in the validation.  Regex used to replace all escape
+     * First step in the safety evaluation.  Regex used to replace all escape
      * sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
+     *
      * @property _ESCAPES
      * @type {RegExp}
      * @private
@@ -61,8 +74,9 @@ var Native = Y.config.win.JSON,
     _ESCAPES = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,
 
     /**
-     * Second step in the validation.  Regex used to replace all simple
+     * Second step in the safety evaluation.  Regex used to replace all simple
      * values with ']' characters.
+     *
      * @property _VALUES
      * @type {RegExp}
      * @private
@@ -70,8 +84,10 @@ var Native = Y.config.win.JSON,
     _VALUES  = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
 
     /**
-     * Third step in the validation.  Regex used to remove all open square
-     * brackets following a colon, comma, or at the beginning of the string.
+     * Third step in the safety evaluation.  Regex used to remove all open
+     * square brackets following a colon, comma, or at the beginning of the
+     * string.
+     *
      * @property _BRACKETS
      * @type {RegExp}
      * @private
@@ -79,25 +95,15 @@ var Native = Y.config.win.JSON,
     _BRACKETS = /(?:^|:|,)(?:\s*\[)+/g,
 
     /**
-     * Final step in the validation.  Regex used to test the string left after
-     * all previous replacements for invalid characters.
-     * @property _INVALID
+     * Final step in the safety evaluation.  Regex used to test the string left
+     * after all previous replacements for invalid characters.
+     *
+     * @property _UNSAFE
      * @type {RegExp}
      * @private
      */
-    _INVALID = /[^\],:{}\s]/,
+    _UNSAFE = /[^\],:{}\s]/,
     
-    /**
-     * Test for JSON string of simple data string, number, boolean, or null.
-     * E.g. '"some string"', "true", "false", "null", or numbers "-123e+7"
-     * Currently FireFox 3.1b2 JSON.parse requires object/array wrapped data
-     *
-     * @property _SIMPLE
-     * @type {RegExp}
-     * @protected
-     */
-    _SIMPLE = /^\s*(?:"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)\s*$/,
-
     /**
      * Replaces specific unicode characters with their appropriate \unnnn
      * format. Some browsers ignore certain characters during eval.
@@ -117,6 +123,7 @@ var Native = Y.config.win.JSON,
      * from the function will replace the original value in the key:value pair.
      * If the value returned is undefined, the key will be omitted from the
      * returned object.
+     *
      * @method _revive
      * @param data {MIXED} Any JavaScript data
      * @param reviver {Function} filter or mutation function
@@ -146,6 +153,7 @@ var Native = Y.config.win.JSON,
 
     /**
      * Parse a JSON string, returning the native JavaScript representation.
+     *
      * @param s {string} JSON string data
      * @param reviver {function} (optional) function(k,v) passed each key value
      *          pair of object literals, allowing pruning or altering values
@@ -153,7 +161,6 @@ var Native = Y.config.win.JSON,
      * @throws SyntaxError
      * @method parse
      * @static
-     * @public
      */
     // JavaScript implementation in lieu of native browser support.  Based on
     // the json2.js library from http://json.org
@@ -165,9 +172,9 @@ var Native = Y.config.win.JSON,
             s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
             
             // Test for any remaining invalid characters
-            if (!_INVALID.test(s.replace(_ESCAPES,'@').
-                                 replace(_VALUES,']').
-                                 replace(_BRACKETS,''))) {
+            if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
+                                replace(_VALUES,']').
+                                replace(_BRACKETS,''))) {
 
                 // Eval the text into a JavaScript data structure, apply any
                 // reviver function, and return
@@ -176,37 +183,25 @@ var Native = Y.config.win.JSON,
         }
 
         throw new SyntaxError('JSON.parse');
-    },
+    };
     
-    test;
+Y.namespace('JSON').parse = function (s,reviver) {
+    return Native && Y.JSON.useNativeParse ?
+        Native.parse(s,reviver) : _parse(s,reviver);
+};
 
-
-// Test the level of native browser support
-if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
-    try {
-        test = Native.parse('{"x":1}', function (k,v) {return k=='x' ? 2 : v;});
-        switch (test.x) {
-            case 1 : // Reviver not supported (currently FF3.1b2)
-                _parse = function (s,reviver) {
-                    return _SIMPLE.test(s) ?
-                            eval('(' + s + ')') :
-                            _revive(Native.parse(s), reviver);
-                };
-                break;
-
-            case 2 : // Full support (currently IE8)
-                _parse = function (s, reviver) {
-                    return Native.parse(s, reviver);
-                };
-                break;
-
-            // default is JS implementation
-        }
-    }
-    catch (e) {} // defer to JS implementation
-}
-
-Y.mix(Y.namespace('JSON'),{ parse : _parse });
+/**
+ * Leverage native JSON parse if the browser has a native implementation.
+ * In general, this is a good idea.  See the Known Issues section in the
+ * JSON user guide for caveats.  The default value is true for browsers with
+ * native JSON support.
+ *
+ * @property useNativeParse
+ * @type Boolean
+ * @default true
+ * @static
+ */
+Y.JSON.useNativeParse = !!Native;
 
 
 }, '@VERSION@' );

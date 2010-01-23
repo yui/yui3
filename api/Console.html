@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>console&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>console&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_console.html" title="console">console</a>
                  &gt; Console 
@@ -66,10 +66,40 @@ debug versions of YUI modules will include logging statements to offer some
 insight into the steps executed during that module's operation.  Including
 log statements in your code will cause those messages to also appear in the
 Console.  Use Console to aid in developing your page or application.
-Entry categories are also referred to as the log level, and entries are
-filtered against the configured logLevel.
+Entry categories &quot;info&quot;, &quot;warn&quot;, and &quot;error&quot;
+are also referred to as the log level, and entries are filtered against the
+configured logLevel.
                     </div>
 
+                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong property="yui:name">Console</strong>
+                                <code>
+                                    (
+  
+                                        
+                                                
+                                                conf
+                                    )
+                                </code>
+                                <div class="description">
+                                        <dl rel="yui:parameters">
+                                            <dt>Parameters:</dt>
+                                                <dd rel="yui:parameter">
+                                                    <code><span property="yui:name">conf</span>
+                                                    &lt;<span property="yui:type">Object</span>&gt;
+                                                    </code>
+                                                    <span property="yui:description">  Configuration object (see Configuration attributes)</span>
+                                                </dd>
+                                        </dl>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div rel="yui:properties" resource="#properties">
                         <div class="section field details">
@@ -93,13 +123,47 @@ filtered against the configured logLevel.
 
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:property" resource="#property__evtCat">
+                                    <h4><a name="property__evtCat" property="yui:name">_evtCat</a>
+                                        - <code>protected <span property="yui:type">string</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Category to prefix all event subscriptions to allow for ease of detach
+during destroy.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__foot">
+                                    <h4><a name="property__foot" property="yui:name">_foot</a>
+                                        - <code>protected <span property="yui:type">Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Reference to the Node instance containing the footer contents.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: null
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:property" resource="#property__head">
                                     <h4><a name="property__head" property="yui:name">_head</a>
                                         - <code>protected <span property="yui:type">Node</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Reference to the Node instance containing the head contents.
+                                            Reference to the Node instance containing the header contents.
                                         </div>
                                     </div>
      
@@ -111,14 +175,14 @@ filtered against the configured logLevel.
 
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:property" resource="#property__timeout">
-                                    <h4><a name="property__timeout" property="yui:name">_timeout</a>
+                                    <div class="protected" rel="yui:property" resource="#property__printLoop">
+                                    <h4><a name="property__printLoop" property="yui:name">_printLoop</a>
                                         - <code>protected <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Object API returned from <code>Y.later</code>. Holds the timer id
-returned by <code>setTimout</code> for scheduling of buffered messages.
+                                            Holds the object API returned from <code>Y.later</code> for the print
+loop interval.
                                         </div>
                                     </div>
      
@@ -130,9 +194,9 @@ returned by <code>setTimout</code> for scheduling of buffered messages.
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_buffer">
+                                    <div class="protected" rel="yui:property" resource="#property_buffer">
                                     <h4><a name="property_buffer" property="yui:name">buffer</a>
-                                        - <code><span property="yui:type">Array</span></code>
+                                        - <code>protected <span property="yui:type">Array</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -144,21 +208,6 @@ returned by <code>setTimout</code> for scheduling of buffered messages.
                                     <div class="default" property="yui:defaultValue">
                                         Default Value: null
                                     </div>        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:property" resource="#property_Console._logLevels">
-                                    <h4><a name="property_Console._logLevels" property="yui:name">Console._logLevels</a>
-                                        - <code>protected <span property="yui:type">Object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Used to normalize input values for available logLevels.
-                                        </div>
-                                    </div>
-     
-                                        
 
 
                                     <hr />
@@ -267,12 +316,33 @@ following placeholders that will be populated by the log entry data:
 <ul>
 <li>cat_class</li>
 <li>src_class</li>
-<li>label</li>
 <li>totalTime</li>
 <li>elapsedTime</li>
 <li>localTime</li>
 <li>sourceAndDetail</li>
 <li>message</li>
+</ul>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_Console.FOOTER_TEMPLATE">
+                                    <h4><a name="property_Console.FOOTER_TEMPLATE" property="yui:name">Console.FOOTER_TEMPLATE</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Markup template used to generate the DOM structure for the footer
+section of the Console when it is rendered.  The template includes
+many of the {placeholder}s from Console.CHROME_CLASSES as well as:
+<ul>
+<li>id_guid - generated unique id, relates the label and checkbox</li>
+<li>str_pause - pulled from attribute strings.pause</li>
+<li>str_clear - pulled from attribute strings.clear</li>
 </ul>
                                         </div>
                                     </div>
@@ -292,10 +362,12 @@ following placeholders that will be populated by the log entry data:
 section of the Console when it is rendered.  The template includes
 these {placeholder}s:
 <ul>
+<li>console_button_class - contributed by Console.CHROME_CLASSES</li>
+<li>console_collapse_class - contributed by Console.CHROME_CLASSES</li>
 <li>console_hd_class - contributed by Console.CHROME_CLASSES</li>
 <li>console_title_class - contributed by Console.CHROME_CLASSES</li>
-<li>str_title - pulled from attribute strings.title</li>
 <li>str_collapse - pulled from attribute strings.collapse</li>
+<li>str_title - pulled from attribute strings.title</li>
 </ul>
                                         </div>
                                     </div>
@@ -307,7 +379,7 @@ these {placeholder}s:
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_Console.LOG_LEVEL_ERROR">
                                     <h4><a name="property_Console.LOG_LEVEL_ERROR" property="yui:name">Console.LOG_LEVEL_ERROR</a>
-                                        - <code>static <span property="yui:type">Number</span></code>
+                                        - <code>static <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -324,7 +396,7 @@ Console entries.
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_Console.LOG_LEVEL_INFO">
                                     <h4><a name="property_Console.LOG_LEVEL_INFO" property="yui:name">Console.LOG_LEVEL_INFO</a>
-                                        - <code>static <span property="yui:type">Number</span></code>
+                                        - <code>static <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -340,7 +412,7 @@ incoming messages to generate Console entries.
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_Console.LOG_LEVEL_WARN">
                                     <h4><a name="property_Console.LOG_LEVEL_WARN" property="yui:name">Console.LOG_LEVEL_WARN</a>
-                                        - <code>static <span property="yui:type">Number</span></code>
+                                        - <code>static <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -374,14 +446,18 @@ to generate Console entries.
                         </div>
 
                         <div rel="yui:inheritance">
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                            <h4>Properties inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
                         <div class="section field inheritance" rel="yui:superclass"  resource="Widget.html">
                             <h4>Properties inherited from <a href="Widget.html" property="yui:name" title="Widget">Widget</a>:</h4>
                             <div class="content" rel="yui:properties">
                                 <code>
-                                    
-                                        <span rel="yui:property" resource="Widget.html#property__strings">
-                                        <a class="private" href="Widget.html#property__strings" property="yui:name" title="_strings">_strings</a><span class="private">,</span>
-                                        </span>
                                     
                                         <span rel="yui:property" resource="Widget.html#property_BOUNDING_TEMPLATE">
                                         <a class="" href="Widget.html#property_BOUNDING_TEMPLATE" property="yui:name" title="BOUNDING_TEMPLATE">BOUNDING_TEMPLATE</a><span class="">,</span>
@@ -395,8 +471,8 @@ to generate Console entries.
                                         <a class="" href="Widget.html#property_DEF_UNIT" property="yui:name" title="DEF_UNIT">DEF_UNIT</a><span class="">,</span>
                                         </span>
                                     
-                                        <span rel="yui:property" resource="Widget.html#property_WRAP_STYLES">
-                                        <a class="" href="Widget.html#property_WRAP_STYLES" property="yui:name" title="WRAP_STYLES">WRAP_STYLES</a>
+                                        <span rel="yui:property" resource="Widget.html#property_UI_EVENTS">
+                                        <a class="" href="Widget.html#property_UI_EVENTS" property="yui:name" title="UI_EVENTS">UI_EVENTS</a>
                                         </span>
                                     
                                 </code>
@@ -408,7 +484,7 @@ to generate Console entries.
                                 <code>
                                     
                                         <span rel="yui:property" resource="Base.html#property_name">
-                                        <a class="" href="Base.html#property_name" property="yui:name" title="name">name</a>
+                                        <a class=" deprecated" href="Base.html#property_name" property="yui:name" title="name">name</a>
                                         </span>
                                     
                                 </code>
@@ -421,58 +497,6 @@ to generate Console entries.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="protected" rel="yui:method" resource="#method__addToConsole">
-                                    <h4>
-                                        <a name="method__addToConsole">_addToConsole</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_addToConsole</strong>
-                                           (
-                                                
-                                                        
-                                                         node
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Inserts a Node into the console body at the top or bottom depending on
-the configuration value of newestOnTop.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">node</span>
-                                                        &lt;<span property="yui:type">Node</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  the node to insert into the console body</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__afterCollapsedChange">
                                     <h4>
                                         <a name="method__afterCollapsedChange">_afterCollapsedChange</a></h4>
@@ -509,13 +533,6 @@ hide or show the body and footer sections depending on the new value.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -561,13 +578,6 @@ consoleLimit attribute.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -597,8 +607,7 @@ consoleLimit attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Updates the UI and schedules or cancels the scheduled buffer printing
-operation.
+                                            Updates the UI and schedules or cancels the print loop.
                                         </div>
 
                                         <div class="description">
@@ -613,13 +622,6 @@ operation.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -665,13 +667,6 @@ attribute.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -716,13 +711,6 @@ attribute.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -732,16 +720,16 @@ attribute.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__clearTimeout">
+                                    <div class="protected" rel="yui:method" resource="#method__cancelPrintLoop">
                                     <h4>
-                                        <a name="method__clearTimeout">_clearTimeout</a></h4>
+                                        <a name="method__cancelPrintLoop">_cancelPrintLoop</a></h4>
                                     <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_clearTimeout</strong>
+                                            <strong property="yui:name">_cancelPrintLoop</strong>
                                            (
                                             )
                                         </code>
@@ -753,12 +741,55 @@ attribute.
                                         <div class="description">
 
 
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__createEntryHTML">
+                                    <h4>
+                                        <a name="method__createEntryHTML">_createEntryHTML</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">_createEntryHTML</strong>
+                                           (
+                                                
+                                                        
+                                                         m
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Translates message meta into the markup for a console entry.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">m</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  object literal containing normalized message metadata</span>
+                                                        </dd>
+                                                </dl>
+
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                        void
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
+                                                    <dd property="yui:returnInfo">String</dd>
                                                 </dl>
 
 
@@ -804,13 +835,6 @@ attribute.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -842,13 +866,6 @@ unpauses the widget.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -894,6 +911,50 @@ as HTML entities.
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">String the encoded string</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getUseBrowserConsole">
+                                    <h4>
+                                        <a name="method__getUseBrowserConsole">_getUseBrowserConsole</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Boolean
+                                            <strong property="yui:name">_getUseBrowserConsole</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Getter method for useBrowserConsole attribute.  Just a pass through to
+the YUI instance configuration setting.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">or null if logSource is not a YUI instance</dd>
+                                                </dl>
 
 
              
@@ -938,6 +999,12 @@ as HTML entities.
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Object the message object with proper escapement</dd>
+                                                </dl>
 
 
              
@@ -969,13 +1036,6 @@ rendered.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1006,13 +1066,6 @@ rendered.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1043,13 +1096,6 @@ rendered.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1081,13 +1127,6 @@ to be buffered for printing.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1110,15 +1149,7 @@ to be buffered for printing.
                                            (
                                                 
                                                         
-                                                         msg
-                                                    
-                                                
-                                                        , 
-                                                         cat
-                                                    
-                                                
-                                                        , 
-                                                         src
+                                                         e
                                                     
                                                 
                                             )
@@ -1129,10 +1160,9 @@ to be buffered for printing.
 <ul>
 <li>time - this moment</li>
 <li>message - leg message</li>
-<li>category - aka logLevel</li>
+<li>category - logLevel or custom category for the message</li>
 <li>source - when provided, the widget or util calling Y.log</li>
 <li>sourceAndDetail - same as source but can include instance info</li>
-<li>label - logLevel/category label for the entry</li>
 <li>localTime - readable version of time</li>
 <li>elapsedTime - ms since last entry</li>
 <li>totalTime - ms since Console was instantiated or reset</li>
@@ -1144,25 +1174,19 @@ to be buffered for printing.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">msg</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  the log message</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">cat</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  OPTIONAL the category or logLevel of the message</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">src</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  OPTIONAL the source widget or util of the message</span>
+                                                        <span property="yui:description">  custom event containing the log message</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Object the message object</dd>
+                                                </dl>
 
 
              
@@ -1208,13 +1232,51 @@ to be buffered for printing.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__onCollapseClick">
+                                    <h4>
+                                        <a name="method__onCollapseClick">_onCollapseClick</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onCollapseClick</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Event handler for clicking on the Collapse/Expand button. Sets the
+&quot;collapsed&quot; attribute accordingly.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">Event</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  DOM event facade for the click event</span>
+                                                        </dd>
                                                 </dl>
+
 
 
              
@@ -1280,13 +1342,6 @@ them along through the entry event for buffering etc.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1332,13 +1387,6 @@ attribute.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1363,19 +1411,12 @@ attribute.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets a timeout for buffered messages to be output to the console.
+                                            Sets an interval for buffered messages to be output to the console.
                                         </div>
 
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1406,10 +1447,8 @@ attribute.
                                         
                                         <div class="description" property="yui:description">
                                             Setter method for logLevel attribute.  Acceptable values are
-&quot;error&quot, &quot;warn&quot, &quot;info&quot, and
-Y.Console.LOG_LEVEL_ERROR, Y.Console.LOG_LEVEL_WARN, 
-Y.Console.LOG_LEVEL_INFO.  Any other value becomes
-Y.Console.LOG_LEVEL_INFO.
+&quot;error&quot, &quot;warn&quot, and &quot;info&quot (case
+insensitive).  Other values are treated as &quot;info&quot;.
                                         </div>
 
                                         <div class="description">
@@ -1418,12 +1457,73 @@ Y.Console.LOG_LEVEL_INFO.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">String|Number</span>&gt;
+                                                        &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  String or numeric alias for the desired logLevel</span>
+                                                        <span property="yui:description">  the desired log level</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">String One of Console.LOG_LEVEL_INFO, _WARN, or _ERROR</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setUseBrowserConsole">
+                                    <h4>
+                                        <a name="method__setUseBrowserConsole">_setUseBrowserConsole</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Boolean
+                                            <strong property="yui:name">_setUseBrowserConsole</strong>
+                                           (
+                                                
+                                                        
+                                                         v
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Setter method for useBrowserConsole attributes.  Only functional if the
+logSource attribute points to a YUI instance.  Passes the value down to
+the YUI instance.  NOTE: multiple Console instances cannot maintain
+independent useBrowserConsole values, since it is just a pass through to
+the YUI instance configuration.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">v</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  false to disable browser console printing (default)</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true|false if logSource is a YUI instance</dd>
+                                                </dl>
 
 
              
@@ -1455,13 +1555,6 @@ specified in the consoleLimit configuration.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1507,13 +1600,6 @@ Overrides Widget.prototype._uiSetHeight.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1558,13 +1644,6 @@ Overrides Widget.prototype._uiSetHeight.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1609,13 +1688,6 @@ Overrides Widget.prototype._uiSetHeight.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1660,13 +1732,6 @@ Overrides Widget.prototype._uiSetHeight.
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1676,16 +1741,16 @@ Overrides Widget.prototype._uiSetHeight.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__validateNewLogLevel">
+                                    <div class="protected" rel="yui:method" resource="#method__validateLogSource">
                                     <h4>
-                                        <a name="method__validateNewLogLevel">_validateNewLogLevel</a></h4>
+                                        <a name="method__validateLogSource">_validateLogSource</a></h4>
                                     <div class="detail" >
                                         <code>
                                          protected 
                                         
                                         
-                                        
-                                            <strong property="yui:name">_validateNewLogLevel</strong>
+                                        Boolean
+                                            <strong property="yui:name">_validateLogSource</strong>
                                            (
                                                 
                                                         
@@ -1696,8 +1761,7 @@ Overrides Widget.prototype._uiSetHeight.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Verifies input logLevel is one of Y.Console.LOG_LEVEL_ERROR,
-Y.Console.LOG_LEVEL_WARN, or Y.Console.LOG_LEVEL_INFO.
+                                            Validator for logSource attribute.
                                         </div>
 
                                         <div class="description">
@@ -1706,12 +1770,72 @@ Y.Console.LOG_LEVEL_WARN, or Y.Console.LOG_LEVEL_INFO.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">v</span>
-                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  requested logLevel</span>
+                                                        <span property="yui:description">  the desired logSource</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">true if the input is an object with an <code>on</code>
+method</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__validateStyle">
+                                    <h4>
+                                        <a name="method__validateStyle">_validateStyle</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        Boolean
+                                            <strong property="yui:name">_validateStyle</strong>
+                                           (
+                                                
+                                                        
+                                                         style
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Validates input value for style attribute.  Accepts only values 'inline',
+'block', and 'separate'.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">style</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  the proposed value</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Boolean
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">pass/fail</dd>
+                                                </dl>
 
 
              
@@ -1742,13 +1866,6 @@ Y.Console.LOG_LEVEL_WARN, or Y.Console.LOG_LEVEL_INFO.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1779,13 +1896,6 @@ Y.Console.LOG_LEVEL_WARN, or Y.Console.LOG_LEVEL_INFO.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
@@ -1813,19 +1923,75 @@ Y.Console.LOG_LEVEL_WARN, or Y.Console.LOG_LEVEL_INFO.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Collapses the UI.
+                                            Collapses the body and footer.
                                         </div>
 
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method_destructor">
+                                    <h4>
+                                        <a name="method_destructor">destructor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">destructor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Tears down the instance, flushing event subscriptions and purging the UI.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_expand">
+                                    <h4>
+                                        <a name="method_expand">expand</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">expand</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Expands the body and footer if collapsed.
+                                        </div>
+
+                                        <div class="description">
+
+
 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
@@ -1860,13 +2026,6 @@ internal events, and subscribe to the configured logEvent.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -1889,7 +2048,7 @@ internal events, and subscribe to the configured logEvent.
                                            (
                                                 
                                                         
-                                                         *
+                                                         arg*
                                                     
                                                 
                                             )
@@ -1904,21 +2063,17 @@ internal events, and subscribe to the configured logEvent.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">*</span>
-                                                        &lt;<span property="yui:type">Any*</span>&gt;
+                                                        <code><span property="yui:name">arg*</span>
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> (all arguments passed through to <code>Y.log</code>)</span>
+                                                        <span property="yui:description">  (all arguments passed through to <code>Y.log</code>)</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
 
              
 
@@ -1938,56 +2093,20 @@ internal events, and subscribe to the configured logEvent.
                                         void
                                             <strong property="yui:name">printBuffer</strong>
                                            (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Outputs all buffered messages to the console UI.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
-
-                                            <div class="chainable">
-                                                <strong>Chainable:</strong> This method is chainable.
-                                            </div>        
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_printLogEntry">
-                                    <h4>
-                                        <a name="method_printLogEntry">printLogEntry</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">printLogEntry</strong>
-                                           (
                                                 
                                                         
-                                                         m
+                                                         limit
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Prints the provided message to the console UI.
+                                            Outputs buffered messages to the console UI.  This is typically called
+from a scheduled interval until the buffer is empty (referred to as the
+print loop).  The number of buffered messages output to the Console is
+limited to the number provided as an argument.  If no limit is passed,
+all buffered messages are rendered.
                                         </div>
 
                                         <div class="description">
@@ -1995,20 +2114,13 @@ internal events, and subscribe to the configured logEvent.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">m</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        <code><span property="yui:name">limit</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Normalized message object</span>
+                                                        <span property="yui:description">  (optional) max number of buffered entries to write</span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
@@ -2042,13 +2154,6 @@ internal events, and subscribe to the configured logEvent.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -2079,13 +2184,6 @@ internal events, and subscribe to the configured logEvent.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
@@ -2119,13 +2217,6 @@ internal events, and subscribe to the configured logEvent.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
@@ -2159,13 +2250,6 @@ internal events, and subscribe to the configured logEvent.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                        void
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo"></dd>
-                                                </dl>
 
 
              
@@ -2179,51 +2263,203 @@ internal events, and subscribe to the configured logEvent.
                         </div>
 
                         <div rel="yui:inheritance">                    
+                            <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
+                                <h4>Methods inherited from <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="EventTarget.html#method__getType">                                        
+                                            <a class="private" href="EventTarget.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__parseType">                                        
+                                            <a class="private" href="EventTarget.html#method__parseType" property="yui:name" title="_parseType">_parseType</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_addTarget">                                        
+                                            <a class="" href="EventTarget.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_after">                                        
+                                            <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_before">                                        
+                                            <a class="" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
+                                            <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detach">                                        
+                                            <a class="" href="EventTarget.html#method_detach" property="yui:name" title="detach">detach</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detachAll">                                        
+                                            <a class="" href="EventTarget.html#method_detachAll" property="yui:name" title="detachAll">detachAll</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_fire">                                        
+                                            <a class="" href="EventTarget.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
+                                            <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_on">                                        
+                                            <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
+                                            <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_removeTarget">                                        
+                                            <a class="" href="EventTarget.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_subscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class=" deprecated">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribeAll">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Attribute.html">
+                                <h4>Methods inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Attribute.html#method__addAttrs">                                        
+                                            <a class="private" href="Attribute.html#method__addAttrs" property="yui:name" title="_addAttrs">_addAttrs</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__addLazyAttr">                                        
+                                            <a class="private" href="Attribute.html#method__addLazyAttr" property="yui:name" title="_addLazyAttr">_addLazyAttr</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__defAttrChangeFn">                                        
+                                            <a class="private" href="Attribute.html#method__defAttrChangeFn" property="yui:name" title="_defAttrChangeFn">_defAttrChangeFn</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__fireAttrChange">                                        
+                                            <a class="private" href="Attribute.html#method__fireAttrChange" property="yui:name" title="_fireAttrChange">_fireAttrChange</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttr">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttr" property="yui:name" title="_getAttr">_getAttr</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrInitVal">                                        
+                                            <a class="private" href="Attribute.html#method__getAttrInitVal" property="yui:name" title="_getAttrInitVal">_getAttrInitVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__getAttrs" property="yui:name" title="_getAttrs">_getAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__getStateVal">                                        
+                                            <a class="private" href="Attribute.html#method__getStateVal" property="yui:name" title="_getStateVal">_getStateVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__isLazyAttr">                                        
+                                            <a class="private" href="Attribute.html#method__isLazyAttr" property="yui:name" title="_isLazyAttr">_isLazyAttr</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__normAttrVals">                                        
+                                            <a class="private" href="Attribute.html#method__normAttrVals" property="yui:name" title="_normAttrVals">_normAttrVals</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__protectAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__protectAttrs" property="yui:name" title="_protectAttrs">_protectAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__set">                                        
+                                            <a class="protected" href="Attribute.html#method__set" property="yui:name" title="_set">_set</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttr">                                        
+                                            <a class="protected" href="Attribute.html#method__setAttr" property="yui:name" title="_setAttr">_setAttr</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttrs">                                        
+                                            <a class="protected" href="Attribute.html#method__setAttrs" property="yui:name" title="_setAttrs">_setAttrs</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setAttrVal">                                        
+                                            <a class="private" href="Attribute.html#method__setAttrVal" property="yui:name" title="_setAttrVal">_setAttrVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method__setStateVal">                                        
+                                            <a class="private" href="Attribute.html#method__setStateVal" property="yui:name" title="_setStateVal">_setStateVal</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAttr">                                        
+                                            <a class="" href="Attribute.html#method_addAttr" property="yui:name" title="addAttr">addAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_addAttrs">                                        
+                                            <a class="" href="Attribute.html#method_addAttrs" property="yui:name" title="addAttrs">addAttrs</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_attrAdded">                                        
+                                            <a class="" href="Attribute.html#method_attrAdded" property="yui:name" title="attrAdded">attrAdded</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_get">                                        
+                                            <a class="" href="Attribute.html#method_get" property="yui:name" title="get">get</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_getAttrs">                                        
+                                            <a class="" href="Attribute.html#method_getAttrs" property="yui:name" title="getAttrs">getAttrs</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_modifyAttr">                                        
+                                            <a class="" href="Attribute.html#method_modifyAttr" property="yui:name" title="modifyAttr">modifyAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_removeAttr">                                        
+                                            <a class="" href="Attribute.html#method_removeAttr" property="yui:name" title="removeAttr">removeAttr</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_reset">                                        
+                                            <a class="" href="Attribute.html#method_reset" property="yui:name" title="reset">reset</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_set">                                        
+                                            <a class="" href="Attribute.html#method_set" property="yui:name" title="set">set</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Attribute.html#method_setAttrs">                                        
+                                            <a class="" href="Attribute.html#method_setAttrs" property="yui:name" title="setAttrs">setAttrs</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
                             <div class="section field inheritance" rel="yui:superclass"  resource="Widget.html">
                                 <h4>Methods inherited from <a href="Widget.html" property="yui:name" title="Widget">Widget</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="Widget.html#method__afterDisabledChange">                                        
-                                            <a class="protected" href="Widget.html#method__afterDisabledChange" property="yui:name" title="_afterDisabledChange">_afterDisabledChange</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__applyParsedConfig">                                        
+                                            <a class="protected" href="Widget.html#method__applyParsedConfig" property="yui:name" title="_applyParsedConfig">_applyParsedConfig</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__afterHasFocusChange">                                        
-                                            <a class="protected" href="Widget.html#method__afterHasFocusChange" property="yui:name" title="_afterHasFocusChange">_afterHasFocusChange</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__applyParser">                                        
+                                            <a class="private" href="Widget.html#method__applyParser" property="yui:name" title="_applyParser">_applyParser</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__afterHeightChange">                                        
-                                            <a class="protected" href="Widget.html#method__afterHeightChange" property="yui:name" title="_afterHeightChange">_afterHeightChange</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__bindAttrUI">                                        
+                                            <a class="protected" href="Widget.html#method__bindAttrUI" property="yui:name" title="_bindAttrUI">_bindAttrUI</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__afterVisibleChange">                                        
-                                            <a class="protected" href="Widget.html#method__afterVisibleChange" property="yui:name" title="_afterVisibleChange">_afterVisibleChange</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Widget.html#method__afterWidthChange">                                        
-                                            <a class="protected" href="Widget.html#method__afterWidthChange" property="yui:name" title="_afterWidthChange">_afterWidthChange</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Widget.html#method__bindDOMListeners">                                        
-                                            <a class="protected" href="Widget.html#method__bindDOMListeners" property="yui:name" title="_bindDOMListeners">_bindDOMListeners</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__bindDOM">                                        
+                                            <a class="protected" href="Widget.html#method__bindDOM" property="yui:name" title="_bindDOM">_bindDOM</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__bindUI">                                        
                                             <a class="protected" href="Widget.html#method__bindUI" property="yui:name" title="_bindUI">_bindUI</a><span class="protected">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="Widget.html#method__createUIEvent">                                        
+                                            <a class="private" href="Widget.html#method__createUIEvent" property="yui:name" title="_createUIEvent">_createUIEvent</a><span class="private">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="Widget.html#method__defRenderFn">                                        
                                             <a class="protected" href="Widget.html#method__defRenderFn" property="yui:name" title="_defRenderFn">_defRenderFn</a><span class="protected">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="Widget.html#method__doBindAttrUI">                                        
+                                            <a class="private" href="Widget.html#method__doBindAttrUI" property="yui:name" title="_doBindAttrUI">_doBindAttrUI</a><span class="private">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="Widget.html#method__getHtmlParser">                                        
-                                            <a class="" href="Widget.html#method__getHtmlParser" property="yui:name" title="_getHtmlParser">_getHtmlParser</a><span class="">,</span>
+                                            <a class="private" href="Widget.html#method__getHtmlParser" property="yui:name" title="_getHtmlParser">_getHtmlParser</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__getSrcNode">                                        
+                                            <a class="protected" href="Widget.html#method__getSrcNode" property="yui:name" title="_getSrcNode">_getSrcNode</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__getStrings">                                        
                                             <a class="protected" href="Widget.html#method__getStrings" property="yui:name" title="_getStrings">_getStrings</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__moveStyles">                                        
-                                            <a class="private" href="Widget.html#method__moveStyles" property="yui:name" title="_moveStyles">_moveStyles</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__getUIEventNode">                                        
+                                            <a class="protected" href="Widget.html#method__getUIEventNode" property="yui:name" title="_getUIEventNode">_getUIEventNode</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__onBlur">                                        
-                                            <a class="protected" href="Widget.html#method__onBlur" property="yui:name" title="_onBlur">_onBlur</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__guid">                                        
+                                            <a class="protected" href="Widget.html#method__guid" property="yui:name" title="_guid">_guid</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__onFocus">                                        
-                                            <a class="protected" href="Widget.html#method__onFocus" property="yui:name" title="_onFocus">_onFocus</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__initUIEvent">                                        
+                                            <a class="private" href="Widget.html#method__initUIEvent" property="yui:name" title="_initUIEvent">_initUIEvent</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__parseHTML">                                        
-                                            <a class="private" href="Widget.html#method__parseHTML" property="yui:name" title="_parseHTML">_parseHTML</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__isUIEvent">                                        
+                                            <a class="private" href="Widget.html#method__isUIEvent" property="yui:name" title="_isUIEvent">_isUIEvent</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__onDocFocus">                                        
+                                            <a class="protected" href="Widget.html#method__onDocFocus" property="yui:name" title="_onDocFocus">_onDocFocus</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__onDocMouseDown">                                        
+                                            <a class="protected" href="Widget.html#method__onDocMouseDown" property="yui:name" title="_onDocMouseDown">_onDocMouseDown</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__removeLoadingClassNames">                                        
+                                            <a class="protected" href="Widget.html#method__removeLoadingClassNames" property="yui:name" title="_removeLoadingClassNames">_removeLoadingClassNames</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__renderBox">                                        
                                             <a class="private" href="Widget.html#method__renderBox" property="yui:name" title="_renderBox">_renderBox</a><span class="private">,</span>
@@ -2234,26 +2470,32 @@ internal events, and subscribe to the configured logEvent.
                                             <span rel="yui:method" resource="Widget.html#method__renderUI">                                        
                                             <a class="protected" href="Widget.html#method__renderUI" property="yui:name" title="_renderUI">_renderUI</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__setBoundingBox">                                        
-                                            <a class="private" href="Widget.html#method__setBoundingBox" property="yui:name" title="_setBoundingBox">_setBoundingBox</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__setBB">                                        
+                                            <a class="private" href="Widget.html#method__setBB" property="yui:name" title="_setBB">_setBB</a><span class="private">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__setBox">                                        
                                             <a class="private" href="Widget.html#method__setBox" property="yui:name" title="_setBox">_setBox</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__setContentBox">                                        
-                                            <a class="private" href="Widget.html#method__setContentBox" property="yui:name" title="_setContentBox">_setContentBox</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__setCB">                                        
+                                            <a class="private" href="Widget.html#method__setCB" property="yui:name" title="_setCB">_setCB</a><span class="private">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__setStrings">                                        
                                             <a class="protected" href="Widget.html#method__setStrings" property="yui:name" title="_setStrings">_setStrings</a><span class="protected">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="Widget.html#method__syncAttrUI">                                        
+                                            <a class="protected" href="Widget.html#method__syncAttrUI" property="yui:name" title="_syncAttrUI">_syncAttrUI</a><span class="protected">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="Widget.html#method__syncUI">                                        
                                             <a class="protected" href="Widget.html#method__syncUI" property="yui:name" title="_syncUI">_syncUI</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__uiSetDim">                                        
+                                            <a class="private" href="Widget.html#method__uiSetDim" property="yui:name" title="_uiSetDim">_uiSetDim</a><span class="private">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__uiSetDisabled">                                        
                                             <a class="protected" href="Widget.html#method__uiSetDisabled" property="yui:name" title="_uiSetDisabled">_uiSetDisabled</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method__uiSetHasFocus">                                        
-                                            <a class="protected" href="Widget.html#method__uiSetHasFocus" property="yui:name" title="_uiSetHasFocus">_uiSetHasFocus</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method__uiSetFocused">                                        
+                                            <a class="protected" href="Widget.html#method__uiSetFocused" property="yui:name" title="_uiSetFocused">_uiSetFocused</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__uiSetHeight">                                        
                                             <a class="protected" href="Widget.html#method__uiSetHeight" property="yui:name" title="_uiSetHeight">_uiSetHeight</a><span class="protected">,</span>
@@ -2267,6 +2509,21 @@ internal events, and subscribe to the configured logEvent.
                                             <span rel="yui:method" resource="Widget.html#method__uiSetWidth">                                        
                                             <a class="protected" href="Widget.html#method__uiSetWidth" property="yui:name" title="_uiSetWidth">_uiSetWidth</a><span class="protected">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="Widget.html#method__uiSizeCB">                                        
+                                            <a class="protected" href="Widget.html#method__uiSizeCB" property="yui:name" title="_uiSizeCB">_uiSizeCB</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__unbindAttrUI">                                        
+                                            <a class="protected" href="Widget.html#method__unbindAttrUI" property="yui:name" title="_unbindAttrUI">_unbindAttrUI</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__unbindDOM">                                        
+                                            <a class="protected" href="Widget.html#method__unbindDOM" property="yui:name" title="_unbindDOM">_unbindDOM</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__unbindUI">                                        
+                                            <a class="protected" href="Widget.html#method__unbindUI" property="yui:name" title="_unbindUI">_unbindUI</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__validTabIndex">                                        
+                                            <a class="protected" href="Widget.html#method__validTabIndex" property="yui:name" title="_validTabIndex">_validTabIndex</a><span class="protected">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="Widget.html#method_bindUI">                                        
                                             <a class="protected" href="Widget.html#method_bindUI" property="yui:name" title="bindUI">bindUI</a><span class="protected">,</span>
                                             </span>
@@ -2276,8 +2533,8 @@ internal events, and subscribe to the configured logEvent.
                                             <span rel="yui:method" resource="Widget.html#method_destructor">                                        
                                             <a class="protected" href="Widget.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Widget.html#method_disabled">                                        
-                                            <a class="" href="Widget.html#method_disabled" property="yui:name" title="disabled">disabled</a><span class="">,</span>
+                                            <span rel="yui:method" resource="Widget.html#method_disable">                                        
+                                            <a class="" href="Widget.html#method_disable" property="yui:name" title="disable">disable</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method_enable">                                        
                                             <a class="" href="Widget.html#method_enable" property="yui:name" title="enable">enable</a><span class="">,</span>
@@ -2316,7 +2573,7 @@ internal events, and subscribe to the configured logEvent.
                                             <a class="" href="Widget.html#method_show" property="yui:name" title="show">show</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method_syncUI">                                        
-                                            <a class="" href="Widget.html#method_syncUI" property="yui:name" title="syncUI">syncUI</a><span class="">,</span>
+                                            <a class="protected" href="Widget.html#method_syncUI" property="yui:name" title="syncUI">syncUI</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method_toString">                                        
                                             <a class="" href="Widget.html#method_toString" property="yui:name" title="toString">toString</a>
@@ -2363,6 +2620,34 @@ internal events, and subscribe to the configured logEvent.
                                             </span>
                                             <span rel="yui:method" resource="Base.html#method_toString">                                        
                                             <a class="" href="Base.html#method_toString" property="yui:name" title="toString">toString</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
+                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__plug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__unplug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
+                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
+                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
+                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
                                             </span>
                                     </code>
                                 </div>
@@ -2571,8 +2856,8 @@ internal events, and subscribe to the configured logEvent.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Triggers the processing of an incoming message via the default logic
-in _defEntryFn.
+                                            Transfers a received message to the print loop buffer.  Default
+behavior defined in _defEntryFn.
                                         </div>
 
                                         <div class="description">
@@ -2822,6 +3107,50 @@ in _defEntryFn.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_logSourceChange">
+                                    <h4>
+                                        <a name="event_logSourceChange">logSourceChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">logSourceChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'logSource' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_newestOnTopChange">
                                     <h4>
                                         <a name="event_newestOnTopChange">newestOnTopChange</a></h4>
@@ -2888,6 +3217,50 @@ in _defEntryFn.
                                         
                                         <div class="description" property="yui:description">
                                             Fires when the value for the configuration attribute 'paused' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_printLimitChange">
+                                    <h4>
+                                        <a name="event_printLimitChange">printLimitChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">printLimitChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'printLimit' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -3133,6 +3506,94 @@ in _defEntryFn.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_styleChange">
+                                    <h4>
+                                        <a name="event_styleChange">styleChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">styleChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'style' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_useBrowserConsoleChange">
+                                    <h4>
+                                        <a name="event_useBrowserConsoleChange">useBrowserConsoleChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">useBrowserConsoleChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'useBrowserConsole' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_widthChange">
                                     <h4>
                                         <a name="event_widthChange">widthChange</a></h4>
@@ -3195,20 +3656,26 @@ in _defEntryFn.
                                                                             <span rel="yui:event" resource="Widget.html#event_disabledChange">
                                         <a class="" href="Widget.html#event_disabledChange" property="yui:name" title="disabledChange">disabledChange</a><span class="">,</span>
                                         </span>
-                                                                            <span rel="yui:event" resource="Widget.html#event_hasFocusChange">
-                                        <a class="" href="Widget.html#event_hasFocusChange" property="yui:name" title="hasFocusChange">hasFocusChange</a><span class="">,</span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_focusedChange">
+                                        <a class="" href="Widget.html#event_focusedChange" property="yui:name" title="focusedChange">focusedChange</a><span class="">,</span>
                                         </span>
                                                                             <span rel="yui:event" resource="Widget.html#event_heightChange">
                                         <a class="" href="Widget.html#event_heightChange" property="yui:name" title="heightChange">heightChange</a><span class="">,</span>
                                         </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_idChange">
+                                        <a class="" href="Widget.html#event_idChange" property="yui:name" title="idChange">idChange</a><span class="">,</span>
+                                        </span>
                                                                             <span rel="yui:event" resource="Widget.html#event_localeChange">
                                         <a class="" href="Widget.html#event_localeChange" property="yui:name" title="localeChange">localeChange</a><span class="">,</span>
                                         </span>
-                                                                            <span rel="yui:event" resource="Widget.html#event_moveStylesChange">
-                                        <a class="" href="Widget.html#event_moveStylesChange" property="yui:name" title="moveStylesChange">moveStylesChange</a><span class="">,</span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_renderChange">
+                                        <a class="" href="Widget.html#event_renderChange" property="yui:name" title="renderChange">renderChange</a><span class="">,</span>
                                         </span>
                                                                             <span rel="yui:event" resource="Widget.html#event_renderedChange">
                                         <a class="" href="Widget.html#event_renderedChange" property="yui:name" title="renderedChange">renderedChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Widget.html#event_srcNodeChange">
+                                        <a class="" href="Widget.html#event_srcNodeChange" property="yui:name" title="srcNodeChange">srcNodeChange</a><span class="">,</span>
                                         </span>
                                                                             <span rel="yui:event" resource="Widget.html#event_stringsChange">
                                         <a class="" href="Widget.html#event_stringsChange" property="yui:name" title="stringsChange">stringsChange</a><span class="">,</span>
@@ -3290,7 +3757,7 @@ DOM tree and impacting page performance.
  
      
                                     <div class="default">
-                                        Default Value: 500
+                                        Default Value: 300
                                     </div>        
 
                                     <hr />
@@ -3302,7 +3769,8 @@ DOM tree and impacting page performance.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             If a category is not specified in the Y.log(..) statement, this
-category will be used. Category is also called &quot;log level&quot;.
+category will be used. Categories &quot;info&quot;,
+&quot;warn&quot;, and &quot;error&quot; are also called log level.
                                         </div>
                                     </div>
  
@@ -3343,7 +3811,7 @@ source will be used.
  
      
                                     <div class="default">
-                                        Default Value: (see Console.ENTRY_TEMPLATE)
+                                        Default Value: Console.ENTRY_TEMPLATE
                                     </div>        
 
                                     <hr />
@@ -3356,7 +3824,7 @@ source will be used.
                                         <div class="description" property="yui:description">
                                             String with units, or number, representing the height of the Console,
 inclusive of header and footer. If a number is provided, the default
-unit, defined by the Widgets DEF_UNIT, property is used.
+unit, defined by Widget's DEF_UNIT, property is used.
                                         </div>
                                     </div>
  
@@ -3404,7 +3872,7 @@ time between log messages.
                                     </div>        
                                     <div class="" rel="yui:attribute" resource="#config_logLevel">
                                     <h4><a name="config_logLevel">logLevel</a>
-                                        <code>- <span property="yui:type">String|Number</span></code>
+                                        <code>- <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -3413,7 +3881,7 @@ logLevel value for all Console instances defaults from the
 Y.config.logLevel YUI configuration, or Console.LOG_LEVEL_INFO if
 that configuration is not set.
 Possible values are &quot;info&quot;, &quot;warn&quot;,
-&quot;error&quot; (case insensitive), or the corresponding statics
+&quot;error&quot; (case insensitive), or their corresponding statics
 Console.LOG_LEVEL_INFO and so on.
                                         </div>
                                     </div>
@@ -3421,6 +3889,25 @@ Console.LOG_LEVEL_INFO and so on.
      
                                     <div class="default">
                                         Default Value: Y.config.logLevel or Console.LOG_LEVEL_INFO
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_logSource">
+                                    <h4><a name="config_logSource">logSource</a>
+                                        <code>- <span property="yui:type">EventTarget</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Object that will emit the log events.  By default the YUI instance.
+To have a single Console capture events from all YUI instances, set
+this to the Y.Global object.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: Y
                                     </div>        
 
                                     <hr />
@@ -3460,14 +3947,32 @@ When paused, messages will accumulate in the buffer.
 
                                     <hr />
                                     </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_printLimit">
+                                    <h4><a name="config_printLimit">printLimit</a>
+                                        <code>- <span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Maximum number of entries printed in each iteration of the print
+loop. This is used to prevent excessive logging locking the page UI.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 50
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_printTimeout">
                                     <h4><a name="config_printTimeout">printTimeout</a>
                                         <code>- <span property="yui:type">Number</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Millisecond timeout to maintain before emptying buffer of Console
-entries to the UI.
+                                            Millisecond timeout between iterations of the print loop, moving
+entries from the buffer to the UI.
                                         </div>
                                     </div>
  
@@ -3538,6 +4043,44 @@ Default collection contains the following name:value pairs:
 
                                     <hr />
                                     </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_style">
+                                    <h4><a name="config_style">style</a>
+                                        <code>- <span property="yui:type">{String}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Allows the Console to flow in the document.  Available values are
+'inline', 'block', and 'separate' (the default).
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 'separate'
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_useBrowserConsole">
+                                    <h4><a name="config_useBrowserConsole">useBrowserConsole</a>
+                                        <code>- <span property="yui:type">{Boolean}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Pass through to the YUI instance useBrowserConsole configuration.
+By default this is set to false, which will disable logging to the
+browser console when a Console instance is created.  If the
+logSource is not a YUI instance, this has no effect.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: false
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_width">
                                     <h4><a name="config_width">width</a>
                                         <code>- <span property="yui:type">{String | Number}</span></code>
@@ -3545,7 +4088,7 @@ Default collection contains the following name:value pairs:
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             String with units, or number, representing the width of the Console.
-If a number is provided, the default unit, defined by the Widgets
+If a number is provided, the default unit, defined by Widget's
 DEF_UNIT, property is used.
                                         </div>
                                     </div>
@@ -3575,32 +4118,38 @@ DEF_UNIT, property is used.
                                                                                 <span rel="yui:attribute" resource="Widget.html#config_disabled">                                        
                                         <a class="" href="Widget.html#config_disabled" property="yui:name" title="disabled">disabled</a><span class="">,</span>
                                         </span>
-                                                                                <span rel="yui:attribute" resource="Widget.html#config_hasFocus">                                        
-                                        <a class="" href="Widget.html#config_hasFocus" property="yui:name" title="hasFocus">hasFocus</a><span class="">,</span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_focused">                                        
+                                        <a class="" href="Widget.html#config_focused" property="yui:name" title="focused">focused</a><span class="">,</span>
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Widget.html#config_height">                                        
                                         <a class="" href="Widget.html#config_height" property="yui:name" title="height">height</a><span class="">,</span>
                                         </span>
-                                                                                <span rel="yui:attribute" resource="Widget.html#config_locale">                                        
-                                        <a class="" href="Widget.html#config_locale" property="yui:name" title="locale">locale</a><span class="">,</span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_id">                                        
+                                        <a class="" href="Widget.html#config_id" property="yui:name" title="id">id</a><span class="">,</span>
                                         </span>
-                                                                                <span rel="yui:attribute" resource="Widget.html#config_moveStyles">                                        
-                                        <a class="" href="Widget.html#config_moveStyles" property="yui:name" title="moveStyles">moveStyles</a><span class="">,</span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_locale">                                        
+                                        <a class="" href="Widget.html#config_locale" property="yui:name" title="locale">locale</a>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_render">                                        
+                                        <a class="" href="Widget.html#config_render" property="yui:name" title="render">render</a>
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Widget.html#config_rendered">                                        
-                                        <a class="" href="Widget.html#config_rendered" property="yui:name" title="rendered">rendered</a><span class="">,</span>
+                                        <a class="" href="Widget.html#config_rendered" property="yui:name" title="rendered">rendered</a>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="Widget.html#config_srcNode">                                        
+                                        <a class="" href="Widget.html#config_srcNode" property="yui:name" title="srcNode">srcNode</a>
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Widget.html#config_strings">                                        
-                                        <a class="" href="Widget.html#config_strings" property="yui:name" title="strings">strings</a><span class="">,</span>
+                                        <a class="" href="Widget.html#config_strings" property="yui:name" title="strings">strings</a>
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Widget.html#config_tabIndex">                                        
-                                        <a class="" href="Widget.html#config_tabIndex" property="yui:name" title="tabIndex">tabIndex</a><span class="">,</span>
+                                        <a class="" href="Widget.html#config_tabIndex" property="yui:name" title="tabIndex">tabIndex</a>
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Widget.html#config_visible">                                        
-                                        <a class="" href="Widget.html#config_visible" property="yui:name" title="visible">visible</a><span class="">,</span>
+                                        <a class="" href="Widget.html#config_visible" property="yui:name" title="visible">visible</a>
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Widget.html#config_width">                                        
-                                        <a class="" href="Widget.html#config_width" property="yui:name" title="width">width</a><span class="">,</span>
+                                        <a class="" href="Widget.html#config_width" property="yui:name" title="width">width</a>
                                         </span>
                                         
                                 </code>
@@ -3611,10 +4160,10 @@ DEF_UNIT, property is used.
                             <div class="content" rel="yui:attributes">
                                 <code>
                                         <span rel="yui:attribute" resource="Base.html#config_destroyed">                                        
-                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a><span class="">,</span>
+                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a>
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
-                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a><span class="">,</span>
+                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a>
                                         </span>
                                         
                                 </code>
@@ -3631,36 +4180,53 @@ DEF_UNIT, property is used.
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class="selected"><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -3682,15 +4248,17 @@ DEF_UNIT, property is used.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="protected"><a href="#property__body" title="_body">_body</a></li>
+                                <li class="protected"><a href="#property__evtCat" title="_evtCat">_evtCat</a></li>
+                                <li class="protected"><a href="#property__foot" title="_foot">_foot</a></li>
                                 <li class="protected"><a href="#property__head" title="_head">_head</a></li>
-                                <li class="protected"><a href="#property__timeout" title="_timeout">_timeout</a></li>
-                                <li class=""><a href="#property_buffer" title="buffer">buffer</a></li>
-                                <li class="protected"><a href="#property_Console._logLevels" title="Console._logLevels">Console._logLevels</a></li>
+                                <li class="protected"><a href="#property__printLoop" title="_printLoop">_printLoop</a></li>
+                                <li class="protected"><a href="#property_buffer" title="buffer">buffer</a></li>
                                 <li class=""><a href="#property_Console.ATTRS" title="Console.ATTRS">Console.ATTRS</a></li>
                                 <li class=""><a href="#property_Console.BODY_TEMPLATE" title="Console.BODY_TEMPLATE">Console.BODY_TEMPLATE</a></li>
                                 <li class=""><a href="#property_Console.CHROME_CLASSES" title="Console.CHROME_CLASSES">Console.CHROME_CLASSES</a></li>
                                 <li class=""><a href="#property_Console.ENTRY_CLASSES" title="Console.ENTRY_CLASSES">Console.ENTRY_CLASSES</a></li>
                                 <li class=""><a href="#property_Console.ENTRY_TEMPLATE" title="Console.ENTRY_TEMPLATE">Console.ENTRY_TEMPLATE</a></li>
+                                <li class=""><a href="#property_Console.FOOTER_TEMPLATE" title="Console.FOOTER_TEMPLATE">Console.FOOTER_TEMPLATE</a></li>
                                 <li class=""><a href="#property_Console.HEADER_TEMPLATE" title="Console.HEADER_TEMPLATE">Console.HEADER_TEMPLATE</a></li>
                                 <li class=""><a href="#property_Console.LOG_LEVEL_ERROR" title="Console.LOG_LEVEL_ERROR">Console.LOG_LEVEL_ERROR</a></li>
                                 <li class=""><a href="#property_Console.LOG_LEVEL_INFO" title="Console.LOG_LEVEL_INFO">Console.LOG_LEVEL_INFO</a></li>
@@ -3702,16 +4270,17 @@ DEF_UNIT, property is used.
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="protected"><a href="#method__addToConsole" title="_addToConsole">_addToConsole</a></li>
                                 <li class="protected"><a href="#method__afterCollapsedChange" title="_afterCollapsedChange">_afterCollapsedChange</a></li>
                                 <li class="protected"><a href="#method__afterConsoleLimitChange" title="_afterConsoleLimitChange">_afterConsoleLimitChange</a></li>
                                 <li class="protected"><a href="#method__afterPausedChange" title="_afterPausedChange">_afterPausedChange</a></li>
                                 <li class="protected"><a href="#method__afterStringsChange" title="_afterStringsChange">_afterStringsChange</a></li>
                                 <li class="protected"><a href="#method__afterVisibleChange" title="_afterVisibleChange">_afterVisibleChange</a></li>
-                                <li class="protected"><a href="#method__clearTimeout" title="_clearTimeout">_clearTimeout</a></li>
+                                <li class="protected"><a href="#method__cancelPrintLoop" title="_cancelPrintLoop">_cancelPrintLoop</a></li>
+                                <li class="protected"><a href="#method__createEntryHTML" title="_createEntryHTML">_createEntryHTML</a></li>
                                 <li class="protected"><a href="#method__defEntryFn" title="_defEntryFn">_defEntryFn</a></li>
                                 <li class="protected"><a href="#method__defResetFn" title="_defResetFn">_defResetFn</a></li>
                                 <li class="protected"><a href="#method__encodeHTML" title="_encodeHTML">_encodeHTML</a></li>
+                                <li class="protected"><a href="#method__getUseBrowserConsole" title="_getUseBrowserConsole">_getUseBrowserConsole</a></li>
                                 <li class="protected"><a href="#method__htmlEscapeMessage" title="_htmlEscapeMessage">_htmlEscapeMessage</a></li>
                                 <li class="protected"><a href="#method__initBody" title="_initBody">_initBody</a></li>
                                 <li class="protected"><a href="#method__initFoot" title="_initFoot">_initFoot</a></li>
@@ -3719,23 +4288,27 @@ DEF_UNIT, property is used.
                                 <li class="protected"><a href="#method__isInLogLevel" title="_isInLogLevel">_isInLogLevel</a></li>
                                 <li class="protected"><a href="#method__normalizeMessage" title="_normalizeMessage">_normalizeMessage</a></li>
                                 <li class="protected"><a href="#method__onClearClick" title="_onClearClick">_onClearClick</a></li>
+                                <li class="protected"><a href="#method__onCollapseClick" title="_onCollapseClick">_onCollapseClick</a></li>
                                 <li class="protected"><a href="#method__onLogEvent" title="_onLogEvent">_onLogEvent</a></li>
                                 <li class="protected"><a href="#method__onPauseClick" title="_onPauseClick">_onPauseClick</a></li>
                                 <li class="protected"><a href="#method__schedulePrint" title="_schedulePrint">_schedulePrint</a></li>
                                 <li class="protected"><a href="#method__setLogLevel" title="_setLogLevel">_setLogLevel</a></li>
+                                <li class="protected"><a href="#method__setUseBrowserConsole" title="_setUseBrowserConsole">_setUseBrowserConsole</a></li>
                                 <li class="protected"><a href="#method__trimOldEntries" title="_trimOldEntries">_trimOldEntries</a></li>
                                 <li class="protected"><a href="#method__uiSetHeight" title="_uiSetHeight">_uiSetHeight</a></li>
                                 <li class="protected"><a href="#method__uiUpdateCollapsed" title="_uiUpdateCollapsed">_uiUpdateCollapsed</a></li>
                                 <li class="protected"><a href="#method__uiUpdateFromHideShow" title="_uiUpdateFromHideShow">_uiUpdateFromHideShow</a></li>
                                 <li class="protected"><a href="#method__uiUpdatePaused" title="_uiUpdatePaused">_uiUpdatePaused</a></li>
-                                <li class="protected"><a href="#method__validateNewLogLevel" title="_validateNewLogLevel">_validateNewLogLevel</a></li>
+                                <li class="protected"><a href="#method__validateLogSource" title="_validateLogSource">_validateLogSource</a></li>
+                                <li class="protected"><a href="#method__validateStyle" title="_validateStyle">_validateStyle</a></li>
                                 <li class="protected"><a href="#method_bindUI" title="bindUI">bindUI</a></li>
                                 <li class=""><a href="#method_clearConsole" title="clearConsole">clearConsole</a></li>
                                 <li class=""><a href="#method_collapse" title="collapse">collapse</a></li>
+                                <li class="protected"><a href="#method_destructor" title="destructor">destructor</a></li>
+                                <li class=""><a href="#method_expand" title="expand">expand</a></li>
                                 <li class="protected"><a href="#method_initializer" title="initializer">initializer</a></li>
                                 <li class=""><a href="#method_log" title="log">log</a></li>
                                 <li class=""><a href="#method_printBuffer" title="printBuffer">printBuffer</a></li>
-                                <li class=""><a href="#method_printLogEntry" title="printLogEntry">printLogEntry</a></li>
                                 <li class="protected"><a href="#method_renderUI" title="renderUI">renderUI</a></li>
                                 <li class=""><a href="#method_reset" title="reset">reset</a></li>
                                 <li class=""><a href="#method_scrollToLatest" title="scrollToLatest">scrollToLatest</a></li>
@@ -3756,13 +4329,17 @@ DEF_UNIT, property is used.
                                 <li class=""><a href="#event_lastTimeChange" title="lastTimeChange">lastTimeChange</a></li>
                                 <li class=""><a href="#event_logEventChange" title="logEventChange">logEventChange</a></li>
                                 <li class=""><a href="#event_logLevelChange" title="logLevelChange">logLevelChange</a></li>
+                                <li class=""><a href="#event_logSourceChange" title="logSourceChange">logSourceChange</a></li>
                                 <li class=""><a href="#event_newestOnTopChange" title="newestOnTopChange">newestOnTopChange</a></li>
                                 <li class=""><a href="#event_pausedChange" title="pausedChange">pausedChange</a></li>
+                                <li class=""><a href="#event_printLimitChange" title="printLimitChange">printLimitChange</a></li>
                                 <li class=""><a href="#event_printTimeoutChange" title="printTimeoutChange">printTimeoutChange</a></li>
                                 <li class=""><a href="#event_reset" title="reset">reset</a></li>
                                 <li class=""><a href="#event_scrollIntoViewChange" title="scrollIntoViewChange">scrollIntoViewChange</a></li>
                                 <li class=""><a href="#event_startTimeChange" title="startTimeChange">startTimeChange</a></li>
                                 <li class=""><a href="#event_stringsChange" title="stringsChange">stringsChange</a></li>
+                                <li class=""><a href="#event_styleChange" title="styleChange">styleChange</a></li>
+                                <li class=""><a href="#event_useBrowserConsoleChange" title="useBrowserConsoleChange">useBrowserConsoleChange</a></li>
                                 <li class=""><a href="#event_widthChange" title="widthChange">widthChange</a></li>
                         </ul>
                     </div>
@@ -3779,12 +4356,16 @@ DEF_UNIT, property is used.
                                 <li class=""><a href="#config_lastTime" title="lastTime">lastTime</a></li>
                                 <li class=""><a href="#config_logEvent" title="logEvent">logEvent</a></li>
                                 <li class=""><a href="#config_logLevel" title="logLevel">logLevel</a></li>
+                                <li class=""><a href="#config_logSource" title="logSource">logSource</a></li>
                                 <li class=""><a href="#config_newestOnTop" title="newestOnTop">newestOnTop</a></li>
                                 <li class=""><a href="#config_paused" title="paused">paused</a></li>
+                                <li class=""><a href="#config_printLimit" title="printLimit">printLimit</a></li>
                                 <li class=""><a href="#config_printTimeout" title="printTimeout">printTimeout</a></li>
                                 <li class=""><a href="#config_scrollIntoView" title="scrollIntoView">scrollIntoView</a></li>
                                 <li class=""><a href="#config_startTime" title="startTime">startTime</a></li>
                                 <li class=""><a href="#config_strings" title="strings">strings</a></li>
+                                <li class=""><a href="#config_style" title="style">style</a></li>
+                                <li class=""><a href="#config_useBrowserConsole" title="useBrowserConsole">useBrowserConsole</a></li>
                                 <li class=""><a href="#config_width" title="width">width</a></li>
                         </ul>
                     </div>
@@ -3794,11 +4375,12 @@ DEF_UNIT, property is used.
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "protected", "host": "Console", "name": "_addToConsole", "url": "Console.html#method__addToConsole", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterCollapsedChange", "url": "Console.html#method__afterCollapsedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterConsoleLimitChange", "url": "Console.html#method__afterConsoleLimitChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterPausedChange", "url": "Console.html#method__afterPausedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterStringsChange", "url": "Console.html#method__afterStringsChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterVisibleChange", "url": "Console.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "bindUI", "url": "Console.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_body", "url": "Console.html#property__body", "type": "property"}, {"access": "", "host": "Console", "name": "buffer", "url": "Console.html#property_buffer", "type": "property"}, {"access": "", "host": "Console", "name": "clearConsole", "url": "Console.html#method_clearConsole", "type": "method"}, {"access": "protected", "host": "Console", "name": "_clearTimeout", "url": "Console.html#method__clearTimeout", "type": "method"}, {"access": "", "host": "Console", "name": "collapse", "url": "Console.html#method_collapse", "type": "method"}, {"access": "", "host": "Console", "name": "collapsed", "url": "Console.html#config_collapsed", "type": "config"}, {"access": "", "host": "Console", "name": "collapsedChange", "url": "Console.html#event_collapsedChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.ATTRS", "url": "Console.html#property_Console.ATTRS", "type": "property"}, {"access": "", "host": "Console", "name": "Console.BODY_TEMPLATE", "url": "Console.html#property_Console.BODY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.CHROME_CLASSES", "url": "Console.html#property_Console.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_CLASSES", "url": "Console.html#property_Console.ENTRY_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_TEMPLATE", "url": "Console.html#property_Console.ENTRY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.HEADER_TEMPLATE", "url": "Console.html#property_Console.HEADER_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "consoleLimit", "url": "Console.html#config_consoleLimit", "type": "config"}, {"access": "", "host": "Console", "name": "consoleLimitChange", "url": "Console.html#event_consoleLimitChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_ERROR", "url": "Console.html#property_Console.LOG_LEVEL_ERROR", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_INFO", "url": "Console.html#property_Console.LOG_LEVEL_INFO", "type": "property"}, {"access": "protected", "host": "Console", "name": "Console._logLevels", "url": "Console.html#property_Console._logLevels", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_WARN", "url": "Console.html#property_Console.LOG_LEVEL_WARN", "type": "property"}, {"access": "", "host": "Console", "name": "Console.NAME", "url": "Console.html#property_Console.NAME", "type": "property"}, {"access": "", "host": "Console", "name": "defaultCategory", "url": "Console.html#config_defaultCategory", "type": "config"}, {"access": "", "host": "Console", "name": "defaultCategoryChange", "url": "Console.html#event_defaultCategoryChange", "type": "event"}, {"access": "", "host": "Console", "name": "defaultSource", "url": "Console.html#config_defaultSource", "type": "config"}, {"access": "", "host": "Console", "name": "defaultSourceChange", "url": "Console.html#event_defaultSourceChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_defEntryFn", "url": "Console.html#method__defEntryFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "_defResetFn", "url": "Console.html#method__defResetFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "_encodeHTML", "url": "Console.html#method__encodeHTML", "type": "method"}, {"access": "", "host": "Console", "name": "entry", "url": "Console.html#event_entry", "type": "event"}, {"access": "", "host": "Console", "name": "entryTemplate", "url": "Console.html#config_entryTemplate", "type": "config"}, {"access": "", "host": "Console", "name": "entryTemplateChange", "url": "Console.html#event_entryTemplateChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_head", "url": "Console.html#property__head", "type": "property"}, {"access": "", "host": "Console", "name": "height", "url": "Console.html#config_height", "type": "config"}, {"access": "", "host": "Console", "name": "heightChange", "url": "Console.html#event_heightChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_htmlEscapeMessage", "url": "Console.html#method__htmlEscapeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initBody", "url": "Console.html#method__initBody", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initFoot", "url": "Console.html#method__initFoot", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initHead", "url": "Console.html#method__initHead", "type": "method"}, {"access": "protected", "host": "Console", "name": "initializer", "url": "Console.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Console", "name": "_isInLogLevel", "url": "Console.html#method__isInLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "lastTime", "url": "Console.html#config_lastTime", "type": "config"}, {"access": "", "host": "Console", "name": "lastTimeChange", "url": "Console.html#event_lastTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "log", "url": "Console.html#method_log", "type": "method"}, {"access": "", "host": "Console", "name": "logEvent", "url": "Console.html#config_logEvent", "type": "config"}, {"access": "", "host": "Console", "name": "logEventChange", "url": "Console.html#event_logEventChange", "type": "event"}, {"access": "", "host": "Console", "name": "logLevel", "url": "Console.html#config_logLevel", "type": "config"}, {"access": "", "host": "Console", "name": "logLevelChange", "url": "Console.html#event_logLevelChange", "type": "event"}, {"access": "", "host": "Console", "name": "newestOnTop", "url": "Console.html#config_newestOnTop", "type": "config"}, {"access": "", "host": "Console", "name": "newestOnTopChange", "url": "Console.html#event_newestOnTopChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_normalizeMessage", "url": "Console.html#method__normalizeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onClearClick", "url": "Console.html#method__onClearClick", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onLogEvent", "url": "Console.html#method__onLogEvent", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onPauseClick", "url": "Console.html#method__onPauseClick", "type": "method"}, {"access": "", "host": "Console", "name": "paused", "url": "Console.html#config_paused", "type": "config"}, {"access": "", "host": "Console", "name": "pausedChange", "url": "Console.html#event_pausedChange", "type": "event"}, {"access": "", "host": "Console", "name": "printBuffer", "url": "Console.html#method_printBuffer", "type": "method"}, {"access": "", "host": "Console", "name": "printLogEntry", "url": "Console.html#method_printLogEntry", "type": "method"}, {"access": "", "host": "Console", "name": "printTimeout", "url": "Console.html#config_printTimeout", "type": "config"}, {"access": "", "host": "Console", "name": "printTimeoutChange", "url": "Console.html#event_printTimeoutChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "renderUI", "url": "Console.html#method_renderUI", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#method_reset", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#event_reset", "type": "event"}, {"access": "protected", "host": "Console", "name": "_schedulePrint", "url": "Console.html#method__schedulePrint", "type": "method"}, {"access": "", "host": "Console", "name": "scrollIntoView", "url": "Console.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "Console", "name": "scrollIntoViewChange", "url": "Console.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "Console", "name": "scrollToLatest", "url": "Console.html#method_scrollToLatest", "type": "method"}, {"access": "protected", "host": "Console", "name": "_setLogLevel", "url": "Console.html#method__setLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "startTime", "url": "Console.html#config_startTime", "type": "config"}, {"access": "", "host": "Console", "name": "startTimeChange", "url": "Console.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "strings", "url": "Console.html#config_strings", "type": "config"}, {"access": "", "host": "Console", "name": "stringsChange", "url": "Console.html#event_stringsChange", "type": "event"}, {"access": "", "host": "Console", "name": "syncUI", "url": "Console.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_timeout", "url": "Console.html#property__timeout", "type": "property"}, {"access": "protected", "host": "Console", "name": "_trimOldEntries", "url": "Console.html#method__trimOldEntries", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiSetHeight", "url": "Console.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateCollapsed", "url": "Console.html#method__uiUpdateCollapsed", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateFromHideShow", "url": "Console.html#method__uiUpdateFromHideShow", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdatePaused", "url": "Console.html#method__uiUpdatePaused", "type": "method"}, {"access": "protected", "host": "Console", "name": "_validateNewLogLevel", "url": "Console.html#method__validateNewLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "width", "url": "Console.html#config_width", "type": "config"}, {"access": "", "host": "Console", "name": "widthChange", "url": "Console.html#event_widthChange", "type": "event"}];
+
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Console", "name": "_afterCollapsedChange", "url": "Console.html#method__afterCollapsedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterConsoleLimitChange", "url": "Console.html#method__afterConsoleLimitChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterPausedChange", "url": "Console.html#method__afterPausedChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterStringsChange", "url": "Console.html#method__afterStringsChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "_afterVisibleChange", "url": "Console.html#method__afterVisibleChange", "type": "method"}, {"access": "protected", "host": "Console", "name": "bindUI", "url": "Console.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_body", "url": "Console.html#property__body", "type": "property"}, {"access": "protected", "host": "Console", "name": "buffer", "url": "Console.html#property_buffer", "type": "property"}, {"access": "protected", "host": "Console", "name": "_cancelPrintLoop", "url": "Console.html#method__cancelPrintLoop", "type": "method"}, {"access": "", "host": "Console", "name": "clearConsole", "url": "Console.html#method_clearConsole", "type": "method"}, {"access": "", "host": "Console", "name": "collapse", "url": "Console.html#method_collapse", "type": "method"}, {"access": "", "host": "Console", "name": "collapsed", "url": "Console.html#config_collapsed", "type": "config"}, {"access": "", "host": "Console", "name": "collapsedChange", "url": "Console.html#event_collapsedChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.ATTRS", "url": "Console.html#property_Console.ATTRS", "type": "property"}, {"access": "", "host": "Console", "name": "Console.BODY_TEMPLATE", "url": "Console.html#property_Console.BODY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.CHROME_CLASSES", "url": "Console.html#property_Console.CHROME_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_CLASSES", "url": "Console.html#property_Console.ENTRY_CLASSES", "type": "property"}, {"access": "", "host": "Console", "name": "Console.ENTRY_TEMPLATE", "url": "Console.html#property_Console.ENTRY_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.FOOTER_TEMPLATE", "url": "Console.html#property_Console.FOOTER_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "Console.HEADER_TEMPLATE", "url": "Console.html#property_Console.HEADER_TEMPLATE", "type": "property"}, {"access": "", "host": "Console", "name": "consoleLimit", "url": "Console.html#config_consoleLimit", "type": "config"}, {"access": "", "host": "Console", "name": "consoleLimitChange", "url": "Console.html#event_consoleLimitChange", "type": "event"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_ERROR", "url": "Console.html#property_Console.LOG_LEVEL_ERROR", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_INFO", "url": "Console.html#property_Console.LOG_LEVEL_INFO", "type": "property"}, {"access": "", "host": "Console", "name": "Console.LOG_LEVEL_WARN", "url": "Console.html#property_Console.LOG_LEVEL_WARN", "type": "property"}, {"access": "", "host": "Console", "name": "Console.NAME", "url": "Console.html#property_Console.NAME", "type": "property"}, {"access": "protected", "host": "Console", "name": "_createEntryHTML", "url": "Console.html#method__createEntryHTML", "type": "method"}, {"access": "", "host": "Console", "name": "defaultCategory", "url": "Console.html#config_defaultCategory", "type": "config"}, {"access": "", "host": "Console", "name": "defaultCategoryChange", "url": "Console.html#event_defaultCategoryChange", "type": "event"}, {"access": "", "host": "Console", "name": "defaultSource", "url": "Console.html#config_defaultSource", "type": "config"}, {"access": "", "host": "Console", "name": "defaultSourceChange", "url": "Console.html#event_defaultSourceChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_defEntryFn", "url": "Console.html#method__defEntryFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "_defResetFn", "url": "Console.html#method__defResetFn", "type": "method"}, {"access": "protected", "host": "Console", "name": "destructor", "url": "Console.html#method_destructor", "type": "method"}, {"access": "protected", "host": "Console", "name": "_encodeHTML", "url": "Console.html#method__encodeHTML", "type": "method"}, {"access": "", "host": "Console", "name": "entry", "url": "Console.html#event_entry", "type": "event"}, {"access": "", "host": "Console", "name": "entryTemplate", "url": "Console.html#config_entryTemplate", "type": "config"}, {"access": "", "host": "Console", "name": "entryTemplateChange", "url": "Console.html#event_entryTemplateChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_evtCat", "url": "Console.html#property__evtCat", "type": "property"}, {"access": "", "host": "Console", "name": "expand", "url": "Console.html#method_expand", "type": "method"}, {"access": "protected", "host": "Console", "name": "_foot", "url": "Console.html#property__foot", "type": "property"}, {"access": "protected", "host": "Console", "name": "_getUseBrowserConsole", "url": "Console.html#method__getUseBrowserConsole", "type": "method"}, {"access": "protected", "host": "Console", "name": "_head", "url": "Console.html#property__head", "type": "property"}, {"access": "", "host": "Console", "name": "height", "url": "Console.html#config_height", "type": "config"}, {"access": "", "host": "Console", "name": "heightChange", "url": "Console.html#event_heightChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_htmlEscapeMessage", "url": "Console.html#method__htmlEscapeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initBody", "url": "Console.html#method__initBody", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initFoot", "url": "Console.html#method__initFoot", "type": "method"}, {"access": "protected", "host": "Console", "name": "_initHead", "url": "Console.html#method__initHead", "type": "method"}, {"access": "protected", "host": "Console", "name": "initializer", "url": "Console.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Console", "name": "_isInLogLevel", "url": "Console.html#method__isInLogLevel", "type": "method"}, {"access": "", "host": "Console", "name": "lastTime", "url": "Console.html#config_lastTime", "type": "config"}, {"access": "", "host": "Console", "name": "lastTimeChange", "url": "Console.html#event_lastTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "log", "url": "Console.html#method_log", "type": "method"}, {"access": "", "host": "Console", "name": "logEvent", "url": "Console.html#config_logEvent", "type": "config"}, {"access": "", "host": "Console", "name": "logEventChange", "url": "Console.html#event_logEventChange", "type": "event"}, {"access": "", "host": "Console", "name": "logLevel", "url": "Console.html#config_logLevel", "type": "config"}, {"access": "", "host": "Console", "name": "logLevelChange", "url": "Console.html#event_logLevelChange", "type": "event"}, {"access": "", "host": "Console", "name": "logSource", "url": "Console.html#config_logSource", "type": "config"}, {"access": "", "host": "Console", "name": "logSourceChange", "url": "Console.html#event_logSourceChange", "type": "event"}, {"access": "", "host": "Console", "name": "newestOnTop", "url": "Console.html#config_newestOnTop", "type": "config"}, {"access": "", "host": "Console", "name": "newestOnTopChange", "url": "Console.html#event_newestOnTopChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_normalizeMessage", "url": "Console.html#method__normalizeMessage", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onClearClick", "url": "Console.html#method__onClearClick", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onCollapseClick", "url": "Console.html#method__onCollapseClick", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onLogEvent", "url": "Console.html#method__onLogEvent", "type": "method"}, {"access": "protected", "host": "Console", "name": "_onPauseClick", "url": "Console.html#method__onPauseClick", "type": "method"}, {"access": "", "host": "Console", "name": "paused", "url": "Console.html#config_paused", "type": "config"}, {"access": "", "host": "Console", "name": "pausedChange", "url": "Console.html#event_pausedChange", "type": "event"}, {"access": "", "host": "Console", "name": "printBuffer", "url": "Console.html#method_printBuffer", "type": "method"}, {"access": "", "host": "Console", "name": "printLimit", "url": "Console.html#config_printLimit", "type": "config"}, {"access": "", "host": "Console", "name": "printLimitChange", "url": "Console.html#event_printLimitChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_printLoop", "url": "Console.html#property__printLoop", "type": "property"}, {"access": "", "host": "Console", "name": "printTimeout", "url": "Console.html#config_printTimeout", "type": "config"}, {"access": "", "host": "Console", "name": "printTimeoutChange", "url": "Console.html#event_printTimeoutChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "renderUI", "url": "Console.html#method_renderUI", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#method_reset", "type": "method"}, {"access": "", "host": "Console", "name": "reset", "url": "Console.html#event_reset", "type": "event"}, {"access": "protected", "host": "Console", "name": "_schedulePrint", "url": "Console.html#method__schedulePrint", "type": "method"}, {"access": "", "host": "Console", "name": "scrollIntoView", "url": "Console.html#config_scrollIntoView", "type": "config"}, {"access": "", "host": "Console", "name": "scrollIntoViewChange", "url": "Console.html#event_scrollIntoViewChange", "type": "event"}, {"access": "", "host": "Console", "name": "scrollToLatest", "url": "Console.html#method_scrollToLatest", "type": "method"}, {"access": "protected", "host": "Console", "name": "_setLogLevel", "url": "Console.html#method__setLogLevel", "type": "method"}, {"access": "protected", "host": "Console", "name": "_setUseBrowserConsole", "url": "Console.html#method__setUseBrowserConsole", "type": "method"}, {"access": "", "host": "Console", "name": "startTime", "url": "Console.html#config_startTime", "type": "config"}, {"access": "", "host": "Console", "name": "startTimeChange", "url": "Console.html#event_startTimeChange", "type": "event"}, {"access": "", "host": "Console", "name": "strings", "url": "Console.html#config_strings", "type": "config"}, {"access": "", "host": "Console", "name": "stringsChange", "url": "Console.html#event_stringsChange", "type": "event"}, {"access": "", "host": "Console", "name": "style", "url": "Console.html#config_style", "type": "config"}, {"access": "", "host": "Console", "name": "styleChange", "url": "Console.html#event_styleChange", "type": "event"}, {"access": "", "host": "Console", "name": "syncUI", "url": "Console.html#method_syncUI", "type": "method"}, {"access": "protected", "host": "Console", "name": "_trimOldEntries", "url": "Console.html#method__trimOldEntries", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiSetHeight", "url": "Console.html#method__uiSetHeight", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateCollapsed", "url": "Console.html#method__uiUpdateCollapsed", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdateFromHideShow", "url": "Console.html#method__uiUpdateFromHideShow", "type": "method"}, {"access": "protected", "host": "Console", "name": "_uiUpdatePaused", "url": "Console.html#method__uiUpdatePaused", "type": "method"}, {"access": "", "host": "Console", "name": "useBrowserConsole", "url": "Console.html#config_useBrowserConsole", "type": "config"}, {"access": "", "host": "Console", "name": "useBrowserConsoleChange", "url": "Console.html#event_useBrowserConsoleChange", "type": "event"}, {"access": "protected", "host": "Console", "name": "_validateLogSource", "url": "Console.html#method__validateLogSource", "type": "method"}, {"access": "protected", "host": "Console", "name": "_validateStyle", "url": "Console.html#method__validateStyle", "type": "method"}, {"access": "", "host": "Console", "name": "width", "url": "Console.html#config_width", "type": "config"}, {"access": "", "host": "Console", "name": "widthChange", "url": "Console.html#event_widthChange", "type": "event"}];
 </script>
 </body>
 </html>

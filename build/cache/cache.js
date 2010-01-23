@@ -11,7 +11,7 @@ var LANG = Y.Lang,
 /**
  * Base class for the YUI Cache utility.
  * @class Cache
- * @extends Plugin
+ * @extends Plugin.Base
  * @constructor
  */    
 Cache = function() {
@@ -44,9 +44,9 @@ Y.mix(Cache, {
      * @type String
      * @static     
      * @final
-     * @value "Cache'
+     * @value "cache"
      */
-    NAME: "Cache",
+    NAME: "cache",
 
 
     ATTRS: {
@@ -98,6 +98,19 @@ Y.mix(Cache, {
         },
 
         /**
+        * @attribute uniqueKeys
+        * @description Validate uniqueness of stored keys. Default is false and
+        * is more performant.
+        * @type Number
+        */
+        uniqueKeys: {
+            value: false,
+            validator: function(value) {
+                return (LANG.isBoolean(value));
+            }
+        },
+
+        /**
          * @attribute entries
          * @description Cached entries.
          * @type Array
@@ -111,7 +124,7 @@ Y.mix(Cache, {
     }
 });
     
-Y.extend(Cache, Y.Plugin, {
+Y.extend(Cache, Y.Plugin.Base, {
     /////////////////////////////////////////////////////////////////////////////
     //
     // Cache private properties
@@ -136,9 +149,10 @@ Y.extend(Cache, Y.Plugin, {
     /**
     * @method initializer
     * @description Internal init() handler.
+    * @param config {Object} Config object.
     * @private        
     */
-    initializer: function() {
+    initializer: function(config) {
 
         /**
         * @event add
@@ -210,6 +224,11 @@ Y.extend(Cache, Y.Plugin, {
         var entries = this._entries,
             max = this.get("max"),
             entry = e.entry;
+
+        if(this.get("uniqueKeys") && (this.retrieve(e.entry.request))) {
+            entries.shift();
+        }
+
             
         // If the cache at or over capacity, make room by removing stalest element (index=0)
         while(entries.length>=max) {
@@ -259,12 +278,13 @@ Y.extend(Cache, Y.Plugin, {
      * If cache is full, evicts the stalest entry before adding the new one.
      *
      * @method add
-     * @param request {Object} Request object.
-     * @param response {Object} Response object.
+     * @param request {Object} Request value.
+     * @param response {Object} Response value.
      * @param payload {Object} (optional) Arbitrary data payload.
      */
     add: function(request, response, payload) {
-        if(this.get("entries") && (this.get("max")>0) && LANG.isValue(request) && LANG.isValue(response)) {
+        if(this.get("entries") && (this.get("max")>0) &&
+                (LANG.isValue(request) || LANG.isNull(request) || LANG.isUndefined(request))) {
             this.fire("add", {entry: {request:request, response:response, payload:payload}});
         }
         else {
@@ -312,12 +332,11 @@ Y.extend(Cache, Y.Plugin, {
                         entries.splice(i,1);
                         // Add as newest
                         entries[entries.length] = entry;
-                        break;
                     } 
+                    
+                    return entry;
                 }
             }
-            return entry;
-
         }
         return null;
     }

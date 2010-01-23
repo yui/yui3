@@ -1,6 +1,7 @@
-/**
+/*
  * DOM event listener abstraction layer
  * @module event
+ * @submodule event-base
  */
 
 (function() {
@@ -10,62 +11,63 @@
 // regardless of the number of instances that use it.
 
 var GLOBAL_ENV = YUI.Env, 
-
-    C = YUI.config, 
-
-    D = C.doc, 
-
-    POLL_INTERVAL = C.pollInterval || 20,
+    config = YUI.config, 
+    doc = config.doc, 
+    docElement = doc.documentElement, 
+    doScrollCap = docElement.doScroll,
+    add = YUI.Env.add,
+    remove = YUI.Env.remove,
+    targetEvent = (doScrollCap) ? 'onreadystatechange' : 'DOMontentLoaded',
+    pollInterval = config.pollInterval || 40,
+    stateChangeListener,
 
     _ready = function(e) {
         GLOBAL_ENV._ready();
     };
 
-    if (!GLOBAL_ENV._ready) {
+if (!GLOBAL_ENV._ready) {
 
-        GLOBAL_ENV.windowLoaded = false;
+    GLOBAL_ENV._ready = function() {
+        if (!GLOBAL_ENV.DOMReady) {
+            GLOBAL_ENV.DOMReady = true;
+            // remove DOMContentLoaded listener
+            remove(doc, targetEvent, _ready);
+        }
+    };
 
-        GLOBAL_ENV._ready = function() {
-            if (!GLOBAL_ENV.DOMReady) {
-                GLOBAL_ENV.DOMReady=true;
+/*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
 
-                // Remove the DOMContentLoaded (FF/Opera)
-                if (D.removeEventListener) {
-                    D.removeEventListener("DOMContentLoaded", _ready, false);
+// Internet Explorer: use the doScroll() method on the root element.  This isolates what 
+// appears to be a safe moment to manipulate the DOM prior to when the document's readyState 
+// suggests it is safe to do so.
+    if (doScrollCap) {
+        if (self !== self.top) {
+            stateChangeListener = function() {
+                if (doc.readyState == 'complete') {
+                    // remove onreadystatechange listener
+                    remove(doc, targetEvent, stateChangeListener);
+                    _ready();
                 }
-            }
-        };
+            };
 
-        // create custom event
+            // add onreadystatechange listener
+            add(doc, targetEvent, stateChangeListener);
 
-        /////////////////////////////////////////////////////////////
-        // DOMReady
-        // based on work by: Dean Edwards/John Resig/Matthias Miller 
-
-        // Internet Explorer: use the readyState of a defered script.
-        // This isolates what appears to be a safe moment to manipulate
-        // the DOM prior to when the document's readyState suggests
-        // it is safe to do so.
-        if (navigator.userAgent.match(/MSIE/)) {
-
+        } else {
             GLOBAL_ENV._dri = setInterval(function() {
                 try {
-                    // throws an error if doc is not ready
-                    document.documentElement.doScroll('left');
+                    docElement.doScroll('left');
                     clearInterval(GLOBAL_ENV._dri);
                     GLOBAL_ENV._dri = null;
                     _ready();
-                } catch (ex) { 
-                }
-            }, POLL_INTERVAL); 
-
-        // FireFox and Opera: These browsers provide a event for this
-        // moment.  The latest WebKit releases now support this event.
-        } else {
-            D.addEventListener("DOMContentLoaded", _ready, false);
+                } catch (domNotReady) { }
+            }, pollInterval); 
         }
-
-        /////////////////////////////////////////////////////////////
+// FireFox, Opera, Safari 3+ provide an event for this moment.
+    } else {
+        // add DOMContentLoaded listener
+        add(doc, targetEvent, _ready);
     }
+}
 
 })();

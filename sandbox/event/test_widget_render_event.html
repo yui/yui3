@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Testing the widget:render event</title>
+	</head>
+	
+	<body class="yui-skin-sam">
+		
+		<h1>Testing the widget:render event</h1>
+		<div id="container"></div>
+		
+		<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0/build/yui/yui-debug.js"></script>
+		<script type="text/javascript">
+		
+			YUI.add('mywidget', function(Y){
+			
+				var MyWidget;
+				
+				MyWidget = function (config) {
+				
+					MyWidget.superclass.constructor.apply(this, arguments);
+				};
+				
+				Y.mix(MyWidget, {
+				
+					NAME : 'mywidget'
+				
+				});
+				
+				Y.extend(MyWidget, Y.Widget, {
+					
+					renderUI : function () {
+					
+						var contentBox = this.get('contentBox');
+						
+						Y.log('about to append to the contentBox', 'info', 'mywidget');
+						contentBox.append('<p>MyWidget\'s rendered text<\/p>');
+						Y.log('appended the contentBox', 'info', 'mywidget');
+					}
+					
+				});
+				
+				Y.MyWidget = MyWidget;
+			
+			}, '3.0.0', { requires: ['widget'] });
+		
+		</script>
+		<script type="text/javascript">
+		
+			YUI({
+				
+				filter		: 'DEBUG',
+				modules		: {
+					'mywidget'	: {
+						type		: 'js',
+						fullpath	: '',
+						requires	: ['widget']
+					}
+				},
+				logInclude	: {
+					'event'				: true,
+					'mywidget'			: true,
+					'mywidget-instance'	: true,
+					'yui-instance'		: true
+				}
+			
+			}).use('mywidget', 'console', 'dump', function(Y){
+				
+				// *** Console instance *** //
+				
+				(new Y.Console({
+					newestOnTop	: false,
+					width		: 400,
+					height		: 400
+				}).render());
+				
+				// *** mywidget:render event bubble target listeners *** //
+				
+				Y.on('mywidget:render', function(e){
+				
+					Y.log('on mywidget:render was passed: '+Y.dump(e), 'info', 'yui-instance');
+					Y.log('A MyWidget is about to render', 'info', 'yui-instance');
+				});
+				
+				Y.after('mywidget:render', function(e){
+					
+					Y.log('after mywidget:render was passed: '+Y.dump(e), 'info', 'yui-instance');	
+					Y.log('A MyWidget has rendered', 'info', 'yui-instance');
+				});
+								
+				// *** after mywidget:renderedChange event bubble target listener *** //
+				
+				Y.after('mywidget:renderedChange', function(e){
+					
+					Y.log('after mywidget:renderedChange was passed: '+Y.dump(e), 'info', 'yui-instance');
+					Y.log('A MyWidget\'s rendered attrs has changed', 'info', 'yui-instance');
+				});
+				
+				// *** myWidget, a MyWidget instance *** //
+				
+				var myWidget = new Y.MyWidget({
+				
+					on : {
+						render : function(e) {
+						
+							Y.log('myWidget about to be rendered', 'info', 'mywidget-instance');
+						}
+					},
+					after	: {
+						render : function (e) {
+						
+							Y.log('myWidget has been rendered', 'info', 'mywidget-instance');
+						}
+					}
+				
+				});
+				
+				myWidget.addTarget(Y);
+				myWidget.render('#container');
+				
+			});
+		
+		</script>
+		
+	</body>
+</html>

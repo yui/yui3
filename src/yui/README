@@ -6,9 +6,29 @@ The YUI Global
     The yui module is a rollup of the following modules:
         yui-base
         get
-        loader
 
-3.0.0b1
+3.next
+* The document element (HTML) is now stamped with a class name (yui-js-enabled) indicating that JS is enabled allowing for the creation of JS-aware CSS style rules for Progressive Enhancement.
+* Added the ability to define a global configuration object (YUI_config).
+* Added Object.some().
+* Chrome detection
+* Inserted script nodes get charset="utf-8" by default.
+
+3.0.0
+
+* Extracted the loader from the seed file.  Instead, if loader not included, 'get' is included,
+  and dependencies are missing, the loader will be fetched before continuing.
+* User agent detection is more granular.  e.g., FireFox 3.5 reports gecko 1.91 rather than 1.9.
+* Fixed UA.os.
+* Added additional mobile device detection.
+* Get utility attribute cleanup before purging nodes.
+* cached accepts a parameter to refresh a cached value.
+* yui-log and yui-later are now optional modules that are included with yui.js.
+* queue-base is no longer a submodule of queue -- it is part of yui-base.
+* All YUI submodules end up in the yui build directory.
+* Dynamic loading can be disabled by setting the 'bootstrap' config to false.
+
+3.0.0 beta 1
 
     Core:
     - Y.fail has been renamed to Y.error so that Y.fail can be used for the assertion
@@ -16,19 +36,29 @@ The YUI Global
     - Y.stamp now accepts a readOnly parameter to be used when you are only interested
       in reading an existing guid rather than creating a new one.
     - Y.stamp defends against stamping items that can't be stamped.
-    - Added to Object: values(), hasKey(), hasValue(), size()
+    - Added to Object: values(), hasKey(), hasValue(), size(), getValue, setValue
+      (the latter are for manipulating nested values)
+    - Y.use calls are queued during dynamic loading.
+    - Added Y.cached for function memoizing
+    - added numericSort to Array
+    - The yui:log event broadcasts globally.
 
     Lang: 
     - Added Lang.type (typeof abstraction), and refactored some 'is' methods to use it.
 
     Get:
+    - Accepts an attribute collection config to apply to inserted nodes.
     - id attributes are globally unique
     - Now accepts purgethreshold as a config option.  This will set the number of transactions
       required before auto removing nodes from previous transactions (default is 20)
 
     Loader:
     - yuitest renamed to test, now requires collection
-    - added collection
+    - lots of new module metadata
+    - added onCSS
+    - Loader requests are queued globally
+    - Accepts jsAttributes and cssAttributes configs for adding attributes to inserted nodes
+    - The force config
 
     UA:
     - Added 'secure' property for SSL detection

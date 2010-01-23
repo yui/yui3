@@ -1,24 +1,34 @@
 YUI.add('json-parse', function(Y) {
 
 /**
- * The JSON Utility provides methods to serialize JavaScript objects into
- * JSON strings and parse JavaScript objects from strings containing JSON data.
- * Three modules are available for inclusion:
- * <ol>
- * <li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>
- * <li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>
- * <li>3. <code>json</code> for both parsing and stringification</li>
- * </ol>
+ * <p>The JSON module adds support for serializing JavaScript objects into
+ * JSON strings and parsing JavaScript objects from strings in JSON format.</p>
+ *
+ * <p>The JSON namespace is added to your YUI instance including static methods
+ * Y.JSON.parse(..) and Y.JSON.stringify(..).</p>
+ *
+ * <p>The functionality and method signatures follow the ECMAScript 5
+ * specification.  In browsers with native JSON support, the native
+ * implementation is used.</p>
+ *
+ * <p>The <code>json</code> module is a rollup of <code>json-parse</code> and
+ * <code>json-stringify</code>.</p>
  * 
- * Both <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).
+ * <p>As their names suggest, <code>json-parse</code> adds support for parsing
+ * JSON data (Y.JSON.parse) and <code>json-stringify</code> for serializing
+ * JavaScript data into JSON strings (Y.JSON.stringify).  You may choose to
+ * include either of the submodules individually if you don't need the
+ * complementary functionality, or include the rollup for both.</p>
+ *
  * @module json
  * @class JSON
  * @static
  */
 
 /**
- * Provides Y.JSON.parse method to take JSON strings and return native
+ * Provides Y.JSON.parse method to accept JSON strings and return native
  * JavaScript objects.
+ *
  * @module json
  * @submodule json-parse
  * @for JSON
@@ -29,14 +39,15 @@ YUI.add('json-parse', function(Y) {
 // All internals kept private for security reasons
 
 
-    /*
+    /**
      * Alias to native browser implementation of the JSON object if available.
      *
      * @property Native
      * @type {Object}
      * @private
      */
-var Native = Y.config.win.JSON,
+var _JSON  = Y.config.win.JSON,
+    Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
 
     /**
      * Replace certain Unicode characters that JavaScript may handle incorrectly
@@ -44,6 +55,7 @@ var Native = Y.config.win.JSON,
      * endings--with escape sequences.
      * IMPORTANT NOTE: This regex will be used to modify the input if a match is
      * found.
+     *
      * @property _UNICODE_EXCEPTIONS
      * @type {RegExp}
      * @private
@@ -52,8 +64,9 @@ var Native = Y.config.win.JSON,
 
 
     /**
-     * First step in the validation.  Regex used to replace all escape
+     * First step in the safety evaluation.  Regex used to replace all escape
      * sequences (i.e. "\\", etc) with '@' characters (a non-JSON character).
+     *
      * @property _ESCAPES
      * @type {RegExp}
      * @private
@@ -61,8 +74,9 @@ var Native = Y.config.win.JSON,
     _ESCAPES = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,
 
     /**
-     * Second step in the validation.  Regex used to replace all simple
+     * Second step in the safety evaluation.  Regex used to replace all simple
      * values with ']' characters.
+     *
      * @property _VALUES
      * @type {RegExp}
      * @private
@@ -70,8 +84,10 @@ var Native = Y.config.win.JSON,
     _VALUES  = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
 
     /**
-     * Third step in the validation.  Regex used to remove all open square
-     * brackets following a colon, comma, or at the beginning of the string.
+     * Third step in the safety evaluation.  Regex used to remove all open
+     * square brackets following a colon, comma, or at the beginning of the
+     * string.
+     *
      * @property _BRACKETS
      * @type {RegExp}
      * @private
@@ -79,25 +95,15 @@ var Native = Y.config.win.JSON,
     _BRACKETS = /(?:^|:|,)(?:\s*\[)+/g,
 
     /**
-     * Final step in the validation.  Regex used to test the string left after
-     * all previous replacements for invalid characters.
-     * @property _INVALID
+     * Final step in the safety evaluation.  Regex used to test the string left
+     * after all previous replacements for invalid characters.
+     *
+     * @property _UNSAFE
      * @type {RegExp}
      * @private
      */
-    _INVALID = /[^\],:{}\s]/,
+    _UNSAFE = /[^\],:{}\s]/,
     
-    /**
-     * Test for JSON string of simple data string, number, boolean, or null.
-     * E.g. '"some string"', "true", "false", "null", or numbers "-123e+7"
-     * Currently FireFox 3.1b2 JSON.parse requires object/array wrapped data
-     *
-     * @property _SIMPLE
-     * @type {RegExp}
-     * @protected
-     */
-    _SIMPLE = /^\s*(?:"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)\s*$/,
-
     /**
      * Replaces specific unicode characters with their appropriate \unnnn
      * format. Some browsers ignore certain characters during eval.
@@ -117,6 +123,7 @@ var Native = Y.config.win.JSON,
      * from the function will replace the original value in the key:value pair.
      * If the value returned is undefined, the key will be omitted from the
      * returned object.
+     *
      * @method _revive
      * @param data {MIXED} Any JavaScript data
      * @param reviver {Function} filter or mutation function
@@ -146,6 +153,7 @@ var Native = Y.config.win.JSON,
 
     /**
      * Parse a JSON string, returning the native JavaScript representation.
+     *
      * @param s {string} JSON string data
      * @param reviver {function} (optional) function(k,v) passed each key value
      *          pair of object literals, allowing pruning or altering values
@@ -153,7 +161,6 @@ var Native = Y.config.win.JSON,
      * @throws SyntaxError
      * @method parse
      * @static
-     * @public
      */
     // JavaScript implementation in lieu of native browser support.  Based on
     // the json2.js library from http://json.org
@@ -165,9 +172,9 @@ var Native = Y.config.win.JSON,
             s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
             
             // Test for any remaining invalid characters
-            if (!_INVALID.test(s.replace(_ESCAPES,'@').
-                                 replace(_VALUES,']').
-                                 replace(_BRACKETS,''))) {
+            if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
+                                replace(_VALUES,']').
+                                replace(_BRACKETS,''))) {
 
                 // Eval the text into a JavaScript data structure, apply any
                 // reviver function, and return
@@ -176,37 +183,25 @@ var Native = Y.config.win.JSON,
         }
 
         throw new SyntaxError('JSON.parse');
-    },
+    };
     
-    test;
+Y.namespace('JSON').parse = function (s,reviver) {
+    return Native && Y.JSON.useNativeParse ?
+        Native.parse(s,reviver) : _parse(s,reviver);
+};
 
-
-// Test the level of native browser support
-if (Native && Object.prototype.toString.call(Native) === '[object JSON]') {
-    try {
-        test = Native.parse('{"x":1}', function (k,v) {return k=='x' ? 2 : v;});
-        switch (test.x) {
-            case 1 : // Reviver not supported (currently FF3.1b2)
-                _parse = function (s,reviver) {
-                    return _SIMPLE.test(s) ?
-                            eval('(' + s + ')') :
-                            _revive(Native.parse(s), reviver);
-                };
-                break;
-
-            case 2 : // Full support (currently IE8)
-                _parse = function (s, reviver) {
-                    return Native.parse(s, reviver);
-                };
-                break;
-
-            // default is JS implementation
-        }
-    }
-    catch (e) {} // defer to JS implementation
-}
-
-Y.mix(Y.namespace('JSON'),{ parse : _parse });
+/**
+ * Leverage native JSON parse if the browser has a native implementation.
+ * In general, this is a good idea.  See the Known Issues section in the
+ * JSON user guide for caveats.  The default value is true for browsers with
+ * native JSON support.
+ *
+ * @property useNativeParse
+ * @type Boolean
+ * @default true
+ * @static
+ */
+Y.JSON.useNativeParse = !!Native;
 
 
 }, '@VERSION@' );
@@ -214,25 +209,37 @@ YUI.add('json-stringify', function(Y) {
 
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
+ *
  * @module json
  * @submodule json-stringify
  * @for JSON
  * @static
  */
-var _toString = Object.prototype.toString,
+var _JSON     = Y.config.win.JSON,
     Lang      = Y.Lang,
     isFunction= Lang.isFunction,
+    isObject  = Lang.isObject,
     isArray   = Lang.isArray,
-    type      = Lang.type,
+    _toStr    = Object.prototype.toString,
+    Native    = (_toStr.call(_JSON) === '[object JSON]' && _JSON),
+    UNDEFINED = 'undefined',
+    OBJECT    = 'object',
+    NULL      = 'null',
     STRING    = 'string',
     NUMBER    = 'number',
     BOOLEAN   = 'boolean',
-    OBJECT    = 'object',
-    ARRAY     = 'array',
-    REGEXP    = 'regexp',
-    ERROR     = 'error',
-    NULL      = 'null',
     DATE      = 'date',
+    _allowable= {
+        'undefined'        : UNDEFINED,
+        'string'           : STRING,
+        '[object String]'  : STRING,
+        'number'           : NUMBER,
+        '[object Number]'  : NUMBER,
+        'boolean'          : BOOLEAN,
+        '[object Boolean]' : BOOLEAN,
+        '[object Date]'    : DATE,
+        '[object RegExp]'  : OBJECT
+    },
     EMPTY     = '',
     OPEN_O    = '{',
     CLOSE_O   = '}',
@@ -243,26 +250,14 @@ var _toString = Object.prototype.toString,
     CR        = "\n",
     COLON     = ':',
     COLON_SP  = ': ',
-    QUOTE     = '"';
+    QUOTE     = '"',
 
-Y.mix(Y.namespace('JSON'),{
-    /**
-     * Regex used to capture characters that need escaping before enclosing
-     * their containing string in quotes.
-     * @property _SPECIAL_CHARS
-     * @type {RegExp}
-     * @private
-     */
-    _SPECIAL_CHARS : /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+    // Regex used to capture characters that need escaping before enclosing
+    // their containing string in quotes.
+    _SPECIAL_CHARS = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 
-    /**
-     * Character substitution map for common escapes and special characters.
-     * @property _CHARS
-     * @type {Object}
-     * @static
-     * @private
-     */
-    _CHARS : {
+    // Character substitution map for common escapes and special characters.
+    _CHARS = {
         '\b': '\\b',
         '\t': '\\t',
         '\n': '\\n',
@@ -270,12 +265,173 @@ Y.mix(Y.namespace('JSON'),{
         '\r': '\\r',
         '"' : '\\"',
         '\\': '\\\\'
-    },
+    };
+
+
+// Utility function used to determine how to serialize a variable.
+function _type(o) {
+    var t = typeof o;
+    return  _allowable[t] ||              // number, string, boolean, undefined
+            _allowable[_toStr.call(o)] || // Number, String, Boolean, Date
+            (t === OBJECT ?
+                (o ? OBJECT : NULL) :     // object, array, null, misc natives
+                UNDEFINED);               // function, unknown
+}
+
+// Escapes a special character to a safe Unicode representation
+function _char(c) {
+    if (!_CHARS[c]) {
+        _CHARS[c] =  '\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
+    }
+    return _CHARS[c];
+}
+
+// Enclose escaped strings in quotes
+function _string(s) {
+    return QUOTE + s.replace(_SPECIAL_CHARS, _char) + QUOTE;
+}
+
+// Adds the provided space to the beginning of every line in the input string
+function _indent(s,space) {
+    return s.replace(/^/gm, space);
+}
+
+// JavaScript implementation of stringify (see API declaration of stringify)
+function _stringify(o,w,space) {
+    if (o === undefined) {
+        return undefined;
+    }
+
+    var replacer = isFunction(w) ? w : null,
+        format   = _toStr.call(space).match(/String|Number/) || [],
+        _date    = Y.JSON.dateToString,
+        stack    = [],
+        tmp,i,len;
+
+    if (replacer || !isArray(w)) {
+        w = undefined;
+    }
+
+    // Ensure whitelist keys are unique (bug 2110391)
+    if (w) {
+        tmp = {};
+        for (i = 0, len = w.length; i < len; ++i) {
+            tmp[w[i]] = true;
+        }
+        w = tmp;
+    }
+
+    // Per the spec, strings are truncated to 10 characters and numbers
+    // are converted to that number of spaces (max 10)
+    space = format[0] === 'Number' ?
+                new Array(Math.min(Math.max(0,space),10)+1).join(" ") :
+                (space || EMPTY).slice(0,10);
+
+    function _serialize(h,key) {
+        var value = h[key],
+            t     = _type(value),
+            a     = [],
+            colon = space ? COLON_SP : COLON,
+            arr, i, keys, k, v;
+
+        // Per the ECMA 5 spec, toJSON is applied before the replacer is
+        // called.  Also per the spec, Date.prototype.toJSON has been added, so
+        // Date instances should be serialized prior to exposure to the
+        // replacer.  I disagree with this decision, but the spec is the spec.
+        if (isObject(value) && isFunction(value.toJSON)) {
+            value = value.toJSON(key);
+        } else if (t === DATE) {
+            value = _date(value);
+        }
+
+        if (isFunction(replacer)) {
+            value = replacer.call(h,key,value);
+        }
+
+        if (value !== h[key]) {
+            t = _type(value);
+        }
+
+        switch (t) {
+            case DATE    : // intentional fallthrough.  Pre-replacer Dates are
+                           // serialized in the toJSON stage.  Dates here would
+                           // have been produced by the replacer.
+            case OBJECT  : break;
+            case STRING  : return _string(value);
+            case NUMBER  : return isFinite(value) ? value+EMPTY : NULL;
+            case BOOLEAN : return value+EMPTY;
+            case NULL    : return NULL;
+            default      : return undefined;
+        }
+
+        // Check for cyclical references in nested objects
+        for (i = stack.length - 1; i >= 0; --i) {
+            if (stack[i] === value) {
+                throw new Error("JSON.stringify. Cyclical reference");
+            }
+        }
+
+        arr = isArray(value);
+
+        // Add the object to the processing stack
+        stack.push(value);
+
+        if (arr) { // Array
+            for (i = value.length - 1; i >= 0; --i) {
+                a[i] = _serialize(value, i) || NULL;
+            }
+        } else {   // Object
+            // If whitelist provided, take only those keys
+            keys = w || value;
+            i = 0;
+
+            for (k in keys) {
+                if (keys.hasOwnProperty(k)) {
+                    v = _serialize(value, k);
+                    if (v) {
+                        a[i++] = _string(k) + colon + v;
+                    }
+                }
+            }
+        }
+
+        // remove the array from the stack
+        stack.pop();
+
+        if (space && a.length) {
+            return arr ?
+                OPEN_A + CR + _indent(a.join(COMMA_CR), space) + CR + CLOSE_A :
+                OPEN_O + CR + _indent(a.join(COMMA_CR), space) + CR + CLOSE_O;
+        } else {
+            return arr ?
+                OPEN_A + a.join(COMMA) + CLOSE_A :
+                OPEN_O + a.join(COMMA) + CLOSE_O;
+        }
+    }
+
+    // process the input
+    return _serialize({'':o},'');
+}
+
+Y.mix(Y.namespace('JSON'),{
+    /**
+     * Leverage native JSON stringify if the browser has a native
+     * implementation.  In general, this is a good idea.  See the Known Issues
+     * section in the JSON user guide for caveats.  The default value is true
+     * for browsers with native JSON support.
+     *
+     * @property JSON.useNativeStringify
+     * @type Boolean
+     * @default true
+     * @static
+     */
+    useNativeStringify : !!Native,
 
     /**
      * Serializes a Date instance as a UTC date string.  Used internally by
      * stringify.  Override this method if you need Dates serialized in a
      * different format.
+     *
      * @method dateToString
      * @param d {Date} The Date to serialize
      * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ
@@ -286,25 +442,33 @@ Y.mix(Y.namespace('JSON'),{
             return v < 10 ? '0' + v : v;
         }
 
-        return QUOTE + d.getUTCFullYear()   + '-' +
+        return d.getUTCFullYear()           + '-' +
               _zeroPad(d.getUTCMonth() + 1) + '-' +
               _zeroPad(d.getUTCDate())      + 'T' +
               _zeroPad(d.getUTCHours())     + COLON +
               _zeroPad(d.getUTCMinutes())   + COLON +
-              _zeroPad(d.getUTCSeconds())   + 'Z' + QUOTE;
+              _zeroPad(d.getUTCSeconds())   + 'Z';
     },
 
     /**
-     * Converts an arbitrary value to a JSON string representation.
-     * Cyclical object or array references are replaced with null.
-     * If a whitelist is provided, only matching object keys will be included.
-     * If a positive integer or non-empty string is passed as the third
+     * <p>Converts an arbitrary value to a JSON string representation.</p>
+     *
+     * <p>Objects with cyclical references will trigger an exception.</p>
+     *
+     * <p>If a whitelist is provided, only matching object keys will be
+     * included.  Alternately, a replacer function may be passed as the
+     * second parameter.  This function is executed on every value in the
+     * input, and its return value will be used in place of the original value.
+     * This is useful to serialize specialized objects or class instances.</p>
+     *
+     * <p>If a positive integer or non-empty string is passed as the third
      * parameter, the output will be formatted with carriage returns and
      * indentation for readability.  If a String is passed (such as "\t") it
      * will be used once for each indentation level.  If a number is passed,
-     * that number of spaces will be used.
+     * that number of spaces will be used.</p>
+     *
      * @method stringify
-     * @param o {MIXED} any arbitrary object to convert to JSON string
+     * @param o {MIXED} any arbitrary value to convert to JSON string
      * @param w {Array|Function} (optional) whitelist of acceptable object
      *                  keys to include, or a replacer function to modify the
      *                  raw value before serialization
@@ -312,130 +476,10 @@ Y.mix(Y.namespace('JSON'),{
      *                  spaces to format the output.
      * @return {string} JSON string representation of the input
      * @static
-     * @public
      */
     stringify : function (o,w,ind) {
-
-        var m      = Y.JSON._CHARS,
-            str_re = Y.JSON._SPECIAL_CHARS,
-            rep    = isFunction(w) ? w : null,
-            pstack = [], // Processing stack used for cyclical ref protection
-            _date  = Y.JSON.dateToString, // Use configured date serialization
-            format = _toString.call(ind).match(/String|Number/);
-
-        if (rep || typeof w !== 'object') {
-            w = undefined;
-        }
-
-        if (format) {
-            // String instances and primatives are left alone.  String objects
-            // coerce for the indenting operations.
-            if (format[0] === 'Number') {
-
-                // force numeric indent values between {0,100} per the spec
-                // This also converts Number instances to primative
-                ind = new Array(Math.min(Math.max(0,ind),100)+1).join(" ");
-            }
-
-            // turn off formatting for 0 or empty string
-            format = ind;
-        }
-
-        // escape encode special characters
-        function _char(c) {
-            if (!m[c]) {
-                m[c]='\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
-            }
-            return m[c];
-        }
-
-        // Enclose the escaped string in double quotes
-        function _string(s) {
-            return QUOTE + s.replace(str_re, _char) + QUOTE;
-        }
-
-        // Check for cyclical references
-        function _cyclicalTest(o) {
-            for (var i = pstack.length - 1; i >= 0; --i) {
-                if (pstack[i] === o) {
-                    throw new Error("JSON.stringify. Cyclical reference");
-                }
-            }
-            return false;
-        }
-
-        function _indent(s) {
-            return s.replace(/^/gm,ind);
-        }
-
-        function _object(o,arr) {
-            // Add the object to the processing stack
-            pstack.push(o);
-
-            var a = [],
-                colon = format ? COLON_SP : COLON,
-                i, j, len, k, v;
-
-            if (arr) { // Array
-                for (i = o.length - 1; i >= 0; --i) {
-                    a[i] = _stringify(o,i) || NULL;
-                }
-            } else {   // Object
-                // If whitelist provided, take only those keys
-                k = isArray(w) ? w : Y.Object.keys(o);
-
-                for (i = 0, j = 0, len = k.length; i < len; ++i) {
-                    if (typeof k[i] === STRING) {
-                        v = _stringify(o,k[i]);
-                        if (v) {
-                            a[j++] = _string(k[i]) + colon + v;
-                        }
-                    }
-                }
-            }
-
-            // remove the array from the stack
-            pstack.pop();
-
-            if (format && a.length) {
-                return arr ?
-                    OPEN_A + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_A :
-                    OPEN_O + CR + _indent(a.join(COMMA_CR)) + CR + CLOSE_O;
-            } else {
-                return arr ?
-                    OPEN_A + a.join(COMMA) + CLOSE_A :
-                    OPEN_O + a.join(COMMA) + CLOSE_O;
-            }
-        }
-
-        // Worker function.  Fork behavior on data type and recurse objects.
-        function _stringify(h,key) {
-            var o = isFunction(rep) ? rep.call(h,key,h[key]) : h[key],
-                t = type(o);
-
-            if (t === OBJECT) {
-                if (/String|Number|Boolean/.test(_toString.call(o))) {
-                    o = o.valueOf();
-                    t = type(o);
-                }
-            }
-
-            switch (t) {
-                case STRING  : return _string(o);
-                case NUMBER  : return isFinite(o) ? o+EMPTY : NULL;
-                case BOOLEAN : return o+EMPTY;
-                case DATE    : return _date(o);
-                case NULL    : return NULL;
-                case ARRAY   : _cyclicalTest(o); return _object(o,true);
-                case REGEXP  : // intentional fall through
-                case ERROR   : // intentional fall through
-                case OBJECT  : _cyclicalTest(o); return _object(o);
-                default      : return undefined;
-            }
-        }
-
-        // process the input
-        return _stringify({'':o},EMPTY);
+        return Native && Y.JSON.useNativeStringify ?
+            Native.stringify(o,w,ind) : _stringify(o,w,ind);
     }
 });
 

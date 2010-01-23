@@ -9,7 +9,7 @@
 
 var ua         = Y.UA, 
     L          = Y.Lang,
-    PREFIX     = Y.guid('yui_'),
+    // PREFIX     = Y.guid(),
     TYPE_JS    = "text/javascript",
     TYPE_CSS   = "text/css",
     STYLESHEET = "stylesheet";
@@ -27,6 +27,9 @@ Y.Get = function() {
      * @private
      */
     var queues={}, 
+        _get,
+        _purge,
+        _track,
         
     /**
      * queue index used to generate transaction ids
@@ -36,14 +39,6 @@ Y.Get = function() {
      */
         qidx=0, 
         
-    /**
-     * node index used to generate unique node ids
-     * @property nidx
-     * @type int
-     * @private
-     */
-        nidx=0, 
-
     /**
      * interal property used to prevent multiple simultaneous purge 
      * processes
@@ -81,18 +76,19 @@ Y.Get = function() {
      * @method _linkNode
      * @param url {string} the url for the css file
      * @param win {Window} optional window to create the node in
+     * @param attributes optional attributes collection to apply to the new node
      * @return {HTMLElement} the generated node
      * @private
      */
-    _linkNode = function(url, win, charset) {
+    _linkNode = function(url, win, attributes) {
         var o = {
-            id:   PREFIX + (nidx++),
+            id:   Y.guid(),
             type: TYPE_CSS,
             rel:  STYLESHEET,
             href: url
         };
-        if (charset) {
-            o.charset = charset;
+        if (attributes) {
+            Y.mix(o, attributes);
         }
         return _node("link", o, win);
     },
@@ -102,48 +98,23 @@ Y.Get = function() {
      * @method _scriptNode
      * @param url {string} the url for the script file
      * @param win {Window} optional window to create the node in
+     * @param attributes optional attributes collection to apply to the new node
      * @return {HTMLElement} the generated node
      * @private
      */
-    _scriptNode = function(url, win, charset) {
+    _scriptNode = function(url, win, attributes) {
         var o = {
-            id:   PREFIX + (nidx++),
-            type: TYPE_JS,
-            src:  url
+            id:   Y.guid(),
+            type: TYPE_JS
         };
 
-        if (charset) {
-            o.charset = charset;
+        if (attributes) {
+            Y.mix(o, attributes);
         }
+
+        o.src = url;
 
         return _node("script", o, win);
-    },
-
-    /**
-     * Removes the nodes for the specified queue
-     * @method _purge
-     * @private
-     */
-    _purge = function(tId) {
-        var q=queues[tId], n, l, d, h, s, i;
-        if (q) {
-            n = q.nodes; 
-            l = n.length;
-            d = q.win.document;
-            h = d.getElementsByTagName("head")[0];
-
-            if (q.insertBefore) {
-                s = _get(q.insertBefore, tId);
-                if (s) {
-                    h = s.parentNode;
-                }
-            }
-
-            for (i=0; i<l; i=i+1) {
-                h.removeChild(n[i]);
-            }
-        }
-        q.nodes = [];
     },
 
     /**
@@ -151,17 +122,32 @@ Y.Get = function() {
      * @method _returnData
      * @private
      */
-    _returnData = function(q, msg) {
+    _returnData = function(q, msg, result) {
         return {
                 tId: q.tId,
                 win: q.win,
                 data: q.data,
                 nodes: q.nodes,
                 msg: msg,
+                statusText: result,
                 purge: function() {
                     _purge(this.tId);
                 }
             };
+    },
+
+    /**
+     * The transaction is finished
+     * @method _end
+     * @param id {string} the id of the request
+     * @private
+     */
+    _end = function(id, msg, result) {
+        var q = queues[id], sc;
+        if (q && q.onEnd) {
+            sc = q.context || q;
+            q.onEnd.call(sc, _returnData(q, msg, result));
+        }
     },
 
     /*
@@ -178,7 +164,8 @@ Y.Get = function() {
 
         var q = queues[id], sc;
         if (q.timer) {
-            q.timer.cancel();
+            // q.timer.cancel();
+            clearTimeout(q.timer);
         }
 
         // execute failure callback
@@ -186,16 +173,8 @@ Y.Get = function() {
             sc = q.context || q;
             q.onFailure.call(sc, _returnData(q, msg));
         }
-    },
 
-    _get = function(nId, tId) {
-        var q = queues[tId],
-            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
-        if (!n) {
-            _fail(tId, "target node not found: " + nId);
-        }
-
-        return n;
+        _end(id, msg, 'failure');
     },
 
     /**
@@ -208,7 +187,8 @@ Y.Get = function() {
         Y.log("Finishing transaction " + id, "info", "get");
         var q = queues[id], msg, sc;
         if (q.timer) {
-            q.timer.cancel();
+            // q.timer.cancel();
+            clearTimeout(q.timer);
         }
         q.finished = true;
 
@@ -223,6 +203,8 @@ Y.Get = function() {
             sc = q.context || q;
             q.onSuccess.call(sc, _returnData(q));
         }
+
+        _end(id, msg, 'OK');
     },
 
     /**
@@ -238,7 +220,10 @@ Y.Get = function() {
             sc = q.context || q;
             q.onTimeout.call(sc, _returnData(q));
         }
+
+        _end(id, 'timeout', 'timeout');
     },
+    
 
     /**
      * Loads the next item for a given request
@@ -248,13 +233,15 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
-        Y.log("_next: " + id + ", loaded: " + loaded, "info", "get");
+
+        Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
 
         var q = queues[id], msg, w, d, h, n, url, s;
 
         if (q.timer) {
             // Y.log('cancel timer');
-            q.timer.cancel();
+            // q.timer.cancel();
+            clearTimeout(q.timer);
         }
 
         if (q.aborted) {
@@ -298,13 +285,16 @@ Y.Get = function() {
 
         if (q.timeout) {
             // Y.log('create timer');
-            q.timer = L.later(q.timeout, q, _timeout, id);
+            // q.timer = L.later(q.timeout, q, _timeout, id);
+            q.timer = setTimeout(function() { 
+                _timeout(id);
+            }, q.timeout);
         }
 
         if (q.type === "script") {
-            n = _scriptNode(url, w, q.charset);
+            n = _scriptNode(url, w, q.attributes);
         } else {
-            n = _linkNode(url, w, q.charset);
+            n = _linkNode(url, w, q.attributes);
         }
 
         // track this node's load progress
@@ -396,12 +386,19 @@ Y.Get = function() {
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
 
-        L.later(0, q, _next, id);
+
+        q.attributes = q.attributes || {};
+        q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
+
+        // L.later(0, q, _next, id);
+        setTimeout(function() {
+            _next(id);
+        }, 0);
 
         return {
             tId: id
         };
-    },
+    };
 
     /**
      * Detects when a node has been loaded.  In the case of
@@ -464,14 +461,70 @@ Y.Get = function() {
         }
     };
 
+
+    _get = function(nId, tId) {
+        var q = queues[tId],
+            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
+        if (!n) {
+            _fail(tId, "target node not found: " + nId);
+        }
+
+        return n;
+    };
+
+    /**
+     * Removes the nodes for the specified queue
+     * @method _purge
+     * @private
+     */
+    _purge = function(tId) {
+        var q=queues[tId], n, l, d, h, s, i, node, attr;
+        if (q) {
+            n = q.nodes; 
+            l = n.length;
+            d = q.win.document;
+            h = d.getElementsByTagName("head")[0];
+
+            if (q.insertBefore) {
+                s = _get(q.insertBefore, tId);
+                if (s) {
+                    h = s.parentNode;
+                }
+            }
+
+            for (i=0; i<l; i=i+1) {
+                node = n[i];
+                if (node.clearAttributes) {
+                    node.clearAttributes();
+                } else {
+                    // This is a hostile delete
+                    // operation attempting to improve
+                    // memory performance.  As such, the
+                    // hasOwnProperty check is intentionally
+                    // ommitted.
+                    for (attr in node) {
+                        if (node.hasOwnProperty(attr)) {
+                            delete node[attr];
+                        }
+                    }
+                }
+
+                h.removeChild(node);
+            }
+        }
+        q.nodes = [];
+    };
+
     return {
 
         /**
          * The number of request required before an automatic purge.
+         * Can be configured via the 'purgethreshold' config
          * property PURGE_THRESH
          * @static
          * @type int
          * @default 20
+         * @private
          */
         PURGE_THRESH: 20,
 
@@ -484,7 +537,10 @@ Y.Get = function() {
          */
         _finalize: function(id) {
             Y.log(id + " finalized ", "info", "get");
-            L.later(0, null, _finish, id);
+            // L.later(0, null, _finish, id);
+            setTimeout(function() {
+                _finish(id);
+            }, 0);
         },
 
         /**
@@ -550,6 +606,8 @@ Y.Get = function() {
          * <dt>
          * </dl>
          * </dd>
+         * <dt>onEnd</dt>
+         * <dd>a function that executes when the transaction finishes, regardless of the exit path</dd>
          * <dt>onFailure</dt>
          * <dd>
          * callback to execute when the script load operation fails
@@ -591,7 +649,9 @@ Y.Get = function() {
          * <dd>node or node id that will become the new node's nextSibling</dd>
          * </dl>
          * <dt>charset</dt>
-         * <dd>Node charset, default utf-8</dd>
+         * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+         * <dt>attributes</dt>
+         * <dd>An object literal containing additional attributes to add to the link tags</dd>
          * <dt>timeout</dt>
          * <dd>Number of milliseconds to wait before aborting and firing the timeout event</dd>
          * <pre>
@@ -663,7 +723,9 @@ Y.Get = function() {
          * <dt>insertBefore</dt>
          * <dd>node or node id that will become the new node's nextSibling</dd>
          * <dt>charset</dt>
-         * <dd>Node charset, default utf-8</dd>
+         * <dd>Node charset, default utf-8 (deprecated, use the attributes config)</dd>
+         * <dt>attributes</dt>
+         * <dd>An object literal containing additional attributes to add to the link tags</dd>
          * </dl>
          * <pre>
          *      Y.Get.css("http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css");

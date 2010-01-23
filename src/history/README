@@ -1,0 +1,8 @@
+Browser History Utility
+
+3.0.0
+    * Fix bug 2528198: window.onhashchange used for IE8 in IE7 mode for proper click detection.
+    * Fix bug 2528051: fix bug in hash encoding/decoding
+
+3.0.0b1
+    * Initial release.

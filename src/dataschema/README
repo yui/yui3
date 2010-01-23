@@ -1,0 +1,17 @@
+**** version 3.0.0 Updated 11/25/2009 ****
+
+* Added support for nested schemas
+* Added support for XPath resultListLocator, instead of requiring the use of 'getElementsByTagName'
+* Improved support for DOM elements in DataSchema.XML when IE xmldoc.selectNodes(String) fails
+
+
+
+**** version 3.0.0 ****
+
+* Support for DOM elements in DataSchema.XML.
+
+
+
+**** version 3.0.0 beta 1 ****
+
+* Initial release.

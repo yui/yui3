@@ -1,38 +1,17 @@
 /**
  * Collection utilities beyond what is provided in the YUI core
- * @module yui
+ * @module collection
+ * @submodule array-extras
  */
-
 
 var L = Y.Lang, Native = Array.prototype, A = Y.Array;
 
 /**
- * Executes the supplied function on each item in the array.
- * Returning true from the processing function will stop the 
- * processing of the remaining
- * items.
- * @method Array.some
- * @param a {Array} the array to iterate
- * @param f {Function} the function to execute on each item
- * @param o Optional context object
- * @static
- * @return {boolean} true if the function returns true on
- * any of the items in the array
+ * Adds the following array utilities to the YUI instance
+ * (Y.Array).  This is in addition to the methods provided
+ * in the core.
+ * @class YUI~array~extras
  */
- A.some = (Native.some) ?
-    function (a, f, o) { 
-        return Native.some.call(a, f, o);
-    } :
-    function (a, f, o) {
-        var l = a.length, i;
-        for (i=0; i<l; i=i+1) {
-            if (f.call(o, a[i], i, a)) {
-                return true;
-            }
-        }
-        return false;
-    };
-
 
 /**
  * Returns the index of the last item in the array
@@ -66,33 +45,29 @@ A.lastIndexOf = (Native.lastIndexOf) ?
  * @return {Array} a copy of the array with duplicate entries removed
  */
 A.unique = function(a, sort) {
-    var s = L.isValue(sort) ? sort : false,
-        b = a.slice(), i = 0, n = -1, item = null;
-    if (s) {
-        while (i < b.length) {
-            if (b[i] === item) {
-                n = (n == -1 ? i : n);
-                i += 1;
-            } else if (n !== -1) {
-                b.splice(n, i-n);
-                i = n;                
-                n = -1;
-            } else {
-                item = b[i];
-                i += 1;
-            }
+    var b = a.slice(), i = 0, n = -1, item = null;
+
+    while (i < b.length) {
+        item = b[i];
+        while ((n = A.lastIndexOf(b, item)) !== i) {
+            b.splice(n, 1);
         }
-        return b;
-    } else {
-        while (i < b.length) {
-            item = b[i];
-            while ((n = b.lastIndexOf(item)) !== i) {
-                b.splice(n, 1);
-            }
-            i += 1;
-        }
-        return b;
+        i += 1;
     }
+
+    // Note: the sort option doesn't really belong here... I think it was added
+    // because there was a way to fast path the two operations together.  That
+    // implementation was not working, so I replaced it with the following.
+    // Leaving it in so that the API doesn't get broken.
+    if (sort) {
+        if (L.isNumber(b[0])) {
+            b.sort(A.numericSort);
+        } else {
+            b.sort();
+        }
+    }
+
+    return b;
 };
 
 /**
@@ -156,8 +131,7 @@ A.every = (Native.every) ?
         return Native.every.call(a,f,o);
     } :
     function(a, f, o) {
-        var l = a.length;
-        for (var i = 0; i < l; i=i+1) {
+        for (var i = 0, l = a.length; i < l; i=i+1) {
             if (!f.call(o, a[i], i, a)) {
                 return false;
             }
@@ -236,8 +210,7 @@ A.reduce = (Native.reduce) ?
 * returns true for, or null if it never returns true
 */
 A.find = function(a, f, o) {
-    var l = a.length;
-    for(var i=0; i < l; i++) {
+    for(var i=0, l = a.length; i < l; i++) {
         if (f.call(o, a[i], i, a)) {
             return a[i];
         }
@@ -279,11 +252,16 @@ A.grep = function (a, pattern) {
 * rejected by the test function (or an empty array).
 */
 A.partition = function (a, f, o) {
-    var results = {matches: [], rejects: []};
+    var results = {
+        matches: [], 
+        rejects: []
+    };
+
     A.each(a, function (item, index) {
         var set = f.call(o, item, index, a) ? results.matches : results.rejects;
         set.push(item);
     });
+
     return results;
 };
 
@@ -306,3 +284,5 @@ A.zip = function (a, a2) {
     });
     return results;
 };
+
+A.forEach = A.each;

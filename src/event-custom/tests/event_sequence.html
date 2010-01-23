@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>Testing Event firing sequence</title>
-    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
     <link type="text/css" rel="stylesheet" href="../../../build/console/assets/skins/sam/console.css">
     <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
     <style type="text/css" id="styleblock" class="highlight-ignore">
@@ -63,7 +62,7 @@ suite.add(new Y.Test.Case({
     name : "single event sequence",
 
     setUp : function () {
-        this.source = new Y.Event.Target;
+        this.source = new Y.EventTarget;
     },
 
     test_seqSimple : function () {
@@ -183,7 +182,7 @@ suite.add(new Y.Test.Case({
     name : "broadcast",
         
     setUp : function () {
-        this.source = new Y.Event.Target;
+        this.source = new Y.EventTarget;
     },
 
     test_broadcast0: function () {
@@ -534,9 +533,9 @@ suite.add(new Y.Test.Case({
     name : "bubble",
 
     setUp : function () {
-        this.source = new Y.Event.Target;
-        this.middleMan1 = new Y.Event.Target;
-        this.middleMan2 = new Y.Event.Target;
+        this.source = new Y.EventTarget;
+        this.middleMan1 = new Y.EventTarget;
+        this.middleMan2 = new Y.EventTarget;
 
         this.source.addTarget(this.middleMan1);
         this.source.addTarget(this.middleMan2);
@@ -838,7 +837,5 @@ Y.Test.Runner.run();
 
 });
 </script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
-<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
 </body>
 </html>

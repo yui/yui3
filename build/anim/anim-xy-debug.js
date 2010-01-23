@@ -5,7 +5,6 @@ YUI.add('anim-xy', function(Y) {
  * <code>to</code> attributes.
  * @module anim
  * @submodule anim-xy
- * @for Anim
  */
 
 var NUM = Number;

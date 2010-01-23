@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>io&nbsp; <span class="subtitle">3.0.0b1</span></h3>
+        <h3>io&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_io.html" title="io">io</a>
                 
@@ -50,7 +50,7 @@
 
                     </h3>
                     <div class="description summary">
-                        HTTP communications module.
+                        Base IO functionality. Provides basic XHR transport support.
                     </div>
 
 
@@ -72,15 +72,20 @@
                                     <div class="submodules">
                                         <h4>Submodules:</h4> 
                                         <dl>
-                                            <dt><code><a href="io.html" title="io-upload-iframe">io-upload-iframe</a></code></dt>
-                                            <dd>Extends the IO base class to enable file uploads, with HTML forms,
-using an iframe as the transport medium.</dd>
-                                            <dt><code><a href="io.html" title="io-xdr">io-xdr</a></code></dt>
-                                            <dd>Extends the IO base class to provide an alternate, Flash transport, for making
-cross-domain requests.</dd>
-                                            <dt><code><a href="io.html" title="io-form">io-form</a></code></dt>
+                                            <dt><code>io-base</code></dt>
+                                            <dd>Base IO functionality. Provides basic XHR transport support.</dd>
+                                            <dt><code>io-form</code></dt>
                                             <dd>Extends the IO base class to enable HTML form data serialization, when specified
 in the transaction's configuration object.</dd>
+                                            <dt><code>io-queue</code></dt>
+                                            <dd>Extends the IO base class to implement Queue for synchronous
+transaction processing.</dd>
+                                            <dt><code>io-upload-iframe</code></dt>
+                                            <dd>Extends the IO base class to enable file uploads, with HTML forms,
+using an iframe as the transport medium.</dd>
+                                            <dt><code>io-xdr</code></dt>
+                                            <dd>Extends the IO base class to provide an alternate, Flash transport, for making
+cross-domain requests.</dd>
                                         </dl>
                                     </div>
 
@@ -95,36 +100,53 @@ in the transaction's configuration object.</dd>
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
+                                <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
+                                <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
+                                <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
-                                <li class=""><a href="module_dd-plugin.html" title="dd-plugin">dd-plugin</a></li>
+                                <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
+                                <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
                                 <li class="selected"><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
+                                <li class=""><a href="module_loader.html" title="loader">loader</a></li>
                                 <li class=""><a href="module_node.html" title="node">node</a></li>
+                                <li class=""><a href="module_node-focusmanager.html" title="node-focusmanager">node-focusmanager</a></li>
                                 <li class=""><a href="module_node-menunav.html" title="node-menunav">node-menunav</a></li>
                                 <li class=""><a href="module_oop.html" title="oop">oop</a></li>
                                 <li class=""><a href="module_overlay.html" title="overlay">overlay</a></li>
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
-                                <li class=""><a href="module_queue.html" title="queue">queue</a></li>
+                                <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
+                                <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
+                                <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
-                                <li class=""><a href="module_yuitest.html" title="yuitest">yuitest</a></li>
                         </ul>
                     </div>
 
@@ -155,11 +177,12 @@ in the transaction's configuration object.</dd>
 	</div>
 	<div id="ft">
         <hr />
-        Copyright &copy; 2009 Yahoo! Inc. All rights reserved.
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
 	</div>
 </div>
 <script type="text/javascript">
-    ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_async", "url": "io.html#method__async", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_purge", "url": "io.html#method__purge", "type": "method"}, {"access": "", "host": "io", "name": "purge", "url": "io.html#method_purge", "type": "method"}, {"access": "private", "host": "io", "name": "_q", "url": "io.html#property__q", "type": "property"}, {"access": "private", "host": "io", "name": "_qMaxSize", "url": "io.html#property__qMaxSize", "type": "property"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "private", "host": "io", "name": "_start", "url": "io.html#method__start", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_timeOut", "url": "io.html#property__timeOut", "type": "property"}, {"access": "private", "host": "io", "name": "_tPubSub", "url": "io.html#method__tPubSub", "type": "method"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}];
+
+    var ALL_YUI_PROPS = [{"access": "private", "host": "io", "name": "_abort", "url": "io.html#method__abort", "type": "method"}, {"access": "private", "host": "io", "name": "appendData", "url": "io.html#method_appendData", "type": "method"}, {"access": "private", "host": "io", "name": "_clearTimeout", "url": "io.html#method__clearTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_concat", "url": "io.html#method__concat", "type": "method"}, {"access": "private", "host": "io", "name": "_create", "url": "io.html#method__create", "type": "method"}, {"access": "private", "host": "io", "name": "_data", "url": "io.html#method__data", "type": "method"}, {"access": "private", "host": "io", "name": "_destroy", "url": "io.html#method__destroy", "type": "method"}, {"access": "private", "host": "io", "name": "_e", "url": "io.html#property__e", "type": "property"}, {"access": "private", "host": "io", "name": "f", "url": "io.html#method_f", "type": "method"}, {"access": "private", "host": "io", "name": "_fn", "url": "io.html#property__fn", "type": "property"}, {"access": "private", "host": "io", "name": "_handle", "url": "io.html#method__handle", "type": "method"}, {"access": "private", "host": "io", "name": "_handleResponse", "url": "io.html#method__handleResponse", "type": "method"}, {"access": "", "host": "io", "name": "header", "url": "io.html#method_header", "type": "method"}, {"access": "private", "host": "io", "name": "_headers", "url": "io.html#property__headers", "type": "property"}, {"access": "private", "host": "io", "name": "_id", "url": "io.html#method__id", "type": "method"}, {"access": "private", "host": "io", "name": "_io", "url": "io.html#method__io", "type": "method"}, {"access": "", "host": "io", "name": "io", "url": "io.html#method_io", "type": "method"}, {"access": "", "host": "io", "name": "io:complete", "url": "io.html#event_io:complete", "type": "event"}, {"access": "", "host": "io", "name": "io:end", "url": "io.html#event_io:end", "type": "event"}, {"access": "", "host": "io", "name": "io:failure", "url": "io.html#event_io:failure", "type": "event"}, {"access": "", "host": "io", "name": "io:start", "url": "io.html#event_io:start", "type": "event"}, {"access": "", "host": "io", "name": "io:success", "url": "io.html#event_io:success", "type": "event"}, {"access": "", "host": "io", "name": "io:xdrReady", "url": "io.html#event_io:xdrReady", "type": "event"}, {"access": "private", "host": "io", "name": "_ioCancel", "url": "io.html#method__ioCancel", "type": "method"}, {"access": "private", "host": "io", "name": "_ioComplete", "url": "io.html#method__ioComplete", "type": "method"}, {"access": "private", "host": "io", "name": "_ioEnd", "url": "io.html#method__ioEnd", "type": "method"}, {"access": "private", "host": "io", "name": "_ioFailure", "url": "io.html#method__ioFailure", "type": "method"}, {"access": "private", "host": "io", "name": "_ioStart", "url": "io.html#method__ioStart", "type": "method"}, {"access": "private", "host": "io", "name": "_ioSuccess", "url": "io.html#method__ioSuccess", "type": "method"}, {"access": "private", "host": "io", "name": "_isInProgress.", "url": "io.html#method__isInProgress.", "type": "method"}, {"access": "", "host": "io", "name": "promote", "url": "io.html#method_promote", "type": "method"}, {"access": "private", "host": "io", "name": "_qState", "url": "io.html#property__qState", "type": "property"}, {"access": "private", "host": "io", "name": "_queue", "url": "io.html#method__queue", "type": "method"}, {"access": "private", "host": "io", "name": "_readyState", "url": "io.html#method__readyState", "type": "method"}, {"access": "private", "host": "io", "name": "_remove", "url": "io.html#method__remove", "type": "method"}, {"access": "", "host": "io", "name": "remove", "url": "io.html#method_remove", "type": "method"}, {"access": "private", "host": "io", "name": "_resend", "url": "io.html#method__resend", "type": "method"}, {"access": "private", "host": "io", "name": "_resetAttrs", "url": "io.html#method__resetAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_rS", "url": "io.html#property__rS", "type": "property"}, {"access": "private", "host": "io", "name": "_serialize", "url": "io.html#method__serialize", "type": "method"}, {"access": "private", "host": "io", "name": "_setAttrs", "url": "io.html#method__setAttrs", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeader", "url": "io.html#method__setHeader", "type": "method"}, {"access": "private", "host": "io", "name": "_setHeaders", "url": "io.html#method__setHeaders", "type": "method"}, {"access": "private", "host": "io", "name": "_shift", "url": "io.html#method__shift", "type": "method"}, {"access": "private", "host": "io", "name": "_size", "url": "io.html#method__size", "type": "method"}, {"access": "", "host": "io", "name": "size", "url": "io.html#method_size", "type": "method"}, {"access": "", "host": "io", "name": "start", "url": "io.html#method_start", "type": "method"}, {"access": "private", "host": "io", "name": "_startTimeout", "url": "io.html#method__startTimeout", "type": "method"}, {"access": "private", "host": "io", "name": "_stop", "url": "io.html#method__stop", "type": "method"}, {"access": "", "host": "io", "name": "stop", "url": "io.html#method_stop", "type": "method"}, {"access": "private", "host": "io", "name": "_swf", "url": "io.html#method__swf", "type": "method"}, {"access": "private", "host": "io", "name": "_tE", "url": "io.html#method__tE", "type": "method"}, {"access": "private", "host": "io", "name": "_timeout", "url": "io.html#property__timeout", "type": "property"}, {"access": "private", "host": "io", "name": "transactionId", "url": "io.html#property_transactionId", "type": "property"}, {"access": "private", "host": "io", "name": "_transport", "url": "io.html#property__transport", "type": "property"}, {"access": "", "host": "io", "name": "transport", "url": "io.html#method_transport", "type": "method"}, {"access": "private", "host": "io", "name": "_unshift", "url": "io.html#method__unshift", "type": "method"}, {"access": "private", "host": "io", "name": "_upload", "url": "io.html#method__upload", "type": "method"}, {"access": "private", "host": "io", "name": "_xdr", "url": "io.html#method__xdr", "type": "method"}, {"access": "private", "host": "io", "name": "xdrReady", "url": "io.html#method_xdrReady", "type": "method"}, {"access": "private", "host": "io", "name": "xdrResponse", "url": "io.html#method_xdrResponse", "type": "method"}, {"access": "private", "host": "io", "name": "_xhr", "url": "io.html#method__xhr", "type": "method"}, {"access": "private", "host": "io", "name": "_yQ", "url": "io.html#property__yQ", "type": "property"}];
 </script>
 </body>
 </html>

@@ -17,13 +17,13 @@
          * @type String
          * @property name
          */
-        this.name /*:String*/ = "";
+        this.name = "";
     
         /**
          * Array of test suites and
          * @private
          */
-        this.items /*:Array*/ = [];
+        this.items = [];
     
         //initialize the properties
         if (Y.Lang.isString(data)){
@@ -47,10 +47,11 @@
          * @return {Void}
          * @method add
          */
-        add : function (testObject /*:Y.Test.Suite*/) /*:Void*/ {
+        add : function (testObject /*:Y.Test.Suite*/) {
             if (testObject instanceof Y.Test.Suite || testObject instanceof Y.Test.Case) {
                 this.items.push(testObject);
             }
+            return this;
         },
         
         //-------------------------------------------------------------------------
@@ -62,7 +63,7 @@
          * @return {Void}
          * @method setUp
          */
-        setUp : function () /*:Void*/ {
+        setUp : function () {
         },
         
         /**
@@ -70,7 +71,7 @@
          * @return {Void}
          * @method tearDown
          */
-        tearDown: function () /*:Void*/ {
+        tearDown: function () {
         }
         
     };
