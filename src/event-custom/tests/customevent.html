@@ -535,15 +535,15 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 Y.Assert.areEqual(1, s4);
 
 
-                Y.Global.on('y:baz', function(e) {
+                Y.Global.on('y:bar', function(e) {
                     Y.Assert.areEqual(0, e.stopped);
-                    Y.Assert.areEqual(0, e._event.stopped);
-                    Y.log('GLOBAL baz executed');
+                    // Y.Assert.areEqual(0, e._event.stopped);
+                    Y.log('GLOBAL bar executed');
                     e.stopPropagation();
                 });
 
-                o.fire('y:baz');
-                o.fire('y:baz');
+                o.fire('y:bar');
+                o.fire('y:bar');
 
             },
 
