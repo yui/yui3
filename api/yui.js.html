@@ -47,20 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="c1">//  Stamp the documentElement (HTML) with a class of &quot;yui-loaded&quot; to </span>
-<span class="c1">//  enable styles that need to key off of JS being enabled.</span>
-<span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-<span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="sr">/(?:^|\\s+)yui-js-enabled(?:\\s+|$)/gi</span><span class="p">,</span>
-    <span class="nx">docEl</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
-    <span class="nx">docElClass</span> <span class="o">=</span> <span class="nx">docEl</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
-
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">re</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">docElClass</span><span class="p">))</span> <span class="p">{</span>
-    <span class="nx">docEl</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="p">(</span><span class="nx">docElClass</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\s+|\s+$/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; yui-js-enabled&#39;</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="p">}());</span>
-
-
-<span class="cm">/**</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
 <span class="cm"> * The YUI module contains the components required for building the YUI seed file.</span>
 <span class="cm"> * This includes the script loading mechanism, a simple queue, and the core utilities for the library.</span>
 <span class="cm"> * @module yui</span>
@@ -69,7 +56,12 @@
 
 <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-    <span class="kd">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="p">{},</span> 
+    <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nb">document</span><span class="p">,</span>
+        <span class="nx">docEl</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
+        <span class="nx">docElClass</span> <span class="o">=</span> <span class="nx">docEl</span> <span class="o">&amp;&amp;</span> <span class="nx">docEl</span><span class="p">.</span><span class="nx">className</span><span class="p">,</span>
+        <span class="nx">DOCUMENT_CLASS</span> <span class="o">=</span> <span class="s1">&#39;yui-js-enabled&#39;</span><span class="p">,</span>
+    
+        <span class="nx">_instances</span> <span class="o">=</span> <span class="p">{},</span> 
         <span class="nx">_startTime</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">(),</span> 
         <span class="nx">p</span><span class="p">,</span> 
         <span class="nx">i</span><span class="p">,</span>
@@ -108,53 +100,63 @@
         <span class="p">},</span>
 
         <span class="nx">SLICE</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">;</span>
+
+<span class="c1">//  Stamp the documentElement (HTML) with a class of &quot;yui-loaded&quot; to </span>
+<span class="c1">//  enable styles that need to key off of JS being enabled.</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">docEl</span> <span class="o">&amp;&amp;</span> <span class="nx">docElClass</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">DOCUMENT_CLASS</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">docElClass</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">docElClass</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">docElClass</span> <span class="o">+=</span> <span class="nx">DOCUMENT_CLASS</span><span class="p">;</span>
+    <span class="nx">docEl</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">docElClass</span><span class="p">;</span>
+<span class="p">}</span>
+
         
 <span class="c1">// reduce to one or the other</span>
 <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * The YUI global namespace object.  If YUI is already defined, the</span>
-<span class="cm">     * existing YUI object will not be overwritten so that defined</span>
-<span class="cm">     * namespaces are preserved.  </span>
-<span class="cm">     *</span>
-<span class="cm">     * @class YUI</span>
-<span class="cm">     * @constructor</span>
-<span class="cm">     * @global</span>
-<span class="cm">     * @uses EventTarget</span>
-<span class="cm">     * @param o* Up to five optional configuration objects.  This object is stored</span>
-<span class="cm">     * in YUI.config.  See config for the list of supported properties.</span>
-<span class="cm">     */</span>
+<span class="cm">/**</span>
+<span class="cm"> * The YUI global namespace object.  If YUI is already defined, the</span>
+<span class="cm"> * existing YUI object will not be overwritten so that defined</span>
+<span class="cm"> * namespaces are preserved.  </span>
+<span class="cm"> *</span>
+<span class="cm"> * @class YUI</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @global</span>
+<span class="cm"> * @uses EventTarget</span>
+<span class="cm"> * @param o* Up to five optional configuration objects.  This object is stored</span>
+<span class="cm"> * in YUI.config.  See config for the list of supported properties.</span>
+<span class="cm"> */</span>
 
-    <span class="cm">/*global YUI*/</span>
-    <span class="cm">/*global YUI_config*/</span>
-    <span class="c1">// @TODO Advice was to make a function, disallow direct instantiation.</span>
-    <span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">)</span> <span class="p">{</span>
+<span class="cm">/*global YUI*/</span>
+<span class="cm">/*global YUI_config*/</span>
+<span class="c1">// @TODO Advice was to make a function, disallow direct instantiation.</span>
+<span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
-            <span class="nx">globalConfig</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="nx">globalConfig</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
 
-        <span class="c1">// Allow instantiation without the new operator</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="c1">// set up the core environment</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
+    <span class="c1">// Allow instantiation without the new operator</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// set up the core environment</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">globalConfig</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">globalConfig</span><span class="p">);</span>
-            <span class="p">}</span>
-
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-            <span class="p">}</span>
-
-            <span class="c1">// bind the specified additional modules for this instance</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
-
-            <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">globalConfig</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">globalConfig</span><span class="p">);</span>
         <span class="p">}</span>
-    <span class="p">};</span>
-<span class="p">}</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// bind the specified additional modules for this instance</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
 
 <span class="c1">// The prototype contains the functions that are required to allow the external</span>
 <span class="c1">// modules to be registered and for the instance to be initialized.</span>
@@ -228,7 +230,7 @@
         <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
 
             <span class="nx">win</span><span class="o">:</span> <span class="nb">window</span> <span class="o">||</span> <span class="p">{},</span>
-            <span class="nx">doc</span><span class="o">:</span> <span class="nb">document</span><span class="p">,</span>
+            <span class="nx">doc</span><span class="o">:</span> <span class="nx">doc</span><span class="p">,</span>
             <span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">useBrowserConsole</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">throwFail</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -240,7 +242,7 @@
                 <span class="kd">var</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">nodes</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">match</span><span class="p">;</span>
 
                 <span class="c1">// get from querystring</span>
-                <span class="nx">nodes</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+                <span class="nx">nodes</span> <span class="o">=</span> <span class="p">(</span><span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">))</span> <span class="o">||</span> <span class="p">[];</span>
 
                 <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">src</span> <span class="o">=</span> <span class="nx">nodes</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">src</span><span class="p">;</span>
@@ -779,6 +781,7 @@
 
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="nx">add</span><span class="p">;</span>
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">remove</span><span class="p">;</span>
+<span class="p">}</span>
 
 <span class="p">})();</span>
 
