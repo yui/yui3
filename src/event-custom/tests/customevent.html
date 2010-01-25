@@ -533,6 +533,18 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
 
                 Y.Assert.areEqual(1, s3);
                 Y.Assert.areEqual(1, s4);
+
+
+                Y.Global.on('y:baz', function(e) {
+                    Y.Assert.areEqual(0, e.stopped);
+                    Y.Assert.areEqual(0, e._event.stopped);
+                    Y.log('GLOBAL baz executed');
+                    e.stopPropagation();
+                });
+
+                o.fire('y:baz');
+                o.fire('y:baz');
+
             },
 
             test_fire_once: function() {

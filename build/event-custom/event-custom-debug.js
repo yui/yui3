@@ -817,6 +817,8 @@ Y.CustomEvent.prototype = {
     },
 
     fireSimple: function(args) {
+        this.stopped = 0;
+        this.prevented = 0;
         if (this.hasSubs()) {
             // this._procSubs(Y.merge(this.subscribers, this.afters), args);
             var subs = this.getSubs();
