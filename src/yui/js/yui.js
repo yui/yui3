@@ -81,35 +81,36 @@ if (typeof YUI === 'undefined' || !YUI) {
  * in YUI.config.  See config for the list of supported properties.
  */
 
-/*global YUI*/
-/*global YUI_config*/
-// @TODO Advice was to make a function, disallow direct instantiation.
-YUI = function(o1, o2, o3, o4, o5) {
+    /*global YUI*/
+    /*global YUI_config*/
+    // @TODO Advice was to make a function, disallow direct instantiation.
+    YUI = function(o1, o2, o3, o4, o5) {
 
-    var Y = this, a = arguments, i, l = a.length,
-        globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
+        var Y = this, a = arguments, i, l = a.length,
+            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
-    // Allow instantiation without the new operator
-    if (!(Y instanceof YUI)) {
-        return new YUI(o1, o2, o3, o4, o5);
-    } else {
-        // set up the core environment
-        Y._init();
+        // Allow instantiation without the new operator
+        if (!(Y instanceof YUI)) {
+            return new YUI(o1, o2, o3, o4, o5);
+        } else {
+            // set up the core environment
+            Y._init();
 
-        if (globalConfig) {
-            Y._config(globalConfig);
+            if (globalConfig) {
+                Y._config(globalConfig);
+            }
+
+            for (i=0; i<l; i++) {
+                Y._config(a[i]);
+            }
+
+            // bind the specified additional modules for this instance
+            Y._setup();
+
+            return Y;
         }
-
-        for (i=0; i<l; i++) {
-            Y._config(a[i]);
-        }
-
-        // bind the specified additional modules for this instance
-        Y._setup();
-
-        return Y;
-    }
-};
+    };
+}
 
 // The prototype contains the functions that are required to allow the external
 // modules to be registered and for the instance to be initialized.
@@ -155,7 +156,7 @@ YUI.prototype = {
 
         Y.version = v;
 
-        Y.Env = {
+        Y.Env = Y.Env || {
             // @todo expand the new module metadata
             mods: {},
             cdn: 'http://yui.yahooapis.com/' + v + '/build/',
@@ -166,21 +167,23 @@ YUI.prototype = {
             _yidx: 0,
             _uidx: 0,
             _loaded: {}
+
         };
 
         Y.Env._loaded[v] = {};
 
-        if (YUI.Env) {
+        if (YUI.Env && Y !== YUI) {
             Y.Env._yidx = (++YUI.Env._yidx);
             Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
-            Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
-        }
+        } 
+
+        Y.id = Y.stamp(Y);
 
         Y.constructor = YUI;
 
         // configuration defaults
-        Y.config = {
+        Y.config = Y.config || {
 
             win: window || {},
             doc: doc,
@@ -347,9 +350,7 @@ YUI.prototype = {
             m    = mods[name];
 
             // console.log(name + '::' + m);
-
-            if (!m) {
-            }
+            // if (!m) { }
 
             if (!attached[name] && m) {
 
@@ -416,6 +417,7 @@ YUI.prototype = {
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
+            onEnd,
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
@@ -561,6 +563,7 @@ YUI.prototype = {
             Y.log('Modules missing: ' + missing, 'info', 'yui');
         }
 
+
         // dynamic load
         if (boot && l && Y.Loader) {
             Y.log('Using loader to fetch missing dependencies.', 'info', 'yui');
@@ -575,20 +578,26 @@ YUI.prototype = {
             loader.require((css) ? missing : a);
             loader.insert(null, (css) ? null : 'js');
         } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
-            Y.log('Fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
             Y._loading = true;
 
             a = Y.Array(arguments, 0, true);
-            // a.unshift('loader');
+            onEnd = function() {
+                Y._loading = false;
+                Y.Env.bootstrapped = true;
+                Y._attach(['loader']);
+                Y.use.apply(Y, a);
+            };
 
-            Y.Get.script(Y.config.base + Y.config.loaderPath, {
-                onEnd: function() {
-                    Y._loading = false;
-                    Y.Env.bootstrapped = true;
-                    Y._attach(['loader']);
-                    Y.use.apply(Y, a);
-                }
-            });
+            if (YUI.Env._bootstrapping) {
+                Y.log('Waiting for loader: ' + Y.id, 'info', 'yui');
+                YUI.Env._loaderQueue.add(onEnd);
+            } else {
+                YUI.Env._bootstrapping = true;
+                Y.log('Fetching loader: ' + Y.id + ", " + Y.config.base + Y.config.loaderPath, 'info', 'yui');
+                Y.Get.script(Y.config.base + Y.config.loaderPath, {
+                    onEnd: onEnd 
+                });
+            }
 
             return Y;
 
@@ -727,6 +736,8 @@ YUI.prototype = {
     // set up the environment
     YUI._init();
 
+    YUI._attach(['yui-base']);
+
     // add a window load event at load time so we can capture
     // the case where it fires before dynamic loading is
     // complete.
@@ -734,7 +745,6 @@ YUI.prototype = {
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
-}
 
 })();
 

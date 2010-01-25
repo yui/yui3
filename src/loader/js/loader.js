@@ -95,13 +95,6 @@
  * </ul>
  */
 
-/*
- * Global loader queue
- * @property _loaderQueue
- * @type Queue
- * @private
- */
-YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
 
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],

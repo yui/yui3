@@ -81,35 +81,36 @@ if (typeof YUI === 'undefined' || !YUI) {
  * in YUI.config.  See config for the list of supported properties.
  */
 
-/*global YUI*/
-/*global YUI_config*/
-// @TODO Advice was to make a function, disallow direct instantiation.
-YUI = function(o1, o2, o3, o4, o5) {
+    /*global YUI*/
+    /*global YUI_config*/
+    // @TODO Advice was to make a function, disallow direct instantiation.
+    YUI = function(o1, o2, o3, o4, o5) {
 
-    var Y = this, a = arguments, i, l = a.length,
-        globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
+        var Y = this, a = arguments, i, l = a.length,
+            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
-    // Allow instantiation without the new operator
-    if (!(Y instanceof YUI)) {
-        return new YUI(o1, o2, o3, o4, o5);
-    } else {
-        // set up the core environment
-        Y._init();
+        // Allow instantiation without the new operator
+        if (!(Y instanceof YUI)) {
+            return new YUI(o1, o2, o3, o4, o5);
+        } else {
+            // set up the core environment
+            Y._init();
 
-        if (globalConfig) {
-            Y._config(globalConfig);
+            if (globalConfig) {
+                Y._config(globalConfig);
+            }
+
+            for (i=0; i<l; i++) {
+                Y._config(a[i]);
+            }
+
+            // bind the specified additional modules for this instance
+            Y._setup();
+
+            return Y;
         }
-
-        for (i=0; i<l; i++) {
-            Y._config(a[i]);
-        }
-
-        // bind the specified additional modules for this instance
-        Y._setup();
-
-        return Y;
-    }
-};
+    };
+}
 
 // The prototype contains the functions that are required to allow the external
 // modules to be registered and for the instance to be initialized.
@@ -155,7 +156,7 @@ YUI.prototype = {
 
         Y.version = v;
 
-        Y.Env = {
+        Y.Env = Y.Env || {
             // @todo expand the new module metadata
             mods: {},
             cdn: 'http://yui.yahooapis.com/' + v + '/build/',
@@ -166,21 +167,23 @@ YUI.prototype = {
             _yidx: 0,
             _uidx: 0,
             _loaded: {}
+
         };
 
         Y.Env._loaded[v] = {};
 
-        if (YUI.Env) {
+        if (YUI.Env && Y !== YUI) {
             Y.Env._yidx = (++YUI.Env._yidx);
             Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
-            Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
-        }
+        } 
+
+        Y.id = Y.stamp(Y);
 
         Y.constructor = YUI;
 
         // configuration defaults
-        Y.config = {
+        Y.config = Y.config || {
 
             win: window || {},
             doc: doc,
@@ -346,9 +349,7 @@ YUI.prototype = {
             m    = mods[name];
 
             // console.log(name + '::' + m);
-
-            if (!m) {
-            }
+            // if (!m) { }
 
             if (!attached[name] && m) {
 
@@ -415,6 +416,7 @@ YUI.prototype = {
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
+            onEnd,
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
@@ -548,6 +550,7 @@ YUI.prototype = {
             missing = Y.Object.keys(Y.Array.hash(missing));
         }
 
+
         // dynamic load
         if (boot && l && Y.Loader) {
             Y._loading = true;
@@ -564,16 +567,21 @@ YUI.prototype = {
             Y._loading = true;
 
             a = Y.Array(arguments, 0, true);
-            // a.unshift('loader');
+            onEnd = function() {
+                Y._loading = false;
+                Y.Env.bootstrapped = true;
+                Y._attach(['loader']);
+                Y.use.apply(Y, a);
+            };
 
-            Y.Get.script(Y.config.base + Y.config.loaderPath, {
-                onEnd: function() {
-                    Y._loading = false;
-                    Y.Env.bootstrapped = true;
-                    Y._attach(['loader']);
-                    Y.use.apply(Y, a);
-                }
-            });
+            if (YUI.Env._bootstrapping) {
+                YUI.Env._loaderQueue.add(onEnd);
+            } else {
+                YUI.Env._bootstrapping = true;
+                Y.Get.script(Y.config.base + Y.config.loaderPath, {
+                    onEnd: onEnd 
+                });
+            }
 
             return Y;
 
@@ -711,6 +719,8 @@ YUI.prototype = {
     // set up the environment
     YUI._init();
 
+    YUI._attach(['yui-base']);
+
     // add a window load event at load time so we can capture
     // the case where it fires before dynamic loading is
     // complete.
@@ -718,7 +728,6 @@ YUI.prototype = {
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
-}
 
 })();
 
@@ -1029,79 +1038,6 @@ YUI.add('yui-base', function(Y) {
  * @module yui
  * @submodule yui-base
  */
-/**
- * The YUI module contains the components required for building the YUI seed file.
- * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
- * @module yui
- * @submodule yui-base
- */
-
-/**
- * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
- * removed using next().
- *
- * @class Queue
- * @param item* {MIXED} 0..n items to seed the queue
- */
-function Queue() {
-    this._init();
-    this.add.apply(this, arguments);
-}
-
-Queue.prototype = {
-    /**
-     * Initialize the queue
-     *
-     * @method _init
-     * @protected
-     */
-    _init : function () {
-        /**
-         * The collection of enqueued items
-         *
-         * @property _q
-         * @type {Array}
-         * @protected
-         */
-        this._q = [];
-    },
-
-    /**
-     * Get the next item in the queue.
-     *
-     * @method next
-     * @return {MIXED} the next item in the queue
-     */
-    next : function () {
-        return this._q.shift();
-    },
-
-    /**
-     * Add 0..n items to the end of the queue
-     *
-     * @method add
-     * @param item* {MIXED} 0..n items
-     */
-    add : function () {
-        Y.Array.each(Y.Array(arguments,0,true),function (fn) {
-            this._q.push(fn);
-        },this);
-
-        return this;
-    },
-
-    /**
-     * Returns the current number of queued items
-     *
-     * @method size
-     * @return {Number}
-     */
-    size : function () {
-        return this._q.length;
-    }
-};
-
-Y.Queue = Queue;
 /**
  * The YUI module contains the components required for building the YUI seed file.
  * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
@@ -1516,6 +1452,81 @@ YArray.some = (Native.some) ?
     };
 
 })();
+/**
+ * The YUI module contains the components required for building the YUI seed file.
+ * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
+ * @module yui
+ * @submodule yui-base
+ */
+
+/**
+ * A simple FIFO queue.  Items are added to the Queue with add(1..n items) and
+ * removed using next().
+ *
+ * @class Queue
+ * @param item* {MIXED} 0..n items to seed the queue
+ */
+function Queue() {
+    this._init();
+    this.add.apply(this, arguments);
+}
+
+Queue.prototype = {
+    /**
+     * Initialize the queue
+     *
+     * @method _init
+     * @protected
+     */
+    _init : function () {
+        /**
+         * The collection of enqueued items
+         *
+         * @property _q
+         * @type {Array}
+         * @protected
+         */
+        this._q = [];
+    },
+
+    /**
+     * Get the next item in the queue.
+     *
+     * @method next
+     * @return {MIXED} the next item in the queue
+     */
+    next : function () {
+        return this._q.shift();
+    },
+
+    /**
+     * Add 0..n items to the end of the queue
+     *
+     * @method add
+     * @param item* {MIXED} 0..n items
+     */
+    add : function () {
+        Y.Array.each(Y.Array(arguments,0,true),function (fn) {
+            this._q.push(fn);
+        },this);
+
+        return this;
+    },
+
+    /**
+     * Returns the current number of queued items
+     *
+     * @method size
+     * @return {Number}
+     */
+    size : function () {
+        return this._q.length;
+    }
+};
+
+Y.Queue = Queue;
+
+YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
 
 
 /**

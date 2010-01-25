@@ -71,3 +71,5 @@ Queue.prototype = {
 };
 
 Y.Queue = Queue;
+
+YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Queue();
