@@ -128,35 +128,36 @@
 <span class="cm"> * in YUI.config.  See config for the list of supported properties.</span>
 <span class="cm"> */</span>
 
-<span class="cm">/*global YUI*/</span>
-<span class="cm">/*global YUI_config*/</span>
-<span class="c1">// @TODO Advice was to make a function, disallow direct instantiation.</span>
-<span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/*global YUI*/</span>
+    <span class="cm">/*global YUI_config*/</span>
+    <span class="c1">// @TODO Advice was to make a function, disallow direct instantiation.</span>
+    <span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
-        <span class="nx">globalConfig</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">globalConfig</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
 
-    <span class="c1">// Allow instantiation without the new operator</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="c1">// set up the core environment</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
+        <span class="c1">// Allow instantiation without the new operator</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// set up the core environment</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">globalConfig</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">globalConfig</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">globalConfig</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">globalConfig</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+
+            <span class="c1">// bind the specified additional modules for this instance</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
+
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
         <span class="p">}</span>
-
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-        <span class="p">}</span>
-
-        <span class="c1">// bind the specified additional modules for this instance</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">_setup</span><span class="p">();</span>
-
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+    <span class="p">};</span>
+<span class="p">}</span>
 
 <span class="c1">// The prototype contains the functions that are required to allow the external</span>
 <span class="c1">// modules to be registered and for the instance to be initialized.</span>
@@ -202,7 +203,7 @@
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span> <span class="o">||</span> <span class="p">{</span>
             <span class="c1">// @todo expand the new module metadata</span>
             <span class="nx">mods</span><span class="o">:</span> <span class="p">{},</span>
             <span class="nx">cdn</span><span class="o">:</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span> <span class="o">+</span> <span class="nx">v</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
@@ -213,21 +214,23 @@
             <span class="nx">_yidx</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">_uidx</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nx">_loaded</span><span class="o">:</span> <span class="p">{}</span>
+
         <span class="p">};</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loaded</span><span class="p">[</span><span class="nx">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span> <span class="o">!==</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="p">(</span><span class="o">++</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_yidx</span><span class="p">);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_guidp</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;yui_&#39;</span> <span class="o">+</span> <span class="nx">v</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_yidx</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">_startTime</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\./g</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">);</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
             <span class="nx">_instances</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="p">}</span> 
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">Y</span><span class="p">);</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">;</span>
 
         <span class="c1">// configuration defaults</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">||</span> <span class="p">{</span>
 
             <span class="nx">win</span><span class="o">:</span> <span class="nb">window</span> <span class="o">||</span> <span class="p">{},</span>
             <span class="nx">doc</span><span class="o">:</span> <span class="nx">doc</span><span class="p">,</span>
@@ -394,9 +397,7 @@
             <span class="nx">m</span>    <span class="o">=</span> <span class="nx">mods</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
 
             <span class="c1">// console.log(name + &#39;::&#39; + m);</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
-            <span class="p">}</span>
+            <span class="c1">// if (!m) { }</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">attached</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
 
@@ -463,6 +464,7 @@
             <span class="nx">mods</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">mods</span><span class="p">,</span> 
             <span class="nx">used</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_used</span><span class="p">,</span>
             <span class="nx">loader</span><span class="p">,</span> 
+            <span class="nx">onEnd</span><span class="p">,</span>
             <span class="nx">firstArg</span> <span class="o">=</span> <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
             <span class="nx">dynamic</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nx">callback</span> <span class="o">=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
@@ -608,6 +610,7 @@
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Modules missing: &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
         <span class="p">}</span>
 
+
         <span class="c1">// dynamic load</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="nx">l</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Using loader to fetch missing dependencies.&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
@@ -622,20 +625,26 @@
             <span class="nx">loader</span><span class="p">.</span><span class="nx">require</span><span class="p">((</span><span class="nx">css</span><span class="p">)</span> <span class="o">?</span> <span class="nx">missing</span> <span class="o">:</span> <span class="nx">a</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="p">(</span><span class="nx">css</span><span class="p">)</span> <span class="o">?</span> <span class="kc">null</span> <span class="o">:</span> <span class="s1">&#39;js&#39;</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="nx">l</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Get</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">bootstrapped</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Fetching loader: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">loaderPath</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
             <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-            <span class="c1">// a.unshift(&#39;loader&#39;);</span>
+            <span class="nx">onEnd</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">bootstrapped</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;loader&#39;</span><span class="p">]);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+            <span class="p">};</span>
 
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">Get</span><span class="p">.</span><span class="nx">script</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">loaderPath</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">onEnd</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">bootstrapped</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;loader&#39;</span><span class="p">]);</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">});</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_bootstrapping</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Waiting for loader: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+                <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_loaderQueue</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">onEnd</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_bootstrapping</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Fetching loader: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">loaderPath</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">Get</span><span class="p">.</span><span class="nx">script</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">loaderPath</span><span class="p">,</span> <span class="p">{</span>
+                    <span class="nx">onEnd</span><span class="o">:</span> <span class="nx">onEnd</span> 
+                <span class="p">});</span>
+            <span class="p">}</span>
 
             <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
 
@@ -774,6 +783,8 @@
     <span class="c1">// set up the environment</span>
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
 
+    <span class="nx">YUI</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;yui-base&#39;</span><span class="p">]);</span>
+
     <span class="c1">// add a window load event at load time so we can capture</span>
     <span class="c1">// the case where it fires before dynamic loading is</span>
     <span class="c1">// complete.</span>
@@ -781,7 +792,6 @@
 
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="nx">add</span><span class="p">;</span>
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">remove</span><span class="p">;</span>
-<span class="p">}</span>
 
 <span class="p">})();</span>
 
