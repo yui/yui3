@@ -1,14 +1,3 @@
-//  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
-//  enable styles that need to key off of JS being enabled.
-(function() {
-var re = /(?:^|\\s+)yui-js-enabled(?:\\s+|$)/gi,
-    docEl = document.documentElement,
-    docElClass = docEl.className;
-
-if (!re.test(docElClass)) {
-    docEl.className = (docElClass.replace(/^\s+|\s+$/g, '') + ' yui-js-enabled');
-}
-}());
 
 
 /**
@@ -20,7 +9,12 @@ if (!re.test(docElClass)) {
 
 (function() {
 
-    var _instances = {}, 
+    var doc = document,
+        docEl = doc && doc.documentElement,
+        docElClass = docEl && docEl.className,
+        DOCUMENT_CLASS = 'yui-js-enabled',
+    
+        _instances = {}, 
         _startTime = new Date().getTime(), 
         p, 
         i,
@@ -59,53 +53,63 @@ if (!re.test(docElClass)) {
         },
 
         SLICE = Array.prototype.slice;
+
+//  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
+//  enable styles that need to key off of JS being enabled.
+if (docEl && docElClass.indexOf(DOCUMENT_CLASS) == -1) {
+    if (docElClass) {
+        docElClass += ' ';
+    }
+    docElClass += DOCUMENT_CLASS;
+    docEl.className = docElClass;
+}
+
         
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
-    /**
-     * The YUI global namespace object.  If YUI is already defined, the
-     * existing YUI object will not be overwritten so that defined
-     * namespaces are preserved.  
-     *
-     * @class YUI
-     * @constructor
-     * @global
-     * @uses EventTarget
-     * @param o* Up to five optional configuration objects.  This object is stored
-     * in YUI.config.  See config for the list of supported properties.
-     */
+/**
+ * The YUI global namespace object.  If YUI is already defined, the
+ * existing YUI object will not be overwritten so that defined
+ * namespaces are preserved.  
+ *
+ * @class YUI
+ * @constructor
+ * @global
+ * @uses EventTarget
+ * @param o* Up to five optional configuration objects.  This object is stored
+ * in YUI.config.  See config for the list of supported properties.
+ */
 
-    /*global YUI*/
-    /*global YUI_config*/
-    // @TODO Advice was to make a function, disallow direct instantiation.
-    YUI = function(o1, o2, o3, o4, o5) {
+/*global YUI*/
+/*global YUI_config*/
+// @TODO Advice was to make a function, disallow direct instantiation.
+YUI = function(o1, o2, o3, o4, o5) {
 
-        var Y = this, a = arguments, i, l = a.length,
-            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
+    var Y = this, a = arguments, i, l = a.length,
+        globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
-        // Allow instantiation without the new operator
-        if (!(Y instanceof YUI)) {
-            return new YUI(o1, o2, o3, o4, o5);
-        } else {
-            // set up the core environment
-            Y._init();
+    // Allow instantiation without the new operator
+    if (!(Y instanceof YUI)) {
+        return new YUI(o1, o2, o3, o4, o5);
+    } else {
+        // set up the core environment
+        Y._init();
 
-            if (globalConfig) {
-                Y._config(globalConfig);
-            }
-
-            for (i=0; i<l; i++) {
-                Y._config(a[i]);
-            }
-
-            // bind the specified additional modules for this instance
-            Y._setup();
-
-            return Y;
+        if (globalConfig) {
+            Y._config(globalConfig);
         }
-    };
-}
+
+        for (i=0; i<l; i++) {
+            Y._config(a[i]);
+        }
+
+        // bind the specified additional modules for this instance
+        Y._setup();
+
+        return Y;
+    }
+};
 
 // The prototype contains the functions that are required to allow the external
 // modules to be registered and for the instance to be initialized.
@@ -179,7 +183,7 @@ YUI.prototype = {
         Y.config = {
 
             win: window || {},
-            doc: document,
+            doc: doc,
             debug: true,
             useBrowserConsole: true,
             throwFail: true,
@@ -191,7 +195,7 @@ YUI.prototype = {
                 var b, nodes, i, src, match;
 
                 // get from querystring
-                nodes = document.getElementsByTagName('script');
+                nodes = (doc && doc.getElementsByTagName('script')) || [];
 
                 for (i=0; i<nodes.length; i=i+1) {
                     src = nodes[i].src;
@@ -730,6 +734,7 @@ YUI.prototype = {
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
+}
 
 })();
 
