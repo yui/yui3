@@ -604,7 +604,8 @@ YUI.prototype = {
 
         } else {
             if (l) {
-                Y.message('Unable or not configured to fetch missing modules: ' + missing, 'info', 'yui');
+                Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
+Y.log('This instance is not provisioned to fetch missing modules: ' + missing, 'log', 'yui');
             }
             Y.log('Attaching available dependencies.', 'info', 'yui');
             Y._attach(r);
@@ -3032,6 +3033,22 @@ INSTANCE.log = function(msg, cat, src, silent) {
     return Y;
 };
 
+/**
+ * Write a system message.  This message will be preserved in the
+ * minified and raw versions of the YUI files, unlike log statements.
+ * @method message
+ * @for YUI
+ * @param  {String}  msg  The message to log.
+ * @param  {String}  cat  The log category for the message.  Default
+ *                        categories are "info", "warn", "error", time".
+ *                        Custom categories can be used as well. (opt)
+ * @param  {String}  src  The source of the the message (opt)
+ * @param  {boolean} silent If true, the log event won't fire
+ * @return {YUI}      YUI instance
+ */
+INSTANCE.message = function() {
+    return INSTANCE.log.apply(INSTANCE, arguments);
+};
 
 })();
 

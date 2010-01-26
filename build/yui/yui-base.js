@@ -588,7 +588,7 @@ YUI.prototype = {
 
         } else {
             if (l) {
-                Y.message('Unable or not configured to fetch missing modules: ' + missing, 'info', 'yui');
+                Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
             }
             Y._attach(r);
             onComplete();
