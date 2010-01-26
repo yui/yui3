@@ -13,6 +13,7 @@
         docEl = doc && doc.documentElement,
         docElClass = docEl && docEl.className,
         DOCUMENT_CLASS = 'yui-js-enabled',
+        NOOP = function() {},
     
         _instances = {}, 
         _startTime = new Date().getTime(), 
@@ -649,9 +650,9 @@ YUI.prototype = {
     },
 
     // this is replaced if the log module is included
-    log: function() {
-
-    },
+    log: NOOP,
+    message: NOOP,
+    
 
     /**
      * Report an error.  The reporting mechanism is controled by
@@ -3031,22 +3032,6 @@ INSTANCE.log = function(msg, cat, src, silent) {
     return Y;
 };
 
-/**
- * Write a system message.  This message will be preserved in the
- * minified and raw versions of the YUI files, unlike log statements.
- * @method message
- * @for YUI
- * @param  {String}  msg  The message to log.
- * @param  {String}  cat  The log category for the message.  Default
- *                        categories are "info", "warn", "error", time".
- *                        Custom categories can be used as well. (opt)
- * @param  {String}  src  The source of the the message (opt)
- * @param  {boolean} silent If true, the log event won't fire
- * @return {YUI}      YUI instance
- */
-INSTANCE.message = function() {
-    return INSTANCE.log.apply(INSTANCE, arguments);
-};
 
 })();
 

@@ -13,6 +13,7 @@
         docEl = doc && doc.documentElement,
         docElClass = docEl && docEl.className,
         DOCUMENT_CLASS = 'yui-js-enabled',
+        NOOP = function() {},
     
         _instances = {}, 
         _startTime = new Date().getTime(), 
@@ -632,9 +633,9 @@ YUI.prototype = {
     },
 
     // this is replaced if the log module is included
-    log: function() {
-
-    },
+    log: NOOP,
+    message: NOOP,
+    
 
     /**
      * Report an error.  The reporting mechanism is controled by
