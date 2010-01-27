@@ -422,7 +422,8 @@
          * If not provided, the content will replace existing content in the section.
          */
         _uiSetStdMod : function(section, content, where) {
-            if (content) {
+            // Using isValue, so that "" is valid content 
+            if (L.isValue(content)) {
                 var node = this.getStdModNode(section) || this._renderStdMod(section);
                 if (content instanceof Node || content instanceof NodeList) {
                     this._addNodeRef(node, content, where);
