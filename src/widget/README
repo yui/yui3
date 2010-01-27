@@ -1,5 +1,7 @@
 Development Master
 
+* Changed default value for the tabIndex attribute to null, meaning by default a Widget's bounding box will not be a focusable element.
+
 * Widget now has built-in support for Progressive Enhancement.  
 
   1)  The document element (HTML) is now stamped with a class name 

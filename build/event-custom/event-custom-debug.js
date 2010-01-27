@@ -817,6 +817,8 @@ Y.CustomEvent.prototype = {
     },
 
     fireSimple: function(args) {
+        this.stopped = 0;
+        this.prevented = 0;
         if (this.hasSubs()) {
             // this._procSubs(Y.merge(this.subscribers, this.afters), args);
             var subs = this.getSubs();
@@ -1916,8 +1918,8 @@ CEProto.fireComplex = function(args) {
 
     subs = this.getSubs();
 
-    this.stopped = 0;
-    this.prevented = 0;
+    this.stopped = es.stopped || 0;
+    this.prevented = es.stopped || 0;
     this.target = this.target || this.host;
 
     events = new Y.EventTarget({
@@ -1960,8 +1962,8 @@ CEProto.fireComplex = function(args) {
 
     // bubble if this is hosted in an event target and propagation has not been stopped
     if (this.bubbles && this.host && this.host.bubble && !this.stopped) {
-        es.stopped = 0;
-        es.prevented = 0;
+        // es.stopped = 0;
+        // es.prevented = 0;
         ret = this.host.bubble(this);
 
         this.stopped = Math.max(this.stopped, es.stopped);

@@ -19,7 +19,7 @@ function DDValue() {
     DDValue.superclass.constructor.apply( this, arguments );
 }
 
-Y.Plugin.DDValue = Y.extend( DDValue, Y.Plugin.Base, {
+Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
 
     // DDValue prototype
 
@@ -61,9 +61,19 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Plugin.Base, {
      * @protected
      */
     initializer: function () {
+        /**
+         * Detach category for internal events to aid in cleanup.
+         *
+         * @property _evtGuid
+         * @type { String }
+         * @protected
+         */
+        this._evtGuid = Y.guid();
+
         this._key = DDValue._AXIS_KEYS[ this.get( 'valueFromAxis' ) ];
 
-        this.doAfter( 'align', this._afterDDAlign, this );
+        this.get( HOST )
+            .after( this._evtGuid + '|align', this._afterDDAlign, this );
 
         this.after( {
             minChange:   this._afterMinChange,
@@ -86,6 +96,18 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Plugin.Base, {
         this._calculateFactor();
 
         this._uiSetDragPosition( this.get( VALUE ) );
+    },
+
+    /**
+     * Detach event listeners.
+     *
+     // @TODO: destroy?
+     * @method detructor
+     * @protected
+     */
+    destructor: function () {
+        this.get( HOST ).detach( this._evtGuid + '|*' );
+        this.detach();
     },
 
     /**
@@ -408,26 +430,74 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Plugin.Base, {
      * @protected
      */
     ATTRS: {
+        /**
+         * The host Drag instance.
+         *
+         * @attribute host
+         * @type { Object }
+         * @writeOnce
+         */
+        host: {
+            writeOnce: true
+        },
+
+        /**
+         * Which movement axis to monitor for value association.  Allowable
+         * values are &quot;x&quot; and &quot;y&quot;.  This will default based
+         * on the host Drag instance's configured <code>stickX</code> or
+         * <code>stickY</code> (via DDConstrained config), or &quot;x&quot; if
+         * neither is defined.
+         *
+         * @attribute valueFromAxis
+         * @type { String }
+         * @writeOnce
+         */
         valueFromAxis: {
             valueFn  : '_initValueFromAxis',
             writeOnce: true,
             validator: '_validateNewValueFromAxis'
         },
 
+        /**
+         * The value associated with the farthest top, left position of the
+         * Drag element within its constraining element.  Can be greater than
+         * the configured <code>max</code> if you want values to increase from
+         * right-to-left or bottom-to-top.
+         *
+         * @attribute min
+         * @type { Number }
+         * @default 0
+         */
         min: {
             value    : 0,
             validator: '_validateNewMin'
         },
 
+        /**
+         * The value associated with the farthest bottom, right position of the
+         * Drag element within its constraining element.  Can be less than
+         * the configured <code>min</code> if you want values to increase from
+         * right-to-left or bottom-to-top.
+         *
+         * @attribute max
+         * @type { Number }
+         * @default 100
+         */
         max: {
             value    : 100,
             validator: '_validateNewMax'
         },
 
+        /**
+         * The value associated with the Drag element's current position along the axis configured in <code>valueFromAxis</code>.  Defaults to the value inferred from the Drag element's current position.  Specifying value in the constructor will move the Drag node to the position that corresponds to the supplied value.
+         *
+         * @attribute value
+         * @type { Number }
+         * @default (inferred from current Drag position)
+         */
         value: {
             valueFn  : '_initValueFromPosition',
             validator: '_validateNewValue'
         }
-
     }
 });

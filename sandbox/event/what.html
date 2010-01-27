@@ -1,0 +1,26 @@
+<head>
+<title>test page</title>
+<!--
+<script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-debug.js" type="text/javascript"></script>  
+-->
+<script type='text/javascript' src='../../build/yui/yui-debug.js'></script>
+</head>
+<body>
+<script type='text/javascript'>
+var Y = YUI();
+Y.use('base','node','event',function(Y) {
+   console.log('setting event');
+   Y.on('available',function(e) {
+      console.log('body available');
+      Y.delegate('click',function(e) {
+         console.log("FOO");
+      },'body','#stuff');
+      Y.on('click',function(e) {
+         console.log("BAR");
+      },"#stuff");
+   },'body');
+});
+</script> 
+<div id='stuff' style='cursor:pointer'>BODY!</div>
+</body>
+

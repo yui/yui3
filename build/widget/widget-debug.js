@@ -205,7 +205,7 @@ ATTRS[CONTENT_BOX] = {
  * @default 0
  */
 ATTRS[TAB_INDEX] = {
-	value: 0,
+	value: null,
 	validator: "_validTabIndex"
 };
 
