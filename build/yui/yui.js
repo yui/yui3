@@ -173,13 +173,14 @@ YUI.prototype = {
 
         Y.Env._loaded[v] = {};
 
+        Y.id = Y.stamp(Y);
+
         if (YUI.Env && Y !== YUI) {
             Y.Env._yidx = (++YUI.Env._yidx);
             Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
             _instances[Y.id] = Y;
         } 
 
-        Y.id = Y.stamp(Y);
 
         Y.constructor = YUI;
 
