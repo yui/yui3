@@ -73,7 +73,7 @@
     <span class="c1">// DDValue prototype</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Map to property names based on &lt;code&gt;valueFromAxis&lt;/code&gt; for use in</span>
+<span class="cm">     * Map to property names based on &lt;code&gt;axis&lt;/code&gt; for use in</span>
 <span class="cm">     * calculation and accessing event info.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @property _key</span>
@@ -92,7 +92,6 @@
 <span class="cm">     */</span>
     <span class="nx">_offsetXY</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 
-
     <span class="cm">/**</span>
 <span class="cm">     * Factor used to translate value -&amp;gt; position -&amp;gt; value.</span>
 <span class="cm">     *</span>
@@ -104,12 +103,20 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Attach event listeners to keep the UI in sync with the min/max/value</span>
-<span class="cm">     * attributes and DD position, then call syncUI() to sync initial state.</span>
+<span class="cm">     * attributes and DD position, then call syncDragNode() to sync initial state.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method initializer</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">),</span>
+            <span class="c1">// DDConstrained must be plugged in</span>
+            <span class="nx">con</span>  <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">con</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defaultConstrain</span><span class="p">(),</span>
+            <span class="nx">category</span><span class="p">;</span>
+
+        <span class="c1">// Because attribute setters aren&#39;t called on initialization</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_key</span> <span class="o">=</span> <span class="nx">DDValue</span><span class="p">.</span><span class="nx">_AXIS_KEYS</span><span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;axis&#39;</span> <span class="p">)</span> <span class="p">];</span>
+
         <span class="cm">/**</span>
 <span class="cm">         * Detach category for internal events to aid in cleanup.</span>
 <span class="cm">         *</span>
@@ -117,50 +124,77 @@
 <span class="cm">         * @type { String }</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">=</span> <span class="nx">category</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span><span class="p">;</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_key</span> <span class="o">=</span> <span class="nx">DDValue</span><span class="p">.</span><span class="nx">_AXIS_KEYS</span><span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;valueFromAxis&#39;</span> <span class="p">)</span> <span class="p">];</span>
+        <span class="nx">host</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="nx">category</span> <span class="o">+</span> <span class="s1">&#39;align&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterAlign</span><span class="p">,</span> <span class="k">this</span> <span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">)</span>
-            <span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">+</span> <span class="s1">&#39;|align&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterDDAlign</span><span class="p">,</span> <span class="k">this</span> <span class="p">);</span>
+        <span class="nx">con</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="nx">category</span> <span class="o">+</span> <span class="s1">&#39;constrain2nodeChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">syncDragNode</span><span class="p">,</span> <span class="k">this</span> <span class="p">);</span>
+        <span class="nx">con</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="nx">category</span> <span class="o">+</span> <span class="s1">&#39;constrain2viewChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">syncDragNode</span><span class="p">,</span> <span class="k">this</span> <span class="p">);</span>
+        <span class="nx">con</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="nx">category</span> <span class="o">+</span> <span class="s1">&#39;constrain2regionChange&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">syncDragNode</span><span class="p">,</span> <span class="k">this</span> <span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="p">{</span>
-            <span class="nx">minChange</span><span class="o">:</span>   <span class="k">this</span><span class="p">.</span><span class="nx">_afterMinChange</span><span class="p">,</span>
-            <span class="nx">maxChange</span><span class="o">:</span>   <span class="k">this</span><span class="p">.</span><span class="nx">_afterMaxChange</span><span class="p">,</span>
+            <span class="nx">minChange</span>  <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMinChange</span><span class="p">,</span>
+            <span class="nx">maxChange</span>  <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMaxChange</span><span class="p">,</span>
             <span class="nx">valueChange</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterValueChange</span>
         <span class="p">}</span> <span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">syncUI</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">syncDragNode</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Plugs in Y.Plugin.DDConstrained onto the Drag instance.  Default</span>
+<span class="cm">     * configuration uses &lt;code&gt;constrain2node&lt;/code&gt; set to the</span>
+<span class="cm">     * &lt;code&gt;dragNode&lt;/code&gt;&#39;s &lt;code&gt;parentNode&lt;/code&gt;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _defaultConstrain</span>
+<span class="cm">     * @return { Y.Plugin.DDConstrained } The plugin instance</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_defaultConstrain</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">);</span>
+
+        <span class="nx">host</span><span class="p">.</span><span class="nx">plug</span><span class="p">(</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">DDConstrain</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">constrain2node</span><span class="o">:</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">DRAG_NODE</span> <span class="p">).</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;parentNode&#39;</span> <span class="p">)</span>
+        <span class="p">}</span> <span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">host</span><span class="p">.</span><span class="nx">con</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Cache constraining element offsets and dims for faster value translation</span>
 <span class="cm">     * and map current DD position to value.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method syncUI</span>
+<span class="cm">     * @method syncDragNode</span>
 <span class="cm">     */</span>
-    <span class="nx">syncUI</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">syncDragNode</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_cacheOffset</span><span class="p">();</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_calculateFactor</span><span class="p">();</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetDragPosition</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">VALUE</span> <span class="p">)</span> <span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_setPosition</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">VALUE</span> <span class="p">)</span> <span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Detach event listeners.</span>
 <span class="cm">     *</span>
-<span class="cm">     // @TODO: destroy?</span>
 <span class="cm">     * @method detructor</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">).</span><span class="nx">detach</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">+</span> <span class="s1">&#39;|*&#39;</span> <span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">);</span>
+
+        <span class="nx">host</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span> <span class="nx">host</span><span class="p">.</span><span class="nx">con</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">host</span><span class="p">.</span><span class="nx">con</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="p">);</span>
+        <span class="p">}</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Captures the current top left of the DD&#39;s constraining node or region to avoid excessive DOM lookups at run time.</span>
+<span class="cm">     * Captures the current top left of the DD&#39;s constraining node or region to</span>
+<span class="cm">     * avoid excessive DOM lookups at run time.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _cacheOffset</span>
 <span class="cm">     * @protected</span>
@@ -190,22 +224,17 @@
     <span class="cm">/**</span>
 <span class="cm">     * Dispatch the new position of the DD into the value setting operations.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _afterDDAlign</span>
+<span class="cm">     * @method _afterAlign</span>
 <span class="cm">     * @param e { EventFacade } The drag:align event</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_afterDDAlign</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">xy</span>      <span class="o">=</span> <span class="nx">e</span><span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">eventPageAxis</span> <span class="p">]</span> <span class="o">-</span>
-                      <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">).</span><span class="nx">deltaXY</span><span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">xyIndex</span> <span class="p">]</span> <span class="o">-</span>
-                      <span class="k">this</span><span class="p">.</span><span class="nx">_offsetXY</span><span class="p">,</span>
-            <span class="nx">prevVal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">VALUE</span> <span class="p">),</span>
-            <span class="nx">newVal</span><span class="p">;</span>
+    <span class="nx">_afterAlign</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">host</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">),</span>
+            <span class="nx">value</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_offsetToValue</span><span class="p">(</span> <span class="nx">host</span><span class="p">.</span><span class="nx">actXY</span><span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">xyIndex</span> <span class="p">]</span> <span class="p">);</span>
 
-        <span class="nx">newVal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_offsetToValue</span><span class="p">(</span> <span class="nx">xy</span> <span class="p">);</span>
-
-        <span class="c1">// Can&#39;t just do this.set( VALUE, this._offsetToValue( xy ) )</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">prevVal</span> <span class="o">!==</span> <span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="nx">VALUE</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">,</span> <span class="p">{</span> <span class="nx">ddEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="p">}</span> <span class="p">);</span>
+        <span class="c1">// Can&#39;t just do this.set( VALUE, this._offsetToValue( value ) )</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">prevVal</span> <span class="o">!==</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="nx">VALUE</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span> <span class="nx">ddEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="p">}</span> <span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -223,19 +252,11 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_offsetToValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">xy</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">max</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MAX</span> <span class="p">),</span>
-            <span class="nx">min</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MIN</span> <span class="p">),</span>
-            <span class="nx">value</span> <span class="o">=</span> <span class="nx">round</span><span class="p">(</span> <span class="nx">xy</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">_factor</span> <span class="p">)</span> <span class="o">+</span> <span class="nx">min</span><span class="p">,</span> <span class="c1">// force int values</span>
-            <span class="nx">tmp</span><span class="p">;</span>
+        <span class="nx">xy</span> <span class="o">-=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_offsetXY</span><span class="p">;</span>
 
-        <span class="c1">// Account for reverse value range (max &lt; min)</span>
-        <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">max</span> <span class="o">&gt;</span> <span class="nx">min</span> <span class="o">?</span> <span class="nx">max</span> <span class="o">:</span> <span class="nx">min</span><span class="p">;</span>
-        <span class="nx">min</span> <span class="o">=</span> <span class="nx">max</span> <span class="o">&gt;</span> <span class="nx">min</span> <span class="o">?</span> <span class="nx">min</span> <span class="o">:</span> <span class="nx">max</span><span class="p">;</span>
-        <span class="nx">max</span> <span class="o">=</span> <span class="nx">tmp</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">round</span><span class="p">(</span> <span class="nx">xy</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">_factor</span> <span class="p">)</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MIN</span> <span class="p">);</span>
 
-        <span class="k">return</span> <span class="nx">value</span> <span class="o">&gt;</span> <span class="nx">max</span> <span class="o">?</span> <span class="nx">max</span> <span class="o">:</span>
-               <span class="nx">value</span> <span class="o">&lt;</span> <span class="nx">min</span> <span class="o">?</span> <span class="nx">min</span> <span class="o">:</span>
-               <span class="nx">value</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_nearestValue</span><span class="p">(</span> <span class="nx">value</span> <span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -255,25 +276,52 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Update value according to new min value.</span>
+<span class="cm">     * Update position according to new min value.  If the new min results in</span>
+<span class="cm">     * the current value being out of range, the value is set to the closer of</span>
+<span class="cm">     * min or max.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _afterMinChange</span>
 <span class="cm">     * @param e { EventFacade } The &lt;code&gt;min&lt;/code&gt; attribute change event.</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterMinChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">syncUI</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_verifyValue</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">syncDragNode</span><span class="p">();</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Update value according to new max value.</span>
+<span class="cm">     * Update position according to new max value.  If the new max results in</span>
+<span class="cm">     * the current value being out of range, the value is set to the closer of</span>
+<span class="cm">     * min or max.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _afterMaxChange</span>
 <span class="cm">     * @param e { EventFacade } The &lt;code&gt;max&lt;/code&gt; attribute change event.</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterMaxChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">syncUI</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_verifyValue</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">syncDragNode</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Verifies that the current value is within the min - max range.  If not,</span>
+<span class="cm">     * value is set to either min or max, depending on which is closer.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _verifyValue</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_verifyValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">value</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">VALUE</span> <span class="p">),</span>
+            <span class="nx">nearest</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_nearestValue</span><span class="p">(</span> <span class="nx">value</span> <span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span> <span class="nx">value</span> <span class="o">!==</span> <span class="nx">nearest</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// @TODO Can/should valueChange, minChange, etc be queued events?</span>
+            <span class="c1">// To make dd.set( &#39;min&#39;, n ); execute after minChange subscribers</span>
+            <span class="c1">// before on/after valueChange subscribers.</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="nx">VALUE</span><span class="p">,</span> <span class="nx">nearest</span> <span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -285,19 +333,18 @@
 <span class="cm">     */</span>
     <span class="nx">_afterValueChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">ddEvent</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetDragPosition</span><span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span> <span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_setPosition</span><span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span> <span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Positions the Drag element in accordance with the translated value.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _uiSetDragPosition</span>
+<span class="cm">     * @method _setPosition</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_uiSetDragPosition</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">),</span>
-            <span class="nx">xy</span><span class="p">;</span>
+    <span class="nx">_setPosition</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">);</span>
 
         <span class="c1">// Drag element hasn&#39;t been setup yet</span>
         <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">host</span><span class="p">.</span><span class="nx">deltaXY</span> <span class="p">)</span> <span class="p">{</span>
@@ -305,10 +352,9 @@
             <span class="nx">host</span><span class="p">.</span><span class="nx">_setStartPosition</span><span class="p">(</span> <span class="nx">host</span><span class="p">.</span><span class="nx">actXY</span> <span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">xy</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">actXY</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
-        <span class="nx">xy</span><span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">xyIndex</span> <span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_valueToOffset</span><span class="p">(</span> <span class="nx">value</span> <span class="p">);</span>
+        <span class="nx">host</span><span class="p">.</span><span class="nx">actXY</span><span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">xyIndex</span> <span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_valueToOffset</span><span class="p">(</span> <span class="nx">value</span> <span class="p">);</span>
 
-        <span class="nx">host</span><span class="p">.</span><span class="nx">_alignNode</span><span class="p">(</span> <span class="nx">xy</span> <span class="p">);</span>
+        <span class="nx">host</span><span class="p">.</span><span class="nx">_moveNode</span><span class="p">();</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -349,28 +395,47 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_validateNewValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span> <span class="nx">value</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">_nearestValue</span><span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Returns the nearest valid value to the value input.  If the provided</span>
+<span class="cm">     * value is outside the min - max range, accounting for min &gt; max</span>
+<span class="cm">     * scenarios, the nearest of either min or max is returned.  Otherwise, the</span>
+<span class="cm">     * provided value is returned.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _nearestValue</span>
+<span class="cm">     * @param value { mixed } Value to test against current min - max range</span>
+<span class="cm">     * @return { Number } Current min, max, or value if within range</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_nearestValue</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">min</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MIN</span> <span class="p">),</span>
             <span class="nx">max</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MAX</span> <span class="p">),</span>
             <span class="nx">tmp</span><span class="p">;</span>
 
         <span class="c1">// Account for reverse value range (min &gt; max)</span>
-        <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">max</span> <span class="o">&gt;</span> <span class="nx">min</span> <span class="o">?</span> <span class="nx">max</span> <span class="o">:</span> <span class="nx">min</span><span class="p">;</span>
-        <span class="nx">min</span> <span class="o">=</span> <span class="nx">max</span> <span class="o">&gt;</span> <span class="nx">min</span> <span class="o">?</span> <span class="nx">min</span> <span class="o">:</span> <span class="nx">max</span><span class="p">;</span>
+        <span class="nx">tmp</span> <span class="o">=</span> <span class="p">(</span> <span class="nx">max</span> <span class="o">&gt;</span> <span class="nx">min</span> <span class="p">)</span> <span class="o">?</span> <span class="nx">max</span> <span class="o">:</span> <span class="nx">min</span><span class="p">;</span>
+        <span class="nx">min</span> <span class="o">=</span> <span class="p">(</span> <span class="nx">max</span> <span class="o">&gt;</span> <span class="nx">min</span> <span class="p">)</span> <span class="o">?</span> <span class="nx">min</span> <span class="o">:</span> <span class="nx">max</span><span class="p">;</span>
         <span class="nx">max</span> <span class="o">=</span> <span class="nx">tmp</span><span class="p">;</span>
 
-        <span class="k">return</span> <span class="nx">value</span> <span class="o">&gt;=</span> <span class="nx">min</span> <span class="o">&amp;&amp;</span> <span class="nx">value</span> <span class="o">&lt;=</span> <span class="nx">max</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">(</span> <span class="nx">value</span> <span class="o">&lt;</span> <span class="nx">min</span> <span class="p">)</span> <span class="o">?</span>
+                <span class="nx">min</span> <span class="o">:</span>
+                <span class="p">(</span> <span class="nx">value</span> <span class="o">&gt;</span> <span class="nx">max</span> <span class="p">)</span> <span class="o">?</span>
+                    <span class="nx">max</span> <span class="o">:</span>
+                    <span class="nx">value</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/** </span>
-<span class="cm">     * Validates new values assigned to &lt;code&gt;valueFromAxis&lt;/code&gt; attribute.</span>
+<span class="cm">     * Validates new values assigned to &lt;code&gt;axis&lt;/code&gt; attribute.</span>
 <span class="cm">     * Acceptable values are &quot;x&quot; and &quot;y&quot;.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _validateNewValueFromAxis</span>
+<span class="cm">     * @method _validateNewAxis</span>
 <span class="cm">     * @param value { String } proposed value</span>
 <span class="cm">     * @return { Boolean } True if value is &quot;x&quot; or &quot;y&quot;</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_validateNewValueFromAxis</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_validateNewAxis</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">value</span> <span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">value</span> <span class="o">===</span> <span class="s1">&#39;x&#39;</span> <span class="o">||</span> <span class="nx">value</span> <span class="o">===</span> <span class="s1">&#39;y&#39;</span><span class="p">;</span>
     <span class="p">},</span>
 
@@ -379,44 +444,33 @@
 <span class="cm">     * the assignment of &lt;code&gt;stickX&lt;/code&gt; or &lt;code&gt;stickY&lt;/code&gt; attributes</span>
 <span class="cm">     * in the DDConstrained plugin.  If neither are set, defaults to &quot;x&quot;.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _initValueFromAxis</span>
+<span class="cm">     * @method _initAxis</span>
 <span class="cm">     * @return { String } &quot;x&quot; or &quot;y&quot;</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_initValueFromAxis</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">).</span><span class="nx">con</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;stickY&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;y&quot;</span> <span class="o">:</span> <span class="s2">&quot;x&quot;</span><span class="p">;</span>
+    <span class="nx">_defaultAxis</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">).</span><span class="nx">con</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;stickY&#39;</span> <span class="p">)</span> <span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;y&quot;</span> <span class="o">:</span> <span class="s2">&quot;x&quot;</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Calculate the value from the current Drag element&#39;s position.  This is</span>
 <span class="cm">     * used to initialize the value attribute if it isn&#39;t set at construction.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _initValueFromPosition</span>
+<span class="cm">     * @method _getValueFromPosition</span>
 <span class="cm">     * @return { mixed } Value as calculated from the node&#39;s current position</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_initValueFromPosition</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="c1">// This is used as the valueFn for the value attribute, and so it can&#39;t</span>
-        <span class="c1">// use the _key shortcuts or the cached values from _cacheOffset or</span>
-        <span class="c1">// _calculateFactor.</span>
-        <span class="kd">var</span> <span class="nx">host</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">),</span>
-            <span class="nx">axis</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;valueFromAxis&#39;</span> <span class="p">),</span>
-            <span class="nx">range</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MAX</span> <span class="p">)</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">MIN</span> <span class="p">),</span>
+    <span class="nx">_getValueFromPosition</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_key</span> <span class="o">=</span> <span class="nx">DDValue</span><span class="p">.</span><span class="nx">_AXIS_KEYS</span><span class="p">[</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;axis&#39;</span> <span class="p">)</span> <span class="p">];</span>
 
-            <span class="nx">region</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">con</span><span class="p">.</span><span class="nx">getRegion</span><span class="p">(</span> <span class="kc">true</span> <span class="p">),</span>
-            <span class="nx">xy</span>     <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">DRAG_NODE</span> <span class="p">).</span><span class="nx">getXY</span><span class="p">(),</span>
+        <span class="kd">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">HOST</span> <span class="p">)</span>
+                    <span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="nx">DRAG_NODE</span> <span class="p">).</span><span class="nx">getXY</span><span class="p">()[</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">.</span><span class="nx">xyIndex</span> <span class="p">];</span>
 
-            <span class="nx">factor</span><span class="p">,</span> <span class="nx">position</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_cacheOffset</span><span class="p">();</span>
 
-        <span class="k">if</span> <span class="p">(</span> <span class="nx">axis</span> <span class="o">===</span> <span class="s1">&#39;x&#39;</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="nx">factor</span>   <span class="o">=</span> <span class="nx">range</span> <span class="o">/</span> <span class="p">(</span> <span class="nx">region</span><span class="p">.</span><span class="nx">right</span>  <span class="o">-</span> <span class="nx">region</span><span class="p">.</span><span class="nx">left</span> <span class="p">);</span>
-            <span class="nx">position</span> <span class="o">=</span> <span class="nx">xy</span><span class="p">[</span> <span class="mi">0</span> <span class="p">]</span> <span class="o">-</span> <span class="nx">region</span><span class="p">.</span><span class="nx">left</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">factor</span>   <span class="o">=</span> <span class="nx">range</span> <span class="o">/</span> <span class="p">(</span> <span class="nx">region</span><span class="p">.</span><span class="nx">bottom</span>  <span class="o">-</span> <span class="nx">region</span><span class="p">.</span><span class="nx">top</span> <span class="p">);</span>
-            <span class="nx">position</span> <span class="o">=</span> <span class="nx">xy</span><span class="p">[</span> <span class="mi">1</span> <span class="p">]</span> <span class="o">-</span> <span class="nx">region</span><span class="p">.</span><span class="nx">top</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_calculateFactor</span><span class="p">();</span>
 
-        <span class="k">return</span> <span class="nx">position</span> <span class="o">*</span> <span class="nx">factor</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_offsetToValue</span><span class="p">(</span> <span class="nx">xy</span> <span class="p">);</span>
     <span class="p">}</span>
 
 <span class="p">},</span> <span class="p">{</span>
@@ -459,13 +513,11 @@
         <span class="nx">x</span> <span class="o">:</span> <span class="p">{</span>
             <span class="nx">offsetEdge</span>    <span class="o">:</span> <span class="s1">&#39;left&#39;</span><span class="p">,</span>
             <span class="nx">farEdge</span>       <span class="o">:</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span>
-            <span class="nx">eventPageAxis</span> <span class="o">:</span> <span class="s1">&#39;pageX&#39;</span><span class="p">,</span>
             <span class="nx">xyIndex</span>       <span class="o">:</span> <span class="mi">0</span>
         <span class="p">},</span>
         <span class="nx">y</span> <span class="o">:</span> <span class="p">{</span>
             <span class="nx">offsetEdge</span>    <span class="o">:</span> <span class="s1">&#39;top&#39;</span><span class="p">,</span>
             <span class="nx">farEdge</span>       <span class="o">:</span> <span class="s1">&#39;bottom&#39;</span><span class="p">,</span>
-            <span class="nx">eventPageAxis</span> <span class="o">:</span> <span class="s1">&#39;pageY&#39;</span><span class="p">,</span>
             <span class="nx">xyIndex</span>       <span class="o">:</span> <span class="mi">1</span>
         <span class="p">}</span>
     <span class="p">},</span>
@@ -497,14 +549,14 @@
 <span class="cm">         * &lt;code&gt;stickY&lt;/code&gt; (via DDConstrained config), or &amp;quot;x&amp;quot; if</span>
 <span class="cm">         * neither is defined.</span>
 <span class="cm">         *</span>
-<span class="cm">         * @attribute valueFromAxis</span>
+<span class="cm">         * @attribute axis</span>
 <span class="cm">         * @type { String }</span>
 <span class="cm">         * @writeOnce</span>
 <span class="cm">         */</span>
-        <span class="nx">valueFromAxis</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">valueFn</span>  <span class="o">:</span> <span class="s1">&#39;_initValueFromAxis&#39;</span><span class="p">,</span>
+        <span class="nx">axis</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">valueFn</span>  <span class="o">:</span> <span class="s1">&#39;_defaultAxis&#39;</span><span class="p">,</span>
             <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-            <span class="nx">validator</span><span class="o">:</span> <span class="s1">&#39;_validateNewValueFromAxis&#39;</span>
+            <span class="nx">validator</span><span class="o">:</span> <span class="s1">&#39;_validateNewAxis&#39;</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
@@ -538,14 +590,18 @@
         <span class="p">},</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * The value associated with the Drag element&#39;s current position along the axis configured in &lt;code&gt;valueFromAxis&lt;/code&gt;.  Defaults to the value inferred from the Drag element&#39;s current position.  Specifying value in the constructor will move the Drag node to the position that corresponds to the supplied value.</span>
+<span class="cm">         * The value associated with the Drag element&#39;s current position along</span>
+<span class="cm">         * the axis configured in &lt;code&gt;axis&lt;/code&gt;.  Defaults to the</span>
+<span class="cm">         * value inferred from the Drag element&#39;s current position.  Specifying</span>
+<span class="cm">         * value in the constructor will move the Drag node to the position</span>
+<span class="cm">         * that corresponds to the supplied value.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @attribute value</span>
 <span class="cm">         * @type { Number }</span>
 <span class="cm">         * @default (inferred from current Drag position)</span>
 <span class="cm">         */</span>
         <span class="nx">value</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">valueFn</span>  <span class="o">:</span> <span class="s1">&#39;_initValueFromPosition&#39;</span><span class="p">,</span>
+            <span class="nx">valueFn</span>  <span class="o">:</span> <span class="s1">&#39;_getValueFromPosition&#39;</span><span class="p">,</span>
             <span class="nx">validator</span><span class="o">:</span> <span class="s1">&#39;_validateNewValue&#39;</span>
         <span class="p">}</span>
     <span class="p">}</span>
