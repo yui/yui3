@@ -1415,9 +1415,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 						menuNav._hideMenu, oSubmenu);
 			
 			}
-			else if (!menuNav._movingToSubmenu && oSubmenu && 
-				!oSubmenu.contains(oRelatedTarget) && 
-				!oRelatedTarget.compareTo(oSubmenu)) {
+			else if (!menuNav._movingToSubmenu && oSubmenu && (!oRelatedTarget || 
+			        (oRelatedTarget && 
+			            !oSubmenu.contains(oRelatedTarget) && 
+			            !oRelatedTarget.compareTo(oSubmenu)))) {
 
 				//	If the mouse is not moving toward the submenu, cancel any 
 				//	submenus that might be in the process of being displayed 
@@ -1821,7 +1822,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			oSubmenu = oMenuLabel.next();
 
-			if (oSubmenu && 
+			if (oSubmenu && oRelatedTarget && 
 				(oRelatedTarget.compareTo(oSubmenu) || 
 					oSubmenu.contains(oRelatedTarget))) {
 
