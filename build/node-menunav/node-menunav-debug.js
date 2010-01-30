@@ -123,9 +123,6 @@ var UA = Y.UA,
 	HOST = "host",
 	ACTIVE_DESCENDANT_CHANGE = ACTIVE_DESCENDANT + "Change",
 
-	STANDARD_QUERY = ">.yui-menu-content>ul>li>a",
-	EXTENDED_QUERY = ">.yui-menu-content>ul>li>.yui-menu-label>a:first-child",
-
 
 	//	Attribute keys
 	
@@ -148,8 +145,12 @@ var UA = Y.UA,
 	//	CSS selectors
 	
 	MENU_SELECTOR = PERIOD + CSS_MENU,
-	MENU_TOGGLE_SELECTOR = (PERIOD + getClassName(MENU, "toggle"));
+	MENU_TOGGLE_SELECTOR = (PERIOD + getClassName(MENU, "toggle")),
+    MENU_CONTENT_SELECTOR = PERIOD + getClassName(MENU, CONTENT),
+    MENU_LABEL_SELECTOR = PERIOD + CSS_MENU_LABEL,
 
+	STANDARD_QUERY = ">" + MENU_CONTENT_SELECTOR + ">ul>li>a",
+	EXTENDED_QUERY = ">" + MENU_CONTENT_SELECTOR + ">ul>li>" + MENU_LABEL_SELECTOR + ">a:first-child";
 
 //	Utility functions
 
@@ -431,7 +432,7 @@ NodeMenuNav.ATTRS = {
 
 				oMenu.set(ROLE, MENU);
 
-				oMenu.all("ul,li,." + getClassName(MENU, CONTENT)).set(ROLE, PRESENTATION);
+				oMenu.all("ul,li," + MENU_CONTENT_SELECTOR).set(ROLE, PRESENTATION);
 
 				oMenu.all((PERIOD + getClassName(MENUITEM, CONTENT))).set(ROLE, MENUITEM);
 
@@ -1074,7 +1075,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			oFocusManager = oRootMenu.focusManager;
 
-			sQuery = "#" + oRootMenu.get("id") + " .yui-menu a," + 
+			sQuery = "#" + oRootMenu.get("id") + MENU_SELECTOR + " a," + 
 							MENU_TOGGLE_SELECTOR;
 
 			oRootMenu.all(sQuery).set("tabIndex", -1);
