@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #bg {
+            position: relative;
+            border: 3px solid #999;
+            height: 30px;
+            width: 300px;
+        }
+        #t1 {
+            background: red;
+            position: absolute;
+            left: 0;
+            height: 30px;
+            width: 30px;
+        }
+        #t2 {
+            background: blue;
+            position: absolute;
+            right: 0;
+            height: 30px;
+            width: 30px;
+        }
+    </style>
+</head>
+<body>
+<div id="bg">
+    <div id="t1"></div>
+    <div id="t2"></div>
+</div>
+
+<script src="/yui3/build/yui/yui.js"></script>
+<!--script src="http://yui.yahooapis.com/3.0.0/build/yui/yui.js"></script-->
+<script>
+YUI({
+    filter: 'raw'
+}).use('dd',function (Y) {
+
+var tmp = Y.Node.create( '<p/>' ),
+    config = { constrain2node: '#bg', gutter: '3' },
+    t1 = new Y.DD.Drag({
+            node: '#t1',
+            // Rail added as a handle to pass dd.validClick in mousedown logic
+            handles: [ '#t1', '#bg' ],
+            // Used by alternate resolveDrag
+            on: { mouseDown: function () { active = this; } }
+        })
+        .plug( Y.Plugin.DDConstrained, config ),
+    t2 = new Y.DD.Drag({
+            node: '#t2',
+            handles: [ '#t2', '#bg' ],
+            // Used by alternate resolveDrag
+            on: { mouseDown: function () { active = this; } }
+        })
+        .plug( Y.Plugin.DDConstrained, config ),
+    // The last clicked thumb.  Rail clicks will activate this thumb.
+    active = t1;
+
+Y.one('#bg').on('mousedown', function ( e ) {
+             // Logic that determines which thumb should be used is abstracted
+    var dd   = resolveDrag( e ),
+        xy   = [],
+        node;
+        
+    if ( dd ) {
+        node = dd.get( 'dragNode' );
+
+        if ( !dd.startXY ) {
+            dd._setStartPosition( node.getXY() );
+        }
+
+        // center
+        xy[ 0 ] = e.pageX - Math.round( ( node.get( 'offsetWidth' ) / 2 ) );
+        xy[ 1 ] = e.pageY - Math.round( ( node.get( 'offsetHeight' ) / 2 ) );
+
+        // Use the constraint logic in DDConstrain to adjust from center if
+        // the click would land the dragNode outside the configured constraint
+        // region
+        dd.actXY = xy;
+        dd.con.align();
+
+        // Not _moveNode because I don't want to broadcast additional events
+        // ...or do I?
+        node.setXY( dd.actXY );
+
+        // Delegate to DD's natural behavior
+        dd._handleMouseDownEvent( e );
+    }
+});
+
+function resolveDrag( e ) {
+    // @TODO: include test for dd.get( 'primaryButtonOnly' ) && e.button > 1
+    var t1node = t1.get( 'node' ),
+        t1xy   = t1node.getXY()[0] +
+                 Math.round( t1node.get( 'offsetWidth' ) / 2),
+        t2node = t2.get( 'node' ),
+        t2xy   = t2node.getXY()[0] +
+                 Math.round( t2node.get( 'offsetWidth' ) / 2);
+        
+    return ( Math.abs( t1xy - e.pageX ) < Math.abs( t2xy - e.pageX ) ) ?
+        t1 : t2;
+}
+
+/*
+ * Alternate resolution algo.  Clicking on the thumb makes it the one the bg
+ * responds to.
+
+function resolveDrag( e ) {
+    return active;
+}
+
+ */
+
+});
+</script>
+</body>
+</html>
