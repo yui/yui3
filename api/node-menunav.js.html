@@ -170,9 +170,6 @@
 	<span class="nx">HOST</span> <span class="o">=</span> <span class="s2">&quot;host&quot;</span><span class="p">,</span>
 	<span class="nx">ACTIVE_DESCENDANT_CHANGE</span> <span class="o">=</span> <span class="nx">ACTIVE_DESCENDANT</span> <span class="o">+</span> <span class="s2">&quot;Change&quot;</span><span class="p">,</span>
 
-	<span class="nx">STANDARD_QUERY</span> <span class="o">=</span> <span class="s2">&quot;&gt;.yui-menu-content&gt;ul&gt;li&gt;a&quot;</span><span class="p">,</span>
-	<span class="nx">EXTENDED_QUERY</span> <span class="o">=</span> <span class="s2">&quot;&gt;.yui-menu-content&gt;ul&gt;li&gt;.yui-menu-label&gt;a:first-child&quot;</span><span class="p">,</span>
-
 
 	<span class="c1">//	Attribute keys</span>
 	
@@ -195,8 +192,12 @@
 	<span class="c1">//	CSS selectors</span>
 	
 	<span class="nx">MENU_SELECTOR</span> <span class="o">=</span> <span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU</span><span class="p">,</span>
-	<span class="nx">MENU_TOGGLE_SELECTOR</span> <span class="o">=</span> <span class="p">(</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">MENU</span><span class="p">,</span> <span class="s2">&quot;toggle&quot;</span><span class="p">));</span>
+	<span class="nx">MENU_TOGGLE_SELECTOR</span> <span class="o">=</span> <span class="p">(</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">MENU</span><span class="p">,</span> <span class="s2">&quot;toggle&quot;</span><span class="p">)),</span>
+    <span class="nx">MENU_CONTENT_SELECTOR</span> <span class="o">=</span> <span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">MENU</span><span class="p">,</span> <span class="nx">CONTENT</span><span class="p">),</span>
+    <span class="nx">MENU_LABEL_SELECTOR</span> <span class="o">=</span> <span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">CSS_MENU_LABEL</span><span class="p">,</span>
 
+	<span class="nx">STANDARD_QUERY</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="o">+</span> <span class="nx">MENU_CONTENT_SELECTOR</span> <span class="o">+</span> <span class="s2">&quot;&gt;ul&gt;li&gt;a&quot;</span><span class="p">,</span>
+	<span class="nx">EXTENDED_QUERY</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span> <span class="o">+</span> <span class="nx">MENU_CONTENT_SELECTOR</span> <span class="o">+</span> <span class="s2">&quot;&gt;ul&gt;li&gt;&quot;</span> <span class="o">+</span> <span class="nx">MENU_LABEL_SELECTOR</span> <span class="o">+</span> <span class="s2">&quot;&gt;a:first-child&quot;</span><span class="p">;</span>
 
 <span class="c1">//	Utility functions</span>
 
@@ -478,7 +479,7 @@
 
 				<span class="nx">oMenu</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ROLE</span><span class="p">,</span> <span class="nx">MENU</span><span class="p">);</span>
 
-				<span class="nx">oMenu</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s2">&quot;ul,li,.&quot;</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">MENU</span><span class="p">,</span> <span class="nx">CONTENT</span><span class="p">)).</span><span class="nx">set</span><span class="p">(</span><span class="nx">ROLE</span><span class="p">,</span> <span class="nx">PRESENTATION</span><span class="p">);</span>
+				<span class="nx">oMenu</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s2">&quot;ul,li,&quot;</span> <span class="o">+</span> <span class="nx">MENU_CONTENT_SELECTOR</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="nx">ROLE</span><span class="p">,</span> <span class="nx">PRESENTATION</span><span class="p">);</span>
 
 				<span class="nx">oMenu</span><span class="p">.</span><span class="nx">all</span><span class="p">((</span><span class="nx">PERIOD</span> <span class="o">+</span> <span class="nx">getClassName</span><span class="p">(</span><span class="nx">MENUITEM</span><span class="p">,</span> <span class="nx">CONTENT</span><span class="p">))).</span><span class="nx">set</span><span class="p">(</span><span class="nx">ROLE</span><span class="p">,</span> <span class="nx">MENUITEM</span><span class="p">);</span>
 
@@ -1121,7 +1122,7 @@
 
 			<span class="nx">oFocusManager</span> <span class="o">=</span> <span class="nx">oRootMenu</span><span class="p">.</span><span class="nx">focusManager</span><span class="p">;</span>
 
-			<span class="nx">sQuery</span> <span class="o">=</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">oRootMenu</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; .yui-menu a,&quot;</span> <span class="o">+</span> 
+			<span class="nx">sQuery</span> <span class="o">=</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="nx">oRootMenu</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">MENU_SELECTOR</span> <span class="o">+</span> <span class="s2">&quot; a,&quot;</span> <span class="o">+</span> 
 							<span class="nx">MENU_TOGGLE_SELECTOR</span><span class="p">;</span>
 
 			<span class="nx">oRootMenu</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">sQuery</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;tabIndex&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
@@ -1462,9 +1463,10 @@
 						<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_hideMenu</span><span class="p">,</span> <span class="nx">oSubmenu</span><span class="p">);</span>
 			
 			<span class="p">}</span>
-			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">menuNav</span><span class="p">.</span><span class="nx">_movingToSubmenu</span> <span class="o">&amp;&amp;</span> <span class="nx">oSubmenu</span> <span class="o">&amp;&amp;</span> 
-				<span class="o">!</span><span class="nx">oSubmenu</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">oRelatedTarget</span><span class="p">)</span> <span class="o">&amp;&amp;</span> 
-				<span class="o">!</span><span class="nx">oRelatedTarget</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">oSubmenu</span><span class="p">))</span> <span class="p">{</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">menuNav</span><span class="p">.</span><span class="nx">_movingToSubmenu</span> <span class="o">&amp;&amp;</span> <span class="nx">oSubmenu</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">oRelatedTarget</span> <span class="o">||</span> 
+			        <span class="p">(</span><span class="nx">oRelatedTarget</span> <span class="o">&amp;&amp;</span> 
+			            <span class="o">!</span><span class="nx">oSubmenu</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">oRelatedTarget</span><span class="p">)</span> <span class="o">&amp;&amp;</span> 
+			            <span class="o">!</span><span class="nx">oRelatedTarget</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">oSubmenu</span><span class="p">))))</span> <span class="p">{</span>
 
 				<span class="c1">//	If the mouse is not moving toward the submenu, cancel any </span>
 				<span class="c1">//	submenus that might be in the process of being displayed </span>
@@ -1868,7 +1870,7 @@
 
 			<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">oMenuLabel</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
 
-			<span class="k">if</span> <span class="p">(</span><span class="nx">oSubmenu</span> <span class="o">&amp;&amp;</span> 
+			<span class="k">if</span> <span class="p">(</span><span class="nx">oSubmenu</span> <span class="o">&amp;&amp;</span> <span class="nx">oRelatedTarget</span> <span class="o">&amp;&amp;</span> 
 				<span class="p">(</span><span class="nx">oRelatedTarget</span><span class="p">.</span><span class="nx">compareTo</span><span class="p">(</span><span class="nx">oSubmenu</span><span class="p">)</span> <span class="o">||</span> 
 					<span class="nx">oSubmenu</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">oRelatedTarget</span><span class="p">)))</span> <span class="p">{</span>
 
