@@ -77,7 +77,7 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
          */
         this._evtGuid = category = Y.guid() + '|';
 
-        host.after( category + 'align', this._afterAlign, this );
+        host.after( category + 'drag:align', this._afterAlign, this );
 
         con.after( category + 'constrain2nodeChange', this.syncDragNode, this );
         con.after( category + 'constrain2viewChange', this.syncDragNode, this );
