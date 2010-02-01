@@ -45,7 +45,7 @@ var Event = Y.Event,
 				returnVal = false;
 			}
 			else {
-				returnVal = Y.Selector.test(el, selector) ? el: getMatch(el.parentNode, selector, container);
+				returnVal = Y.Selector.test(el, selector, container) ? el: getMatch(el.parentNode, selector, container);
 			}
 			
 			return returnVal;
