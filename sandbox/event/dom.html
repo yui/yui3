@@ -47,7 +47,7 @@ YUI({
     logExclude: {
         Selector: 1
     }
-}).use('event-base', 'dump', 'substitute', function(Y) {
+}).use('event', 'dump', 'substitute', function(Y) {
 
 var handler = function () {
     alert("click");
@@ -126,13 +126,17 @@ Y.Event.detach("click", handler, "#button0");
     }, '#lazy');
 
 
-    Y.on('focus', function() {
-        Y.log("FORM focus fired");
+    Y.on(['focus', 'blur'], function(e) {
+        Y.log("FORM fired " + e.type);
     }, '#form1');
 
-    Y.on('blur', function() {
-        Y.log("blur fired");
+    Y.on('focus', function(e) {
+        Y.log("FORM fired " + e.type);
     }, '#form1');
+
+    // Y.on('blur', function() {
+    //     Y.log("blur fired");
+    // }, '#form1');
 
     // Y.on('focus', function() {
     //     Y.log("TEXT focus fired");

@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>EventTarget</title>
+
+    <script type="text/javascript" src="../../build/yui/yui.js"></script>
+    <script type="text/javascript">
+
+        YUI({filter:"raw"}).use("async-queue", "event-custom-complex", function (Y) {
+           
+            var et1 = new Y.EventTarget();
+
+            et1.publish("A", {
+                emitFacade: true,
+                defaultFn: function (e) {
+                    // Also has the same issue if I move this into 
+                    // the A:on listener.
+
+                    // Originally thought it might be related to that 
+                    // fact that I'm doing this in the defFn for attribute.
+                    e.stopImmediatePropagation();
+                    Y.log("A:default, stopImmediatePropagation");
+                }
+            });
+
+            et1.publish("B", {
+                emitFacade: true,
+                defaultFn: function (e) {
+                    Y.log("B:default");
+                }
+            });
+
+            et1.on("A", function (e) {
+                Y.log("A:on");
+            });
+
+            et1.after("A", function (e) {
+                Y.log("A:after");
+            });
+
+            et1.on("B", function (e) {
+                Y.log("B:on");
+            });
+
+            et1.after("B", function (e) {
+                Y.log("B:after");
+            });
+
+            function test() {
+                et1.fire("A");
+                et1.fire("B");
+            }
+
+            Y.log("--Outside Queue--");
+            test();
+
+            Y.log("--Inside Queue--");
+            var q = new Y.AsyncQueue();
+            q.add({
+                fn:test
+            });
+            q.run();
+
+        });
+    
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>
