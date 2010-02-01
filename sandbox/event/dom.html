@@ -47,7 +47,7 @@ YUI({
     logExclude: {
         Selector: 1
     }
-}).use('event', 'dump', 'substitute', function(Y) {
+}).use('event-base', 'dump', 'substitute', function(Y) {
 
 var handler = function () {
     alert("click");
@@ -121,22 +121,19 @@ Y.Event.detach("click", handler, "#button0");
         Y.log("never should happen");
     }, '#neverwillbehere');
 
-    Y.on('click', function() {
-        Y.log("lazy element worked");
+    // Y.on('click', function(e) {
+    Y.on(['click', 'mouseover'], function(e) {
+        Y.log("lazy element worked: " + e.type);
     }, '#lazy');
 
 
-    Y.on(['focus', 'blur'], function(e) {
-        Y.log("FORM fired " + e.type);
+    Y.on('focus', function() {
+        Y.log("FORM focus fired");
     }, '#form1');
 
-    Y.on('focus', function(e) {
-        Y.log("FORM fired " + e.type);
+    Y.on('blur', function() {
+        Y.log("blur fired");
     }, '#form1');
-
-    // Y.on('blur', function() {
-    //     Y.log("blur fired");
-    // }, '#form1');
 
     // Y.on('focus', function() {
     //     Y.log("TEXT focus fired");

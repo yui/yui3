@@ -30,6 +30,7 @@
                     emitFacade: true,                     
                     defaultFn: function (e) {
                         Y.log("et1 default click.");
+                        et1.fire('foobar');
                     }
 
                   });
@@ -40,6 +41,7 @@
                       emitFacade: true,                     
                       defaultFn: function (e) {
                           Y.log("et2 default click.");
+                          et2.fire('foobar');
                       }
 
                     });
@@ -49,6 +51,7 @@
                 et2.on("click", function (e) {
                     
                     Y.log("Listener on bubble target called.");
+                    et2.fire('foobar');
 
                     //  It'd be nice if calling "preventDefault()" here
                     //  prevented et1's default implementation.
