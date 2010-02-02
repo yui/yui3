@@ -8,7 +8,7 @@ YUI.add('dd-constrain', function(Y) {
      */
     /**
      * Plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a node or viewport. It supports tick based moves and XY axis constraints.
-     * @class DragConstrained
+     * @class DDConstrained
      * @extends Base
      * @constructor
      * @namespace Plugin     
@@ -32,9 +32,13 @@ YUI.add('dd-constrain', function(Y) {
             C.superclass.constructor.apply(this, arguments);
         };
     
-    C.NAME = 'DragConstrained';
+    C.NAME = 'ddConstrained';
     /**
-    * @property con
+    * @property NS
+    * @default con
+    * @readonly
+    * @protected
+    * @static
     * @description The Constrained instance will be placed on the Drag instance under the con namespace.
     * @type {String}
     */

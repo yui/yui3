@@ -46,6 +46,14 @@ YUI.add('dd-ddm-base', function(Y) {
             value: 1000
         },
         /**
+        * @attribute throttleTime
+        * @description The number of milliseconds to throttle the mousemove event. Default: 150
+        * @type Number
+        */        
+        throttleTime: {
+            value: 150
+        },
+        /**
         * @attribute dragMode
         * @description This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of all future Drag instances. 
         * @type String
@@ -151,7 +159,7 @@ YUI.add('dd-ddm-base', function(Y) {
         _setupListeners: function() {
             this._active = true;
             var doc = Y.one(document);
-            doc.on('mousemove', Y.bind(this._move, this));
+            doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
             //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
             doc.on('mouseup', Y.bind(this._end, this));
         },
@@ -337,7 +345,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node', 'base'], skinnable:false});
+}, '@VERSION@' ,{requires:['node', 'base', 'yui-throttle'], skinnable:false});
 YUI.add('dd-ddm', function(Y) {
 
 
@@ -451,7 +459,7 @@ YUI.add('dd-ddm', function(Y) {
             }
             this._pg = pg;
             this._pg.on('mouseup', Y.bind(this._end, this));
-            this._pg.on('mousemove', Y.bind(this._move, this));
+            this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
             
             win = Y.one(window);
             Y.on('window:resize', Y.bind(this._pg_size, this));
@@ -1996,7 +2004,11 @@ YUI.add('dd-proxy', function(Y) {
     
     P.NAME = 'DDProxy';
     /**
-    * @property proxy
+    * @property NS
+    * @default con
+    * @readonly
+    * @protected
+    * @static
     * @description The Proxy instance will be placed on the Drag instance under the proxy namespace.
     * @type {String}
     */
@@ -2217,7 +2229,7 @@ YUI.add('dd-constrain', function(Y) {
      */
     /**
      * Plugin for the dd-drag module to add the constraining methods to it. It supports constraining to a node or viewport. It supports tick based moves and XY axis constraints.
-     * @class DragConstrained
+     * @class DDConstrained
      * @extends Base
      * @constructor
      * @namespace Plugin     
@@ -2241,9 +2253,13 @@ YUI.add('dd-constrain', function(Y) {
             C.superclass.constructor.apply(this, arguments);
         };
     
-    C.NAME = 'DragConstrained';
+    C.NAME = 'ddConstrained';
     /**
-    * @property con
+    * @property NS
+    * @default con
+    * @readonly
+    * @protected
+    * @static
     * @description The Constrained instance will be placed on the Drag instance under the con namespace.
     * @type {String}
     */
@@ -2995,6 +3011,15 @@ YUI.add('dd-scroll', function(Y) {
             this.set('windowScroll', this.get('windowScroll'));
         }
     });
+    /**
+    * @property NS
+    * @default winscroll
+    * @readonly
+    * @protected
+    * @static
+    * @description The Scroll instance will be placed on the Drag instance under the winscroll namespace.
+    * @type {String}
+    */
     WS.NAME = WS.NS = 'winscroll';
     Y.Plugin.DDWinScroll = WS;
     
@@ -3038,6 +3063,15 @@ YUI.add('dd-scroll', function(Y) {
             this.set('node', this.get('node'));
         }
     });
+    /**
+    * @property NS
+    * @default nodescroll
+    * @readonly
+    * @protected
+    * @static
+    * @description The NodeScroll instance will be placed on the Drag instance under the nodescroll namespace.
+    * @type {String}
+    */
     NS.NAME = NS.NS = 'nodescroll';
     Y.Plugin.DDNodeScroll = NS;
 

@@ -349,6 +349,15 @@
             this.set('windowScroll', this.get('windowScroll'));
         }
     });
+    /**
+    * @property NS
+    * @default winscroll
+    * @readonly
+    * @protected
+    * @static
+    * @description The Scroll instance will be placed on the Drag instance under the winscroll namespace.
+    * @type {String}
+    */
     WS.NAME = WS.NS = 'winscroll';
     Y.Plugin.DDWinScroll = WS;
     
@@ -392,6 +401,15 @@
             this.set('node', this.get('node'));
         }
     });
+    /**
+    * @property NS
+    * @default nodescroll
+    * @readonly
+    * @protected
+    * @static
+    * @description The NodeScroll instance will be placed on the Drag instance under the nodescroll namespace.
+    * @type {String}
+    */
     NS.NAME = NS.NS = 'nodescroll';
     Y.Plugin.DDNodeScroll = NS;
 

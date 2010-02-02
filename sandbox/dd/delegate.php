@@ -65,6 +65,8 @@ foreach (range(1, $count) as $k) {
 <div id="drop">Drop Here..</div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/yui/yui-throttle.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/loader/loader.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -103,7 +105,7 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', function(Y) {
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', 'yui-throttle', function(Y) {
     //console.log(Y);
     //Y.DD.DDM._debugShim = true;
     //Y.DD.DDM._useShim = false;
