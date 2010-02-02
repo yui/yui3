@@ -668,7 +668,8 @@ var NOT_FOUND = {},
         },
 
         test: {                                                                                                                                                        
-            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
+            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate'],
+            skinnable: true                                                                                                                     
         }  
 
     },
