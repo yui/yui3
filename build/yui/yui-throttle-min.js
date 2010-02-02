@@ -1,0 +1,1 @@
+YUI.add("yui-throttle",function(B){var A=function(D,C){if(C===-1){return(function(){D.apply(null,arguments);});}C=B.config.throttleTime||150;var E=(new Date()).getTime();return(function(){var F=(new Date()).getTime();if(F-E>C){E=F;D.apply(null,arguments);}});};B.throttle=A;B.Lang.throttle=A;},"@VERSION@",{requires:["yui-base"]});
