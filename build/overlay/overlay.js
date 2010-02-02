@@ -22,8 +22,7 @@ YUI.add('overlay', function(Y) {
  * @uses WidgetStdMod
  * @param {Object} object The user configuration for the instance.
  */
-Y.Overlay = Y.Base.build("overlay", Y.Widget, [Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionExt, Y.WidgetStdMod]);
-
+Y.Overlay = Y.Base.create("overlay", Y.Widget, [Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionExt, Y.WidgetStdMod]);
 
 
 }, '@VERSION@' ,{requires:['widget', 'widget-position', 'widget-stack', 'widget-position-ext', 'widget-stdmod']});
