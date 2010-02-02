@@ -121,8 +121,9 @@ Y.Event.detach("click", handler, "#button0");
         Y.log("never should happen");
     }, '#neverwillbehere');
 
-    Y.on('click', function() {
-        Y.log("lazy element worked");
+    // Y.on('click', function(e) {
+    Y.on(['click', 'mouseover'], function(e) {
+        Y.log("lazy element worked: " + e.type);
     }, '#lazy');
 
 

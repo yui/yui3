@@ -1,14 +1,3 @@
-//  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
-//  enable styles that need to key off of JS being enabled.
-(function() {
-var re = /(?:^|\\s+)yui-js-enabled(?:\\s+|$)/gi,
-    docEl = document.documentElement,
-    docElClass = docEl.className;
-
-if (!re.test(docElClass)) {
-    docEl.className = (docElClass.replace(/^\s+|\s+$/g, '') + ' yui-js-enabled');
-}
-}());
 
 
 /**
@@ -20,7 +9,13 @@ if (!re.test(docElClass)) {
 
 (function() {
 
-    var _instances = {}, 
+    var doc = document,
+        docEl = doc && doc.documentElement,
+        docElClass = docEl && docEl.className,
+        DOCUMENT_CLASS = 'yui-js-enabled',
+        NOOP = function() {},
+    
+        _instances = {}, 
         _startTime = new Date().getTime(), 
         p, 
         i,
@@ -59,22 +54,33 @@ if (!re.test(docElClass)) {
         },
 
         SLICE = Array.prototype.slice;
+
+//  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
+//  enable styles that need to key off of JS being enabled.
+if (docEl && docElClass.indexOf(DOCUMENT_CLASS) == -1) {
+    if (docElClass) {
+        docElClass += ' ';
+    }
+    docElClass += DOCUMENT_CLASS;
+    docEl.className = docElClass;
+}
+
         
 // reduce to one or the other
 if (typeof YUI === 'undefined' || !YUI) {
 
-    /**
-     * The YUI global namespace object.  If YUI is already defined, the
-     * existing YUI object will not be overwritten so that defined
-     * namespaces are preserved.  
-     *
-     * @class YUI
-     * @constructor
-     * @global
-     * @uses EventTarget
-     * @param o* Up to five optional configuration objects.  This object is stored
-     * in YUI.config.  See config for the list of supported properties.
-     */
+/**
+ * The YUI global namespace object.  If YUI is already defined, the
+ * existing YUI object will not be overwritten so that defined
+ * namespaces are preserved.  
+ *
+ * @class YUI
+ * @constructor
+ * @global
+ * @uses EventTarget
+ * @param o* Up to five optional configuration objects.  This object is stored
+ * in YUI.config.  See config for the list of supported properties.
+ */
 
     /*global YUI*/
     /*global YUI_config*/
@@ -151,7 +157,7 @@ YUI.prototype = {
 
         Y.version = v;
 
-        Y.Env = {
+        Y.Env = Y.Env || {
             // @todo expand the new module metadata
             mods: {},
             cdn: 'http://yui.yahooapis.com/' + v + '/build/',
@@ -162,24 +168,27 @@ YUI.prototype = {
             _yidx: 0,
             _uidx: 0,
             _loaded: {}
+
         };
 
         Y.Env._loaded[v] = {};
 
-        if (YUI.Env) {
+        Y.id = Y.stamp(Y);
+
+        if (YUI.Env && Y !== YUI) {
             Y.Env._yidx = (++YUI.Env._yidx);
             Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
-            Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
-        }
+        } 
+
 
         Y.constructor = YUI;
 
         // configuration defaults
-        Y.config = {
+        Y.config = Y.config || {
 
             win: window || {},
-            doc: document,
+            doc: doc,
             debug: true,
             useBrowserConsole: true,
             throwFail: true,
@@ -191,7 +200,7 @@ YUI.prototype = {
                 var b, nodes, i, src, match;
 
                 // get from querystring
-                nodes = document.getElementsByTagName('script');
+                nodes = (doc && doc.getElementsByTagName('script')) || [];
 
                 for (i=0; i<nodes.length; i=i+1) {
                     src = nodes[i].src;
@@ -343,9 +352,7 @@ YUI.prototype = {
             m    = mods[name];
 
             // console.log(name + '::' + m);
-
-            if (!m) {
-            }
+            // if (!m) { }
 
             if (!attached[name] && m) {
 
@@ -412,6 +419,7 @@ YUI.prototype = {
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
+            onEnd,
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
@@ -557,6 +565,7 @@ YUI.prototype = {
             Y.log('Modules missing: ' + missing, 'info', 'yui');
         }
 
+
         // dynamic load
         if (boot && l && Y.Loader) {
             Y.log('Using loader to fetch missing dependencies.', 'info', 'yui');
@@ -571,26 +580,33 @@ YUI.prototype = {
             loader.require((css) ? missing : a);
             loader.insert(null, (css) ? null : 'js');
         } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
-            Y.log('Fetching loader: ' + Y.config.base + Y.config.loaderPath, 'info', 'yui');
             Y._loading = true;
 
             a = Y.Array(arguments, 0, true);
-            // a.unshift('loader');
+            onEnd = function() {
+                Y._loading = false;
+                Y.Env.bootstrapped = true;
+                Y._attach(['loader']);
+                Y.use.apply(Y, a);
+            };
 
-            Y.Get.script(Y.config.base + Y.config.loaderPath, {
-                onEnd: function() {
-                    Y._loading = false;
-                    Y.Env.bootstrapped = true;
-                    Y._attach(['loader']);
-                    Y.use.apply(Y, a);
-                }
-            });
+            if (YUI.Env._bootstrapping) {
+                Y.log('Waiting for loader: ' + Y.id, 'info', 'yui');
+                YUI.Env._loaderQueue.add(onEnd);
+            } else {
+                YUI.Env._bootstrapping = true;
+                Y.log('Fetching loader: ' + Y.id + ", " + Y.config.base + Y.config.loaderPath, 'info', 'yui');
+                Y.Get.script(Y.config.base + Y.config.loaderPath, {
+                    onEnd: onEnd 
+                });
+            }
 
             return Y;
 
         } else {
             if (l) {
-                Y.message('Unable or not configured to fetch missing modules: ' + missing, 'info', 'yui');
+                Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
+Y.log('This instance is not provisioned to fetch missing modules: ' + missing, 'log', 'yui');
             }
             Y.log('Attaching available dependencies.', 'info', 'yui');
             Y._attach(r);
@@ -636,9 +652,9 @@ YUI.prototype = {
     },
 
     // this is replaced if the log module is included
-    log: function() {
-
-    },
+    log: NOOP,
+    message: NOOP,
+    
 
     /**
      * Report an error.  The reporting mechanism is controled by
@@ -722,6 +738,8 @@ YUI.prototype = {
 
     // set up the environment
     YUI._init();
+
+    YUI._attach(['yui-base']);
 
     // add a window load event at load time so we can capture
     // the case where it fires before dynamic loading is

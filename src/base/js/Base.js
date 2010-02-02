@@ -1,8 +1,7 @@
     /**
      * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
-     * The module also provides two ways to reuse code - An augmentable Plugin.Host interface which provides plugin support 
-     * (which is augmented to the Base class) and Base.build which provides a way to 
-     * build custom classes using extensions.
+     * The module also provides two ways to reuse code - It augments Base with the Plugin.Host interface which provides 
+     * plugin support and also provides the Base.build method which provides a way to build custom classes using extensions.
      *
      * @module base
      */
@@ -43,12 +42,30 @@
      * from Base will be used as the identifier for the class, and is used by Base to prefix 
      * all events fired by instances of that class.
      * </p>
+     *
      * @class Base
      * @constructor
      * @uses Attribute
      * @uses Plugin.Host
      *
-     * @param {Object} config Object with configuration property name/value pairs
+     * @param {Object} config Object with configuration property name/value pairs. The object can be 
+     * used to provide default values for the objects published attributes.
+     *
+     * <p>
+     * The config object can also contain the following non-attribute properties, providing a convenient 
+     * way to configure events listeners and plugins for the instance, as part of the constructor call:
+     * </p>
+     *
+     * <dl>
+     *     <dt>on</dt>
+     *     <dd>An event name to listener function map, to register event listeners for the "on" moment of the event. A constructor convenience property for the <a href="Base.html#method_on">on</a> method.</dd>
+     *     <dt>after</dt>
+     *     <dd>An event name to listener function map, to register event listeners for the "after" moment of the event. A constructor convenience property for the <a href="Base.html#method_after">after</a> method.</dd>
+     *     <dt>bubbleTargets</dt>
+     *     <dd>An object, or array of objects, to register as bubble targets for bubbled events fired by this instance. A constructor convenience property for the <a href="EventTarget.html#method_addTarget">addTarget</a> method.</dd>
+     *     <dt>plugins</dt>
+     *     <dd>A plugin, or array of plugins to be plugged into the instance (see PluginHost's plug method for signature details). A constructor convenience property for the <a href="Plugin.Host.html#method_plug">plug</a> method.</dd>
+     * </dl>
      */
     function Base() {
         Y.log('constructor called', 'life', 'base');
@@ -186,6 +203,22 @@
                 defaultFn:this._defInitFn
             });
 
+            this._preInitEventCfg(config);
+
+            this.fire(INIT, {cfg: config});
+
+            return this;
+        },
+
+        /**
+         * Handles the special on, after and target properties which allow the user to
+         * easily configure on and after listeners as well as bubble targets during 
+         * construction, prior to init.
+         * 
+         * @method _preInitEventCfg
+         * @param {Object} config The user configuration object
+         */
+        _preInitEventCfg : function(config) {
             if (config) {
                 if (config.on) {
                     this.on(config.on);
@@ -193,11 +226,17 @@
                 if (config.after) {
                     this.after(config.after);
                 }
+                if (config.bubbleTargets) {
+                    var i, l, target = config.bubbleTargets;
+                    if (L.isArray(target)) {
+                        for (i = 0, l = target.length; i < l; i++) { 
+                            this.addTarget(target[i]);
+                        }
+                    } else {
+                        this.addTarget(target);
+                    }
+                }
             }
-
-            this.fire(INIT, {cfg: config});
-
-            return this;
         },
 
         /**

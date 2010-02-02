@@ -22,6 +22,31 @@
 			</ul>
 		</div>
 
+        <ul id="list-2">
+            <li id="list-2-li-1"><em><em>Item One</em></em></li>
+            <li id="list-2-li-2"><em>Item Two</em></li>
+            <li id="list-2-li-3"><em>Item Three</em>
+                <ul id="list-3">
+                    <li id="list-3-li-1"><em>Item Three - One</em></li>
+                    <li id="list-3-li-1"><em>Item Three - Two</em></li>
+                    <li id="list-3-li-1"><em>Item Three - Three</em></li>
+                </ul>            
+            </li>        
+        </ul>
+        
+        <div id="div-1" class="div-a">
+            <div id="div-1-1" class="div-b">
+              <div id="div-1-1-1" class="div-c"><em>Item One</em></div>
+            </div>
+            <div id="div-1-2" class="div-x">
+                <em>Item Two</em>
+                <div id="div-1-2-1" class="div-b">
+                    <em>Item Two - One</em>
+                    <div id="div-1-2-1-1" class="div-c"><em>Item Two - Two</em></div>
+                </div>
+            </div>
+        </div>        
+
     </div>
 	<!-- YUI3 Core //-->
 	<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
@@ -245,6 +270,36 @@
 					Y.Assert.isTrue(foo1, "first match fail, delegate should be able to match [a]");
 					Y.Assert.isFalse(foo2, "the listener for 'doc' got executed, which means that e.halt fails during the delegate routine");
 				},
+				
+				test_direct_descendant_combinator: function () {
+
+                    var matchID = null;
+				    
+                    Y.one("#list-2").delegate("click", function (e) {
+                        matchID = this.get("id");
+                    }, ">li");				    
+
+					Y.Event.simulate(document.getElementById('list-3-li-1'), 'click');					
+                    Y.Assert.areEqual('list-2-li-3', matchID, "The currentTarget is an incorrect node, should be the matching node.");
+				    
+				    
+				    matchID = null;
+
+                    Y.one("#div-1").delegate("click", function (e) {
+                        matchID = this.get("id");
+                    }, ">.div-b");				    
+
+					Y.Event.simulate(document.getElementById('div-1-1-1'), 'click');
+                    Y.Assert.areEqual('div-1-1', matchID, "The currentTarget is an incorrect node, should be the matching node.");
+
+
+				    matchID = null;
+				    
+					Y.Event.simulate(document.getElementById('div-1-2-1'), 'click');
+                    Y.Assert.isNull(matchID, "The currentTarget is an incorrect node, should be the matching node.");
+				    
+				},
+                
 				
 				test_successful_purge: function () {
 				

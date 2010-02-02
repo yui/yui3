@@ -38,16 +38,17 @@ function report( e ) {
 X* 1) no config + no stickX or stickY - value via x axis
 X* 2) no config + stickX
 X* 3) no config + stickY
- * 4) valueFromAxis "x", "y" -- NOTE: when conflict with stick, interesting
+X* 4) valueFromAxis "x", "y"
 X* 5) value - Drag el should jump to location
 X* 6) negative min and/or max
 X* 7) min > max
  * 8) constrain2region
- * 9) constrain2view
+X* 9) constrain2view
  */
 var dd = new Y.DD.Drag({ node: '#container div' })
     .plug( Y.Plugin.DDConstrained, {
         constrain2node: '#container',
+        //constrain2view: true
         stickY: true
     } )
     .plug( Y.Plugin.DDValue, {

@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>Slider Image Test</title>
+
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?3.0.0/build/cssreset/reset-min.css&3.0.0/build/cssfonts/fonts-min.css">
+<link rel="stylesheet" type="text/css" href="assets/node-menunav-examples-base.css">
+
+    </head>
+<!-- YUI Seed -->
+	<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0/build/yui/yui.js"></script>
+
+<style type="text/css">
+body { background-color:#ffffff; height:400; margin:0; padding:1px;}
+#slider_content div {border:1px solid #000000;/**/}
+#slider {margin:5em;}
+.yui-slider-rail,
+.endcap_left,
+.endcap_right { background:/*#ddffdd*/ url(../images/rail_white_00_h_3px_thick.png);}
+.yui-slider-rail { position:relative; width:223px; height:25px;}
+.endcap_left,
+.endcap_right { position:absolute; width:25px; height:25px;}
+
+.endcap_left { left:-25px; top:0; background-position:0px -25px;}
+.endcap_right { left:100%; background-position:-25px -25px;}
+
+.thumb_container { position:absolute; top:-12px; left:50%; width:50px; height:50px;}
+.thumb, .thumb_shadow { position:absolute; top:0; left:0; width:50px; height:50px; background:url(../images/thumb_white_00_rect_pointer.png);}
+.thumb_shadow {background-position: 0px -50px; opacity:0.15;}
+</style>
+<body>
+<div class="doc">
+	<div id="slider"><!-- boundingBox -->
+		<div id="slider_content"><!-- contentBox -->
+			<div class="yui-slider-rail">
+				<div class="endcap_left"></div>
+				<div class="endcap_right"></div>
+				<div class="thumb_container">
+					<div class="thumb_shadow"></div>
+					<div class="thumb"></div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+
+</html>

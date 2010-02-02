@@ -12,6 +12,9 @@ Development Master
   allowing extensions to add to, or overwrite, attribute 
   configuration properties on the host.
 
+* Documented non-attribute on, after, bubbleTargets and plugins 
+  property support in the Base constructor config argument 
+
 3.0.0
 
 * Fixed hasImpl method on built classes, to look up the class

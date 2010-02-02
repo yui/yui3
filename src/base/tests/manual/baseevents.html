@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Base Event Test</title>
+    <script src="/YuiWip/yui3/build/yui/yui-min.js" type="text/javascript"></script>
+</head>
+<body>
+    <script>
+      YUI({filter:"raw"}).use("base", function(Y) {
+
+         var Parent = Y.extend(function () {Y.Base.apply(this, arguments);}, Y.Base, null, {NAME:"parent"});
+         var Child = Y.extend(function () {Y.Base.apply(this, arguments);}, Y.Base, null, {NAME:"child"});
+
+         var p = new Parent({
+            after: {
+                'child:test' : function(e) {
+                    Y.log("parent after child:test");
+                }
+            },
+            on: {
+                'child:test' : function(e) {
+                    Y.log("parent on child:test");
+                }
+            }
+         });
+
+         var c = new Child({bubbleTargets:[p]});
+
+         c.fire("test");
+      });        
+    </script>
+</body>
+</html>

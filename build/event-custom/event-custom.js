@@ -812,6 +812,8 @@ Y.CustomEvent.prototype = {
     },
 
     fireSimple: function(args) {
+        this.stopped = 0;
+        this.prevented = 0;
         if (this.hasSubs()) {
             // this._procSubs(Y.merge(this.subscribers, this.afters), args);
             var subs = this.getSubs();
@@ -1152,7 +1154,7 @@ ET.prototype = {
 
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
-            Node = Y.Node, n, domevent;
+            Node = Y.Node, n, domevent, isArr;
 
         if (L.isObject(type)) {
 
@@ -1164,17 +1166,22 @@ ET.prototype = {
             c = context; 
             args = Y.Array(arguments, 0, true);
             ret = {};
-            after = type._after;
-            delete type._after;
+
+            if (L.isArray(type)) {
+                isArr = true;
+            } else {
+                after = type._after;
+                delete type._after;
+            }
 
             Y.each(type, function(v, k) {
 
-                if (v) {
-                    f = v.fn || ((Y.Lang.isFunction(v)) ? v : f);
+                if (L.isObject(v)) {
+                    f = v.fn || ((L.isFunction(v)) ? v : f);
                     c = v.context || c;
                 }
 
-                args[0] = (after) ? AFTER_PREFIX + k : k;
+                args[0] = (isArr) ? v : ((after) ? AFTER_PREFIX + k : k);
                 args[1] = f;
                 args[2] = c;
 
@@ -1896,6 +1903,7 @@ CEProto.fireComplex = function(args) {
            silent: this.silent,
            stopped: 0,
            prevented: 0,
+           type: this.type,
            queue: []
         };
         es = Y.Env._eventstack;
@@ -1903,8 +1911,9 @@ CEProto.fireComplex = function(args) {
 
     subs = this.getSubs();
 
-    this.stopped = 0;
-    this.prevented = 0;
+    this.stopped = (this.type !== es.type) ? 0 : es.stopped;
+    this.prevented = (this.type !== es.type) ? 0 : es.prevented;
+
     this.target = this.target || this.host;
 
     events = new Y.EventTarget({
@@ -1947,8 +1956,12 @@ CEProto.fireComplex = function(args) {
 
     // bubble if this is hosted in an event target and propagation has not been stopped
     if (this.bubbles && this.host && this.host.bubble && !this.stopped) {
-        es.stopped = 0;
-        es.prevented = 0;
+
+        if (es.type != this.type) {
+            es.stopped = 0;
+            es.prevented = 0;
+        }
+
         ret = this.host.bubble(this);
 
         this.stopped = Math.max(this.stopped, es.stopped);

@@ -24,7 +24,7 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
     // DDValue prototype
 
     /**
-     * Map to property names based on <code>valueFromAxis</code> for use in
+     * Map to property names based on <code>axis</code> for use in
      * calculation and accessing event info.
      *
      * @property _key
@@ -43,7 +43,6 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
      */
     _offsetXY: null,
 
-
     /**
      * Factor used to translate value -&gt; position -&gt; value.
      *
@@ -55,12 +54,20 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
 
     /**
      * Attach event listeners to keep the UI in sync with the min/max/value
-     * attributes and DD position, then call syncUI() to sync initial state.
+     * attributes and DD position, then call syncDragNode() to sync initial state.
      *
      * @method initializer
      * @protected
      */
     initializer: function () {
+        var host = this.get( HOST ),
+            // DDConstrained must be plugged in
+            con  = host.con || this._defaultConstrain(),
+            category;
+
+        // Because attribute setters aren't called on initialization
+        this._key = DDValue._AXIS_KEYS[ this.get( 'axis' ) ];
+
         /**
          * Detach category for internal events to aid in cleanup.
          *
@@ -68,50 +75,77 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
          * @type { String }
          * @protected
          */
-        this._evtGuid = Y.guid();
+        this._evtGuid = category = Y.guid() + '|';
 
-        this._key = DDValue._AXIS_KEYS[ this.get( 'valueFromAxis' ) ];
+        host.after( category + 'drag:align', this._afterAlign, this );
 
-        this.get( HOST )
-            .after( this._evtGuid + '|align', this._afterDDAlign, this );
+        con.after( category + 'constrain2nodeChange', this.syncDragNode, this );
+        con.after( category + 'constrain2viewChange', this.syncDragNode, this );
+        con.after( category + 'constrain2regionChange', this.syncDragNode, this );
 
         this.after( {
-            minChange:   this._afterMinChange,
-            maxChange:   this._afterMaxChange,
+            minChange  : this._afterMinChange,
+            maxChange  : this._afterMaxChange,
             valueChange: this._afterValueChange
         } );
 
-        this.syncUI();
+        this.syncDragNode();
+    },
+
+    /**
+     * Plugs in Y.Plugin.DDConstrained onto the Drag instance.  Default
+     * configuration uses <code>constrain2node</code> set to the
+     * <code>dragNode</code>'s <code>parentNode</code>.
+     *
+     * @method _defaultConstrain
+     * @return { Y.Plugin.DDConstrained } The plugin instance
+     * @protected
+     */
+    _defaultConstrain: function () {
+        var host = this.get( HOST );
+
+        host.plug( Y.Plugin.DDConstrain, {
+            constrain2node: host.get( DRAG_NODE ).get( 'parentNode' )
+        } );
+
+        return host.con;
     },
 
     /**
      * Cache constraining element offsets and dims for faster value translation
      * and map current DD position to value.
      *
-     * @method syncUI
+     * @method syncDragNode
      */
-    syncUI: function () {
+    syncDragNode: function () {
         this._cacheOffset();
 
         this._calculateFactor();
 
-        this._uiSetDragPosition( this.get( VALUE ) );
+        this._setPosition( this.get( VALUE ) );
     },
 
     /**
      * Detach event listeners.
      *
-     // @TODO: destroy?
      * @method detructor
      * @protected
      */
     destructor: function () {
-        this.get( HOST ).detach( this._evtGuid + '|*' );
+        var host = this.get( HOST );
+
+        host.detach( this._evtGuid + '*' );
+
+        if ( host.con ) {
+            host.con.detach( this._evtGuid + '*' );
+        }
+
         this.detach();
     },
 
     /**
-     * Captures the current top left of the DD's constraining node or region to avoid excessive DOM lookups at run time.
+     * Captures the current top left of the DD's constraining node or region to
+     * avoid excessive DOM lookups at run time.
      *
      * @method _cacheOffset
      * @protected
@@ -141,22 +175,17 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
     /**
      * Dispatch the new position of the DD into the value setting operations.
      *
-     * @method _afterDDAlign
+     * @method _afterAlign
      * @param e { EventFacade } The drag:align event
      * @protected
      */
-    _afterDDAlign: function ( e ) {
-        var xy      = e[ this._key.eventPageAxis ] -
-                      this.get( HOST ).deltaXY[ this._key.xyIndex ] -
-                      this._offsetXY,
-            prevVal = this.get( VALUE ),
-            newVal;
+    _afterAlign: function ( e ) {
+        var host  = this.get( HOST ),
+            value = this._offsetToValue( host.actXY[ this._key.xyIndex ] );
 
-        newVal = this._offsetToValue( xy );
-
-        // Can't just do this.set( VALUE, this._offsetToValue( xy ) )
-        if (prevVal !== newVal) {
-            this.set( VALUE, newVal, { ddEvent: e } );
+        // Can't just do this.set( VALUE, this._offsetToValue( value ) )
+        if ( e.prevVal !== value ) {
+            this.set( VALUE, value, { ddEvent: e } );
         }
     },
 
@@ -174,19 +203,11 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
      * @protected
      */
     _offsetToValue: function ( xy ) {
-        var max   = this.get( MAX ),
-            min   = this.get( MIN ),
-            value = round( xy * this._factor ) + min, // force int values
-            tmp;
+        xy -= this._offsetXY;
 
-        // Account for reverse value range (max < min)
-        tmp = max > min ? max : min;
-        min = max > min ? min : max;
-        max = tmp;
+        var value = round( xy * this._factor ) + this.get( MIN );
 
-        return value > max ? max :
-               value < min ? min :
-               value;
+        return this._nearestValue( value );
     },
 
     /**
@@ -206,25 +227,52 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
     },
 
     /**
-     * Update value according to new min value.
+     * Update position according to new min value.  If the new min results in
+     * the current value being out of range, the value is set to the closer of
+     * min or max.
      *
      * @method _afterMinChange
      * @param e { EventFacade } The <code>min</code> attribute change event.
      * @protected
      */
     _afterMinChange: function ( e ) {
-        this.syncUI();
+        this._verifyValue();
+
+        this.syncDragNode();
     },
 
     /**
-     * Update value according to new max value.
+     * Update position according to new max value.  If the new max results in
+     * the current value being out of range, the value is set to the closer of
+     * min or max.
      *
      * @method _afterMaxChange
      * @param e { EventFacade } The <code>max</code> attribute change event.
      * @protected
      */
     _afterMaxChange: function ( e ) {
-        this.syncUI();
+        this._verifyValue();
+
+        this.syncDragNode();
+    },
+
+    /**
+     * Verifies that the current value is within the min - max range.  If not,
+     * value is set to either min or max, depending on which is closer.
+     *
+     * @method _verifyValue
+     * @protected
+     */
+    _verifyValue: function () {
+        var value   = this.get( VALUE ),
+            nearest = this._nearestValue( value );
+
+        if ( value !== nearest ) {
+            // @TODO Can/should valueChange, minChange, etc be queued events?
+            // To make dd.set( 'min', n ); execute after minChange subscribers
+            // before on/after valueChange subscribers.
+            this.set( VALUE, nearest );
+        }
     },
 
     /**
@@ -236,19 +284,18 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
      */
     _afterValueChange: function ( e ) {
         if ( !e.ddEvent ) {
-            this._uiSetDragPosition( e.newVal );
+            this._setPosition( e.newVal );
         }
     },
 
     /**
      * Positions the Drag element in accordance with the translated value.
      *
-     * @method _uiSetDragPosition
+     * @method _setPosition
      * @protected
      */
-    _uiSetDragPosition: function ( value ) {
-        var host = this.get( HOST ),
-            xy;
+    _setPosition: function ( value ) {
+        var host = this.get( HOST );
 
         // Drag element hasn't been setup yet
         if ( !host.deltaXY ) {
@@ -256,10 +303,9 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
             host._setStartPosition( host.actXY );
         }
 
-        xy = host.actXY.slice();
-        xy[ this._key.xyIndex ] = this._valueToOffset( value );
+        host.actXY[ this._key.xyIndex ] = this._valueToOffset( value );
 
-        host._alignNode( xy );
+        host._moveNode();
     },
 
     /**
@@ -300,28 +346,47 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
      * @protected
      */
     _validateNewValue: function ( value ) {
+        return ( value === this._nearestValue( value ) );
+    },
+
+    /**
+     * Returns the nearest valid value to the value input.  If the provided
+     * value is outside the min - max range, accounting for min > max
+     * scenarios, the nearest of either min or max is returned.  Otherwise, the
+     * provided value is returned.
+     *
+     * @method _nearestValue
+     * @param value { mixed } Value to test against current min - max range
+     * @return { Number } Current min, max, or value if within range
+     * @protected
+     */
+    _nearestValue: function ( value ) {
         var min = this.get( MIN ),
             max = this.get( MAX ),
             tmp;
 
         // Account for reverse value range (min > max)
-        tmp = max > min ? max : min;
-        min = max > min ? min : max;
+        tmp = ( max > min ) ? max : min;
+        min = ( max > min ) ? min : max;
         max = tmp;
 
-        return value >= min && value <= max;
+        return ( value < min ) ?
+                min :
+                ( value > max ) ?
+                    max :
+                    value;
     },
 
     /** 
-     * Validates new values assigned to <code>valueFromAxis</code> attribute.
+     * Validates new values assigned to <code>axis</code> attribute.
      * Acceptable values are "x" and "y".
      *
-     * @method _validateNewValueFromAxis
+     * @method _validateNewAxis
      * @param value { String } proposed value
      * @return { Boolean } True if value is "x" or "y"
      * @protected
      */
-    _validateNewValueFromAxis: function ( value ) {
+    _validateNewAxis: function ( value ) {
         return value === 'x' || value === 'y';
     },
 
@@ -330,44 +395,33 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
      * the assignment of <code>stickX</code> or <code>stickY</code> attributes
      * in the DDConstrained plugin.  If neither are set, defaults to "x".
      *
-     * @method _initValueFromAxis
+     * @method _initAxis
      * @return { String } "x" or "y"
      * @protected
      */
-    _initValueFromAxis: function () {
-        return this.get( HOST ).con.get( 'stickY' ) ? "y" : "x";
+    _defaultAxis: function () {
+        return ( this.get( HOST ).con.get( 'stickY' ) ) ? "y" : "x";
     },
 
     /**
      * Calculate the value from the current Drag element's position.  This is
      * used to initialize the value attribute if it isn't set at construction.
      *
-     * @method _initValueFromPosition
+     * @method _getValueFromPosition
      * @return { mixed } Value as calculated from the node's current position
      * @protected
      */
-    _initValueFromPosition: function () {
-        // This is used as the valueFn for the value attribute, and so it can't
-        // use the _key shortcuts or the cached values from _cacheOffset or
-        // _calculateFactor.
-        var host   = this.get( HOST ),
-            axis   = this.get( 'valueFromAxis' ),
-            range  = this.get( MAX ) - this.get( MIN ),
+    _getValueFromPosition: function () {
+        this._key = DDValue._AXIS_KEYS[ this.get( 'axis' ) ];
 
-            region = host.con.getRegion( true ),
-            xy     = host.get( DRAG_NODE ).getXY(),
+        var xy = this.get( HOST )
+                    .get( DRAG_NODE ).getXY()[ this._key.xyIndex ];
 
-            factor, position;
+        this._cacheOffset();
 
-        if ( axis === 'x' ) {
-            factor   = range / ( region.right  - region.left );
-            position = xy[ 0 ] - region.left;
-        } else {
-            factor   = range / ( region.bottom  - region.top );
-            position = xy[ 1 ] - region.top;
-        }
+        this._calculateFactor();
 
-        return position * factor;
+        return this._offsetToValue( xy );
     }
 
 }, {
@@ -410,13 +464,11 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
         x : {
             offsetEdge    : 'left',
             farEdge       : 'right',
-            eventPageAxis : 'pageX',
             xyIndex       : 0
         },
         y : {
             offsetEdge    : 'top',
             farEdge       : 'bottom',
-            eventPageAxis : 'pageY',
             xyIndex       : 1
         }
     },
@@ -448,14 +500,14 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
          * <code>stickY</code> (via DDConstrained config), or &quot;x&quot; if
          * neither is defined.
          *
-         * @attribute valueFromAxis
+         * @attribute axis
          * @type { String }
          * @writeOnce
          */
-        valueFromAxis: {
-            valueFn  : '_initValueFromAxis',
+        axis: {
+            valueFn  : '_defaultAxis',
             writeOnce: true,
-            validator: '_validateNewValueFromAxis'
+            validator: '_validateNewAxis'
         },
 
         /**
@@ -489,14 +541,18 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
         },
 
         /**
-         * The value associated with the Drag element's current position along the axis configured in <code>valueFromAxis</code>.  Defaults to the value inferred from the Drag element's current position.  Specifying value in the constructor will move the Drag node to the position that corresponds to the supplied value.
+         * The value associated with the Drag element's current position along
+         * the axis configured in <code>axis</code>.  Defaults to the
+         * value inferred from the Drag element's current position.  Specifying
+         * value in the constructor will move the Drag node to the position
+         * that corresponds to the supplied value.
          *
          * @attribute value
          * @type { Number }
          * @default (inferred from current Drag position)
          */
         value: {
-            valueFn  : '_initValueFromPosition',
+            valueFn  : '_getValueFromPosition',
             validator: '_validateNewValue'
         }
     }

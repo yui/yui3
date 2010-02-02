@@ -121,9 +121,6 @@ var UA = Y.UA,
 	HOST = "host",
 	ACTIVE_DESCENDANT_CHANGE = ACTIVE_DESCENDANT + "Change",
 
-	STANDARD_QUERY = ">.yui-menu-content>ul>li>a",
-	EXTENDED_QUERY = ">.yui-menu-content>ul>li>.yui-menu-label>a:first-child",
-
 
 	//	Attribute keys
 	
@@ -146,8 +143,12 @@ var UA = Y.UA,
 	//	CSS selectors
 	
 	MENU_SELECTOR = PERIOD + CSS_MENU,
-	MENU_TOGGLE_SELECTOR = (PERIOD + getClassName(MENU, "toggle"));
+	MENU_TOGGLE_SELECTOR = (PERIOD + getClassName(MENU, "toggle")),
+    MENU_CONTENT_SELECTOR = PERIOD + getClassName(MENU, CONTENT),
+    MENU_LABEL_SELECTOR = PERIOD + CSS_MENU_LABEL,
 
+	STANDARD_QUERY = ">" + MENU_CONTENT_SELECTOR + ">ul>li>a",
+	EXTENDED_QUERY = ">" + MENU_CONTENT_SELECTOR + ">ul>li>" + MENU_LABEL_SELECTOR + ">a:first-child";
 
 //	Utility functions
 
@@ -429,7 +430,7 @@ NodeMenuNav.ATTRS = {
 
 				oMenu.set(ROLE, MENU);
 
-				oMenu.all("ul,li,." + getClassName(MENU, CONTENT)).set(ROLE, PRESENTATION);
+				oMenu.all("ul,li," + MENU_CONTENT_SELECTOR).set(ROLE, PRESENTATION);
 
 				oMenu.all((PERIOD + getClassName(MENUITEM, CONTENT))).set(ROLE, MENUITEM);
 
@@ -1072,7 +1073,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			oFocusManager = oRootMenu.focusManager;
 
-			sQuery = "#" + oRootMenu.get("id") + " .yui-menu a," + 
+			sQuery = "#" + oRootMenu.get("id") + MENU_SELECTOR + " a," + 
 							MENU_TOGGLE_SELECTOR;
 
 			oRootMenu.all(sQuery).set("tabIndex", -1);
@@ -1344,35 +1345,54 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 			bIsRoot = menuNav._isRoot(oActiveMenu),
 			bUseAutoSubmenuDisplay = 
 				(menuNav.get(AUTO_SUBMENU_DISPLAY) && bIsRoot || !bIsRoot),
+            submenuShowDelay = menuNav.get("submenuShowDelay"),	
 			oSubmenu;
-
-
-		menuNav._focusItem(menuLabel);
-		menuNav._setActiveItem(menuLabel);
 				
 
-		if (bUseAutoSubmenuDisplay && !menuNav._movingToSubmenu) {
-	
+        var showSubmenu = function (delay) {
+
 			menuNav._cancelHideSubmenuTimer();
 			menuNav._cancelShowSubmenuTimer();
-
 
 			if (!hasVisibleSubmenu(menuLabel)) {
 
 				oSubmenu = menuLabel.next();
-	
 
 				if (oSubmenu) {
-					
 					menuNav._hideAllSubmenus(oActiveMenu);
-
-					menuNav._showSubmenuTimer = 
-						later(menuNav.get("submenuShowDelay"), menuNav, 
-								menuNav._showMenu, oSubmenu);
-				
+					menuNav._showSubmenuTimer = later(delay, menuNav, menuNav._showMenu, oSubmenu);
 				}
-			
+
 			}
+            
+        };
+
+
+		menuNav._focusItem(menuLabel);
+		menuNav._setActiveItem(menuLabel);
+
+
+		if (bUseAutoSubmenuDisplay) {
+	
+	        if (menuNav._movingToSubmenu) {
+	            
+	            //  If the user is moving diagonally from a submenu to 
+	            //  another submenu and they then stop and pause on a
+	            //  menu label for an amount of time equal to the amount of 
+	            //  time defined for the display of a submenu then show the 
+	            //  submenu immediately.
+	            //  http://yuilibrary.com/projects/yui3/ticket/2528316
+	            
+	            Y.message("Pause path");
+	            
+	            menuNav._hoverTimer = later(submenuShowDelay, menuNav, function () {
+                    showSubmenu(0);
+	            });
+	            
+	        }
+	        else {
+                showSubmenu(submenuShowDelay);
+	        }
 		
 		}
 
@@ -1394,7 +1414,12 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 				(menuNav.get(AUTO_SUBMENU_DISPLAY) && bIsRoot || !bIsRoot),
 
 			oRelatedTarget = event.relatedTarget,
-			oSubmenu = menuLabel.next();
+			oSubmenu = menuLabel.next(),
+			hoverTimer = menuNav._hoverTimer;
+
+        if (hoverTimer) {
+            hoverTimer.cancel();
+        }
 
 		menuNav._clearActiveItem();
 
@@ -1413,9 +1438,10 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 						menuNav._hideMenu, oSubmenu);
 			
 			}
-			else if (!menuNav._movingToSubmenu && oSubmenu && 
-				!oSubmenu.contains(oRelatedTarget) && 
-				!oRelatedTarget.compareTo(oSubmenu)) {
+			else if (!menuNav._movingToSubmenu && oSubmenu && (!oRelatedTarget || 
+			        (oRelatedTarget && 
+			            !oSubmenu.contains(oRelatedTarget) && 
+			            !oRelatedTarget.compareTo(oSubmenu)))) {
 
 				//	If the mouse is not moving toward the submenu, cancel any 
 				//	submenus that might be in the process of being displayed 
@@ -1819,7 +1845,7 @@ Y.extend(NodeMenuNav, Y.Plugin.Base, {
 
 			oSubmenu = oMenuLabel.next();
 
-			if (oSubmenu && 
+			if (oSubmenu && oRelatedTarget && 
 				(oRelatedTarget.compareTo(oSubmenu) || 
 					oSubmenu.contains(oRelatedTarget))) {
 

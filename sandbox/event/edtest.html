@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+ 
+<html>
+<head>
+	<script src="../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
+</head>
+ 
+<body>
+ 
+<h1>Alloy - ImageViewer</h1>
+ 
+<script type="text/javascript">
+ 
+YUI().use('base', function(Y) {
+ 
+	function Test(config) {
+		Test.superclass.constructor.apply(this, arguments);
+	}
+ 
+	Y.mix(Test, {
+		NAME: 'test'
+	});
+ 
+	Y.extend(Test, Y.Base, {
+		initializer: function() {
+			var instance = this;
+ 
+			instance.after('init', function() {
+				console.log('after init Test');
+			});
+		}
+	});
+ 
+	Y.Test = Test;
+ 
+	new Y.Test({});
+ 
+});
+ 
+</script>
+ 
+</body>
+</html>

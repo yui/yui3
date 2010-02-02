@@ -1,3 +1,14 @@
+//	TO DO:
+//	-   Make the multiple state class name an optional configuration?
+//	-   Consider making this work for any/all elements 
+//	-   Change name?    stateStyle
+//	-   Implement lazy binding of event handlers
+//  -   Augment new/additional attributes onto the HTML button/node directly?
+//  -   Rename rootClassName attribute -- className, baseClass?
+//  -   Make prefix configurable
+//  -   Use the base class name as the foundation (if defined), else create the 
+//      base name using the type attribute
+
 var UA = Y.UA,
 	getClassName = Y.ClassNameManager.getClassName;
 
