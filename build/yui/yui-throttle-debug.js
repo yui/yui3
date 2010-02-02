@@ -22,7 +22,7 @@ var throttle = function(fn, ms) {
             fn.apply(null, arguments);
         });
     }
-    ms = Y.config.throttleTime || 150
+    ms = (ms) ? ms : (Y.config.throttleTime || 150);
     var last = (new Date()).getTime();
 
     return (function() {
