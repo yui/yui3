@@ -121,7 +121,7 @@ var NOT_FOUND = {},
     CONTEXT = '-context',
 
     ANIMBASE = 'anim-base',
-	ATTRIBUTE = 'attribute',
+    ATTRIBUTE = 'attribute',
     ATTRIBUTEBASE = ATTRIBUTE + '-base',
     BASEBASE = 'base-base',
     DDDRAG = 'dd-drag',
@@ -150,7 +150,7 @@ var NOT_FOUND = {},
     WIDGETPOSITION = 'widget-position',
     YUIBASE = 'yui-base',
 
-	PLUGIN = 'plugin',
+    PLUGIN = 'plugin',
 
     META = {
 
@@ -326,18 +326,15 @@ var NOT_FOUND = {},
 
         collection: { 
             submodules: {
-                'array-extras': {
-                    // @TODO: is oop required?
-                    requires: [OOP]
-                },
+                'array-extras': {},
                 'arraylist': {},
                 'array-invoke': {},
                 // @TODO: candidates for plugins
                 'arraylist-filter': {
-                    requires: [ 'arraylist' ]
+                    requires: ['arraylist']
                 },
                 'arraylist-add': {
-                    requires: [ 'arraylist' ]
+                    requires: ['arraylist']
                 }
             }
         },
@@ -466,7 +463,7 @@ var NOT_FOUND = {},
             }
         },
 
-        dd-value: {
+        'dd-value': {
             requires: ['dd-constrain']
         },
 
