@@ -417,7 +417,7 @@ var NOT_FOUND = {},
         dd:{
             submodules: {
                 'dd-ddm-base': {
-                    requires: [NODE, BASE]
+                    requires: [NODE, BASE, 'yui-throttle']
                 }, 
                 'dd-ddm':{
                     requires: ['dd-ddm-base', 'event-resize']
@@ -665,7 +665,8 @@ var NOT_FOUND = {},
                 'yui-base': {},
                 get: {},
                 'yui-log': {},
-                'yui-later': {}
+                'yui-later': {},
+                'yui-throttle': {}
             }
         },
 
@@ -2274,7 +2275,6 @@ Y.Loader.prototype = {
 };
 
 })();
-
 
 
 
