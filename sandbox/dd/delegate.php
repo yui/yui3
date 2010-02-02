@@ -111,7 +111,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     //Y.DD.DDM._useShim = false;
 
     var del = new Y.DD.Delegate({
-        cont: '#demo',
+        container: '#demo',
         nodes: '.item',
         target: true,
         invalid: '.disabled',
@@ -123,7 +123,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         this.get('currentNode').setStyle('zIndex', '999');
     });
     del.on('drag:over', function(e) {
-        var sel = e.currentTarget.get('cont') + ' ' + e.currentTarget.get('nodes');
+        var sel = e.currentTarget.get('container') + ' ' + e.currentTarget.get('nodes');
         if (e.drop.get('node').test(sel)) {
             Y.DD.DDM.swapNode(e.drag, e.drop);
         }
@@ -141,9 +141,9 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         inc = 1;
     
     Y.one('#add').on('click', function(e) {
-        var node, demo = Y.one('#demo');
+        var node, demo = Y.one('#demo ul');
         for (var i = 1; i < count + 1; i++) {
-            node = Y.Node.create('<li class="item">(' + inc + ') ' + i + '</li>');
+            node = Y.Node.create('<li class="item">(' + inc + ') ' + i + ' <strong>[GRAB]</strong></li>');
             demo.append(node);
         }
         inc++;
