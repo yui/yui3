@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+    .yui-slider {
+        /* xbrowser inline-block styles */
+        display: -moz-inline-stack; /* FF2 */
+        display: inline-block;
+        *display: inline; /* IE 7- (with zoom) */
+        zoom: 1;
+        vertical-align: middle;
+    }
+    .yui-slider-content {
+        position: relative;
+    }
+
+    .yui-slider-rail {
+        position: relative;
+    }
+    .yui-slider-rail-cap-left,
+    .yui-slider-rail-cap-right,
+    .yui-slider-thumb-range,
+    .yui-slider-thumb,
+    .yui-slider-thumb-image,
+    .yui-slider-thumb-shadow {
+        position: absolute;
+    }
+
+    /* With the absolute positioning, is this still needed? */
+    .yui-slider-thumb-image,
+    .yui-slider-thumb-shadow {
+        /* to collapse vertical space around short thumbs in tall line-height */
+        display: block;
+    }
+
+    /* SKINS */
+    .yui-slider-skin-1 .yui-slider-rail,
+    .yui-slider-skin-1 .yui-slider-rail-cap-left,
+    .yui-slider-skin-1 .yui-slider-rail-cap-right {
+        background-image: url(skin_research/images/rail_white_01_h_5px_thick.png);
+    }
+
+    .yui-slider-skin-1 .yui-slider-rail {
+        height: 25px;
+        width: 300px;
+        margin: 0 5px;
+    }
+
+    .yui-slider-skin-1 .yui-slider-rail-cap-left {
+        background-position: 32 -25px;
+        height: 25px;
+        left: -5px;
+        width: 5px;
+    }
+    .yui-slider-skin-1 .yui-slider-rail-cap-right {
+        background-position: -27px -25px;
+        height: 25px;
+        right: -5px;
+        width: 5px;
+    }
+    .yui-slider-skin-1 .yui-slider-thumb-range {
+        height: 25px;
+        width: 100%;
+        margin-top: -25px;
+    }
+    .yui-slider-skin-1 .yui-slider-thumb {
+        height: 25px;
+        overflow: hidden;
+        width: 25px;
+    }
+    .yui-slider-skin-1 .yui-slider-thumb-image {
+        left: -12px;
+        top: -13px;
+    }
+    .yui-slider-skin-1 .yui-slider-thumb-shadow {
+        top: -62px;
+        left: -63px;
+        opacity: 0.15;
+    }
+
+    </style>
+</head>
+<body>
+<div class="yui-slider yui-slider-skin-1">
+    <div class="yui-slider-content">
+        <div class="yui-slider-rail">
+            <div class="yui-slider-rail-cap-left"></div>
+            <div class="yui-slider-rail-cap-right"></div>
+        </div>
+        <div class="yui-slider-thumb-range">
+            <div class="yui-slider-thumb">
+                <img src="skin_research/images/thumb_white_04_recessed_w_dark_ring.png" class="yui-slider-thumb-shadow">
+                <img src="skin_research/images/thumb_white_04_recessed_w_dark_ring.png" class="yui-slider-thumb-image">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="report"></div>
+
+<script src="/yui3/build/yui/yui.js"></script>
+<script src="/yui3/build/dd-value/dd-value.js"></script>
+<!--script src="http://yui.yahooapis.com/3.0.0/build/yui/yui.js"></script-->
+<script>
+YUI({
+    filter: 'raw'
+}).use( 'dd','dd-value', function ( Y ) {
+
+    Y.one( '.yui-slider-thumb' ).plug( Y.Plugin.Drag )
+        .dd
+        .plug( Y.Plugin.DDConstrained, {
+            constrain2node: '.yui-slider-thumb-range'
+        } )
+        .plug( Y.Plugin.DDValue, {
+            after: {
+                valueChange: function ( e ) {
+                    Y.one( '#report' ).setContent( e.newVal + '' );
+                }
+            }
+        } );
+
+});
+</script>
+</body>
+</html>
