@@ -424,6 +424,7 @@ YUI.prototype = {
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
+            queue = YUI.Env._loaderQueue,
             onEnd,
             firstArg = a[0], 
             dynamic = false,
@@ -483,7 +484,7 @@ YUI.prototype = {
 
             onComplete;
 
-        // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
+        // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback, 'info', 'yui');
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
@@ -570,10 +571,9 @@ YUI.prototype = {
             Y.log('Modules missing: ' + missing, 'info', 'yui');
         }
 
-
         // dynamic load
         if (boot && l && Y.Loader) {
-            Y.log('Using loader to fetch missing dependencies.', 'info', 'yui');
+            Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
             Y._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
@@ -590,6 +590,7 @@ YUI.prototype = {
             a = Y.Array(arguments, 0, true);
             onEnd = function() {
                 Y._loading = false;
+                queue.running = false;
                 Y.Env.bootstrapped = true;
                 Y._attach(['loader']);
                 Y.use.apply(Y, a);
@@ -597,7 +598,7 @@ YUI.prototype = {
 
             if (YUI.Env._bootstrapping) {
                 Y.log('Waiting for loader: ' + Y.id, 'info', 'yui');
-                YUI.Env._loaderQueue.add(onEnd);
+                queue.add(onEnd);
             } else {
                 YUI.Env._bootstrapping = true;
                 Y.log('Fetching loader: ' + Y.id + ", " + Y.config.base + Y.config.loaderPath, 'info', 'yui');

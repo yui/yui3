@@ -423,6 +423,7 @@ YUI.prototype = {
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
+            queue = YUI.Env._loaderQueue,
             onEnd,
             firstArg = a[0], 
             dynamic = false,
@@ -557,7 +558,6 @@ YUI.prototype = {
             missing = Y.Object.keys(Y.Array.hash(missing));
         }
 
-
         // dynamic load
         if (boot && l && Y.Loader) {
             Y._loading = true;
@@ -576,13 +576,14 @@ YUI.prototype = {
             a = Y.Array(arguments, 0, true);
             onEnd = function() {
                 Y._loading = false;
+                queue.running = false;
                 Y.Env.bootstrapped = true;
                 Y._attach(['loader']);
                 Y.use.apply(Y, a);
             };
 
             if (YUI.Env._bootstrapping) {
-                YUI.Env._loaderQueue.add(onEnd);
+                queue.add(onEnd);
             } else {
                 YUI.Env._bootstrapping = true;
                 Y.Get.script(Y.config.base + Y.config.loaderPath, {
