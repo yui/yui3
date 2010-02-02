@@ -157,29 +157,34 @@ YUI.prototype = {
 
         Y.version = v;
 
-        Y.Env = Y.Env || {
-            // @todo expand the new module metadata
-            mods: {},
-            cdn: 'http://yui.yahooapis.com/' + v + '/build/',
-            bootstrapped: false,
-            _idx: 0,
-            _used: {},
-            _attached: {},
-            _yidx: 0,
-            _uidx: 0,
-            _loaded: {}
+        if (!Y.Env) {
 
-        };
+            Y.Env = {
+                // @todo expand the new module metadata
+                mods: {},
+                cdn: 'http://yui.yahooapis.com/' + v + '/build/',
+                bootstrapped: false,
+                _idx: 0,
+                _used: {},
+                _attached: {},
+                _yidx: 0,
+                _uidx: 0,
+                _guidp: 'y',
+                _loaded: {}
 
-        Y.Env._loaded[v] = {};
+            };
 
-        Y.id = Y.stamp(Y);
+            Y.Env._loaded[v] = {};
 
-        if (YUI.Env && Y !== YUI) {
-            Y.Env._yidx = (++YUI.Env._yidx);
-            Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
+            if (YUI.Env && Y !== YUI) {
+                Y.Env._yidx = (++YUI.Env._yidx);
+                Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
+            }
+
+            Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
-        } 
+
+        }
 
 
         Y.constructor = YUI;
@@ -418,6 +423,7 @@ YUI.prototype = {
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
+            queue = YUI.Env._loaderQueue,
             onEnd,
             firstArg = a[0], 
             dynamic = false,
@@ -552,7 +558,6 @@ YUI.prototype = {
             missing = Y.Object.keys(Y.Array.hash(missing));
         }
 
-
         // dynamic load
         if (boot && l && Y.Loader) {
             Y._loading = true;
@@ -571,13 +576,14 @@ YUI.prototype = {
             a = Y.Array(arguments, 0, true);
             onEnd = function() {
                 Y._loading = false;
+                queue.running = false;
                 Y.Env.bootstrapped = true;
                 Y._attach(['loader']);
                 Y.use.apply(Y, a);
             };
 
             if (YUI.Env._bootstrapping) {
-                YUI.Env._loaderQueue.add(onEnd);
+                queue.add(onEnd);
             } else {
                 YUI.Env._bootstrapping = true;
                 Y.Get.script(Y.config.base + Y.config.loaderPath, {

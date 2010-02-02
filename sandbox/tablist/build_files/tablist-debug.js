@@ -1,33 +1,6 @@
 YUI.add('tablist', function(Y) {
 
-function TabList() {
-    TabList.superclass.constructor.apply(this,arguments);
-}
-
-Y.mix(TabList, {
-
-    NAME : "tablist",
-
-    ATTRS : {
-
-        defaultChildType: {  
-            value: "Tab"
-        },
-
-        //  Override of Widget's default tabIndex attribute since we don't 
-        //  want the bounding box of each TabList instance in the default
-        //  tab index.  The focusable pieces of a TabList's UI will be 
-        //  each tab's anchor element.
-        
-        tabIndex: {
-    		value: null,
-    		validator: "_validTabIndex"
-        }
-    }
-
-});
-
-Y.extend(TabList, Y.Widget, {
+Y.TabList = Y.Base.create("tabList", Y.Widget, [Y.WidgetParent], {
 
     bindUI: function() {
 
@@ -60,52 +33,30 @@ Y.extend(TabList, Y.Widget, {
         
     }
     
-});
-
-Y.Base.build(TabList.NAME, TabList, [Y.WidgetParent], { dynamic: false });
-
-Y.TabList = TabList;
-var Lang = Y.Lang,
-    getClassName = Y.ClassNameManager.getClassName;
-
-function Tab() {
-    Tab.superclass.constructor.apply(this,arguments);
-}
-
-Y.mix(Tab, {
-
-    NAME : "tab",
+}, {
 
     ATTRS : {
 
-        label: { 
-            validator: Lang.isString
-        },
-
-        content: {
-            validator: Lang.isString
-        },
-        
-        panelNode: { 
-            readOnly: true
+        defaultChildType: {  
+            value: "Tab"
         },
 
         //  Override of Widget's default tabIndex attribute since we don't 
-        //  want the bounding box (<li>) of each Tab instance in the default
-        //  tab index. The focusable pieces of a TabList's UI will be 
+        //  want the bounding box of each TabList instance in the default
+        //  tab index.  The focusable pieces of a TabList's UI will be 
         //  each tab's anchor element.
         
         tabIndex: {
-    		value: null,
-    		validator: "_validTabIndex"
-        }        
-
+            value: null,
+            validator: "_validTabIndex"
+        }
     }
 
 });
+var Lang = Y.Lang,
+    getClassName = Y.ClassNameManager.getClassName;
 
-
-Y.extend(Tab, Y.Widget,{
+Y.Tab = Y.Base.create("tab", Y.Widget, [Y.WidgetChild], {
 
     PANEL_CLASS: getClassName("tabpanel"),
 
@@ -204,11 +155,35 @@ Y.extend(Tab, Y.Widget,{
         
     }
     
+}, {
+
+    ATTRS : {
+
+        label: { 
+            validator: Lang.isString
+        },
+
+        content: {
+            validator: Lang.isString
+        },
+        
+        panelNode: { 
+            readOnly: true
+        },
+
+        //  Override of Widget's default tabIndex attribute since we don't 
+        //  want the bounding box (<li>) of each Tab instance in the default
+        //  tab index. The focusable pieces of a TabList's UI will be 
+        //  each tab's anchor element.
+        
+        tabIndex: {
+            value: null,
+            validator: "_validTabIndex"
+        }        
+
+    }
+
 });
-
-Y.Base.build(Tab.NAME, Tab, [Y.WidgetChild], { dynamic: false });
-
-Y.Tab = Tab;
 
 
 }, '@VERSION@' ,{requires:['widget', 'widget-parent', 'widget-child', 'node-focusmanager']});

@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: collection   invoke.js  (YUI Library)</title>
+	<title>API: collection   arraylist-filter.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_collection.html" title="collection">collection</a>
                 
-                 &gt; invoke.js (source view) 
+                 &gt; arraylist-filter.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -50,41 +50,41 @@
                         <div class="highlight"><pre><span class="cm">/**</span>
 <span class="cm"> * Collection utilities beyond what is provided in the YUI core</span>
 <span class="cm"> * @module collection</span>
-<span class="cm"> * @submodule array-invoke</span>
+<span class="cm"> * @submodule arraylist-filter</span>
 <span class="cm"> */</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Adds the &lt;code&gt;Y.Array.invoke( items, methodName )&lt;/code&gt; utility method.</span>
-<span class="cm"> * @class YUI~array~invoke</span>
+<span class="cm"> * Adds filter method to ArrayList prototype</span>
+<span class="cm"> * @class ArrayList~filter</span>
 <span class="cm"> */</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ArrayList</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * &lt;p&gt;Execute a named method on an array of objects.  Items in the list that do</span>
-<span class="cm"> * not have a so named function will be skipped.&lt;/p&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * &lt;p&gt;The return values from each call are stored in an array and returned.&lt;/p&gt;</span>
-<span class="cm"> *</span>
-<span class="cm"> * @method invoke</span>
-<span class="cm"> * @static</span>
-<span class="cm"> * @param items { Array } Array of objects supporting the named method</span>
-<span class="cm"> * @param name { String } the name of the method to execute on each item</span>
-<span class="cm"> * @param args* { mixed } Any number of additional args are passed as</span>
-<span class="cm"> *                        parameters to the execution of the named method.</span>
-<span class="cm"> * @return { Array } All return values, indexed according to item index.</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">invoke</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">items</span><span class="p">,</span> <span class="nx">name</span> <span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">args</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span> <span class="nx">arguments</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="kc">true</span> <span class="p">),</span>
-        <span class="nx">isFunction</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">,</span>
-        <span class="nx">ret</span>        <span class="o">=</span> <span class="p">[];</span>
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;Create a new ArrayList (or augmenting class instance) from a subset</span>
+<span class="cm">     * of items as determined by the boolean function passed as the</span>
+<span class="cm">     * argument.  The original ArrayList is unchanged.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;The validator signature is &lt;code&gt;validator( item )&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method filter</span>
+<span class="cm">     * @param validator { Function } Boolean function to determine in or out</span>
+<span class="cm">     * @return { ArrayList } New instance based on who passed the validator</span>
+<span class="cm">     */</span>
+    <span class="nx">filter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">validator</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">[];</span>
 
-    <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span> <span class="nx">items</span> <span class="p">),</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span> <span class="nx">isFunction</span><span class="p">(</span> <span class="nx">item</span><span class="p">[</span> <span class="nx">name</span> <span class="p">]</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="nx">ret</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">item</span><span class="p">[</span> <span class="nx">name</span> <span class="p">].</span><span class="nx">apply</span><span class="p">(</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">args</span> <span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">i</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">item</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span> <span class="nx">i</span> <span class="p">);</span>
 
-    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
-<span class="p">};</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="nx">validator</span><span class="p">(</span> <span class="nx">item</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="nx">items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="nx">item</span> <span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">(</span> <span class="nx">items</span> <span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span> <span class="p">);</span>
 </pre></div>
 
                     </div>
@@ -162,9 +162,9 @@
                         <ul class="content">        
                                 <li class=""><a href="array-extras.js.html" title="array-extras.js">array-extras.js</a></li>
                                 <li class=""><a href="arraylist-add.js.html" title="arraylist-add.js">arraylist-add.js</a></li>
-                                <li class=""><a href="arraylist-filter.js.html" title="arraylist-filter.js">arraylist-filter.js</a></li>
+                                <li class="selected"><a href="arraylist-filter.js.html" title="arraylist-filter.js">arraylist-filter.js</a></li>
                                 <li class=""><a href="arraylist.js.html" title="arraylist.js">arraylist.js</a></li>
-                                <li class="selected"><a href="invoke.js.html" title="invoke.js">invoke.js</a></li>
+                                <li class=""><a href="invoke.js.html" title="invoke.js">invoke.js</a></li>
                         </ul>
                     </div>
 

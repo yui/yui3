@@ -12,6 +12,12 @@ Development Master
   allowing extensions to add to, or overwrite, attribute 
   configuration properties on the host.
 
+* Added sugar Base.create and Base.mix methods on top of 
+  Base.build, to simplify the 2 main use cases: 
+
+  1). Creating a completely new class which uses extensions.
+  2). Mixing in extensions to an existing class.
+
 * Documented non-attribute on, after, bubbleTargets and plugins 
   property support in the Base constructor config argument 
 
