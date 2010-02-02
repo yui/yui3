@@ -668,7 +668,8 @@ var NOT_FOUND = {},
         },
 
         test: {                                                                                                                                                        
-            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
+            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate'],
+            skinnable: true                                                                                                                     
         }  
 
     },
@@ -874,7 +875,7 @@ Y.Loader = function(o) {
      * @property maxURLLength
      * @type int
      */
-    this.maxURLLength = (o.maxURLLength) ? Math.min(MAX_URL_LENGTH, o.maxURLLength) : MAX_URL_LENGTH;
+    this.maxURLLength = MAX_URL_LENGTH;
 
     /**
      * Ignore modules registered on the YUI global
@@ -1141,14 +1142,14 @@ Y.Loader.prototype = {
                     if (i == 'require') {
                         this.require(val);
                     } else if (i == 'modules') {
-
                         // add a hash of module definitions
                         for (j in val) {
                             if (val.hasOwnProperty(j)) {
                                 this.addModule(val[j], j);
                             }
                         }
-
+                    } else if (i == 'maxURLLength') {
+                        this[i] = Math.min(MAX_URL_LENGTH, val);
                     } else {
                         this[i] = val;
                     }
