@@ -717,7 +717,8 @@
         <span class="p">},</span>
 
         <span class="nx">test</span><span class="o">:</span> <span class="p">{</span>                                                                                                                                                        
-            <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="nx">SUBSTITUTE</span><span class="p">,</span> <span class="nx">NODE</span><span class="p">,</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;event-simulate&#39;</span><span class="p">]</span>                                                                                                                     
+            <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="nx">SUBSTITUTE</span><span class="p">,</span> <span class="nx">NODE</span><span class="p">,</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;event-simulate&#39;</span><span class="p">],</span>
+            <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>                                                                                                                     
         <span class="p">}</span>  
 
     <span class="p">},</span>
@@ -923,7 +924,7 @@
 <span class="cm">     * @property maxURLLength</span>
 <span class="cm">     * @type int</span>
 <span class="cm">     */</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">maxURLLength</span> <span class="o">=</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">maxURLLength</span><span class="p">)</span> <span class="o">?</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">MAX_URL_LENGTH</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">maxURLLength</span><span class="p">)</span> <span class="o">:</span> <span class="nx">MAX_URL_LENGTH</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">maxURLLength</span> <span class="o">=</span> <span class="nx">MAX_URL_LENGTH</span><span class="p">;</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Ignore modules registered on the YUI global</span>
@@ -1190,14 +1191,14 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;require&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;modules&#39;</span><span class="p">)</span> <span class="p">{</span>
-
                         <span class="c1">// add a hash of module definitions</span>
                         <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="k">in</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">j</span><span class="p">))</span> <span class="p">{</span>
                                 <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">val</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">j</span><span class="p">);</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
-
+                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;maxURLLength&#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">MAX_URL_LENGTH</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                         <span class="k">this</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
                     <span class="p">}</span>

@@ -1154,7 +1154,7 @@ ET.prototype = {
 
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
-            Node = Y.Node, n, domevent;
+            Node = Y.Node, n, domevent, isArr;
 
         if (L.isObject(type)) {
 
@@ -1166,17 +1166,22 @@ ET.prototype = {
             c = context; 
             args = Y.Array(arguments, 0, true);
             ret = {};
-            after = type._after;
-            delete type._after;
+
+            if (L.isArray(type)) {
+                isArr = true;
+            } else {
+                after = type._after;
+                delete type._after;
+            }
 
             Y.each(type, function(v, k) {
 
-                if (v) {
-                    f = v.fn || ((Y.Lang.isFunction(v)) ? v : f);
+                if (L.isObject(v)) {
+                    f = v.fn || ((L.isFunction(v)) ? v : f);
                     c = v.context || c;
                 }
 
-                args[0] = (after) ? AFTER_PREFIX + k : k;
+                args[0] = (isArr) ? v : ((after) ? AFTER_PREFIX + k : k);
                 args[1] = f;
                 args[2] = c;
 

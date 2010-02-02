@@ -124,6 +124,7 @@ CEProto.fireComplex = function(args) {
            silent: this.silent,
            stopped: 0,
            prevented: 0,
+           type: this.type,
            queue: []
         };
         es = Y.Env._eventstack;
@@ -131,8 +132,9 @@ CEProto.fireComplex = function(args) {
 
     subs = this.getSubs();
 
-    this.stopped = es.stopped || 0;
-    this.prevented = es.stopped || 0;
+    this.stopped = (this.type !== es.type) ? 0 : es.stopped;
+    this.prevented = (this.type !== es.type) ? 0 : es.prevented;
+
     this.target = this.target || this.host;
 
     events = new Y.EventTarget({
@@ -175,8 +177,12 @@ CEProto.fireComplex = function(args) {
 
     // bubble if this is hosted in an event target and propagation has not been stopped
     if (this.bubbles && this.host && this.host.bubble && !this.stopped) {
-        // es.stopped = 0;
-        // es.prevented = 0;
+
+        if (es.type != this.type) {
+            es.stopped = 0;
+            es.prevented = 0;
+        }
+
         ret = this.host.bubble(this);
 
         this.stopped = Math.max(this.stopped, es.stopped);

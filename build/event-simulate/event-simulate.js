@@ -33,7 +33,34 @@ var L   = Y.Lang,
         keydown:    1,
         keyup:      1,
         keypress:   1
+    },
+    
+    //HTML events supported
+    uiEvents  = {
+        blur:       1,
+        change:     1,
+        focus:      1,
+        resize:     1,
+        scroll:     1,
+        select:     1
+
+    },
+    
+    //events that bubble by default
+    bubbleEvents = {
+        scroll:     1,
+        resize:     1,
+        reset:      1,
+        submit:     1,
+        change:     1,
+        select:     1,
+        error:      1,
+        abort:      1
     };
+    
+//all key and mouse events bubble
+Y.mix(bubbleEvents, mouseEvents);
+Y.mix(bubbleEvents, keyEvents);    
 
 /*
  * Note: Intentionally not for YUIDoc generation.
@@ -443,6 +470,100 @@ function simulateMouseEvent(target /*:HTMLElement*/, type /*:String*/,
     }
 }
 
+/*
+ * Note: Intentionally not for YUIDoc generation.
+ * Simulates a UI event using the given event information to populate
+ * the generated event object. This method does browser-equalizing
+ * calculations to account for differences in the DOM and IE event models
+ * as well as different browser quirks.
+ * @method simulateHTMLEvent
+ * @private
+ * @static
+ * @param {HTMLElement} target The target of the given event.
+ * @param {String} type The type of event to fire. This can be any one of
+ *      the following: click, dblclick, mousedown, mouseup, mouseout,
+ *      mouseover, and mousemove.
+ * @param {Boolean} bubbles (Optional) Indicates if the event can be
+ *      bubbled up. DOM Level 2 specifies that all mouse events bubble by
+ *      default. The default is true.
+ * @param {Boolean} cancelable (Optional) Indicates if the event can be
+ *      canceled using preventDefault(). DOM Level 2 specifies that all
+ *      mouse events except mousemove can be cancelled. The default 
+ *      is true for all events except mousemove, for which the default 
+ *      is false.
+ * @param {Window} view (Optional) The view containing the target. This is
+ *      typically the window object. The default is window.
+ * @param {int} detail (Optional) The number of times the mouse button has
+ *      been used. The default value is 1.
+ */
+function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/, 
+                               bubbles /*:Boolean*/,  cancelable /*:Boolean*/,    
+                               view /*:Window*/,        detail /*:int*/) /*:Void*/
+{
+    
+    //check target   
+    if (!target){
+        Y.error("simulateUIEvent(): Invalid target.");
+    }
+    
+    //check event type
+    if (isString(type)){
+        type = type.toLowerCase();
+        
+        //make sure it's a supported mouse event
+        if (!uiEvents[type]){
+            Y.error("simulateUIEvent(): Event type '" + type + "' not supported.");
+        }
+    } else {
+        Y.error("simulateUIEvent(): Event type must be a string.");
+    }
+    
+    //try to create a mouse event
+    var customEvent = null;    
+    
+    
+    //setup default values
+    if (!isBoolean(bubbles)){
+        bubbles = (type in bubbleEvents);  //not all events bubble
+    }
+    if (!isBoolean(cancelable)){
+        cancelable = (type == "submit"); //submit is the only one that can be cancelled
+    }
+    if (!isObject(view)){
+        view = window; //view is typically window
+    }
+    if (!isNumber(detail)){
+        detail = 1;  //usually not used but defaulted to this
+    }
+        
+    //check for DOM-compliant browsers first
+    if (isFunction(doc.createEvent)){
+    
+        //just a generic UI Event object is needed
+        customEvent = doc.createEvent("UIEvents");
+        customEvent.initUIEvent(type, bubbles, cancelable, view, detail);
+        
+        //fire the event
+        target.dispatchEvent(customEvent);
+
+    } else if (isObject(doc.createEventObject)){ //IE
+    
+        //create an IE event object
+        customEvent = doc.createEventObject();
+        
+        //assign available properties
+        customEvent.bubbles = bubbles;
+        customEvent.cancelable = cancelable;
+        customEvent.view = view;
+        customEvent.detail = detail;
+
+        //fire the event
+        target.fireEvent("on" + type, customEvent);
+                
+    } else {
+        Y.error("simulateUIEvent(): No event simulation framework present.");
+    }
+}
 
 /**
  * Simulates the event with the given name on a target.
@@ -467,17 +588,18 @@ Y.Event.simulate = function(target, type, options){
         simulateKeyEvent(target, type, options.bubbles,
             options.cancelable, options.view, options.ctrlKey,
             options.altKey, options.shiftKey, options.metaKey, 
-            options.keyCode, options.charCode);     
-    } else {
+            options.keyCode, options.charCode);   
+    } else if (uiEvents[type]){
+        simulateUIEvent(target, type, options.bubbles,
+            options.cancelable, options.view, options.detail);        
+     } else {
         Y.error("simulate(): Event '" + type + "' can't be simulated.");
     }
 };
 
-/*
- * @TODO: focus(), blur(), submit()
- */
 
 })();
+
 
 
 }, '@VERSION@' ,{requires:['event-base']});
