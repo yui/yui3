@@ -325,7 +325,21 @@ var NOT_FOUND = {},
         },
 
         collection: { 
-            requires: [OOP]
+            submodules: {
+                'array-extras': {
+                    // @TODO: is oop required?
+                    requires: [OOP]
+                },
+                'arraylist': {},
+                'array-invoke': {},
+                // @TODO: candidates for plugins
+                'arraylist-filter': {
+                    requires: [ 'arraylist' ]
+                },
+                'arraylist-add': {
+                    requires: [ 'arraylist' ]
+                }
+            }
         },
 
         console: {
@@ -450,6 +464,10 @@ var NOT_FOUND = {},
                     optional: ['dd-drop-plugin']
                 }
             }
+        },
+
+        dd-value: {
+            requires: ['dd-constrain']
         },
 
         dump: { 
@@ -615,7 +633,7 @@ var NOT_FOUND = {},
         },
 
         slider: {
-            requires: [WIDGET, 'dd-constrain'],
+            requires: [WIDGET, 'dd-value'],
             skinnable: true
         },
 
