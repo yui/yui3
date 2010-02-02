@@ -2277,5 +2277,4 @@ Y.Loader.prototype = {
 
 
 
-
 }, '@VERSION@' );
