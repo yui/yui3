@@ -60,6 +60,27 @@
         <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * The domready event fires at the moment the browser&#39;s DOM is</span>
+<span class="cm"> * usable. In most cases, this is before images are fully</span>
+<span class="cm"> * downloaded, allowing you to provide a more responsive user</span>
+<span class="cm"> * interface.</span>
+<span class="cm"> *</span>
+<span class="cm"> * In YUI 3, domready subscribers will be notified immediately if</span>
+<span class="cm"> * that moment has already passed when the subscription is created.</span>
+<span class="cm"> *</span>
+<span class="cm"> * One exception is if the yui.js file is dynamically injected into</span>
+<span class="cm"> * the page.  If this is done, you must tell the YUI instance that</span>
+<span class="cm"> * you did this in order for DOMReady (and window load events) to</span>
+<span class="cm"> * fire normally.  That configuration option is &#39;injected&#39; -- set</span>
+<span class="cm"> * it to true if the yui.js script is not included inline.</span>
+<span class="cm"> *</span>
+<span class="cm"> * This method is part of the &#39;event-ready&#39; module, which is a</span>
+<span class="cm"> * submodule of &#39;event&#39;.  </span>
+<span class="cm"> *</span>
+<span class="cm"> * @event domready</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">fireOnce</span><span class="o">:</span> <span class="kc">true</span>
 <span class="p">});</span>
