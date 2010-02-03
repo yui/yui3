@@ -805,7 +805,8 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * and the 'domready' custom event.
  *
  * @property injected
- * @type object
+ * @type boolean
+ * @default false
  */
 
 /**

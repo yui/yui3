@@ -787,7 +787,8 @@ YUI.prototype = {
  * and the 'domready' custom event.
  *
  * @property injected
- * @type object
+ * @type boolean
+ * @default false
  */
 
 /**
