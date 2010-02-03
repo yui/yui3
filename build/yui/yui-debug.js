@@ -1519,7 +1519,7 @@ Queue.prototype = {
      * @method _init
      * @protected
      */
-    _init : function () {
+    _init: function () {
         /**
          * The collection of enqueued items
          *
@@ -1531,13 +1531,23 @@ Queue.prototype = {
     },
 
     /**
-     * Get the next item in the queue.
+     * Get the next item in the queue. FIFO support
      *
      * @method next
      * @return {MIXED} the next item in the queue
      */
-    next : function () {
+    next: function () {
         return this._q.shift();
+    },
+
+    /**
+     * Get the last in the queue. LIFO support
+     *
+     * @method last
+     * @return {MIXED} the last item in the queue
+     */
+    last: function () {
+        return this._q.pop();
     },
 
     /**
@@ -1546,7 +1556,7 @@ Queue.prototype = {
      * @method add
      * @param item* {MIXED} 0..n items
      */
-    add : function () {
+    add: function () {
         Y.Array.each(Y.Array(arguments,0,true),function (fn) {
             this._q.push(fn);
         },this);
@@ -1560,7 +1570,7 @@ Queue.prototype = {
      * @method size
      * @return {Number}
      */
-    size : function () {
+    size: function () {
         return this._q.length;
     }
 };
@@ -3164,13 +3174,17 @@ YUI.add('yui-throttle', function(Y) {
  * @return {function} Returns a wrapped function that calls fn throttled.
  */
 
+/*! Based on work by Simon Willison: http://gist.github.com/292562 */
+
 var throttle = function(fn, ms) {
+    ms = (ms) ? ms : (Y.config.throttleTime || 150);
+
     if (ms === -1) {
         return (function() {
             fn.apply(null, arguments);
         });
     }
-    ms = (ms) ? ms : (Y.config.throttleTime || 150);
+
     var last = (new Date()).getTime();
 
     return (function() {
@@ -3183,7 +3197,10 @@ var throttle = function(fn, ms) {
 };
 
 Y.throttle = throttle;
-Y.Lang.throttle = throttle;
+
+// Added the redundant definition to later for backwards compatibility.
+// I don't think we need to do the same thing here
+// Y.Lang.throttle = throttle;
 
 
 

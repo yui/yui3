@@ -1,1 +1,3 @@
-YUI.add("yui-throttle",function(B){var A=function(D,C){if(C===-1){return(function(){D.apply(null,arguments);});}C=(C)?C:(B.config.throttleTime||150);var E=(new Date()).getTime();return(function(){var F=(new Date()).getTime();if(F-E>C){E=F;D.apply(null,arguments);}});};B.throttle=A;B.Lang.throttle=A;},"@VERSION@",{requires:["yui-base"]});
+YUI.add("yui-throttle",function(Y){
+/* Based on work by Simon Willison: http://gist.github.com/292562 */
+var throttle=function(fn,ms){ms=(ms)?ms:(Y.config.throttleTime||150);if(ms===-1){return(function(){fn.apply(null,arguments);});}var last=(new Date()).getTime();return(function(){var now=(new Date()).getTime();if(now-last>ms){last=now;fn.apply(null,arguments);}});};Y.throttle=throttle;},"@VERSION@",{requires:["yui-base"]});
