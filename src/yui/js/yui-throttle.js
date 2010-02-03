@@ -14,13 +14,17 @@
  * @return {function} Returns a wrapped function that calls fn throttled.
  */
 
+/*! Based on work by Simon Willison: http://gist.github.com/292562 */
+
 var throttle = function(fn, ms) {
+    ms = (ms) ? ms : (Y.config.throttleTime || 150);
+
     if (ms === -1) {
         return (function() {
             fn.apply(null, arguments);
         });
     }
-    ms = (ms) ? ms : (Y.config.throttleTime || 150);
+
     var last = (new Date()).getTime();
 
     return (function() {

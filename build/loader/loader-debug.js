@@ -674,7 +674,6 @@ var NOT_FOUND = {},
             },
             skinnable: true
         },
-
         yui: {
             submodules: {
                 'yui-base': {},
