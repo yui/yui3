@@ -438,7 +438,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-thr
         groups: ['one', 'three'],
         target: true,
         dragMode: 'intersect',
-        handles: ['h2'],
+        handles: [Y.one('#drag h2')],
         bubbleTargets: Y.DD.DDM,
         //bubbles: false,
         //dragMode: 'strict',
@@ -556,10 +556,12 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-thr
     dd3 = Y.Node.get('#drag3');
     dd3.plug(Y.Plugin.Drag, {
         groups: ['one', 'three'],
-        dragMode: 'intersect'
+        dragMode: 'intersect',
+        handles: [Y.all('#drag3 h2')]
     });
     dd3.dd.plug(Y.Plugin.DDProxy, {});
-    dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
+    //dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
+    dd3.dd.addInvalid('h2.one');
     
 
 /*

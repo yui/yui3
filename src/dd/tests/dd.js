@@ -130,12 +130,20 @@ YUI({
             Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
             dd.set('handles', ['h2']);
             Y.Assert.isObject(dd._handles, 'dd: Handles not an object');
-            Y.Assert.isTrue(dd._handles.h2, 'dd: Handles H2 not there');
+            Y.Assert.isNotUndefined(dd._handles.h2, 'dd: Handles H2 not there');
             dd.set('handles', false);
             Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
             dd.addHandle('h2');
             Y.Assert.isObject(dd._handles, 'dd: Handles not an object');
-            Y.Assert.isTrue(dd._handles.h2, 'dd: Handles H2 not there');
+            Y.Assert.isNotUndefined(dd._handles.h2, 'dd: Handles H2 not there');
+            dd.set('handles', false);
+            Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
+            var wrap = Y.one('#wrap');
+            dd.addHandle(wrap);
+            Y.Assert.isObject(dd._handles, 'dd: Handles not an object');
+            Y.Assert.isNotUndefined(dd._handles[wrap._yuid], 'dd: Handles ' + wrap._yuid + ' not there (Node Based Handle)');
+            dd.set('handles', false);
+            Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
         },
         test_drag_setup_events: function() {
             Y.each(dd_events, function(v) {

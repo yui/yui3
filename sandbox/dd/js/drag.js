@@ -320,7 +320,11 @@ YUI.add('dd-drag', function(Y) {
                 if (g) {
                     this._handles = {};
                     Y.each(g, function(v, k) {
-                        this._handles[v] = true;
+                        var key = v;
+                        if (v instanceof Y.Node || v instanceof Y.NodeList) {
+                            key = v._yuid;
+                        }
+                        this._handles[key] = v;
                     }, this);
                 } else {
                     this._handles = null;
@@ -677,10 +681,23 @@ YUI.add('dd-drag', function(Y) {
             tar = ev.target,
             hTest = null,
             els = null,
+            nlist = null,
             set = false;
             if (this._handles) {
                 Y.each(this._handles, function(i, n) {
-                    if (Y.Lang.isString(n)) {
+                    if (i instanceof Y.Node || i instanceof Y.NodeList) {
+                        if (!r) {
+                            nlist = i;
+                            if (nlist instanceof Y.Node) {
+                                nlist = new Y.NodeList(i._node);
+                            }
+                            nlist.each(function(nl) {
+                                if (nl.contains(tar)) {
+                                    r = true;
+                                }
+                            });
+                        }
+                    } else if (Y.Lang.isString(n)) {
                         //Am I this or am I inside this
                         if (tar.test(n + ', ' + n + ' *') && !hTest) {
                             hTest = n;
@@ -759,8 +776,12 @@ YUI.add('dd-drag', function(Y) {
         * @chainable
         */
         removeHandle: function(str) {
-            if (this._handles[str]) {
-                delete this._handles[str];
+            var key = str;
+            if (str instanceof Y.Node || str instanceof Y.NodeList) {
+                key = str._yuid;
+            }
+            if (this._handles[key]) {
+                delete this._handles[key];
                 this.fire(EV_REMOVE_HANDLE, { handle: str });
             }
             return this;
@@ -776,10 +797,12 @@ YUI.add('dd-drag', function(Y) {
             if (!this._handles) {
                 this._handles = {};
             }
-            if (Y.Lang.isString(str)) {
-                this._handles[str] = true;
-                this.fire(EV_ADD_HANDLE, { handle: str });
+            var key = str;
+            if (str instanceof Y.Node || str instanceof Y.NodeList) {
+                key = str._yuid;
             }
+            this._handles[key] = str;
+            this.fire(EV_ADD_HANDLE, { handle: str });
             return this;
         },
         /**

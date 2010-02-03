@@ -54,7 +54,7 @@ YUI.add('sortable', function(Y) {
 
             c = new Y.DD.Drop({
                 node: self.get(CONT),
-                bubbles: del,
+                bubbleTarget: del,
                 groups: del.dd.get('groups')
             }).on('drop:over', Y.bind(self._onDropOver, self));
             
