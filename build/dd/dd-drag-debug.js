@@ -330,14 +330,11 @@ YUI.add('dd-drag', function(Y) {
             }
         },
         /**
+        * @deprecated
         * @attribute bubbles
-        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config
         * @type Object
         */
-        bubbles: {
-            writeOnce: true,
-            value: Y.DD.DDM
-        }
     };
 
     Y.extend(Drag, Y.Base, {
@@ -390,7 +387,7 @@ YUI.add('dd-drag', function(Y) {
                     if (!Y.Lang.isObject(config)) {
                         config = {};
                     }
-                    config.bubbles = ('bubbles' in config) ? config.bubbles : this.get('bubbles');
+                    //config.bubbles = ('bubbles' in config) ? config.bubbles : this.get('bubbles');
                     config.node = this.get(NODE);
                     config.groups = config.groups || this.get('groups');
                     this.target = new Y.DD.Drop(config);
@@ -469,12 +466,6 @@ YUI.add('dd-drag', function(Y) {
                     prefix: 'drag'
                 });
             }, this);
-
-            if (this.get('bubbles')) {
-                this.addTarget(this.get('bubbles'));
-            }
-            
-           
         },
         /**
         * @private
@@ -826,7 +817,10 @@ YUI.add('dd-drag', function(Y) {
         * @method initializer
         * @description Internal init handler
         */
-        initializer: function() {
+        initializer: function(cfg) {
+            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
+                this.addTarget(Y.DD.DDM);
+            }
             this.get(NODE).dd = this;
 
             if (!this.get(NODE).get('id')) {

@@ -99,35 +99,36 @@ YUI.add('dd-delegate', function(Y) {
         _onMouseLeave: function(e) {
             Y.DD.DDM._noShim = this._shimState;
         },
-        initializer: function() {
+        initializer: function(cfg) {
+            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
+                this.addTarget(Y.DD.DDM);
+            }
             //Create a tmp DD instance under the hood.
             var conf = this.get('dragConfig') || {},
-                self = this, cont = self.get(CONT);
+                cont = this.get(CONT);
 
             conf.node = _tmpNode.cloneNode(true);
-            conf.bubbles = self;
-            if (self.get('handles')) {
-                conf.handles = self.get('handles');
+            conf.bubbleTargets = this;
+
+            if (this.get('handles')) {
+                conf.handles = this.get('handles');
             }
 
-            self.dd = new Y.DD.Drag(conf);
-
-            //Set this as the target
-            self.addTarget(Y.DD.DDM);
+            this.dd = new Y.DD.Drag(conf);
 
             //On end drag, detach the listeners
-            self.dd.after('drag:end', Y.bind(self._afterDragEnd, self));
-            self.dd.on('dragNodeChange', Y.bind(self._onNodeChange, self));
+            this.dd.after('drag:end', Y.bind(this._afterDragEnd, this));
+            this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
 
             //Attach the delegate to the container
-            Y.delegate('mousedown', Y.bind(self._onDelegate, self), cont, self.get(NODES));
+            Y.delegate('mousedown', Y.bind(this._onDelegate, this), cont, this.get(NODES));
 
-            Y.on('mouseenter', Y.bind(self._onMouseEnter, self), cont);
+            Y.on('mouseenter', Y.bind(this._onMouseEnter, this), cont);
 
-            Y.on('mouseleave', Y.bind(self._onMouseLeave, self), cont);
+            Y.on('mouseleave', Y.bind(this._onMouseLeave, this), cont);
 
-            self.syncTargets();
-            Y.DD.DDM.regDelegate(self);
+            Y.later(10, this, this.syncTargets);
+            Y.DD.DDM.regDelegate(this);
         },
         /**
         * @method syncTargets
@@ -166,7 +167,7 @@ YUI.add('dd-delegate', function(Y) {
         createDrop: function(node, groups) {
             var config = {
                 useShim: false,
-                bubbles: this
+                bubbleTargets: this
             };
 
             if (!node.drop) {

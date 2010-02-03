@@ -406,6 +406,9 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-thr
     Y.DD.DDM.on('drag:drag', function(e) {
         //console.log('DDM:drag:drag :: ', e);
     });
+    Y.DD.DDM.on('drag:dropmiss', function(e) {
+        console.log('DDM:drag:dropmiss :: ', e);
+    });
     //Y.DD.DDM.set('multiDrop', false);
 
 /* //Event Hijacking
@@ -424,7 +427,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-thr
   */
 
     Y.DD.DDM.on('ddm:start', function(e) {
-        //console.log('DDM:start :: ', e);
+        console.log('DDM:start :: ', e);
     });
     Y.DD.DDM.on('drag:end', function(e) {
         console.log('DDM:end :: ', e);
@@ -436,6 +439,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-thr
         target: true,
         dragMode: 'intersect',
         handles: ['h2'],
+        bubbleTargets: Y.DD.DDM,
         //bubbles: false,
         //dragMode: 'strict',
         data: {

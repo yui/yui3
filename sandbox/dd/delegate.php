@@ -110,12 +110,20 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     //Y.DD.DDM._debugShim = true;
     //Y.DD.DDM._useShim = false;
 
+    Y.DD.DDM.on('drag:start', function(e) {
+        console.log('DDM:start :: ', e);
+    });
+    Y.DD.DDM.on('drag:end', function(e) {
+        console.log('DDM:end :: ', e);
+    });
+
     var del = new Y.DD.Delegate({
         container: '#demo',
         nodes: '.item',
         target: true,
         invalid: '.disabled',
-        handles: ['strong']
+        handles: ['strong'],
+        bubbleTargets: false
     });
 
     del.on('drag:start', function(e) {

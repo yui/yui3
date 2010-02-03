@@ -128,14 +128,11 @@ YUI.add('dd-drop', function(Y) {
             }
         },
         /**
+        * @deprecated
         * @attribute bubbles
-        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config.
         * @type Object
         */
-        bubbles: {
-            writeOnce: true,
-            value: Y.DD.DDM
-        },
         useShim: {
             value: true,
             setter: function(v) {
@@ -192,11 +189,6 @@ YUI.add('dd-drop', function(Y) {
                     prefix: 'drop'
                 });
             }, this);
-
-            if (this.get('bubbles')) {
-                this.addTarget(this.get('bubbles'));
-            }
-            
         },
         /**
         * @private
@@ -252,7 +244,10 @@ YUI.add('dd-drop', function(Y) {
         * @method initializer
         * @description Private lifecycle method
         */
-        initializer: function() {
+        initializer: function(cfg) {
+            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
+                this.addTarget(Y.DD.DDM);
+            }
             //this._createEvents();
             Y.later(100, this, this._createEvents);
 

@@ -1217,14 +1217,11 @@ YUI.add('dd-drag', function(Y) {
             }
         },
         /**
+        * @deprecated
         * @attribute bubbles
-        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config
         * @type Object
         */
-        bubbles: {
-            writeOnce: true,
-            value: Y.DD.DDM
-        }
     };
 
     Y.extend(Drag, Y.Base, {
@@ -1277,7 +1274,7 @@ YUI.add('dd-drag', function(Y) {
                     if (!Y.Lang.isObject(config)) {
                         config = {};
                     }
-                    config.bubbles = ('bubbles' in config) ? config.bubbles : this.get('bubbles');
+                    //config.bubbles = ('bubbles' in config) ? config.bubbles : this.get('bubbles');
                     config.node = this.get(NODE);
                     config.groups = config.groups || this.get('groups');
                     this.target = new Y.DD.Drop(config);
@@ -1356,12 +1353,6 @@ YUI.add('dd-drag', function(Y) {
                     prefix: 'drag'
                 });
             }, this);
-
-            if (this.get('bubbles')) {
-                this.addTarget(this.get('bubbles'));
-            }
-            
-           
         },
         /**
         * @private
@@ -1713,7 +1704,10 @@ YUI.add('dd-drag', function(Y) {
         * @method initializer
         * @description Internal init handler
         */
-        initializer: function() {
+        initializer: function(cfg) {
+            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
+                this.addTarget(Y.DD.DDM);
+            }
             this.get(NODE).dd = this;
 
             if (!this.get(NODE).get('id')) {
@@ -3079,7 +3073,7 @@ YUI.add('dd-scroll', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-proxy'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, optional:['dd-proxy'], requires:['dd-drag']});
 YUI.add('dd-plugin', function(Y) {
 
 
@@ -3125,7 +3119,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-constrain', 'dd-proxy'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag']});
 YUI.add('dd-drop', function(Y) {
 
 
@@ -3256,14 +3250,11 @@ YUI.add('dd-drop', function(Y) {
             }
         },
         /**
+        * @deprecated
         * @attribute bubbles
-        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config.
         * @type Object
         */
-        bubbles: {
-            writeOnce: true,
-            value: Y.DD.DDM
-        },
         useShim: {
             value: true,
             setter: function(v) {
@@ -3320,11 +3311,6 @@ YUI.add('dd-drop', function(Y) {
                     prefix: 'drop'
                 });
             }, this);
-
-            if (this.get('bubbles')) {
-                this.addTarget(this.get('bubbles'));
-            }
-            
         },
         /**
         * @private
@@ -3380,7 +3366,10 @@ YUI.add('dd-drop', function(Y) {
         * @method initializer
         * @description Private lifecycle method
         */
-        initializer: function() {
+        initializer: function(cfg) {
+            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
+                this.addTarget(Y.DD.DDM);
+            }
             //this._createEvents();
             Y.later(100, this, this._createEvents);
 
@@ -3706,99 +3695,15 @@ YUI.add('dd-delegate', function(Y) {
      */
 
 
-    var D = function(o) {
-        D.superclass.constructor.apply(this, arguments);
+    var Delegate = function(o) {
+        Delegate.superclass.constructor.apply(this, arguments);
     },
-    CONT = 'cont',
+    CONT = 'container',
     NODES = 'nodes',
     _tmpNode = Y.Node.create('<div>Temp Node</div>');
 
-    D.NAME = 'delegate';
 
-    D.ATTRS = {
-        /**
-        * @attribute cont
-        * @description A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
-        * @type String
-        */    
-        cont: {
-            value: 'body'
-        },
-        /**
-        * @attribute nodes
-        * @description A selector query to get the children of the "container" to make draggable elements from.
-        * @type String
-        */        
-        nodes: {
-            value: '.dd-draggable'
-        },
-        /**
-        * @attribute invalid
-        * @description A selector query to test a node to see if it's an invalid item.
-        * @type String
-        */        
-        invalid: {
-            value: ''
-        },
-        /**
-        * @attribute lastNode
-        * @description Y.Node instance of the last item dragged.
-        * @type Node
-        */        
-        lastNode: {
-            value: _tmpNode
-        },
-        /**
-        * @attribute currentNode
-        * @description Y.Node instance of the dd node.
-        * @type Node
-        */        
-        currentNode: {
-            value: _tmpNode
-        },
-        /**
-        * @attribute dragNode
-        * @description Y.Node instance of the dd dragNode.
-        * @type Node
-        */        
-        dragNode: {
-            value: _tmpNode
-        },
-        /**
-        * @attribute over
-        * @description Is the mouse currently over the container
-        * @type Boolean
-        */        
-        over: {
-            value: false
-        },
-        /**
-        * @attribute target
-        * @description Should the items also be a drop target.
-        * @type Boolean
-        */        
-        target: {
-            value: false
-        },
-        /**
-        * @attribute dragConfig
-        * @description The default config to be used when creating the DD instance.
-        * @type Object
-        */        
-        dragConfig: {
-            value: null
-        },
-        /**
-        * @attribute handles
-        * @description The handles config option added to the temp DD instance.
-        * @type Array
-        */        
-        handles: {
-            value: null
-        }
-    };
-
-    Y.extend(D, Y.Base, {
+    Y.extend(Delegate, Y.Base, {
         /**
         * @property dd
         * @description A reference to the temporary dd instance used under the hood.
@@ -3812,20 +3717,20 @@ YUI.add('dd-delegate', function(Y) {
         _shimState: null,
         /**
         * @private
-        * @method _handleNodeChange
+        * @method _onNodeChange
         * @description Listens to the nodeChange event and sets the dragNode on the temp dd instance.
         * @param {Event} e The Event.
         */
-        _handleNodeChange: function(e) {
+        _onNodeChange: function(e) {
             this.set('dragNode', e.newVal);
         },
         /**
         * @private
-        * @method _handleDragEnd
+        * @method _afterDragEnd
         * @description Listens for the drag:end event and updates the temp dd instance.
         * @param {Event} e The Event.
         */
-        _handleDragEnd: function(e) {
+        _afterDragEnd: function(e) {
             var self = this;
             Y.DD.DDM._noShim = self._shimState;
             self.set('lastNode', self.dd.get('node'));
@@ -3835,11 +3740,11 @@ YUI.add('dd-delegate', function(Y) {
         },
         /**
         * @private
-        * @method _handleDelegate
+        * @method _onDelegate
         * @description The callback for the Y.DD.Delegate instance used
         * @param {Event} e The MouseDown Event.
         */
-        _handleDelegate: function(e) {
+        _onDelegate: function(e) {
             var tar = e.currentTarget,
                 self = this, dd = self.dd;
             if (tar.test(self.get(NODES)) && !tar.test(self.get('invalid'))) {
@@ -3853,57 +3758,58 @@ YUI.add('dd-delegate', function(Y) {
                     dd.set('dragNode', tar);
                 }
                 dd._prep();
-                dd.fire.call(dd, 'drag:mouseDown', { ev: e });
+                dd.fire('drag:mouseDown', { ev: e });
             }
         },
         /**
         * @private
-        * @method _handleMouseEnter
+        * @method _onMouseEnter
         * @description Sets the target shim state
         * @param {Event} e The MouseEnter Event
         */
-        _handleMouseEnter: function(e) {
+        _onMouseEnter: function(e) {
             this._shimState = Y.DD.DDM._noShim;
             Y.DD.DDM._noShim = true;
         },
         /**
         * @private
-        * @method _handleMouseLeave
+        * @method _onMouseLeave
         * @description Resets the target shim state
         * @param {Event} e The MouseLeave Event
         */
-        _handleMouseLeave: function(e) {
+        _onMouseLeave: function(e) {
             Y.DD.DDM._noShim = this._shimState;
         },
-        initializer: function() {
+        initializer: function(cfg) {
+            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
+                this.addTarget(Y.DD.DDM);
+            }
             //Create a tmp DD instance under the hood.
             var conf = this.get('dragConfig') || {},
-                self = this, cont = self.get(CONT);
+                cont = this.get(CONT);
 
             conf.node = _tmpNode.cloneNode(true);
-            conf.bubbles = self;
-            if (self.get('handles')) {
-                conf.handles = self.get('handles');
+            conf.bubbleTargets = this;
+
+            if (this.get('handles')) {
+                conf.handles = this.get('handles');
             }
 
-            self.dd = new Y.DD.Drag(conf);
-
-            //Set this as the target
-            self.addTarget(Y.DD.DDM);
+            this.dd = new Y.DD.Drag(conf);
 
             //On end drag, detach the listeners
-            self.dd.after('drag:end', Y.bind(self._handleDragEnd, self));
-            self.dd.on('dragNodeChange', Y.bind(self._handleNodeChange, self));
+            this.dd.after('drag:end', Y.bind(this._afterDragEnd, this));
+            this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
 
             //Attach the delegate to the container
-            Y.delegate('mousedown', Y.bind(self._handleDelegate, self), cont, self.get(NODES));
+            Y.delegate('mousedown', Y.bind(this._onDelegate, this), cont, this.get(NODES));
 
-            Y.on('mouseenter', Y.bind(self._handleMouseEnter, self), cont);
+            Y.on('mouseenter', Y.bind(this._onMouseEnter, this), cont);
 
-            Y.on('mouseleave', Y.bind(self._handleMouseLeave, self), cont);
+            Y.on('mouseleave', Y.bind(this._onMouseLeave, this), cont);
 
-            self.syncTargets();
-            Y.DD.DDM.regDelegate(self);
+            Y.later(10, this, this.syncTargets);
+            Y.DD.DDM.regDelegate(this);
         },
         /**
         * @method syncTargets
@@ -3942,7 +3848,7 @@ YUI.add('dd-delegate', function(Y) {
         createDrop: function(node, groups) {
             var config = {
                 useShim: false,
-                bubbles: this
+                bubbleTargets: this
             };
 
             if (!node.drop) {
@@ -3957,10 +3863,91 @@ YUI.add('dd-delegate', function(Y) {
             }
             if (Y.Plugin.Drop) {
                 var targets = Y.one(this.get(CONT)).all(this.get(NODES));
-                targets.each(function(node) {
-                    node.drop.destroy();
-                    node.unplug(Y.Plugin.Drop);
-                });
+                targets.unplug(Y.Plugin.Drop);
+            }
+        }
+    }, {
+        NAME: 'delegate',
+        ATTRS: {
+            /**
+            * @attribute container
+            * @description A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
+            * @type String
+            */    
+            container: {
+                value: 'body'
+            },
+            /**
+            * @attribute nodes
+            * @description A selector query to get the children of the "container" to make draggable elements from.
+            * @type String
+            */        
+            nodes: {
+                value: '.dd-draggable'
+            },
+            /**
+            * @attribute invalid
+            * @description A selector query to test a node to see if it's an invalid item.
+            * @type String
+            */        
+            invalid: {
+                value: ''
+            },
+            /**
+            * @attribute lastNode
+            * @description Y.Node instance of the last item dragged.
+            * @type Node
+            */        
+            lastNode: {
+                value: _tmpNode
+            },
+            /**
+            * @attribute currentNode
+            * @description Y.Node instance of the dd node.
+            * @type Node
+            */        
+            currentNode: {
+                value: _tmpNode
+            },
+            /**
+            * @attribute dragNode
+            * @description Y.Node instance of the dd dragNode.
+            * @type Node
+            */        
+            dragNode: {
+                value: _tmpNode
+            },
+            /**
+            * @attribute over
+            * @description Is the mouse currently over the container
+            * @type Boolean
+            */        
+            over: {
+                value: false
+            },
+            /**
+            * @attribute target
+            * @description Should the items also be a drop target.
+            * @type Boolean
+            */        
+            target: {
+                value: false
+            },
+            /**
+            * @attribute dragConfig
+            * @description The default config to be used when creating the DD instance.
+            * @type Object
+            */        
+            dragConfig: {
+                value: null
+            },
+            /**
+            * @attribute handles
+            * @description The handles config option added to the temp DD instance.
+            * @type Array
+            */        
+            handles: {
+                value: null
             }
         }
     });
@@ -4001,11 +3988,11 @@ YUI.add('dd-delegate', function(Y) {
     });
 
     Y.namespace('DD');    
-    Y.DD.Delegate = D;
+    Y.DD.Delegate = Delegate;
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag', 'event-mouseenter'], optional:['dd-drop-plugin'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, optional:['dd-drop-plugin'], requires:['dd-drag', 'event-mouseenter']});
 
 
 YUI.add('dd', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-scroll', 'dd-delegate']});
