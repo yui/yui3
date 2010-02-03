@@ -1136,6 +1136,8 @@ var L = Y.Lang,
 
             chain: ('chain' in o) ? o.chain : Y.config.chain,
 
+            bubbling: false,
+
             defaults: {
                 context: o.context || this, 
                 host: this,

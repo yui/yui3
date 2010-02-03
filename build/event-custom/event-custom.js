@@ -1128,6 +1128,8 @@ var L = Y.Lang,
 
             chain: ('chain' in o) ? o.chain : Y.config.chain,
 
+            bubbling: false,
+
             defaults: {
                 context: o.context || this, 
                 host: this,
@@ -1959,7 +1961,10 @@ CEProto.fireComplex = function(args) {
     // bubble if this is hosted in an event target and propagation has not been stopped
     if (this.bubbles && host.bubble && !this.stopped) {
 
-        if (host !== ef.target || es.type != this.type) {
+        // this.bubbling = true;
+
+        // if (host !== ef.target || es.type != this.type) {
+        if (es.type != this.type) {
             es.stopped = 0;
             es.prevented = 0;
         }
@@ -1968,6 +1973,8 @@ CEProto.fireComplex = function(args) {
 
         this.stopped = Math.max(this.stopped, es.stopped);
         this.prevented = Math.max(this.prevented, es.prevented);
+
+        // this.bubbling = false;
 
     }
 
@@ -1990,23 +1997,35 @@ CEProto.fireComplex = function(args) {
         this._procSubs(subs[1], args, ef);
     }
 
+    // es.stopped = 0;
+    // es.prevented = 0;
+
     if (es.id === this.id) {
         queue = es.queue;
 
         while (queue.length) {
             q = queue.pop(); 
             ce = q[0];
-            es.stopped = 0;
-            es.prevented = 0;
             // set up stack to allow the next item to be processed
             es.next = ce;
             ce.fire.apply(ce, q[1]);
+            // es.stopped = 0;
+            // es.prevented = 0;
         }
 
         Y.Env._eventstack = null;
     } 
 
-    return this.stopped ? false : true;
+    ret = !(this.stopped);
+
+    if (this.type != host._yuievt.bubbling) {
+        es.stopped = 0;
+        es.prevented = 0;
+        this.stopped = 0;
+        this.prevented = 0;
+    }
+
+    return ret;
 };
 
 CEProto._getFacade = function() {
@@ -2158,6 +2177,8 @@ ETProto.bubble = function(evt, args, target) {
                 if (ce2 && !ce) {
                     ce = t.publish(type);
                 }
+
+                t._yuievt.bubbling = type;
                     
                 // if this event was not published on the bubble target,
                 // continue propagating the event.
@@ -2184,6 +2205,8 @@ ETProto.bubble = function(evt, args, target) {
                         break;
                     }
                 }
+
+                t._yuievt.bubbling = null;
             }
         }
     }
