@@ -2256,8 +2256,6 @@ YUI.add('dd-constrain', function(Y) {
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',
         HOST = 'host',
-        CON_2_REGION = 'constrain2region',
-        CON_2_NODE = 'constrain2node',
         TICK_X_ARRAY = 'tickXArray',
         TICK_Y_ARRAY = 'tickYArray',
         DDM = Y.DD.DDM,
@@ -2265,8 +2263,10 @@ YUI.add('dd-constrain', function(Y) {
         RIGHT = 'right',
         BOTTOM = 'bottom',
         LEFT = 'left',
+        VIEW = 'view',
         proto = null,
         C = function(config) {
+            this._lazyAddAttrs = false;
             C.superclass.constructor.apply(this, arguments);
         };
     
@@ -2334,37 +2334,6 @@ YUI.add('dd-constrain', function(Y) {
             value: false
         },
         /**
-        * @attribute constrain2region
-        * @description An Object Literal containing a valid region (top, right, bottom, left) of page positions to constrain the drag node to.
-        * @type Object
-        */
-        constrain2region: {
-            value: false,
-            getter: function(r) {
-                if (Y.Lang.isObject(r)) {
-                    var o = {};
-                    Y.mix(o, r);
-                    return o;
-                } else {
-                    return false;
-                }
-            },
-            setter: function (r) {
-                if (Y.Lang.isObject(r)) {
-                    if (Y.Lang.isNumber(r[TOP]) && Y.Lang.isNumber(r[RIGHT]) && Y.Lang.isNumber(r[LEFT]) && Y.Lang.isNumber(r[BOTTOM])) {
-                        var o = {};
-                        Y.mix(o, r);
-                        return o;
-                    } else {
-                        return false;
-                    }
-                } else if (r !== false) {
-                    return false;
-                }
-                return r;
-            }
-        },
-        /**
         * @attribute gutter
         * @description CSS style string for the gutter of a region (supports negative values): '5 0' (sets top and bottom to 5px, left and right to 0px), '1 2 3 4' (top 1px, right 2px, bottom 3px, left 4px)        
         * @type String
@@ -2376,30 +2345,55 @@ YUI.add('dd-constrain', function(Y) {
             }
         },
         /**
+        * @attribute constrain
+        * @description Will attempt to constrain the drag node to the boundaries. Arguments:<br>
+        * 'view': Contrain to Viewport<br>
+        * '#selector_string': Constrain to this node<br>
+        * '{Region Object}': An Object Literal containing a valid region (top, right, bottom, left) of page positions
+        * @type {String/Object/Node}
+        */
+        constrain: {
+            value: VIEW,
+            setter: function(con) {
+                var node = Y.one(con);
+                if (node) {
+                    con = node;
+                }
+                return con;
+            }
+        },
+        /**
+        * @deprecated
+        * @attribute constrain2region
+        * @description An Object Literal containing a valid region (top, right, bottom, left) of page positions to constrain the drag node to.
+        * @type Object
+        */
+        constrain2region: {
+            setter: function(r) {
+                return this.set('constrain', r);
+            }
+        },
+        /**
+        * @deprecated
         * @attribute constrain2node
         * @description Will attempt to constrain the drag node to the boundaries of this node.
         * @type Object
         */
         constrain2node: {
-            value: false,
             setter: function(n) {
-                if (!this.get(CON_2_REGION)) {
-                    var node = Y.one(n);
-                    if (node) {
-                        return node;
-                    }
-                } else if (this.get(CON_2_REGION) !== false) {
-                }
-                return false;
+                return this.set('constrain', Y.one(n));
             }
         },
         /**
+        * @deprecated
         * @attribute constrain2view
         * @description Will attempt to constrain the drag node to the boundaries of the viewport region.
         * @type Object
         */
         constrain2view: {
-            value: false
+            setter: function(n) {
+                return this.set('constrain', VIEW);
+            }
         },
         /**
         * @attribute cacheRegion
@@ -2437,7 +2431,7 @@ YUI.add('dd-constrain', function(Y) {
         * @description Get's the region and caches it, called from window.resize and when the cache is null
         */
         _cacheRegion: function() {
-            this._regionCache = this.get(CON_2_NODE).get('region');
+            this._regionCache = this.get('constrain').get('region');
         },
         /**
         * @method resetCache
@@ -2447,6 +2441,47 @@ YUI.add('dd-constrain', function(Y) {
             this._regionCache = null;
         },
         /**
+        * @private
+        * @method _getConstraint
+        * @description Standardizes the 'constraint' attribute
+        */
+        _getConstraint: function() {
+            var con = this.get('constrain'),
+                g = this.get('gutter'),
+                region;
+
+            if (con) {
+                if (con instanceof Y.Node) {
+                    if (!this._regionCache) {
+                        Y.on('resize', Y.bind(this._cacheRegion, this), window);
+                        this._cacheRegion();
+                    }
+                    region = Y.clone(this._regionCache);
+                    if (!this.get('cacheRegion')) {
+                        this.resetCache();
+                    }
+                } else if (Y.Lang.isObject(con)) {
+                    region = con;
+                }
+            }
+            if (!con || !region) {
+                con = VIEW;
+            }
+            if (con === VIEW) {
+                region = this.get(HOST).get(DRAG_NODE).get('viewportRegion');
+            }
+
+            Y.each(g, function(i, n) {
+                if ((n == RIGHT) || (n == BOTTOM)) {
+                    region[n] -= i;
+                } else {
+                    region[n] += i;
+                }
+            });
+            return region;
+        },
+
+        /**
         * @method getRegion
         * @description Get the active region: viewport, node, custom region
         * @param {Boolean} inc Include the node's height and width
@@ -2454,33 +2489,10 @@ YUI.add('dd-constrain', function(Y) {
         */
         getRegion: function(inc) {
             var r = {}, oh = null, ow = null,
-                g = this.get('gutter'),
                 host = this.get(HOST);
+            
+            r = this._getConstraint();
 
-            if (this.get(CON_2_NODE)) {
-                if (!this._regionCache) {
-                    Y.on('resize', Y.bind(this._cacheRegion, this), window);
-                    this._cacheRegion();
-                }
-                r = Y.clone(this._regionCache);
-                if (!this.get('cacheRegion')) {
-                    this.resetCache();
-                }
-            } else if (this.get(CON_2_REGION)) {
-                r = this.get(CON_2_REGION);
-            } else if (this.get('constrain2view')) {
-                r = host.get(DRAG_NODE).get('viewportRegion');
-            } else {
-                return false;
-            }
-
-            Y.each(g, function(i, n) {
-                if ((n == RIGHT) || (n == BOTTOM)) {
-                    r[n] -= i;
-                } else {
-                    r[n] += i;
-                }
-            });
             if (inc) {
                 oh = host.get(DRAG_NODE).get(OFFSET_HEIGHT);
                 ow = host.get(DRAG_NODE).get(OFFSET_WIDTH);
