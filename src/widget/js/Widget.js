@@ -793,10 +793,14 @@ Y.extend(Widget, Y.Base, {
      */
     _removeLoadingClassNames: function () {
 
-        var boundingBox = this.get(BOUNDING_BOX);
+        var boundingBox = this.get(BOUNDING_BOX),
+            contentBox = this.get(CONTENT_BOX);
 
         boundingBox.removeClass(_getWidgetClassName(LOADING));
         boundingBox.removeClass(this.getClassName(LOADING));
+        
+        contentBox.removeClass(_getWidgetClassName(LOADING));
+        contentBox.removeClass(this.getClassName(LOADING));
         
     },
 
