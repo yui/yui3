@@ -1031,11 +1031,25 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 /**
  * A list of module definitions to add to the list of YUI components.  
  * These components can then be dynamically loaded side by side with
- * YUI via the use() method.See Loader.addModule for the supported
- * module metadata.
+ * YUI via the use() method. This is a hash, the key is the module
+ * name, and the value is an object literal specifying the metdata
+ * for the module.  * See Loader.addModule for the supported module
+ * metadata fields.
+ * <code>
+ * modules: {
+ * &nbsp; mymod1: {
+ * &nbsp;   requires: ['node'],
+ * &nbsp;   fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
+ * &nbsp; },
+ * &nbsp; mymod2: {
+ * &nbsp;   requires: ['mymod1'],
+ * &nbsp;   fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
+ * &nbsp; }
+ * }
+ * </code>
  *
  * @property modules
- * @type function
+ * @type object
  */
  
 /**

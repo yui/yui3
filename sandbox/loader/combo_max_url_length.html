@@ -2,16 +2,17 @@
     <head>
         <title>Multiple combo urls for long requests</title>
         <!--
-        <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
-        -->
         <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0/build/yui/yui-debug.js"></script>
+        -->
+        <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
         <script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
     </head>
     <body>
 
         <script>
         YUI({
-
+            combine: true,
+            comboBase: 'http://yui.yahooapis.com/combo?3.0.0',
             filter:"raw",
             maxURLLength: 300
 
