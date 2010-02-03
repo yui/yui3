@@ -110,7 +110,7 @@ YUI.add('dd-ddm', function(Y) {
             }
             this._pg = pg;
             this._pg.on('mouseup', Y.bind(this._end, this));
-            this._pg.on('mousemove', Y.bind(this._move, this));
+            this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
             
             win = Y.one(window);
             Y.on('window:resize', Y.bind(this._pg_size, this));
