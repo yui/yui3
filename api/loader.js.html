@@ -170,7 +170,7 @@
     <span class="nx">CONTEXT</span> <span class="o">=</span> <span class="s1">&#39;-context&#39;</span><span class="p">,</span>
 
     <span class="nx">ANIMBASE</span> <span class="o">=</span> <span class="s1">&#39;anim-base&#39;</span><span class="p">,</span>
-	<span class="nx">ATTRIBUTE</span> <span class="o">=</span> <span class="s1">&#39;attribute&#39;</span><span class="p">,</span>
+    <span class="nx">ATTRIBUTE</span> <span class="o">=</span> <span class="s1">&#39;attribute&#39;</span><span class="p">,</span>
     <span class="nx">ATTRIBUTEBASE</span> <span class="o">=</span> <span class="nx">ATTRIBUTE</span> <span class="o">+</span> <span class="s1">&#39;-base&#39;</span><span class="p">,</span>
     <span class="nx">BASEBASE</span> <span class="o">=</span> <span class="s1">&#39;base-base&#39;</span><span class="p">,</span>
     <span class="nx">DDDRAG</span> <span class="o">=</span> <span class="s1">&#39;dd-drag&#39;</span><span class="p">,</span>
@@ -199,7 +199,7 @@
     <span class="nx">WIDGETPOSITION</span> <span class="o">=</span> <span class="s1">&#39;widget-position&#39;</span><span class="p">,</span>
     <span class="nx">YUIBASE</span> <span class="o">=</span> <span class="s1">&#39;yui-base&#39;</span><span class="p">,</span>
 
-	<span class="nx">PLUGIN</span> <span class="o">=</span> <span class="s1">&#39;plugin&#39;</span><span class="p">,</span>
+    <span class="nx">PLUGIN</span> <span class="o">=</span> <span class="s1">&#39;plugin&#39;</span><span class="p">,</span>
 
     <span class="nx">META</span> <span class="o">=</span> <span class="p">{</span>
 
@@ -374,7 +374,18 @@
         <span class="p">},</span>
 
         <span class="nx">collection</span><span class="o">:</span> <span class="p">{</span> 
-            <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="nx">OOP</span><span class="p">]</span>
+            <span class="nx">submodules</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s1">&#39;array-extras&#39;</span><span class="o">:</span> <span class="p">{},</span>
+                <span class="s1">&#39;arraylist&#39;</span><span class="o">:</span> <span class="p">{},</span>
+                <span class="s1">&#39;array-invoke&#39;</span><span class="o">:</span> <span class="p">{},</span>
+                <span class="c1">// @TODO: candidates for plugins</span>
+                <span class="s1">&#39;arraylist-filter&#39;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;arraylist&#39;</span><span class="p">]</span>
+                <span class="p">},</span>
+                <span class="s1">&#39;arraylist-add&#39;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;arraylist&#39;</span><span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
         <span class="p">},</span>
 
         <span class="nx">console</span><span class="o">:</span> <span class="p">{</span>
@@ -499,6 +510,10 @@
                     <span class="nx">optional</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;dd-drop-plugin&#39;</span><span class="p">]</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;dd-value&#39;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;dd-constrain&#39;</span><span class="p">]</span>
         <span class="p">},</span>
 
         <span class="nx">dump</span><span class="o">:</span> <span class="p">{</span> 
@@ -664,7 +679,7 @@
         <span class="p">},</span>
 
         <span class="nx">slider</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="nx">WIDGET</span><span class="p">,</span> <span class="s1">&#39;dd-constrain&#39;</span><span class="p">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="nx">WIDGET</span><span class="p">,</span> <span class="s1">&#39;dd-value&#39;</span><span class="p">],</span>
             <span class="nx">skinnable</span><span class="o">:</span> <span class="kc">true</span>
         <span class="p">},</span>
 
