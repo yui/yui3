@@ -325,6 +325,7 @@ var AFTER = 'after',
         'contextFn',
         'currentTarget',
         'defaultFn',
+        'defaultTargetOnly',
         'details',
         'emitFacade',
         'fireOnce',
@@ -1134,6 +1135,8 @@ var L = Y.Lang,
             config: o,
 
             chain: ('chain' in o) ? o.chain : Y.config.chain,
+
+            bubbling: false,
 
             defaults: {
                 context: o.context || this, 

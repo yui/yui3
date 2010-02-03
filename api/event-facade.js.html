@@ -155,7 +155,8 @@
 <span class="p">};</span>
 
 <span class="nx">CEProto</span><span class="p">.</span><span class="nx">fireComplex</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_eventstack</span><span class="p">,</span> <span class="nx">ef</span><span class="p">,</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">queue</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">subs</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_eventstack</span><span class="p">,</span> <span class="nx">ef</span><span class="p">,</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">queue</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">subs</span><span class="p">,</span>
+        <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">host</span> <span class="o">||</span> <span class="k">this</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">es</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// queue this event if the current item in the queue bubbles</span>
@@ -183,11 +184,11 @@
     <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">!==</span> <span class="nx">es</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">es</span><span class="p">.</span><span class="nx">stopped</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">!==</span> <span class="nx">es</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">es</span><span class="p">.</span><span class="nx">prevented</span><span class="p">;</span>
 
-    <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">host</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">host</span><span class="p">;</span>
 
     <span class="nx">events</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">({</span>
         <span class="nx">fireOnce</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">host</span>
+        <span class="nx">context</span><span class="o">:</span> <span class="nx">host</span>
     <span class="p">});</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="nx">events</span><span class="p">;</span>
@@ -200,7 +201,7 @@
         <span class="nx">events</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;stopped&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">stoppedFn</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="k">this</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">host</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">host</span><span class="p">;</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span> <span class="c1">// original arguments in the details</span>
 
@@ -224,23 +225,30 @@
     <span class="p">}</span>
 
     <span class="c1">// bubble if this is hosted in an event target and propagation has not been stopped</span>
-    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">bubbles</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">host</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">host</span><span class="p">.</span><span class="nx">bubble</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stopped</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">bubbles</span> <span class="o">&amp;&amp;</span> <span class="nx">host</span><span class="p">.</span><span class="nx">bubble</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">stopped</span><span class="p">)</span> <span class="p">{</span>
 
+        <span class="c1">// this.bubbling = true;</span>
+
+        <span class="c1">// if (host !== ef.target || es.type != this.type) {</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">es</span><span class="p">.</span><span class="nx">type</span> <span class="o">!=</span> <span class="k">this</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">es</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
             <span class="nx">es</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">host</span><span class="p">.</span><span class="nx">bubble</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="nx">ret</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">bubble</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stopped</span><span class="p">,</span> <span class="nx">es</span><span class="p">.</span><span class="nx">stopped</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">prevented</span><span class="p">,</span> <span class="nx">es</span><span class="p">.</span><span class="nx">prevented</span><span class="p">);</span>
 
+        <span class="c1">// this.bubbling = false;</span>
+
     <span class="p">}</span>
 
     <span class="c1">// execute the default behavior if not prevented</span>
-    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultFn</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">prevented</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">defaultFn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">host</span> <span class="o">||</span> <span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+    <span class="c1">// console.log(&#39;defaultTargetOnly: &#39; + this.defaultTargetOnly);</span>
+    <span class="c1">// console.log(&#39;host === target: &#39; + (host === ef.target));</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultFn</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">defaultTargetOnly</span><span class="p">)</span> <span class="o">||</span> <span class="nx">host</span> <span class="o">===</span> <span class="nx">ef</span><span class="p">.</span><span class="nx">target</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">defaultFn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">host</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="c1">// broadcast listeners are fired as discreet events on the</span>
@@ -255,23 +263,35 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">_procSubs</span><span class="p">(</span><span class="nx">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ef</span><span class="p">);</span>
     <span class="p">}</span>
 
+    <span class="c1">// es.stopped = 0;</span>
+    <span class="c1">// es.prevented = 0;</span>
+
     <span class="k">if</span> <span class="p">(</span><span class="nx">es</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">queue</span> <span class="o">=</span> <span class="nx">es</span><span class="p">.</span><span class="nx">queue</span><span class="p">;</span>
 
         <span class="k">while</span> <span class="p">(</span><span class="nx">queue</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">q</span> <span class="o">=</span> <span class="nx">queue</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span> 
             <span class="nx">ce</span> <span class="o">=</span> <span class="nx">q</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-            <span class="nx">es</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="nx">es</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
             <span class="c1">// set up stack to allow the next item to be processed</span>
             <span class="nx">es</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">;</span>
             <span class="nx">ce</span><span class="p">.</span><span class="nx">fire</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ce</span><span class="p">,</span> <span class="nx">q</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="c1">// es.stopped = 0;</span>
+            <span class="c1">// es.prevented = 0;</span>
         <span class="p">}</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_eventstack</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span> 
 
-    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">?</span> <span class="kc">false</span> <span class="o">:</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="nx">ret</span> <span class="o">=</span> <span class="o">!</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stopped</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">!=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">bubbling</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">es</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">es</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="nx">CEProto</span><span class="p">.</span><span class="nx">_getFacade</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -424,6 +444,8 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">ce2</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">type</span><span class="p">);</span>
                 <span class="p">}</span>
+
+                <span class="nx">t</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">bubbling</span> <span class="o">=</span> <span class="nx">type</span><span class="p">;</span>
                     
                 <span class="c1">// if this event was not published on the bubble target,</span>
                 <span class="c1">// continue propagating the event.</span>
@@ -450,6 +472,8 @@
                         <span class="k">break</span><span class="p">;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
+
+                <span class="nx">t</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">bubbling</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
