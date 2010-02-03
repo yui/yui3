@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+    .yui-slider {
+        /* xbrowser inline-block styles */
+        display: -moz-inline-stack; /* FF2 */
+        display: inline-block;
+        *display: inline; /* IE 7- (with zoom) */
+        zoom: 1;
+        vertical-align: middle;
+    }
+    .yui-slider-content {
+        position: relative;
+    }
+
+    .yui-slider-rail,
+    .yui-slider-thumb-range {
+        position: relative;
+    }
+    .yui-slider-rail-cap-left,
+    .yui-slider-rail-cap-right,
+    .yui-slider-thumb,
+    .yui-slider-thumb-image,
+    .yui-slider-thumb-shadow {
+        position: absolute;
+    }
+
+    /* With the absolute positioning, is this still needed? */
+    .yui-slider-thumb-image,
+    .yui-slider-thumb-shadow {
+        /* to collapse vertical space around short thumbs in tall line-height */
+        display: block;
+    }
+
+    /* SKINS */
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail,
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-left,
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-right {
+        background-image: url(skin_research/images/rail_white_06_h_embossed_groove_lines.png);
+        background-position: 5px 0; /* for pretties with this rail/length */
+    }
+
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail {
+        height: 25px;
+        margin: 0;
+        width: 300px; /* Example.  This will be supplied via js */
+    }
+
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-thumb-range {
+        height: 31px;
+        margin-top: -25px;
+    }
+
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-left {
+        background-position: -18px -25px;
+        height: 25px;
+        left: -2px;
+        width: 2px;
+    }
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-right {
+        background-position: -30px -25px;
+        height: 25px;
+        right: -2px;
+        width: 2px;
+    }
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-thumb {
+        height: 31px;
+        overflow: hidden;
+        width: 14px;
+    }
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-thumb-image {
+        left: -18px;
+        top: -13px;
+    }
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-thumb-shadow {
+        left: -18px;
+        opacity: 0.15;
+        top: -63px;
+    }
+
+    </style>
+</head>
+<body>
+<div class="yui-slider yui-slider-skin-1">
+    <div class="yui-slider-content yui-slider-x">
+        <div class="yui-slider-rail">
+            <div class="yui-slider-rail-cap-left"></div>
+            <div class="yui-slider-rail-cap-right"></div>
+        </div>
+        <div class="yui-slider-thumb-range" tabindex="-1">
+            <div class="yui-slider-thumb">
+                <img src="skin_research/images/thumb_white_06_oval_groove.png" alt="Slider thumb shadow" class="yui-slider-thumb-shadow">
+                <img src="skin_research/images/thumb_white_06_oval_groove.png" alt="Slider thumb" class="yui-slider-thumb-image">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="report"></div>
+<img class="showntell" src="skin_research/images/rail_white_06_h_embossed_groove_lines.png">
+
+<script src="/yui3/build/yui/yui.js"></script>
+<script src="/yui3/build/dd-value/dd-value.js"></script>
+<!--script src="http://yui.yahooapis.com/3.0.0/build/yui/yui.js"></script-->
+<script>
+YUI({
+    filter: 'raw'
+}).use( 'dd','dd-value', function ( Y ) {
+
+    Y.one( '.yui-slider-thumb' ).plug( Y.Plugin.Drag )
+        .dd
+        .plug( Y.Plugin.DDConstrained, {
+            constrain2node: '.yui-slider-thumb-range'
+        } )
+        .plug( Y.Plugin.DDValue, {
+            after: {
+                valueChange: function ( e ) {
+                    Y.one( '#report' ).setContent( e.newVal + '' );
+                }
+            }
+        } );
+
+});
+</script>
+</body>
+</html>

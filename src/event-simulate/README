@@ -2,6 +2,9 @@ YUI Event Simulation Utilities
 Module Name: "event-simulate"
 Documentation: http://developer.yahoo.com/yui/3/event
 
+3.1.0
+    * simulate() can now simulate "blur", "change", "focus", "resize", "scroll", and "select" events.
+
 3.0.0
     * No changes.
 

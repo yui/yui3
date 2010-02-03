@@ -157,29 +157,34 @@ YUI.prototype = {
 
         Y.version = v;
 
-        Y.Env = Y.Env || {
-            // @todo expand the new module metadata
-            mods: {},
-            cdn: 'http://yui.yahooapis.com/' + v + '/build/',
-            bootstrapped: false,
-            _idx: 0,
-            _used: {},
-            _attached: {},
-            _yidx: 0,
-            _uidx: 0,
-            _loaded: {}
+        if (!Y.Env) {
 
-        };
+            Y.Env = {
+                // @todo expand the new module metadata
+                mods: {},
+                cdn: 'http://yui.yahooapis.com/' + v + '/build/',
+                bootstrapped: false,
+                _idx: 0,
+                _used: {},
+                _attached: {},
+                _yidx: 0,
+                _uidx: 0,
+                _guidp: 'y',
+                _loaded: {}
 
-        Y.Env._loaded[v] = {};
+            };
 
-        Y.id = Y.stamp(Y);
+            Y.Env._loaded[v] = {};
 
-        if (YUI.Env && Y !== YUI) {
-            Y.Env._yidx = (++YUI.Env._yidx);
-            Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
+            if (YUI.Env && Y !== YUI) {
+                Y.Env._yidx = (++YUI.Env._yidx);
+                Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
+            }
+
+            Y.id = Y.stamp(Y);
             _instances[Y.id] = Y;
-        } 
+
+        }
 
 
         Y.constructor = YUI;
@@ -419,6 +424,7 @@ YUI.prototype = {
             mods = YUI.Env.mods, 
             used = Y.Env._used,
             loader, 
+            queue = YUI.Env._loaderQueue,
             onEnd,
             firstArg = a[0], 
             dynamic = false,
@@ -478,7 +484,7 @@ YUI.prototype = {
 
             onComplete;
 
-        // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
+        // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback, 'info', 'yui');
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
@@ -565,10 +571,9 @@ YUI.prototype = {
             Y.log('Modules missing: ' + missing, 'info', 'yui');
         }
 
-
         // dynamic load
         if (boot && l && Y.Loader) {
-            Y.log('Using loader to fetch missing dependencies.', 'info', 'yui');
+            Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
             Y._loading = true;
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
@@ -585,6 +590,7 @@ YUI.prototype = {
             a = Y.Array(arguments, 0, true);
             onEnd = function() {
                 Y._loading = false;
+                queue.running = false;
                 Y.Env.bootstrapped = true;
                 Y._attach(['loader']);
                 Y.use.apply(Y, a);
@@ -592,7 +598,7 @@ YUI.prototype = {
 
             if (YUI.Env._bootstrapping) {
                 Y.log('Waiting for loader: ' + Y.id, 'info', 'yui');
-                YUI.Env._loaderQueue.add(onEnd);
+                queue.add(onEnd);
             } else {
                 YUI.Env._bootstrapping = true;
                 Y.log('Fetching loader: ' + Y.id + ", " + Y.config.base + Y.config.loaderPath, 'info', 'yui');
@@ -799,7 +805,8 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * and the 'domready' custom event.
  *
  * @property injected
- * @type object
+ * @type boolean
+ * @default false
  */
 
 /**
@@ -1025,11 +1032,25 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 /**
  * A list of module definitions to add to the list of YUI components.  
  * These components can then be dynamically loaded side by side with
- * YUI via the use() method.See Loader.addModule for the supported
- * module metadata.
+ * YUI via the use() method. This is a hash, the key is the module
+ * name, and the value is an object literal specifying the metdata
+ * for the module.  * See Loader.addModule for the supported module
+ * metadata fields.
+ * <code>
+ * modules: {
+ * &nbsp; mymod1: {
+ * &nbsp;   requires: ['node'],
+ * &nbsp;   fullpath: 'http://myserver.mydomain.com/mymod1/mymod1.js'
+ * &nbsp; },
+ * &nbsp; mymod2: {
+ * &nbsp;   requires: ['mymod1'],
+ * &nbsp;   fullpath: 'http://myserver.mydomain.com/mymod2/mymod2.js'
+ * &nbsp; }
+ * }
+ * </code>
  *
  * @property modules
- * @type function
+ * @type object
  */
  
 /**

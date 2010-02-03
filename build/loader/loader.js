@@ -123,7 +123,7 @@ var NOT_FOUND = {},
     CONTEXT = '-context',
 
     ANIMBASE = 'anim-base',
-	ATTRIBUTE = 'attribute',
+    ATTRIBUTE = 'attribute',
     ATTRIBUTEBASE = ATTRIBUTE + '-base',
     BASEBASE = 'base-base',
     DDDRAG = 'dd-drag',
@@ -152,7 +152,7 @@ var NOT_FOUND = {},
     WIDGETPOSITION = 'widget-position',
     YUIBASE = 'yui-base',
 
-	PLUGIN = 'plugin',
+    PLUGIN = 'plugin',
 
     META = {
 
@@ -327,7 +327,18 @@ var NOT_FOUND = {},
         },
 
         collection: { 
-            requires: [OOP]
+            submodules: {
+                'array-extras': {},
+                'arraylist': {},
+                'array-invoke': {},
+                // @TODO: candidates for plugins
+                'arraylist-filter': {
+                    requires: ['arraylist']
+                },
+                'arraylist-add': {
+                    requires: ['arraylist']
+                }
+            }
         },
 
         console: {
@@ -452,6 +463,10 @@ var NOT_FOUND = {},
                     optional: ['dd-drop-plugin']
                 }
             }
+        },
+
+        'dd-value': {
+            requires: ['dd-constrain']
         },
 
         dump: { 
@@ -617,7 +632,7 @@ var NOT_FOUND = {},
         },
 
         slider: {
-            requires: [WIDGET, 'dd-constrain'],
+            requires: [WIDGET, 'dd-value'],
             skinnable: true
         },
 
@@ -670,7 +685,8 @@ var NOT_FOUND = {},
         },
 
         test: {                                                                                                                                                        
-            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
+            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate'],
+            skinnable: true                                                                                                                     
         }  
 
     },
@@ -876,7 +892,7 @@ Y.Loader = function(o) {
      * @property maxURLLength
      * @type int
      */
-    this.maxURLLength = (o.maxURLLength) ? Math.min(MAX_URL_LENGTH, o.maxURLLength) : MAX_URL_LENGTH;
+    this.maxURLLength = MAX_URL_LENGTH;
 
     /**
      * Ignore modules registered on the YUI global
@@ -1143,14 +1159,14 @@ Y.Loader.prototype = {
                     if (i == 'require') {
                         this.require(val);
                     } else if (i == 'modules') {
-
                         // add a hash of module definitions
                         for (j in val) {
                             if (val.hasOwnProperty(j)) {
                                 this.addModule(val[j], j);
                             }
                         }
-
+                    } else if (i == 'maxURLLength') {
+                        this[i] = Math.min(MAX_URL_LENGTH, val);
                     } else {
                         this[i] = val;
                     }

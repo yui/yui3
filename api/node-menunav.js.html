@@ -1394,35 +1394,54 @@
 			<span class="nx">bIsRoot</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="p">.</span><span class="nx">_isRoot</span><span class="p">(</span><span class="nx">oActiveMenu</span><span class="p">),</span>
 			<span class="nx">bUseAutoSubmenuDisplay</span> <span class="o">=</span> 
 				<span class="p">(</span><span class="nx">menuNav</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">AUTO_SUBMENU_DISPLAY</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">bIsRoot</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bIsRoot</span><span class="p">),</span>
+            <span class="nx">submenuShowDelay</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;submenuShowDelay&quot;</span><span class="p">),</span>	
 			<span class="nx">oSubmenu</span><span class="p">;</span>
-
-
-		<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_focusItem</span><span class="p">(</span><span class="nx">menuLabel</span><span class="p">);</span>
-		<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_setActiveItem</span><span class="p">(</span><span class="nx">menuLabel</span><span class="p">);</span>
 				
 
-		<span class="k">if</span> <span class="p">(</span><span class="nx">bUseAutoSubmenuDisplay</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">menuNav</span><span class="p">.</span><span class="nx">_movingToSubmenu</span><span class="p">)</span> <span class="p">{</span>
-	
+        <span class="kd">var</span> <span class="nx">showSubmenu</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">delay</span><span class="p">)</span> <span class="p">{</span>
+
 			<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_cancelHideSubmenuTimer</span><span class="p">();</span>
 			<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_cancelShowSubmenuTimer</span><span class="p">();</span>
-
 
 			<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">hasVisibleSubmenu</span><span class="p">(</span><span class="nx">menuLabel</span><span class="p">))</span> <span class="p">{</span>
 
 				<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">menuLabel</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
-	
 
 				<span class="k">if</span> <span class="p">(</span><span class="nx">oSubmenu</span><span class="p">)</span> <span class="p">{</span>
-					
 					<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_hideAllSubmenus</span><span class="p">(</span><span class="nx">oActiveMenu</span><span class="p">);</span>
-
-					<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_showSubmenuTimer</span> <span class="o">=</span> 
-						<span class="nx">later</span><span class="p">(</span><span class="nx">menuNav</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;submenuShowDelay&quot;</span><span class="p">),</span> <span class="nx">menuNav</span><span class="p">,</span> 
-								<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_showMenu</span><span class="p">,</span> <span class="nx">oSubmenu</span><span class="p">);</span>
-				
+					<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_showSubmenuTimer</span> <span class="o">=</span> <span class="nx">later</span><span class="p">(</span><span class="nx">delay</span><span class="p">,</span> <span class="nx">menuNav</span><span class="p">,</span> <span class="nx">menuNav</span><span class="p">.</span><span class="nx">_showMenu</span><span class="p">,</span> <span class="nx">oSubmenu</span><span class="p">);</span>
 				<span class="p">}</span>
-			
+
 			<span class="p">}</span>
+            
+        <span class="p">};</span>
+
+
+		<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_focusItem</span><span class="p">(</span><span class="nx">menuLabel</span><span class="p">);</span>
+		<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_setActiveItem</span><span class="p">(</span><span class="nx">menuLabel</span><span class="p">);</span>
+
+
+		<span class="k">if</span> <span class="p">(</span><span class="nx">bUseAutoSubmenuDisplay</span><span class="p">)</span> <span class="p">{</span>
+	
+	        <span class="k">if</span> <span class="p">(</span><span class="nx">menuNav</span><span class="p">.</span><span class="nx">_movingToSubmenu</span><span class="p">)</span> <span class="p">{</span>
+	            
+	            <span class="c1">//  If the user is moving diagonally from a submenu to </span>
+	            <span class="c1">//  another submenu and they then stop and pause on a</span>
+	            <span class="c1">//  menu label for an amount of time equal to the amount of </span>
+	            <span class="c1">//  time defined for the display of a submenu then show the </span>
+	            <span class="c1">//  submenu immediately.</span>
+	            <span class="c1">//  http://yuilibrary.com/projects/yui3/ticket/2528316</span>
+	            
+	            <span class="nx">Y</span><span class="p">.</span><span class="nx">message</span><span class="p">(</span><span class="s2">&quot;Pause path&quot;</span><span class="p">);</span>
+	            
+	            <span class="nx">menuNav</span><span class="p">.</span><span class="nx">_hoverTimer</span> <span class="o">=</span> <span class="nx">later</span><span class="p">(</span><span class="nx">submenuShowDelay</span><span class="p">,</span> <span class="nx">menuNav</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+                    <span class="nx">showSubmenu</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+	            <span class="p">});</span>
+	            
+	        <span class="p">}</span>
+	        <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">showSubmenu</span><span class="p">(</span><span class="nx">submenuShowDelay</span><span class="p">);</span>
+	        <span class="p">}</span>
 		
 		<span class="p">}</span>
 
@@ -1444,7 +1463,12 @@
 				<span class="p">(</span><span class="nx">menuNav</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">AUTO_SUBMENU_DISPLAY</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">bIsRoot</span> <span class="o">||</span> <span class="o">!</span><span class="nx">bIsRoot</span><span class="p">),</span>
 
 			<span class="nx">oRelatedTarget</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">relatedTarget</span><span class="p">,</span>
-			<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">menuLabel</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span>
+			<span class="nx">oSubmenu</span> <span class="o">=</span> <span class="nx">menuLabel</span><span class="p">.</span><span class="nx">next</span><span class="p">(),</span>
+			<span class="nx">hoverTimer</span> <span class="o">=</span> <span class="nx">menuNav</span><span class="p">.</span><span class="nx">_hoverTimer</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">hoverTimer</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">hoverTimer</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+        <span class="p">}</span>
 
 		<span class="nx">menuNav</span><span class="p">.</span><span class="nx">_clearActiveItem</span><span class="p">();</span>
 
