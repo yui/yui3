@@ -73,6 +73,7 @@ foreach (range(1, $count) as $k) {
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/yui/yui-throttle.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/attribute/attribute-base-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -113,13 +114,13 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-constrain', 'dd-drop-plugin', 'event-mouseenter', 'sortable', function(Y) {
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-constrain', 'dd-drop-plugin', 'event-mouseenter', 'sortable', 'yui-throttle', function(Y) {
     console.log(Y);
     
     //Y.DD.DDM._debugShim = true;
 
     var sel = new Y.Sortable({
-        cont: '#one',
+        container: '#one',
         nodes: '.item',
         opacity: '.5',
         moveType: 'move',
@@ -135,7 +136,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     
 
     var sel2 = new Y.Sortable({
-        cont: '#two',
+        container: '#two',
         nodes: '.item',
         moveType: 'copy'
     });
