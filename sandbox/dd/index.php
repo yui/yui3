@@ -427,7 +427,6 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-thr
         target: true,
         dragMode: 'intersect',
         handles: [Y.one('#drag h2')],
-        bubbleTargets: Y.DD.DDM,
         //bubbles: false,
         //dragMode: 'strict',
         data: {

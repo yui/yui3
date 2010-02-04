@@ -22,7 +22,12 @@
 
 
     Y.extend(Delegate, Y.Base, {
-        _defaultGroup: null,
+        /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
         /**
         * @property dd
         * @description A reference to the temporary dd instance used under the hood.
@@ -100,9 +105,6 @@
         },
         _handles: null,
         initializer: function(cfg) {
-            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
-                this.addTarget(Y.DD.DDM);
-            }
             this._handles = [];
             //Create a tmp DD instance under the hood.
             var conf = this.get('dragConfig') || {},
@@ -148,7 +150,7 @@
                 groups = this.dd.get('groups');
                 config = this.get('dragConfig');
                 
-                if (config.groups) {
+                if (config && 'groups' in config) {
                     groups = config.groups;
                 }
 

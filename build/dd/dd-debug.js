@@ -1230,6 +1230,12 @@ YUI.add('dd-drag', function(Y) {
 
     Y.extend(Drag, Y.Base, {
         /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
+        /**
         * @method addToGroup
         * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.
         * @param {String} g The group to add this Drag Instance to.
@@ -1728,9 +1734,6 @@ YUI.add('dd-drag', function(Y) {
         * @description Internal init handler
         */
         initializer: function(cfg) {
-            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
-                this.addTarget(Y.DD.DDM);
-            }
             this.get(NODE).dd = this;
 
             if (!this.get(NODE).get('id')) {
@@ -3298,6 +3301,12 @@ YUI.add('dd-drop', function(Y) {
         * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config.
         * @type Object
         */
+        /**
+        * @deprecated
+        * @attribute useShim
+        * @description Use the Drop shim. Default: true
+        * @type Boolean
+        */
         useShim: {
             value: true,
             setter: function(v) {
@@ -3308,6 +3317,12 @@ YUI.add('dd-drop', function(Y) {
     };
 
     Y.extend(Drop, Y.Base, {
+        /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
         /**
         * @method addToGroup
         * @description Add this Drop instance to a group, this should be used for on-the-fly group additions.
@@ -3410,10 +3425,6 @@ YUI.add('dd-drop', function(Y) {
         * @description Private lifecycle method
         */
         initializer: function(cfg) {
-            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
-                this.addTarget(Y.DD.DDM);
-            }
-            //this._createEvents();
             Y.later(100, this, this._createEvents);
 
             var node = this.get(NODE), id;
@@ -3747,7 +3758,12 @@ YUI.add('dd-delegate', function(Y) {
 
 
     Y.extend(Delegate, Y.Base, {
-        _defaultGroup: null,
+        /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
         /**
         * @property dd
         * @description A reference to the temporary dd instance used under the hood.
@@ -3825,9 +3841,6 @@ YUI.add('dd-delegate', function(Y) {
         },
         _handles: null,
         initializer: function(cfg) {
-            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
-                this.addTarget(Y.DD.DDM);
-            }
             this._handles = [];
             //Create a tmp DD instance under the hood.
             var conf = this.get('dragConfig') || {},
@@ -3873,7 +3886,7 @@ YUI.add('dd-delegate', function(Y) {
                 groups = this.dd.get('groups');
                 config = this.get('dragConfig');
                 
-                if (config.groups) {
+                if (config && 'groups' in config) {
                     groups = config.groups;
                 }
 

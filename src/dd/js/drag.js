@@ -341,6 +341,12 @@
 
     Y.extend(Drag, Y.Base, {
         /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
+        /**
         * @method addToGroup
         * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.
         * @param {String} g The group to add this Drag Instance to.
@@ -839,9 +845,6 @@
         * @description Internal init handler
         */
         initializer: function(cfg) {
-            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
-                this.addTarget(Y.DD.DDM);
-            }
             this.get(NODE).dd = this;
 
             if (!this.get(NODE).get('id')) {
