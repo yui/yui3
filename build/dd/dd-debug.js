@@ -2370,7 +2370,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2region: {
             setter: function(r) {
-                Y.log('Deprecated use constrain: {Region}', 'error');
+                Y.log('constrain2region is deprecated use constrain: {Region}', 'warn', 'dd');
                 return this.set('constrain', r);
             }
         },
@@ -2382,7 +2382,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2node: {
             setter: function(n) {
-                Y.log('Deprecated use constrain: NodeInstance', 'error');
+                Y.log('constrain2node is deprecated use constrain: NodeInstance', 'warn', 'dd');
                 return this.set('constrain', Y.one(n));
             }
         },
@@ -2394,7 +2394,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2view: {
             setter: function(n) {
-                Y.log('Deprecated use constrain: "view"', 'error');
+                Y.log('constrain2view is deprecated use constrain: "view"', 'warn', 'dd');
                 return this.set('constrain', VIEW);
             }
         },
@@ -2744,7 +2744,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Number
         */
         buffer: {
-            value: 30
+            value: 30,
+            validator: Y.Lang.isNumber
         },
         /**
         * @attribute scrollDelay
@@ -2752,7 +2753,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Number
         */
         scrollDelay: {
-            value: 235
+            value: 235,
+            validator: Y.Lang.isNumber
         },
         /**
         * @attribute host
@@ -2768,7 +2770,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Boolean
         */
         windowScroll: {
-            value: false
+            value: false,
+            validator: Y.Lang.isBoolean
         },
         /**
         * @attribute vertical
@@ -2776,7 +2779,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Boolean
         */
         vertical: {
-            value: true
+            value: true,
+            validator: Y.Lang.isBoolean
         },
         /**
         * @attribute horizontal
@@ -2784,7 +2788,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Boolean
         */
         horizontal: {
-            value: true
+            value: true,
+            validator: Y.Lang.isBoolean
         }
     };
 

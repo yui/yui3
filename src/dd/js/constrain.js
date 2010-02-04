@@ -130,7 +130,7 @@
         */
         constrain2region: {
             setter: function(r) {
-                Y.log('Deprecated use constrain: {Region}', 'error');
+                Y.log('constrain2region is deprecated use constrain: {Region}', 'warn', 'dd');
                 return this.set('constrain', r);
             }
         },
@@ -142,7 +142,7 @@
         */
         constrain2node: {
             setter: function(n) {
-                Y.log('Deprecated use constrain: NodeInstance', 'error');
+                Y.log('constrain2node is deprecated use constrain: NodeInstance', 'warn', 'dd');
                 return this.set('constrain', Y.one(n));
             }
         },
@@ -154,7 +154,7 @@
         */
         constrain2view: {
             setter: function(n) {
-                Y.log('Deprecated use constrain: "view"', 'error');
+                Y.log('constrain2view is deprecated use constrain: "view"', 'warn', 'dd');
                 return this.set('constrain', VIEW);
             }
         },
