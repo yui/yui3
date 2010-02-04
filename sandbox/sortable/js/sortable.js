@@ -19,6 +19,7 @@ YUI.add('sortable', function(Y) {
     OPACITY_NODE = 'opacityNode',
     CONT = 'container',
     ID = 'id',
+    ZINDEX = 'zIndex',
     OPACITY = 'opacity',
     PARENT_NODE = 'parentNode',
     NODES = 'nodes',
@@ -34,18 +35,17 @@ YUI.add('sortable', function(Y) {
         delegate: null,
         initializer: function() {
             var id = 'sortable-' + Y.guid(), c,
-                self = this,
                 del = new Y.DD.Delegate({
-                    container: self.get(CONT),
-                    nodes: self.get(NODES),
+                    container: this.get(CONT),
+                    nodes: this.get(NODES),
                     target: true,
-                    invalid: self.get('invalid'),
+                    invalid: this.get('invalid'),
                     dragConfig: {
                         groups: [ id ]
                     }
                 });
 
-            self.set(ID, id);
+            this.set(ID, id);
 
             del.dd.plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false,
@@ -53,19 +53,19 @@ YUI.add('sortable', function(Y) {
             });
 
             c = new Y.DD.Drop({
-                node: self.get(CONT),
+                node: this.get(CONT),
                 bubbleTarget: del,
                 groups: del.dd.get('groups')
-            }).on('drop:over', Y.bind(self._onDropOver, self));
+            }).on('drop:over', Y.bind(this._onDropOver, this));
             
             del.on({
-                'drag:start': Y.bind(self._onDragStart, self),
-                'drag:end': Y.bind(self._onDragEnd, self),
-                'drag:over': Y.bind(self._onDragOver, self)
+                'drag:start': Y.bind(this._onDragStart, this),
+                'drag:end': Y.bind(this._onDragEnd, this),
+                'drag:over': Y.bind(this._onDragOver, this)
             });
 
-            self.delegate = del;
-            Sortable.reg(self);
+            this.delegate = del;
+            Sortable.reg(this);
         },
         /**
         * @private
@@ -108,8 +108,8 @@ YUI.add('sortable', function(Y) {
                         Y.log('No delegate parent found', 'error');
                         return;
                     }
-
-                    Y.DD.DDM.getDrop(e.drag.get(NODE)).addToGroup(dropsort.get('id'));
+                    
+                    Y.DD.DDM.getDrop(e.drag.get(NODE)).addToGroup(dropsort.get(ID));
 
                     //Same List
                     if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
@@ -140,9 +140,9 @@ YUI.add('sortable', function(Y) {
         * @description Handles the DragStart event and initializes some settings.
         */
         _onDragStart: function(e) {
-            this.delegate.get('lastNode').setStyle('zIndex', '');
+            this.delegate.get('lastNode').setStyle(ZINDEX, '');
             this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
-            this.delegate.get(CURRENT_NODE).setStyle('zIndex', '999');
+            this.delegate.get(CURRENT_NODE).setStyle(ZINDEX, '999');
         },
         /**
         * @private
@@ -156,6 +156,7 @@ YUI.add('sortable', function(Y) {
                 top: '',
                 left: ''
             });
+            this.sync();
         },
         /**
         * @method plug
@@ -174,7 +175,7 @@ YUI.add('sortable', function(Y) {
         * @chainable
         */
         sync: function() {
-            this.delegate.syncTargets(this.get(ID));
+            this.delegate.syncTargets();
             return this;
         },
         destructor: function() {
