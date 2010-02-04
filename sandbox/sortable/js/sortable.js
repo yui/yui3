@@ -65,7 +65,7 @@ YUI.add('sortable', function(Y) {
             });
 
             self.delegate = del;
-            Sortable.regSortable(self);
+            Sortable.reg(self);
         },
         /**
         * @private
@@ -94,7 +94,8 @@ YUI.add('sortable', function(Y) {
             if (e.drag.get(NODE) == e.drop.get(NODE)) {
                 return;
             }
-            switch (this.get('moveType')) {
+
+            switch (this.get('moveType').toLowerCase()) {
                 case 'swap':
                     Y.DD.DDM.swapNode(e.drag, e.drop);
                     break;
@@ -178,17 +179,18 @@ YUI.add('sortable', function(Y) {
         },
         destructor: function() {
             this.delegate.destroy();
-            Sortable.unregSortable(this);
+            Sortable.unreg(this);
         },
         /**
         * @method join
         * @param Sortable sel The sortable list to join with
-        * @param String type The type of join to do: full, inner, outer. Default: full
+        * @param String type The type of join to do: full, inner, outer, none. Default: full
         * @description Join this Sortable with another Sortable instance.
         * <ul>
-        *   <li>Full: Exchange nodes with both lists.</li>
-        *   <li>Inner: Items can go into this list from the joined list.</li>
-        *   <li>Outer: Items can go out of the joined list into this list.</li>
+        *   <li>full: Exchange nodes with both lists.</li>
+        *   <li>inner: Items can go into this list from the joined list.</li>
+        *   <li>outer: Items can go out of the joined list into this list.</li>
+        *   <li>none: Removes the join.</li>
         * </ul>
         * @chainable
         */
@@ -200,35 +202,54 @@ YUI.add('sortable', function(Y) {
             if (!type) {
                 type = 'full';
             }
+            type = type.toLowerCase();
+            var method = '_join_' + type;
 
-            switch (type.toLowerCase()) {
-                case 'none':
-                    this.delegate.dd.removeFromGroup(sel.get(ID));
-                    sel.delegate.dd.removeFromGroup(this.get(ID));
-                    break;
-                case 'out':
-                case 'outside':
-                case 'outter':
-                case 'outer':
-                    this.delegate.dd.addToGroup(sel.get(ID));
-                    break;
-                case 'in':
-                case 'inside':
-                case 'inner':
-                    sel.delegate.dd.addToGroup(this.get(ID));
-                    break;
-                default: //full
-                    this.delegate.dd.addToGroup(sel.get(ID));
-                    sel.delegate.dd.addToGroup(this.get(ID));
-                    break;
+            if (this[method]) {
+                this[method](sel);
             }
+            
             return this;
+        },
+        /**
+        * @private
+        * @method _join_none
+        * @param Sortable sel The Sortable to remove the join from
+        * @description Removes the join with the passed Sortable.
+        */
+        _join_none: function(sel) {
+            this.delegate.dd.removeFromGroup(sel.get(ID));
+            sel.delegate.dd.removeFromGroup(this.get(ID));
+        },
+        /**
+        * @private
+        * @method _join_full
+        * @param Sortable sel The sortable list to join with
+        * @description Joins both of the Sortables together.
+        */
+        _join_full: function(sel) {
+            this.delegate.dd.addToGroup(sel.get(ID));
+            sel.delegate.dd.addToGroup(this.get(ID));
+        },
+        /**
+        * @private
+        * @method _join_outer
+        * @param Sortable sel The sortable list to join with
+        * @description Allows this Sortable to accept items from the passed Sortable.
+        */
+        _join_outer: function(sel) {
+            this.delegate.dd.addToGroup(sel.get(ID));
+        },
+        /**
+        * @private
+        * @method _join_inner
+        * @param Sortable sel The sortable list to join with
+        * @description Allows this Sortable to give items to the passed Sortable.
+        */
+        _join_inner: function(sel) {
+            sel.delegate.dd.addToGroup(this.get(ID));
         }
     }, {
-        JOIN_OUTER: 'outer',
-        JOIN_INNER: 'inner',
-        JOIN_FULL: 'full',
-        JOIN_NONE: 'none',
         NAME: 'sortable',
         ATTRS: {
             /**
@@ -314,20 +335,20 @@ YUI.add('sortable', function(Y) {
         },
         /**
         * @static
-        * @method regSortable
+        * @method reg
         * @param Sortable s A Sortable instance.
         * @description Register a Sortable instance with the singleton to allow lookups later.
         */
-        regSortable: function(s) {
+        reg: function(s) {
             Sortable._sortables.push(s);
         },
         /**
         * @static
-        * @method unregSortable
+        * @method unreg
         * @param Sortable s A Sortable instance.
         * @description Unregister a Sortable instance with the singleton.
         */
-        unregSortable: function(s) {
+        unreg: function(s) {
             Y.each(Sortable._sortables, function(v, k) {
                 if (v === s) {
                     Sortable._sortables[k] = null;

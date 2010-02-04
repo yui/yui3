@@ -169,12 +169,12 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
             node = Y.Node.create('<li class="item">(' + inc + ':1) ' + i + '</li>');
             one.append(node);
             two.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':2) ' + i));
-            three.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':3) ' + i));
+            //three.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':3) ' + i));
         }
         inc++;
         sel.sync();
         sel2.sync();
-        sel3.sync();
+        //sel3.sync();
     });
 
 });
