@@ -321,14 +321,14 @@ YUI({
                     top: 0, left: 0
                 });
             });
-            del._onDelegate({
+            del._delMouseDown({
                 currentTarget: Y.one('#del ul li')
             });
             _fakeMove(del.dd, moveCount);
         },
         test_delegate_move2: function() {
             _resetCount();
-            del._onDelegate({
+            del._delMouseDown({
                 currentTarget: Y.one('#del ul li:nth-child(4)')
             });
             _fakeMove(del.dd, moveCount);
@@ -340,7 +340,7 @@ YUI({
             del.on('drag:mouseDown', function() {
                 mDown = true;
             });
-            del._onDelegate({
+            del._delMouseDown({
                 currentTarget: Y.one('#del ul li:nth-child(6)')
             });
             Y.Assert.isFalse(mDown, 'Delegate mouseDown fired on a disabled item');
