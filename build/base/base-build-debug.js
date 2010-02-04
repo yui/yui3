@@ -41,8 +41,12 @@ YUI.add('base-build', function(Y) {
         // Augment/Aggregate
         for (i = 0, l = extensions.length; i < l; i++) {
             extClass = extensions[i];
-            Y.mix(builtClass, extClass, true, null, 1);         // Prototype, old non-displacing augment
-            _mixCust(builtClass, extClass, aggregates, custom); // Custom Statics
+
+            // Prototype, old non-displacing augment
+            Y.mix(builtClass, extClass, true, null, 1);
+             // Custom Statics
+            _mixCust(builtClass, extClass, aggregates, custom);
+
             builtClass._yuibuild.exts.push(extClass);
         }
 

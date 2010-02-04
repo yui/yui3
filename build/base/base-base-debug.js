@@ -23,6 +23,8 @@ YUI.add('base-base', function(Y) {
         INITIALIZED = "initialized",
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
+        BUBBLETARGETS = "bubbleTargets",
+        _BUBBLETARGETS = "_bubbleTargets",
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DEEP = "deep",
         SHALLOW = "shallow",
@@ -216,7 +218,7 @@ YUI.add('base-base', function(Y) {
          * Handles the special on, after and target properties which allow the user to
          * easily configure on and after listeners as well as bubble targets during 
          * construction, prior to init.
-         * 
+         *
          * @method _preInitEventCfg
          * @param {Object} config The user configuration object
          */
@@ -228,15 +230,19 @@ YUI.add('base-base', function(Y) {
                 if (config.after) {
                     this.after(config.after);
                 }
-                if (config.bubbleTargets) {
-                    var i, l, target = config.bubbleTargets;
-                    if (L.isArray(target)) {
-                        for (i = 0, l = target.length; i < l; i++) { 
-                            this.addTarget(target[i]);
-                        }
-                    } else {
-                        this.addTarget(target);
+            }
+
+            var i, l, target,
+                userTargets = (config && BUBBLETARGETS in config);
+
+            if (userTargets || _BUBBLETARGETS in this) {
+                target = userTargets ? (config && config.bubbleTargets) : this._bubbleTargets;
+                if (L.isArray(target)) {
+                    for (i = 0, l = target.length; i < l; i++) { 
+                        this.addTarget(target[i]);
                     }
+                } else if (target) {
+                    this.addTarget(target);
                 }
             }
         },
