@@ -23,7 +23,7 @@ YUI({
         augment: true,
         useConsole: true
     }
-}).use('dd', 'console', 'test', 'substitute', function(Y) {
+}).use('dd', 'console', 'test', 'substitute', 'selector-css3', function(Y) {
         var myConsole = new Y.Console({
             height: Y.one(window).get('winHeight') + 'px',
             width: '375px'
