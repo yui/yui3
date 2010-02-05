@@ -131,6 +131,13 @@
         * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config.
         * @type Object
         */
+        bubbles: {
+            setter: function(t) {
+                Y.log('bubbles is deprecated use bubbleTargets: HOST', 'warn', 'dd');
+                this.addTarget(t);
+                return t;
+            }
+        },
         /**
         * @deprecated
         * @attribute useShim
