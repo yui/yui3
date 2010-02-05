@@ -1230,6 +1230,12 @@ YUI.add('dd-drag', function(Y) {
 
     Y.extend(Drag, Y.Base, {
         /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
+        /**
         * @method addToGroup
         * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.
         * @param {String} g The group to add this Drag Instance to.
@@ -1728,9 +1734,6 @@ YUI.add('dd-drag', function(Y) {
         * @description Internal init handler
         */
         initializer: function(cfg) {
-            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
-                this.addTarget(Y.DD.DDM);
-            }
             this.get(NODE).dd = this;
 
             if (!this.get(NODE).get('id')) {
@@ -2370,7 +2373,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2region: {
             setter: function(r) {
-                Y.log('Deprecated use constrain: {Region}', 'error');
+                Y.log('constrain2region is deprecated use constrain: {Region}', 'warn', 'dd');
                 return this.set('constrain', r);
             }
         },
@@ -2382,7 +2385,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2node: {
             setter: function(n) {
-                Y.log('Deprecated use constrain: NodeInstance', 'error');
+                Y.log('constrain2node is deprecated use constrain: NodeInstance', 'warn', 'dd');
                 return this.set('constrain', Y.one(n));
             }
         },
@@ -2394,7 +2397,7 @@ YUI.add('dd-constrain', function(Y) {
         */
         constrain2view: {
             setter: function(n) {
-                Y.log('Deprecated use constrain: "view"', 'error');
+                Y.log('constrain2view is deprecated use constrain: "view"', 'warn', 'dd');
                 return this.set('constrain', VIEW);
             }
         },
@@ -2744,7 +2747,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Number
         */
         buffer: {
-            value: 30
+            value: 30,
+            validator: Y.Lang.isNumber
         },
         /**
         * @attribute scrollDelay
@@ -2752,7 +2756,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Number
         */
         scrollDelay: {
-            value: 235
+            value: 235,
+            validator: Y.Lang.isNumber
         },
         /**
         * @attribute host
@@ -2768,7 +2773,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Boolean
         */
         windowScroll: {
-            value: false
+            value: false,
+            validator: Y.Lang.isBoolean
         },
         /**
         * @attribute vertical
@@ -2776,7 +2782,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Boolean
         */
         vertical: {
-            value: true
+            value: true,
+            validator: Y.Lang.isBoolean
         },
         /**
         * @attribute horizontal
@@ -2784,7 +2791,8 @@ YUI.add('dd-scroll', function(Y) {
         * @type Boolean
         */
         horizontal: {
-            value: true
+            value: true,
+            validator: Y.Lang.isBoolean
         }
     };
 
@@ -3293,6 +3301,12 @@ YUI.add('dd-drop', function(Y) {
         * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config.
         * @type Object
         */
+        /**
+        * @deprecated
+        * @attribute useShim
+        * @description Use the Drop shim. Default: true
+        * @type Boolean
+        */
         useShim: {
             value: true,
             setter: function(v) {
@@ -3303,6 +3317,12 @@ YUI.add('dd-drop', function(Y) {
     };
 
     Y.extend(Drop, Y.Base, {
+        /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
         /**
         * @method addToGroup
         * @description Add this Drop instance to a group, this should be used for on-the-fly group additions.
@@ -3405,10 +3425,6 @@ YUI.add('dd-drop', function(Y) {
         * @description Private lifecycle method
         */
         initializer: function(cfg) {
-            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
-                this.addTarget(Y.DD.DDM);
-            }
-            //this._createEvents();
             Y.later(100, this, this._createEvents);
 
             var node = this.get(NODE), id;
@@ -3743,6 +3759,12 @@ YUI.add('dd-delegate', function(Y) {
 
     Y.extend(Delegate, Y.Base, {
         /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
+        /**
         * @property dd
         * @description A reference to the temporary dd instance used under the hood.
         */    
@@ -3769,26 +3791,25 @@ YUI.add('dd-delegate', function(Y) {
         * @param {Event} e The Event.
         */
         _afterDragEnd: function(e) {
-            var self = this;
-            Y.DD.DDM._noShim = self._shimState;
-            self.set('lastNode', self.dd.get('node'));
-            self.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
-            self.dd._unprep();
-            self.dd.set('node', _tmpNode);
+            Y.DD.DDM._noShim = this._shimState;
+            this.set('lastNode', this.dd.get('node'));
+            this.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
+            this.dd._unprep();
+            this.dd.set('node', _tmpNode);
         },
         /**
         * @private
-        * @method _onDelegate
+        * @method _delMouseDown
         * @description The callback for the Y.DD.Delegate instance used
         * @param {Event} e The MouseDown Event.
         */
-        _onDelegate: function(e) {
+        _delMouseDown: function(e) {
             var tar = e.currentTarget,
-                self = this, dd = self.dd;
-            if (tar.test(self.get(NODES)) && !tar.test(self.get('invalid'))) {
-                self._shimState = Y.DD.DDM._noShim;
+                dd = this.dd;
+            if (tar.test(this.get(NODES)) && !tar.test(this.get('invalid'))) {
+                this._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
-                self.set('currentNode', tar);
+                this.set('currentNode', tar);
                 dd.set('node', tar);
                 if (dd.proxy) {
                     dd.set('dragNode', Y.DD.DDM._proxy);
@@ -3818,10 +3839,9 @@ YUI.add('dd-delegate', function(Y) {
         _onMouseLeave: function(e) {
             Y.DD.DDM._noShim = this._shimState;
         },
+        _handles: null,
         initializer: function(cfg) {
-            if (!Y.Object.hasKey(cfg, 'bubbleTargets')) {
-                this.addTarget(Y.DD.DDM);
-            }
+            this._handles = [];
             //Create a tmp DD instance under the hood.
             var conf = this.get('dragConfig') || {},
                 cont = this.get(CONT);
@@ -3840,41 +3860,41 @@ YUI.add('dd-delegate', function(Y) {
             this.dd.on('dragNodeChange', Y.bind(this._onNodeChange, this));
 
             //Attach the delegate to the container
-            Y.delegate('mousedown', Y.bind(this._onDelegate, this), cont, this.get(NODES));
+            this._handles.push(Y.delegate('mousedown', Y.bind(this._delMouseDown, this), cont, this.get(NODES)));
 
-            Y.on('mouseenter', Y.bind(this._onMouseEnter, this), cont);
+            this._handles.push(Y.on('mouseenter', Y.bind(this._onMouseEnter, this), cont));
 
-            Y.on('mouseleave', Y.bind(this._onMouseLeave, this), cont);
+            this._handles.push(Y.on('mouseleave', Y.bind(this._onMouseLeave, this), cont));
 
-            Y.later(10, this, this.syncTargets);
+            Y.later(50, this, this.syncTargets);
             Y.DD.DDM.regDelegate(this);
         },
         /**
         * @method syncTargets
         * @description Applies the Y.Plugin.Drop to all nodes matching the cont + nodes selector query.
-        * @param {String} group The default group to assign this target to. Optional.
         * @return {Self}
         * @chainable
         */        
-        syncTargets: function(group) {
-            if (!Y.Plugin.Drop) {
+        syncTargets: function() {
+            if (!Y.Plugin.Drop || this.get('destroyed')) {
                 return;
             }
-            var items, groups, self = this;
+            var items, groups, config;
 
-            if (self.get('target')) {
-                items = Y.one(self.get(CONT)).all(self.get(NODES));
-                groups = self.dd.get('groups');
-
-                if (group) {
-                    groups = [group];
+            if (this.get('target')) {
+                items = Y.one(this.get(CONT)).all(this.get(NODES));
+                groups = this.dd.get('groups');
+                config = this.get('dragConfig');
+                
+                if (config && 'groups' in config) {
+                    groups = config.groups;
                 }
 
                 items.each(function(i) {
-                    self.createDrop(i, groups);
-                });
+                    this.createDrop(i, groups);
+                }, this);
             }
-            return self;
+            return this;
         },
         /**
         * @method createDrop
@@ -3903,6 +3923,9 @@ YUI.add('dd-delegate', function(Y) {
                 var targets = Y.one(this.get(CONT)).all(this.get(NODES));
                 targets.unplug(Y.Plugin.Drop);
             }
+            Y.each(this._handles, function(v) {
+                v.detach();
+            });
         }
     }, {
         NAME: 'delegate',

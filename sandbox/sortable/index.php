@@ -13,7 +13,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 
         #demo {
             border: 1px solid black;
-            height: 400px;
+            height: 700px;
         }
         #demo ul {
             border: 1px solid blue;
@@ -73,16 +73,6 @@ foreach (range(1, $count) as $k) {
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/yui/yui-throttle.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/attribute/attribute-base-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event-custom/event-custom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-screen-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
 
 <script type="text/javascript" src="../dd/js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
@@ -124,7 +114,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         nodes: '.item',
         opacity: '.5',
         moveType: 'move',
-        //invalid: '.disabled',
+        invalid: '.disabled',
         opacityNode: 'currentNode'
     });
     sel.plug(Y.Plugin.DDConstrained, {
@@ -150,6 +140,8 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
 
     sel.join(sel2, 'outer');
 
+    sel.destroy();
+
     /*
     console.log(Y.DD.DDM.getDelegate(Y.one('#three')));
     console.log(Y.DD.DDM.getDelegate('#one'));
@@ -169,12 +161,12 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
             node = Y.Node.create('<li class="item">(' + inc + ':1) ' + i + '</li>');
             one.append(node);
             two.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':2) ' + i));
-            three.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':3) ' + i));
+            //three.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':3) ' + i));
         }
         inc++;
         sel.sync();
         sel2.sync();
-        sel3.sync();
+        //sel3.sync();
     });
 
 });

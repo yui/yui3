@@ -19,6 +19,7 @@ YUI.add('sortable', function(Y) {
     OPACITY_NODE = 'opacityNode',
     CONT = 'container',
     ID = 'id',
+    ZINDEX = 'zIndex',
     OPACITY = 'opacity',
     PARENT_NODE = 'parentNode',
     NODES = 'nodes',
@@ -34,18 +35,17 @@ YUI.add('sortable', function(Y) {
         delegate: null,
         initializer: function() {
             var id = 'sortable-' + Y.guid(), c,
-                self = this,
                 del = new Y.DD.Delegate({
-                    container: self.get(CONT),
-                    nodes: self.get(NODES),
+                    container: this.get(CONT),
+                    nodes: this.get(NODES),
                     target: true,
-                    invalid: self.get('invalid'),
+                    invalid: this.get('invalid'),
                     dragConfig: {
                         groups: [ id ]
                     }
                 });
 
-            self.set(ID, id);
+            this.set(ID, id);
 
             del.dd.plug(Y.Plugin.DDProxy, {
                 moveOnEnd: false,
@@ -53,19 +53,19 @@ YUI.add('sortable', function(Y) {
             });
 
             c = new Y.DD.Drop({
-                node: self.get(CONT),
+                node: this.get(CONT),
                 bubbleTarget: del,
                 groups: del.dd.get('groups')
-            }).on('drop:over', Y.bind(self._onDropOver, self));
+            }).on('drop:over', Y.bind(this._onDropOver, this));
             
             del.on({
-                'drag:start': Y.bind(self._onDragStart, self),
-                'drag:end': Y.bind(self._onDragEnd, self),
-                'drag:over': Y.bind(self._onDragOver, self)
+                'drag:start': Y.bind(this._onDragStart, this),
+                'drag:end': Y.bind(this._onDragEnd, this),
+                'drag:over': Y.bind(this._onDragOver, this)
             });
 
-            self.delegate = del;
-            Sortable.regSortable(self);
+            this.delegate = del;
+            Sortable.reg(this);
         },
         /**
         * @private
@@ -94,7 +94,8 @@ YUI.add('sortable', function(Y) {
             if (e.drag.get(NODE) == e.drop.get(NODE)) {
                 return;
             }
-            switch (this.get('moveType')) {
+
+            switch (this.get('moveType').toLowerCase()) {
                 case 'swap':
                     Y.DD.DDM.swapNode(e.drag, e.drop);
                     break;
@@ -107,8 +108,8 @@ YUI.add('sortable', function(Y) {
                         Y.log('No delegate parent found', 'error');
                         return;
                     }
-
-                    Y.DD.DDM.getDrop(e.drag.get(NODE)).addToGroup(dropsort.get('id'));
+                    
+                    Y.DD.DDM.getDrop(e.drag.get(NODE)).addToGroup(dropsort.get(ID));
 
                     //Same List
                     if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
@@ -139,9 +140,9 @@ YUI.add('sortable', function(Y) {
         * @description Handles the DragStart event and initializes some settings.
         */
         _onDragStart: function(e) {
-            this.delegate.get('lastNode').setStyle('zIndex', '');
+            this.delegate.get('lastNode').setStyle(ZINDEX, '');
             this.delegate.get(this.get(OPACITY_NODE)).setStyle(OPACITY, this.get(OPACITY));
-            this.delegate.get(CURRENT_NODE).setStyle('zIndex', '999');
+            this.delegate.get(CURRENT_NODE).setStyle(ZINDEX, '999');
         },
         /**
         * @private
@@ -155,6 +156,7 @@ YUI.add('sortable', function(Y) {
                 top: '',
                 left: ''
             });
+            this.sync();
         },
         /**
         * @method plug
@@ -173,22 +175,23 @@ YUI.add('sortable', function(Y) {
         * @chainable
         */
         sync: function() {
-            this.delegate.syncTargets(this.get(ID));
+            this.delegate.syncTargets();
             return this;
         },
         destructor: function() {
             this.delegate.destroy();
-            Sortable.unregSortable(this);
+            Sortable.unreg(this);
         },
         /**
         * @method join
         * @param Sortable sel The sortable list to join with
-        * @param String type The type of join to do: full, inner, outer. Default: full
+        * @param String type The type of join to do: full, inner, outer, none. Default: full
         * @description Join this Sortable with another Sortable instance.
         * <ul>
-        *   <li>Full: Exchange nodes with both lists.</li>
-        *   <li>Inner: Items can go into this list from the joined list.</li>
-        *   <li>Outer: Items can go out of the joined list into this list.</li>
+        *   <li>full: Exchange nodes with both lists.</li>
+        *   <li>inner: Items can go into this list from the joined list.</li>
+        *   <li>outer: Items can go out of the joined list into this list.</li>
+        *   <li>none: Removes the join.</li>
         * </ul>
         * @chainable
         */
@@ -200,35 +203,54 @@ YUI.add('sortable', function(Y) {
             if (!type) {
                 type = 'full';
             }
+            type = type.toLowerCase();
+            var method = '_join_' + type;
 
-            switch (type.toLowerCase()) {
-                case 'none':
-                    this.delegate.dd.removeFromGroup(sel.get(ID));
-                    sel.delegate.dd.removeFromGroup(this.get(ID));
-                    break;
-                case 'out':
-                case 'outside':
-                case 'outter':
-                case 'outer':
-                    this.delegate.dd.addToGroup(sel.get(ID));
-                    break;
-                case 'in':
-                case 'inside':
-                case 'inner':
-                    sel.delegate.dd.addToGroup(this.get(ID));
-                    break;
-                default: //full
-                    this.delegate.dd.addToGroup(sel.get(ID));
-                    sel.delegate.dd.addToGroup(this.get(ID));
-                    break;
+            if (this[method]) {
+                this[method](sel);
             }
+            
             return this;
+        },
+        /**
+        * @private
+        * @method _join_none
+        * @param Sortable sel The Sortable to remove the join from
+        * @description Removes the join with the passed Sortable.
+        */
+        _join_none: function(sel) {
+            this.delegate.dd.removeFromGroup(sel.get(ID));
+            sel.delegate.dd.removeFromGroup(this.get(ID));
+        },
+        /**
+        * @private
+        * @method _join_full
+        * @param Sortable sel The sortable list to join with
+        * @description Joins both of the Sortables together.
+        */
+        _join_full: function(sel) {
+            this.delegate.dd.addToGroup(sel.get(ID));
+            sel.delegate.dd.addToGroup(this.get(ID));
+        },
+        /**
+        * @private
+        * @method _join_outer
+        * @param Sortable sel The sortable list to join with
+        * @description Allows this Sortable to accept items from the passed Sortable.
+        */
+        _join_outer: function(sel) {
+            this.delegate.dd.addToGroup(sel.get(ID));
+        },
+        /**
+        * @private
+        * @method _join_inner
+        * @param Sortable sel The sortable list to join with
+        * @description Allows this Sortable to give items to the passed Sortable.
+        */
+        _join_inner: function(sel) {
+            sel.delegate.dd.addToGroup(this.get(ID));
         }
     }, {
-        JOIN_OUTER: 'outer',
-        JOIN_INNER: 'inner',
-        JOIN_FULL: 'full',
-        JOIN_NONE: 'none',
         NAME: 'sortable',
         ATTRS: {
             /**
@@ -314,20 +336,20 @@ YUI.add('sortable', function(Y) {
         },
         /**
         * @static
-        * @method regSortable
+        * @method reg
         * @param Sortable s A Sortable instance.
         * @description Register a Sortable instance with the singleton to allow lookups later.
         */
-        regSortable: function(s) {
+        reg: function(s) {
             Sortable._sortables.push(s);
         },
         /**
         * @static
-        * @method unregSortable
+        * @method unreg
         * @param Sortable s A Sortable instance.
         * @description Unregister a Sortable instance with the singleton.
         */
-        unregSortable: function(s) {
+        unreg: function(s) {
             Y.each(Sortable._sortables, function(v, k) {
                 if (v === s) {
                     Sortable._sortables[k] = null;
