@@ -22,16 +22,21 @@
 
 	            name: "ClassNameManager Tests",
 
-	            testCoreFunctionality: function() {
-
+	            testSingleSection: function() {
 					Y.Assert.areEqual(Y.ClassNameManager.getClassName("menuitem"), "yui-menuitem");
-
-					Y.Assert.areEqual(Y.ClassNameManager.getClassName("menu item"), "yui-menuitem");
-
+                },
+                
+                testSingleSectionNoPrefix: function() {
+                    Y.Assert.areEqual(Y.ClassNameManager.getClassName("menuitem", true), "menuitem");
+                },
+                
+                testMoreThanOneSection : function() {
 					Y.Assert.areEqual(Y.ClassNameManager.getClassName("menuitem", "active"), "yui-menuitem-active");
+                },
 
-	            }
-
+                testMoreThanOneSectionNoPrefix : function() {
+                    Y.Assert.areEqual(Y.ClassNameManager.getClassName("menuitem", "active", true), "menuitem-active");
+                }
 	        });
 
 	        Y.Test.Runner.add(testClassNameManager);

@@ -84,6 +84,16 @@ YUI.add('base-base', function(Y) {
 
         if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
 
+        /**
+         * The string used to identify the class of this object.
+         *
+         * @deprecated Use this.constructor.NAME
+         * @property name
+         * @type String
+         */
+        this.name = this.constructor.NAME;
+        this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
+
         this.init.apply(this, arguments);
     }
 
@@ -173,14 +183,7 @@ YUI.add('base-base', function(Y) {
          */
         init: function(config) {
 
-            /**
-             * The string used to identify the class of this object.
-             *
-             * @deprecated Use this.constructor.NAME
-             * @property name
-             * @type String
-             */
-            this._yuievt.config.prefix = this.name = this.constructor.NAME;
+            this._yuievt.config.prefix = this._eventPrefix;
 
             /**
              * <p>
@@ -556,6 +559,7 @@ YUI.add('base-base', function(Y) {
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         }
+
     };
 
     // Straightup augment, no wrapper functions

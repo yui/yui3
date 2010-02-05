@@ -6,11 +6,12 @@
 
 var L = Y.Lang,
     Node = Y.Node,
+
     ClassNameManager = Y.ClassNameManager,
 
     _getClassName = ClassNameManager.getClassName,
     _getWidgetClassName,
-    
+
     _toInitialCap = Y.cached(function(str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }),
@@ -88,6 +89,7 @@ function Widget(config) {
     Y.log('constructor called', 'life', 'widget');
 
     this._strs = {};
+    this._cssPrefix = this.constructor.CSS_PREFIX || _getClassName(this.constructor.NAME.toLowerCase());
 
     Widget.superclass.constructor.apply(this, arguments);
 
@@ -99,7 +101,6 @@ function Widget(config) {
         }
         this.render(parentNode);
     }
-    
 }
 
 /**
@@ -288,13 +289,15 @@ ATTRS[RENDER] = {
 };
 
 /**
- * Cached lowercase version of Widget.NAME
+ * The css prefix which the static Widget.getClassName method should use when constructing class names
  *
- * @property Widget._NAME_LOWERCASE
+ * @property Widget.CSS_PREFIX
+ * @type String
+ * @default Widget.NAME.toLowerCase()
  * @private
  * @static
  */
-Widget._NAME = Widget.NAME.toLowerCase();
+Widget.CSS_PREFIX = _getClassName(Widget.NAME.toLowerCase());
 
 /**
  * Generate a standard prefixed classname for the Widget, prefixed by the default prefix defined
@@ -311,7 +314,7 @@ Widget._NAME = Widget.NAME.toLowerCase();
  */
 Widget.getClassName = function() {
     // arguments needs to be array'fied to concat
-    return _getClassName.apply(ClassNameManager, [Widget._NAME].concat(Y.Array(arguments)));
+    return _getClassName.apply(ClassNameManager, [Widget.CSS_PREFIX].concat(Y.Array(arguments), true));
 };
 
 _getWidgetClassName = Widget.getClassName;
@@ -334,7 +337,7 @@ Widget.getByNode = function(node) {
 
     node = Node.one(node);
     if (node) {
-        node = (node.hasClass(widgetMarker)) ? node : node.ancestor("." + widgetMarker);
+        node = node.ancestor("." + widgetMarker, true);
         if (node) {
             widget = _instances[Y.stamp(node, TRUE)];
         }
@@ -364,7 +367,7 @@ Y.extend(Widget, Y.Base, {
 	 * @param {String}+ One or more classname bits to be joined and prefixed
 	 */
 	getClassName: function () {
-        return _getClassName.apply(ClassNameManager, [this._name].concat(Y.Array(arguments)));
+        return _getClassName.apply(ClassNameManager, [this._cssPrefix].concat(Y.Array(arguments), true));
 	},
 
     /**
@@ -377,8 +380,6 @@ Y.extend(Widget, Y.Base, {
      */
     initializer: function(config) {
         Y.log('initializer called', 'life', 'widget');
-
-        this._name = this.constructor.NAME.toLowerCase();
 
         _instances[Y.stamp(this.get(BOUNDING_BOX))] = this;
 
@@ -769,6 +770,7 @@ Y.extend(Widget, Y.Base, {
      */
     _renderBoxClassNames : function() {
         var classes = this._getClasses(),
+            cl,
             boundingBox = this.get(BOUNDING_BOX),
             i;
 
@@ -776,7 +778,8 @@ Y.extend(Widget, Y.Base, {
 
         // Start from Widget Sub Class
         for (i = classes.length-3; i >= 0; i--) {
-            boundingBox.addClass(ClassNameManager.getClassName(classes[i].NAME.toLowerCase()));
+            cl = classes[i];
+            boundingBox.addClass(cl.CSS_PREFIX || _getClassName(cl.NAME.toLowerCase()));
         }
 
         // Use instance based name for content box
@@ -1099,6 +1102,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     _BIND_UI_ATTRS : UI_ATTRS,
+
     _SYNC_UI_ATTRS : UI_ATTRS.concat(TAB_INDEX),
 
     /**
