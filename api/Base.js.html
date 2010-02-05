@@ -132,6 +132,16 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_lazyAddAttrs</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_lazyAddAttrs</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="p">}</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * The string used to identify the class of this object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @deprecated Use this.constructor.NAME</span>
+<span class="cm">         * @property name</span>
+<span class="cm">         * @type String</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NAME</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_eventPrefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">EVENT_PREFIX</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NAME</span><span class="p">;</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -222,14 +232,7 @@
         <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;init called&#39;</span><span class="p">,</span> <span class="s1">&#39;life&#39;</span><span class="p">,</span> <span class="s1">&#39;base&#39;</span><span class="p">);</span>
 
-            <span class="cm">/**</span>
-<span class="cm">             * The string used to identify the class of this object.</span>
-<span class="cm">             *</span>
-<span class="cm">             * @deprecated Use this.constructor.NAME</span>
-<span class="cm">             * @property name</span>
-<span class="cm">             * @type String</span>
-<span class="cm">             */</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NAME</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_eventPrefix</span><span class="p">;</span>
 
             <span class="cm">/**</span>
 <span class="cm">             * &lt;p&gt;</span>
@@ -608,6 +611,7 @@
         <span class="nx">toString</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">;</span>
         <span class="p">}</span>
+
     <span class="p">};</span>
 
     <span class="c1">// Straightup augment, no wrapper functions</span>

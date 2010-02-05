@@ -105,18 +105,22 @@
 <span class="cm">		 * &lt;code&gt;Y.config.classNamePrefix&lt;/code&gt; attribute + the provided strings.</span>
 <span class="cm">		 * Uses the &lt;code&gt;Y.config.classNameDelimiter&lt;/code&gt; attribute to delimit the </span>
 <span class="cm">		 * provided strings. E.g. Y.ClassNameManager.getClassName(&#39;foo&#39;,&#39;bar&#39;); // yui-foo-bar</span>
-<span class="cm">		 * </span>
+<span class="cm">		 *</span>
 <span class="cm">		 * @method getClassName</span>
-<span class="cm">		 * @param {String}+ one or more classname bits to be joined and prefixed</span>
+<span class="cm">		 * @param {String}+ classnameSection one or more classname sections to be joined</span>
+<span class="cm">		 * @param {Boolean} skipPrefix If set to true, the classname will not be prefixed with the default Y.config.classNameDelimiter value.  </span>
 <span class="cm">		 */</span>
-		<span class="nx">getClassName</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">getClassName</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-			<span class="kd">var</span> <span class="nx">sClass</span> <span class="o">=</span> <span class="nx">sPrefix</span> <span class="o">+</span> <span class="nx">sDelimiter</span> <span class="o">+</span> 
-                   <span class="c1">// ((x) ? Y.Array(arguments, 0, true).join(sDelimiter) : c);</span>
-                   <span class="p">((</span><span class="nx">x</span><span class="p">)</span> <span class="o">?</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">join</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">sDelimiter</span><span class="p">)</span> <span class="o">:</span> <span class="nx">c</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
 
-			<span class="k">return</span> <span class="nx">sClass</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">sPrefix</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">args</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+            <span class="p">}</span>
 
+			<span class="k">return</span> <span class="nx">args</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">sDelimiter</span><span class="p">);</span>
 		<span class="p">})</span>
 
 	<span class="p">};</span>
