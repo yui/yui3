@@ -236,7 +236,7 @@
 <span class="cm"> * @writeOnce</span>
 <span class="cm"> */</span>
 <span class="nx">ATTRS</span><span class="p">[</span><span class="nx">CONTENT_BOX</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">value</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+    <span class="nx">valueFn</span><span class="o">:</span><span class="s2">&quot;_defaultCB&quot;</span><span class="p">,</span>
     <span class="nx">setter</span><span class="o">:</span> <span class="s2">&quot;_setCB&quot;</span><span class="p">,</span>
     <span class="nx">writeOnce</span><span class="o">:</span> <span class="nx">TRUE</span>
 <span class="p">};</span>
@@ -777,6 +777,10 @@
 <span class="cm">     */</span>
     <span class="nx">_setCB</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">CONTENT_TEMPLATE</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">)</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setBox</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">CONTENT_TEMPLATE</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">_defaultCB</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">SRC_NODE</span><span class="p">)</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
