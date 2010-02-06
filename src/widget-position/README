@@ -1,3 +1,8 @@
+Development Master
+
+* Relatively positioned bounding boxes, will default to 
+  page position instead of 0,0
+
 3.0.0
 
 * Fixed ability to set individual x, y values.

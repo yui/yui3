@@ -188,7 +188,7 @@ ATTRS[BOUNDING_BOX] = {
  * @writeOnce
  */
 ATTRS[CONTENT_BOX] = {
-    value:null,
+    valueFn:"_defaultCB",
     setter: "_setCB",
     writeOnce: TRUE
 };
@@ -726,6 +726,10 @@ Y.extend(Widget, Y.Base, {
      */
     _setCB: function(node) {
         return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE);
+    },
+
+    _defaultCB : function(node) {
+        return this.get(SRC_NODE) || null;
     },
 
     /**
