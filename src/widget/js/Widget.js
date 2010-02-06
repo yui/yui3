@@ -679,6 +679,7 @@ Y.extend(Widget, Y.Base, {
         var contentBox = this.get(CONTENT_BOX),
             boundingBox = this.get(BOUNDING_BOX),
             srcNode = this.get(SRC_NODE),
+            defParentNode = this.DEF_PARENT_NODE,
 
             doc = (srcNode && srcNode.get(OWNER_DOCUMENT)) || boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT);
 
@@ -688,7 +689,6 @@ Y.extend(Widget, Y.Base, {
         }
 
         if (!boundingBox.compareTo(contentBox.get(PARENT_NODE)) && !boundingBox.compareTo(contentBox)) {
-
             // If contentBox box is already in the document, have boundingBox box take it's place
             if (contentBox.inDoc(doc)) {
                 contentBox.replace(boundingBox);
@@ -696,10 +696,11 @@ Y.extend(Widget, Y.Base, {
             boundingBox.appendChild(contentBox);
         }
 
+        parentNode = parentNode || (defParentNode && Node.one(defParentNode));
+
         if (parentNode) {
             parentNode.appendChild(boundingBox);
         } else if (!boundingBox.inDoc(doc)) {
-            // Special case when handling body as default (no parentNode), always try to insert.
             Node.one(BODY).insert(boundingBox, 0);
         }
 
@@ -1004,8 +1005,18 @@ Y.extend(Widget, Y.Base, {
      * Default unit to use for dimension values
      * 
      * @property DEF_UNIT
+     * @type String
      */
     DEF_UNIT : "px",
+
+    /** 
+     * Default node to render the bounding box to. If not set,
+     * will default to the current document body.
+     * 
+     * @property DEF_PARENT_NODE
+     * @type String | Node
+     */ 
+    DEF_PARENT_NODE : null,
 
     /**
      * Property defining the markup template for content box. If your Widget doesn't
