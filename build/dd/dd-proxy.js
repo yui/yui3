@@ -96,6 +96,7 @@ YUI.add('dd-proxy', function(Y) {
         */
         _init: function() {
             if (!DDM._proxy) {
+                DDM._createFrame();
                 Y.on('domready', Y.bind(this._init, this));
                 return;
             }
@@ -234,7 +235,7 @@ YUI.add('dd-proxy', function(Y) {
     });
 
     //Create the frame when DOM is ready
-    Y.on('domready', Y.bind(DDM._createFrame, DDM));
+    //Y.on('domready', Y.bind(DDM._createFrame, DDM));
 
 
 
