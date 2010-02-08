@@ -385,6 +385,13 @@
 <span class="cm">        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config</span>
 <span class="cm">        * @type Object</span>
 <span class="cm">        */</span>
+        <span class="nx">bubbles</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;bubbles is deprecated use bubbleTargets: HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;dd&#39;</span><span class="p">);</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">addTarget</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+                <span class="k">return</span> <span class="nx">t</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">};</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Drag</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
