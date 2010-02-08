@@ -17,7 +17,7 @@ var GLOBAL_ENV = YUI.Env,
     doScrollCap = docElement.doScroll,
     add = YUI.Env.add,
     remove = YUI.Env.remove,
-    targetEvent = (doScrollCap) ? 'onreadystatechange' : 'DOMontentLoaded',
+    targetEvent = (doScrollCap) ? 'onreadystatechange' : 'DOMContentLoaded',
     pollInterval = config.pollInterval || 40,
     stateChangeListener,
 

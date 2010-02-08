@@ -292,7 +292,7 @@ YUI.add('dd-ddm-drop', function(Y) {
                     activeDrop.fire('drop:hit', { drag: activeDrag, drop: activeDrop, others: other });
                     activeDrag.fire('drag:drophit', { drag: activeDrag,  drop: activeDrop, others: other });
                 }
-            } else if (activeDrag) {
+            } else if (activeDrag && activeDrag.get('dragging')) {
                 activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over');
                 activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
             } else {
@@ -408,4 +408,4 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm']});
+}, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});

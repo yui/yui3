@@ -106,6 +106,8 @@ var L = Y.Lang,
 
             chain: ('chain' in o) ? o.chain : Y.config.chain,
 
+            bubbling: false,
+
             defaults: {
                 context: o.context || this, 
                 host: this,
@@ -113,6 +115,7 @@ var L = Y.Lang,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
                 broadcast: o.broadcast,
+                defaultTargetOnly: o.defaulTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };

@@ -8,8 +8,10 @@
 
         XY_COORD = "xy",
 
+        POSITION = "position",
         POSITIONED = "positioned",
         BOUNDING_BOX = "boundingBox",
+        RELATIVE = "relative",
 
         RENDERUI = "renderUI",
         BINDUI = "bindUI",
@@ -57,10 +59,10 @@
             setter: function(val) {
                 this._setX(val);
             },
-            lazyAdd:false,
             getter: function() {
                 return this._getX();
-            }
+            },
+            lazyAdd:false
         },
 
         /**
@@ -75,12 +77,12 @@
             setter: function(val) {
                 this._setY(val);
             },
-            lazyAdd: false,
             getter: function() {
                 return this._getY();
-            }
+            },
+            lazyAdd: false
         },
-        
+
         /**
          * @attribute xy
          * @type Array
@@ -90,7 +92,6 @@
          */
         xy: {
             value:[0,0],
-
             validator: function(val) {
                 return this._validateXY(val);
             }
@@ -132,6 +133,10 @@
          * @protected
          */
         _syncUIPosition : function() {
+            var posNode = this._posNode;
+            if (posNode.getStyle(POSITION) === RELATIVE) {
+                this.syncXY();
+            }
             this._uiSetXY(this.get(XY_COORD));
         },
 

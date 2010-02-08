@@ -258,7 +258,7 @@ YUI.prototype = {
         var Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get', 'loader', 'yui-log', 'yui-later'];
+            extras = Y.config.core || ['get', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
 
 
         for (i=0; i<extras.length; i++) {
@@ -1501,7 +1501,7 @@ Queue.prototype = {
      * @method _init
      * @protected
      */
-    _init : function () {
+    _init: function () {
         /**
          * The collection of enqueued items
          *
@@ -1513,13 +1513,23 @@ Queue.prototype = {
     },
 
     /**
-     * Get the next item in the queue.
+     * Get the next item in the queue. FIFO support
      *
      * @method next
      * @return {MIXED} the next item in the queue
      */
-    next : function () {
+    next: function () {
         return this._q.shift();
+    },
+
+    /**
+     * Get the last in the queue. LIFO support
+     *
+     * @method last
+     * @return {MIXED} the last item in the queue
+     */
+    last: function () {
+        return this._q.pop();
     },
 
     /**
@@ -1528,7 +1538,7 @@ Queue.prototype = {
      * @method add
      * @param item* {MIXED} 0..n items
      */
-    add : function () {
+    add: function () {
         Y.Array.each(Y.Array(arguments,0,true),function (fn) {
             this._q.push(fn);
         },this);
@@ -1542,7 +1552,7 @@ Queue.prototype = {
      * @method size
      * @return {Number}
      */
-    size : function () {
+    size: function () {
         return this._q.length;
     }
 };

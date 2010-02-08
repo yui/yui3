@@ -321,7 +321,11 @@ YUI.add('dd-drag', function(Y) {
                 if (g) {
                     this._handles = {};
                     Y.each(g, function(v, k) {
-                        this._handles[v] = true;
+                        var key = v;
+                        if (v instanceof Y.Node || v instanceof Y.NodeList) {
+                            key = v._yuid;
+                        }
+                        this._handles[key] = v;
                     }, this);
                 } else {
                     this._handles = null;
@@ -330,17 +334,26 @@ YUI.add('dd-drag', function(Y) {
             }
         },
         /**
+        * @deprecated
         * @attribute bubbles
-        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config
         * @type Object
         */
         bubbles: {
-            writeOnce: true,
-            value: Y.DD.DDM
+            setter: function(t) {
+                this.addTarget(t);
+                return t;
+            }
         }
     };
 
     Y.extend(Drag, Y.Base, {
+        /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
         /**
         * @method addToGroup
         * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.
@@ -390,7 +403,7 @@ YUI.add('dd-drag', function(Y) {
                     if (!Y.Lang.isObject(config)) {
                         config = {};
                     }
-                    config.bubbles = ('bubbles' in config) ? config.bubbles : this.get('bubbles');
+                    config.bubbleTargets = ('bubbleTargets' in config) ? config.bubbleTargets : Y.Object.values(this._yuievt.targets);
                     config.node = this.get(NODE);
                     config.groups = config.groups || this.get('groups');
                     this.target = new Y.DD.Drop(config);
@@ -469,12 +482,6 @@ YUI.add('dd-drag', function(Y) {
                     prefix: 'drag'
                 });
             }, this);
-
-            if (this.get('bubbles')) {
-                this.addTarget(this.get('bubbles'));
-            }
-            
-           
         },
         /**
         * @private
@@ -687,10 +694,23 @@ YUI.add('dd-drag', function(Y) {
             tar = ev.target,
             hTest = null,
             els = null,
+            nlist = null,
             set = false;
             if (this._handles) {
                 Y.each(this._handles, function(i, n) {
-                    if (Y.Lang.isString(n)) {
+                    if (i instanceof Y.Node || i instanceof Y.NodeList) {
+                        if (!r) {
+                            nlist = i;
+                            if (nlist instanceof Y.Node) {
+                                nlist = new Y.NodeList(i._node);
+                            }
+                            nlist.each(function(nl) {
+                                if (nl.contains(tar)) {
+                                    r = true;
+                                }
+                            });
+                        }
+                    } else if (Y.Lang.isString(n)) {
                         //Am I this or am I inside this
                         if (tar.test(n + ', ' + n + ' *') && !hTest) {
                             hTest = n;
@@ -769,8 +789,12 @@ YUI.add('dd-drag', function(Y) {
         * @chainable
         */
         removeHandle: function(str) {
-            if (this._handles[str]) {
-                delete this._handles[str];
+            var key = str;
+            if (str instanceof Y.Node || str instanceof Y.NodeList) {
+                key = str._yuid;
+            }
+            if (this._handles[key]) {
+                delete this._handles[key];
                 this.fire(EV_REMOVE_HANDLE, { handle: str });
             }
             return this;
@@ -786,10 +810,12 @@ YUI.add('dd-drag', function(Y) {
             if (!this._handles) {
                 this._handles = {};
             }
-            if (Y.Lang.isString(str)) {
-                this._handles[str] = true;
-                this.fire(EV_ADD_HANDLE, { handle: str });
+            var key = str;
+            if (str instanceof Y.Node || str instanceof Y.NodeList) {
+                key = str._yuid;
             }
+            this._handles[key] = str;
+            this.fire(EV_ADD_HANDLE, { handle: str });
             return this;
         },
         /**
@@ -826,7 +852,7 @@ YUI.add('dd-drag', function(Y) {
         * @method initializer
         * @description Internal init handler
         */
-        initializer: function() {
+        initializer: function(cfg) {
             this.get(NODE).dd = this;
 
             if (!this.get(NODE).get('id')) {
@@ -1090,4 +1116,4 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
