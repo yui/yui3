@@ -18,6 +18,7 @@ YUI.add('iframe', function(Y) {
 
     Y.extend(IFrame, Y.Base, {
         _iframe: null,
+        _delayed: null,
         _instance: null,
         _ready: null,
         appendTo: function(n) {
@@ -134,6 +135,18 @@ YUI.add('iframe', function(Y) {
             doc.close();
 
         },
+        delegate: function(type, fn, cont, sel) {
+            var inst = this.getInstance();
+            if (!inst) {
+                Y.log('Delegate events can not be attached until after ready', 'error', 'iframe');
+                return false;
+            }
+            if (!sel) {
+                sel = cont;
+                cont = 'body';
+            }
+            return inst.delegate(type, fn, cont, sel);
+        },
         getInstance: function() {
             return this._instance;
         },
@@ -142,6 +155,7 @@ YUI.add('iframe', function(Y) {
             return this;
         },
         initializer: function() {
+            this._delayed = [];
         },
         destructor: function() {
         }
