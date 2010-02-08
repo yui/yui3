@@ -52,8 +52,8 @@ Y.mix(Y.DOM, {
      */
     replaceClass: function(node, oldC, newC) {
         //Y.log('replaceClass replacing ' + oldC + ' with ' + newC, 'info', 'Node');
+        removeClass(node, oldC); // remove first in case oldC === newC
         addClass(node, newC);
-        removeClass(node, oldC);
     },
 
     /**
