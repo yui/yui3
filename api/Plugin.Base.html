@@ -183,6 +183,222 @@ should set their own NS value.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_afterHostEvent">
+                                    <h4>
+                                        <a name="method_afterHostEvent">afterHostEvent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        EventHandle
+                                            <strong property="yui:name">afterHostEvent</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Listens for the "after" moment of events fired by the host object.
+Listeners attached through this method will be detached when the plugin is unplugged.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String | Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event type.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The listener.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The execution context. Defaults to the plugin instance.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            EventHandle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">handle  The detach handle for the listener.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_afterHostMethod">
+                                    <h4>
+                                        <a name="method_afterHostMethod">afterHostMethod</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        EventHandle
+                                            <strong property="yui:name">afterHostMethod</strong>
+                                           (
+                                                
+                                                        
+                                                         The
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Injects a function to be executed after a given method on host object.
+The function will be detached when the plugin is unplugged.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">The</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> name of the method to inject the function after.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The function to inject.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The execution context. Defaults to the plugin instance.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            EventHandle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">handle  The detach handle for the injected function.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_beforeHostMethod">
+                                    <h4>
+                                        <a name="method_beforeHostMethod">beforeHostMethod</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        EventHandle
+                                            <strong property="yui:name">beforeHostMethod</strong>
+                                           (
+                                                
+                                                        
+                                                         The
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Injects a function to be executed before a given method on host object.
+The function will be detached when the plugin is unplugged.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">The</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> name of the method to inject the function before.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The function to inject.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The execution context. Defaults to the plugin instance.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            EventHandle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">handle  The detach handle for the injected function.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_destructor">
                                     <h4>
                                         <a name="method_destructor">destructor</a></h4>
@@ -227,7 +443,7 @@ Removes any event listeners or injected methods applied by the Plugin
                                            (
                                                 
                                                         
-                                                         sFn
+                                                         strMethod
                                                     
                                                 
                                                         , 
@@ -251,7 +467,7 @@ or injects code "after" a given method on the host.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">sFn</span>
+                                                        <code><span property="yui:name">strMethod</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  The event to listen for, or method to inject logic after.</span>
@@ -275,7 +491,7 @@ or injects code "after" a given method on the host.
                                                     <code property="yui:return">
                                                             EventHandle
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">handle  The detach handle for the handler.</dd>
+                                                    <dd property="yui:returnInfo">handle  The detach handle for the listener.</dd>
                                                 </dl>
 
 
@@ -299,7 +515,7 @@ or injects code "after" a given method on the host.
                                            (
                                                 
                                                         
-                                                         sFn
+                                                         strMethod
                                                     
                                                 
                                                         , 
@@ -323,7 +539,7 @@ or injects code "before" a given method on the host.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">sFn</span>
+                                                        <code><span property="yui:name">strMethod</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  The event to listen for, or method to inject logic before.</span>
@@ -393,6 +609,78 @@ or injects code "before" a given method on the host.
                                                         </dd>
                                                 </dl>
 
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_onHostEvent">
+                                    <h4>
+                                        <a name="method_onHostEvent">onHostEvent</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        EventHandle
+                                            <strong property="yui:name">onHostEvent</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Listens for the "on" moment of events fired by the host object.
+Listeners attached through this method will be detached when the plugin is unplugged.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String | Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The event type.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The listener.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">context</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The execution context. Defaults to the plugin instance.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            EventHandle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">handle  The detach handle for the listener.</dd>
+                                                </dl>
 
 
              
@@ -824,10 +1112,14 @@ or injects code "before" a given method on the host.
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class=""><a href="#method_afterHostEvent" title="afterHostEvent">afterHostEvent</a></li>
+                                <li class=""><a href="#method_afterHostMethod" title="afterHostMethod">afterHostMethod</a></li>
+                                <li class=""><a href="#method_beforeHostMethod" title="beforeHostMethod">beforeHostMethod</a></li>
                                 <li class=""><a href="#method_destructor" title="destructor">destructor</a></li>
                                 <li class=""><a href="#method_doAfter" title="doAfter">doAfter</a></li>
                                 <li class=""><a href="#method_doBefore" title="doBefore">doBefore</a></li>
                                 <li class=""><a href="#method_initializer" title="initializer">initializer</a></li>
+                                <li class=""><a href="#method_onHostEvent" title="onHostEvent">onHostEvent</a></li>
                         </ul>
                     </div>
 
@@ -855,7 +1147,7 @@ or injects code "before" a given method on the host.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Base", "name": "destructor", "url": "Plugin.Base.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doAfter", "url": "Plugin.Base.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doBefore", "url": "Plugin.Base.html#method_doBefore", "type": "method"}, {"access": "private", "host": "Plugin.Base", "name": "_handles", "url": "Plugin.Base.html#property__handles", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "host", "url": "Plugin.Base.html#config_host", "type": "config"}, {"access": "", "host": "Plugin.Base", "name": "hostChange", "url": "Plugin.Base.html#event_hostChange", "type": "event"}, {"access": "", "host": "Plugin.Base", "name": "initializer", "url": "Plugin.Base.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.ATTRS", "url": "Plugin.Base.html#property_Plugin.Base.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.NAME", "url": "Plugin.Base.html#property_Plugin.Base.NAME", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.NS", "url": "Plugin.Base.html#property_Plugin.NS", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Base", "name": "afterHostEvent", "url": "Plugin.Base.html#method_afterHostEvent", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "afterHostMethod", "url": "Plugin.Base.html#method_afterHostMethod", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "beforeHostMethod", "url": "Plugin.Base.html#method_beforeHostMethod", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "destructor", "url": "Plugin.Base.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doAfter", "url": "Plugin.Base.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doBefore", "url": "Plugin.Base.html#method_doBefore", "type": "method"}, {"access": "private", "host": "Plugin.Base", "name": "_handles", "url": "Plugin.Base.html#property__handles", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "host", "url": "Plugin.Base.html#config_host", "type": "config"}, {"access": "", "host": "Plugin.Base", "name": "hostChange", "url": "Plugin.Base.html#event_hostChange", "type": "event"}, {"access": "", "host": "Plugin.Base", "name": "initializer", "url": "Plugin.Base.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "onHostEvent", "url": "Plugin.Base.html#method_onHostEvent", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.ATTRS", "url": "Plugin.Base.html#property_Plugin.Base.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.NAME", "url": "Plugin.Base.html#property_Plugin.Base.NAME", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.NS", "url": "Plugin.Base.html#property_Plugin.NS", "type": "property"}];
 </script>
 </body>
 </html>

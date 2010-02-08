@@ -20,4 +20,4 @@
  * @uses WidgetStdMod
  * @param {Object} object The user configuration for the instance.
  */
-Y.Overlay = Y.Base.create("overlay", Y.Widget, [Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionExt, Y.WidgetStdMod]);
+Y.Overlay = Y.Base.create("overlay", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionExt]);

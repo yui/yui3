@@ -126,8 +126,8 @@
 <span class="cm">         * @param {Object} config Configuration object with property name/value pairs.</span>
 <span class="cm">         */</span>
         <span class="nx">initializer</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span> <span class="o">=</span> <span class="p">[];</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">))</span> <span class="p">{</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;No host defined for plugin &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;Plugin&#39;</span><span class="p">);}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span> <span class="o">=</span> <span class="p">[];</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Initializing: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NAME</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;Plugin&#39;</span><span class="p">);</span>
         <span class="p">},</span>
 
@@ -153,24 +153,20 @@
 <span class="cm">         *</span>
 <span class="cm">         * @method doBefore</span>
 <span class="cm">         *</span>
-<span class="cm">         * @param sFn {String} The event to listen for, or method to inject logic before.</span>
+<span class="cm">         * @param strMethod {String} The event to listen for, or method to inject logic before.</span>
 <span class="cm">         * @param fn {Function} The handler function. For events, the &quot;on&quot; moment listener. For methods, the function to execute before the given method is executed.</span>
 <span class="cm">         * @param context {Object} An optional context to call the handler with. The default context is the plugin instance.</span>
 <span class="cm">         * @return handle {EventHandle} The detach handle for the handler.</span>
 <span class="cm">         */</span>
-        <span class="nx">doBefore</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sFn</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span>
-                <span class="nx">handle</span><span class="p">;</span>
+        <span class="nx">doBefore</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span> <span class="nx">handle</span><span class="p">;</span>
 
-            <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">sFn</span> <span class="k">in</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// method</span>
-                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">host</span><span class="p">,</span> <span class="nx">sFn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">strMethod</span> <span class="k">in</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// method</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">beforeHostMethod</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">on</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// event</span>
-                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">sFn</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">onHostEvent</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
             <span class="p">}</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
         <span class="p">},</span>
 
@@ -180,23 +176,87 @@
 <span class="cm">         *</span>
 <span class="cm">         * @method doAfter</span>
 <span class="cm">         *</span>
-<span class="cm">         * @param sFn {String} The event to listen for, or method to inject logic after.</span>
+<span class="cm">         * @param strMethod {String} The event to listen for, or method to inject logic after.</span>
 <span class="cm">         * @param fn {Function} The handler function. For events, the &quot;after&quot; moment listener. For methods, the function to execute after the given method is executed.</span>
 <span class="cm">         * @param context {Object} An optional context to call the handler with. The default context is the plugin instance.</span>
-<span class="cm">         * @return handle {EventHandle} The detach handle for the handler.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the listener.</span>
 <span class="cm">         */</span>
-        <span class="nx">doAfter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sFn</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span>
-                <span class="nx">handle</span><span class="p">;</span>
+        <span class="nx">doAfter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span> <span class="nx">handle</span><span class="p">;</span>
 
-            <span class="nx">context</span> <span class="o">=</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">;</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">sFn</span> <span class="k">in</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// method</span>
-                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">host</span><span class="p">,</span> <span class="nx">sFn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">strMethod</span> <span class="k">in</span> <span class="nx">host</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// method</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">afterHostMethod</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">host</span><span class="p">.</span><span class="nx">after</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// event</span>
-                <span class="nx">handle</span> <span class="o">=</span> <span class="nx">host</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">sFn</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
+                <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">afterHostEvent</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
             <span class="p">}</span>
 
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Listens for the &quot;on&quot; moment of events fired by the host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * Listeners attached through this method will be detached when the plugin is unplugged.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method onHostEvent</span>
+<span class="cm">         * @param {String | Object} type The event type.</span>
+<span class="cm">         * @param {Function} fn The listener.</span>
+<span class="cm">         * @param {Object} context The execution context. Defaults to the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the listener. </span>
+<span class="cm">         */</span>
+        <span class="nx">onHostEvent</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">).</span><span class="nx">after</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Listens for the &quot;after&quot; moment of events fired by the host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * Listeners attached through this method will be detached when the plugin is unplugged.</span>
+<span class="cm">         * </span>
+<span class="cm">         * @method afterHostEvent</span>
+<span class="cm">         * @param {String | Object} type The event type.</span>
+<span class="cm">         * @param {Function} fn The listener.</span>
+<span class="cm">         * @param {Object} context The execution context. Defaults to the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the listener. </span>
+<span class="cm">         */</span>
+        <span class="nx">afterHostEvent</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">).</span><span class="nx">after</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Injects a function to be executed before a given method on host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * The function will be detached when the plugin is unplugged.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method beforeHostMethod</span>
+<span class="cm">         * @param {String} The name of the method to inject the function before.</span>
+<span class="cm">         * @param {Function} fn The function to inject.</span>
+<span class="cm">         * @param {Object} context The execution context. Defaults to the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the injected function. </span>
+<span class="cm">         */</span>
+        <span class="nx">beforeHostMethod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span> <span class="nx">strMethod</span><span class="p">,</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="cm">/**</span>
+<span class="cm">         * Injects a function to be executed after a given method on host object.</span>
+<span class="cm">         *</span>
+<span class="cm">         * The function will be detached when the plugin is unplugged.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method afterHostMethod</span>
+<span class="cm">         * @param {String} The name of the method to inject the function after.</span>
+<span class="cm">         * @param {Function} fn The function to inject.</span>
+<span class="cm">         * @param {Object} context The execution context. Defaults to the plugin instance.</span>
+<span class="cm">         * @return handle {EventHandle} The detach handle for the injected function. </span>
+<span class="cm">         */</span>
+        <span class="nx">afterHostMethod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">strMethod</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">handle</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;host&quot;</span><span class="p">),</span> <span class="nx">strMethod</span><span class="p">,</span> <span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_handles</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">handle</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
         <span class="p">},</span>
@@ -296,7 +356,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Base", "name": "destructor", "url": "Plugin.Base.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doAfter", "url": "Plugin.Base.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doBefore", "url": "Plugin.Base.html#method_doBefore", "type": "method"}, {"access": "private", "host": "Plugin.Base", "name": "_handles", "url": "Plugin.Base.html#property__handles", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "host", "url": "Plugin.Base.html#config_host", "type": "config"}, {"access": "", "host": "Plugin.Base", "name": "hostChange", "url": "Plugin.Base.html#event_hostChange", "type": "event"}, {"access": "", "host": "Plugin.Base", "name": "initializer", "url": "Plugin.Base.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.ATTRS", "url": "Plugin.Base.html#property_Plugin.Base.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.NAME", "url": "Plugin.Base.html#property_Plugin.Base.NAME", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.NS", "url": "Plugin.Base.html#property_Plugin.NS", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Base", "name": "afterHostEvent", "url": "Plugin.Base.html#method_afterHostEvent", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "afterHostMethod", "url": "Plugin.Base.html#method_afterHostMethod", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "beforeHostMethod", "url": "Plugin.Base.html#method_beforeHostMethod", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "destructor", "url": "Plugin.Base.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doAfter", "url": "Plugin.Base.html#method_doAfter", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "doBefore", "url": "Plugin.Base.html#method_doBefore", "type": "method"}, {"access": "private", "host": "Plugin.Base", "name": "_handles", "url": "Plugin.Base.html#property__handles", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "host", "url": "Plugin.Base.html#config_host", "type": "config"}, {"access": "", "host": "Plugin.Base", "name": "hostChange", "url": "Plugin.Base.html#event_hostChange", "type": "event"}, {"access": "", "host": "Plugin.Base", "name": "initializer", "url": "Plugin.Base.html#method_initializer", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "onHostEvent", "url": "Plugin.Base.html#method_onHostEvent", "type": "method"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.ATTRS", "url": "Plugin.Base.html#property_Plugin.Base.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.Base.NAME", "url": "Plugin.Base.html#property_Plugin.Base.NAME", "type": "property"}, {"access": "", "host": "Plugin.Base", "name": "Plugin.NS", "url": "Plugin.Base.html#property_Plugin.NS", "type": "property"}];
 </script>
 </body>
 </html>
