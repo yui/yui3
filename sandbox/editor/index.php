@@ -29,10 +29,23 @@
             width: 16px;
             background-image: url(arrow.png);
         }
+        #out {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 200px;
+            border: 1px solid black;
+            font-size: 10px;
+        }
+
+        #out p {
+            margin: 0;
+        }
 	</style>
 </head>
 <body class="yui-skin-sam">
 
+<div id="out"></div>
 
 <div id="test"></div>
 <div id="test2"></div>
@@ -79,39 +92,47 @@ var yConfig = {
 
 //YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', 'anim', 'dd', function(Y) {
 YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', function(Y) {
-    console.log(Y, Y.id);
+    //console.log(Y, Y.id);
 
+    var out = function(str) {
+        Y.one('#out').prepend('<p>' + str + '</p>');
+    };
 
     var iframe = new Y.IFrame({
         container: '#test',
+        designMode: true,
         use: ['node','selector-css3', 'dd']
     }).render();
 
     iframe.after('ready', function() {
         
-        console.info('After ready iframe #1');
+        //console.info('After ready iframe #1');
         var Y = this.getInstance();
-        Y.one('doc').set('designMode', 'On');
+        //Y.one('doc').set('designMode', 'On');
         Y.one('strong').set('innerHTML', 'Drag Me');
+
+        out('frame1: ' + Y.all('p'));
+        out('frame1: ' + Y.all('strong'));
+
         if (Y.DD) {
             var dd = new Y.DD.Drag({ node: 'strong' });
         }
     });
 
     iframe.on('click', function(e) {
-        console.log(e.type, e);
+        //console.log(e.type, e);
         Y.one('#arrow').setStyle('display', 'block').setXY([e.frameX - 8, e.frameY - 20]);
         e.halt();
     });
     
     iframe.on('contextmenu', function(e) {
-        console.log(e.type, e);
+        //console.log(e.type, e);
         e.preventDefault();
         //e.halt();
     });
     
     iframe.on('dblclick', function(e) {
-        console.log(e.type, e);
+        //console.log(e.type, e);
         e.halt();
     });
     
@@ -121,9 +142,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
     }).render();
 
     iframe2.after('ready', function() {
-        console.info('After ready iframe #2');
+        //console.info('After ready iframe #2');
         var Y = this.getInstance();
-        Y.one('doc').set('designMode', 'On');
+        out('frame2: ' + Y.all('p'));
+        out('frame2: ' + Y.all('strong'));
+        //Y.one('doc').set('designMode', 'On');
         Y.one('strong').set('innerHTML', 'Click Me').on('click', function() {
             new Y.Anim({
                 node: 'strong',
@@ -134,7 +157,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
         });
     });
     iframe2.on('click', function(e) {
-        console.log(e);
+        //console.log(e);
         Y.one('#arrow').setStyle('display', 'block').setXY([e.frameX - 8, e.frameY - 20]);
     });
     
