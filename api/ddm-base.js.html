@@ -97,7 +97,8 @@
 <span class="cm">        * @type Number</span>
 <span class="cm">        */</span>        
         <span class="nx">throttleTime</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="mi">150</span>
+            <span class="c1">//value: 150</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
 <span class="cm">        * @attribute dragMode</span>
@@ -115,6 +116,7 @@
     <span class="p">};</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">DDMBase</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">_createPG</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
         <span class="cm">/**</span>
 <span class="cm">        * @property _active</span>
 <span class="cm">        * @description flag set when we activate our first drag, so DDM can start listening for events.</span>
@@ -203,6 +205,7 @@
 <span class="cm">        * @description Add the document listeners.</span>
 <span class="cm">        */</span>
         <span class="nx">_setupListeners</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_createPG</span><span class="p">();</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_active</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nb">document</span><span class="p">);</span>
             <span class="nx">doc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mousemove&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">throttle</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_move</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;throttleTime&#39;</span><span class="p">)));</span>

@@ -22,7 +22,7 @@
         * @type {Boolean}
         */
         _debugShim: false,
-        _activateTargets: function() {},
+        _activateTargets: function() { },
         _deactivateTargets: function() {},
         _startDrag: function() {
             if (this.activeDrag.get('useShim')) {

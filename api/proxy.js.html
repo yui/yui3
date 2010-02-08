@@ -142,6 +142,7 @@
 <span class="cm">        */</span>
         <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_proxy</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">DDM</span><span class="p">.</span><span class="nx">_createFrame</span><span class="p">();</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
                 <span class="k">return</span><span class="p">;</span>
             <span class="p">}</span>
@@ -280,7 +281,7 @@
     <span class="p">});</span>
 
     <span class="c1">//Create the frame when DOM is ready</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">_createFrame</span><span class="p">,</span> <span class="nx">DDM</span><span class="p">));</span>
+    <span class="c1">//Y.on(&#39;domready&#39;, Y.bind(DDM._createFrame, DDM));</span>
 </pre></div>
 
                     </div>
