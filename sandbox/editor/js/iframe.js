@@ -2,19 +2,7 @@ YUI.add('iframe', function(Y) {
 
     var IFrame = function(o) {
         IFrame.superclass.constructor.apply(this, arguments);
-    },
-    SRC = ((Y.UA.ie) ? 'javascript:false;' : 'javascript:;'),
-    EVENTS = [
-        'click',
-        'mousedown',
-        'mouseup',
-        'dblclick',
-        'keydown',
-        'keyup',
-        'keypress',
-        'contextmenu',
-        'mousemove'
-    ];
+    };
 
     Y.extend(IFrame, Y.Base, {
         _iframe: null,
@@ -33,10 +21,21 @@ YUI.add('iframe', function(Y) {
             }
         },
         _create: function() {
-            this._iframe = Y.Node.create(IFrame.HTML);
-            this._iframe.setStyle('visibility', 'hidden');
-            this.get('container').append(this._iframe);
+            var win, doc;
+            if (this.get('type') == 'iframe') {
+                this._iframe = Y.Node.create(Y.substitute(IFrame.HTML, { SRC: this.get('src') }));
+                this._iframe.setStyle('visibility', 'hidden');
+                this.get('container').append(this._iframe);
+                win = Y.Node.getDOMNode(this._iframe.get('contentWindow'));
+                doc = Y.Node.getDOMNode(this._iframe.get('contentWindow.document'));
+            }
+            if (this.get('type') == 'window') {
+                win = Y.config.win.open(this.get('src'), Y.guid(), 'menubar=1,resizable=1,width=350,height=250');
+                doc = win.document;
+                this._iframe = Y.one(win);
+            }
             
+
             var inst,
             cb = Y.bind(function(i) {
                 //console.info('Internal instance loaded with node: ', inst, this);
@@ -46,8 +45,8 @@ YUI.add('iframe', function(Y) {
             config = {
                 debug: false,
                 bootstrap: false,
-                win: this._iframe._node.contentWindow,
-                doc: this._iframe._node.contentWindow.document
+                win: win,
+                doc: doc
             },
             fn = function() {
                 //console.info('New Modules Loaded into main instance');
@@ -86,9 +85,6 @@ YUI.add('iframe', function(Y) {
                 var obj = {},
                     inst = this.getInstance(),
                     fn = Y.bind(this._onDomEvent, this);
-
-                inst.config.win = this._iframe._node.contentWindow;
-                inst.config.doc = this._iframe._node.contentWindow.document;
                 
                 Y.each(Y.Node.DOM_EVENTS, function(v, k) {
                     if (v === 1) {
@@ -105,8 +101,6 @@ YUI.add('iframe', function(Y) {
             this._instance = inst;
             this._instance.on('contentready', Y.bind(function() {
                 var inst = this.getInstance();
-                inst.config.win = this._iframe._node.contentWindow;
-                inst.config.doc = this._iframe._node.contentWindow.document;
                 //console.log('On available for body of iframe');
                 var args = Y.clone(this.get('use'));
                 args.push(Y.bind(function() {
@@ -115,7 +109,7 @@ YUI.add('iframe', function(Y) {
 
                 }, this));
                 //console.info('Calling use on internal instance: ', args);
-                this._instance.use.apply(this._instance, args);
+                this.getInstance().use.apply(this.getInstance(), args);
 
                 
             }, this), 'body');
@@ -123,7 +117,7 @@ YUI.add('iframe', function(Y) {
             
 
             var html = Y.substitute(IFrame.PAGE_HTML, {
-                CONTENT: Y.one('#stub').get('innerHTML')
+                CONTENT: this.get('content')
             }),
             doc = this._instance.config.doc;
             if (this.get('designMode')) {
@@ -138,7 +132,7 @@ YUI.add('iframe', function(Y) {
         delegate: function(type, fn, cont, sel) {
             var inst = this.getInstance();
             if (!inst) {
-                Y.log('Delegate events can not be attached until after ready', 'error', 'iframe');
+                Y.log('Delegate events can not be attached until after the ready event has fired.', 'error', 'iframe');
                 return false;
             }
             if (!sel) {
@@ -160,12 +154,21 @@ YUI.add('iframe', function(Y) {
         destructor: function() {
         }
     }, {
-        HTML: '<iframe src="' + SRC + '" border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="100%"></iframe>',
+        HTML: '<iframe src="{SRC}" border="0" frameBorder="0" marginWidth="0" marginHeight="0" leftMargin="0" topMargin="0" allowTransparency="true" width="100%" height="100%"></iframe>',
         PAGE_HTML: '<html><head><title></title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /></head><body>{CONTENT}</body></html>',
         NAME: 'iframe',
         ATTRS: {
+            src: {
+                value: ((Y.UA.ie) ? 'javascript:false;' : 'javascript:;')
+            },
+            type: {
+                value: 'iframe'
+            },
             designMode: {
                 value: false
+            },
+            content: {
+                value: ''
             },
             use: {
                 value: ['node', 'selector-css3']

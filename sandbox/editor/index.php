@@ -45,6 +45,8 @@
 </head>
 <body class="yui-skin-sam">
 
+<button id="openWindow">Open Window</button>
+
 <div id="out"></div>
 
 <div id="test"></div>
@@ -98,9 +100,48 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
         Y.one('#out').prepend('<p>' + str + '</p>');
     };
 
+    Y.on('click', function() {
+        var win = new Y.IFrame({
+            type: 'window',
+            content: Y.one('#stub').get('innerHTML'),
+            use: ['node','selector-css3', 'anim']
+        }).render();
+        win.after('ready', function() {
+            
+            //console.info('After ready iframe #1');
+            var Y = this.getInstance();
+
+            out('frame1: ' + Y.all('p'));
+            out('frame1: ' + Y.all('strong'));
+
+            Y.one('strong').set('innerHTML', 'Click Me').on('click', function() {
+                new Y.Anim({
+                    node: 'strong',
+                    to: {
+                        opacity: 0
+                    }
+                }).run();
+            });
+
+            this.delegate('click', function(e) {
+                Y.all('p').setStyle('border', 'none');
+                e.currentTarget.setStyle('border', '1px solid red');
+                //console.log('iframe1 delegate', arguments);
+            }, 'p');
+
+        });
+
+        win.on('click', function(e) {
+            //console.log(e.type, e);
+            e.halt();
+        });
+    }, '#openWindow');
+
+
     var iframe = new Y.IFrame({
         container: '#test',
         designMode: true,
+        content: Y.one('#stub').get('innerHTML'),
         use: ['node','selector-css3', 'dd']
     }).render();
 
@@ -145,6 +186,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
     
     var iframe2 = new Y.IFrame({
         container: '#test2',
+        content: Y.one('#stub').get('innerHTML'),
         use: ['node','selector-css3', 'anim']
     }).render();
 
