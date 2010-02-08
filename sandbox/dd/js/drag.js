@@ -404,7 +404,9 @@ YUI.add('dd-drag', function(Y) {
                         config = {};
                     }
                     //config.bubbles = ('bubbles' in config) ? config.bubbles : this.get('bubbles');
+                    config.bubbleTargets = Y.Object.values(this._yuievt.targets);
                     config.node = this.get(NODE);
+                    console.log(config);
                     config.groups = config.groups || this.get('groups');
                     this.target = new Y.DD.Drop(config);
                 }
