@@ -2,7 +2,18 @@ YUI.add('iframe', function(Y) {
 
     var IFrame = function(o) {
         IFrame.superclass.constructor.apply(this, arguments);
-    };
+    },
+    EVENTS = [
+        'click',
+        'mousedown',
+        'mouseup',
+        'dblclick',
+        'keydown',
+        'keyup',
+        'keypress',
+        'contextmenu',
+        'mousemove'
+    ];
 
     Y.extend(IFrame, Y.Base, {
         _iframe: null,
@@ -35,9 +46,8 @@ YUI.add('iframe', function(Y) {
                 bootstrap: false,
                 win: this._iframe._node.contentWindow,
                 doc: this._iframe._node.contentWindow.document
-            };
-
-            var fn = function() {
+            },
+            fn = function() {
                 //console.info('New Modules Loaded into main instance');
                 //console.log(config);
                 inst = YUI(config);
@@ -60,28 +70,16 @@ YUI.add('iframe', function(Y) {
             }
             this.publish(e.type, {
                 stoppedFn: Y.bind(function(ev, domev) {
-                    console.log('stopped: ', arguments);
-                    domev.halt();
+                    ev.halt();
                 }, this, e),
-                preventedFn: function() {
-                    console.log('prevented: ', arguments);
-                }
+                preventedFn: Y.bind(function(ev, domev) {
+                    ev.preventDefault();
+                }, this, e)
             });
             this.fire(e.type, e);
         },
         _setup: function() {
-            var events = [
-                'click',
-                'mousedown',
-                'mouseup',
-                'dblclick',
-                'keydown',
-                'keyup',
-                'keypress',
-                'contextmenu',
-                'mousemove'
-            ];
-            this._instance.on(events, Y.bind(this._onDomEvent, this), this._instance.config.doc);
+            this._instance.on(EVENTS, Y.bind(this._onDomEvent, this), this._instance.config.doc);
         },
         _instanceLoaded: function(inst) {
             this._instance = inst;
@@ -103,9 +101,10 @@ YUI.add('iframe', function(Y) {
 
             var html = Y.substitute(IFrame.PAGE_HTML, {
                 CONTENT: Y.one('#stub').get('innerHTML')
-            });
-            //console.info('Injecting content into iframe');
+            }),
             doc = this._instance.config.doc;
+
+            //console.info('Injecting content into iframe');
             doc.open();
             doc.write(html);
             doc.close();
