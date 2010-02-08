@@ -50,7 +50,8 @@ YUI.add('dd-ddm-base', function(Y) {
         * @type Number
         */        
         throttleTime: {
-            value: 150
+            //value: 150
+            value: -1
         },
         /**
         * @attribute dragMode
@@ -68,6 +69,7 @@ YUI.add('dd-ddm-base', function(Y) {
     };
 
     Y.extend(DDMBase, Y.Base, {
+        _createPG: function() {},
         /**
         * @property _active
         * @description flag set when we activate our first drag, so DDM can start listening for events.
@@ -156,6 +158,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description Add the document listeners.
         */
         _setupListeners: function() {
+            this._createPG();
             this._active = true;
             var doc = Y.one(document);
             doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));

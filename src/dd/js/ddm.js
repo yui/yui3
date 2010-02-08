@@ -117,7 +117,4 @@
         }   
     }, true);
 
-    Y.on('domready', Y.bind(Y.DD.DDM._createPG, Y.DD.DDM));
-
-
 
