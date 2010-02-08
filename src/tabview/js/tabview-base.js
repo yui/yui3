@@ -49,7 +49,7 @@ var getClassName = Y.ClassNameManager.getClassName,
 
     };
 
-TabviewBase.NAME = 'tabBase';
+TabviewBase.NAME = 'tabviewBase';
 TabviewBase.queries = queries;
 TabviewBase.classNames = classNames;
 
@@ -57,6 +57,8 @@ Y.mix(TabviewBase.prototype, {
     initializer: function(config) {
         config = config || EMPTY_OBJ;
         this._node = config.host || Y.one(config.node);
+
+        this.render();
     },
 
     initClassNames: function(index) {
@@ -140,7 +142,7 @@ Y.mix(TabviewBase.prototype, {
 
     destructor: function() {
         // remove events via detach prefix
-        this._node.detach('tabview');
+        this._node.detach('tabview|*');
     },
 
     destroy: function() {
