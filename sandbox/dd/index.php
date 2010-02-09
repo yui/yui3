@@ -646,7 +646,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-thr
         });
         */
         drop.on('drop:hit', function(e) {
-            //console.log('drop:hit :: Drag: ' + e.drag.get('node').get('id') + ' ::: Drop: ' + this.get('node').get('id'), e);
+            console.log('drop:hit :: Drag: ' + e.drag.get('node').get('id') + ' ::: Drop: ' + this.get('node').get('id'), e);
             if (e.drag.get('data')) {
                 //console.log('Payload: ', e.drag.get('data'));
             }
