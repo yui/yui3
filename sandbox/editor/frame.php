@@ -120,13 +120,13 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         win.after('ready', function() {
             
             //console.info('After ready iframe #1');
-            var Y = this.getInstance();
+            var Y1 = this.getInstance();
 
-            out('win1: ' + Y.all('p'));
-            out('win1: ' + Y.all('strong'));
+            out('win1: ' + Y1.all('p'));
+            out('win1: ' + Y1.all('strong'));
             
-            Y.one('strong').set('innerHTML', 'Click Me for Animation').on('click', function() {
-                new Y.Anim({
+            Y1.one('strong').set('innerHTML', 'Click Me for Animation').on('click', function() {
+                new Y1.Anim({
                     node: 'strong',
                     to: {
                         opacity: 0
@@ -135,11 +135,39 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
             });
 
             this.delegate('click', function(e) {
-                Y.all('p').setStyle('border', 'none');
+                Y1.all('p').setStyle('border', 'none');
                 e.currentTarget.setStyle('border', '1px solid red');
                 //console.log('iframe1 delegate', arguments);
             }, 'p');
 
+            var cont = Y1.one('p').append('<div style="height: 300px; border: 3px solid black;"></div>').one('div');
+            var iframe4 = new Y.Frame({
+                designMode: true,
+                content: Y.one('#stub').get('innerHTML'),
+                use: ['node','selector-css3', 'dd']
+            }).render(cont);
+            iframe4.after('ready', function() {
+                
+                //console.info('After ready iframe #1');
+                var Y2 = this.getInstance();
+                //Y.one('doc').set('designMode', 'On');
+                Y2.one('strong').set('innerHTML', 'Drag Me');
+
+                out('frame4: ' + Y2.all('p'));
+                out('frame4: ' + Y2.all('strong'));
+
+                if (Y2.DD) {
+                    var dd = new Y2.DD.Drag({ node: 'strong' });
+                }
+
+                this.delegate('click', function(e) {
+                    Y2.all('p').setStyle('border', 'none');
+                    e.currentTarget.setStyle('border', '1px solid red');
+                    //console.log('iframe1 delegate', arguments);
+                }, 'p');
+
+            });
+            
         });
 
         win.on('click', function(e) {

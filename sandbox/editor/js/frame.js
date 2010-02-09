@@ -128,6 +128,9 @@ YUI.add('frame', function(Y) {
                     inst.on(k, fn, inst.config.doc);
                 }
             });
+            if ((this.get('type') == 'window') && this.get('designMode')) {
+                inst.config.doc.designMode = 'on';
+            }
 
             this._iframe.setStyle('visibility', 'visible');
             this.fire('ready');
