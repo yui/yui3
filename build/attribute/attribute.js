@@ -759,7 +759,7 @@ YUI.add('attribute-base', function(Y) {
                     // Prevent "after" listeners from being invoked since nothing changed.
                     e.stopImmediatePropagation();
                 } else {
-                    e.newVal = this._getStateVal(e.attrName);
+                    e.newVal = this.get(e.attrName); //this._getStateVal(e.attrName);
                 }
                 
             }
