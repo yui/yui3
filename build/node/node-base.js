@@ -83,6 +83,7 @@ Y_Node.DOM_EVENTS = {
     close: 1,
     command: 1,
     contextmenu: 1,
+    DOMMouseScroll: 1,
     drag: 1,
     dragstart: 1,
     dragenter: 1,

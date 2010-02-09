@@ -279,6 +279,13 @@ YUI.add('widget-stdmod', function(Y) {
          */
         _renderUIStdMod : function() {
             this._stdModNode.addClass(Widget.getClassName(STDMOD));
+            this._renderStdModSections();
+        },
+
+        _renderStdModSections : function() {
+            if (L.isValue(this.get(STD_HEADER + CONTENT_SUFFIX))) { this._renderStdMod(STD_HEADER); }
+            if (L.isValue(this.get(STD_BODY + CONTENT_SUFFIX))) { this._renderStdMod(STD_BODY); }
+            if (L.isValue(this.get(STD_FOOTER + CONTENT_SUFFIX))) { this._renderStdMod(STD_FOOTER); }
         },
 
         /**

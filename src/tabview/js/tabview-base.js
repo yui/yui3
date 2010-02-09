@@ -1,5 +1,3 @@
-YUI.add('tabview-base', function(Y) {
-
 var getClassName = Y.ClassNameManager.getClassName,
     TABVIEW = 'tabview',
     TAB = 'tab',
@@ -40,33 +38,27 @@ var getClassName = Y.ClassNameManager.getClassName,
         tabPanel:'div > div',
         selectedTab: '.' + classNames.selectedTab,
         selectedContent: '.' + classNames.selectedContent
-    };
-
-function TabView(config) {
-    if (TabView.superclass) {
-        TabView.superclass.constructor.apply(this, arguments);
-    } else {
-        this.init.apply(this, arguments);
-    }
-
-}
-
-TabView.NAME = 'tabView';
-TabView.queries = queries;
-TabView.classNames = classNames;
-
-Y.mix(TabView.prototype, {
-    initializer: function(config) {
-        config = config || EMPTY_OBJ;
-        this._node = config.host || Y.one(config.node);
     },
 
-    init: function() {
-        if (TabView.superclass) {
-            TabView.superclass.constructor.prototype.init.apply(this, arguments);
+    TabviewBase = function(config) {
+        if (TabviewBase.superclass) {
+            TabviewBase.superclass.constructor.apply(this, arguments);
         } else {
             this.initializer.apply(this, arguments);
         }
+
+    };
+
+TabviewBase.NAME = 'tabviewBase';
+TabviewBase.queries = queries;
+TabviewBase.classNames = classNames;
+
+Y.mix(TabviewBase.prototype, {
+    initializer: function(config) {
+        config = config || EMPTY_OBJ;
+        this._node = config.host || Y.one(config.node);
+
+        this.render();
     },
 
     initClassNames: function(index) {
@@ -135,7 +127,7 @@ Y.mix(TabView.prototype, {
 
     initEvents: function() {
         // TODO: detach prefix for delegate?
-        // this._node.delegate('tabview|' + this.tabEventName,
+        // this._node.delegate('tabview|' + this.tabEventName),
         this._node.delegate(this.tabEventName,
             this.onTabEvent,
             queries.tab,
@@ -150,7 +142,7 @@ Y.mix(TabView.prototype, {
 
     destructor: function() {
         // remove events via detach prefix
-        this._node.detach('tabview');
+        this._node.detach('tabview|*');
     },
 
     destroy: function() {
@@ -158,6 +150,4 @@ Y.mix(TabView.prototype, {
     }
 });
 
-Y.TabView = TabView;
-
-}, '@VERSION@' , {requires:['node-event-delegate', 'classnamemanager']});
+Y.TabviewBase = TabviewBase;

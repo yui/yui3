@@ -757,8 +757,8 @@ Y.mix(Y.DOM, {
      * @param {String} newClassName the class name that will be replacing the old class name
      */
     replaceClass: function(node, oldC, newC) {
+        removeClass(node, oldC); // remove first in case oldC === newC
         addClass(node, newC);
-        removeClass(node, oldC);
     },
 
     /**
