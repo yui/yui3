@@ -6,7 +6,7 @@
         p, h2 {
             margin: 1em;
         }
-        #test, #test2 {
+        #test, #test2, #test3 {
             height: 300px;
             width: 300px;
             border: 3px solid red;
@@ -17,7 +17,10 @@
         }
         #test2 {
             top: 200px;
-            left: 600px;
+            left: 550px;
+        }
+        #test3 {
+            left: 950px;
         }
         #stub {
             display: none;
@@ -51,6 +54,7 @@
 
 <div id="test"></div>
 <div id="test2"></div>
+<div id="test3"></div>
 
 <div id="arrow"></div>
 
@@ -74,26 +78,30 @@ echo($str);
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
-<script type="text/javascript" src="js/iframe.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
-    debug: false,
+    debug: true,
     //base: '../../build/',
     filter: 'DEBUG',
     allowRollup: false,
     logExclude: {
-        'YUI': true,
-        Event: true,
-        Base: true,
-        Attribute: true,
-        augment: true
+        'yui': true,
+        'event': true,
+        base: true,
+        attribute: true,
+        augment: true,
+        get: true,
+        loader: true,
+        Selector: true,
+
     },
     throwFail: true
 };
 
 //YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', 'anim', 'dd', function(Y) {
-YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', function(Y) {
     //console.log(Y, Y.id);
 
     var out = function(str) {
@@ -101,8 +109,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
     };
 
     Y.on('click', function() {
-        var win = new Y.IFrame({
+        var win = new Y.Frame({
             type: 'window',
+            src: 'local.htm',
             content: Y.one('#stub').get('innerHTML'),
             use: ['node','selector-css3', 'anim']
         }).render();
@@ -111,10 +120,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
             //console.info('After ready iframe #1');
             var Y = this.getInstance();
 
-            out('frame1: ' + Y.all('p'));
-            out('frame1: ' + Y.all('strong'));
-
-            Y.one('strong').set('innerHTML', 'Click Me').on('click', function() {
+            out('win1: ' + Y.all('p'));
+            out('win1: ' + Y.all('strong'));
+            
+            Y.one('strong').set('innerHTML', 'Click Me for Animation').on('click', function() {
                 new Y.Anim({
                     node: 'strong',
                     to: {
@@ -137,8 +146,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
         });
     }, '#openWindow');
 
-
-    var iframe = new Y.IFrame({
+    var iframe = new Y.Frame({
         container: '#test',
         designMode: true,
         content: Y.one('#stub').get('innerHTML'),
@@ -184,7 +192,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
         e.halt();
     });
     
-    var iframe2 = new Y.IFrame({
+    var iframe2 = new Y.Frame({
         container: '#test2',
         content: Y.one('#stub').get('innerHTML'),
         use: ['node','selector-css3', 'anim']
@@ -196,7 +204,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
         out('frame2: ' + Y.all('p'));
         out('frame2: ' + Y.all('strong'));
         //Y.one('doc').set('designMode', 'On');
-        Y.one('strong').set('innerHTML', 'Click Me').on('click', function() {
+        Y.one('strong').set('innerHTML', 'Click Me for Animation').on('click', function() {
             new Y.Anim({
                 node: 'strong',
                 to: {
@@ -206,6 +214,32 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', functi
         });
     });
     iframe2.on('click', function(e) {
+        //console.log(e);
+        Y.one('#arrow').setStyle('display', 'block').setXY([e.frameX - 8, e.frameY - 20]);
+    });
+    
+    var iframe3 = new Y.Frame({
+        container: '#test3',
+        src: 'local.htm',
+        use: ['node','selector-css3', 'anim']
+    }).render();
+
+    iframe3.after('ready', function() {
+        //console.info('After ready iframe #2');
+        var Y = this.getInstance();
+        out('frame3: ' + Y.all('p'));
+        out('frame3: ' + Y.all('strong'));
+        //Y.one('doc').set('designMode', 'On');
+        Y.one('strong').set('innerHTML', 'Click Me for Animation').on('click', function() {
+            new Y.Anim({
+                node: 'strong',
+                to: {
+                    opacity: 0
+                }
+            }).run();
+        });
+    });
+    iframe3.on('click', function(e) {
         //console.log(e);
         Y.one('#arrow').setStyle('display', 'block').setXY([e.frameX - 8, e.frameY - 20]);
     });
