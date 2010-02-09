@@ -19,6 +19,13 @@ YUI.add('frame', function(Y) {
     Y.extend(Frame, Y.Base, {
         /**
         * @private
+        * @property _rendered
+        * @description Internal reference set when render is called.
+        * @type Boolean
+        */
+        _rendered: null,
+        /**
+        * @private
         * @property _frame
         * @description Internal Node reference to the iFrame or the window
         * @type Node
@@ -31,13 +38,6 @@ YUI.add('frame', function(Y) {
         * @type YUI
         */
         _instance: null,
-        /**
-        * @private
-        * @property _ready
-        * @description Flag set when the content of the frame or window is ready
-        * @type Boolean
-        */
-        _ready: null,
         /**
         * @private
         * @method _create
@@ -57,14 +57,14 @@ YUI.add('frame', function(Y) {
                 doc = res.doc;
             }
             if (this.get('type') == 'window') {
-                win = window.open(this.get('src'), Y.guid(), 'menubar=1,resizable=1,width=450,height=550');
+                win = window.open(this.get('src'), Y.guid(), this.get('windowFeatures'));
                 doc = win.document;
                 this._iframe = Y.one(win);
             }
             return {
                 win: win,
                 doc: doc
-            }
+            };
         },
         /**
         * @private
@@ -120,20 +120,17 @@ YUI.add('frame', function(Y) {
         * @description Binds DOM events, sets the iframe to visible and fires the ready event
         */
         _setup: function() {
-            if (!this._ready) {
-                var inst = this.getInstance(),
-                    fn = Y.bind(this._onDomEvent, this);
-                
-                Y.each(Y.Node.DOM_EVENTS, function(v, k) {
-                    if (v === 1) {
-                        inst.on(k, fn, inst.config.doc);
-                    }
-                });
+            var inst = this.getInstance(),
+                fn = Y.bind(this._onDomEvent, this);
+            
+            Y.each(Y.Node.DOM_EVENTS, function(v, k) {
+                if (v === 1) {
+                    inst.on(k, fn, inst.config.doc);
+                }
+            });
 
-                this._iframe.setStyle('visibility', 'visible');
-                this._ready = true;
-                this.fire('ready');
-            }
+            this._iframe.setStyle('visibility', 'visible');
+            this.fire('ready');
         },
         /**
         * @private
@@ -155,6 +152,8 @@ YUI.add('frame', function(Y) {
             }, this));
             Y.log('Calling use on internal instance: ', 'info', 'frame');
             inst.use.apply(inst, args);
+
+            inst.one('doc').set('title', this.get('windowTitle')).get('documentElement').addClass('yui-js-enabled');
         },
         /**
         * @private
@@ -176,8 +175,18 @@ YUI.add('frame', function(Y) {
             if (this.get('src').indexOf('javascript') === 0) {
                 Y.log('Creating the document from a javascript URL', 'info', 'frame');
                 html = Y.substitute(Frame.PAGE_HTML, {
-                    CONTENT: this.get('content')
+                    TITLE: this.get('windowTitle'),
+                    META: Frame.META,
+                    CONTENT: this.get('content'),
+                    BASE_HREF: this._resolveBaseHref()
                 });
+                if (Y.config.doc.compatMode != 'BackCompat') {
+                    Y.log('Adding Doctype to frame', 'info', 'frame');
+                    html = Frame.DOC_TYPE + "\n" + html;
+                } else {
+                    Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
+                }
+
                 if (this.get('designMode')) {
                     doc.designMode = 'on';
                 }
@@ -219,11 +228,16 @@ YUI.add('frame', function(Y) {
         /**
         * @method render
         * @description Render the iframe into the container config option or open the window.
-        * @param String/HTMLElement/Node The node to render to
+        * @param String/HTMLElement/Node node The node to render to
         * @return self
         * @chainable
         */
         render: function(node) {
+            if (this._rendered) {
+                Y.log('Frame already rendered.', 'warn', 'frame');
+                return this;
+            }
+            this._rendered = true;
             if (node) {
                 this.set('container', node);
             }
@@ -253,6 +267,38 @@ YUI.add('frame', function(Y) {
             Y.log('Adding new modules to main instance', 'info', 'frame');
             Y.use.apply(Y, args);
             return this;
+        },
+        /**
+        * @private
+        * @method _resolveBaseHref
+        * @description Resolves the basehref of the page the frame is created on.
+        * @return String
+        */
+        _resolveBaseHref: function() {
+            var href = Y.config.doc.location.href;
+            if (href.indexOf('?') !== -1) { //Remove the query string
+                href = href.substring(0, href.indexOf('?'));
+            }
+            href = href.substring(0, href.lastIndexOf('/')) + '/';
+            return href;
+        },
+        /**
+        * @private
+        * @method _getType
+        * @description Getter method for the type attribute.
+        * @param String type The type of frame to create
+        * @return String
+        */
+        _getType: function(type) {
+            switch (type.toLowerCase()) {
+                case 'window':
+                case 'iframe':
+                    break;
+                default:
+                    type = 'iframe';
+                    break;
+            }
+            return type;
         }
     }, {
         /**
@@ -268,7 +314,21 @@ YUI.add('frame', function(Y) {
         * @description The template used to create the page when created dynamically.
         * @type String
         */
-        PAGE_HTML: '<html><head><title></title><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /></head><body>{CONTENT}</body></html>',
+        PAGE_HTML: '<html><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/></head><body>{CONTENT}</body></html>',
+        /**
+        * @static
+        * @property DOC_TYPE
+        * @description The DOCTYPE to prepend to the new document when created. Should match the one on the page being served.
+        * @type String
+        */
+        DOC_TYPE: '<!DOCTYPE HTML PUBLIC "-/'+'/W3C/'+'/DTD HTML 4.01/'+'/EN" "http:/'+'/www.w3.org/TR/html4/strict.dtd">',
+        /**
+        * @static
+        * @property META
+        * @description The meta-tag for Content-Type to add to the dynamic document
+        * @type String
+        */
+        META: '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>',
         /**
         * @static
         * @property NAME
@@ -283,7 +343,8 @@ YUI.add('frame', function(Y) {
             * @type String
             */
             src: {
-                value: ((Y.UA.ie) ? 'javascript:false;' : 'javascript:;')
+                //Hackish, IE needs the false in the Javascript URL
+                value: 'javascript' + ((Y.UA.ie) ? ':false' : ':') + ';'
             },
             /**
             * @config type
@@ -291,7 +352,19 @@ YUI.add('frame', function(Y) {
             * @type String
             */
             type: {
-                value: 'iframe'
+                value: 'iframe',
+                getter: '_getType'
+            },
+            /**
+            * @config windowFeatures
+            * @description The extra options to pass to window.open. Default: resizable=yes,width=450,height=550
+            * @type String
+            */
+            windowFeatures: {
+                value: 'resizable=yes,width=450,height=550'
+            },
+            windowTitle: {
+                value: 'Page Title'
             },
             /**
             * @config designMode

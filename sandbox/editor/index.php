@@ -52,7 +52,7 @@
 
 <div id="out"></div>
 
-<div id="test"></div>
+<div id="test">Click me to render the Frame</div>
 <div id="test2"></div>
 <div id="test3"></div>
 
@@ -111,6 +111,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
     Y.on('click', function() {
         var win = new Y.Frame({
             type: 'window',
+            windowFeatures: 'width=800,height=500',
+            windowTitle: 'My New Open Window',
             src: 'local.htm',
             content: Y.one('#stub').get('innerHTML'),
             use: ['node','selector-css3', 'anim']
@@ -147,11 +149,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
     }, '#openWindow');
 
     var iframe = new Y.Frame({
-        container: '#test',
         designMode: true,
+        type: 'foo',
         content: Y.one('#stub').get('innerHTML'),
         use: ['node','selector-css3', 'dd']
-    }).render();
+    });
 
     iframe.after('ready', function() {
         
@@ -187,10 +189,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         //e.halt();
     });
     
-    iframe.on('dblclick', function(e) {
-        //console.log(e.type, e);
-        e.halt();
-    });
+    Y.on('click', function(e) {
+        //console.log('test one: ', e.target);
+        e.target.set('innerHTML', '');
+        iframe.render(e.target);
+    }, '#test');
     
     var iframe2 = new Y.Frame({
         container: '#test2',
