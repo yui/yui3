@@ -544,11 +544,19 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-thr
     dd3.plug(Y.Plugin.Drag, {
         groups: ['one', 'three'],
         dragMode: 'intersect',
-        handles: [Y.all('#drag3 h2')]
+        handles: [Y.all('#drag3 h2')],
+        startCentered: true
     });
     dd3.dd.plug(Y.Plugin.DDProxy, {});
     //dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
     dd3.dd.addInvalid('h2.one');
+    dd3.dd.after('drag:start', function(e) {
+        this.get('dragNode').setStyles({
+            width: '60px',
+            height: '30px'
+        });
+    });
+
     
 
 /*
