@@ -1145,6 +1145,7 @@ var L = Y.Lang,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
                 broadcast: o.broadcast,
+                defaultTargetOnly: o.defaulTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };

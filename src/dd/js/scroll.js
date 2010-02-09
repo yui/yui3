@@ -50,7 +50,8 @@
         * @type Number
         */
         buffer: {
-            value: 30
+            value: 30,
+            validator: Y.Lang.isNumber
         },
         /**
         * @attribute scrollDelay
@@ -58,7 +59,8 @@
         * @type Number
         */
         scrollDelay: {
-            value: 235
+            value: 235,
+            validator: Y.Lang.isNumber
         },
         /**
         * @attribute host
@@ -74,7 +76,8 @@
         * @type Boolean
         */
         windowScroll: {
-            value: false
+            value: false,
+            validator: Y.Lang.isBoolean
         },
         /**
         * @attribute vertical
@@ -82,7 +85,8 @@
         * @type Boolean
         */
         vertical: {
-            value: true
+            value: true,
+            validator: Y.Lang.isBoolean
         },
         /**
         * @attribute horizontal
@@ -90,7 +94,8 @@
         * @type Boolean
         */
         horizontal: {
-            value: true
+            value: true,
+            validator: Y.Lang.isBoolean
         }
     };
 
@@ -349,6 +354,15 @@
             this.set('windowScroll', this.get('windowScroll'));
         }
     });
+    /**
+    * @property NS
+    * @default winscroll
+    * @readonly
+    * @protected
+    * @static
+    * @description The Scroll instance will be placed on the Drag instance under the winscroll namespace.
+    * @type {String}
+    */
     WS.NAME = WS.NS = 'winscroll';
     Y.Plugin.DDWinScroll = WS;
     
@@ -392,6 +406,15 @@
             this.set('node', this.get('node'));
         }
     });
+    /**
+    * @property NS
+    * @default nodescroll
+    * @readonly
+    * @protected
+    * @static
+    * @description The NodeScroll instance will be placed on the Drag instance under the nodescroll namespace.
+    * @type {String}
+    */
     NS.NAME = NS.NS = 'nodescroll';
     Y.Plugin.DDNodeScroll = NS;
 

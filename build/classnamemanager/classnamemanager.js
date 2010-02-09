@@ -60,16 +60,20 @@ Y.ClassNameManager = function () {
 		 * provided strings. E.g. Y.ClassNameManager.getClassName('foo','bar'); // yui-foo-bar
 		 * 
 		 * @method getClassName
-		 * @param {String}+ one or more classname bits to be joined and prefixed
+		 * @param {String}+ classnameBit one or more classname bits to be joined and prefixed
+		 * @param {Boolean} skipPrefix Don't use the instance based prefix.  
 		 */
-		getClassName: Y.cached(function (c, x) {
+		getClassName: Y.cached(function () {
 
-			var sClass = sPrefix + sDelimiter + 
-                   // ((x) ? Y.Array(arguments, 0, true).join(sDelimiter) : c);
-                   ((x) ? Array.prototype.join.call(arguments, sDelimiter) : c);
+            var args = Y.Array(arguments);
 
-			return sClass.replace(/\s/g, '');
+            if (args[args.length-1] !== true) {
+                args.unshift(sPrefix);
+            } else {
+                args.pop();
+            }
 
+			return args.join(sDelimiter);
 		})
 
 	};

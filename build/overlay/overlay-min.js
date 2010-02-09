@@ -1,1 +1,1 @@
-YUI.add("overlay",function(A){A.Overlay=A.Base.create("overlay",A.Widget,[A.WidgetPosition,A.WidgetStack,A.WidgetPositionExt,A.WidgetStdMod]);},"@VERSION@",{requires:["widget","widget-position","widget-stack","widget-position-ext","widget-stdmod"]});
+YUI.add("overlay",function(A){A.Overlay=A.Base.create("overlay",A.Widget,[A.WidgetStdMod,A.WidgetPosition,A.WidgetStack,A.WidgetPositionExt]);},"@VERSION@",{requires:["widget","widget-position","widget-stack","widget-position-ext","widget-stdmod"]});

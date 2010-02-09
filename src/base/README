@@ -1,5 +1,8 @@
 Development Master
 
+* Added support for MyClass.EVENT_PREFIX to allow developers
+  to define their own event prefix
+
 * Made "init" and "destroy" events fireOnce:true (along with
   "render" in Widget), so that subscriptions made after the 
   events are fired, are notified immediately.

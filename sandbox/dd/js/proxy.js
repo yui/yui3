@@ -23,7 +23,11 @@ YUI.add('dd-proxy', function(Y) {
     
     P.NAME = 'DDProxy';
     /**
-    * @property proxy
+    * @property NS
+    * @default con
+    * @readonly
+    * @protected
+    * @static
     * @description The Proxy instance will be placed on the Drag instance under the proxy namespace.
     * @type {String}
     */
@@ -91,6 +95,7 @@ YUI.add('dd-proxy', function(Y) {
         */
         _init: function() {
             if (!DDM._proxy) {
+                DDM._createFrame();
                 Y.on('domready', Y.bind(this._init, this));
                 return;
             }
@@ -229,6 +234,6 @@ YUI.add('dd-proxy', function(Y) {
     });
 
     //Create the frame when DOM is ready
-    Y.on('domready', Y.bind(DDM._createFrame, DDM));
+    //Y.on('domready', Y.bind(DDM._createFrame, DDM));
 
 }, '@VERSION@' ,{requires:['dd-ddm', 'dd-drag'], skinnable:false});

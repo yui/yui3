@@ -9,24 +9,60 @@
       YUI({filter:"raw"}).use("base", function(Y) {
 
          var Parent = Y.extend(function () {Y.Base.apply(this, arguments);}, Y.Base, null, {NAME:"parent"});
-         var Child = Y.extend(function () {Y.Base.apply(this, arguments);}, Y.Base, null, {NAME:"child"});
 
-         var p = new Parent({
+         var parent = new Parent({
             after: {
                 'child:test' : function(e) {
-                    Y.log("parent after child:test");
+                    Y.log("parent after child:test [" + e.id + "]");
                 }
             },
             on: {
                 'child:test' : function(e) {
-                    Y.log("parent on child:test");
+                    Y.log("parent on child:test [" + e.id + "]");
                 }
             }
          });
 
-         var c = new Child({bubbleTargets:[p]});
+         var parent2 = new Parent({
+            after: {
+                'child:test' : function(e) {
+                    Y.log("parent2 after child:test [" + e.id + "]");
+                }
+            },
+            on: {
+                'child:test' : function(e) {
+                    Y.log("parent2 on child:test [" + e.id + "]");
+                }
+            }
+        });
 
-         c.fire("test");
+         var Child = Y.extend(function () {Y.Base.apply(this, arguments);}, Y.Base, {
+            test: function() {
+                this.fire("test", {id:this.id});
+            },
+
+            // Default bubbleTargets
+            _bubbleTargets:parent 
+         }, {
+            NAME:"child"
+         });
+
+         var c1 = new Child();
+         c1.id = "c1";
+
+         var c2 = new Child({
+            bubbleTargets:null // anything falsey
+         });
+         c2.id = "c2";
+
+         var c3 = new Child({
+            bubbleTargets:[parent, parent2]
+         });
+         c3.id = "c3";
+
+         c1.test();
+         c2.test();
+         c3.test();
       });        
     </script>
 </body>

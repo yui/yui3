@@ -1,6 +1,11 @@
 Development Master
 
-* Changed default value for the tabIndex attribute to null, meaning by default a Widget's bounding box will not be a focusable element.
+* Added support for MyWidget.CSS_PREFIX static property 
+  to let developers define their own CSS PREFIX instead of 
+  yui-<MyWidget.NAME>. 
+
+* Changed default value for the tabIndex attribute to null, meaning by default 
+  a Widget's bounding box will not be a focusable element.
 
 * Widget now has built-in support for Progressive Enhancement.  
 

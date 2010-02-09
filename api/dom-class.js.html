@@ -101,8 +101,8 @@
 <span class="cm">     */</span>
     <span class="nx">replaceClass</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">oldC</span><span class="p">,</span> <span class="nx">newC</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">//Y.log(&#39;replaceClass replacing &#39; + oldC + &#39; with &#39; + newC, &#39;info&#39;, &#39;Node&#39;);</span>
+        <span class="nx">removeClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">oldC</span><span class="p">);</span> <span class="c1">// remove first in case oldC === newC</span>
         <span class="nx">addClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">newC</span><span class="p">);</span>
-        <span class="nx">removeClass</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">oldC</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>

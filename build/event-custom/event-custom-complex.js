@@ -110,61 +110,63 @@ Y.EventFacade = function(e, currentTarget) {
 
 CEProto.fireComplex = function(args) {
     var es = Y.Env._eventstack, ef, q, queue, ce, ret, events, subs,
-        host = this.host || this;
+        self = this, host = self.host || self, next;
 
     if (es) {
         // queue this event if the current item in the queue bubbles
-        if (this.queuable && this.type != es.next.type) {
-            this.log('queue ' + this.type);
-            es.queue.push([this, args]);
+        if (self.queuable && self.type != es.next.type) {
+            self.log('queue ' + self.type);
+            es.queue.push([self, args]);
             return true;
         }
     } else {
         Y.Env._eventstack = {
            // id of the first event in the stack
-           id: this.id,
-           next: this,
-           silent: this.silent,
+           id: self.id,
+           next: self,
+           silent: self.silent,
            stopped: 0,
            prevented: 0,
-           type: this.type,
+           type: self.type,
+           // defaultFnQueue: new Y.Queue(),
+           afterQueue: new Y.Queue(),
            queue: []
         };
         es = Y.Env._eventstack;
     }
 
-    subs = this.getSubs();
+    subs = self.getSubs();
 
-    this.stopped = (this.type !== es.type) ? 0 : es.stopped;
-    this.prevented = (this.type !== es.type) ? 0 : es.prevented;
+    self.stopped = (self.type !== es.type) ? 0 : es.stopped;
+    self.prevented = (self.type !== es.type) ? 0 : es.prevented;
 
-    this.target = this.target || host;
+    self.target = self.target || host;
 
     events = new Y.EventTarget({
         fireOnce: true,
         context: host
     });
 
-    this.events = events;
+    self.events = events;
 
-    if (this.preventedFn) {
-        events.on('prevented', this.preventedFn);
+    if (self.preventedFn) {
+        events.on('prevented', self.preventedFn);
     }
 
-    if (this.stoppedFn) {
-        events.on('stopped', this.stoppedFn);
+    if (self.stoppedFn) {
+        events.on('stopped', self.stoppedFn);
     }
 
-    this.currentTarget = host;
+    self.currentTarget = host;
 
-    this.details = args.slice(); // original arguments in the details
+    self.details = args.slice(); // original arguments in the details
 
-    // this.log("Firing " + this  + ", " + "args: " + args);
-    this.log("Firing " + this.type);
+    // self.log("Firing " + self  + ", " + "args: " + args);
+    self.log("Firing " + self.type);
 
-    this._facade = null; // kill facade to eliminate stale properties
+    self._facade = null; // kill facade to eliminate stale properties
 
-    ef = this._getFacade(args);
+    ef = self._getFacade(args);
 
     if (Y.Lang.isObject(args[0])) {
         args[0] = ef;
@@ -174,53 +176,81 @@ CEProto.fireComplex = function(args) {
 
     // if (subCount) {
     if (subs[0]) {
-        // this._procSubs(Y.merge(this.subscribers), args, ef);
-        this._procSubs(subs[0], args, ef);
+        // self._procSubs(Y.merge(self.subscribers), args, ef);
+        self._procSubs(subs[0], args, ef);
     }
 
     // bubble if this is hosted in an event target and propagation has not been stopped
-    if (this.bubbles && host.bubble && !this.stopped) {
+    if (self.bubbles && host.bubble && !self.stopped) {
 
-        // this.bubbling = true;
+        // self.bubbling = true;
 
-        // if (host !== ef.target || es.type != this.type) {
-        if (es.type != this.type) {
+        // if (host !== ef.target || es.type != self.type) {
+        if (es.type != self.type) {
             es.stopped = 0;
             es.prevented = 0;
         }
 
-        ret = host.bubble(this);
+        ret = host.bubble(self);
 
-        this.stopped = Math.max(this.stopped, es.stopped);
-        this.prevented = Math.max(this.prevented, es.prevented);
+        self.stopped = Math.max(self.stopped, es.stopped);
+        self.prevented = Math.max(self.prevented, es.prevented);
 
-        // this.bubbling = false;
+        // self.bubbling = false;
 
     }
 
     // execute the default behavior if not prevented
-    // console.log('defaultTargetOnly: ' + this.defaultTargetOnly);
+    // console.log('defaultTargetOnly: ' + self.defaultTargetOnly);
     // console.log('host === target: ' + (host === ef.target));
-    if (this.defaultFn && !this.prevented && ((!this.defaultTargetOnly) || host === ef.target)) {
-        this.defaultFn.apply(host, args);
+    if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly) || host === ef.target)) {
+
+        // if (es.id === self.id) {
+        //     self.defaultFn.apply(host, args);
+        //     while ((next = es.defaultFnQueue.last())) {
+        //         next();
+        //     }
+        // } else {
+        //     es.defaultFnQueue.add(function() {
+        //         self.defaultFn.apply(host, args);
+        //     });
+        // }
+
+        self.defaultFn.apply(host, args);
     }
 
     // broadcast listeners are fired as discreet events on the
     // YUI instance and potentially the YUI global.
-    this._broadcast(args);
+    self._broadcast(args);
 
     // process after listeners.  If the default behavior was
     // prevented, the after events don't fire.
-    // if (this.afterCount && !this.prevented && this.stopped < 2) {
-    if (subs[1] && !this.prevented && this.stopped < 2) {
-        // this._procSubs(Y.merge(this.afters), args, ef);
-        this._procSubs(subs[1], args, ef);
+    // if (self.afterCount && !self.prevented && self.stopped < 2) {
+
+    // if (subs[1] && !self.prevented && self.stopped < 2) {
+    //     // self._procSubs(Y.merge(self.afters), args, ef);
+    //     self._procSubs(subs[1], args, ef);
+    // }
+
+    
+    // Queue the after
+    if (subs[1] && !self.prevented && self.stopped < 2) {
+        if (es.id === self.id) {
+            self._procSubs(subs[1], args, ef);
+            while ((next = es.afterQueue.last())) {
+                next();
+            }
+        } else {
+            es.afterQueue.add(function() {
+                self._procSubs(subs[1], args, ef);
+            });
+        }
     }
 
     // es.stopped = 0;
     // es.prevented = 0;
 
-    if (es.id === this.id) {
+    if (es.id === self.id) {
         queue = es.queue;
 
         while (queue.length) {
@@ -236,13 +266,13 @@ CEProto.fireComplex = function(args) {
         Y.Env._eventstack = null;
     } 
 
-    ret = !(this.stopped);
+    ret = !(self.stopped);
 
-    if (this.type != host._yuievt.bubbling) {
+    if (self.type != host._yuievt.bubbling) {
         es.stopped = 0;
         es.prevented = 0;
-        this.stopped = 0;
-        this.prevented = 0;
+        self.stopped = 0;
+        self.prevented = 0;
     }
 
     return ret;

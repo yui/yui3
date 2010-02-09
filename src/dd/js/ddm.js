@@ -22,7 +22,7 @@
         * @type {Boolean}
         */
         _debugShim: false,
-        _activateTargets: function() {},
+        _activateTargets: function() { },
         _deactivateTargets: function() {},
         _startDrag: function() {
             if (this.activeDrag.get('useShim')) {
@@ -109,15 +109,12 @@
             }
             this._pg = pg;
             this._pg.on('mouseup', Y.bind(this._end, this));
-            this._pg.on('mousemove', Y.bind(this._move, this));
+            this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
             
             win = Y.one(window);
             Y.on('window:resize', Y.bind(this._pg_size, this));
             win.on('scroll', Y.bind(this._pg_size, this));
         }   
     }, true);
-
-    Y.on('domready', Y.bind(Y.DD.DDM._createPG, Y.DD.DDM));
-
 
 
