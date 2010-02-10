@@ -178,7 +178,7 @@ YUI.prototype = {
 
             if (YUI.Env && Y !== YUI) {
                 Y.Env._yidx = (++YUI.Env._yidx);
-                Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
+                Y.Env._guidp = ('yui_' + v + '_' + Y.Env._yidx + '_' + _startTime).replace(/\./g, '_');
             }
 
             Y.id = Y.stamp(Y);
