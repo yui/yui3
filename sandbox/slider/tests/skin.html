@@ -3,28 +3,42 @@
 <head>
     <title>Test Page</title>
     <style type="text/css">
-    .yui-slider {
+    .yui-slider,
+    .yui-slider .yui-slider-y .yui-slider-thumb-range {
         /* xbrowser inline-block styles */
         display: -moz-inline-stack; /* FF2 */
         display: inline-block;
         *display: inline; /* IE 7- (with zoom) */
         zoom: 1;
-        vertical-align: middle;
-    }
-    .yui-slider-content {
-        position: relative;
     }
 
+    .yui-slider .yui-slider-x .yui-slider-thumb-range {
+        vertical-align: middle;
+    }
+
+    .yui-slider-content,
     .yui-slider-rail,
     .yui-slider-thumb-range {
         position: relative;
+        display: block;
     }
+
+    .yui-slider-rail-cap-top,
     .yui-slider-rail-cap-left,
+    .yui-slider-rail-cap-bottom,
     .yui-slider-rail-cap-right,
     .yui-slider-thumb,
     .yui-slider-thumb-image,
     .yui-slider-thumb-shadow {
         position: absolute;
+    }
+
+    .yui-slider-rail {
+        z-index: 5;
+    }
+    .yui-slider-thumb {
+        overflow: hidden;
+        z-index: 6;
     }
 
     /* With the absolute positioning, is this still needed? */
@@ -35,88 +49,166 @@
     }
 
     /* SKINS */
+    /* Horizontal Slider */
     .yui-slider-skin-1 .yui-slider-x .yui-slider-rail,
     .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-left,
     .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-right {
-        background-image: url(skin_research/images/rail_white_06_h_embossed_groove_lines.png);
-        background-position: 5px 0; /* for pretties with this rail/length */
-    }
-
-    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail {
-        height: 25px;
-        margin: 0;
-        width: 300px; /* Example.  This will be supplied via js */
+        background-image: url(skin_research/images/rail_white_00_h_3px_thick-1.png);
     }
 
     .yui-slider-skin-1 .yui-slider-x .yui-slider-thumb-range {
-        height: 31px;
-        margin-top: -25px;
-    }
-
-    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-left {
-        background-position: -18px -25px;
-        height: 25px;
-        left: -2px;
-        width: 2px;
-    }
-    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-right {
-        background-position: -30px -25px;
-        height: 25px;
-        right: -2px;
-        width: 2px;
+        height: 26px;
+        width: 200px; /* Example.  This will be supplied via js */
     }
     .yui-slider-skin-1 .yui-slider-x .yui-slider-thumb {
-        height: 31px;
-        overflow: hidden;
-        width: 14px;
+        height: 26px;
+        width: 15px;
     }
     .yui-slider-skin-1 .yui-slider-x .yui-slider-thumb-image {
-        left: -18px;
-        top: -13px;
+        left: 0;
+        top: -10px;
     }
     .yui-slider-skin-1 .yui-slider-x .yui-slider-thumb-shadow {
-        left: -18px;
+        left: 0;
         opacity: 0.15;
-        top: -63px;
+        top: -50px;
     }
 
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail {
+        height: 20px;
+        width: 100%;
+    }
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-left {
+        background-position: 0 -20px;
+        height: 20px;
+        left: -2px;
+        width: 5px;
+    }
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-right {
+        background-position: 0 -40px;
+        height: 20px;
+        right: -2px;
+        width: 5px;
+    }
+
+    /* Vertical Slider */
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-rail,
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-rail-cap-top,
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-rail-cap-bottom {
+        background-image: url(skin_research/images/rail_white_00_v_3px_thick-1.png);
+    }
+
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb-range {
+        width: 26px;
+        height: 200px; /* Example.  This will be supplied via js */
+    }
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb {
+        width: 26px;
+        height: 15px;
+    }
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb-image {
+        left: -10px;
+        top: 0;
+    }
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb-shadow {
+        left: -50px;
+        opacity: 0.15;
+        top: 0;
+    }
+
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-rail {
+        height: 100%; /* can't rely on block formatting like w/ horiz */
+        width: 20px;
+    }
+
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-rail-cap-top {
+        background-position: -20px 0;
+        width: 20px;
+        top: -2px;
+        height: 5px;
+    }
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-rail-cap-bottom {
+        background-position: -40px 0;
+        width: 20px;
+        bottom: -2px;
+        height: 5px;
+    }
     </style>
 </head>
-<body>
-<div class="yui-slider yui-slider-skin-1">
-    <div class="yui-slider-content yui-slider-x">
-        <div class="yui-slider-rail">
-            <div class="yui-slider-rail-cap-left"></div>
-            <div class="yui-slider-rail-cap-right"></div>
-        </div>
-        <div class="yui-slider-thumb-range" tabindex="-1">
-            <div class="yui-slider-thumb">
-                <img src="skin_research/images/thumb_white_06_oval_groove.png" alt="Slider thumb shadow" class="yui-slider-thumb-shadow">
-                <img src="skin_research/images/thumb_white_06_oval_groove.png" alt="Slider thumb" class="yui-slider-thumb-image">
-            </div>
-        </div>
-    </div>
-</div>
+<body class="yui-skin-sam">
+
+<p>This is a horizontal Slider: 
+<span class="yui-slider yui-slider-skin-1">
+    <span class="yui-slider-content yui-slider-x">
+        <span id="x-range" class="yui-slider-thumb-range">
+            <span id="x" class="yui-slider-thumb" tabindex="-1">
+                <img src="skin_research/images/thumb_white_00_h_rect_pointer-1.png" alt="Slider thumb shadow" class="yui-slider-thumb-shadow">
+                <img src="skin_research/images/thumb_white_00_h_rect_pointer-1.png" alt="Slider thumb" class="yui-slider-thumb-image">
+            </span>
+            <span class="yui-slider-rail">
+                <span class="yui-slider-rail-cap-left"></span>
+                <span class="yui-slider-rail-cap-right"></span>
+            </span>
+        </span>
+    </span>
+</span>
+
+and this is a vertical Slider:
+<span class="yui-slider yui-slider-skin-1">
+    <span class="yui-slider-content yui-slider-y">
+        <span id="y-range" class="yui-slider-thumb-range">
+            <span id="y" class="yui-slider-thumb" tabindex="-1">
+                <img src="skin_research/images/thumb_white_00_v_rect_pointer-1.png" alt="Slider thumb shadow" class="yui-slider-thumb-shadow">
+                <img src="skin_research/images/thumb_white_00_v_rect_pointer-1.png" alt="Slider thumb" class="yui-slider-thumb-image">
+            </span>
+            <span class="yui-slider-rail">
+                <span class="yui-slider-rail-cap-top"></span>
+                <span class="yui-slider-rail-cap-bottom"></span>
+            </span>
+        </span>
+    </span>
+</span>
+and this is more content.</p>
 <div id="report"></div>
-<img class="showntell" src="skin_research/images/rail_white_06_h_embossed_groove_lines.png">
+
 
 <script src="/yui3/build/yui/yui.js"></script>
-<script src="/yui3/build/dd-value/dd-value.js"></script>
+<script src="/yui3/build/dd-value/dd-value-debug.js"></script>
 <!--script src="http://yui.yahooapis.com/3.0.0/build/yui/yui.js"></script-->
 <script>
 YUI({
     filter: 'raw'
-}).use( 'dd','dd-value', function ( Y ) {
+}).use( 'dd', 'dd-value', 'console', function ( Y ) {
 
-    Y.one( '.yui-slider-thumb' ).plug( Y.Plugin.Drag )
-        .dd
-        .plug( Y.Plugin.DDConstrained, {
-            constrain2node: '.yui-slider-thumb-range'
+    var x = Y.one( '#x' ).plug( Y.Plugin.Drag );
+    x.dd.plug( Y.Plugin.DDConstrained, {
+            constrain2node: '#x-range'
+        } )
+        .plug( Y.Plugin.DDValue, {
+            //value: 35,
+            after: {
+                valueChange: function ( e ) {
+                    Y.one( '#report' ).setContent( e.newVal + '' );
+                    // Without the following, IE6,7 jumps the thumb off the rail
+                    // for the duration of the drag if there is no content in
+                    // #report.  On the next attempt to move (when the new
+                    // content is in place), it jumps back to the rail.
+                    x.dd.con.resetCache();
+                }
+            }
+        } );
+
+    var y = Y.one( '#y' ).plug( Y.Plugin.Drag );
+    y.dd.plug( Y.Plugin.DDConstrained, {
+            constrain2node: '#y-range',
+            stickY: true
         } )
         .plug( Y.Plugin.DDValue, {
             after: {
                 valueChange: function ( e ) {
                     Y.one( '#report' ).setContent( e.newVal + '' );
+                    // I didn't see the same issue here, but eh, whatever.
+                    x.dd.con.resetCache();
                 }
             }
         } );
