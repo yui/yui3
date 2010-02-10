@@ -94,8 +94,7 @@ var yConfig = {
         augment: true,
         get: true,
         loader: true,
-        Selector: true,
-
+        Selector: true
     },
     throwFail: true
 };
@@ -115,8 +114,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
             windowTitle: 'My New Open Window',
             src: 'local.htm',
             content: Y.one('#stub').get('innerHTML'),
-            use: ['node','selector-css3', 'anim']
+            use: ['node','selector-css3', 'anim', 'substitute', 'frame']
         }).render();
+
         win.after('ready', function() {
             
             //console.info('After ready iframe #1');
@@ -140,8 +140,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
                 //console.log('iframe1 delegate', arguments);
             }, 'p');
 
-            var cont = Y1.one('p').append('<div style="height: 300px; border: 3px solid black;"></div>').one('div');
-            var iframe4 = new Y.Frame({
+            var cont = Y1.one('p').insert('<div style="height: 300px; border: 3px solid black;"></div>', 'after').next();
+            var iframe4 = new Y1.Frame({
                 designMode: true,
                 content: Y.one('#stub').get('innerHTML'),
                 use: ['node','selector-css3', 'dd']
@@ -225,6 +225,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
     
     var iframe2 = new Y.Frame({
         container: '#test2',
+        basehref: 'http://foo.com/assets/',
         content: Y.one('#stub').get('innerHTML'),
         use: ['node','selector-css3', 'anim']
     }).render();

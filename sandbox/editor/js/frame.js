@@ -46,7 +46,8 @@ YUI.add('frame', function(Y) {
         * @type Object
         */
         _create: function() {
-            var win, doc, res;
+            var win, doc, res,
+                title = Y.guid().replace(/-/g, '_');
             if (this.get('type') == 'iframe') {
                 this._iframe = Y.Node.create(Frame.HTML);
                 this._iframe.setStyle('visibility', 'hidden');
@@ -56,8 +57,8 @@ YUI.add('frame', function(Y) {
                 win = res.win;
                 doc = res.doc;
             }
-            if (this.get('type') == 'window') {
-                win = window.open(this.get('src'), Y.guid(), this.get('windowFeatures'));
+            if (this.get('type') === 'window') {
+                win = window.open(this.get('src'), title, this.get('windowFeatures'));
                 doc = win.document;
                 this._iframe = Y.one(win);
             }
@@ -96,14 +97,15 @@ YUI.add('frame', function(Y) {
         * @param EventFacade e
         */
         _onDomEvent: function(e) {
-            var xy = this._iframe.getXY(),
+            var xy = (this.get('type') == 'window') ? [0, 0] : this._iframe.getXY(),
                 node = this._instance.one('win');
 
             //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
-            if (e.pageX && e.pageY) {
+            if (this.get('type') == 'iframe')) {
                 e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
                 e.frameY = xy[1] + e.pageY - node.get('scrollTop');
             }
+
             e.frameTarget = e.target;
             e.frameCurrentTarget = e.currentTarget;
 
@@ -117,12 +119,18 @@ YUI.add('frame', function(Y) {
             });
             this.fire(e.type, e);
         },
+        initializer: function() {
+            this.publish('ready', {
+                emitFacade: true,
+                defaultFn: this._defReadyFn
+            });
+        },
         /**
         * @private
-        * @method _setup
+        * @method _defReadyFn
         * @description Binds DOM events, sets the iframe to visible and fires the ready event
         */
-        _setup: function() {
+        _defReadyFn: function() {
             var inst = this.getInstance(),
                 fn = Y.bind(this._onDomEvent, this);
             
@@ -134,9 +142,33 @@ YUI.add('frame', function(Y) {
             if ((this.get('type') == 'window') && this.get('designMode')) {
                 inst.config.doc.designMode = 'on';
             }
+            inst._use = inst.use;
+            inst.use = Y.bind(this.use, this);
 
             this._iframe.setStyle('visibility', 'visible');
-            this.fire('ready');
+        },
+        /**
+        * @method use
+        * @description This is a scoped version of the normal YUI.use method & is bound to this frame/window.
+        * At setup, the inst.use method is mapped to this method.
+        */
+        use: function() {
+            Y.log('Calling augmented use after ready', 'info', 'frame');
+            var inst = this.getInstance(),
+                args = Y.Array(arguments),
+                cb = false;
+
+            if (Y.Lang.isFunction(args[args.length - 1])) {
+                cb = args.pop();
+            }
+            if (cb) {
+                args.push(function() {
+                    Y.log('Internal callback from augmented use', 'info', 'frame');
+                    cb.apply(inst, arguments);
+
+                });
+            }
+            inst._use.apply(inst, args);
         },
         /**
         * @private
@@ -154,7 +186,7 @@ YUI.add('frame', function(Y) {
             }
             args.push(Y.bind(function() {
                 Y.log('Callback from final internal use call', 'info', 'frame');
-                this._setup();
+                this.fire('ready');
             }, this));
             Y.log('Calling use on internal instance: ', 'info', 'frame');
             inst.use.apply(inst, args);
@@ -173,7 +205,14 @@ YUI.add('frame', function(Y) {
             if (this.get('type') == 'iframe') {
                 this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
             } else {
-                this._iframe.on('load', Y.bind(this._onContentReady, this));
+                if (Y.UA.webkit || Y.UA.ie) {
+                    //Hack for Webkit and no windowload event :(
+                    Y.later(100, this, function() {
+                        this._onContentReady({ target: Y.one(this._iframe._node.document) });
+                    });
+                } else {
+                    this._iframe.on('load', Y.bind(this._onContentReady, this));
+                }
             }
             var html = '',
                 doc = this._instance.config.doc;
@@ -184,7 +223,7 @@ YUI.add('frame', function(Y) {
                     TITLE: this.get('windowTitle'),
                     META: Frame.META,
                     CONTENT: this.get('content'),
-                    BASE_HREF: this._resolveBaseHref()
+                    BASE_HREF: this.get('basehref')
                 });
                 if (Y.config.doc.compatMode != 'BackCompat') {
                     Y.log('Adding Doctype to frame', 'info', 'frame');
@@ -193,13 +232,13 @@ YUI.add('frame', function(Y) {
                     Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
                 }
 
-                if (this.get('designMode')) {
-                    doc.designMode = 'on';
-                }
                 Y.log('Injecting content into iframe', 'info', 'frame');
                 doc.open();
                 doc.write(html);
                 doc.close();
+                if (this.get('designMode')) {
+                    doc.designMode = 'on';
+                }
             }
         },
         /**
@@ -277,15 +316,18 @@ YUI.add('frame', function(Y) {
         /**
         * @private
         * @method _resolveBaseHref
-        * @description Resolves the basehref of the page the frame is created on.
+        * @description Resolves the basehref of the page the frame is created on. Only applies to dynamic content.
+        * @param String href The new value to use, if empty it will be resolved from the current url.
         * @return String
         */
-        _resolveBaseHref: function() {
-            var href = Y.config.doc.location.href;
-            if (href.indexOf('?') !== -1) { //Remove the query string
-                href = href.substring(0, href.indexOf('?'));
+        _resolveBaseHref: function(href) {
+            if (!href || href === '') {
+                href = Y.config.doc.location.href;
+                if (href.indexOf('?') !== -1) { //Remove the query string
+                    href = href.substring(0, href.indexOf('?'));
+                }
+                href = href.substring(0, href.lastIndexOf('/')) + '/';
             }
-            href = href.substring(0, href.lastIndexOf('/')) + '/';
             return href;
         },
         /**
@@ -356,8 +398,10 @@ YUI.add('frame', function(Y) {
             * @config type
             * @description The type of frame to make. (iframe or window)
             * @type String
+            * @writeonce
             */
             type: {
+                writeOnce: true,
                 value: 'iframe',
                 getter: '_getType'
             },
@@ -375,6 +419,7 @@ YUI.add('frame', function(Y) {
             /**
             * @config designMode
             * @description Should designMode be turned on after creation.
+            * @writeonce
             * @type Boolean
             */
             designMode: {
@@ -389,12 +434,18 @@ YUI.add('frame', function(Y) {
             content: {
                 value: '<br>'
             },
+            basehref: {
+                value: false,
+                getter: '_resolveBaseHref'
+            },
             /**
             * @config use
-            * @description Array of modules to include in the scoped YUI instance. Default: ['none', 'selector-css2']
+            * @description Array of modules to include in the scoped YUI instance at render time. Default: ['none', 'selector-css2']
+            * @writeonce
             * @type Array
             */
             use: {
+                writeOnce: true,
                 value: ['node', 'selector-css3']
             },
             /**
@@ -412,8 +463,10 @@ YUI.add('frame', function(Y) {
             * @config id
             * @description Set the id of the new Node. (optional)
             * @type String
+            * @writeonce
             */
             id: {
+                writeOnce: true,
                 getter: function(id) {
                     if (!id) {
                         id = 'iframe-' + Y.guid();

@@ -17,9 +17,9 @@ YUI.add('exec-command', function(Y) {
                     fn.call(this, action, value);  
                 } else {
                     try {
-                        inst.config.doc.execCommand(action, '', value);
+                        inst.config.doc.execCommand(action, false, value);
                     } catch (e) {
-                        Y.Throw(e);
+                        Y.Throw(e.message);
                     }
                 }
             },

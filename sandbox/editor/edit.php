@@ -80,8 +80,8 @@ var yConfig = {
         augment: true,
         get: true,
         loader: true,
-        Selector: true,
-        frame: true
+        Selector: true//,
+        //frame: true
     },
     throwFail: true
 };
@@ -102,12 +102,21 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
 
     iframe.render('#test');
 
-    console.log(iframe);
+    //console.log(iframe);
 
+    iframe.on('ready', function() {
+        var inst = this.getInstance();
+        inst.config.bootstrap = true;
+        inst.use('cssfonts', 'cssreset', 'cssbase', function() {
+            inst.config.bootstrap = false;
+        });
+    });
     iframe.after('ready', function() {
         var inst = this.getInstance();
-        
-        this.exec.command('styleWithCSS', false, false);
+
+        if (!Y.UA.ie) {
+            this.exec.command('styleWithCSS', false, false);
+        }
 
         out('frame1: ' + Y.all('p'));
 
@@ -124,6 +133,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
     });
 
     Y.delegate('click', function(e) {
+        e.target.toggleClass('selected');
         var val = e.target.get('innerHTML').toLowerCase();
         iframe.execCommand(val);
         //iframe.exec.command(val);
