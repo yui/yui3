@@ -1239,6 +1239,38 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
         },
 
+        // purgeElement: function(el, recurse, type) {
+        //     // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
+        //     var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
+        //         lis = this.getListeners(oEl, type), i, len, props, children, child;
+
+        //     if (recurse && oEl) {
+        //         lis = lis || [];
+        //         // children = Y.Selector.query('*', oEl);
+        //         children = oEl.getElementsByTagName('*');
+        //         i = 0;
+        //         len = children.length;
+        //         for (; i < len; ++i) {
+        //             child = this.getListeners(children[i], type);
+        //             if (child) {
+        //                 lis.concat(child);
+        //             }
+        //         }
+        //     }
+
+        //     if (lis) {
+        //         for (; i < len; ++i) {
+        //             props = lis[i];
+        //             props.detachAll();
+        //             remove(props.el, props.type, props.fn, props.capture);
+        //             delete _wrappers[props.key];
+        //             delete _el_events[props.domkey][props.key];
+        //         }
+        //     }
+
+        // },
+
+
         /**
          * Returns all listeners attached to the given element via addListener.
          * Optionally, you can specify a specific type of event to return.

@@ -1924,6 +1924,7 @@ CEProto.fireComplex = function(args) {
            type: self.type,
            // defaultFnQueue: new Y.Queue(),
            afterQueue: new Y.Queue(),
+           defaultTargetOnly: self.defaultTargetOnly,
            queue: []
         };
         es = Y.Env._eventstack;
@@ -1997,7 +1998,8 @@ CEProto.fireComplex = function(args) {
     // execute the default behavior if not prevented
     // console.log('defaultTargetOnly: ' + self.defaultTargetOnly);
     // console.log('host === target: ' + (host === ef.target));
-    if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly) || host === ef.target)) {
+    // if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly) || host === es.id === self.id)) {
+    if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
 
         // if (es.id === self.id) {
         //     self.defaultFn.apply(host, args);
@@ -2237,6 +2239,7 @@ ETProto.bubble = function(evt, args, target) {
 
                     // set the original target to that the target payload on the
                     // facade is correct.
+                    ce.target = originalTarget;
                     ce.originalTarget = originalTarget;
                     ce.currentTarget = t;
                     bc = ce.broadcast;
