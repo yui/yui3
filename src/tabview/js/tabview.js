@@ -1,5 +1,3 @@
-YUI.add('tabview', function(Y) {
-
 var queries = Y.TabviewBase.queries,
     templates = {
         contentBox: '<div></div>',
@@ -102,6 +100,3 @@ Y.Tabview = Y.Base.create('tabview', Y.Widget, [Y.TabviewBase, Y.WidgetParent], 
         }
     }
 });
-
-
-}, '@VERSION@' ,{requires:['substitute', 'tabview-base', 'widget', 'widget-parent', 'widget-child']});

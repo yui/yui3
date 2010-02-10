@@ -89,8 +89,7 @@ YUI({
         },
         test_shim: function() {
             var s = Y.DD.DDM._pg;
-            Y.Assert.isInstanceOf(Y.Node, s, 'Shim: Node Instance');
-
+            Y.Assert.isNull(s, 'Shim: Node Instance');
         },
         test_drop_setup: function() {
             drop = new Y.DD.Drop({ node: '#drop', data: { one: 1, two: 2, three: 3 } });
@@ -108,12 +107,19 @@ YUI({
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
         },
+        test_shim_after: function() {
+            var s = Y.DD.DDM._pg;
+            Y.Assert.isInstanceOf(Y.Node, s, 'Shim: Node Instance');
+        },
         test_drag_drop_setup: function() {
             dd.destroy();
             dd = new Y.DD.Drag({ node: '#drag', target: true });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
             Y.Assert.isInstanceOf(Y.DD.Drop, dd.target, 'drag.target: Drop Instance');
+            Y.each(dd._yuievt.targets, function(v, k) {
+                Y.Assert.areSame(v, dd.target._yuievt.targets[k], 'bubbleTargets are not the same');
+            });
         },
         test_drag_drop_group_setup: function() {
             dd.destroy();
