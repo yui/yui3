@@ -843,6 +843,38 @@
 
         <span class="p">},</span>
 
+        <span class="c1">// purgeElement: function(el, recurse, type) {</span>
+        <span class="c1">//     // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,</span>
+        <span class="c1">//     var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,</span>
+        <span class="c1">//         lis = this.getListeners(oEl, type), i, len, props, children, child;</span>
+
+        <span class="c1">//     if (recurse &amp;&amp; oEl) {</span>
+        <span class="c1">//         lis = lis || [];</span>
+        <span class="c1">//         // children = Y.Selector.query(&#39;*&#39;, oEl);</span>
+        <span class="c1">//         children = oEl.getElementsByTagName(&#39;*&#39;);</span>
+        <span class="c1">//         i = 0;</span>
+        <span class="c1">//         len = children.length;</span>
+        <span class="c1">//         for (; i &lt; len; ++i) {</span>
+        <span class="c1">//             child = this.getListeners(children[i], type);</span>
+        <span class="c1">//             if (child) {</span>
+        <span class="c1">//                 lis.concat(child);</span>
+        <span class="c1">//             }</span>
+        <span class="c1">//         }</span>
+        <span class="c1">//     }</span>
+
+        <span class="c1">//     if (lis) {</span>
+        <span class="c1">//         for (; i &lt; len; ++i) {</span>
+        <span class="c1">//             props = lis[i];</span>
+        <span class="c1">//             props.detachAll();</span>
+        <span class="c1">//             remove(props.el, props.type, props.fn, props.capture);</span>
+        <span class="c1">//             delete _wrappers[props.key];</span>
+        <span class="c1">//             delete _el_events[props.domkey][props.key];</span>
+        <span class="c1">//         }</span>
+        <span class="c1">//     }</span>
+
+        <span class="c1">// },</span>
+
+
         <span class="cm">/**</span>
 <span class="cm">         * Returns all listeners attached to the given element via addListener.</span>
 <span class="cm">         * Optionally, you can specify a specific type of event to return.</span>
