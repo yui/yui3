@@ -82,6 +82,7 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
         host.after( category + 'drag:align', this._afterAlign, this );
 
         con.after( category + 'constrainChange', this.syncDragNode, this );
+        con.after( category + 'gutterChange',    this.syncDragNode, this );
 
         this.after( {
             minChange  : this._afterMinChange,
