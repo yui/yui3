@@ -487,6 +487,7 @@ Y.extend(Widget, Y.Base, {
             this.publish(RENDER, {
                 queuable:FALSE,
                 fireOnce:TRUE,
+                defaultTargetOnly:TRUE,
                 defaultFn: this._defRenderFn
             });
 
@@ -504,21 +505,15 @@ Y.extend(Widget, Y.Base, {
      * @param {Node} parentNode The parent node to render to, if passed in to the <code>render</code> method
      */
     _defRenderFn : function(e) {
-        // TODO: Remove target check, once fix/config is in event. 
-        // Currently prevents _defRenderFn from being called at all 
-        // levels in the heirarchy if events are bubbled.
-        if (e.target === this) {
-            this._renderUI(e.parentNode);
-            this._bindUI();
-            this._syncUI();
+        this._renderUI(e.parentNode);
+        this._bindUI();
+        this._syncUI();
 
-            this.renderer();
+        this.renderer();
 
-            this._set(RENDERED, TRUE);
-            
-            this._removeLoadingClassNames();
-            
-        }
+        this._set(RENDERED, TRUE);
+        
+        this._removeLoadingClassNames();
     },
 
     /**
