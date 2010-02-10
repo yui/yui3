@@ -79,9 +79,7 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
 
         host.after( category + 'drag:align', this._afterAlign, this );
 
-        con.after( category + 'constrain2nodeChange', this.syncDragNode, this );
-        con.after( category + 'constrain2viewChange', this.syncDragNode, this );
-        con.after( category + 'constrain2regionChange', this.syncDragNode, this );
+        con.after( category + 'constrainChange', this.syncDragNode, this );
 
         this.after( {
             minChange  : this._afterMinChange,
@@ -94,7 +92,7 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
 
     /**
      * Plugs in Y.Plugin.DDConstrained onto the Drag instance.  Default
-     * configuration uses <code>constrain2node</code> set to the
+     * configuration uses <code>constrain</code> set to the
      * <code>dragNode</code>'s <code>parentNode</code>.
      *
      * @method _defaultConstrain
@@ -105,7 +103,7 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
         var host = this.get( HOST );
 
         host.plug( Y.Plugin.DDConstrain, {
-            constrain2node: host.get( DRAG_NODE ).get( 'parentNode' )
+            constrain: host.get( DRAG_NODE ).get( 'parentNode' )
         } );
 
         return host.con;
@@ -128,7 +126,7 @@ Y.Plugin.DDValue = Y.extend( DDValue, Y.Base, {
     /**
      * Detach event listeners.
      *
-     * @method detructor
+     * @method destructor
      * @protected
      */
     destructor: function () {
