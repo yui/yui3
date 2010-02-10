@@ -1,5 +1,7 @@
 Development Master
 
+* "render" event now published with the defaultTargetOnly set to true.
+
 * Added support for MyWidget.CSS_PREFIX static property 
   to let developers define their own CSS PREFIX instead of 
   yui-<MyWidget.NAME>. 

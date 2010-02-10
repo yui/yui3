@@ -1,5 +1,9 @@
 Development Master
 
+* Attribute change events are now publish with the defaultTargetOnly property set to true.
+
+* newVal property of event object passed to change event listeners will now be the value returned from the Attribute's getter (if defined)
+
 * setter, getter, validator and valueFn can now be specified as 
   strings, referring to the method names to be invoked on the Attribute
   instance.
