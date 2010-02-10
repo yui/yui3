@@ -178,7 +178,7 @@ YUI.prototype = {
 
             if (YUI.Env && Y !== YUI) {
                 Y.Env._yidx = (++YUI.Env._yidx);
-                Y.Env._guidp = ('yui_' + v + '-' + Y.Env._yidx + '-' + _startTime).replace(/\./g, '_');
+                Y.Env._guidp = ('yui_' + v + '_' + Y.Env._yidx + '_' + _startTime).replace(/\./g, '_');
             }
 
             Y.id = Y.stamp(Y);
@@ -461,7 +461,8 @@ YUI.prototype = {
 
                 // make sure requirements are attached
                 if (req) {
-                    if (Y.Lang.isString(req)) {
+                    // if (Y.Lang.isString(req)) {
+                    if (typeof req == 'string') {
                         f(req);
                     } else {
                         for (j = 0; j < req.length; j = j + 1) {
