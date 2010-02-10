@@ -1558,22 +1558,15 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         // this event has not been published or subscribed to
         if (!ce) {
-            
             if (this._yuievt.hasTargets) {
                 return this.bubble({ type: t }, args, this);
             }
 
             // otherwise there is nothing to be done
             ret = true;
-
         } else {
-
             ce.sibling = ce2;
-
             ret = ce.fire.apply(ce, args);
-
-            // clear target for next fire()
-            ce.target = null;
         }
 
         return (this._yuievt.chain) ? this : ret;
@@ -2043,6 +2036,8 @@ CEProto.fireComplex = function(args) {
         }
     }
 
+    self.target = null;
+
     // es.stopped = 0;
     // es.prevented = 0;
 
@@ -2187,6 +2182,15 @@ CEProto.halt = function(immediate) {
 ETProto.addTarget = function(o) {
     this._yuievt.targets[Y.stamp(o)] = o;
     this._yuievt.hasTargets = true;
+};
+
+/**
+ * Returns an array of bubble targets for this object.
+ * @method getTargets
+ * @return EventTarget[]
+ */
+ETProto.getTargets = function() {
+    return Y.Object.values(this._yuievt.targets);
 };
 
 /**

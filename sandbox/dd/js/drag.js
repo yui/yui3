@@ -179,6 +179,14 @@ YUI.add('dd-drag', function(Y) {
             value: true
         },
         /**
+        * @attribute startCentered
+        * @description Center the dragNode to the mouse position on drag:start: default false
+        * @type Boolean
+        */
+        startCentered: {
+            value: false
+        },
+        /**
         * @attribute clickPixelThresh
         * @description The number of pixels to move to start a drag operation, default is 3.
         * @type Number
@@ -762,7 +770,7 @@ YUI.add('dd-drag', function(Y) {
             this.startXY = xy;
             
             this.nodeXY = this.lastXY = this.realXY = this.get(NODE).getXY();
-
+            
             if (this.get('offsetNode')) {
                 this.deltaXY = [(this.startXY[0] - this.nodeXY[0]), (this.startXY[1] - this.nodeXY[1])];
             } else {
@@ -908,7 +916,7 @@ YUI.add('dd-drag', function(Y) {
         */
         start: function() {
             if (!this.get('lock') && !this.get(DRAGGING)) {
-                var node = this.get(NODE), ow = node.get(OFFSET_WIDTH), oh = node.get(OFFSET_HEIGHT), xy;
+                var node = this.get(NODE), ow, oh, xy;
                 this._startTime = (new Date()).getTime();
 
                 DDM._start();
@@ -918,8 +926,16 @@ YUI.add('dd-drag', function(Y) {
                     pageY: this.nodeXY[1],
                     startTime: this._startTime
                 });
+                node = this.get(DRAG_NODE);
                 xy = this.nodeXY;
-
+                
+                ow = node.get(OFFSET_WIDTH);
+                oh = node.get(OFFSET_HEIGHT);
+                
+                if (this.get('startCentered')) {
+                    this._setStartPosition([xy[0] + (ow / 2), xy[1] + (oh / 2)]);
+                }
+                
                 
                 this.region = {
                     '0': xy[0], 

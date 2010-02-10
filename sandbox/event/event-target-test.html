@@ -10,7 +10,7 @@
     <script type="text/javascript">
     
         YUI({
-            // filter: 'debug'
+            filter: 'debug'
         }).use("event-custom", function (Y) {
 
             var uberParent = new Y.EventTarget();
@@ -63,7 +63,8 @@
            });
 
 
-           var child = new Y.EventTarget();
+           var child = new Y.EventTarget(),
+               current = 'child';
            
            child.id = "child";           
            
@@ -90,39 +91,43 @@
            //   the grandParent, the event target start changing.
 
            uberParent.on("test", function (e) {
-               Y.log("[uberParent] target is: " + e.target.id + ", expected child" + (child == e.target));
+               Y.log("[uberParent] target is: " + e.target.id + ", expected " + current);
            });
 
            grandParent.on("test", function (e) {
-               Y.log("[grandParent] target is: " + e.target.id + ", expected child" + (child == e.target));
+               Y.log("[grandParent] target is: " + e.target.id + ", expected " + current);
            });
 
            parent.on("test", function (e) {
-               Y.log("[parent] target is: " + e.target.id + ", expected child" + (child == e.target));
+               Y.log("[parent] target is: " + e.target.id + ", expected " + current);
            });
 
            child.on("test", function (e) {
-               Y.log("[child] target is: " + e.target.id + ", expected child" + (child == e.target));
+               Y.log("[child] target is: " + e.target.id + ", expected " + current);
            });
 
            uberParent.after("test", function (e) {
-               Y.log("[uberParent] target is: " + e.target.id + ", expected child" + (child == e.target));
+               Y.log("[uberParent] target is: " + e.target.id + ", expected " + current);
            });
 
            grandParent.after("test", function (e) {
-               Y.log("[grandParent] target is: " + e.target.id + ", expected child" + (child == e.target));
+               Y.log("[grandParent] target is: " + e.target.id + ", expected " + current);
            });
 
            parent.after("test", function (e) {
-               Y.log("[parent] target is: " + e.target.id + ", expected child" + (child == e.target));
+               Y.log("[parent] target is: " + e.target.id + ", expected " + current);
            });
 
            child.after("test", function (e) {
-               Y.log("[child] target is: " + e.target.id + ", expected child" + (child == e.target));
+               Y.log("[child] target is: " + e.target.id + ", expected " + current);
            });
            
 
            child.fire("test");
+
+           current = 'parent';
+
+           parent.fire("test");
             
         });
     

@@ -247,6 +247,8 @@ CEProto.fireComplex = function(args) {
         }
     }
 
+    self.target = null;
+
     // es.stopped = 0;
     // es.prevented = 0;
 
@@ -391,6 +393,15 @@ CEProto.halt = function(immediate) {
 ETProto.addTarget = function(o) {
     this._yuievt.targets[Y.stamp(o)] = o;
     this._yuievt.hasTargets = true;
+};
+
+/**
+ * Returns an array of bubble targets for this object.
+ * @method getTargets
+ * @return EventTarget[]
+ */
+ETProto.getTargets = function() {
+    return Y.Object.values(this._yuievt.targets);
 };
 
 /**
