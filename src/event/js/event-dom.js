@@ -771,59 +771,60 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * left out, all listeners will be removed
          * @static
          */
-        purgeElement: function(el, recurse, type) {
-            // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
-            var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = this.getListeners(oEl, type), i, len, props;
-            if (lis) {
-                for (i=0,len=lis.length; i<len ; ++i) {
-                    props = lis[i];
-                    props.detachAll();
-                    remove(props.el, props.type, props.fn, props.capture);
-                    delete _wrappers[props.key];
-                    delete _el_events[props.domkey][props.key];
-                }
-
-            }
-
-            if (recurse && oEl && oEl.childNodes) {
-                for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
-                    this.purgeElement(oEl.childNodes[i], recurse, type);
-                }
-            }
-
-        },
-
         // purgeElement: function(el, recurse, type) {
         //     // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
         //     var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-        //         lis = this.getListeners(oEl, type), i, len, props, children, child;
-
-        //     if (recurse && oEl) {
-        //         lis = lis || [];
-        //         // children = Y.Selector.query('*', oEl);
-        //         children = oEl.getElementsByTagName('*');
-        //         i = 0;
-        //         len = children.length;
-        //         for (; i < len; ++i) {
-        //             child = this.getListeners(children[i], type);
-        //             if (child) {
-        //                 lis.concat(child);
-        //             }
-        //         }
-        //     }
-
+        //         lis = this.getListeners(oEl, type), i, len, props;
         //     if (lis) {
-        //         for (; i < len; ++i) {
+        //         for (i=0,len=lis.length; i<len ; ++i) {
         //             props = lis[i];
         //             props.detachAll();
         //             remove(props.el, props.type, props.fn, props.capture);
         //             delete _wrappers[props.key];
         //             delete _el_events[props.domkey][props.key];
         //         }
+
+        //     }
+
+        //     if (recurse && oEl && oEl.childNodes) {
+        //         for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
+        //             this.purgeElement(oEl.childNodes[i], recurse, type);
+        //         }
         //     }
 
         // },
+
+        purgeElement: function(el, recurse, type) {
+            // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
+            var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
+                lis = this.getListeners(oEl, type), i, len, props, children, child;
+
+            if (recurse && oEl) {
+                lis = lis || [];
+                children = Y.Selector.query('*', oEl);
+                i = 0;
+                len = children.length;
+                for (; i < len; ++i) {
+                    child = this.getListeners(children[i], type);
+                    if (child) {
+                        lis = lis.concat(child);
+                    }
+                }
+            }
+
+            if (lis) {
+                i = 0;
+                len = lis.length;
+                for (; i < len; ++i) {
+                    props = lis[i];
+                    props.detachAll();
+                    remove(props.el, props.type, props.fn, props.capture);
+                    delete _wrappers[props.key];
+                    delete _el_events[props.domkey][props.key];
+                }
+            }
+
+        },
 
 
         /**

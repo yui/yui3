@@ -1545,22 +1545,15 @@ ET.prototype = {
 
         // this event has not been published or subscribed to
         if (!ce) {
-            
             if (this._yuievt.hasTargets) {
                 return this.bubble({ type: t }, args, this);
             }
 
             // otherwise there is nothing to be done
             ret = true;
-
         } else {
-
             ce.sibling = ce2;
-
             ret = ce.fire.apply(ce, args);
-
-            // clear target for next fire()
-            ce.target = null;
         }
 
         return (this._yuievt.chain) ? this : ret;
