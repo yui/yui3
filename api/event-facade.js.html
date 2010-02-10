@@ -176,6 +176,7 @@
            <span class="nx">type</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span>
            <span class="c1">// defaultFnQueue: new Y.Queue(),</span>
            <span class="nx">afterQueue</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Queue</span><span class="p">(),</span>
+           <span class="nx">defaultTargetOnly</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">defaultTargetOnly</span><span class="p">,</span>
            <span class="nx">queue</span><span class="o">:</span> <span class="p">[]</span>
         <span class="p">};</span>
         <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_eventstack</span><span class="p">;</span>
@@ -249,7 +250,8 @@
     <span class="c1">// execute the default behavior if not prevented</span>
     <span class="c1">// console.log(&#39;defaultTargetOnly: &#39; + self.defaultTargetOnly);</span>
     <span class="c1">// console.log(&#39;host === target: &#39; + (host === ef.target));</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">defaultFn</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">self</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="o">!</span><span class="nx">self</span><span class="p">.</span><span class="nx">defaultTargetOnly</span><span class="p">)</span> <span class="o">||</span> <span class="nx">host</span> <span class="o">===</span> <span class="nx">ef</span><span class="p">.</span><span class="nx">target</span><span class="p">))</span> <span class="p">{</span>
+    <span class="c1">// if (self.defaultFn &amp;&amp; !self.prevented &amp;&amp; ((!self.defaultTargetOnly) || host === es.id === self.id)) {</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">defaultFn</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">self</span><span class="p">.</span><span class="nx">prevented</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="o">!</span><span class="nx">self</span><span class="p">.</span><span class="nx">defaultTargetOnly</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">es</span><span class="p">.</span><span class="nx">defaultTargetOnly</span><span class="p">)</span> <span class="o">||</span> <span class="nx">host</span> <span class="o">===</span> <span class="nx">ef</span><span class="p">.</span><span class="nx">target</span><span class="p">))</span> <span class="p">{</span>
 
         <span class="c1">// if (es.id === self.id) {</span>
         <span class="c1">//     self.defaultFn.apply(host, args);</span>
@@ -489,6 +491,7 @@
 
                     <span class="c1">// set the original target to that the target payload on the</span>
                     <span class="c1">// facade is correct.</span>
+                    <span class="nx">ce</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">originalTarget</span><span class="p">;</span>
                     <span class="nx">ce</span><span class="p">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="nx">originalTarget</span><span class="p">;</span>
                     <span class="nx">ce</span><span class="p">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">t</span><span class="p">;</span>
                     <span class="nx">bc</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">.</span><span class="nx">broadcast</span><span class="p">;</span>
