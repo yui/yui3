@@ -104,6 +104,9 @@ YUI.add('frame', function(Y) {
                 e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
                 e.frameY = xy[1] + e.pageY - node.get('scrollTop');
             }
+            e.frameTarget = e.target;
+            e.frameCurrentTarget = e.currentTarget;
+
             this.publish(e.type, {
                 stoppedFn: Y.bind(function(ev, domev) {
                     ev.halt();
