@@ -466,7 +466,8 @@ YUI.prototype = {
 
                 // make sure requirements are attached
                 if (req) {
-                    if (Y.Lang.isString(req)) {
+                    // if (Y.Lang.isString(req)) {
+                    if (typeof req == 'string') {
                         f(req);
                     } else {
                         for (j = 0; j < req.length; j = j + 1) {

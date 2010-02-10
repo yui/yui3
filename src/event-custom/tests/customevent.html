@@ -837,9 +837,10 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 b.addTarget(a);
                 a.addTarget(z);
 
-                z.on('*:foo', function(e) {
+                z.after('*:foo', function(e) {
 
                     // e.preventDefault();
+                    Y.Assert.areEqual(b, e.target);
 
                 });
 

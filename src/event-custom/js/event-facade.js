@@ -201,6 +201,7 @@ CEProto.fireComplex = function(args) {
     // execute the default behavior if not prevented
     // console.log('defaultTargetOnly: ' + self.defaultTargetOnly);
     // console.log('host === target: ' + (host === ef.target));
+    // if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly) || host === es.id === self.id)) {
     if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly) || host === ef.target)) {
 
         // if (es.id === self.id) {
@@ -441,6 +442,7 @@ ETProto.bubble = function(evt, args, target) {
 
                     // set the original target to that the target payload on the
                     // facade is correct.
+                    ce.target = originalTarget;
                     ce.originalTarget = originalTarget;
                     ce.currentTarget = t;
                     bc = ce.broadcast;
