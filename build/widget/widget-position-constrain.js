@@ -1,9 +1,11 @@
+YUI.add('widget-position-constrain', function(Y) {
+
 /**
  * Provides constrained XY positioning support for Widgets, through an extension.
  *
  * It builds on top of the widget-position module, to provide constrained positioning support.
  *
- * @module widget-position-constrained
+ * @module widget-position-constrain
  */
 var CONSTRAIN = "constrain",
     CONSTRAIN_XYCHANGE = "constrain|xyChange",
@@ -30,28 +32,28 @@ var CONSTRAIN = "constrain",
 /**
  * Widget extension, which can be used to add extended XY positioning support to the base Widget class,
  * through the <a href="Base.html#method_build">Base.build</a> method. This extension requires that 
- * the WidgetPosition extension be added to the Widget (before WidgetPositionConstrained, if part of the same 
+ * the WidgetPosition extension be added to the Widget (before WidgetPositionConstrain, if part of the same 
  * extension list passed to Base.build).
  *
- * @class WidgetPositionConstrained
+ * @class WidgetPositionConstrain
  * @param {Object} User configuration object
  */
-function PositionConstrained(config) {
+function PositionConstrain(config) {
     if (!this._posNode) {
-        Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionConstrained is added"); 
+        Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionConstrain is added"); 
     }
     Y.after(this._bindUIPosConstrained, this, BINDUI);
 }
 
 /**
  * Static property used to define the default attribute 
- * configuration introduced by WidgetPositionConstrained.
+ * configuration introduced by WidgetPositionConstrain.
  *
- * @property WidgetPositionConstrained.ATTRS
+ * @property WidgetPositionConstrain.ATTRS
  * @type Object
  * @static
  */
-PositionConstrained.ATTRS = {
+PositionConstrain.ATTRS = {
     constrain : {
         value: null,
         setter: "_setConstrain"
@@ -62,7 +64,7 @@ PositionConstrained.ATTRS = {
     }
 };
 
-PREVENT_OVERLAP_MAP = PositionConstrained.PREVENT_OVERLAP = {
+PREVENT_OVERLAP_MAP = PositionConstrain.PREVENT_OVERLAP = {
     x: {
         "tltr": 1,
         "blbr": 1,
@@ -77,7 +79,7 @@ PREVENT_OVERLAP_MAP = PositionConstrained.PREVENT_OVERLAP = {
     }
 };
 
-PositionConstrained.prototype = {
+PositionConstrain.prototype = {
 
     /**
      * @method getConstrainedXY
@@ -274,4 +276,7 @@ PositionConstrained.prototype = {
     }
 };
 
-Y.WidgetPositionConstrained = PositionConstrained;
+Y.WidgetPositionConstrain = PositionConstrain;
+
+
+}, '@VERSION@' ,{requires:['widget', 'widget-position']});
