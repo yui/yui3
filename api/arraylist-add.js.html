@@ -65,11 +65,20 @@
 <span class="cm">     * @method add</span>
 <span class="cm">     * @param item { mixed } Item presumably of the same type as others in the</span>
 <span class="cm">     *                       ArrayList</span>
+<span class="cm">     * @param index {Number} (Optional.)  Number representing the position at </span>
+<span class="cm">     * which the item should be inserted.</span>
 <span class="cm">     * @return {ArrayList} the instance</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
-    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">item</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="nx">item</span> <span class="p">);</span>
+    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">index</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">items</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">item</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">},</span>
