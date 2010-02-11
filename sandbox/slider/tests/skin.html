@@ -4,7 +4,7 @@
     <title>Test Page</title>
     <style type="text/css">
     .yui-slider,
-    .yui-slider .yui-slider-y .yui-slider-thumb-range {
+    .yui-slider-rail {
         /* xbrowser inline-block styles */
         display: -moz-inline-stack; /* FF2 */
         display: inline-block;
@@ -13,14 +13,15 @@
     }
 
     .yui-slider .yui-slider-x .yui-slider-thumb-range {
-        vertical-align: middle;
+        xvertical-align: middle;
     }
 
-    .yui-slider-content,
-    .yui-slider-rail,
-    .yui-slider-thumb-range {
+    .yui-slider-content {
         position: relative;
         display: block;
+    }
+    .yui-slider-rail {
+        position: relative;
     }
 
     .yui-slider-rail-cap-top,
@@ -33,12 +34,8 @@
         position: absolute;
     }
 
-    .yui-slider-rail {
-        z-index: 5;
-    }
     .yui-slider-thumb {
         overflow: hidden;
-        z-index: 6;
     }
 
     /* With the absolute positioning, is this still needed? */
@@ -56,7 +53,7 @@
         background-image: url(skin_research/images/rail_white_00_h_3px_thick-1.png);
     }
 
-    .yui-slider-skin-1 .yui-slider-x .yui-slider-thumb-range {
+    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail {
         height: 26px;
         width: 200px; /* Example.  This will be supplied via js */
     }
@@ -74,10 +71,6 @@
         top: -50px;
     }
 
-    .yui-slider-skin-1 .yui-slider-x .yui-slider-rail {
-        height: 20px;
-        width: 100%;
-    }
     .yui-slider-skin-1 .yui-slider-x .yui-slider-rail-cap-left {
         background-position: 0 -20px;
         height: 20px;
@@ -92,33 +85,16 @@
     }
 
     /* Vertical Slider */
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-rail {
+        position: relative;
+        height: 200px; /* Example.  This will be supplied via js */
+        width: 20px;
+    }
+
     .yui-slider-skin-1 .yui-slider-y .yui-slider-rail,
     .yui-slider-skin-1 .yui-slider-y .yui-slider-rail-cap-top,
     .yui-slider-skin-1 .yui-slider-y .yui-slider-rail-cap-bottom {
         background-image: url(skin_research/images/rail_white_00_v_3px_thick-1.png);
-    }
-
-    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb-range {
-        width: 26px;
-        height: 200px; /* Example.  This will be supplied via js */
-    }
-    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb {
-        width: 26px;
-        height: 15px;
-    }
-    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb-image {
-        left: -10px;
-        top: 0;
-    }
-    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb-shadow {
-        left: -50px;
-        opacity: 0.15;
-        top: 0;
-    }
-
-    .yui-slider-skin-1 .yui-slider-y .yui-slider-rail {
-        height: 100%; /* can't rely on block formatting like w/ horiz */
-        width: 20px;
     }
 
     .yui-slider-skin-1 .yui-slider-y .yui-slider-rail-cap-top {
@@ -133,6 +109,20 @@
         bottom: -2px;
         height: 5px;
     }
+
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb {
+        width: 26px;
+        height: 15px;
+    }
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb-image {
+        left: -10px;
+        top: 0;
+    }
+    .yui-slider-skin-1 .yui-slider-y .yui-slider-thumb-shadow {
+        left: -50px;
+        opacity: 0.15;
+        top: 0;
+    }
     </style>
 </head>
 <body class="yui-skin-sam">
@@ -140,14 +130,12 @@
 <p>This is a horizontal Slider: 
 <span class="yui-slider yui-slider-skin-1">
     <span class="yui-slider-content yui-slider-x">
-        <span id="x-range" class="yui-slider-thumb-range">
+        <span id="x-rail" class="yui-slider-rail">
+            <span class="yui-slider-rail-cap-left"></span>
+            <span class="yui-slider-rail-cap-right"></span>
             <span id="x" class="yui-slider-thumb" tabindex="-1">
                 <img src="skin_research/images/thumb_white_00_h_rect_pointer-1.png" alt="Slider thumb shadow" class="yui-slider-thumb-shadow">
                 <img src="skin_research/images/thumb_white_00_h_rect_pointer-1.png" alt="Slider thumb" class="yui-slider-thumb-image">
-            </span>
-            <span class="yui-slider-rail">
-                <span class="yui-slider-rail-cap-left"></span>
-                <span class="yui-slider-rail-cap-right"></span>
             </span>
         </span>
     </span>
@@ -156,14 +144,12 @@
 and this is a vertical Slider:
 <span class="yui-slider yui-slider-skin-1">
     <span class="yui-slider-content yui-slider-y">
-        <span id="y-range" class="yui-slider-thumb-range">
+        <span id="y-rail" class="yui-slider-rail">
+            <span class="yui-slider-rail-cap-top"></span>
+            <span class="yui-slider-rail-cap-bottom"></span>
             <span id="y" class="yui-slider-thumb" tabindex="-1">
                 <img src="skin_research/images/thumb_white_00_v_rect_pointer-1.png" alt="Slider thumb shadow" class="yui-slider-thumb-shadow">
                 <img src="skin_research/images/thumb_white_00_v_rect_pointer-1.png" alt="Slider thumb" class="yui-slider-thumb-image">
-            </span>
-            <span class="yui-slider-rail">
-                <span class="yui-slider-rail-cap-top"></span>
-                <span class="yui-slider-rail-cap-bottom"></span>
             </span>
         </span>
     </span>
@@ -182,7 +168,7 @@ YUI({
 
     var x = Y.one( '#x' ).plug( Y.Plugin.Drag );
     x.dd.plug( Y.Plugin.DDConstrained, {
-            constrain2node: '#x-range'
+            constrain2node: '#x-rail'
         } )
         .plug( Y.Plugin.DDValue, {
             //value: 35,
@@ -200,7 +186,7 @@ YUI({
 
     var y = Y.one( '#y' ).plug( Y.Plugin.Drag );
     y.dd.plug( Y.Plugin.DDConstrained, {
-            constrain2node: '#y-range',
+            constrain2node: '#y-rail',
             stickY: true
         } )
         .plug( Y.Plugin.DDValue, {
