@@ -361,7 +361,7 @@ Child.prototype = {
      * @method _bindUIChild
      * @protected
      */    
-    _bindUIChild: function () {
+    _bindUIChild: function () { 
         this.after("selectedChange", this._afterChildSelectedChange);
     }
     

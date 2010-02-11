@@ -17,6 +17,8 @@ var Lang = Y.Lang;
  */
 function Parent(config) {
 
+    //  TO DO:  look at DataType for event facade documentation
+
     /**
     * Fires when a Widget is add as a child.  The event object will have a 
     * 'child' property that returns a reference to the child Widget, as well 
@@ -35,7 +37,10 @@ function Parent(config) {
     * @preventable _defAddChildFn
     * @param {EventFacade} e The Event Facade
     */
-    this.publish("addChild", { defaultFn: this._defAddChildFn });
+    this.publish("addChild", { 
+        defaultTargetOnly: true,
+        defaultFn: this._defAddChildFn 
+    });
 
 
     /**
@@ -55,8 +60,13 @@ function Parent(config) {
     * @preventable _defRemoveChildFn
     * @param {EventFacade} e The Event Facade
     */
-    this.publish("removeChild", { defaultFn: this._defRemoveChildFn });
+    this.publish("removeChild", { 
+        defaultTargetOnly: true,
+        defaultFn: this._defRemoveChildFn 
+    });
 
+
+    //  TO DO: Document ability to populate children via the constructor
 
     this._items = [];
 
@@ -74,18 +84,18 @@ function Parent(config) {
 
     }
 
-    //  Widget method overlap
 
-    //  TO DO: What is the pattern for cleanup of these listeners?
+    //  Widget method overlap
     Y.after(this._renderChildren, this, "renderUI");
     Y.after(this._bindUIParent, this, "bindUI");
     Y.before(this._destroyChildren, this, "destructor");
-    
-    //  TO DO: What is the pattern for cleanup of these listeners?
+
     this.after("selectionChange", this._afterSelectionChange);
     this.after("selectedChange", this._afterParentSelectedChange);
+    this.after("activeItemChange", this._afterActiveItemChange);
 
     this._hDestroyChild = this.after("*:destroy", this._afterDestroyChild);
+    this.after("*:focusedChange", this._updateActiveItem);
 
 }
 
@@ -185,7 +195,7 @@ Parent.ATTRS = {
             var returnVal = value;
 
             if (value === 1 && !this.get("multiple")) {
-			    Y.log('The selected attribute can only be set to 1 if the "multiple" attribute is set to true.', "error", "widget");
+                Y.log('The selected attribute can only be set to 1 if the "multiple" attribute is set to true.', "error", "widget");
                 returnVal = Y.Attribute.INVALID_VALUE;
             }
             
@@ -207,15 +217,11 @@ Parent.prototype = {
      * @param {EventFacade} event The event facade for the attribute change.
      */
     _afterDestroyChild: function (event) {
-
         var child = event.target;
 
-        //  Since we're taking advantage of bubbling, make sure the child being 
-        //  destroyed is one this parent is managing (is a direct descendant).
-        if (this.indexOf(child) != -1) {
+        if (child.get("parent") == this) {
             child.remove();
-        }
-        
+        }        
     },
 
 
@@ -230,9 +236,6 @@ Parent.prototype = {
      */
     _afterSelectionChange: function (event) {
 
-        //  TO DO: Remove "event.target == this" check once Attribute
-        //  is updated with fix.
-        
         if (event.target == this && event.src != this) {
 
             var selection = event.newVal,
@@ -259,6 +262,32 @@ Parent.prototype = {
         
     },
 
+
+    /**
+     * Attribute change listener for the <code>activeItem</code> 
+     * attribute, responsible for setting the value of the 
+     * parent's <code>activeItem</code> attribute.
+     *
+     * @method _afterSelectionChange
+     * @protected
+     * @param {EventFacade} event The event facade for the attribute change.
+     */    
+    _afterActiveItemChange: function (event) {
+
+        var parent;
+
+        if (event.target == this) {
+
+            parent = this.get("parent");
+
+            if (parent) {
+                parent._set("activeItem", this);
+            }
+            
+        }
+        
+    },
+    
 
     /**
      * Attribute change listener for the <code>selected</code> 
@@ -347,25 +376,32 @@ Parent.prototype = {
     _updateSelection: function (event) {
 
         var child = event.target,
-            selection = this.get("selection");
+            selection;
 
-        if (event.src != this) {
+        if (child.get("parent") == this) {
 
-            if (!this.get("multiple") && selection && event.newVal > 0) {
+            if (event.src != "_updateSelection") {
 
-                //  Deselect the previously selected child.
-                //  Set src equal to the current context to prevent
-                //  unnecessary re-calculation of the selection.
+                selection = this.get("selection");
 
-                selection.set("selected", 0, { src: this });
+                if (!this.get("multiple") && selection && event.newVal > 0) {
+
+                    //  Deselect the previously selected child.
+                    //  Set src equal to the current context to prevent
+                    //  unnecessary re-calculation of the selection.
+
+                    selection.set("selected", 0, { src: "_updateSelection" });
+
+                }
+
+                this._set("selection", child);
 
             }
-            
-            this._set("selection", child);
 
-        }
-        else {
-            this._set("selection", child, { src: this });
+            if (event.src == this) {
+                this._set("selection", child, { src: this });
+            }
+            
         }
 
     },
@@ -382,13 +418,18 @@ Parent.prototype = {
      */
     _updateActiveItem: function (event) {
 
-        var val = null;
+        var child = event.target,
+            val = null;
         
-        if (event.newVal === true) {
-            val = event.target;
-        }
+        if (child.get("parent") == this) {
 
-        this._set("activeItem", val);
+            if (event.newVal === true) {
+                val = event.target;
+            }
+
+            this._set("activeItem", val);
+            
+        }
 
     },
 
@@ -472,7 +513,7 @@ Parent.prototype = {
 
         //  TO DO: Remove in favor of using event bubbling
         child.after("selectedChange", Y.bind(this._updateSelection, this));
-        child.after("focusedChange", Y.bind(this._updateActiveItem, this));
+        //child.after("focusedChange", Y.bind(this._updateActiveItem, this));
         
     },
 
@@ -509,22 +550,22 @@ Parent.prototype = {
     },
 
 
-	/**
-	* @method _add
-	* @protected
+    /**
+    * @method _add
+    * @protected
     * @param child {Widget|Object} The Widget instance, or configuration 
     * object for the Widget to be added as a child.
     * @param child {Array} Array of Widget instances, or configuration 
     * objects for the Widgets to be added as a children.
     * @param index {Number} (Optional.)  Number representing the position at 
     * which the child should be inserted.
-	* @description Adds a Widget as a child.  If the specified Widget already
-	* has a parent it will be removed from its current parent before
-	* being added as a child.
-	* @return {Widget|Array} Successfully added Widget or Array containing the 
-	* successfully added Widget instance(s). If no children where added, will 
-	* will return undefined.
-	*/
+    * @description Adds a Widget as a child.  If the specified Widget already
+    * has a parent it will be removed from its current parent before
+    * being added as a child.
+    * @return {Widget|Array} Successfully added Widget or Array containing the 
+    * successfully added Widget instance(s). If no children where added, will 
+    * will return undefined.
+    */
     _add: function (child, index) {   
 
         var children,
@@ -572,21 +613,21 @@ Parent.prototype = {
     },
 
 
-	/**
-	* @method add
+    /**
+    * @method add
     * @param child {Widget|Object} The Widget instance, or configuration 
     * object for the Widget to be added as a child.
     * @param child {Array} Array of Widget instances, or configuration 
     * objects for the Widgets to be added as a children.
     * @param index {Number} (Optional.)  Number representing the position at 
     * which the child should be inserted.
-	* @description Adds a Widget as a child.  If the specified Widget already
-	* has a parent it will be removed from its current parent before
-	* being added as a child.
-	* @return {Y.ArrayList} Y.ArrayList containing the successfully added 
-	* Widget instance(s).  If no children where added, will return an empty 
-	* Y.ArrayList instance.
-	*/
+    * @description Adds a Widget as a child.  If the specified Widget already
+    * has a parent it will be removed from its current parent before
+    * being added as a child.
+    * @return {Y.ArrayList} Y.ArrayList containing the successfully added 
+    * Widget instance(s).  If no children where added, will return an empty 
+    * Y.ArrayList instance.
+    */
     add: function () {
 
         var added = this._add.apply(this, arguments),
@@ -597,15 +638,15 @@ Parent.prototype = {
     },
 
 
-	/**
-	* @method remove
+    /**
+    * @method remove
     * @param index {Number} (Optional.)  Number representing the index of the 
     * child to be removed.
-	* @description Removes the Widget from its parent.  Optionally, can remove
-	* a child by specifying its index.
-	* @return {Widget} Widget instance that was successfully removed, otherwise
-	* undefined.
-	*/
+    * @description Removes the Widget from its parent.  Optionally, can remove
+    * a child by specifying its index.
+    * @return {Widget} Widget instance that was successfully removed, otherwise
+    * undefined.
+    */
     remove: function (index) {
 
         var child = this._items[index],
@@ -620,13 +661,13 @@ Parent.prototype = {
     },
 
 
-	/**
-	* @method removeAll
-	* @description Removes all of the children from the Widget.
-	* @return {Y.ArrayList} Y.ArrayList instance containing Widgets that were 
-	* successfully removed.  If no children where removed, will return an empty 
-	* Y.ArrayList instance.
-	*/
+    /**
+    * @method removeAll
+    * @description Removes all of the children from the Widget.
+    * @return {Y.ArrayList} Y.ArrayList instance containing Widgets that were 
+    * successfully removed.  If no children where removed, will return an empty 
+    * Y.ArrayList instance.
+    */
     removeAll: function () {
 
         var removed = [],
@@ -705,11 +746,19 @@ Parent.prototype = {
 
 
     _afterAddChild: function (event) {
-        this._uiAddChild(event.child, this.get("contentBox"), event.index);
+        var child = event.child;
+
+        if (child.get("parent") == this) {
+            this._uiAddChild(child, this.get("contentBox"), event.index);
+        }
     },
 
     _afterRemoveChild: function (event) {
-        this._uiRemoveChild(event.child);
+        var child = event.child;
+
+        if (child.get("parent") == this) {
+            this._uiRemoveChild(child);
+        }
     },
 
 
@@ -724,12 +773,8 @@ Parent.prototype = {
      * @protected
      */
     _bindUIParent: function () {
-
-        //  TO DO: Pattern for removal of these listeners?
-
         this.after("addChild", this._afterAddChild);
         this.after("removeChild", this._afterRemoveChild);
-
     },
 
 
