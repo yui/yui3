@@ -133,9 +133,7 @@
 <span class="cm">             * the Widget will be centered within the node. If set the false, no center positioning is applied.</span>
 <span class="cm">             */</span>
             <span class="nx">centered</span><span class="o">:</span> <span class="p">{</span>
-                <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setAlignCenter</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
-                <span class="p">},</span>
+                <span class="nx">setter</span><span class="o">:</span> <span class="s2">&quot;_setAlignCenter&quot;</span><span class="p">,</span>
                 <span class="nx">lazyAdd</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
                 <span class="nx">value</span><span class="o">:</span><span class="kc">false</span>
             <span class="p">}</span>
@@ -300,22 +298,12 @@
                     <span class="k">return</span><span class="p">;</span>
                 <span class="p">}</span>
 
-                <span class="kd">var</span> <span class="nx">nodeRegion</span><span class="p">,</span> <span class="nx">widgetPoint</span><span class="p">,</span> <span class="nx">nodePoint</span><span class="p">,</span> <span class="nx">xy</span><span class="p">;</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VIEWPORT_REGION</span><span class="p">);</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REGION</span><span class="p">);</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
+                <span class="kd">var</span> <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getRegion</span><span class="p">(</span><span class="nx">node</span><span class="p">),</span> 
+                    <span class="nx">widgetPoint</span><span class="p">,</span> 
+                    <span class="nx">nodePoint</span><span class="p">,</span> 
+                    <span class="nx">xy</span><span class="p">;</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">nodeRegion</span><span class="p">)</span> <span class="p">{</span>
-
-                    <span class="c1">// TODO: ViewportRegion doesn&#39;t have width/height - Workaround until normalized in Node/Dom</span>
-                    <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">width</span> <span class="o">||</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">left</span><span class="p">;</span>
-                    <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">height</span> <span class="o">||</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">nodeRegion</span><span class="p">.</span><span class="nx">top</span><span class="p">;</span>
 
                     <span class="nx">widgetPoint</span> <span class="o">=</span> <span class="nx">points</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
                     <span class="nx">nodePoint</span> <span class="o">=</span> <span class="nx">points</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
@@ -409,6 +397,19 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">xy</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">move</span><span class="p">(</span><span class="nx">xy</span><span class="p">);</span>
                 <span class="p">}</span>
+            <span class="p">},</span>
+
+            <span class="nx">_getRegion</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">nodeRegion</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_posNode</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VIEWPORT_REGION</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">nodeRegion</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REGION</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nx">nodeRegion</span><span class="p">;</span>
             <span class="p">},</span>
 
             <span class="cm">/**</span>
