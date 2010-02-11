@@ -30,8 +30,8 @@
                  root.add(new Parent());
                  root.add(new Child());
 
-                 root.item(0).get("contentBox").set("innerHTML", "Child One");
-                 root.item(1).get("contentBox").set("innerHTML", "Child Two");
+                 root.item(0).one("contentBox").set("innerHTML", "Child One");
+                 root.item(1).one("contentBox").set("innerHTML", "Child Two");
 
                  root.render();
                  
