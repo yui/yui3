@@ -59,17 +59,18 @@
 <span class="cm"> * A basic Overlay Widget, which can be positioned based on Page XY co-ordinates and is stackable (z-index support).</span>
 <span class="cm"> * It also provides alignment and centering support and uses a standard module format for it&#39;s content, with header,</span>
 <span class="cm"> * body and footer section support.</span>
-<span class="cm"> * </span>
+<span class="cm"> *</span>
 <span class="cm"> * @class Overlay</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> * @extends Widget</span>
+<span class="cm"> * @uses WidgetStdMod</span>
 <span class="cm"> * @uses WidgetPosition</span>
 <span class="cm"> * @uses WidgetStack</span>
-<span class="cm"> * @uses WidgetPositionExt</span>
-<span class="cm"> * @uses WidgetStdMod</span>
+<span class="cm"> * @uses WidgetPositionAlign</span>
+<span class="cm"> * @uses WidgetPositionConstrain</span>
 <span class="cm"> * @param {Object} object The user configuration for the instance.</span>
 <span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Overlay</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;overlay&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span> <span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetStdMod</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetPosition</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetStack</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetPositionExt</span><span class="p">]);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">Overlay</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;overlay&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span> <span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetStdMod</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetPosition</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetStack</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetPositionAlign</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetPositionConstrain</span><span class="p">]);</span>
 </pre></div>
 
                     </div>
@@ -124,7 +125,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

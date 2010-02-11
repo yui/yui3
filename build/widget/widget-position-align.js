@@ -1,10 +1,12 @@
+YUI.add('widget-position-align', function(Y) {
+
 /**
  * Provides extended/advanced XY positioning support for Widgets, through an extension.
  *
  * It builds on top of the widget-position module, to provide alignmentment and centering support.
  * Future releases aim to add constrained and fixed positioning support.
  *
- * @module widget-position-ext
+ * @module widget-position-align
  */
         var L = Y.Lang,
             ALIGN = "align",
@@ -22,29 +24,29 @@
         /**
          * Widget extension, which can be used to add extended XY positioning support to the base Widget class,
          * through the <a href="Base.html#method_build">Base.build</a> method. This extension requires that 
-         * the WidgetPosition extension be added to the Widget (before WidgetPositionExt, if part of the same 
+         * the WidgetPosition extension be added to the Widget (before WidgetPositionAlign, if part of the same 
          * extension list passed to Base.build).
          *
-         * @class WidgetPositionExt
+         * @class WidgetPositionAlign
          * @param {Object} User configuration object
          */
-        function PositionExt(config) {
+        function PositionAlign(config) {
             if (!this._posNode) {
-                Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionExt is added"); 
+                Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionAlign is added"); 
             }
-            Y.after(this._syncUIPosExtras, this, SYNCUI);
-            Y.after(this._bindUIPosExtras, this, BINDUI);
+            Y.after(this._syncUIPosAlgin, this, SYNCUI);
+            Y.after(this._bindUIPosAlign, this, BINDUI);
         }
 
         /**
          * Static property used to define the default attribute 
-         * configuration introduced by WidgetPositionExt.
+         * configuration introduced by WidgetPositionAlign.
          * 
-         * @property WidgetPositionExt.ATTRS
+         * @property WidgetPositionAlign.ATTRS
          * @type Object
          * @static
          */
-        PositionExt.ATTRS = {
+        PositionAlign.ATTRS = {
 
             /**
              * @attribute align
@@ -61,11 +63,11 @@
              *       <dd>
              *         <p>
              *         A two element array, defining the two points on the Widget and node/viewport which are to be aligned. The first element is the point on the Widget, and the second element is the point on the node/viewport.
-             *         Supported alignment points are defined as static properties on <code>WidgetPositionExt</code>.
+             *         Supported alignment points are defined as static properties on <code>WidgetPositionAlign</code>.
              *         </p>
              *         <p>
-             *         e.g. <code>[WidgetPositionExt.TR, WidgetPositionExt.TL]</code> aligns the Top-Right corner of the Widget with the
-             *         Top-Left corner of the node/viewport, and <code>[WidgetPositionExt.CC, WidgetPositionExt.TC]</code> aligns the Center of the 
+             *         e.g. <code>[WidgetPositionAlign.TR, WidgetPositionAlign.TL]</code> aligns the Top-Right corner of the Widget with the
+             *         Top-Left corner of the node/viewport, and <code>[WidgetPositionAlign.CC, WidgetPositionAlign.TC]</code> aligns the Center of the 
              *         Widget with the Top-Center edge of the node/viewport.
              *         </p>
              *       </dd>
@@ -93,96 +95,97 @@
         /**
          * Constant used to specify the top-left corner for alignment
          * 
-         * @property WidgetPositionExt.TL
+         * @property WidgetPositionAlign.TL
          * @type String
          * @static
          * @value "tl"
          */
-        PositionExt.TL = "tl";
+        PositionAlign.TL = "tl";
         /**
          * Constant used to specify the top-right corner for alignment
          * 
-         * @property WidgetPositionExt.TR
+         * @property WidgetPositionAlign.TR
          * @type String
          * @static
          * @value "tr"
          */
-        PositionExt.TR = "tr";
+        PositionAlign.TR = "tr";
         /**
          * Constant used to specify the bottom-left corner for alignment
          * 
-         * @property WidgetPositionExt.BL
+         * @property WidgetPositionAlign.BL
          * @type String
          * @static
          * @value "bl"
          */
-        PositionExt.BL = "bl";
+        PositionAlign.BL = "bl";
         /**
          * Constant used to specify the bottom-right corner for alignment
          * 
-         * @property WidgetPositionExt.BR
+         * @property WidgetPositionAlign.BR
          * @type String
          * @static
          * @value "br"
          */
-        PositionExt.BR = "br";
+        PositionAlign.BR = "br";
         /**
          * Constant used to specify the top edge-center point for alignment
          * 
-         * @property WidgetPositionExt.TC
+         * @property WidgetPositionAlign.TC
          * @type String
          * @static
          * @value "tc"
          */
-        PositionExt.TC = "tc";
+        PositionAlign.TC = "tc";
         /**
          * Constant used to specify the right edge, center point for alignment
          * 
-         * @property WidgetPositionExt.RC
+         * @property WidgetPositionAlign.RC
          * @type String
          * @static
          * @value "rc"
          */
-        PositionExt.RC = "rc";
+        PositionAlign.RC = "rc";
         /**
          * Constant used to specify the bottom edge, center point for alignment
          * 
-         * @property WidgetPositionExt.BC
+         * @property WidgetPositionAlign.BC
          * @type String
          * @static
          * @value "bc"
          */
-        PositionExt.BC = "bc";
+        PositionAlign.BC = "bc";
         /**
          * Constant used to specify the left edge, center point for alignment
          * 
-         * @property WidgetPositionExt.LC
+         * @property WidgetPositionAlign.LC
          * @type String
          * @static
          * @value "lc"
          */
-        PositionExt.LC = "lc";
+        PositionAlign.LC = "lc";
         /**
          * Constant used to specify the center of widget/node/viewport for alignment
          * 
-         * @property WidgetPositionExt.CC
+         * @property WidgetPositionAlign.CC
          * @type String
          * @static
          * @value "cc"
          */
-        PositionExt.CC = "cc";
+        PositionAlign.CC = "cc";
 
-        PositionExt.prototype = {
+        PositionAlign.prototype = {
 
             /**
-             * Synchronizes the UI to match the Widgets extended positioning state.
+             * Synchronizes the UI to match the Widgets align configuration.
+             * 
              * This method in invoked after syncUI is invoked for the Widget class
              * using YUI's aop infrastructure.
              *
-             * @method _syncUIPosExtras
+             * @method _syncUIPosAlgin
              * @protected
              */
-            _syncUIPosExtras : function() {
+            _syncUIPosAlgin : function() {
                 var align = this.get(ALIGN);
                 if (align) {
                     this._uiSetAlign(align.node, align.points);
@@ -199,7 +202,7 @@
              * @method _bindUIStack
              * @protected
              */
-            _bindUIPosExtras : function() {
+            _bindUIPosAlign : function() {
                 this.after(AlignChange, this._afterAlignChange);
             },
 
@@ -216,7 +219,7 @@
                 if (val) {
                     this.set(ALIGN, {
                         node: val === true ? null : val,
-                        points: [PositionExt.CC, PositionExt.CC]
+                        points: [PositionAlign.CC, PositionAlign.CC]
                     });
                 }
                 return val;
@@ -261,35 +264,34 @@
 
                     // TODO: Optimize KWeight - Would lookup table help?
                     switch (nodePoint) {
-                        case PositionExt.TL:
+                        case PositionAlign.TL:
                             xy = [nodeRegion.left, nodeRegion.top];
                             break;
-                        case PositionExt.TR:
+                        case PositionAlign.TR:
                             xy = [nodeRegion.right, nodeRegion.top];
                             break;
-                        case PositionExt.BL:
+                        case PositionAlign.BL:
                             xy = [nodeRegion.left, nodeRegion.bottom];
                             break;
-                        case PositionExt.BR:
+                        case PositionAlign.BR:
                             xy = [nodeRegion.right, nodeRegion.bottom];
                             break;
-                        case PositionExt.TC:
+                        case PositionAlign.TC:
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.top];
                             break;
-                        case PositionExt.BC:
+                        case PositionAlign.BC:
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.bottom];
                             break;
-                        case PositionExt.LC:
+                        case PositionAlign.LC:
                             xy = [nodeRegion.left, nodeRegion.top + Math.floor(nodeRegion.height/2)];
                             break;
-                        case PositionExt.RC:
+                        case PositionAlign.RC:
                             xy = [nodeRegion.right, nodeRegion.top + Math.floor(nodeRegion.height/2), widgetPoint];
                             break;
-                        case PositionExt.CC:
+                        case PositionAlign.CC:
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.top + Math.floor(nodeRegion.height/2), widgetPoint];
                             break;
                         default:
-                            Y.log("align: Invalid Points Arguments", "info", "widget-position-extras");
                             break;
                     }
 
@@ -304,7 +306,7 @@
              *
              * @method _doAlign
              * @private
-             * @param {String} widgetPoint Supported point constant (e.g. WidgetPositionExt.TL)
+             * @param {String} widgetPoint Supported point constant (e.g. WidgetPositionAlign.TL)
              * @param {Number} x X page co-ordinate to align to
              * @param {Number} y Y page co-ordinate to align to
              */
@@ -313,35 +315,34 @@
                     xy;
 
                 switch (widgetPoint) {
-                    case PositionExt.TL:
+                    case PositionAlign.TL:
                         xy = [x, y];
                         break;
-                    case PositionExt.TR:
+                    case PositionAlign.TR:
                         xy = [x - widgetNode.get(OFFSET_WIDTH), y];
                         break;
-                    case PositionExt.BL:
+                    case PositionAlign.BL:
                         xy = [x, y - widgetNode.get(OFFSET_HEIGHT)];
                         break;
-                    case PositionExt.BR:
+                    case PositionAlign.BR:
                         xy = [x - widgetNode.get(OFFSET_WIDTH), y - widgetNode.get(OFFSET_HEIGHT)];
                         break;
-                    case PositionExt.TC:
+                    case PositionAlign.TC:
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y];
                         break;
-                    case PositionExt.BC:
+                    case PositionAlign.BC:
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y - widgetNode.get(OFFSET_HEIGHT)];
                         break;
-                    case PositionExt.LC:
+                    case PositionAlign.LC:
                         xy = [x, y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
-                    case PositionExt.RC:
+                    case PositionAlign.RC:
                         xy = [(x - widgetNode.get(OFFSET_WIDTH)), y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
-                    case PositionExt.CC:
+                    case PositionAlign.CC:
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
                     default:
-                        Y.log("align: Invalid Points Argument", "info", "widget-position-extras");
                         break;
                 }
 
@@ -373,9 +374,9 @@
              * If null is passed in, the Widget will be aligned with the viewport.
              * @param {Array[2]} points A two element array, specifying the points on the Widget and node/viewport which need to be aligned. 
              * The first entry is the point on the Widget, and the second entry is the point on the node/viewport which need to align.
-             * Valid point references are defined as static constants on the WidgetPositionExt class. 
+             * Valid point references are defined as static constants on the WidgetPositionAlign class. 
              * 
-             * e.g. [WidgetPositionExt.TL, WidgetPositionExt.TR] will align the top-left corner of the Widget with the top-right corner of the node/viewport.
+             * e.g. [WidgetPositionAlign.TL, WidgetPositionAlign.TR] will align the top-left corner of the Widget with the top-right corner of the node/viewport.
              */
             align: function (node, points) {
                 this.set(ALIGN, {node: node, points:points});
@@ -391,8 +392,11 @@
              * viewport.
              */
             centered: function (node) {
-                this.align(node, [PositionExt.CC, PositionExt.CC]);
+                this.align(node, [PositionAlign.CC, PositionAlign.CC]);
             }
         };
 
-        Y.WidgetPositionExt = PositionExt;
+        Y.WidgetPositionAlign = PositionAlign;
+
+
+}, '@VERSION@' ,{requires:['widget', 'widget-position']});
