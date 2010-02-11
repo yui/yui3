@@ -79,10 +79,12 @@ Y_Node.DOM_EVENTS = {
     beforeunload: 1,
     blur: 1,
     change: 1,
+    changedTouches: 1, // iphone
     click: 1,
     close: 1,
     command: 1,
     contextmenu: 1,
+    dblclick: 1,
     DOMMouseScroll: 1,
     drag: 1,
     dragstart: 1,
@@ -91,9 +93,9 @@ Y_Node.DOM_EVENTS = {
     dragleave: 1,
     dragend: 1,
     drop: 1,
-    dblclick: 1,
     error: 1,
     focus: 1,
+    identifier: 1, // iphone
     key: 1,
     keydown: 1,
     keypress: 1,
@@ -101,20 +103,24 @@ Y_Node.DOM_EVENTS = {
     load: 1,
     message: 1,
     mousedown: 1,
+    mouseenter: 1,
+    mouseleave: 1,
     mousemove: 1,
+    mousemultiwheel: 1,
     mouseout: 1, 
     mouseover: 1, 
     mouseup: 1,
-    mousemultiwheel: 1,
     mousewheel: 1,
-    submit: 1,
-    mouseenter: 1,
-    mouseleave: 1,
-    scroll: 1,
     reset: 1,
     resize: 1,
+    rotation: 1, // iphone
+    scale: 1, // iphone
     select: 1,
+    submit: 1,
+    scroll: 1,
+    targetTouches: 1, // iphone
     textInput: 1,
+    touches: 1, // iphone
     unload: 1
 };
 
@@ -2094,5 +2100,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], skinnable:false});
 
