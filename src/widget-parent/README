@@ -1,0 +1,16 @@
+Development Master
+
+*   "childAdded" event renamed to "addChild"
+*   "childRemoved" event renamed to "removeChild"
+*   Now augmented with Y.ArrayList
+*   "selection" attribute now returns an Y.ArrayList or Widget
+*   Removed "children" attribute since that functionality is provided 
+    by Y.ArrayList
+	-  Can retrieve # of child via the size() method
+	-  Can iterate children via this.each()
+	-  Can retrieve a individual child via the item() method
+* add method will always return a Y.ArrayList instance for easy chaining
+* removeAll method will always return a Y.ArrayList instance for easy chaining
+* added selectAll() and deselectAll() methods
+* widget UI will render children added/inserted children after widget is rendered
+* widget UI will update when a child is removed

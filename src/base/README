@@ -1,5 +1,7 @@
 Development Master
 
+* "init" and "destroy" events are now publish with the defaultTargetOnly property set to true
+
 * Added support for MyClass.EVENT_PREFIX to allow developers
   to define their own event prefix
 

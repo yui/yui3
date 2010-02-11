@@ -600,12 +600,15 @@
 <span class="cm">     * @return {Object} The document for the given element or the default document. </span>
 <span class="cm">     */</span>
     <span class="nx">_getDoc</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">element</span> <span class="o">=</span> <span class="nx">element</span> <span class="o">||</span> <span class="p">{};</span>
-
-        <span class="k">return</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">NODE_TYPE</span><span class="p">]</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="c1">// element === document</span>
+        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">NODE_TYPE</span><span class="p">]</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="c1">// element === document</span>
                 <span class="nx">element</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">]</span> <span class="o">||</span> <span class="c1">// element === DOM node</span>
                 <span class="nx">element</span><span class="p">.</span><span class="nb">document</span> <span class="o">||</span> <span class="c1">// element === window</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span> <span class="c1">// default</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">doc</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
