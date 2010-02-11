@@ -10,14 +10,15 @@
  * A basic Overlay Widget, which can be positioned based on Page XY co-ordinates and is stackable (z-index support).
  * It also provides alignment and centering support and uses a standard module format for it's content, with header,
  * body and footer section support.
- * 
+ *
  * @class Overlay
  * @constructor
  * @extends Widget
+ * @uses WidgetStdMod
  * @uses WidgetPosition
  * @uses WidgetStack
- * @uses WidgetPositionExt
- * @uses WidgetStdMod
+ * @uses WidgetPositionAlign
+ * @uses WidgetPositionConstrain
  * @param {Object} object The user configuration for the instance.
  */
-Y.Overlay = Y.Base.create("overlay", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionExt]);
+Y.Overlay = Y.Base.create("overlay", Y.Widget, [Y.WidgetStdMod, Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionAlign, Y.WidgetPositionConstrain]);
