@@ -77,6 +77,15 @@ echo($str);
 ?>
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../dd/js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../dd/js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../dd/js/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../dd/js/drag.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../dd/js/drop.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../dd/js/proxy.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../dd/js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../dd/js/dd-plugin.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../dd/js/dd-drop-plugin.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
 
@@ -180,7 +189,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         designMode: true,
         type: 'foo',
         content: Y.one('#stub').get('innerHTML'),
-        use: ['node','selector-css3', 'dd']
+        use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
     });
 
     iframe.after('ready', function() {
@@ -194,6 +203,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         out('frame1: ' + Y.all('strong'));
 
         if (Y.DD) {
+            //Y.one('strong').setStyle('position', 'relative').setXY([50, 50]);
             var dd = new Y.DD.Drag({ node: 'strong' });
         }
 

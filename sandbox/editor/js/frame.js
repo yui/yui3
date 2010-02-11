@@ -59,6 +59,9 @@ YUI.add('frame', function(Y) {
             }
             if (this.get('type') === 'window') {
                 win = window.open(this.get('src'), title, this.get('windowFeatures'));
+                win.onload = Y.bind(function() {
+                    this._onContentReady({ target: Y.one(this._iframe._node.document) });
+                }, this);
                 doc = win.document;
                 this._iframe = Y.one(win);
             }
@@ -176,22 +179,26 @@ YUI.add('frame', function(Y) {
         * @description Called once the content is available in the frame/window and calls the final use call
         * on the internal instance so that the modules are loaded properly.
         */
+        _ready: null,
         _onContentReady: function(e) {
-            var inst = this.getInstance(),
-                args = Y.clone(this.get('use'));
+            if (!this._ready) {
+                this._ready = true;
+                var inst = this.getInstance(),
+                    args = Y.clone(this.get('use'));
 
-            Y.log('On available for body of iframe', 'info', 'frame');
-            if (e) {
-                inst.config.doc = Y.Node.getDOMNode(e.target);
+                Y.log('On available for body of iframe', 'info', 'frame');
+                if (e) {
+                    inst.config.doc = Y.Node.getDOMNode(e.target);
+                }
+                args.push(Y.bind(function() {
+                    Y.log('Callback from final internal use call', 'info', 'frame');
+                    this.fire('ready');
+                }, this));
+                Y.log('Calling use on internal instance: ', 'info', 'frame');
+                inst.use.apply(inst, args);
+
+                inst.one('doc').set('title', this.get('windowTitle')).get('documentElement').addClass('yui-js-enabled');
             }
-            args.push(Y.bind(function() {
-                Y.log('Callback from final internal use call', 'info', 'frame');
-                this.fire('ready');
-            }, this));
-            Y.log('Calling use on internal instance: ', 'info', 'frame');
-            inst.use.apply(inst, args);
-
-            inst.one('doc').set('title', this.get('windowTitle')).get('documentElement').addClass('yui-js-enabled');
         },
         /**
         * @private
