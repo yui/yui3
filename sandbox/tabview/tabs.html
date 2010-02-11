@@ -42,9 +42,10 @@ YUI({filter: 'raw'}).use('tablist', function(Y) {
         }]
     });
     tablist.render('#demo');
-    tablist.select(2);
+    tablist.selectChild(2);
     tablist.get('selection').previous().set('selected', 1);
 
+/*
     var tablist2 = new Y.TabList({
         children: [{
             label: 'tab 1',
@@ -56,6 +57,7 @@ YUI({filter: 'raw'}).use('tablist', function(Y) {
     });
     tablist2.render('#demo2');
     console.log(tablist2.get('contentBox'));
+*/
 });
 
 </script>
