@@ -947,7 +947,13 @@ Y.Subscriber = function(fn, context, args) {
      * @property events
      * @type {EventTarget}
      */
-    this.events = null;
+    // this.events = null;
+
+    /**
+     * This listener only reacts to the event once
+     * @property once
+     */
+    // this.once = false;
     
 };
 
@@ -970,6 +976,10 @@ Y.Subscriber.prototype = {
                 } else {
                     ret = this.fn.call(c);
                 }
+        }
+
+        if (this.once) {
+            ce._delete(this);
         }
 
         return ret;
@@ -1146,6 +1156,21 @@ var L = Y.Lang,
 
 
 ET.prototype = {
+
+    /**
+     * Listen to a custom event hosted by this object one time.  
+     * This is the equivalent to <code>on</code> except the
+     * listener is immediatelly detached when it is executed.
+     * @method once
+     * @param type    {string}   The type of the event
+     * @param fn {Function} The callback
+     * @return the event target or a detach handle per 'chain' config
+     */
+    once: function() {
+        var handle = this.on.apply(this, arguments);
+        handle.sub.once = true;
+        return handle;
+    },
 
     /**
      * Subscribe to a custom event hosted by this object
@@ -1545,22 +1570,15 @@ ET.prototype = {
 
         // this event has not been published or subscribed to
         if (!ce) {
-            
             if (this._yuievt.hasTargets) {
                 return this.bubble({ type: t }, args, this);
             }
 
             // otherwise there is nothing to be done
             ret = true;
-
         } else {
-
             ce.sibling = ce2;
-
             ret = ce.fire.apply(ce, args);
-
-            // clear target for next fire()
-            ce.target = null;
         }
 
         return (this._yuievt.chain) ? this : ret;
@@ -1754,6 +1772,26 @@ Y.Global = YUI.Env.globalEvents;
  * @for YUI
  */
 
+ /**
+  * Listen for an event one time.  Equivalent to <code>on</code>, except that
+  * the listener is immediately detached when executed.
+  * @see on
+  * @method once
+  * @param type** event type (this parameter does not apply for function events)
+  * @param fn the callback
+  * @param target** a descriptor for the target (applies to custom events only).
+  * For function events, this is the object that contains the function to
+  * execute.
+  * @param extra** 0..n Extra information a particular event may need.  These
+  * will be documented with the event.  In the case of function events, this
+  * is the name of the function to execute on the host.  In the case of
+  * delegate listeners, this is the event delegation specification.
+  * @param context optionally change the value of 'this' in the callback
+  * @param args* 0..n additional arguments to pass to the callback.
+  * @return the event target or a detach handle per 'chain' config
+  * @for YUI
+  */
+
 /**
  * after() is a unified interface for subscribing to
  * most events exposed by YUI.  This includes custom events,
@@ -1911,6 +1949,7 @@ CEProto.fireComplex = function(args) {
            type: self.type,
            // defaultFnQueue: new Y.Queue(),
            afterQueue: new Y.Queue(),
+           defaultTargetOnly: self.defaultTargetOnly,
            queue: []
         };
         es = Y.Env._eventstack;
@@ -1984,7 +2023,8 @@ CEProto.fireComplex = function(args) {
     // execute the default behavior if not prevented
     // console.log('defaultTargetOnly: ' + self.defaultTargetOnly);
     // console.log('host === target: ' + (host === ef.target));
-    if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly) || host === ef.target)) {
+    // if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly) || host === es.id === self.id)) {
+    if (self.defaultFn && !self.prevented && ((!self.defaultTargetOnly && !es.defaultTargetOnly) || host === ef.target)) {
 
         // if (es.id === self.id) {
         //     self.defaultFn.apply(host, args);
@@ -2027,6 +2067,8 @@ CEProto.fireComplex = function(args) {
             });
         }
     }
+
+    self.target = null;
 
     // es.stopped = 0;
     // es.prevented = 0;
@@ -2175,6 +2217,15 @@ ETProto.addTarget = function(o) {
 };
 
 /**
+ * Returns an array of bubble targets for this object.
+ * @method getTargets
+ * @return EventTarget[]
+ */
+ETProto.getTargets = function() {
+    return Y.Object.values(this._yuievt.targets);
+};
+
+/**
  * Removes a bubble target
  * @method removeTarget
  * @param o {EventTarget} the target to remove
@@ -2223,6 +2274,7 @@ ETProto.bubble = function(evt, args, target) {
 
                     // set the original target to that the target payload on the
                     // facade is correct.
+                    ce.target = originalTarget;
                     ce.originalTarget = originalTarget;
                     ce.currentTarget = t;
                     bc = ce.broadcast;

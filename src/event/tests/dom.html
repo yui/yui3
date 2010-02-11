@@ -7,7 +7,7 @@
     <div id="doc">
 
         <div id="clickcontainer">
-            <p id="clicker1" class="clickers">click1</p>
+            <p id="clicker1" class="clickers"><a id='clicka'>click1</click></p>
             <p id="clicker2" class="clickers">click2</p>
         </div>
 
@@ -375,7 +375,48 @@
                         Y.Event.simulate(document.getElementById('notthereyet'), 'click');
                         Y.Assert.areEqual(0, avail, "lazy detacher didn't work.");
                     }, 300);
+                },
+
+                test_purge: function() {
+                    var a = 0,
+                        b = 0
+                        c = 0,
+                        d = 0;
+
+                    Y.on('click', function(e) {
+                        a++;
+                    }, '#clickcontainer');
+
+                    Y.on('click', function(e) {
+                        b++;
+                    }, '#clicker1');
+
+                    Y.on('click', function(e) {
+                        c++;
+                    }, '#clicker2');
+
+                    Y.on('click', function(e) {
+                        d++;
+                    }, '#clicka');
+
+                    Y.Event.simulate(document.getElementById('clicka'), 'click');
+                    Y.Assert.areEqual(1, a);
+                    Y.Assert.areEqual(1, b);
+                    Y.Assert.areEqual(0, c);
+                    Y.Assert.areEqual(1, d);
+
+                    Y.Event.purgeElement('#clickcontainer', true, 'click');
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+                    Y.Event.simulate(document.getElementById('clickcontainer'), 'click');
+                    Y.Event.simulate(document.getElementById('clicka'), 'click');
+                    Y.Assert.areEqual(1, a);
+                    Y.Assert.areEqual(1, b);
+                    Y.Assert.areEqual(0, c);
+                    Y.Assert.areEqual(1, d);
                 }
+ 
                 
             })); 
             

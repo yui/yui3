@@ -205,6 +205,7 @@
             this.publish(INIT, {
                 queuable:false,
                 fireOnce:true,
+                defaultTargetOnly:true,
                 defaultFn:this._defInitFn
             });
 
@@ -286,6 +287,7 @@
             this.publish(DESTROY, {
                 queuable:false,
                 fireOnce:true,
+                defaultTargetOnly:true,
                 defaultFn: this._defDestroyFn
             });
             this.fire(DESTROY);

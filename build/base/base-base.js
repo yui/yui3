@@ -205,6 +205,7 @@ YUI.add('base-base', function(Y) {
             this.publish(INIT, {
                 queuable:false,
                 fireOnce:true,
+                defaultTargetOnly:true,
                 defaultFn:this._defInitFn
             });
 
@@ -285,6 +286,7 @@ YUI.add('base-base', function(Y) {
             this.publish(DESTROY, {
                 queuable:false,
                 fireOnce:true,
+                defaultTargetOnly:true,
                 defaultFn: this._defDestroyFn
             });
             this.fire(DESTROY);

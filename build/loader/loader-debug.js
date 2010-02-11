@@ -661,7 +661,7 @@ var NOT_FOUND = {},
                 }
             },
             plugins: {
-                'widget-parent': { },
+                'widget-parent': { requires: ['arraylist'] },
                 'widget-child': { },                
                 'widget-position': { },
                 'widget-position-ext': {

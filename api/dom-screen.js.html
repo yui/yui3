@@ -126,8 +126,8 @@
 <span class="cm">     * @method docScrollX</span>
 <span class="cm">     * @return {Number} The current amount the screen is scrolled horizontally.</span>
 <span class="cm">     */</span>
-    <span class="nx">docScrollX</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="nx">docScrollX</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span> <span class="c1">// perf optimization</span>
         <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">doc</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">].</span><span class="nx">scrollLeft</span><span class="p">,</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">scrollLeft</span><span class="p">);</span>
     <span class="p">},</span>
 
@@ -136,8 +136,8 @@
 <span class="cm">     * @method docScrollY</span>
 <span class="cm">     * @return {Number} The current amount the screen is scrolled vertically.</span>
 <span class="cm">     */</span>
-    <span class="nx">docScrollY</span><span class="o">:</span>  <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="nx">docScrollY</span><span class="o">:</span>  <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span> <span class="c1">// perf optimization</span>
         <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="nx">doc</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">].</span><span class="nx">scrollTop</span><span class="p">,</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">);</span>
     <span class="p">},</span>
 
@@ -165,10 +165,10 @@
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="nx">scrollLeft</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
-                        <span class="nx">scrollTop</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">;</span>
+                        <span class="nx">scrollLeft</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+                        <span class="nx">scrollTop</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
                         <span class="nx">box</span> <span class="o">=</span> <span class="nx">node</span><span class="p">[</span><span class="nx">GET_BOUNDING_CLIENT_RECT</span><span class="p">]();</span>
-                        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
                         <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">box</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">box</span><span class="p">.</span><span class="nx">top</span><span class="p">];</span>
 
                             <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
@@ -213,6 +213,7 @@
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// manually calculate by crawling up offsetParents</span>
                 <span class="c1">//Calculate the Top and Left border sizes (assumes pixels)</span>
                 <span class="kd">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                    <span class="nx">doc</span><span class="p">,</span>
                     <span class="nx">parentNode</span><span class="p">,</span>
                     <span class="nx">bCheck</span><span class="p">,</span>
                     <span class="nx">scrollTop</span><span class="p">,</span>
@@ -221,6 +222,7 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">inDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">))</span> <span class="p">{</span>
                         <span class="nx">xy</span> <span class="o">=</span> <span class="p">[</span><span class="nx">node</span><span class="p">.</span><span class="nx">offsetLeft</span><span class="p">,</span> <span class="nx">node</span><span class="p">.</span><span class="nx">offsetTop</span><span class="p">];</span>
+                        <span class="nx">doc</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">;</span>
                         <span class="nx">parentNode</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
                         <span class="c1">// TODO: refactor with !! or just falsey</span>
                         <span class="nx">bCheck</span> <span class="o">=</span> <span class="p">((</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">webkit</span> <span class="o">&gt;</span> <span class="mi">519</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">);</span>
@@ -253,13 +255,13 @@
                                     <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="nx">scrollTop</span><span class="p">;</span>
                                 <span class="p">}</span>
                             <span class="p">}</span>
-                            <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
-                            <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                            <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+                            <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
 
                         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                             <span class="c1">//Fix FIXED position -- add scrollbars</span>
-                            <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
-                            <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                            <span class="nx">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollX</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
+                            <span class="nx">xy</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">docScrollY</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">);</span>
                         <span class="p">}</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                         <span class="nx">xy</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getOffset</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
@@ -424,9 +426,9 @@
         <span class="k">return</span> <span class="nx">xy2</span><span class="p">;</span>
     <span class="p">},</span>
 
-    <span class="nx">_getWinSize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(),</span>
-            <span class="nx">win</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">defaultView</span> <span class="o">||</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">parentWindow</span><span class="p">,</span>
+    <span class="nx">_getWinSize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">doc</span>  <span class="o">=</span> <span class="nx">doc</span> <span class="o">||</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">win</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">defaultView</span> <span class="o">||</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">parentWindow</span><span class="p">,</span>
             <span class="nx">mode</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">COMPAT_MODE</span><span class="p">],</span>
             <span class="nx">h</span> <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">innerHeight</span><span class="p">,</span>
             <span class="nx">w</span> <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">innerWidth</span><span class="p">,</span>
@@ -439,11 +441,11 @@
             <span class="nx">h</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">clientHeight</span><span class="p">;</span>
             <span class="nx">w</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">clientWidth</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="p">{</span> <span class="nx">height</span><span class="o">:</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">width</span><span class="o">:</span> <span class="nx">w</span> <span class="p">};</span> 
+        <span class="k">return</span> <span class="p">{</span> <span class="nx">height</span><span class="o">:</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">width</span><span class="o">:</span> <span class="nx">w</span> <span class="p">};</span>
     <span class="p">},</span>
 
     <span class="nx">_getDocSize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(),</span>
+        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
             <span class="nx">root</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">[</span><span class="nx">COMPAT_MODE</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;CSS1Compat&#39;</span><span class="p">)</span> <span class="p">{</span>
@@ -453,6 +455,7 @@
         <span class="k">return</span> <span class="p">{</span> <span class="nx">height</span><span class="o">:</span> <span class="nx">root</span><span class="p">.</span><span class="nx">scrollHeight</span><span class="p">,</span> <span class="nx">width</span><span class="o">:</span> <span class="nx">root</span><span class="p">.</span><span class="nx">scrollWidth</span> <span class="p">};</span>
     <span class="p">}</span>
 <span class="p">});</span>
+
 <span class="p">})(</span><span class="nx">Y</span><span class="p">);</span>
 </pre></div>
 

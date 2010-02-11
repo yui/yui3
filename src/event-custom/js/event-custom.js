@@ -652,7 +652,13 @@ Y.Subscriber = function(fn, context, args) {
      * @property events
      * @type {EventTarget}
      */
-    this.events = null;
+    // this.events = null;
+
+    /**
+     * This listener only reacts to the event once
+     * @property once
+     */
+    // this.once = false;
     
 };
 
@@ -675,6 +681,10 @@ Y.Subscriber.prototype = {
                 } else {
                     ret = this.fn.call(c);
                 }
+        }
+
+        if (this.once) {
+            ce._delete(this);
         }
 
         return ret;
