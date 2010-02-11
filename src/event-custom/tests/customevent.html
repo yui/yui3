@@ -847,6 +847,24 @@ o.after('e', f1).on('foo:e', f2).on('foo:e2', f3).on('detach, e', f4).detach('de
                 ret = b.fire('a:foo', {}, b);
 
                 Y.Assert.areEqual(0, count);
+            },
+
+            test_listen_once: function() {
+
+                var count = 0;
+
+                Y.once('foo', function(e) {
+                    count++;
+                });
+
+                Y.fire('foo', 'bar');
+
+                Y.Assert.areEqual(1, count);
+
+                Y.fire('foo', 'bar');
+
+                Y.Assert.areEqual(1, count);
+
             }
         });
         
