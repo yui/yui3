@@ -101,7 +101,7 @@ YUI.add('frame', function(Y) {
                 node = this._instance.one('win');
 
             //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
-            if (this.get('type') == 'iframe')) {
+            if (this.get('type') == 'iframe') {
                 e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
                 e.frameY = xy[1] + e.pageY - node.get('scrollTop');
             }
