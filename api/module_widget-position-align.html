@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: align-plugin   (YUI Library)</title>
+	<title>API: widget-position-align   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>align-plugin&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>widget-position-align&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_align-plugin.html" title="align-plugin">align-plugin</a>
+            &gt; <a href="./module_widget-position-align.html" title="widget-position-align">widget-position-align</a>
                 
                 
         <form onsubmit="return false">
@@ -44,14 +44,15 @@
             </form>
 
                    
-                    <h3>Module: align-plugin
+                    <h3>Module: widget-position-align
                     
 
 
                     </h3>
                     <div class="description summary">
-                        Provides advanced positioning support for Node via a Plugin
-for centering and alignment.
+                        Provides extended/advanced XY positioning support for Widgets, through an extension.
+It builds on top of the widget-position module, to provide alignmentment and centering support.
+Future releases aim to add constrained and fixed positioning support.
                     </div>
 
 
@@ -61,11 +62,11 @@ for centering and alignment.
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Node plugin which can be used to align a node with another node,\nregion, or the viewport.", "guessedname": "Plugin.Align", "name": "Plugin.Align"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Widget extension, which can be used to add extended XY positioning support to the base Widget class,\nthrough the <a href=\"Base.html#method_build\">Base.build</a> method. This extension requires that \nthe WidgetPosition extension be added to the Widget (before WidgetPositionAlign, if part of the same \nextension list passed to Base.build).", "guessedname": "WidgetPositionAlign", "name": "WidgetPositionAlign"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
-                                    <li><a href="Plugin.Align.html" title="Plugin.Align" id="class_0">Plugin.Align</a></li>
+                                    <li><a href="WidgetPositionAlign.html" title="WidgetPositionAlign" id="class_0">WidgetPositionAlign</a></li>
                                 </ul>
                             </div>
                     </div>
@@ -82,7 +83,7 @@ for centering and alignment.
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-                                <li class="selected"><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
+                                <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
                                 <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
@@ -125,7 +126,7 @@ for centering and alignment.
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class="selected"><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
@@ -136,16 +137,14 @@ for centering and alignment.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Plugin.Align.html" title="Plugin.Align">Plugin.Align</a></li>
+                                <li class=""><a href="WidgetPositionAlign.html" title="WidgetPositionAlign">WidgetPositionAlign</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="align-plugin.js.html" title="align-plugin.js">align-plugin.js</a></li>
-                                <li class=""><a href="node-class.js.html" title="node-class.js">node-class.js</a></li>
-                                <li class=""><a href="node-event-delegate.js.html" title="node-event-delegate.js">node-event-delegate.js</a></li>
+                                <li class=""><a href="Widget-PositionAlign.js.html" title="Widget-PositionAlign.js">Widget-PositionAlign.js</a></li>
                         </ul>
                     </div>
 
@@ -163,7 +162,7 @@ for centering and alignment.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.Align", "name": "center", "url": "Plugin.Align.html#method_center", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "destroy", "url": "Plugin.Align.html#method_destroy", "type": "method"}, {"access": "", "host": "Plugin.Align", "name": "to", "url": "Plugin.Align.html#method_to", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPositionAlign", "name": "_afterAlignChange", "url": "WidgetPositionAlign.html#method__afterAlignChange", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "align", "url": "WidgetPositionAlign.html#method_align", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "align", "url": "WidgetPositionAlign.html#config_align", "type": "config"}, {"access": "", "host": "WidgetPositionAlign", "name": "alignChange", "url": "WidgetPositionAlign.html#event_alignChange", "type": "event"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_bindUIStack", "url": "WidgetPositionAlign.html#method__bindUIStack", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "centered", "url": "WidgetPositionAlign.html#method_centered", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "centered", "url": "WidgetPositionAlign.html#config_centered", "type": "config"}, {"access": "", "host": "WidgetPositionAlign", "name": "centeredChange", "url": "WidgetPositionAlign.html#event_centeredChange", "type": "event"}, {"access": "private", "host": "WidgetPositionAlign", "name": "_doAlign", "url": "WidgetPositionAlign.html#method__doAlign", "type": "method"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_setAlignCenter", "url": "WidgetPositionAlign.html#method__setAlignCenter", "type": "method"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_syncUIPosAlgin", "url": "WidgetPositionAlign.html#method__syncUIPosAlgin", "type": "method"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_uiSetAlign", "url": "WidgetPositionAlign.html#method__uiSetAlign", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.ATTRS", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.ATTRS", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.BC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.BC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.BL", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.BL", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.BR", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.BR", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.CC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.CC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.LC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.LC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.RC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.RC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.TC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.TC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.TL", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.TL", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.TR", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.TR", "type": "property"}];
 </script>
 </body>
 </html>

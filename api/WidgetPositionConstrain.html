@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: dataschema  DataSchema.XML   (YUI Library)</title>
+	<title>API: widget-position-constrain  WidgetPositionConstrain   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,10 +16,10 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dataschema&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>widget-position-constrain&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_dataschema.html" title="dataschema">dataschema</a>
-                 &gt; DataSchema.XML 
+            &gt; <a href="./module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a>
+                 &gt; WidgetPositionConstrain 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -46,11 +46,10 @@
                     <h2>
                         
 
-                        <code>static</code>
                         
-                            Class <b property="yui:name">DataSchema.XML</b>
+                        
+                            Class <b property="yui:name">WidgetPositionConstrain</b>
                         <span class="extends">
-                           - extends <a href="DataSchema.Base.html" title="DataSchema.Base">DataSchema.Base</a>
                         </span>
 
                     </h2>
@@ -60,11 +59,35 @@
   
 
                     <div class="summary description" property="yui:description">
-                        XML subclass for the DataSchema Utility.
+                        Widget extension, which can be used to add extended XY positioning support to the base Widget class,
+through the <a href="Base.html#method_build">Base.build</a> method. This extension requires that 
+the WidgetPosition extension be added to the Widget (before WidgetPositionConstrain, if part of the same 
+extension list passed to Base.build).
                     </div>
 
                     
                     <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_WidgetPositionConstrain.ATTRS">
+                                    <h4><a name="property_WidgetPositionConstrain.ATTRS" property="yui:name">WidgetPositionConstrain.ATTRS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Static property used to define the default attribute 
+configuration introduced by WidgetPositionConstrain.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -72,167 +95,28 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="protected" rel="yui:method" resource="#method__getLocationValue">
+                                    <div class="protected" rel="yui:method" resource="#method__afterAlignChange">
                                     <h4>
-                                        <a name="method__getLocationValue">_getLocationValue</a></h4>
+                                        <a name="method__afterAlignChange">_afterAlignChange</a></h4>
                                     <div class="detail" >
                                         <code>
                                          protected 
-                                         static 
                                         
-                                        Object
-                                            <strong property="yui:name">_getLocationValue</strong>
-                                           (
-                                                
-                                                        
-                                                         field
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Get an XPath-specified value for a given field from an XML node or document.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">field</span>
-                                                        &lt;<span property="yui:type">String | Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Field definition.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  XML node or document to search within.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Data value or null.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__getXPathResult">
-                                    <h4>
-                                        <a name="method__getXPathResult">_getXPathResult</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                         static 
-                                        
-                                        Object
-                                            <strong property="yui:name">_getXPathResult</strong>
-                                           (
-                                                
-                                                        
-                                                         locator
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                                        , 
-                                                         xmldoc
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fetches the XPath-specified result for a given location in an XML node or document.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">locator</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  The XPath location.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  XML node or document to search within.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">xmldoc</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  XML document to resolve namespace.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Data collection or null.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__parseField">
-                                    <h4>
-                                        <a name="method__parseField">_parseField</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                         static 
                                         
                                         void
-                                            <strong property="yui:name">_parseField</strong>
+                                            <strong property="yui:name">_afterAlignChange</strong>
                                            (
                                                 
                                                         
-                                                         field
-                                                    
-                                                
-                                                        , 
-                                                         result
-                                                    
-                                                
-                                                        , 
-                                                         context
+                                                         e
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Schema-parsed result field.
+                                            Default attribute change listener for the align attribute, responsible
+for updating the UI, in response to attribute changes.
                                         </div>
 
                                         <div class="description">
@@ -240,22 +124,10 @@
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">field</span>
-                                                        &lt;<span property="yui:type">String | Object</span>&gt;
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Required. Field definition.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">result</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Required. Schema parsed data object.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Required. XML node or document to search within.</span>
+                                                        <span property="yui:description"> The event facade for the attribute change</span>
                                                         </dd>
                                                 </dl>
 
@@ -268,31 +140,27 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__parseMeta">
+                                    <div class="" rel="yui:method" resource="#method__afterConstrainChange">
                                     <h4>
-                                        <a name="method__parseMeta">_parseMeta</a></h4>
+                                        <a name="method__afterConstrainChange">_afterConstrainChange</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         protected 
-                                         static 
                                         
-                                        Object
-                                            <strong property="yui:name">_parseMeta</strong>
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterConstrainChange</strong>
                                            (
                                                 
                                                         
-                                                         xmldoc_in
-                                                    
-                                                
-                                                        , 
-                                                         data_out
+                                                         e
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Parses results data according to schema
+                                            
                                         </div>
 
                                         <div class="description">
@@ -300,26 +168,13 @@
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">xmldoc_in</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  XML document parse.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">data_out</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  In-progress schema-parsed data to update.</span>
+                                                        <span property="yui:description"></span>
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Schema-parsed data.</dd>
-                                                </dl>
 
 
              
@@ -329,31 +184,74 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__parseResult">
+                                    <div class="protected" rel="yui:method" resource="#method__bindUIPosConstrained">
                                     <h4>
-                                        <a name="method__parseResult">_parseResult</a></h4>
+                                        <a name="method__bindUIPosConstrained">_bindUIPosConstrained</a></h4>
                                     <div class="detail" >
                                         <code>
                                          protected 
-                                         static 
                                         
-                                        Object
-                                            <strong property="yui:name">_parseResult</strong>
+                                        
+                                        void
+                                            <strong property="yui:name">_bindUIPosConstrained</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Binds event listeners responsible for updating the UI state in response to 
+Widget extended positioning related state changes.
+<p>
+This method is invoked after bindUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method__constrain">
+                                    <h4>
+                                        <a name="method__constrain">_constrain</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_constrain</strong>
                                            (
                                                 
                                                         
-                                                         fields
+                                                         val
                                                     
                                                 
                                                         , 
-                                                         context
+                                                         axis
+                                                    
+                                                
+                                                        , 
+                                                         nodeRegion
+                                                    
+                                                
+                                                        , 
+                                                         constrainingRegion
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Schema-parsed result to add to results list.
+                                            
                                         </div>
 
                                         <div class="description">
@@ -361,157 +259,351 @@
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">fields</span>
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">axis</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">nodeRegion</span>
+                                                        &lt;<span property="yui:type">Region</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">constrainingRegion</span>
+                                                        &lt;<span property="yui:type">Region</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method__getRegion">
+                                    <h4>
+                                        <a name="method__getRegion">_getRegion</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_getRegion</strong>
+                                           (
+                                                
+                                                        
+                                                         (Optional)
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">(Optional)</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> node</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method__preventOverlap">
+                                    <h4>
+                                        <a name="method__preventOverlap">_preventOverlap</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_preventOverlap</strong>
+                                           (
+                                                
+                                                        
+                                                         val
+                                                    
+                                                
+                                                        , 
+                                                         axis
+                                                    
+                                                
+                                                        , 
+                                                         nodeRegion
+                                                    
+                                                
+                                                        , 
+                                                         constrainingRegion
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">Number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">axis</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">nodeRegion</span>
+                                                        &lt;<span property="yui:type">Region</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">constrainingRegion</span>
+                                                        &lt;<span property="yui:type">Region</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method__setConstrain">
+                                    <h4>
+                                        <a name="method__setConstrain">_setConstrain</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setConstrain</strong>
+                                           (
+                                                
+                                                        
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_constrain">
+                                    <h4>
+                                        <a name="method_constrain">constrain</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">constrain</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                                        , 
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">xy</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_enable or disable constraints listeners">
+                                    <h4>
+                                        <a name="method_enable or disable constraints listeners">enable or disable constraints listeners</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">enable or disable constraints listeners</strong>
+                                           (
+                                                
+                                                        
+                                                         enable
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">enable</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getConstrainedXY">
+                                    <h4>
+                                        <a name="method_getConstrainedXY">getConstrainedXY</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Array
+                                            <strong property="yui:name">getConstrainedXY</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                                        , 
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">xy</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Required. A collection of field definition.</span>
+                                                        <span property="yui:description"></span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node | boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Required. XML node or document to search within.</span>
+                                                        <span property="yui:description"></span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                            Object
+                                                            Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Schema-parsed data.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__parseResults">
-                                    <h4>
-                                        <a name="method__parseResults">_parseResults</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                         static 
-                                        
-                                        Object
-                                            <strong property="yui:name">_parseResults</strong>
-                                           (
-                                                
-                                                        
-                                                         schema
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                                        , 
-                                                         data_out
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Schema-parsed list of results from full data
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">schema</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Schema to parse against.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">context</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  XML node document parse.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">data_out</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  In-progress schema-parsed data to update.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Schema-parsed data.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_apply">
-                                    <h4>
-                                        <a name="method_apply">apply</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        Object
-                                            <strong property="yui:name">apply</strong>
-                                           (
-                                                
-                                                        
-                                                         schema
-                                                    
-                                                
-                                                        , 
-                                                         data
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Applies a given schema to given XML data.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">schema</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Schema to apply.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">data</span>
-                                                        &lt;<span property="yui:type">XMLDoc</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  XML document.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Schema-parsed data.</dd>
+                                                    <dd property="yui:returnInfo">The constrained XY values</dd>
                                                 </dl>
 
 
@@ -525,18 +617,6 @@
                             </div>
                         </div>
 
-                        <div rel="yui:inheritance">                    
-                            <div class="section field inheritance" rel="yui:superclass"  resource="DataSchema.Base.html">
-                                <h4>Methods inherited from <a href="DataSchema.Base.html" property="yui:name" title="DataSchema.Base">DataSchema.Base</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="DataSchema.Base.html#method_parse">                                        
-                                            <a class="" href="DataSchema.Base.html#method_parse" property="yui:name" title="parse">parse</a>
-                                            </span>
-                                    </code>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div rel="yui:events" resource="#events">
@@ -567,7 +647,7 @@
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
-                                <li class="selected"><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
+                                <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
                                 <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
@@ -600,7 +680,7 @@
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
-                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
+                                <li class="selected"><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
@@ -610,36 +690,37 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="DataSchema.Array.html" title="DataSchema.Array">DataSchema.Array</a></li>
-                                <li class=""><a href="DataSchema.Base.html" title="DataSchema.Base">DataSchema.Base</a></li>
-                                <li class=""><a href="DataSchema.JSON.html" title="DataSchema.JSON">DataSchema.JSON</a></li>
-                                <li class=""><a href="DataSchema.Text.html" title="DataSchema.Text">DataSchema.Text</a></li>
-                                <li class="selected"><a href="DataSchema.XML.html" title="DataSchema.XML">DataSchema.XML</a></li>
+                                <li class="selected"><a href="WidgetPositionConstrain.html" title="WidgetPositionConstrain">WidgetPositionConstrain</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="dataschema-array.js.html" title="dataschema-array.js">dataschema-array.js</a></li>
-                                <li class=""><a href="dataschema-base.js.html" title="dataschema-base.js">dataschema-base.js</a></li>
-                                <li class=""><a href="dataschema-json.js.html" title="dataschema-json.js">dataschema-json.js</a></li>
-                                <li class=""><a href="dataschema-text.js.html" title="dataschema-text.js">dataschema-text.js</a></li>
-                                <li class=""><a href="dataschema-xml.js.html" title="dataschema-xml.js">dataschema-xml.js</a></li>
+                                <li class=""><a href="Widget-PositionConstrain.js.html" title="Widget-PositionConstrain.js">Widget-PositionConstrain.js</a></li>
                         </ul>
                     </div>
 
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_WidgetPositionConstrain.ATTRS" title="WidgetPositionConstrain.ATTRS">WidgetPositionConstrain.ATTRS</a></li>
+                        </ul>
+                    </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="protected"><a href="#method__getLocationValue" title="_getLocationValue">_getLocationValue</a></li>
-                                <li class="protected"><a href="#method__getXPathResult" title="_getXPathResult">_getXPathResult</a></li>
-                                <li class="protected"><a href="#method__parseField" title="_parseField">_parseField</a></li>
-                                <li class="protected"><a href="#method__parseMeta" title="_parseMeta">_parseMeta</a></li>
-                                <li class="protected"><a href="#method__parseResult" title="_parseResult">_parseResult</a></li>
-                                <li class="protected"><a href="#method__parseResults" title="_parseResults">_parseResults</a></li>
-                                <li class=""><a href="#method_apply" title="apply">apply</a></li>
+                                <li class="protected"><a href="#method__afterAlignChange" title="_afterAlignChange">_afterAlignChange</a></li>
+                                <li class=""><a href="#method__afterConstrainChange" title="_afterConstrainChange">_afterConstrainChange</a></li>
+                                <li class="protected"><a href="#method__bindUIPosConstrained" title="_bindUIPosConstrained">_bindUIPosConstrained</a></li>
+                                <li class=""><a href="#method__constrain" title="_constrain">_constrain</a></li>
+                                <li class=""><a href="#method__getRegion" title="_getRegion">_getRegion</a></li>
+                                <li class=""><a href="#method__preventOverlap" title="_preventOverlap">_preventOverlap</a></li>
+                                <li class=""><a href="#method__setConstrain" title="_setConstrain">_setConstrain</a></li>
+                                <li class=""><a href="#method_constrain" title="constrain">constrain</a></li>
+                                <li class=""><a href="#method_enable or disable constraints listeners" title="enable or disable constraints listeners">enable or disable constraints listeners</a></li>
+                                <li class=""><a href="#method_getConstrainedXY" title="getConstrainedXY">getConstrainedXY</a></li>
                         </ul>
                     </div>
 
@@ -655,7 +736,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "DataSchema.Array", "name": "apply", "url": "DataSchema.Array.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "apply", "url": "DataSchema.Base.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "apply", "url": "DataSchema.JSON.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.Text", "name": "apply", "url": "DataSchema.Text.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.XML", "name": "apply", "url": "DataSchema.XML.html#method_apply", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getLocationValue", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getLocationValue", "type": "method"}, {"access": "", "host": "DataSchema.JSON", "name": "DataSchema.JSON.getPath", "url": "DataSchema.JSON.html#method_DataSchema.JSON.getPath", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_getFieldValues", "url": "DataSchema.JSON.html#method__getFieldValues", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getLocationValue", "url": "DataSchema.XML.html#method__getLocationValue", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_getXPathResult", "url": "DataSchema.XML.html#method__getXPathResult", "type": "method"}, {"access": "", "host": "DataSchema.Base", "name": "parse", "url": "DataSchema.Base.html#method_parse", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseField", "url": "DataSchema.XML.html#method__parseField", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseMeta", "url": "DataSchema.JSON.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseMeta", "url": "DataSchema.XML.html#method__parseMeta", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResult", "url": "DataSchema.XML.html#method__parseResult", "type": "method"}, {"access": "protected", "host": "DataSchema.Array", "name": "_parseResults", "url": "DataSchema.Array.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.JSON", "name": "_parseResults", "url": "DataSchema.JSON.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.Text", "name": "_parseResults", "url": "DataSchema.Text.html#method__parseResults", "type": "method"}, {"access": "protected", "host": "DataSchema.XML", "name": "_parseResults", "url": "DataSchema.XML.html#method__parseResults", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPositionConstrain", "name": "_afterAlignChange", "url": "WidgetPositionConstrain.html#method__afterAlignChange", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_afterConstrainChange", "url": "WidgetPositionConstrain.html#method__afterConstrainChange", "type": "method"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_bindUIPosConstrained", "url": "WidgetPositionConstrain.html#method__bindUIPosConstrained", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_constrain", "url": "WidgetPositionConstrain.html#method__constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "constrain", "url": "WidgetPositionConstrain.html#method_constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "enable or disable constraints listeners", "url": "WidgetPositionConstrain.html#method_enable or disable constraints listeners", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "getConstrainedXY", "url": "WidgetPositionConstrain.html#method_getConstrainedXY", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_getRegion", "url": "WidgetPositionConstrain.html#method__getRegion", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_preventOverlap", "url": "WidgetPositionConstrain.html#method__preventOverlap", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_setConstrain", "url": "WidgetPositionConstrain.html#method__setConstrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "WidgetPositionConstrain.ATTRS", "url": "WidgetPositionConstrain.html#property_WidgetPositionConstrain.ATTRS", "type": "property"}];
 </script>
 </body>
 </html>
