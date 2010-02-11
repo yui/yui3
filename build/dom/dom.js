@@ -552,12 +552,15 @@ Y.DOM = {
      * @return {Object} The document for the given element or the default document. 
      */
     _getDoc: function(element) {
-        element = element || {};
-
-        return (element[NODE_TYPE] === 9) ? element : // element === document
+        var doc = Y.config.doc;
+        if (element) {
+            doc = (element[NODE_TYPE] === 9) ? element : // element === document
                 element[OWNER_DOCUMENT] || // element === DOM node
                 element.document || // element === window
                 Y.config.doc; // default
+        }
+
+        return doc;
     },
 
     /**
@@ -757,8 +760,8 @@ Y.mix(Y.DOM, {
      * @param {String} newClassName the class name that will be replacing the old class name
      */
     replaceClass: function(node, oldC, newC) {
+        removeClass(node, oldC); // remove first in case oldC === newC
         addClass(node, newC);
-        removeClass(node, oldC);
     },
 
     /**
@@ -1416,8 +1419,8 @@ Y.mix(Y_DOM, {
      * @method docScrollX
      * @return {Number} The current amount the screen is scrolled horizontally.
      */
-    docScrollX: function(node) {
-        var doc = Y_DOM._getDoc(node);
+    docScrollX: function(node, doc) {
+        doc = doc || (node) ? Y_DOM._getDoc(node) : Y.config.doc; // perf optimization
         return Math.max(doc[DOCUMENT_ELEMENT].scrollLeft, doc.body.scrollLeft);
     },
 
@@ -1426,8 +1429,8 @@ Y.mix(Y_DOM, {
      * @method docScrollY
      * @return {Number} The current amount the screen is scrolled vertically.
      */
-    docScrollY:  function(node) {
-        var doc = Y_DOM._getDoc(node);
+    docScrollY:  function(node, doc) {
+        doc = doc || (node) ? Y_DOM._getDoc(node) : Y.config.doc; // perf optimization
         return Math.max(doc[DOCUMENT_ELEMENT].scrollTop, doc.body.scrollTop);
     },
 
@@ -1455,10 +1458,10 @@ Y.mix(Y_DOM, {
 
                 if (node) {
                     if (Y_DOM.inDoc(node)) {
-                        scrollLeft = Y_DOM.docScrollX(node);
-                        scrollTop = Y_DOM.docScrollY(node);
+                        doc = node.ownerDocument;
+                        scrollLeft = Y_DOM.docScrollX(node, doc);
+                        scrollTop = Y_DOM.docScrollY(node, doc);
                         box = node[GET_BOUNDING_CLIENT_RECT]();
-                        doc = Y_DOM._getDoc(node);
                         xy = [box.left, box.top];
 
                             if (Y.UA.ie) {
@@ -1503,6 +1506,7 @@ Y.mix(Y_DOM, {
             return function(node) { // manually calculate by crawling up offsetParents
                 //Calculate the Top and Left border sizes (assumes pixels)
                 var xy = null,
+                    doc,
                     parentNode,
                     bCheck,
                     scrollTop,
@@ -1511,6 +1515,7 @@ Y.mix(Y_DOM, {
                 if (node) {
                     if (Y_DOM.inDoc(node)) {
                         xy = [node.offsetLeft, node.offsetTop];
+                        doc = node.ownerDocument;
                         parentNode = node;
                         // TODO: refactor with !! or just falsey
                         bCheck = ((Y.UA.gecko || Y.UA.webkit > 519) ? true : false);
@@ -1543,13 +1548,13 @@ Y.mix(Y_DOM, {
                                     xy[1] -= scrollTop;
                                 }
                             }
-                            xy[0] += Y_DOM.docScrollX(node);
-                            xy[1] += Y_DOM.docScrollY(node);
+                            xy[0] += Y_DOM.docScrollX(node, doc);
+                            xy[1] += Y_DOM.docScrollY(node, doc);
 
                         } else {
                             //Fix FIXED position -- add scrollbars
-                            xy[0] += Y_DOM.docScrollX(node);
-                            xy[1] += Y_DOM.docScrollY(node);
+                            xy[0] += Y_DOM.docScrollX(node, doc);
+                            xy[1] += Y_DOM.docScrollY(node, doc);
                         }
                     } else {
                         xy = Y_DOM._getOffset(node);
@@ -1712,9 +1717,9 @@ Y.mix(Y_DOM, {
         return xy2;
     },
 
-    _getWinSize: function(node) {
-        var doc = Y_DOM._getDoc(),
-            win = doc.defaultView || doc.parentWindow,
+    _getWinSize: function(node, doc) {
+        doc  = doc || (node) ? Y_DOM._getDoc(node) : Y.config.doc;
+        var win = doc.defaultView || doc.parentWindow,
             mode = doc[COMPAT_MODE],
             h = win.innerHeight,
             w = win.innerWidth,
@@ -1727,11 +1732,11 @@ Y.mix(Y_DOM, {
             h = root.clientHeight;
             w = root.clientWidth;
         }
-        return { height: h, width: w }; 
+        return { height: h, width: w };
     },
 
     _getDocSize: function(node) {
-        var doc = Y_DOM._getDoc(),
+        var doc = (node) ? Y_DOM._getDoc(node) : Y.config.doc,
             root = doc[DOCUMENT_ELEMENT];
 
         if (doc[COMPAT_MODE] != 'CSS1Compat') {
@@ -1741,6 +1746,7 @@ Y.mix(Y_DOM, {
         return { height: root.scrollHeight, width: root.scrollWidth };
     }
 });
+
 })(Y);
 (function(Y) {
 var TOP = 'top',
@@ -1913,7 +1919,7 @@ Y.mix(DOM, {
 })(Y);
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style']});
+}, '@VERSION@' ,{requires:['dom-base', 'dom-style', 'event-base']});
 YUI.add('selector-native', function(Y) {
 
 (function(Y) {

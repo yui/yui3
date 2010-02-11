@@ -1,0 +1,7 @@
+Development Master
+*   Add new ROOT_TYPE property to constrain the behavior of the "root" attribute 
+    to instances of a specified type
+    
+*   Fixes to remove method so that it always returns a reference to the 
+    child removed
+

@@ -16,11 +16,20 @@ Y.mix( Y.ArrayList.prototype, {
      * @method add
      * @param item { mixed } Item presumably of the same type as others in the
      *                       ArrayList
+     * @param index {Number} (Optional.)  Number representing the position at 
+     * which the item should be inserted.
      * @return {ArrayList} the instance
      * @chainable
      */
-    add: function ( item ) {
-        this._items.push( item );
+    add: function ( item, index ) {
+        var items = this._items;
+
+        if (Y.Lang.isNumber(index)) {
+            items.splice(index, 0, item);
+        }
+        else {
+            items.push(item);
+        }
 
         return this;
     },

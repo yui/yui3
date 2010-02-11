@@ -510,7 +510,7 @@ YUI.add('imageloader', function(Y) {
 			this._fetched = false;
 
 			/**
-			 * The Node object returned from <code>Y.get</code>, to avoid repeat calls to access the DOM.
+			 * The Node object returned from <code>Y.one</code>, to avoid repeat calls to access the DOM.
 			 * @property _imgEl
 			 * @private
 			 * @type Object
@@ -598,7 +598,7 @@ YUI.add('imageloader', function(Y) {
 		 */
 		_getImgEl: function() {
 			if (this._imgEl === null) {
-				this._imgEl = Y.get('#' + this.get('domId'));
+				this._imgEl = Y.one('#' + this.get('domId'));
 			}
 			return this._imgEl;
 		},

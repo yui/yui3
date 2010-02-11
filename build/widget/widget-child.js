@@ -17,8 +17,7 @@ var Lang = Y.Lang;
 */
 function Child() {
 
-    // Widget method overlap
-
+    //  Widget method overlap
     Y.after(this._syncUIChild, this, "syncUI");
     Y.after(this._bindUIChild, this, "bindUI");
 
@@ -58,20 +57,10 @@ Child.ATTRS = {
         getter: function () {
             
             var parent = this.get("parent"),
-                children,
-                index;
+                index = -1;
             
             if (parent) {
-                
-                children = parent.get("children");
-                
-                for (var i=0, len = children.length; i < len; i++) {
-                    if (this == children[i]) {
-                        index = i;
-                        break;
-                    }
-                }
-                
+                index = parent.indexOf(this);
             }
             
             return index;
@@ -98,20 +87,27 @@ Child.ATTRS = {
      * @default -1 
      * @readOnly         
      *
-     * @description Number representing the depth of this Widget in the object 
-     * hierarchy.
+     * @description Number representing the depth of this Widget relative to 
+     * the root Widget in the object heirarchy.
      */
     depth: {
-        value: -1,
         readOnly: true,
         getter: function () {
             
             var parent = this.get("parent"),
+                root = this.get("root"),
                 depth = -1;
             
             while (parent) {
+
                 depth = (depth + 1);
+
+                if (parent == root) {
+                    break;
+                }
+
                 parent = parent.get("parent");
+
             }
             
             return depth;
@@ -124,7 +120,9 @@ Child.ATTRS = {
      * @type Widget 
      * @readOnly         
      *
-     * @description Returns the root Widget in the object hierarchy.
+     * @description Returns the root Widget in the object hierarchy.  If the
+     * ROOT_TYPE property is set, the search for the root Widget will be 
+     * constrained to parent Widgets of the specified type.
      */
     root: {
         readOnly: true,
@@ -132,9 +130,15 @@ Child.ATTRS = {
 
             var getParent = function (child) {
 
-                var parent = child.get("parent");
+                var parent = child.get("parent"),
+                    FnRootType = child.ROOT_TYPE,
+                    criteria = parent;
 
-                return (parent ? getParent(parent) : child);
+                if (FnRootType) {
+                    criteria = (parent && (parent instanceof FnRootType));
+                }
+
+                return (criteria ? getParent(parent) : child);
                 
             };
 
@@ -146,6 +150,22 @@ Child.ATTRS = {
 };
 
 Child.prototype = {
+
+    /**
+     * Constructor reference used to determine the root of a Widget-based 
+     * object tree.
+     * <p>
+     * Currently used to control the behavior of the <code>root</code>  
+     * attribute so that recursing up the object heirarchy can be constrained 
+     * to a specific type of Widget.  Widget authors should set this property
+     * to the constructor function for a given Widget implementation.
+     * </p>
+     *
+     * @property ROOT_TYPE
+     * @type Object
+     */
+    ROOT_TYPE: null,
+
 
     //  Override of Widget's implementation of _getUIEventNode() to ensure that 
     //  all event listeners are bound to the Widget's topmost DOM element.
@@ -182,7 +202,7 @@ Child.prototype = {
             sibling = parent.item((this.get("index")+1));
         }
 
-        if (circular && !sibling) {
+        if (!sibling && circular) {
             sibling = parent.item(0);
         }
 
@@ -208,8 +228,8 @@ Child.prototype = {
             sibling = parent.item([(index-1)]);
         }
 
-        if (circular && !sibling) {
-            sibling = parent.item((parent.get("children").length - 1));
+        if (!sibling && circular) {
+            sibling = parent.item((parent.size() - 1));
         }
 
         return sibling; 
@@ -221,20 +241,23 @@ Child.prototype = {
     //  Sugar implementation allowing a child to remove itself from its parent.
     remove: function (index) {
 
-        var parent;
+        var parent,
+            removed;
 
         if (Lang.isNumber(index)) {
-            Y.WidgetParent.prototype.remove.apply(this, arguments);
+            removed = Y.WidgetParent.prototype.remove.apply(this, arguments);
         }
         else {
 
             parent = this.get("parent");
 
             if (parent) {
-                parent.remove(this.get("index"));
+                removed = parent.remove(this.get("index"));
             }
                         
         }
+        
+        return removed;
         
     },
 
@@ -252,19 +275,21 @@ Child.prototype = {
 
 
 	/**
-	* @method isRoot
+	* @method ancestor
 	* @description Returns the Widget instance at the specified depth.
+    * @param {number} depth Number representing the depth of the ancestor.
 	* @return {Widget} Widget instance.
 	*/
     ancestor: function (depth) {
 
-        var parent;
+        var root = this.get("root"),
+            parent;
 
-        if (this.get("depth") >= depth && depth > 0)  {
+        if (this.get("depth") > depth)  {
 
             parent = this.get("parent");
 
-            while (parent.get("depth") > depth) {
+            while (parent != root && parent.get("depth") > depth) {
                 parent = parent.get("parent");
             }
 
@@ -312,9 +337,11 @@ Child.prototype = {
     
 
     /**
-     * Synchronizes the UI to match the WidgetChild state. This method in 
-     * invoked after syncUI is invoked for the Widget class using YUI's aop 
-     * infrastructure.
+     * Synchronizes the UI to match the WidgetChild state.
+     * <p>
+     * This method is invoked after bindUI is invoked for the Widget class
+     * using YUI's aop infrastructure.
+     * </p>     
      *
      * @method _syncUIChild
      * @protected
@@ -334,7 +361,7 @@ Child.prototype = {
      * @method _bindUIChild
      * @protected
      */    
-    _bindUIChild: function () {
+    _bindUIChild: function () { 
         this.after("selectedChange", this._afterChildSelectedChange);
     }
     
