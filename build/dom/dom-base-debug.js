@@ -553,12 +553,15 @@ Y.DOM = {
      * @return {Object} The document for the given element or the default document. 
      */
     _getDoc: function(element) {
-        element = element || {};
-
-        return (element[NODE_TYPE] === 9) ? element : // element === document
+        var doc = Y.config.doc;
+        if (element) {
+            doc = (element[NODE_TYPE] === 9) ? element : // element === document
                 element[OWNER_DOCUMENT] || // element === DOM node
                 element.document || // element === window
                 Y.config.doc; // default
+        }
+
+        return doc;
     },
 
     /**
