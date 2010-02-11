@@ -86,9 +86,7 @@ YUI.add('widget-position-ext', function(Y) {
              * the Widget will be centered within the node. If set the false, no center positioning is applied.
              */
             centered: {
-                setter: function(val) {
-                    return this._setAlignCenter(val);
-                },
+                setter: "_setAlignCenter",
                 lazyAdd:false,
                 value:false
             }
@@ -253,22 +251,12 @@ YUI.add('widget-position-ext', function(Y) {
                     return;
                 }
 
-                var nodeRegion, widgetPoint, nodePoint, xy;
-
-                if (!node) {
-                    nodeRegion = this._posNode.get(VIEWPORT_REGION);
-                } else {
-                    node = Y.Node.one(node);
-                    if (node) {
-                        nodeRegion = node.get(REGION);
-                    }
-                }
+                var nodeRegion = this._getRegion(node), 
+                    widgetPoint, 
+                    nodePoint, 
+                    xy;
 
                 if (nodeRegion) {
-
-                    // TODO: ViewportRegion doesn't have width/height - Workaround until normalized in Node/Dom
-                    nodeRegion.width = nodeRegion.width || nodeRegion.right - nodeRegion.left;
-                    nodeRegion.height = nodeRegion.height || nodeRegion.bottom - nodeRegion.top;
 
                     widgetPoint = points[0];
                     nodePoint = points[1];
@@ -360,6 +348,19 @@ YUI.add('widget-position-ext', function(Y) {
                 if (xy) {
                     this.move(xy);
                 }
+            },
+
+            _getRegion : function(node) {
+                var nodeRegion;
+                if (!node) {
+                    nodeRegion = this._posNode.get(VIEWPORT_REGION);
+                } else {
+                    node = Y.Node.one(node);
+                    if (node) {
+                        nodeRegion = node.get(REGION);
+                    }
+                }
+                return nodeRegion;
             },
 
             /**
