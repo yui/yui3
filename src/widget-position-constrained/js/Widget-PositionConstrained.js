@@ -7,11 +7,14 @@
  */
 var CONSTRAIN = "constrain",
     CONSTRAIN_XYCHANGE = "constrain|xyChange",
-
     CONSTRAIN_CHANGE = "constrainChange",
 
+    PREVENT_OVERLAP = "preventOverlap",
+    ALIGN = "align",
+    
+    EMPTY_STR = "",
+
     BINDUI = "bindUI",
-    SYNCUI = "syncUI",
 
     XY = "xy",
     X_COORD = "x",
@@ -22,7 +25,7 @@ var CONSTRAIN = "constrain",
     VIEWPORT_REGION = "viewportRegion",
     REGION = "region",
 
-    PREVENT_OVERLAP;
+    PREVENT_OVERLAP_MAP;
 
 /**
  * Widget extension, which can be used to add extended XY positioning support to the base Widget class,
@@ -37,7 +40,6 @@ function PositionConstrained(config) {
     if (!this._posNode) {
         Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionConstrained is added"); 
     }
-    Y.after(this._syncUIPosConstrained, this, SYNCUI);
     Y.after(this._bindUIPosConstrained, this, BINDUI);
 }
 
@@ -60,7 +62,7 @@ PositionConstrained.ATTRS = {
     }
 };
 
-PREVENT_OVERLAP = PositionConstrained.PREVENT_OVERLAP = {
+PREVENT_OVERLAP_MAP = PositionConstrained.PREVENT_OVERLAP = {
     x: {
         "tltr": 1,
         "blbr": 1,
@@ -133,7 +135,7 @@ PositionConstrained.prototype = {
     _constrain: function(val, axis, nodeRegion, constrainingRegion) {
         if (constrainingRegion) {
 
-            if (this.get("preventOverlap")) {
+            if (this.get(PREVENT_OVERLAP)) {
                 val = this._preventOverlap(val, axis, nodeRegion, constrainingRegion);
             }
 
@@ -169,7 +171,7 @@ PositionConstrained.prototype = {
      */
     _preventOverlap : function(val, axis, nodeRegion, constrainingRegion) {
 
-        var align = this.get("align"),
+        var align = this.get(ALIGN),
             x = (axis === X_COORD),
             nodeSize,
             alignRegion,
@@ -178,7 +180,7 @@ PositionConstrained.prototype = {
             spaceOnNearSide, 
             spaceOnFarSide;
 
-        if (align && align.points && PREVENT_OVERLAP[align.points.join()]) {
+        if (align && align.points && PREVENT_OVERLAP_MAP[axis][align.points.join(EMPTY_STR)]) {
 
             alignRegion = this._getRegion(align.node);
 
@@ -192,7 +194,7 @@ PositionConstrained.prototype = {
  
             if (val > nearEdge) {
                 if (spaceOnFarSide < nodeSize && spaceOnNearSide > nodeSize) {
-                    val = nearEdge;
+                    val = nearEdge - nodeSize;
                 }
             } else {
                 if (spaceOnNearSide < nodeSize && spaceOnFarSide > nodeSize) {
@@ -216,18 +218,6 @@ PositionConstrained.prototype = {
      */
     _bindUIPosConstrained : function() {
         this.after(CONSTRAIN_CHANGE, this._afterConstrainChange);
-    },
-
-    /**
-     * Syncs the initial UI state to reflect the value of constrained
-     * <p>
-     * This method is invoked after syncUI is invoked for the Widget class
-     * using YUI's aop infrastructure.
-     * </p>
-     * @method _syncUIPosConstrained
-     * @protected
-     */
-    _syncUIPosConstrained : function() {
         this._enableConstraints(this.get(CONSTRAIN));
     },
 
@@ -246,9 +236,9 @@ PositionConstrained.prototype = {
     _enableConstraints : function(enable) {
         if (enable) {
             this.constrain();
-            this.on(CONSTRAIN_XYCHANGE, this._constrainOnXYChange);
-        } else {
-            this.detach(CONSTRAIN_XYCHANGE);    
+            this._cxyHandle = this._cxyHandle || this.on(CONSTRAIN_XYCHANGE, this._constrainOnXYChange);
+        } else if (this._cxyHandle) {
+            this._cxyHandle.detach();    
         }
     },
 
