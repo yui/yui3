@@ -536,6 +536,7 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">RENDER</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">queuable</span><span class="o">:</span><span class="nx">FALSE</span><span class="p">,</span>
                 <span class="nx">fireOnce</span><span class="o">:</span><span class="nx">TRUE</span><span class="p">,</span>
+                <span class="nx">defaultTargetOnly</span><span class="o">:</span><span class="nx">TRUE</span><span class="p">,</span>
                 <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRenderFn</span>
             <span class="p">});</span>
 
@@ -553,21 +554,15 @@
 <span class="cm">     * @param {Node} parentNode The parent node to render to, if passed in to the &lt;code&gt;render&lt;/code&gt; method</span>
 <span class="cm">     */</span>
     <span class="nx">_defRenderFn</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// TODO: Remove target check, once fix/config is in event. </span>
-        <span class="c1">// Currently prevents _defRenderFn from being called at all </span>
-        <span class="c1">// levels in the heirarchy if events are bubbled.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_renderUI</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_bindUI</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_syncUI</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderUI</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_bindUI</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_syncUI</span><span class="p">();</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">renderer</span><span class="p">();</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">renderer</span><span class="p">();</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">RENDERED</span><span class="p">,</span> <span class="nx">TRUE</span><span class="p">);</span>
-            
-            <span class="k">this</span><span class="p">.</span><span class="nx">_removeLoadingClassNames</span><span class="p">();</span>
-            
-        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">RENDERED</span><span class="p">,</span> <span class="nx">TRUE</span><span class="p">);</span>
+        
+        <span class="k">this</span><span class="p">.</span><span class="nx">_removeLoadingClassNames</span><span class="p">();</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -850,10 +845,14 @@
 <span class="cm">     */</span>
     <span class="nx">_removeLoadingClassNames</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">boundingBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">BOUNDING_BOX</span><span class="p">),</span>
+            <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">);</span>
 
         <span class="nx">boundingBox</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">_getWidgetClassName</span><span class="p">(</span><span class="nx">LOADING</span><span class="p">));</span>
         <span class="nx">boundingBox</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">LOADING</span><span class="p">));</span>
+        
+        <span class="nx">contentBox</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">_getWidgetClassName</span><span class="p">(</span><span class="nx">LOADING</span><span class="p">));</span>
+        <span class="nx">contentBox</span><span class="p">.</span><span class="nx">removeClass</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">LOADING</span><span class="p">));</span>
         
     <span class="p">},</span>
 
