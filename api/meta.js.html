@@ -47,7 +47,862 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre>
+                        <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+<span class="kd">var</span> <span class="nx">VERSION</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span>
+<span class="nx">ROOT</span> <span class="o">=</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
+<span class="nx">GALLERY_VERSION</span> <span class="o">=</span> <span class="s1">&#39;gallery-2009-10-19&#39;</span><span class="p">,</span> <span class="c1">// @TODO build time</span>
+<span class="nx">GALLERY_ROOT</span> <span class="o">=</span> <span class="nx">GALLERY_VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
+<span class="nx">GALLERY_BASE</span> <span class="o">=</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span> <span class="o">+</span> <span class="nx">GALLERY_ROOT</span><span class="p">,</span>
+<span class="nx">META</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">version</span><span class="o">:</span> <span class="nx">VERSION</span><span class="p">,</span>
+    <span class="nx">root</span><span class="o">:</span> <span class="nx">ROOT</span><span class="p">,</span>
+    <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span> <span class="o">+</span> <span class="nx">ROOT</span><span class="p">,</span>
+    <span class="nx">comboBase</span><span class="o">:</span> <span class="s1">&#39;http://yui.yahooapis.com/combo?&#39;</span><span class="p">,</span>
+    <span class="nx">skin</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">defaultSkin</span><span class="o">:</span> <span class="s1">&#39;sam&#39;</span><span class="p">,</span>
+        <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;assets/skins/&#39;</span><span class="p">,</span>
+        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;skin.css&#39;</span><span class="p">,</span>
+        <span class="nx">after</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;cssreset&#39;</span><span class="p">,</span> <span class="s1">&#39;cssfonts&#39;</span><span class="p">,</span> <span class="s1">&#39;cssreset-context&#39;</span><span class="p">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="p">]</span>
+        <span class="c1">//rollup: 3</span>
+    <span class="p">},</span>
+<span class="nx">modules</span><span class="o">:</span> 
+<span class="p">{</span>
+    <span class="s2">&quot;anim&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;anim-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-style&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;anim-color&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;anim-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;anim-curve&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;anim-xy&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;anim-easing&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;anim-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;anim-node-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-pluginhost&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;anim-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;anim-scroll&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;anim-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;anim-xy&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;anim-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-screen&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;async-queue&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;event-custom&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;attribute&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;attribute-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-custom&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;attribute-complex&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;attribute-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;base&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;base-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;attribute-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;base-build&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;base-pluginhost&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;pluginhost&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cache&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;plugin&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;classnamemanager&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;collection&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;array-extras&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;array-invoke&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;arraylist&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;arraylist-add&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;arraylist&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;arraylist-filter&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;arraylist&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;compat&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;event-base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;dom&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;dump&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;substitute&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;console&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;console-filters&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;console&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;skin-sam-console-filters&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">}</span>
+        <span class="p">},</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-log&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;substitute&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;skin-sam-console&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cookie&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cssbase&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;cssreset&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssfonts&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssgrids&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssreset-context&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssfonts-context&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssgrids-context&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cssbase-context&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;cssreset&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssfonts&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssgrids&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssreset-context&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssfonts-context&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;cssgrids-context&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssbase/base-context-min.css&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cssfonts&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cssfonts-context&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssfonts/fonts-context-min.css&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cssgrids&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;cssreset&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;cssfonts&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cssgrids-context&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;cssreset-context&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssgrids/grids-context-min.css&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;cssfonts-context&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cssreset&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;cssreset-context&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssreset/reset-context-min.css&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;dataschema&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;dataschema-array&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dataschema-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dataschema-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dataschema-json&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dataschema-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;json&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dataschema-text&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dataschema-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dataschema-xml&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dataschema-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;datasource&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;datasource-arrayschema&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dataschema-array&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datasource-cache&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;cache&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datasource-function&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datasource-local&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datasource-get&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;get&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datasource-io&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;io-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datasource-jsonschema&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dataschema-json&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datasource-local&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datasource-polling&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datasource-local&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datasource-textschema&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dataschema-text&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datasource-xmlschema&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dataschema-xml&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;datatype&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;datatype-date&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datatype-number&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datatype-xml&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;dd&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;dd-constrain&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drag&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-ddm&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-ddm-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-resize&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-ddm-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;yui-throttle&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-ddm-drop&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-ddm&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-delegate&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drop-plugin&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drag&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-mouseenter&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-drag&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-ddm-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-drop&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-ddm-drop&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-drop-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drop&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-constrain&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dd-proxy&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drag&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-proxy&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drag&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dd-scroll&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dd-drag&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;dd-value&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;dd-constrain&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;dom&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;selector-css3&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;selector-css2&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">},</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;oop&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;dom-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;oop&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dom-screen&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dom-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;dom-style&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;dom-style&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dom-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;selector&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dom-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;selector-css2&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;selector-native&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;selector-native&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dom-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;dump&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;event&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;expound&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;event-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;expound&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-custom-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-delegate&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-focus&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-key&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-mouseenter&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-mousewheel&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-resize&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;event-custom&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;event-custom-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;oop&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;yui-later&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-custom-complex&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-custom-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;event-simulate&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;event-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;history&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;node&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;imageloader&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;base-base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node-style&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node-screen&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;io&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;io-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-custom-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;querystring-stringify-simple&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;io-form&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;io-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-style&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;io-queue&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;io-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;queue-promote&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;io-upload-iframe&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;io-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;io-xdr&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;io-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;datatype-xml&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;json&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;json-parse&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;json-stringify&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;loader&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;get&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;node&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;align-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-screen&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-pluginhost&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;node-event-simulate&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-simulate&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;shim-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-style&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-pluginhost&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">},</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;dom&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-base&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;node-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dom-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;selector-css2&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;node-event-delegate&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-delegate&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;node-pluginhost&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;pluginhost&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;node-screen&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dom-screen&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;node-style&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;dom-style&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;node-focusmanager&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;attribute&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node-event-simulate&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-key&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-focus&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;node-menunav&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;classnamemanager&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node-focusmanager&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;skin-sam-node-menunav&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;oop&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;overlay&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;widget-stdmod&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;widget-position&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;widget-position-align&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;widget-stack&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;widget-position-constrain&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;skin-sam-overlay&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;base-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;pluginhost&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;profiler&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;querystring&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;querystring-parse&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;array-extras&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;querystring-stringify&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;querystring-parse-simple&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;querystring/querystring-parse-simple.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;querystring-stringify-simple&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;querystring/querystring-stringify-simple.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;queue-promote&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;queue-run&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;async-queue/async-queue-min.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;event-custom&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;slider&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;dd-value&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;skin-sam-slider&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;sortable&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;dd-delegate&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;dd-drop-plugin&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;dd-proxy&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;stylesheet&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;yui-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;substitute&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;dump&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;substitute&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;json&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-simulate&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;skin-sam-test&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;widget&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;widget-child&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;widget-parent&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;arraylist&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;widget-position&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;widget-position-align&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget-position&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;widget-position-constrain&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget-position&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;widget-stack&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;skin-sam-widget-stack&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;widget-stdmod&quot;</span><span class="o">:</span> <span class="p">{}</span>
+        <span class="p">},</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;skin-sam-widget&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> 
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;widget-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;attribute&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-focus&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;classnamemanager&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;widget-htmlparser&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;widget-i18n&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;widget-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;yui&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;get&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;yui-base&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;yui-later&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;yui-log&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;yui-throttle&quot;</span><span class="o">:</span> <span class="p">{}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">},</span>
+
+    <span class="c1">// Patterns are module definitions which will be added with </span>
+    <span class="c1">// the default options if a definition is not found. The</span>
+    <span class="c1">// assumption is that the module itself will be in the default</span>
+    <span class="c1">// location, and if there are any additional dependencies, they</span>
+    <span class="c1">// will have to be fetched with a second request.  This could</span>
+    <span class="c1">// happen multiple times, each segment resulting in a new</span>
+    <span class="c1">// dependency list.</span>
+    <span class="c1">//</span>
+    <span class="c1">// types: regex, prefix, function</span>
+    <span class="nx">patterns</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">&#39;gallery-&#39;</span><span class="o">:</span> <span class="p">{</span> 
+            <span class="c1">// http://yui.yahooapis.com/3.0.0/build/</span>
+            <span class="c1">// http://yui.yahooapis.com/gallery-/build/</span>
+            <span class="nx">base</span><span class="o">:</span> <span class="nx">GALLERY_BASE</span><span class="p">,</span>  <span class="c1">// explicit declaration of the base attribute</span>
+            <span class="nx">filter</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s1">&#39;searchExp&#39;</span><span class="o">:</span> <span class="nx">VERSION</span><span class="p">,</span>
+                <span class="s1">&#39;replaceStr&#39;</span><span class="o">:</span> <span class="nx">GALLERY_VERSION</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">VERSION</span><span class="p">]</span> <span class="o">=</span> <span class="nx">META</span><span class="p">;</span>
+
+<span class="p">})();</span>
 </pre></div>
 
                     </div>
