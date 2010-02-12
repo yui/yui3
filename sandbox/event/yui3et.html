@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>EventTarget</title>
+
+<!--
+    <script type="text/javascript" src="http://yuibuild.corp.yahoo.com:9999/yhudson/job/yui3/1766/artifact/build_tmp/artifacts/dist/yui/build/yui/yui.js"></script>
+    -->
+    <script type="text/javascript" src="../../build/yui/yui.js"></script>
+    <script type="text/javascript">
+
+        YUI({filter:"raw"}).use("event-custom-complex", function (Y) {
+           
+            var et1 = new Y.EventTarget();
+
+            et1.publish("A", {
+                queueable: false,
+                emitFacade: true,
+                defaultFn: function (e) {
+                    Y.log("A:default");
+                }
+            });
+
+            et1.publish("B", {
+                queueable: false,
+                emitFacade: true,
+                defaultFn: function (e) {
+                    Y.log("B:default");
+                }
+            });
+
+            et1.on("A", function (e) {
+                Y.log("A:on");
+            });
+
+            et1.after("A", function (e) {
+                et1.fire("B");
+                Y.log("A:after");
+            });
+
+            et1.on("B", function (e) {
+                Y.log("B:on");
+            });
+
+            et1.after("B", function (e) {
+                Y.log("B:after");
+            });
+
+            function test() {
+                et1.fire("A");
+            }
+
+            test();
+        });
+    
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>
