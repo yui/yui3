@@ -380,12 +380,13 @@ Y.mix(Y_Node.prototype, {
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
-            node = this._node;
+            node = this._node,
+            id = node.getAttribute('id'); // form.id may be a field name
 
         if (node) {
             str += node[NODE_NAME];
-            if (node.id) {
-                str += '#' + node.id; 
+            if (id) {
+                str += '#' + id; 
             }
 
             if (node.className) {

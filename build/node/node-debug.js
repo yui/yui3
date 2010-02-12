@@ -382,12 +382,13 @@ Y.mix(Y_Node.prototype, {
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
-            node = this._node;
+            node = this._node,
+            id = node.getAttribute('id'); // form.id may be a field name
 
         if (node) {
             str += node[NODE_NAME];
-            if (node.id) {
-                str += '#' + node.id; 
+            if (id) {
+                str += '#' + id; 
             }
 
             if (node.className) {
@@ -2113,5 +2114,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], skinnable:false});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 
