@@ -23,7 +23,7 @@ class MetaJoin(object):
 
         TEMPLATE_DIR   = 'template'
         TEMPLATE_FILE  = 'meta.js'
-        TEMPLATE_TOKEN = '{ // METAGEN }' 
+        TEMPLATE_TOKEN = '{ /* METAGEN */ }' 
 
         DEST_DIR       = 'js'
         DEST_JSON      = 'modules.json'
@@ -72,7 +72,7 @@ class MetaJoin(object):
         print jsonstr
 
         jsstr = readFile(template_path, TEMPLATE_FILE)
-        jsstr.replace(TEMPLATE_TOKEN, jsonstr)
+        jsstr = jsstr.replace(TEMPLATE_TOKEN, jsonstr)
 
         # write the raw module json
         out = codecs.open(os.path.join(dest_path, DEST_JSON), 'w', 'utf-8')
