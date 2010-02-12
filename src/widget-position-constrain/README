@@ -1,0 +1,7 @@
+Development Master
+
+3.1 - Initial release
+
+Module Name: "widget-position-contrain"
+
+An extension, which can be used with Base.build to add the ability to contrain XY positioning for a widget to the viewport, or to another node. Also provides "preventOverlap" support, to prevent the widget from overlapping the node to which it is aligned (when using widget-position-align). 
