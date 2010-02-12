@@ -577,7 +577,7 @@ var NOT_FOUND = {},
         },
 
         overlay: {
-            requires: [WIDGET, WIDGETPOSITION, 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
+            requires: [WIDGET, 'widget-stdmod', WIDGETPOSITION, 'widget-position-align', 'widget-stack', 'widget-position-constrain'],
             skinnable: true
         },
 
@@ -620,7 +620,7 @@ var NOT_FOUND = {},
             submodules: {
                 'querystring-parse': {
                     supersedes: ['querystring-parse-simple'],
-                    requires: [YUIBASE]
+                    requires: [YUIBASE, 'array-extras']
                 },
                 'querystring-stringify': {
                     supersedes: ['querystring-stringify-simple'],
@@ -660,9 +660,12 @@ var NOT_FOUND = {},
             },
             plugins: {
                 'widget-parent': { requires: ['arraylist'] },
-                'widget-child': { },                
+                'widget-child': { },
                 'widget-position': { },
-                'widget-position-ext': {
+                'widget-position-align': {
+                    requires: [WIDGETPOSITION]
+                },
+                'widget-position-constrain': {
                     requires: [WIDGETPOSITION]
                 },
                 'widget-stack': {
@@ -672,6 +675,7 @@ var NOT_FOUND = {},
             },
             skinnable: true
         },
+
         yui: {
             submodules: {
                 'yui-base': {},

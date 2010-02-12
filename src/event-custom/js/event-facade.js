@@ -108,7 +108,7 @@ Y.EventFacade = function(e, currentTarget) {
 
 CEProto.fireComplex = function(args) {
     var es = Y.Env._eventstack, ef, q, queue, ce, ret, events, subs,
-        self = this, host = self.host || self, next;
+        self = this, host = self.host || self, next, oldbubble;
 
     if (es) {
         // queue this event if the current item in the queue bubbles
@@ -125,6 +125,7 @@ CEProto.fireComplex = function(args) {
            silent: self.silent,
            stopped: 0,
            prevented: 0,
+           bubbling: null,
            type: self.type,
            // defaultFnQueue: new Y.Queue(),
            afterQueue: new Y.Queue(),
@@ -182,7 +183,10 @@ CEProto.fireComplex = function(args) {
     // bubble if this is hosted in an event target and propagation has not been stopped
     if (self.bubbles && host.bubble && !self.stopped) {
 
+        oldbubble = es.bubbling;
+
         // self.bubbling = true;
+        es.bubbling = self.type;
 
         // if (host !== ef.target || es.type != self.type) {
         if (es.type != self.type) {
@@ -196,6 +200,7 @@ CEProto.fireComplex = function(args) {
         self.prevented = Math.max(self.prevented, es.prevented);
 
         // self.bubbling = false;
+        es.bubbling = oldbubble;
 
     }
 
@@ -235,7 +240,7 @@ CEProto.fireComplex = function(args) {
     
     // Queue the after
     if (subs[1] && !self.prevented && self.stopped < 2) {
-        if (es.id === self.id) {
+        if (es.id === self.id || self.type != host._yuievt.bubbling) {
             self._procSubs(subs[1], args, ef);
             while ((next = es.afterQueue.last())) {
                 next();
@@ -425,7 +430,8 @@ ETProto.bubble = function(evt, args, target) {
 
     var targs = this._yuievt.targets, ret = true,
         t, type = evt && evt.type, ce, i, bc, ce2,
-        originalTarget = target || (evt && evt.target) || this;
+        originalTarget = target || (evt && evt.target) || this,
+        es = Y.Env._eventstack, oldbubble;
 
     if (!evt || ((!evt.stopped) && targs)) {
 
@@ -440,8 +446,9 @@ ETProto.bubble = function(evt, args, target) {
                     ce = t.publish(type);
                 }
 
+                oldbubble = t._yuievt.bubbling;
                 t._yuievt.bubbling = type;
-                    
+
                 // if this event was not published on the bubble target,
                 // continue propagating the event.
                 if (!ce) {
@@ -469,7 +476,7 @@ ETProto.bubble = function(evt, args, target) {
                     }
                 }
 
-                t._yuievt.bubbling = null;
+                t._yuievt.bubbling = oldbubble;
             }
         }
     }

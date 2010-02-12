@@ -38,7 +38,7 @@ YUI().use('event-delegate', 'dump', 'substitute', function(Y) {
 
 	function(e) {
 
-	   Y.log(e.type + ": " + e.target.get('innerHTML'));
+	   Y.log(e.type + ": " + e.target.one('innerHTML'));
 
 	}, 
 
@@ -56,7 +56,7 @@ YUI().use('event-delegate', 'dump', 'substitute', function(Y) {
 
 	function(e) {
 
-	   Y.log(e.type + ": " + e.target.get('innerHTML'));
+	   Y.log(e.type + ": " + e.target.one('innerHTML'));
 
 	}, 
 
