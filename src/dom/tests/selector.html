@@ -18,6 +18,11 @@
 <script>
 onload = function() {
     YUI({filter: 'raw'}).use('node', 'selector-css3', 'console', 'test', function(Y) {
+        String.prototype.test = function() {
+            // simulate Moo monkey-patch
+            return false;
+
+        };
         Y.Dom = {
             get: function (id) {
                 return document.getElementById(id);
@@ -335,6 +340,8 @@ onload = function() {
                 Assert.areEqual(document.getElementById('foo-bar'),
                     $('[-hyphen-start]', null, true),
                     "$('[-hyphen-start]', null, true)");
+
+                Assert.areEqual(Y.DOM.byId('test-lang-en-us'), $('[lang|=en]', null, true), "$('[lang|=en]')");
 
                 Assert.areEqual(Y.DOM.byId('test:colon'), 
                     $('#test\\:colon', null, true),

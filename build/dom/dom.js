@@ -2350,7 +2350,8 @@ var PARENT_NODE = 'parentNode',
                             }
 
                             if ((operator === '=' && value !== test[2]) ||  // fast path for equality
-                                (operator.test && !operator.test(value)) ||  // regex test
+                                (typeof operator !== 'string' && // protect against String.test monkey-patch (Moo)
+                                operator.test && !operator.test(value)) ||  // regex test
                                 (operator.call && !operator(tmpNode, test[0]))) { // function test
 
                                 // skip non element nodes or non-matching tags
