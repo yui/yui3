@@ -86,6 +86,15 @@ YUI.add('anim-base', function(Y) {
     };
 
     /**
+     * Time in milliseconds passed to setInterval for frame processing 
+     *
+     * @property intervalTime
+     * @default 20
+     * @static
+     */
+    Y.Anim._intervalTime = 20;
+
+    /**
      * Bucket for custom getters and setters
      *
      * @property behaviors
@@ -325,7 +334,7 @@ YUI.add('anim-base', function(Y) {
     
     Y.Anim._startTimer = function() {
         if (!_timer) {
-            _timer = setInterval(Y.Anim._runFrame, 1);
+            _timer = setInterval(Y.Anim._runFrame, Y.Anim._intervalTime);
         }
     };
 
