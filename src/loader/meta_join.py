@@ -2,15 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: et sw=4 ts=4
 
-import os, sys, re, simplejson, shutil, logging, logging.config, time, datetime, urllib, pprint, codecs, subprocess
-from sets import Set
-
-try:
-    logging.config.fileConfig(os.path.join(sys.path[0], 'log.conf'))
-except:
-    pass
-
-log = logging.getLogger('meta.join')
+import os, sys, simplejson, codecs
 
 class MetaJoin(object):
 
@@ -43,9 +35,6 @@ class MetaJoin(object):
 
         def readFile(path, file):
             return codecs.open(os.path.join(path, file), "r", "utf-8").read()
-
-        def pp(msg):
-            log.info(pprint.pformat(data))
 
         modules = {}
 
@@ -84,7 +73,7 @@ class MetaJoin(object):
         out.writelines(jsstr)
         out.close()
             
-        log.info('end) done')
+        print 'done'
 
 def main():
     metagen = MetaJoin()
