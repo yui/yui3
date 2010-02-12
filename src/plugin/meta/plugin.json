@@ -1,0 +1,7 @@
+{
+    "plugin": {
+        "requires": [
+            "base-base"
+        ]
+    }
+}

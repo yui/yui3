@@ -1,0 +1,21 @@
+{
+    "console": {
+        "plugins": {
+            "console-filters": {
+                "requires": [
+                    "plugin", 
+                    "console", 
+                    "skin-sam-console-filters"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "yui-log", 
+            "widget", 
+            "substitute", 
+            "skin-sam-console"
+        ], 
+        "skinnable": true
+    }
+}

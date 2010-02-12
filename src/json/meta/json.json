@@ -1,0 +1,16 @@
+{
+    "json": {
+        "submodules": {
+            "json-parse": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "json-stringify": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
+        }
+    }
+}

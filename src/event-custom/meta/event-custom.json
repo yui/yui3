@@ -1,0 +1,17 @@
+{
+    "event-custom": {
+        "submodules": {
+            "event-custom-base": {
+                "requires": [
+                    "oop", 
+                    "yui-later"
+                ]
+            }, 
+            "event-custom-complex": {
+                "requires": [
+                    "event-custom-base"
+                ]
+            }
+        }
+    }
+}

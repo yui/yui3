@@ -1,0 +1,10 @@
+{
+    "compat": {
+        "requires": [
+            "event-base", 
+            "dom", 
+            "dump", 
+            "substitute"
+        ]
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "yui": {
+        "submodules": {
+            "get": {}, 
+            "yui-base": {}, 
+            "yui-later": {}, 
+            "yui-log": {}, 
+            "yui-throttle": {}
+        }
+    }
+}

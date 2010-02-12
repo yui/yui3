@@ -1,0 +1,7 @@
+{
+    "pluginhost": {
+        "requires": [
+            "yui-base"
+        ]
+    }
+}

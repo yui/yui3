@@ -1,0 +1,7 @@
+{
+    "loader": {
+        "requires": [
+            "get"
+        ]
+    }
+}

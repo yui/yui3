@@ -1,0 +1,8 @@
+{
+    "queue-run": {
+        "path": "async-queue/async-queue-min.js", 
+        "requires": [
+            "event-custom"
+        ]
+    }
+}

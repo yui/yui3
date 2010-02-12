@@ -1,0 +1,21 @@
+{
+    "datatype": {
+        "submodules": {
+            "datatype-date": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "datatype-number": {
+                "requires": [
+                    "yui-base"
+                ]
+            }, 
+            "datatype-xml": {
+                "requires": [
+                    "yui-base"
+                ]
+            }
+        }
+    }
+}
