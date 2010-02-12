@@ -167,7 +167,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
         suite = new Y.Test.Suite("yuisuite");
 
     window.Y = Y; // export Y global for Selenium
-    new Y.Console({node: '#yui-log', height: '80%' }).render('#yui-log');
+    new Y.Console({node: '#yui-log', height: '50em' }).render('#yui-log');
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -183,6 +183,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
                 nodes = Y.all('#test-nodes *');
 
             // return null 
+            Y.one("a[href$='?t=5']");
             Assert.isNull(Y.get(''), 'Y.get("")');
             Assert.isNull(Y.get(null), 'Y.get(null)');
             Assert.isNull(Y.get('#fake-id li'), 'Y.get("#fake-id li") === null');

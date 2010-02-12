@@ -18,6 +18,7 @@
 <script>
 onload = function() {
     YUI({filter: 'raw'}).use('node', 'selector-css3', 'console', 'test', function(Y) {
+        Y.Selector.query('[href$="^html"]');
         String.prototype.test = function() {
             // simulate Moo monkey-patch
             return false;
@@ -343,6 +344,8 @@ onload = function() {
 
                 Assert.areEqual(Y.DOM.byId('test-lang-en-us'), $('[lang|=en]', null, true), "$('[lang|=en]')");
 
+                Assert.areEqual(Y.DOM.byId('href-test'), $('[href$=".html"]', null, true), "$('[href$=\".html\"]')");
+                Assert.isNull($('[href$="?html"]', null, true), "$('[href$=\?html\]')");
                 Assert.areEqual(Y.DOM.byId('test:colon'), 
                     $('#test\\:colon', null, true),
                     "$('#test\\:colon', null, true)");
@@ -394,6 +397,7 @@ onload = function() {
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), 'div[title="this is a demo"]'), 'quoted attribute with spaces');
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), "div[title='this is a demo']"), 'single quoted attribute with spaces');
                 Assert.isTrue(Selector.test(Y.Dom.get('href-test'), '[href="foo.html"]'), 'href="foo.html"');
+                Assert.isTrue(Selector.test(Y.Dom.get('href-test'), '[href$=".html"]'), 'href$=".html"');
                 Assert.isFalse(Selector.test(Y.Dom.get('demo'), '[id=demo][title=demo]'), 'multiple attributes false pos');
 
                 /* non-standard
