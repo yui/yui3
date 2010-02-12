@@ -432,12 +432,18 @@ onload = function() {
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), '*'), 'universal tag');
             },
 
-            /*
+            testDisabled: function() {
+                Assert.areEqual(Y.DOM.byId('disabled-button'), $('#test-inputs :disabled', null, true), "$('#test-inputs :disabled')");
+            },
+
+            testEnabled: function() {
+                Assert.areEqual(Y.DOM.byId('label-checkbox-unchecked'), $('#test-inputs :enabled', null, true), "$('#test-inputs :enabled')");
+            },
+
             testIframe: function() {
                 var frameDoc = Y.DOM.byId('test-frame').contentWindow.document;
                 Assert.areEqual('iframe foo', $('#demo li', frameDoc, true).innerHTML, "Y.get('#demo li', frameDoc, true)");
             },
-            */
 
 
             // to support:
@@ -536,7 +542,7 @@ onload = function() {
         <input type="checkbox" checked="true" id="checkbox-checked" class="not-button">
         <input type="radio" id="radio-unchecked" class="not-button">
         <input type="radio" checked="true" id="radio-checked" class="not-button">
-        <input type="button" value="foo">
+        <input type="button" value="foo" disabled id="disabled-button">
         <input id="foo-bar" name="foo.bar" class="not-button" aria-controls="foo-bar" -hyphen-start="true">
         <select>
             <option>foo</option>
