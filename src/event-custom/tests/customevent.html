@@ -92,7 +92,7 @@
                 var o = new O(),
                 handle = o.on('testAugment', function(e, arg1, arg2) {
                     Y.Assert.isTrue(this instanceof O);
-                    Y.Assert.isTrue(e instanceof Y.Event.Facade);
+                    Y.Assert.isTrue(e instanceof Y.EventFacade);
                     Y.Assert.isTrue(e.foo === 'afoo');
                     Y.Assert.isTrue(e.details[1] === 1);
                     Y.Assert.isTrue(arg1 === 1);
