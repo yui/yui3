@@ -104,7 +104,7 @@ onload = function() {
             }
         };
 
-        new Y.Console({height:'90%'}).render();
+        new Y.Console({height:'50em'}).render();
 
         var suite = new Y.Test.Suite("Selector Suite");
         var Selector = Y.Selector;
@@ -455,6 +455,10 @@ onload = function() {
                 Assert.areEqual(node, Y.Selector.ancestor(node, 'p', true));
                 Assert.areEqual(document.body, Y.Selector.ancestor(node, 'body', true));
                 Assert.areEqual(node.parentNode, Y.Selector.ancestor(node, 'div'));
+            },
+
+            testChecked: function() {
+                Assert.areEqual(4, Y.all('#test-inputs :checked').size(), "Y.all('#test-inputs :checked').size()");
             }
 
         });
@@ -523,6 +527,10 @@ onload = function() {
         <input type="radio" checked="true" id="radio-checked" class="not-button">
         <input type="button" value="foo">
         <input id="foo-bar" name="foo.bar" class="not-button" aria-controls="foo-bar" -hyphen-start="true">
+        <select>
+            <option>foo</option>
+            <option selected>bar</option>
+        </select>
     </form>
 
     <form id="form-root">

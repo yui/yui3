@@ -124,7 +124,7 @@ Y.mix(Y.Selector.pseudos, {
     },
 
     'checked': function(node) {
-        return node.checked === true;
+        return (node.checked === true || node.selected === true);
     }
 });
 
