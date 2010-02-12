@@ -19,8 +19,8 @@ META = {
         after: ['cssreset', 'cssfonts', 'cssreset-context', 'cssfonts-context']
         //rollup: 3
     },
-modules: 
-{
+
+    modules: {
     "anim": {
         "submodules": {
             "anim-base": {
@@ -819,6 +819,12 @@ modules:
                 ]
             }
         }
+    }, 
+    "widget-anim": {
+        "requires": [
+            "plugin", 
+            "anim-base"
+        ]
     }, 
     "yui": {
         "submodules": {

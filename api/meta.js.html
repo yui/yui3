@@ -66,8 +66,8 @@
         <span class="nx">after</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;cssreset&#39;</span><span class="p">,</span> <span class="s1">&#39;cssfonts&#39;</span><span class="p">,</span> <span class="s1">&#39;cssreset-context&#39;</span><span class="p">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="p">]</span>
         <span class="c1">//rollup: 3</span>
     <span class="p">},</span>
-<span class="nx">modules</span><span class="o">:</span> 
-<span class="p">{</span>
+
+    <span class="nx">modules</span><span class="o">:</span> <span class="p">{</span>
     <span class="s2">&quot;anim&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;anim-base&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -866,6 +866,12 @@
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;widget-anim&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;anim-base&quot;</span>
+        <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;yui&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
