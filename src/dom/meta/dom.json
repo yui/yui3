@@ -1,0 +1,47 @@
+{
+    "dom": {
+        "plugins": {
+            "selector-css3": {
+                "requires": [
+                    "selector-css2"
+                ]
+            }
+        }, 
+        "requires": [
+            "oop"
+        ], 
+        "submodules": {
+            "dom-base": {
+                "requires": [
+                    "oop"
+                ]
+            }, 
+            "dom-screen": {
+                "requires": [
+                    "dom-base", 
+                    "dom-style"
+                ]
+            }, 
+            "dom-style": {
+                "requires": [
+                    "dom-base"
+                ]
+            }, 
+            "selector": {
+                "requires": [
+                    "dom-base"
+                ]
+            }, 
+            "selector-css2": {
+                "requires": [
+                    "selector-native"
+                ]
+            }, 
+            "selector-native": {
+                "requires": [
+                    "dom-base"
+                ]
+            }
+        }
+    }
+}

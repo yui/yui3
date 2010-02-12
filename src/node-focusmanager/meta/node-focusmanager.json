@@ -1,0 +1,12 @@
+{
+    "node-focusmanager": {
+        "requires": [
+            "attribute", 
+            "node", 
+            "plugin", 
+            "node-event-simulate", 
+            "event-key", 
+            "event-focus"
+        ]
+    }
+}

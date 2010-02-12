@@ -1,0 +1,37 @@
+{
+    "io": {
+        "submodules": {
+            "io-base": {
+                "requires": [
+                    "event-custom-base", 
+                    "querystring-stringify-simple"
+                ]
+            }, 
+            "io-form": {
+                "requires": [
+                    "io-base", 
+                    "node-base", 
+                    "node-style"
+                ]
+            }, 
+            "io-queue": {
+                "requires": [
+                    "io-base", 
+                    "queue-promote"
+                ]
+            }, 
+            "io-upload-iframe": {
+                "requires": [
+                    "io-base", 
+                    "node-base"
+                ]
+            }, 
+            "io-xdr": {
+                "requires": [
+                    "io-base", 
+                    "datatype-xml"
+                ]
+            }
+        }
+    }
+}

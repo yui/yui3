@@ -1,0 +1,61 @@
+{
+    "node": {
+        "plugins": {
+            "align-plugin": {
+                "requires": [
+                    "node-screen", 
+                    "node-pluginhost"
+                ]
+            }, 
+            "node-event-simulate": {
+                "requires": [
+                    "node-base", 
+                    "event-simulate"
+                ]
+            }, 
+            "shim-plugin": {
+                "requires": [
+                    "node-style", 
+                    "node-pluginhost"
+                ]
+            }
+        }, 
+        "requires": [
+            "dom", 
+            "event-base"
+        ], 
+        "submodules": {
+            "node-base": {
+                "requires": [
+                    "dom-base", 
+                    "selector-css2", 
+                    "event-base"
+                ]
+            }, 
+            "node-event-delegate": {
+                "requires": [
+                    "node-base", 
+                    "event-delegate"
+                ]
+            }, 
+            "node-pluginhost": {
+                "requires": [
+                    "node-base", 
+                    "pluginhost"
+                ]
+            }, 
+            "node-screen": {
+                "requires": [
+                    "dom-screen", 
+                    "node-base"
+                ]
+            }, 
+            "node-style": {
+                "requires": [
+                    "dom-style", 
+                    "node-base"
+                ]
+            }
+        }
+    }
+}

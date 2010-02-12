@@ -1,0 +1,16 @@
+{
+    "attribute": {
+        "submodules": {
+            "attribute-base": {
+                "requires": [
+                    "event-custom"
+                ]
+            }, 
+            "attribute-complex": {
+                "requires": [
+                    "attribute-base"
+                ]
+            }
+        }
+    }
+}
