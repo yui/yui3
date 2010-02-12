@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: loader   gallery.js  (YUI Library)</title>
+	<title>API: loader   meta.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
-                 &gt; gallery.js (source view) 
+                 &gt; meta.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,74 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="c1">// bootstrap loader</span>
-
-<span class="c1">// parse the use array for gallery components</span>
-
-<span class="c1">// add module stubs for each gallery module</span>
-
-<span class="c1">// reenter use()</span>
-
-<span class="c1">//////////////////////////////////////////////////</span>
-
-<span class="c1">// dependencies a second hit</span>
-
-<span class="c1">// loader bootstrap could pull in the known</span>
-
-<span class="c1">// bootstrappable modules</span>
-<span class="c1">//  +loader</span>
-<span class="c1">//  +gallery</span>
-<span class="c1">//</span>
-<span class="c1">//  no: use the pattern specification</span>
-
-<span class="c1">// maybe use parameters can be passed to the module def</span>
-
-<span class="c1">//////////////////////////////////////////////////</span>
-
-
-<span class="nx">patterns</span><span class="o">:</span> <span class="p">{</span>
-    <span class="s1">&#39;gallery-&#39;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="c1">// base path is used to build the url</span>
-        <span class="c1">// @TODO resolve pattern specific overrides for local development</span>
-        <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;http://yui.yahooapis.com/gallery-2009.10.26-22.41.46/build/&#39;</span>
-    <span class="p">}</span>
-
-    <span class="s1">&#39;yui2.8.0-&#39;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;http://yui.yahooapis.com/2.8.0/build/&#39;</span>
-
-        <span class="c1">// Additional dependencies for a given component won&#39;t be resolved in</span>
-        <span class="c1">// the YUI 3 system unless we actually look to code to YAHOO.register</span>
-        <span class="c1">// specifically.</span>
-        
-        <span class="c1">// @TODO do we need a facility for discovering new dependencies after</span>
-        <span class="c1">// the initial set is loaded?  For non-YUI3 code, this is probably not</span>
-        <span class="c1">// an option since a component&#39;s dependencies need to have been evaluated</span>
-        <span class="c1">// in the page before the component can be fetched.</span>
-        
-        
-        <span class="c1">// the idea here is that the dependencies for the module refer to</span>
-        <span class="c1">// other modules that should be captured in this filter.  This means</span>
-        <span class="c1">// if we are able</span>
-        <span class="nx">propagatePrefix</span><span class="o">:</span> <span class="kc">true</span>
-
-        <span class="c1">// @TODO yui 2 loader bootstrapper?</span>
-        <span class="c1">// @TODO yui 2 module wrapping?</span>
-
-        <span class="c1">// path resolution template</span>
-        <span class="c1">// mini substitute in core... would prefer if we didn&#39;t have a different way</span>
-        <span class="c1">// to render this template.  At any rate, the problem is this:</span>
-        <span class="c1">//</span>
-        <span class="c1">// yui2-menu would have the path resolved to:</span>
-        <span class="c1">// http://yui.yahooapis.com/2.8.0/build/yui2.8.0-menu/yui2.8.0-menu-min.js</span>
-        <span class="c1">// but we want</span>
-        <span class="c1">// http://yui.yahooapis.com/2.8.0/build/menu/menu-min.js</span>
-        <span class="c1">//</span>
-        <span class="c1">// @TODO can this be handled simply be having a flag at whether or not the prefix</span>
-        <span class="c1">// is included when building the path?  Or do we need a filter?  Or a full template</span>
-        <span class="c1">// and a filter?</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-<span class="p">}</span>
+                        <div class="highlight"><pre>
 </pre></div>
 
                     </div>
@@ -187,8 +120,8 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="gallery.js.html" title="gallery.js">gallery.js</a></li>
                                 <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
+                                <li class="selected"><a href="meta.js.html" title="meta.js">meta.js</a></li>
                         </ul>
                     </div>
 
