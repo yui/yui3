@@ -67,6 +67,7 @@
     <span class="nx">Selector</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">,</span>
 
     <span class="nx">SelectorCSS2</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">_reRegExpTokens</span><span class="o">:</span> <span class="sr">/([\^\$\?\[\]\*\+\-\.\(\)\|\\])/</span><span class="p">,</span> <span class="c1">// TODO: move?</span>
         <span class="nx">SORT_RESULTS</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
         <span class="nx">_children</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span>
@@ -300,6 +301,7 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">operator</span> <span class="k">in</span> <span class="nx">operators</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">test</span> <span class="o">=</span> <span class="nx">operators</span><span class="p">[</span><span class="nx">operator</span><span class="p">];</span>
                         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">test</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">].</span><span class="nx">replace</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_reRegExpTokens</span><span class="p">,</span> <span class="s1">&#39;\\$1&#39;</span><span class="p">);</span>
                             <span class="nx">test</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getRegExp</span><span class="p">(</span><span class="nx">test</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;{val}&#39;</span><span class="p">,</span> <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">]));</span>
                         <span class="p">}</span>
                         <span class="nx">match</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">test</span><span class="p">;</span>
