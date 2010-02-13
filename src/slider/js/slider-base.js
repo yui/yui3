@@ -35,7 +35,9 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
         this.axis = this.get( 'axis' );
 
         this._key = {
-            dim : ( this.axis === 'y' ) ? 'height' : 'width'
+            dim    : ( this.axis === 'y' ) ? 'height' : 'width',
+            minEdge: ( this.axis === 'y' ) ? 'top'    : 'left',
+            maxEdge: ( this.axis === 'y' ) ? 'bottom' : 'right'
         };
 
         /**
@@ -68,7 +70,7 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
 
         this.rail = this._renderRail();
 
-        this._uiSetRailSize();
+        this._uiSetRailLength();
 
         this.thumb = this._renderThumb();
 
@@ -81,8 +83,8 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
     },
 
     _renderRail: function () {
-        var minCapClass = this.getClassName( 'rail', 'cap', this._minEdge ),
-            maxCapClass = this.getClassName( 'rail', 'cap', this._maxEdge );
+        var minCapClass = this.getClassName( 'rail', 'cap', this._key.minEdge ),
+            maxCapClass = this.getClassName( 'rail', 'cap', this._key.maxEdge );
 
         return Y.Node.create(
             Y.substitute( this.RAIL_TEMPLATE, {
@@ -92,15 +94,8 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
             } ) );
     },
 
-    _uiSetRailSize: function () {
-        var length = this.get( this._key.dim ) + '';
-
-        // If the specified height or width doesn't include units, default px
-        if ( !/\D$/.test( length ) ) {
-            length += this.DEF_UNIT;
-        }
-
-        this.rail.setStyle( this._key.dim, length );
+    _uiSetRailLength: function () {
+        this.rail.setStyle( this._key.dim, this.get( 'length' ) );
     },
 
     _renderThumb: function () {
@@ -129,7 +124,7 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
         this._bindValueLogic();
 
         this.after( 'disabledChange', this._afterDisabledChange );
-        this.after( this._dim + 'Change', this._afterLengthChange );
+        this.after( 'lengthChange',   this._afterLengthChange );
     },
 
     _bindThumbDD: function () {
@@ -199,7 +194,7 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
     },
 
     _afterLengthChange: function ( e ) {
-        this._uiSetRailSize();
+        this._uiSetRailLength();
     },
 
     /**
@@ -221,31 +216,30 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
     _syncThumbPosition: function () { },
 
     /**
-     * Validator applied to new values for the axis attribute. Only
-     * &quot;x&quot; and &quot;y&quot; are permitted.
+     * Validates the axis is &quot;x&quot; or &quot;y&quot; (case insensitive).
+     * Converts to lower case for storage.
      *
-     * @method _validateNewAxis
-     * @param v {String} proposed value for the axis attribute
-     * @return Boolean
-     * @protected
-     */
-    _validateNewAxis : function (v) {
-        return Y.Lang.isString( v ) && 'xyXY'.indexOf( v ) > -1;
-    },
-
-    /**
-     * Setter applied to the input when updating the axis attribute.
-     *
-     * @method _setAxisFn
+     * @method _setAxis
      * @param v {String} proposed value for the axis attribute
      * @return {String} lowercased first character of the input string
      * @protected
      */
-    _setAxisFn : function (v) {
-        return v.charAt(0).toLowerCase();
+    _setAxis : function (v) {
+        v = ( v + '' ).toLowerCase();
+
+        return ( v === 'x' || v === 'y' ) ? v : Y.Attribute.INVALID_VALUE;
     },
 
-    _initThumbUrlFn: function () {
+    _setLength: function ( v ) {
+        v = ( v + '' ).toLowerCase();
+
+        var length = parseFloat( v, 10 ),
+            units  = v.replace( /[\d\.\-]/g, '' ) || this.DEF_UNIT;
+
+        return length > 0 ? ( length + units ) : Y.Attribute.INVALID_VALUE;
+    },
+
+    _initThumbUrl: function () {
         return Y.config.base + 
                   'slider/assets/skins/sam/thumb-' + this.axis + '.png';
     },
@@ -307,9 +301,20 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
         axis : {
             value     : 'x',
             writeOnce : true,
-            validator : '_validateNewAxis',
-            setter    : '_setAxisFn',
+            setter    : '_setAxis',
             lazyAdd   : false
+        },
+
+        /**
+         * The length of the rail (minus end caps as shifted by CSS).  This corresponds to the movable range of the thumb.
+         *
+         * @attribute length
+         * @type { String|Number } e.g. "200px", "6em", or 200 (defaults to px)
+         * @default 150px
+         */
+        length: {
+            value: '150px',
+            setter: '_setLength'
         },
 
         /**
@@ -322,7 +327,7 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
          * current build path for Slider
          */
         thumbUrl: {
-            valueFn: '_initThumbUrlFn',
+            valueFn: '_initThumbUrl',
             validator: Y.Lang.isString
         }
     }
