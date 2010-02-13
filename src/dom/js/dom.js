@@ -444,16 +444,7 @@ Y.DOM = {
         return newNode;
     },
 
-    VALUE_SETTERS: {
-        select: function(node, val) {
-            var option = Y.Selector.query('option[value="' + val + '"]', node, true);
-            if (option) {
-                node.selectedIndex = Y.Array.indexOf(node.getElementsByTagName('option'), option);
-            } else {
-                Y.log('option: ' + val +  'not found, unable to set value on select', 'warn', 'dom');
-            }
-        }
-    },
+    VALUE_SETTERS: {},
 
     VALUE_GETTERS: {},
 
@@ -656,6 +647,16 @@ Y.DOM = {
                 }
 
                 attr.value = val;
+            },
+
+            select: function(node, val) {
+                for (var i = 0, options = node.getElementsByTagName('option'), option;
+                        option = options[i++];) {
+                    if (Y.DOM.getValue(option) === val) {
+                        Y.DOM.setAttribute(option, 'selected', true);
+                        break;
+                    }
+                }
             }
         });
     }
@@ -706,7 +707,7 @@ Y.DOM = {
                 if (node.multiple) {
                     Y.log('multiple select normalization not implemented', 'warn', 'DOM');
                 } else {
-                    val = Y.DOM.getValue(options[node.selectedIndex], 'value');
+                    val = Y.DOM.getValue(options[node.selectedIndex]);
                 }
             }
 

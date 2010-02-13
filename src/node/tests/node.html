@@ -436,6 +436,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
 
             Y.one('#test-select').set('value', 1);
             Assert.areEqual(1, Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
+            Y.one('#test-select').set('value', 'baz');
+            Assert.areEqual('baz', Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
         },
 
         test_dom_methods: function() {
