@@ -1,15 +1,15 @@
-.yui-skin-sam .yui-console-ft .yui-console-filters-categories,
-.yui-skin-sam .yui-console-ft .yui-console-filters-sources {
+.yui3-skin-sam .yui3-console-ft .yui3-console-filters-categories,
+.yui3-skin-sam .yui3-console-ft .yui3-console-filters-sources {
     text-align: left;
     padding: 5px 0;
     border: 1px inset;
     margin: 0 2px;
 }
-.yui-skin-sam .yui-console-ft .yui-console-filters-categories {
+.yui3-skin-sam .yui3-console-ft .yui3-console-filters-categories {
     background: #fff;
     border-bottom: 2px ridge;
 }
-.yui-skin-sam .yui-console-ft .yui-console-filters-sources {
+.yui3-skin-sam .yui3-console-ft .yui3-console-filters-sources {
     background: #fff;
     margin-bottom: 2px;
 
@@ -21,7 +21,7 @@
     -webkit-border-bottom-right-radius: 10px;
     -webkit-border-bottom-left-radius: 10px;
 }
-.yui-skin-sam .yui-console-filter-label {
+.yui3-skin-sam .yui3-console-filter-label {
     white-space: nowrap;
     margin-left: 1ex;
 }

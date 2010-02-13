@@ -1,13 +1,13 @@
-.yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+.yui3-skin-sam .yui3-console-entry-pass .yui3-console-entry-cat {
     background-color: green;
     color: #fff;
 }
 
-.yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+.yui3-skin-sam .yui3-console-entry-fail .yui3-console-entry-cat {
     background-color: red;
     color: #fff;
 }
 
-.yui-skin-sam .yui-console-entry-ignore .yui-console-entry-cat {
+.yui3-skin-sam .yui3-console-entry-ignore .yui3-console-entry-cat {
     background-color: #666;
 }
