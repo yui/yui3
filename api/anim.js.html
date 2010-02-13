@@ -495,6 +495,11 @@
         <span class="p">},</span>
 
         <span class="nx">_end</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">finish</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">duration</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">finish</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// jump to last frame</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_runAttrs</span><span class="p">(</span><span class="nx">duration</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REVERSE</span><span class="p">));</span>
+            <span class="p">}</span>
+
             <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">START_TIME</span><span class="p">,</span> <span class="kc">null</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">ELAPSED_TIME</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">PAUSED</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
@@ -504,38 +509,14 @@
         <span class="p">},</span>
 
         <span class="nx">_runFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_runtimeAttr</span><span class="p">,</span>
-                <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
-                <span class="nx">easing</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">easing</span><span class="p">,</span>
-                <span class="nx">d</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span>
+            <span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_runtimeAttr</span><span class="p">.</span><span class="nx">duration</span><span class="p">,</span>
                 <span class="nx">t</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">START_TIME</span><span class="p">),</span>
-                <span class="nx">reversed</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REVERSE</span><span class="p">),</span>
+                <span class="nx">reverse</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">REVERSE</span><span class="p">),</span>
                 <span class="nx">done</span> <span class="o">=</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&gt;=</span> <span class="nx">d</span><span class="p">),</span>
-                <span class="nx">lastFrame</span> <span class="o">=</span> <span class="nx">d</span><span class="p">,</span>
                 <span class="nx">attribute</span><span class="p">,</span>
                 <span class="nx">setter</span><span class="p">;</span>
                 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">reversed</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">t</span> <span class="o">=</span> <span class="nx">d</span> <span class="o">-</span> <span class="nx">t</span><span class="p">;</span>
-                <span class="nx">done</span> <span class="o">=</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">);</span>
-                <span class="nx">lastFrame</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">attribute</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                    <span class="nx">setter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;set&#39;</span> <span class="k">in</span> <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">?</span>
-                            <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">set</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">DEFAULT_SETTER</span><span class="p">;</span>
-
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">setter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">easing</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">unit</span><span class="p">);</span> 
-                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// ensure final frame value is set</span>
-                       <span class="c1">// TODO: handle keyframes </span>
-                        <span class="nx">setter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span> <span class="nx">lastFrame</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">easing</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">unit</span><span class="p">);</span> 
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-
+            <span class="k">this</span><span class="p">.</span><span class="nx">_runAttrs</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">reverse</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_actualFrames</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">ELAPSED_TIME</span><span class="p">,</span> <span class="nx">t</span><span class="p">);</span>
 
@@ -543,6 +524,37 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_lastFrame</span><span class="p">();</span>
             <span class="p">}</span>
+        <span class="p">},</span>
+
+        <span class="nx">_runAttrs</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">reverse</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_runtimeAttr</span><span class="p">,</span>
+                <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">behaviors</span><span class="p">,</span>
+                <span class="nx">easing</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">easing</span><span class="p">,</span>
+                <span class="nx">lastFrame</span> <span class="o">=</span> <span class="nx">d</span><span class="p">,</span>
+                <span class="nx">attribute</span><span class="p">,</span>
+                <span class="nx">setter</span><span class="p">,</span>
+                <span class="nx">i</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">reverse</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">t</span> <span class="o">=</span> <span class="nx">d</span> <span class="o">-</span> <span class="nx">t</span><span class="p">;</span>
+                <span class="nx">lastFrame</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">to</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">attribute</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="nx">setter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;set&#39;</span> <span class="k">in</span> <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">?</span>
+                            <span class="nx">customAttr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">set</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">DEFAULT_SETTER</span><span class="p">;</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="nx">d</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">setter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">easing</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">unit</span><span class="p">);</span> 
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">setter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">from</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">to</span><span class="p">,</span> <span class="nx">lastFrame</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">easing</span><span class="p">,</span> <span class="nx">attribute</span><span class="p">.</span><span class="nx">unit</span><span class="p">);</span> 
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+
         <span class="p">},</span>
 
         <span class="nx">_lastFrame</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
