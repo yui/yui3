@@ -446,7 +446,16 @@ Y.DOM = {
         return newNode;
     },
 
-    VALUE_SETTERS: {},
+    VALUE_SETTERS: {
+        select: function(node, val) {
+            var option = Y.Selector.query('option[value="' + val + '"]', node, true);
+            if (option) {
+                node.selectedIndex = Y.Array.indexOf(node.getElementsByTagName('option'), option);
+            } else {
+                Y.log('option: ' + val +  'not found, unable to set value on select', 'warn', 'dom');
+            }
+        }
+    },
 
     VALUE_GETTERS: {},
 

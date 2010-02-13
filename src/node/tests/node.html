@@ -432,6 +432,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             Assert.areEqual(1, Y.get('#test-select')._node.selectedIndex,
                     "Y.get('#test-select').set('selectedIndex', 1)");
 
+
+
+            Y.one('#test-select').set('value', 1);
+            Assert.areEqual(1, Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
         },
 
         test_dom_methods: function() {

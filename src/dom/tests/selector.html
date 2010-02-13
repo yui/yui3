@@ -437,7 +437,7 @@ onload = function() {
             },
 
             testEnabled: function() {
-                Assert.areEqual(Y.DOM.byId('label-checkbox-unchecked'), $('#test-inputs :enabled', null, true), "$('#test-inputs :enabled')");
+                Assert.areEqual(Y.DOM.byId('checkbox-unchecked'), $('#test-inputs input:enabled', null, true), "$('#test-inputs input:enabled')");
             },
 
             testIframe: function() {
