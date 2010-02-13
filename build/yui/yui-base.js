@@ -12,7 +12,7 @@
     var doc = document,
         docEl = doc && doc.documentElement,
         docElClass = docEl && docEl.className,
-        DOCUMENT_CLASS = 'yui-js-enabled',
+        DOCUMENT_CLASS = 'yui3-js-enabled',
         NOOP = function() {},
     
         _instances = {}, 
