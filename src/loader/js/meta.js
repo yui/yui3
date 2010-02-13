@@ -527,6 +527,16 @@ META = {
             "node-screen"
         ]
     }, 
+    "intl": {
+        "submodules": {
+            "intl-lang": {
+                "requires": [
+                    "event-custom"
+                ]
+            }, 
+            "intl-load": {}
+        }
+    }, 
     "io": {
         "submodules": {
             "io-base": {
