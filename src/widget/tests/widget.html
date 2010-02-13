@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+    <title>Widget Test Suite</title>
+    <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
+    <style type="text/css">
+        h1 {
+            font: normal 125%/1.4 Arial, sans-serif;
+        }
+        .yui-skin-sam .yui-console .yui-console-content {
+            font-size: 10px;
+        }
+        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+            background: #070;
+            color: #fff;
+        }
+        .yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+            background: #700;
+            color: #fff;
+        }
+        .yui-skin-sam .yui-console-entry-time {
+            display: none;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+<div id="testbed" class="yui3-skin-foo"></div>
+
+<script src="../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    filter : 'raw',
+    filters: {
+        widget: 'debug'
+    }
+}).use('test','console',function (Y) {
+
+var suite = new Y.Test.Suite("Widget Tests");
+
+suite.add(new Y.Test.Case({
+    name : "getSkinName",
+
+    "getSkinName should return null if not rendered" : function () {
+        var w = new Y.Widget();
+
+        Y.Assert.isNull( w.getSkinName() );
+    },
+
+    "getSkinName should return name from BB if available": function () {
+        var bb = Y.Node.create( '<div class="yui3-skin-foo"><div></div></div>' ),
+            cb = bb.one( 'div' ),
+            w = new Y.Widget( {
+            boundingBox: bb,
+            contentBox:  cb
+        } );
+
+        Y.Assert.areEqual( "foo", w.getSkinName() );
+    },
+
+    "getSkinName should return name from body or null": function () {
+        var w = new Y.Widget().render(),
+            body = Y.one( 'body' );
+
+        Y.Assert.areEqual( "sam", w.getSkinName() );
+
+        body.removeClass( "yui3-skin-sam" );
+
+        Y.Assert.isNull( w.getSkinName() );
+
+        body.addClass( "yui3-skin-sam" );
+    },
+
+    "getSkinName should return name from ancestor if both ancestor and body are classed": function () {
+        var w = new Y.Widget().render( '#testbed' ),
+            body = Y.one( 'body' );
+
+        body.addClass( "yui3-skin-sam" );
+
+        Y.Assert.areEqual( "foo", w.getSkinName() );
+    }
+
+}));
+
+new Y.Console({
+    newestOnTop: false,
+    height: '580px'
+}).render();
+
+Y.Test.Runner.add(suite);
+
+Y.Test.Runner.run();
+
+});
+</script>
+</body>
+</html>

@@ -372,6 +372,31 @@ Y.extend(Widget, Y.Base, {
 	},
 
     /**
+     * Returns the name of the skin that's currently applied to the widget.
+     * This is only really useful after the widget's DOM structure is in the
+     * document, either by render or by progressive enhancement.  Searches up
+     * the Widget's ancestor axis for a class yui3-skin-(name), and returns the
+     * (name) portion.  Otherwise, returns null.
+     *
+     * @method getSkinName
+     * @return {String} the name of the skin, or null (yui3-skin-sam => sam)
+     */
+    getSkinName: function () {
+        var root = this.get( CONTENT_BOX ) || this.get( BOUNDING_BOX ),
+            search = new RegExp( '\\b' + _getClassName( 'skin' ) + '-(\\S+)' ),
+            match;
+
+        if ( root ) {
+            root.ancestor( function ( node ) {
+                match = node.get( 'className' ).match( search );
+                return match;
+            } );
+        }
+
+        return ( match ) ? match[1] : null;
+    },
+
+    /**
      * Initializer lifecycle implementation for the Widget class. Registers the 
      * widget instance, and runs through the Widget's HTML_PARSER definition. 
      *
@@ -402,7 +427,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Descructor lifecycle implementation for the Widget class. Purges events attached
+     * Destructor lifecycle implementation for the Widget class. Purges events attached
      * to the bounding box (and all child nodes) and removes the Widget from the 
      * list of registered widgets.
      *
