@@ -446,6 +446,11 @@
         },
 
         _end: function(finish) {
+            var duration = this.get('duration') * 1000;
+            if (finish) { // jump to last frame
+                this._runAttrs(duration, duration, this.get(REVERSE));
+            }
+
             this._set(START_TIME, null);
             this._set(ELAPSED_TIME, 0);
             this._set(PAUSED, false);
@@ -455,38 +460,14 @@
         },
 
         _runFrame: function() {
-            var attr = this._runtimeAttr,
-                customAttr = Y.Anim.behaviors,
-                easing = attr.easing,
-                d = attr.duration,
+            var d = this._runtimeAttr.duration,
                 t = new Date() - this.get(START_TIME),
-                reversed = this.get(REVERSE),
+                reverse = this.get(REVERSE),
                 done = (t >= d),
-                lastFrame = d,
                 attribute,
                 setter;
                 
-            if (reversed) {
-                t = d - t;
-                done = (t <= 0);
-                lastFrame = 0;
-            }
-
-            for (var i in attr) {
-                if (attr[i].to) {
-                    attribute = attr[i];
-                    setter = (i in customAttr && 'set' in customAttr[i]) ?
-                            customAttr[i].set : Y.Anim.DEFAULT_SETTER;
-
-                    if (!done) {
-                        setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
-                    } else { // ensure final frame value is set
-                       // TODO: handle keyframes 
-                        setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
-                    }
-                }
-            }
-
+            this._runAttrs(t, d, reverse);
             this._actualFrames += 1;
             this._set(ELAPSED_TIME, t);
 
@@ -494,6 +475,37 @@
             if (done) {
                 this._lastFrame();
             }
+        },
+
+        _runAttrs: function(t, d, reverse) {
+            var attr = this._runtimeAttr,
+                customAttr = Y.Anim.behaviors,
+                easing = attr.easing,
+                lastFrame = d,
+                attribute,
+                setter,
+                i;
+
+            if (reverse) {
+                t = d - t;
+                lastFrame = 0;
+            }
+
+            for (i in attr) {
+                if (attr[i].to) {
+                    attribute = attr[i];
+                    setter = (i in customAttr && 'set' in customAttr[i]) ?
+                            customAttr[i].set : Y.Anim.DEFAULT_SETTER;
+
+                    if (t < d) {
+                        setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
+                    } else {
+                        setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
+                    }
+                }
+            }
+
+
         },
 
         _lastFrame: function() {
