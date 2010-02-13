@@ -1,0 +1,334 @@
+YUI.add('slider-base', function(Y) {
+
+/**
+ * Create a sliding value range input visualized as a draggable thumb on a
+ * background element.
+ * 
+ * @module slider
+ */
+
+/**
+ * Create a slider to represent an integer value between a given minimum and
+ * maximum.  Sliders may be aligned vertically or horizontally, based on the
+ * <code>axis</code> configuration.
+ *
+ * @class Slider
+ * @extends Widget
+ * @param config {Object} Configuration object
+ * @constructor
+ */
+function SliderBase() {
+    SliderBase.superclass.constructor.apply( this, arguments );
+}
+
+Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
+
+    // Y.Slider prototype
+
+    /**
+     * Construction logic executed durint Slider instantiation. Subscribes to
+     * after events for min, max, and railSize.  Publishes custom events
+     * including slideStart and slideEnd.
+     *
+     * @method initializer
+     * @protected
+     */
+    initializer : function () {
+        this.axis = this.get( 'axis' );
+
+        this._key = {
+            dim : ( this.axis === 'y' ) ? 'height' : 'width'
+        };
+
+        /**
+         * Signals that the thumb has moved.  Payload includes the DD.Drag
+         * instance's <code>drag:drag</code>.
+         *
+         * @event thumbMove
+         * @param event {Event.Facade} An Event Facade object with the
+         *                  following properties added:
+         *  <dl>
+         *      <dt>ddEvent</dt>
+         *          <dd><code>drag:drag</code> event from the managed DD.Drag
+         *          instance</dd>
+         *  </dl>
+         */
+        this.publish( 'thumbMove', {
+            defaultFn: this._defThumbMoveFn,
+            queue    : true
+        } );
+    },
+
+    /**
+     * Create the DOM structure for the Slider.
+     *
+     * @method renderUI
+     * @protected
+     */
+    renderUI : function () {
+        var contentBox = this.get( 'contentBox' );
+
+        this.rail = this._renderRail();
+
+        this._uiSetRailSize();
+
+        this.thumb = this._renderThumb();
+
+        this.rail.appendChild( this.thumb );
+        // @TODO: insert( contentBox, 'replace' ) or setContent?
+        contentBox.appendChild( this.rail );
+
+        // <span class="yui3-slider-x">
+        contentBox.addClass( this.getClassName( this.axis ) );
+    },
+
+    _renderRail: function () {
+        var minCapClass = this.getClassName( 'rail', 'cap', this._minEdge ),
+            maxCapClass = this.getClassName( 'rail', 'cap', this._maxEdge );
+
+        return Y.Node.create(
+            Y.substitute( this.RAIL_TEMPLATE, {
+                railClass      : this.getClassName( 'rail' ),
+                railMinCapClass: minCapClass,
+                railMaxCapClass: maxCapClass
+            } ) );
+    },
+
+    _uiSetRailSize: function () {
+        var length = this.get( this._key.dim ) + '';
+
+        // If the specified height or width doesn't include units, default px
+        if ( !/\D$/.test( length ) ) {
+            length += this.DEF_UNIT;
+        }
+
+        this.rail.setStyle( this._key.dim, length );
+    },
+
+    _renderThumb: function () {
+        var imageUrl = this.get( 'thumbUrl' );
+
+        return Y.Node.create(
+            Y.substitute( this.THUMB_TEMPLATE, {
+                thumbClass      : this.getClassName( 'thumb' ),
+                thumbShadowClass: this.getClassName( 'thumb', 'shadow' ),
+                thumbImageClass : this.getClassName( 'thumb', 'image' ),
+                thumbShadowUrl  : imageUrl,
+                thumbImageUrl   : imageUrl
+            } ) );
+    },
+
+    /**
+     * Creates the Y.DD.Drag instance used to handle the thumb movement and
+     * binds Slider interaction to the configured value model.
+     *
+     * @method bindUI
+     * @protected
+     */
+    bindUI : function () {
+        this._bindThumbDD();
+
+        this._bindValueLogic();
+
+        this.after( 'disabledChange', this._afterDisabledChange );
+        this.after( this._dim + 'Change', this._afterLengthChange );
+    },
+
+    _bindThumbDD: function () {
+        var config = { constrain: this.rail };
+        
+        // { constrain: rail, stickX: true }
+        config[ 'stick' + this.axis.toUpperCase() ] = true;
+
+        this._dd = new Y.DD.Drag( {
+            node   : this.thumb,
+            bubble : false,
+            on     : {
+                'drag:start': Y.bind( this._onDragStart, this )
+            },
+            after  : {
+                'drag:align': Y.bind( this._afterAlign,   this ),
+                'drag:end'  : Y.bind( this._afterDragEnd, this )
+            }
+        } );
+
+        // Constrain the thumb to the rail
+        this._dd.plug( Y.Plugin.DDConstrained, config );
+    },
+
+    _bindValueLogic: function () {},
+
+    _onDragStart: function ( e ) {
+        /**
+         * Signals the beginning of a thumb drag operation.  Payload includes
+         * the DD.Drag instance's drag:start event.
+         *
+         * @event slideStart
+         * @param event {Event.Facade} An Event Facade object with the
+         *                  following properties added:
+         *  <dl>
+         *      <dt>ddEvent</dt>
+         *          <dd><code>drag:start</code> event from the managed DD.Drag
+         *          instance</dd>
+         *  </dl>
+         */
+        this.fire( 'slideStart', { ddEvent: e } );
+    },
+
+    _afterAlign: function ( e ) {
+        this.fire( 'thumbMove', { ddEvent: e } );
+    },
+
+    _afterDragEnd: function ( e ) {
+        /**
+         * Signals the end of a thumb drag operation.  Payload includes
+         * the DD.Drag instance's drag:end event and the current value.
+         *
+         * @event slideEnd
+         * @param event {Event.Facade} An Event Facade object with the
+         *                  following properties added:
+         *  <dl>
+         *      <dt>ddEvent</dt>
+         *          <dd><code>drag:end</code> event from the managed DD.Drag
+         *          instance</dd>
+         *  </dl>
+         */
+        this.fire( 'slideEnd', { ddEvent: e } );
+    },
+
+    _afterDisabledChange: function ( e ) {
+        this._dd.set( 'lock', true );
+    },
+
+    _afterLengthChange: function ( e ) {
+        this._uiSetRailSize();
+    },
+
+    /**
+     * Synchronizes the DOM state with the attribute settings (most notably
+     * railSize and value).  If thumbImage is provided and is still loading,
+     * sync is delayed until it is complete, since the image's dimensions are
+     * taken into consideration for calculations.
+     *
+     * @method syncUI
+     */
+    syncUI : function () {
+        this._syncThumbPosition();
+
+        // Forces a reflow of the bounding box to address IE8 inline-block
+        // container not expanding correctly. bug 2527905
+        //this.get('boundingBox').toggleClass('');
+    },
+
+    _syncThumbPosition: function () { },
+
+    /**
+     * Validator applied to new values for the axis attribute. Only
+     * &quot;x&quot; and &quot;y&quot; are permitted.
+     *
+     * @method _validateNewAxis
+     * @param v {String} proposed value for the axis attribute
+     * @return Boolean
+     * @protected
+     */
+    _validateNewAxis : function (v) {
+        return Y.Lang.isString( v ) && 'xyXY'.indexOf( v ) > -1;
+    },
+
+    /**
+     * Setter applied to the input when updating the axis attribute.
+     *
+     * @method _setAxisFn
+     * @param v {String} proposed value for the axis attribute
+     * @return {String} lowercased first character of the input string
+     * @protected
+     */
+    _setAxisFn : function (v) {
+        return v.charAt(0).toLowerCase();
+    },
+
+    _initThumbUrlFn: function () {
+        return Y.config.base + 
+                  'slider/assets/skins/sam/thumb-' + this.axis + '.png';
+    },
+
+    BOUNDING_TEMPLATE : '<span></span>',
+
+    CONTENT_TEMPLATE  : '<span></span>',
+
+    RAIL_TEMPLATE     : '<span class="{railClass}">' +
+                            '<span class="{railMinCapClass}"></span>' +
+                            '<span class="{railMaxCapClass}"></span>' +
+                        '</span>',
+
+    THUMB_TEMPLATE    : '<span class="{thumbClass}" tabindex="-1">' +
+                            '<img src="{thumbShadowUrl}" ' +
+                                'alt="Slider thumb shadow" ' +
+                                'class="{thumbShadowClass}">' +
+                            '<img src="{thumbImageUrl}" ' +
+                                'alt="Slider thumb" ' +
+                                'class="{thumbImageClass}">' +
+                        '</span>'
+
+}, {
+
+    // Y.Slider static properties
+
+    /**
+     * The identity of the widget.
+     *
+     * @property Slider.NAME
+     * @type String
+     * @default 'sliderBase'
+     * @readOnly
+     * @protected
+     * @static
+     */
+    NAME : 'sliderBase',
+
+    /**
+     * Static property used to define the default attribute configuration of
+     * the Widget.
+     *
+     * @property Slider.ATTRS
+     * @type Object
+     * @protected
+     * @static
+     */
+    ATTRS : {
+
+        /**
+         * Axis upon which the Slider's thumb moves.  &quot;x&quot; for
+         * horizontal, &quot;y&quot; for vertical.
+         *
+         * @attribute axis
+         * @type String
+         * @default &quot;x&quot;
+         * @writeOnce
+         */
+        axis : {
+            value     : 'x',
+            writeOnce : true,
+            validator : '_validateNewAxis',
+            setter    : '_setAxisFn',
+            lazyAdd   : false
+        },
+
+        /**
+         * Path to the thumb image.  This will be used as both the thumb and
+         * shadow as a sprite.
+         *
+         * @attribute thumbUrl
+         * @type { String }
+         * @default thumb-x.png or thumb-y.png in the sam skin directory of the
+         * current build path for Slider
+         */
+        thumbUrl: {
+            valueFn: '_initThumbUrlFn',
+            validator: Y.Lang.isString
+        }
+    }
+});
+
+
+}, '@VERSION@' ,{requires:['widget', 'substitute', 'dd-constrain']});

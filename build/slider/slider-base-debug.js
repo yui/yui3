@@ -1,11 +1,11 @@
+YUI.add('slider-base', function(Y) {
+
 /**
  * Create a sliding value range input visualized as a draggable thumb on a
  * background element.
  * 
  * @module slider
  */
-
-var VALUE = 'value';
 
 /**
  * Create a slider to represent an integer value between a given minimum and
@@ -17,11 +17,11 @@ var VALUE = 'value';
  * @param config {Object} Configuration object
  * @constructor
  */
-function Slider() {
-    Slider.superclass.constructor.apply(this,arguments);
+function SliderBase() {
+    SliderBase.superclass.constructor.apply( this, arguments );
 }
 
-Y.Slider = Y.extend(Slider, Y.Widget, {
+Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
 
     // Y.Slider prototype
 
@@ -34,7 +34,29 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
      * @protected
      */
     initializer : function () {
-        //this.on( 'render', this._onRender );
+        this.axis = this.get( 'axis' );
+
+        this._key = {
+            dim : ( this.axis === 'y' ) ? 'height' : 'width'
+        };
+
+        /**
+         * Signals that the thumb has moved.  Payload includes the DD.Drag
+         * instance's <code>drag:drag</code>.
+         *
+         * @event thumbMove
+         * @param event {Event.Facade} An Event Facade object with the
+         *                  following properties added:
+         *  <dl>
+         *      <dt>ddEvent</dt>
+         *          <dd><code>drag:drag</code> event from the managed DD.Drag
+         *          instance</dd>
+         *  </dl>
+         */
+        this.publish( 'thumbMove', {
+            defaultFn: this._defThumbMoveFn,
+            queue    : true
+        } );
     },
 
     /**
@@ -73,7 +95,14 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
     },
 
     _uiSetRailSize: function () {
-        this.rail.setStyle( this._dim, this._dim );
+        var length = this.get( this._key.dim ) + '';
+
+        // If the specified height or width doesn't include units, default px
+        if ( !/\D$/.test( length ) ) {
+            length += this.DEF_UNIT;
+        }
+
+        this.rail.setStyle( this._key.dim, length );
     },
 
     _renderThumb: function () {
@@ -99,7 +128,7 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
     bindUI : function () {
         this._bindThumbDD();
 
-        this._bindValuePlugin();
+        this._bindValueLogic();
 
         this.after( 'disabledChange', this._afterDisabledChange );
         this.after( this._dim + 'Change', this._afterLengthChange );
@@ -118,7 +147,7 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
                 'drag:start': Y.bind( this._onDragStart, this )
             },
             after  : {
-                'drag:drag' : Y.bind( this._afterDrag,    this ),
+                'drag:align': Y.bind( this._afterAlign,   this ),
                 'drag:end'  : Y.bind( this._afterDragEnd, this )
             }
         } );
@@ -127,40 +156,12 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
         this._dd.plug( Y.Plugin.DDConstrained, config );
     },
 
-    _bindValuePlugin: function () {
-        var valuePlugin = this.get( 'valuePlugin' ),
-            config      = {
-                min  : this.min,
-                max  : this.max,
-                after: {
-                    // Subscriptions to bring plugin changes here
-                    minChange  : Y.rbind( this._afterPluginMinChange, this ),
-                    maxChange  : Y.rbind( this._afterPluginMaxChange, this ),
-                    valueChange: Y.rbind( this._afterPluginValueChange, this )
-                }
-            };
-
-        // Let the valuePlugin default the value unless it's been set via
-        // configuration.
-        if ( this.value !== null ) {
-            config.value = this.value;
-        }
-
-        this._dd.plug( valuePlugin, config );
-
-        // Loop back subscriptions to sync slider attr changes into the plugin
-        this.after( {
-            minChange  : this._afterMinChange,
-            maxChange  : this._afterMaxChange,
-            valueChange: this._afterValueChange
-        } );
-
-    },
+    _bindValueLogic: function () {},
 
     _onDragStart: function ( e ) {
         /**
          * Signals the beginning of a thumb drag operation.  Payload includes
-         * the DD.Drag instance's drag:start event and the current value.
+         * the DD.Drag instance's drag:start event.
          *
          * @event slideStart
          * @param event {Event.Facade} An Event Facade object with the
@@ -169,32 +170,13 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
          *      <dt>ddEvent</dt>
          *          <dd><code>drag:start</code> event from the managed DD.Drag
          *          instance</dd>
-         *      <dt>value</dt>
-         *          <dd>The <code>value</code> associated to the thumb's
-         *          current position</dd>
          *  </dl>
          */
-        this.fire( 'slideStart', { ddEvent: e, value: this.value } );
+        this.fire( 'slideStart', { ddEvent: e } );
     },
 
-    _afterDrag: function ( e ) {
-        /**
-         * Signals that the thumb has moved.  Payload includes the DD.Drag
-         * instance's <code>drag:drag</code> event and the current value.
-         *
-         * @event thumbMove
-         * @param event {Event.Facade} An Event Facade object with the
-         *                  following properties added:
-         *  <dl>
-         *      <dt>ddEvent</dt>
-         *          <dd><code>drag:drag</code> event from the managed DD.Drag
-         *          instance</dd>
-         *      <dt>value</dt>
-         *          <dd>The <code>value</code> associated to the thumb's
-         *          current position</dd>
-         *  </dl>
-         */
-        this.fire( 'thumbMove', { ddEvent: e, value: this.value } );
+    _afterAlign: function ( e ) {
+        this.fire( 'thumbMove', { ddEvent: e } );
     },
 
     _afterDragEnd: function ( e ) {
@@ -209,42 +191,9 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
          *      <dt>ddEvent</dt>
          *          <dd><code>drag:end</code> event from the managed DD.Drag
          *          instance</dd>
-         *      <dt>value</dt>
-         *          <dd>The <code>value</code> associated to the thumb's
-         *          current position</dd>
          *  </dl>
          */
-        this.fire( 'slideEnd', { ddEvent: e, value: this.value } );
-    },
-
-    _afterPluginMinChange: function ( e ) {
-        this.set( 'min', e.newVal, { fromPlugin: true } );
-    },
-
-    _afterMinChange: function ( e ) {
-        if ( !e.fromPlugin && this._dd ) {
-            this._dd._val.set( 'min', e.newVal );
-        }
-    },
-
-    _afterPluginMaxChange: function ( e ) {
-        this.set( 'max', e.newVal, { fromPlugin: true } );
-    },
-
-    _afterMaxChange: function ( e ) {
-        if ( !e.fromPlugin && this._dd ) {
-            this._dd._val.set( 'max', e.newVal );
-        }
-    },
-
-    _afterPluginValueChange: function ( e ) {
-        this.set( VALUE, e.newVal, { fromPlugin: true } );
-    },
-
-    _afterValueChange: function ( e ) {
-        if ( !e.fromPlugin && this._dd ) {
-            this._dd._val.set( VALUE, e.newVal );
-        }
+        this.fire( 'slideEnd', { ddEvent: e } );
     },
 
     _afterDisabledChange: function ( e ) {
@@ -264,34 +213,14 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
      * @method syncUI
      */
     syncUI : function () {
-        this._dd[ this.get( 'valuePlugin' ).NS ].syncDragNode();
+        this._syncThumbPosition();
 
         // Forces a reflow of the bounding box to address IE8 inline-block
         // container not expanding correctly. bug 2527905
         //this.get('boundingBox').toggleClass('');
     },
 
-    /**
-     * Convenience method for accessing the current value of the Slider.
-     * Equivalent to <code>slider.get(&quot;value&quot;)</code>.
-     *
-     * @method getValue
-     * @return {Number} the value
-     */
-    getValue : function () {
-        return this.get( VALUE );
-    },
-
-    /**
-     * Convenience method for updating the current value of the Slider.
-     * Equivalent to <code>slider.set(&quot;value&quot;,val)</code>.
-     *
-     * @method setValue
-     * @param val {Number} the new value
-     */
-    setValue : function ( val ) {
-        this.set( VALUE, val );
-    },
+    _syncThumbPosition: function () { },
 
     /**
      * Validator applied to new values for the axis attribute. Only
@@ -303,7 +232,7 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _validateNewAxis : function (v) {
-        return Y.Lang.isString( v ) && 'xXyY'.indexOf( v.charAt( 0 ) ) > -1;
+        return Y.Lang.isString( v ) && 'xyXY'.indexOf( v ) > -1;
     },
 
     /**
@@ -315,69 +244,12 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
      * @protected
      */
     _setAxisFn : function (v) {
-        this.axis = v.charAt(0).toLowerCase();
-
-        var vertical = ( this.axis === 'y' );
-
-        this._dim =     ( vertical ) ? 'height' : 'width';
-        this._minEdge = ( vertical ) ? 'top'    : 'left';
-        this._maxEdge = ( vertical ) ? 'bottom' : 'right';
-
-        return this.axis;
+        return v.charAt(0).toLowerCase();
     },
-
-/*
-    _onRender: function ( e ) {
-        var destNode = e.parentNode ||
-                       this.get( 'boundingBox' ) ||
-                       this.get( 'contentBox' ).
-            hidden = false;
-
-        destNode = Y.Lang.isString( destNode ) ?  Y.one( destNode ) : destNode;
-
-        if ( destNode ) {
-            hidden = !destNode.inDoc() && destNode.ancestor( function ( n ) {
-                return ( n.getComputedStyle( 'display' ) === 'none' );
-            } );
-        }
-
-        // Disallow rendering in a hidden container
-        if ( hidden ) {
-            e.preventDefault();
-        }
-    },
-*/
 
     _initThumbUrlFn: function () {
         return Y.config.base + 
                   'slider/assets/skins/sam/thumb-' + this.axis + '.png';
-    },
-
-    _getMin: function () {
-        return ( this._dd ) ? this._dd._val.get( 'min' ) : this.min;
-    },
-
-    _setMin: function ( v, o ) {
-        this.min = v;
-        return v;
-    },
-
-    _getMax: function () {
-        return ( this._dd ) ? this._dd._val.get( 'max' ) : this.max;
-    },
-
-    _setMax: function ( v, o ) {
-        this.max = v;
-        return v;
-    },
-
-    _getValue: function () {
-        return ( this._dd ) ? this._dd._val.get( VALUE ) : this.value;
-    },
-
-    _setValue: function ( v, o ) {
-        this.value = v;
-        return v;
     },
 
     BOUNDING_TEMPLATE : '<span></span>',
@@ -396,11 +268,7 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
                             '<img src="{thumbImageUrl}" ' +
                                 'alt="Slider thumb" ' +
                                 'class="{thumbImageClass}">' +
-                        '</span>',
-
-    min: 0,
-    max: 100,
-    value: null
+                        '</span>'
 
 }, {
 
@@ -411,9 +279,12 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
      *
      * @property Slider.NAME
      * @type String
+     * @default 'sliderBase'
+     * @readOnly
+     * @protected
      * @static
      */
-    NAME : 'slider',
+    NAME : 'sliderBase',
 
     /**
      * Static property used to define the default attribute configuration of
@@ -444,63 +315,20 @@ Y.Slider = Y.extend(Slider, Y.Widget, {
         },
 
         /**
-         * Value associated with the left or top most position of the thumb on
-         * the rail.  Defers to the valuePlugin logic.
+         * Path to the thumb image.  This will be used as both the thumb and
+         * shadow as a sprite.
          *
-         * @attribute min
-         * @type Number
-         * @default 0
+         * @attribute thumbUrl
+         * @type { String }
+         * @default thumb-x.png or thumb-y.png in the sam skin directory of the
+         * current build path for Slider
          */
-        min : {
-            getter : '_getMinFn',
-            setter : '_setMinFn',
-            lazyAdd: false
-        },
-
-        /**
-         * Value associated with the right or bottom most position of the thumb
-         * on the rail.  Defers to the valuePlugin logic.
-         *
-         * @attribute max
-         * @type Number
-         * @default 100
-         */
-        max : {
-            getter : '_getMaxFn',
-            setter : '_setMaxFn',
-            lazyAdd: false
-        },
-
-        /**
-         * The current value of the Slider.  This value is interpretted into a
-         * position for the thumb along the Slider's rail.  Defers to the
-         * valuePlugin logic.
-         *
-         * @attribute value
-         * @type Number
-         * @default 0
-         */
-        value: {
-            getter : '_getValueFn',
-            setter : '_setValueFn',
-            lazyAdd: false
-        },
-
-        /**
-         * DD plugin to translate thumb position to a value and vice versa.
-         *
-         * @attribute valuePlugin
-         * @type { Function }
-         * @default Y.Plugin.DDValue
-         */
-        valuePlugin: {
-            value: Y.Plugin.DDValue,
-            validator: Y.Lang.isFunction
-        },
-
         thumbUrl: {
             valueFn: '_initThumbUrlFn',
             validator: Y.Lang.isString
         }
     }
 });
+
+
+}, '@VERSION@' ,{requires:['widget', 'substitute', 'dd-constrain']});
