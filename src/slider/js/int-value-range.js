@@ -369,4 +369,4 @@ Y.IntValueRange = Y.mix( IntValueRange, {
             validator: '_validateNewValue'
         }
     }
-} );
+}, true );

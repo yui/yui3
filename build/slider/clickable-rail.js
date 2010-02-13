@@ -1,3 +1,5 @@
+YUI.add('clickable-rail', function(Y) {
+
 function ClickableRail() {
     this._initClickableRail();
 }
@@ -90,3 +92,6 @@ Y.ClickableRail = Y.mix( ClickableRail, {
     }
 
 }, true );
+
+
+}, '@VERSION@' ,{requires:['base-build', 'node-base']});
