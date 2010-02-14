@@ -842,10 +842,24 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  */
 
 /**
+ * A list of languages in order of preference. This list is matched against
+ * the list of available languages in modules that the YUI instance uses to
+ * determine the best possible localization of language sensitive modules.
+ * Languages are represented using BCP 47 language tags, such as "en-GB" for
+ * English as used in the United Kingdom, or "zh-Hans-CN" for simplified
+ * Chinese as used in China. The list can be provided as a comma-separated
+ * list or as an array.
+ *
+ * @property lang
+ * @type string|string[]
+ */
+
+/**
  * The default date format
  *
  * @property dateFormat
  * @type string
+ * @deprecated use configuration in DataType.Date.format() instead
  */
 
 /**
@@ -853,6 +867,7 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  *
  * @property locale
  * @type string
+ * @deprecated use config.lang instead
  */
 
 /**
