@@ -242,8 +242,11 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
     },
 
     _initThumbUrl: function () {
-        return Y.config.base + 
-                  'slider/assets/skins/sam/thumb-' + this.axis + '.png';
+        var skin    = this.getSkinName() || 'sam',
+            skinDir = Y.config.base + 'slider/assets/skins/' + skin;
+
+        // <img src="/path/to/build/slider/assets/skins/sam/thumb-x.png">
+        return skinDir + '/thumb-' + this.axis + '.png';
     },
 
     BOUNDING_TEMPLATE : '<span></span>',
