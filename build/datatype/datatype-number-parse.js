@@ -34,5 +34,4 @@ Y.mix(Y.namespace("DataType.Number"), {
 Y.namespace("Parsers").number = Y.DataType.Number.parse;
 
 
-
 }, '@VERSION@' );
