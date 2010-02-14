@@ -123,7 +123,8 @@ PHP added a few of its own, defined at <a href="http://www.php.net/strftime">htt
 This javascript implementation supports all the PHP specifiers and a few more.  The full list is below.
 </p>
 <p>
-If not specified, it defaults to the ISO8601 standard date format: %Y-%m-%d.  This may be overridden by changing Y.config.dateFormat
+If not specified, it defaults to the ISO 8601 standard date format: %Y-%m-%d.
+This may be overridden by the deprecated Y.config.dateFormat property.
 </p>
 <dl>
 <dt>%a</dt> <dd>abbreviated weekday name according to the current locale</dd>
@@ -175,10 +176,11 @@ first Monday as the first day of the first week</dd>
 </dd>
 <dt>locale {String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  (Optional)</dt>
+                                                        <span property="yui:description">  (Deprecated, optional)</dt>
 <dd>
+<b>Deprecated - use Y.config.lang instead, which provides access to a much larger set of built-in languages.</b>
 The locale to use when displaying days of week, months of the year, and other locale specific
-strings. If not specified, this defaults to "en" (though this may be overridden by changing Y.config.locale).
+strings. If not specified, this defaults to "en" (though this may be overridden by the deprecated Y.config.locale).
 The following locales are built in:
 <dl>
 <dt>en</dt>
@@ -190,7 +192,7 @@ The following locales are built in:
 <dt>en-AU</dt>
 <dd>Australian English (identical to British English)</dd>
 </dl>
-More locales may be added by subclassing of Y.DataType.Date.Locale["en"].
+More locales may be added by subclassing of the deprecated Y.DataType.Date.Locale["en"].
 See Y.DataType.Date.Locale for more information.
 </dd>
 </dl></span>
