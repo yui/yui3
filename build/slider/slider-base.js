@@ -101,6 +101,8 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
     },
 
     _renderThumb: function () {
+        this._initThumbUrl();
+
         var imageUrl = this.get( 'thumbUrl' );
 
         return Y.Node.create(
@@ -242,11 +244,15 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
     },
 
     _initThumbUrl: function () {
-        var skin    = this.getSkinName() || 'sam',
+        var url     = this.get( 'thumbUrl' ),
+            skin    = this.getSkinName() || 'sam',
             skinDir = Y.config.base + 'slider/assets/skins/' + skin;
 
-        // <img src="/path/to/build/slider/assets/skins/sam/thumb-x.png">
-        return skinDir + '/thumb-' + this.axis + '.png';
+        if ( !url ) {
+            // <img src="/path/to/build/slider/assets/skins/sam/thumb-x.png">
+            url = skinDir + '/thumb-' + this.axis + '.png';
+            this.set( 'thumbUrl', url );
+        }
     },
 
     BOUNDING_TEMPLATE : '<span></span>',
@@ -324,7 +330,8 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
 
         /**
          * Path to the thumb image.  This will be used as both the thumb and
-         * shadow as a sprite.
+         * shadow as a sprite.  Defaults at render() to thumb-x.png or
+         * thumb-y.png in the skin directory of the current skin.
          *
          * @attribute thumbUrl
          * @type { String }
@@ -332,7 +339,7 @@ Y.SliderBase = Y.extend(SliderBase, Y.Widget, {
          * current build path for Slider
          */
         thumbUrl: {
-            valueFn: '_initThumbUrl',
+            value: null,
             validator: Y.Lang.isString
         }
     }
