@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+    </style>
+</head>
+<body class="yui3-skin-sam">
+<input id="in"><input type="button" id="log" value="log">
+
+<script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+<script type="text/javascript">
+YUI({
+    filter : 'raw'
+}).use('console-filters',function (Y) {
+
+var input = Y.one( '#in' );
+
+new Y.Console({ newestOnTop: false })
+        .plug( Y.Plugin.ConsoleFilters )
+        .render();
+
+Y.log( "I'm alive!!!" );
+
+Y.one( '#log' ).on( 'click', function ( e ) {
+    Y.log( input.get( 'value' ) );
+} );
+
+});
+</script>
+</body>
+</html>
