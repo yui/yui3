@@ -13,6 +13,7 @@ var _JSON     = Y.config.win.JSON,
     isArray   = Lang.isArray,
     _toStr    = Object.prototype.toString,
     Native    = (_toStr.call(_JSON) === '[object JSON]' && _JSON),
+    useNative = !!Native,
     UNDEFINED = 'undefined',
     OBJECT    = 'object',
     NULL      = 'null',
@@ -204,6 +205,16 @@ function _stringify(o,w,space) {
     return _serialize({'':o},'');
 }
 
+// Double check basic native functionality.  This is primarily to catch broken
+// early JSON API implementations in Firefox 3.1 beta1 and beta2.
+if ( Native ) {
+    try {
+        useNative = ( '0' === Native.stringify(0) );
+    } catch ( e ) {
+        useNative = false;
+    }
+}
+
 Y.mix(Y.namespace('JSON'),{
     /**
      * Leverage native JSON stringify if the browser has a native
@@ -216,7 +227,7 @@ Y.mix(Y.namespace('JSON'),{
      * @default true
      * @static
      */
-    useNativeStringify : !!Native,
+    useNativeStringify : useNative,
 
     /**
      * Serializes a Date instance as a UTC date string.  Used internally by
