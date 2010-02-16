@@ -1,12 +1,8 @@
 {
     "intl": {
-        "submodules": {
-            "intl-load": {}, 
-            "intl-lang": {
-                "requires": [
-                    "event-custom"
-                ]
-            }
-        }
+       "requires": [
+	  "intl-base",
+          "event-custom"
+       ]
     }
 }
