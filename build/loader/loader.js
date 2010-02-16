@@ -923,6 +923,7 @@ META = {
     "yui": {
         "submodules": {
             "get": {}, 
+            "intl-base": {}, 
             "yui-base": {}, 
             "yui-later": {}, 
             "yui-log": {}, 

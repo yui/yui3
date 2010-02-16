@@ -260,7 +260,7 @@ YUI.prototype = {
         var Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get', 'intl-load', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
+            extras = Y.config.core || ['get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
 
 
         for (i=0; i<extras.length; i++) {
