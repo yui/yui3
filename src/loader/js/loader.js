@@ -923,6 +923,7 @@ Y.Loader.prototype = {
         var packPath = _path((m.pkg || m.name), packName, JS);
         this.addModule({
             path: packPath,
+            after: ['intl'],
             requires: ['intl'],
             ext: m.ext,
             supersedes: []
