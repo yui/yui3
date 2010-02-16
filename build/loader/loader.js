@@ -1898,6 +1898,7 @@ Y.Loader.prototype = {
         var packPath = _path((m.pkg || m.name), packName, JS);
         this.addModule({
             path: packPath,
+            requires: ['intl'],
             ext: m.ext,
             supersedes: []
         }, packName, true);
@@ -2028,6 +2029,7 @@ Y.Loader.prototype = {
                     if (lang) {
                         // this._addLangPack(lang, m, packName); // add on demand?
                         r[packName] = true;
+                        r.intl = true;
                     }
                 }
 
