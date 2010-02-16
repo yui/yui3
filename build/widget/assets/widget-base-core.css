@@ -1,12 +1,12 @@
-.yui-widget-hidden {
+.yui3-widget-hidden {
     display:none;
 }
 
-.yui-widget-content {
+.yui3-widget-content {
     overflow:hidden;
 }
 
-.yui-widget-content-expanded {
+.yui3-widget-content-expanded {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -ms-box-sizing: border-box;
@@ -15,6 +15,6 @@
 }
 
 /* Only used for IE6, to go from a bigger size to a smaller size when using cb.sizeTo(bb) */
-.yui-widget-tmp-forcesize {
+.yui3-widget-tmp-forcesize {
     overflow:hidden !important;
 }

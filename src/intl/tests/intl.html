@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Internationalization Tests</title>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+<h1>Loader Tests</h1>
+<p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+
+<script type="text/javascript">
+
+(function() {
+    YUI({
+        logInclude:{"TestRunner":true},
+        useConsole: true
+    }).use("console", "test", "dump", "intl", function(Y) {
+        
+        // Set up the page
+        var LANG = Y.Lang,
+            ASSERT = Y.Assert,
+            ARRAYASSERT = Y.ArrayAssert,
+            btnRun = Y.get("#btnRun"),
+            myConsole = new Y.Console().render();
+            
+        btnRun.set("disabled", false);
+        Y.on("click", function(){
+            Y.Test.Runner.run();
+        }, btnRun);
+
+
+        var testLookupBestLanguage = new Y.Test.Case({
+            name: "Lookup Best Language Tests",
+        
+            testArray: function() {
+                var language = Y.Intl.lookupBestLang(["de-DE", "en-SG", "ja-JP"], ["fr-FR", "en", "en-SG"]);
+                ASSERT.areSame(language, "en-SG", "Expected en-SG.");
+            },
+
+            testString: function() {
+                var language = Y.Intl.lookupBestLang("de-DE,en-SG,ja-JP", ["fr-FR", "en", "en-SG"]);
+                ASSERT.areSame(language, "en-SG", "Expected en-SG.");
+            },
+
+            testStar: function() {
+                var language = Y.Intl.lookupBestLang("de-DE,*,en-SG,ja-JP", ["fr-FR", "en", "en-SG"]);
+                ASSERT.areSame(language, "en-SG", "Expected en-SG.");
+            },
+
+            testPrivate: function() {
+                var language = Y.Intl.lookupBestLang("de-DE,zh-Hant-CN-x-private1-private2", ["fr-FR", "zh-Hant-CN", "zh-Hant-CN-x"]);
+                ASSERT.areSame(language, "zh-Hant-CN", "Expected zh-Hant-CN.");
+            }
+        });
+        
+
+        Y.Test.Runner.add(testLookupBestLanguage);
+        Y.Test.Runner.run();
+    });
+})();
+</script>
+</body>
+</html>

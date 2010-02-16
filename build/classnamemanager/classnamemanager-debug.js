@@ -33,7 +33,7 @@ var CLASS_NAME_PREFIX = 'classNamePrefix',
  * @default "yui"
  * @static
  */
-CONFIG[CLASS_NAME_PREFIX] = CONFIG[CLASS_NAME_PREFIX] || 'yui';
+CONFIG[CLASS_NAME_PREFIX] = CONFIG[CLASS_NAME_PREFIX] || 'yui3';
 
 /**
  * Configuration property indicating the delimiter used to compose all CSS class names in
@@ -58,10 +58,10 @@ Y.ClassNameManager = function () {
 		 * <code>Y.config.classNamePrefix</code> attribute + the provided strings.
 		 * Uses the <code>Y.config.classNameDelimiter</code> attribute to delimit the 
 		 * provided strings. E.g. Y.ClassNameManager.getClassName('foo','bar'); // yui-foo-bar
-		 * 
+		 *
 		 * @method getClassName
-		 * @param {String}+ classnameBit one or more classname bits to be joined and prefixed
-		 * @param {Boolean} skipPrefix Don't use the instance based prefix.  
+		 * @param {String}+ classnameSection one or more classname sections to be joined
+		 * @param {Boolean} skipPrefix If set to true, the classname will not be prefixed with the default Y.config.classNameDelimiter value.  
 		 */
 		getClassName: Y.cached(function () {
 

@@ -1,3 +1,8 @@
+Development Master
+
+* IMPORTANT: Changed default prefix to "yui3-" to avoid collisions with yui2 code,
+  which uses "yui-". Bundled CSS has also been updated. 
+
 **** YUI 3.0.0 ***
 
 * No change

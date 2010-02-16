@@ -197,7 +197,8 @@ var Dt = {
 	 *   This javascript implementation supports all the PHP specifiers and a few more.  The full list is below.
 	 *   </p>
 	 *   <p>
-	 *   If not specified, it defaults to the ISO8601 standard date format: %Y-%m-%d.  This may be overridden by changing Y.config.dateFormat
+	 *   If not specified, it defaults to the ISO 8601 standard date format: %Y-%m-%d.
+     *   This may be overridden by the deprecated Y.config.dateFormat property.
 	 *   </p>
 	 *   <dl>
 	 *	<dt>%a</dt> <dd>abbreviated weekday name according to the current locale</dd>
@@ -247,10 +248,11 @@ var Dt = {
 	 *	<dt>%%</dt> <dd>a literal "%" character</dd>
 	 *   </dl>
 	 *  </dd>
-	 *  <dt>locale {String} (Optional)</dt>
+	 *  <dt>locale {String} (Deprecated, optional)</dt>
 	 *  <dd>
+     *   <b>Deprecated - use Y.config.lang instead, which provides access to a much larger set of built-in languages.</b>
 	 *   The locale to use when displaying days of week, months of the year, and other locale specific
-	 *   strings. If not specified, this defaults to "en" (though this may be overridden by changing Y.config.locale).
+	 *   strings. If not specified, this defaults to "en" (though this may be overridden by the deprecated Y.config.locale).
 	 *   The following locales are built in:
 	 *   <dl>
 	 *    <dt>en</dt>
@@ -262,7 +264,7 @@ var Dt = {
 	 *    <dt>en-AU</dt>
 	 *    <dd>Australian English (identical to British English)</dd>
 	 *   </dl>
-	 *   More locales may be added by subclassing of Y.DataType.Date.Locale["en"].
+	 *   More locales may be added by subclassing of the deprecated Y.DataType.Date.Locale["en"].
 	 *   See Y.DataType.Date.Locale for more information.
 	 *  </dd>
 	 * </dl>
@@ -275,29 +277,37 @@ var Dt = {
 			return Y.Lang.isValue(oDate) ? oDate : "";
 		}
 
-		var format = oConfig.format || Y.config.dateFormat,
-			sLocale = oConfig.locale || Y.config.locale,
+		var format, resources, compatMode, sLocale, LOCALE;
+
+        // Y.config.dateFormat is deprecated - remove from YUI 3.2
+        format = oConfig.format || Y.config.dateFormat  || "%Y-%m-%d";
+        // compatMode supports deprecated features - remove from YUI 3.2
+        compatMode = Y.Lang.isUndefined(Y.config.lang) && (Y.Lang.isValue(oConfig.locale) || Y.Lang.isValue(Y.config.locale));
+        if (compatMode) {
+			sLocale = oConfig.locale || Y.config.locale;
 			LOCALE = Y.DataType.Date.Locale;
-
-		sLocale = sLocale.replace(/_/g, "-");
-		
-		// Make sure we have a definition for the requested locale, or default to en.
-		if(!LOCALE[sLocale]) {
-			var tmpLocale = sLocale.replace(/-[a-zA-Z]+$/, "");
-			if(tmpLocale in LOCALE) {
-				sLocale = tmpLocale;
-			} else if(Y.config.locale in LOCALE) {
-				sLocale = Y.config.locale;
-			} else {
-				sLocale = "en";
-			}
-		}
-
-		var aLocale = LOCALE[sLocale];
+            sLocale = sLocale.replace(/_/g, "-");
+            
+            // Make sure we have a definition for the requested locale, or default to en.
+            if(!LOCALE[sLocale]) {
+                var tmpLocale = sLocale.replace(/-[a-zA-Z]+$/, "");
+                if(tmpLocale in LOCALE) {
+                    sLocale = tmpLocale;
+                } else if(Y.config.locale in LOCALE) {
+                    sLocale = Y.config.locale;
+                } else {
+                    sLocale = "en";
+                }
+            }
+    
+            resources = LOCALE[sLocale];
+        } else {
+            resources = Y.Intl.get('datatype-date-format');
+        }
 
 		var replace_aggs = function (m0, m1) {
 			var f = Dt.aggregates[m1];
-			return (f === "locale" ? aLocale[m1] : f);
+			return (f === "locale" ? resources[m1] : f);
 		};
 
 		var replace_formats = function (m0, m1) {
@@ -306,12 +316,13 @@ var Dt = {
 				case "string":					// string => built in date function
 					return oDate[f]();
 				case "function":				// function => our own function
-					return f.call(oDate, oDate, aLocale);
+					return f.call(oDate, oDate, resources);
 				case "array":					// built in function with padding
 					if(Y.Lang.type(f[0]) === "string") {
 						return xPad(oDate[f[0]](), f[1]);
 					} // no break; (fall through to default:)
 				default:
+                    // Y.config.dateFormat is deprecated - remove from YUI 3.2
 					return m1;
 			}
 		};
@@ -331,7 +342,6 @@ var Dt = {
 };
 
 Y.mix(Y.namespace("DataType.Date"), Dt);
-
 /**
  * @module datatype
 */
@@ -400,6 +410,7 @@ Y.mix(Y.namespace("DataType.Date"), Dt);
  * @requires oop
  * @class DataType.Date.Locale
  * @static
+ * @deprecated - use Y.config.lang to request one of many built-in languages instead.
  */
 var YDateEn = {
 	a: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -432,5 +443,4 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 
 
-
-}, '@VERSION@' );
+}, '@VERSION@' ,{lang:['ar','ar-JO','ca','ca-ES','da','da-DK','de','de-AT','de-DE','el','el-GR','en','en-AU','en-CA','en-GB','en-GY','en-IE','en-IN','en-JO','en-MY','en-NZ','en-PH','en-SG','en-US','es','es-AR','es-BO','es-CL','es-CO','es-EC','es-ES','es-MX','es-PE','es-PY','es-US','es-UY','es-VE','fi','fi-FI','fr','fr-BE','fr-CA','fr-FR','fr-GF','hi','hi-IN','id','id-ID','it','it-IT','ja','ja-JP','ko','ko-KR','ms','ms-MY','nb','nb-NO','nl','nl-BE','nl-NL','nl-SR','pl','pl-PL','pt','pt-BR','ro','ro-RO','ru','ru-RU','sv','sv-SE','th','th-TH','tr','tr-TR','vi','vi-VN','zh-Hans','zh-Hans-CN','zh-Hant','zh-Hant-HK','zh-Hant-TW']});
