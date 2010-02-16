@@ -2051,6 +2051,8 @@ Y.Loader.prototype = {
                     if (lang) {
                         // this._addLangPack(lang, m, packName); // add on demand?
                         r[packName] = true;
+                        delete r[m.name];
+                        r[m.name] = true;
                         r.intl = true;
                         // Y.log('added: ' + packName);
                     }
