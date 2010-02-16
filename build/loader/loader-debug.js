@@ -1,7 +1,6 @@
 YUI.add('loader', function(Y) {
 
 (function() {
-//gallery-2009.12.15-22
 var VERSION = Y.version,
 ROOT = VERSION + '/build/',
 GALLERY_VERSION = Y.config.gallery || Y.gallery,
@@ -1908,7 +1907,7 @@ Y.Loader.prototype = {
 
     _addLangPack: function(lang, m, packName) {
         // var packName = this.getLangPackName(lang, m.name);
-        var packPath = _path((m.pkg || m.name) + '/lang', packName, JS);
+        var packPath = _path((m.pkg || m.name), packName, JS);
         this.addModule({
             path: packPath,
             ext: m.ext,
@@ -2014,7 +2013,7 @@ Y.Loader.prototype = {
      * @return {string} the language pack module name
      */
     getLangPackName: Y.cached(function(lang, mname) {
-        return ( mname + '_' + lang);
+        return ('lang/' + mname + '_' + lang);
     }),
 
     /**

@@ -1,5 +1,4 @@
 (function() {
-//gallery-2009.12.15-22
 var VERSION = Y.version,
 ROOT = VERSION + '/build/',
 GALLERY_VERSION = Y.config.gallery || Y.gallery,
