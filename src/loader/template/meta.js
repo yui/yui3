@@ -1,8 +1,8 @@
 (function() {
-
+//gallery-2009.12.15-22
 var VERSION = Y.version,
 ROOT = VERSION + '/build/',
-GALLERY_VERSION = 'gallery-2010.02.10-01', // @TODO build time
+GALLERY_VERSION = Y.config.gallery || Y.gallery,
 GALLERY_ROOT = GALLERY_VERSION + '/build/',
 GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
 META = {

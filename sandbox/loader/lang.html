@@ -24,16 +24,22 @@
             // attributes: {
             //     language: 'javascript1.2'
             // },
-            languages: ['en-US']
+            gallery: 'gallery-2009.12.15-22',
+            // currently it expects this attribute in order to load any lang packs
+            lang: ['en-US']
 
         // }).use('datatype', 'gallery-yql', function(Y) {
         }).use('datatype', function(Y) {
 
             console.log('done');
 
+            // one way to pull an arbitrary lang pack
             Y.use('lang|datatype-date|ca-ES', function() { });
 
+            // it will create this module and try (and fail) to load it
             Y.use('lang|datatype-date|ca-blah|create', function() { });
+
+            // Y.use('gallery-yql', function() { });
 
         });
         </script>

@@ -1,3 +1,71 @@
+(function() {
+
+var BASE = 'base', 
+    CSS = 'css',
+    JS = 'js',
+    CSSRESET = 'cssreset',
+    CSSFONTS = 'cssfonts',
+    CSSGRIDS = 'cssgrids',
+    CSSBASE  = 'cssbase',
+    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
+                 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
+    YUI_CSS = ['reset', 'fonts', 'grids', BASE],
+    VERSION = Y.version,
+    GALLERY_VERSION = 'gallery-2009-10-19', // @TODO build time
+    ROOT = VERSION + '/build/',
+    GALLERY_ROOT = GALLERY_VERSION + '/build/',
+    GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
+    CONTEXT = '-context',
+    ANIMBASE = 'anim-base',
+    ATTRIBUTE = 'attribute',
+    ATTRIBUTEBASE = ATTRIBUTE + '-base',
+    BASEBASE = 'base-base',
+    DDDRAG = 'dd-drag',
+    DOM = 'dom',
+    DATASCHEMABASE = 'dataschema-base',
+    DATASOURCELOCAL = 'datasource-local',
+    DOMBASE = 'dom-base',
+    DOMSTYLE = 'dom-style',
+    DOMSCREEN = 'dom-screen',
+    DUMP = 'dump',
+    GET = 'get',
+    EVENTBASE = 'event-base',
+    EVENTCUSTOM = 'event-custom',
+    EVENTCUSTOMBASE = 'event-custom-base',
+    IOBASE = 'io-base',
+    NODE = 'node',
+    NODEBASE = 'node-base',
+    NODESTYLE = 'node-style',
+    NODESCREEN = 'node-screen',
+    NODEPLUGINHOST = 'node-pluginhost',
+    OOP = 'oop',
+    PLUGINHOST = 'pluginhost',
+    SELECTORCSS2 = 'selector-css2',
+    SUBSTITUTE = 'substitute',
+    WIDGET = 'widget',
+    WIDGETPOSITION = 'widget-position',
+    YUIBASE = 'yui-base',
+    PLUGIN = 'plugin',
+
+    META = {
+
+    version: VERSION,
+
+    root: ROOT,
+
+    base: 'http://yui.yahooapis.com/' + ROOT,
+
+    comboBase: 'http://yui.yahooapis.com/combo?',
+
+    skin: {
+        defaultSkin: 'sam',
+        base: 'assets/skins/',
+        path: 'skin.css',
+        after: CSS_AFTER
+        //rollup: 3
+    },
+
+    modules: 
 {
     "anim": {
         "submodules": {
@@ -293,91 +361,6 @@
     "datatype": {
         "submodules": {
             "datatype-date": {
-                "lang": [
-                    "ar", 
-                    "ar-JO", 
-                    "ca", 
-                    "ca-ES", 
-                    "da", 
-                    "da-DK", 
-                    "de", 
-                    "de-AT", 
-                    "de-DE", 
-                    "el", 
-                    "el-GR", 
-                    "en", 
-                    "en-AU", 
-                    "en-CA", 
-                    "en-GB", 
-                    "en-GY", 
-                    "en-IE", 
-                    "en-IN", 
-                    "en-JO", 
-                    "en-MY", 
-                    "en-NZ", 
-                    "en-PH", 
-                    "en-SG", 
-                    "en-US", 
-                    "es", 
-                    "es-AR", 
-                    "es-BO", 
-                    "es-CL", 
-                    "es-CO", 
-                    "es-EC", 
-                    "es-ES", 
-                    "es-MX", 
-                    "es-PE", 
-                    "es-PY", 
-                    "es-US", 
-                    "es-UY", 
-                    "es-VE", 
-                    "fi", 
-                    "fi-FI", 
-                    "fr", 
-                    "fr-BE", 
-                    "fr-CA", 
-                    "fr-FR", 
-                    "fr-GF", 
-                    "hi", 
-                    "hi-IN", 
-                    "id", 
-                    "id-ID", 
-                    "it", 
-                    "it-IT", 
-                    "ja", 
-                    "ja-JP", 
-                    "ko", 
-                    "ko-KR", 
-                    "ms", 
-                    "ms-MY", 
-                    "nb", 
-                    "nb-NO", 
-                    "nl", 
-                    "nl-BE", 
-                    "nl-NL", 
-                    "nl-SR", 
-                    "pl", 
-                    "pl-PL", 
-                    "pt", 
-                    "pt-BR", 
-                    "ro", 
-                    "ro-RO", 
-                    "ru", 
-                    "ru-RU", 
-                    "sv", 
-                    "sv-SE", 
-                    "th", 
-                    "th-TH", 
-                    "tr", 
-                    "tr-TR", 
-                    "vi", 
-                    "vi-VN", 
-                    "zh-Hans", 
-                    "zh-Hans-CN", 
-                    "zh-Hant", 
-                    "zh-Hant-HK", 
-                    "zh-Hant-TW"
-                ], 
                 "requires": [
                     "yui-base"
                 ]
@@ -591,16 +574,6 @@
             "node-style", 
             "node-screen"
         ]
-    }, 
-    "intl": {
-        "submodules": {
-            "intl-lang": {
-                "requires": [
-                    "event-custom"
-                ]
-            }, 
-            "intl-load": {}
-        }
     }, 
     "io": {
         "submodules": {
@@ -893,12 +866,6 @@
             }
         }
     }, 
-    "widget-anim": {
-        "requires": [
-            "plugin", 
-            "anim-base"
-        ]
-    }, 
     "yui": {
         "submodules": {
             "get": {}, 
@@ -908,4 +875,30 @@
             "yui-throttle": {}
         }
     }
-}
+},
+
+    // Patterns are module definitions which will be added with 
+    // the default options if a definition is not found. The
+    // assumption is that the module itself will be in the default
+    // location, and if there are any additional dependencies, they
+    // will have to be fetched with a second request.  This could
+    // happen multiple times, each segment resulting in a new
+    // dependency list.
+    //
+    // types: regex, prefix, function
+    patterns: {
+        'gallery-': { 
+            // http://yui.yahooapis.com/3.0.0/build/
+            // http://yui.yahooapis.com/gallery-/build/
+            base: GALLERY_BASE,  // explicit declaration of the base attribute
+            filter: {
+                'searchExp': VERSION,
+                'replaceStr': GALLERY_VERSION
+            }
+        }
+    }
+};
+
+YUI.Env[VERSION] = META;
+
+})();

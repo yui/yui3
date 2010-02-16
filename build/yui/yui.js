@@ -157,6 +157,8 @@ YUI.prototype = {
 
         Y.version = v;
 
+        Y.gallery = 'gallery-2010.02.10-01'; // @TODO build time
+
         if (!Y.Env) {
 
             Y.Env = {
@@ -1060,18 +1062,25 @@ YUI.prototype = {
  * when boostrapping with the get utility alone.
  *
  * @property loaderPath
+ * @type string
  * @default loader/loader-min.js
  */
 
 /**
- * 
  * Specifies whether or not YUI().use(...) will attempt to load CSS
  * resources at all.  Any truthy value will cause CSS dependencies
  * to load when fetching script.  The special value 'force' will 
  * cause CSS dependencies to be loaded even if no script is needed.
  *
  * @property fetchCSS
+ * @type boolean
  * @default true
+ */
+
+/**
+ * The default gallery version to create gallery module urls
+ * @property gallery
+ * @type string
  */
 YUI.add('yui-base', function(Y) {
 

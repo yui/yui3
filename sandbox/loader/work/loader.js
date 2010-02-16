@@ -95,14 +95,21 @@
  * </ul>
  */
 
-var NOT_FOUND = {},
+var BASE = 'base',
+    NOT_FOUND = {},
     NO_REQUIREMENTS = [],
     MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
     GLOBAL_ENV = YUI.Env,
-    GLOBAL_LOADED = GLOBAL_ENV._loaded,
+    GLOBAL_LOADED,
     CSS = 'css',
     JS = 'js',
+    CSSRESET = 'cssreset',
+    CSSFONTS = 'cssfonts',
+    CSSBASE  = 'cssbase',
+    CSS_AFTER = [CSSRESET, CSSFONTS, 'cssreset-context', 'cssfonts-context'],
+    YUI_CSS = ['reset', 'fonts', BASE],
     VERSION = Y.version,
+    CONTEXT = '-context',
 
     _path = Y.cached(function(dir, file, type) {
         return dir + '/' + file + '-min.' + (type || CSS);
@@ -112,10 +119,41 @@ var NOT_FOUND = {},
 
     META = GLOBAL_ENV[VERSION],
 
+    mods  = META.modules, i, bname, mname, contextname,
     L     = Y.Lang;
 
+// Create the metadata for both the regular and context-aware
+// versions of the YUI CSS foundation.
+for (i=0; i<YUI_CSS.length; i=i+1) {
+    bname = YUI_CSS[i];
+    mname = CSS + bname;
+
+    mods[mname] = {
+        type: CSS,
+        path: _path(mname, bname)
+    };
+
+    // define -context module
+    contextname = mname + CONTEXT;
+    bname = bname + CONTEXT;
+
+    mods[contextname] = {
+        type: CSS,
+        path: _path(mname, bname)
+    };
+
+    if (mname == CSSBASE) {
+        mods[mname].after = CSS_AFTER;
+        mods[contextname].after = CSS_AFTER;
+    }
+
+}
+
+// debugger;
 
 Y.Env.meta = META;
+
+GLOBAL_LOADED = GLOBAL_ENV._loaded;
 
 Y.Loader = function(o) {
 
@@ -222,11 +260,6 @@ Y.Loader = function(o) {
      * @default http://yui.yahooapis.com/combo?
      */
     this.comboBase = Y.Env.meta.comboBase;
-
-    /*
-     * Base path for language packs.
-     */
-    // this.langBase = Y.Env.meta.langBase;
 
     /**
      * If configured, YUI JS resources will use the combo
@@ -408,12 +441,11 @@ Y.Loader = function(o) {
      *   </code>
      *   @property skin
      */
-    this.skin = Y.merge(Y.Env.meta.skin);
+     this.skin = Y.merge(Y.Env.meta.skin);
     
-    var defaults = Y.Env.meta.modules, i, onPage = GLOBAL_ENV.mods;
+    var defaults = Y.Env.meta.modules, i, onPage = YUI.Env.mods;
 
     this._internal = true;
-
     for (i in defaults) {
         if (defaults.hasOwnProperty(i)) {
             this.addModule(defaults[i], i);
@@ -425,7 +457,6 @@ Y.Loader = function(o) {
             this.addModule(onPage[i].details, i);
         }
     }
-
     this._internal = false;
 
     /**
@@ -666,12 +697,10 @@ Y.Loader.prototype = {
      * @method addModule
      * @param o An object containing the module data
      * @param name the module name (optional), required if not in the module data
-     * @param persist {boolean} persist the availability of this module across instances
-     *
      * @return {boolean} true if the module was added, false if 
      * the object passed in did not provide all required attributes
      */
-    addModule: function(o, name, persist) {
+    addModule: function(o, name) {
 
         name = name || o.name;
         o.name = name;
@@ -697,8 +726,7 @@ Y.Loader.prototype = {
         this.moduleInfo[name] = o;
 
         // Handle submodule logic
-        var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
-            j, langs, packName, supName, flatSup, flatLang, lang;
+        var subs = o.submodules, i, l, sup, s, smod, plugins, plug;
         if (subs) {
             sup = []; 
             l   = 0;
@@ -706,50 +734,13 @@ Y.Loader.prototype = {
             for (i in subs) {
                 if (subs.hasOwnProperty(i)) {
                     s = subs[i];
-
                     s.path = _path(name, i, o.type);
-                    s.pkg = name;
                     this.addModule(s, i);
                     sup.push(i);
 
                     if (o.skinnable) {
                         smod = this._addSkin(this.skin.defaultSkin, i, name);
                         sup.push(smod.name);
-                    }
-
-                    // looks like we are expected to work out the metadata
-                    // for the parent module language packs from what is
-                    // specified in the child modules.
-                    if (s.lang && s.lang.length) {
-                        langs = Y.Array(s.lang);
-                        for (j=0; j < langs.length; j++) {
-                            lang = langs[j];
-                            packName = this.getLangPackName(lang, name);
-                            supName = this.getLangPackName(lang, i);
-                            smod = this.moduleInfo[packName];
-
-                            if (!smod) {
-                                smod = this._addLangPack(lang, o, packName);
-                            }
-
-                            flatSup = flatSup || Y.Array.hash(smod.supersedes);
-
-                            if (!(supName in flatSup)) {
-                                smod.supersedes.push(supName);
-                            }
-
-                            o.lang = o.lang || [];
-
-                            flatLang = flatLang || Y.Array.hash(o.lang);
-
-                            if (!(lang in flatLang)) {
-                                o.lang.push(lang);
-                            }
-
-                            // Y.log('pack ' + packName + ' should supersede ' + supName);
-
-                            // Add rollup file, need to add to supersedes list too 
-                        }
                     }
 
                     l++;
@@ -776,14 +767,9 @@ Y.Loader.prototype = {
             }
         }
 
-        // if (silent) {
-            // Y.log("addModule (sets dirty to true): " + name);
-            this.dirty = true;
-        // }
+        this.dirty = true;
 
-        if (persist) {
-            Y.Env.meta.modules[name] = o;
-        }
+        // Y.log("addModule (sets dirty to true): " + name);
 
         return o;
     },
@@ -918,24 +904,6 @@ Y.Loader.prototype = {
         }
     },
 
-    _addLangPack: function(lang, m, packName) {
-        // var packName = this.getLangPackName(lang, m.name);
-        var packPath = _path((m.pkg || m.name) + '/lang', packName, JS);
-        this.addModule({
-            path: packPath,
-            ext: m.ext,
-            supersedes: []
-        }, packName, true);
-
-        // Y.log('add pack path: ' + packPath);
-
-        Y.Env.lang = Y.Env.lang || {};
-        Y.Env.lang[lang] = Y.Env.lang[lang] || {};
-        Y.Env.lang[lang][m.name] = true;
-
-        return this.moduleInfo[packName];
-    },
-
     /**
      * Investigates the current YUI configuration on the page.  By default,
      * modules already detected will not be loaded again unless a force
@@ -945,8 +913,7 @@ Y.Loader.prototype = {
      */
     _setup: function() {
 
-        var info = this.moduleInfo, name, i, j, m, o, l, smod,
-        langs, lang, packName;
+        var info = this.moduleInfo, name, i, j, m, o, l, smod;
 
         // Create skin modules
         for (name in info) {
@@ -964,16 +931,6 @@ Y.Loader.prototype = {
                     }
 
                     m.requires.push(smod);
-                }
-
-                if (m && m.lang && m.lang.length) {
-                    langs = Y.Array(m.lang);
-                    for (i=0; i<langs.length; i=i+1) {
-                        // create the module definition
-                        lang = langs[i];
-                        packName = this.getLangPackName(lang, name);
-                        this._addLangPack(lang, m, packName);
-                    }
                 }
             }
         }
@@ -1018,16 +975,6 @@ Y.Loader.prototype = {
 
     },
     
-    /**
-     * Builds a module name for a language pack
-     * @function getLangPackName
-     * @param lang {string} the language code
-     * @param mname {string} the module to build it for
-     * @return {string} the language pack module name
-     */
-    getLangPackName: Y.cached(function(lang, mname) {
-        return ( mname + '_' + lang);
-    }),
 
     /**
      * Inspects the required modules list looking for additional 
@@ -1038,7 +985,7 @@ Y.Loader.prototype = {
      */
     _explode: function() {
 
-        var r = this.required, m, reqs, lang, packName;
+        var r = this.required, m, reqs;
 
         // the setup phase is over, all modules have been created
         this.dirty = false;
@@ -1052,20 +999,6 @@ Y.Loader.prototype = {
 
             if (m) {
 
-                // Y.log('checking intl: ' + m.name + ', ' + m.lang + ', ' + this.lang);
-
-                if (Y.Intl && this.lang && m.lang) {
-                    lang = Y.Intl.lookupBestLang(this.lang, m.lang);
-                    // Y.log('lang pack: ' + lang);
-                    packName = this.getLangPackName(lang, m.name);
-                    // Y.log('pack name: ' + packName);
-                    if (lang) {
-                        // this._addLangPack(lang, m, packName); // add on demand?
-                        r[packName] = true;
-                        // Y.log('added: ' + packName);
-                    }
-                }
-
                 if (expound) {
                     r[expound] = this.getModule(expound);
                     reqs = this.getRequires(r[expound]);
@@ -1076,12 +1009,9 @@ Y.Loader.prototype = {
 
                 // Y.log('via explode: ' + reqs);
                 Y.mix(r, Y.Array.hash(reqs));
-
             }
 
         }, this);
-
-
     },
 
     getModule: function(name) {
@@ -1090,48 +1020,38 @@ Y.Loader.prototype = {
             return null;
         }
 
-        var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, found;
+        var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, add = false;
 
         // check the patterns library to see if we should automatically add
         // the module with defaults
         if (!m) {
-           // Y.log('testing patterns ' + Y.Object.keys(patterns));
 
             for (i in patterns) {
-                if (patterns.hasOwnProperty(i)) {
-                    // Y.log('testing pattern ' + i);
-                    p = patterns[i];
-                    type = p.type;
+                p = patterns[i];
+                type = p.type;
 
-                    // switch (type) {
-                        // case 'regex':
-                        //     break;
-                        // case 'function':
-                        //     break;
-                        // default: // prefix
-                        //     if (name.indexOf(i) > -1) {
-                        //         add = true;
-                        //     }
-                    // }
+                // switch (type) {
+                    // case 'regex':
+                    //     break;
+                    // case 'function':
+                    //     break;
+                    // default: // prefix
+                    //     if (name.indexOf(i) > -1) {
+                    //         add = true;
+                    //     }
+                // }
 
-                    // use the metadata supplied for the pattern
-                    // as the module definition.
-                    if (name.indexOf(i) > -1) {
-                        found = p;
-                        break;
-                    }
+                // use the metadata supplied for the pattern
+                // as the module definition.
+                if (name.indexOf(i) > -1) {
+                    add = p;
                 }
             }
 
-            if (found) {
-                if (p.action) {
-                    // Y.log('executing pattern action: ' + i);
-                    p.action.call(this, name, i);
-                } else {
-                    Y.log('Module does not exist: ' + name + ', but matched a pattern so creating with defaults');
-                    // ext true or false?
-                    m = this.addModule(found, name);
-                }
+            if (add) {
+                Y.log('Module does not exist: ' + name + ', but matched a pattern so creating with defaults');
+                // ext true or false?
+                m = this.addModule(add, name);
             }
         }
 
@@ -1258,7 +1178,6 @@ Y.Loader.prototype = {
                 }
             }
         }
-        // Y.log('required now: ' + Y.Object.keys(r));
     },
 
     _attach: function() {

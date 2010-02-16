@@ -1,10 +1,10 @@
 YUI.add('loader', function(Y) {
 
 (function() {
-
+//gallery-2009.12.15-22
 var VERSION = Y.version,
 ROOT = VERSION + '/build/',
-GALLERY_VERSION = 'gallery-2010.02.10-01', // @TODO build time
+GALLERY_VERSION = Y.config.gallery || Y.gallery,
 GALLERY_ROOT = GALLERY_VERSION + '/build/',
 GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
 META = {
@@ -315,7 +315,7 @@ META = {
     "datatype": {
         "submodules": {
             "datatype-date": {
-                "languages": [
+                "lang": [
                     "ar", 
                     "ar-JO", 
                     "ca", 
@@ -1708,8 +1708,8 @@ Y.Loader.prototype = {
                     // looks like we are expected to work out the metadata
                     // for the parent module language packs from what is
                     // specified in the child modules.
-                    if (s.languages && s.languages.length) {
-                        langs = Y.Array(s.languages);
+                    if (s.lang && s.lang.length) {
+                        langs = Y.Array(s.lang);
                         for (j=0; j < langs.length; j++) {
                             lang = langs[j];
                             packName = this.getLangPackName(lang, name);
@@ -1726,12 +1726,12 @@ Y.Loader.prototype = {
                                 smod.supersedes.push(supName);
                             }
 
-                            o.languages = o.languages || [];
+                            o.lang = o.lang || [];
 
-                            flatLang = flatLang || Y.Array.hash(o.languages);
+                            flatLang = flatLang || Y.Array.hash(o.lang);
 
                             if (!(lang in flatLang)) {
-                                o.languages.push(lang);
+                                o.lang.push(lang);
                             }
 
                             // Y.log('pack ' + packName + ' should supersede ' + supName);
@@ -1917,9 +1917,9 @@ Y.Loader.prototype = {
 
         // Y.log('add pack path: ' + packPath);
 
-        Y.Env.languages = Y.Env.languages || {};
-        Y.Env.languages[lang] = Y.Env.languages[lang] || {};
-        Y.Env.languages[lang][m.name] = true;
+        Y.Env.lang = Y.Env.lang || {};
+        Y.Env.lang[lang] = Y.Env.lang[lang] || {};
+        Y.Env.lang[lang][m.name] = true;
 
         return this.moduleInfo[packName];
     },
@@ -1954,8 +1954,8 @@ Y.Loader.prototype = {
                     m.requires.push(smod);
                 }
 
-                if (m && m.languages && m.languages.length) {
-                    langs = Y.Array(m.languages);
+                if (m && m.lang && m.lang.length) {
+                    langs = Y.Array(m.lang);
                     for (i=0; i<langs.length; i=i+1) {
                         // create the module definition
                         lang = langs[i];
@@ -2014,7 +2014,7 @@ Y.Loader.prototype = {
      * @return {string} the language pack module name
      */
     getLangPackName: Y.cached(function(lang, mname) {
-        return (mname + '_' + lang);
+        return ( mname + '_' + lang);
     }),
 
     /**
@@ -2040,10 +2040,10 @@ Y.Loader.prototype = {
 
             if (m) {
 
-                // Y.log('checking intl: ' + m.name + ', ' + m.languages + ', ' + this.languages);
+                // Y.log('checking intl: ' + m.name + ', ' + m.lang + ', ' + this.lang);
 
-                if (Y.Intl && this.languages && m.languages) {
-                    lang = Y.Intl.lookupBestLang(this.languages, m.languages);
+                if (Y.Intl && this.lang && m.lang) {
+                    lang = Y.Intl.lookupBestLang(this.lang, m.lang);
                     // Y.log('lang pack: ' + lang);
                     packName = this.getLangPackName(lang, m.name);
                     // Y.log('pack name: ' + packName);
