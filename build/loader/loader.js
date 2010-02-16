@@ -2024,10 +2024,10 @@ Y.Loader.prototype = {
                     packName = this.getLangPackName(lang, m.name);
                     if (lang) {
                         // this._addLangPack(lang, m, packName); // add on demand?
+                        r.intl = true;
                         r[packName] = true;
                         delete r[m.name];
                         r[m.name] = true;
-                        r.intl = true;
                     }
                 }
 

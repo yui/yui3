@@ -1062,10 +1062,10 @@ Y.Loader.prototype = {
                     // Y.log('pack name: ' + packName);
                     if (lang) {
                         // this._addLangPack(lang, m, packName); // add on demand?
+                        r.intl = true;
                         r[packName] = true;
                         delete r[m.name];
                         r[m.name] = true;
-                        r.intl = true;
                         // Y.log('added: ' + packName);
                     }
                 }
