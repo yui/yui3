@@ -2,7 +2,7 @@
 
 var VERSION = Y.version,
 ROOT = VERSION + '/build/',
-GALLERY_VERSION = 'gallery-2009-10-19', // @TODO build time
+GALLERY_VERSION = 'gallery-2010.02.10-01', // @TODO build time
 GALLERY_ROOT = GALLERY_VERSION + '/build/',
 GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
 META = {
@@ -37,6 +37,35 @@ META = {
             filter: {
                 'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
+            }
+        },
+
+        // expand 'lang|module|lang'
+        'lang|': {
+            action: function(data) {
+                // Y.log('testing data: ' + data);
+
+                var parts = data.split('|'),
+                    name = parts[1],
+                    lang = parts[2],
+                    packName, mod;
+
+                if (lang) {
+
+                    packName = this.getLangPackName(lang, name);
+
+                    if ('create' == parts[3]) {
+                        mod = this.getModule(packName);
+                        if (!mod) {
+                            mod = this.getModule(name);
+                            // Y.log('action creating ' + packName);
+                            this._addLangPack(lang, mod, packName);
+                        }
+                    }
+
+                    this.require(packName);
+                }
+                delete this.required[data];
             }
         }
     }

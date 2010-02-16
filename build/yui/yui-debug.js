@@ -258,7 +258,7 @@ YUI.prototype = {
         var Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
+            extras = Y.config.core || ['get', 'intl-load', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
 
 
         for (i=0; i<extras.length; i++) {
@@ -429,7 +429,8 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            boot = Y.config.bootstrap,
+            config = Y.config,
+            boot = config.bootstrap,
             k, i, l, missing = [], 
             r = [], 
             css = Y.config.fetchCSS,
@@ -543,12 +544,13 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
-            loader = new Y.Loader(Y.config);
+            loader = new Y.Loader(config);
             loader.require(a);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
             // loader.calculate(null, (css && css == 'force') ? null : 'js');
             // loader.calculate();
+            // loader.calculate(null, (css) ? null : 'js');
             loader.calculate(null, (css) ? null : 'js');
             a = loader.sorted;
         }
@@ -575,8 +577,9 @@ YUI.prototype = {
         // dynamic load
         if (boot && l && Y.Loader) {
             Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
+
             Y._loading = true;
-            loader = new Y.Loader(Y.config);
+            loader = new Y.Loader(config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
@@ -602,8 +605,8 @@ YUI.prototype = {
                 queue.add(onEnd);
             } else {
                 YUI.Env._bootstrapping = true;
-                Y.log('Fetching loader: ' + Y.id + ", " + Y.config.base + Y.config.loaderPath, 'info', 'yui');
-                Y.Get.script(Y.config.base + Y.config.loaderPath, {
+                Y.log('Fetching loader: ' + Y.id + ", " + config.base + config.loaderPath, 'info', 'yui');
+                Y.Get.script(config.base + config.loaderPath, {
                     onEnd: onEnd 
                 });
             }
@@ -1078,7 +1081,7 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * @default loader/loader-min.js
  */
 
-/*
+/**
  * 
  * Specifies whether or not YUI().use(...) will attempt to load CSS
  * resources at all.  Any truthy value will cause CSS dependencies

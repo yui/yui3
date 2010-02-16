@@ -2,7 +2,7 @@
 
 var VERSION = Y.version,
 ROOT = VERSION + '/build/',
-GALLERY_VERSION = 'gallery-2009-10-19', // @TODO build time
+GALLERY_VERSION = 'gallery-2010.02.10-01', // @TODO build time
 GALLERY_ROOT = GALLERY_VERSION + '/build/',
 GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
 META = {
@@ -313,6 +313,91 @@ META = {
     "datatype": {
         "submodules": {
             "datatype-date": {
+                "languages": [
+                    "ar", 
+                    "ar-JO", 
+                    "ca", 
+                    "ca-ES", 
+                    "da", 
+                    "da-DK", 
+                    "de", 
+                    "de-AT", 
+                    "de-DE", 
+                    "el", 
+                    "el-GR", 
+                    "en", 
+                    "en-AU", 
+                    "en-CA", 
+                    "en-GB", 
+                    "en-GY", 
+                    "en-IE", 
+                    "en-IN", 
+                    "en-JO", 
+                    "en-MY", 
+                    "en-NZ", 
+                    "en-PH", 
+                    "en-SG", 
+                    "en-US", 
+                    "es", 
+                    "es-AR", 
+                    "es-BO", 
+                    "es-CL", 
+                    "es-CO", 
+                    "es-EC", 
+                    "es-ES", 
+                    "es-MX", 
+                    "es-PE", 
+                    "es-PY", 
+                    "es-US", 
+                    "es-UY", 
+                    "es-VE", 
+                    "fi", 
+                    "fi-FI", 
+                    "fr", 
+                    "fr-BE", 
+                    "fr-CA", 
+                    "fr-FR", 
+                    "fr-GF", 
+                    "hi", 
+                    "hi-IN", 
+                    "id", 
+                    "id-ID", 
+                    "it", 
+                    "it-IT", 
+                    "ja", 
+                    "ja-JP", 
+                    "ko", 
+                    "ko-KR", 
+                    "ms", 
+                    "ms-MY", 
+                    "nb", 
+                    "nb-NO", 
+                    "nl", 
+                    "nl-BE", 
+                    "nl-NL", 
+                    "nl-SR", 
+                    "pl", 
+                    "pl-PL", 
+                    "pt", 
+                    "pt-BR", 
+                    "ro", 
+                    "ro-RO", 
+                    "ru", 
+                    "ru-RU", 
+                    "sv", 
+                    "sv-SE", 
+                    "th", 
+                    "th-TH", 
+                    "tr", 
+                    "tr-TR", 
+                    "vi", 
+                    "vi-VN", 
+                    "zh-Hans", 
+                    "zh-Hans-CN", 
+                    "zh-Hant", 
+                    "zh-Hant-HK", 
+                    "zh-Hant-TW"
+                ], 
                 "requires": [
                     "yui-base"
                 ]
@@ -862,6 +947,35 @@ META = {
             filter: {
                 'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
+            }
+        },
+
+        // expand 'lang|module|lang'
+        'lang|': {
+            action: function(data) {
+                // Y.log('testing data: ' + data);
+
+                var parts = data.split('|'),
+                    name = parts[1],
+                    lang = parts[2],
+                    packName, mod;
+
+                if (lang) {
+
+                    packName = this.getLangPackName(lang, name);
+
+                    if ('create' == parts[3]) {
+                        mod = this.getModule(packName);
+                        if (!mod) {
+                            mod = this.getModule(name);
+                            // Y.log('action creating ' + packName);
+                            this._addLangPack(lang, mod, packName);
+                        }
+                    }
+
+                    this.require(packName);
+                }
+                delete this.required[data];
             }
         }
     }
