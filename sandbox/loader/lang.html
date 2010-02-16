@@ -17,7 +17,7 @@
 
         <script>
         YUI({
-            // comboBase: 'http://l.yimg.com/a/lib/yui/combo?',
+            comboBase: 'http://l.yimg.com/a/lib/yui/combo?',
             // combine: true,
             // filter:"raw",
             // maxURLLength: 300,
@@ -25,11 +25,12 @@
             //     language: 'javascript1.2'
             // },
             gallery: 'gallery-2009.12.15-22',
+            fetchCSS: false,
             // currently it expects this attribute in order to load any lang packs
             lang: ['en-US']
 
         // }).use('datatype', 'gallery-yql', function(Y) {
-        }).use('datatype', function(Y) {
+        }).use('datatype', 'slider', function(Y) {
 
             console.log('done');
 

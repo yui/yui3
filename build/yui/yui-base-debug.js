@@ -1091,7 +1091,7 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * cause CSS dependencies to be loaded even if no script is needed.
  *
  * @property fetchCSS
- * @type boolean
+ * @type boolean|string
  * @default true
  */
 
