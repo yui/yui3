@@ -30,11 +30,12 @@ var getClassName = Y.ClassNameManager.getClassName,
     },
 
     queries = {
-        tablist: '> ul, ',
+        tabview: '.' + classNames.view,
+        tablist: 'ul',
         tab: 'ul > li',
         link: 'ul > li > a',
         label: 'ul > li > a > em',
-        content:'> div',
+        content:'div',
         tabPanel:'div > div',
         selectedTab: '.' + classNames.selectedTab,
         selectedContent: '.' + classNames.selectedContent
