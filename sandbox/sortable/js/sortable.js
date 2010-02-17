@@ -1,11 +1,11 @@
 YUI.add('sortable', function(Y) {
 
     /**
-     * Sortable List.
+     * The class allows you to create a Drag & Drop reordered list.
      * @module sortable
      */     
     /**
-     * Sortable Lists.
+     * The class allows you to create a Drag & Drop reordered list.
      * @class Sortable
      * @extends Base
      * @constructor
