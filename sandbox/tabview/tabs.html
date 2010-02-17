@@ -5,9 +5,8 @@
 <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
 <script type="text/javascript" src="../../build/tabview/tabview-base.js"></script>
 <script type="text/javascript" src="../../build/tabview/tabview-plugin.js"></script>
-<script type="text/javascript" src="../../build/tabview/tablist.js"></script>
+<script type="text/javascript" src="../../build/tabview/tabview.js"></script>
 <script type="text/javascript" src="../../build/tabview/tab.js"></script>
-<script type="text/javascript" src="../../build/tabview/tabpanel.js"></script>
 
 <link rel="stylesheet" type="text/css" href="../../src/tabview/css/tabview.css">
 <style>
@@ -24,11 +23,40 @@ ul, li {
 </div>
 
 <div id="demo2">
+    <ul>
+        <li><a>foo</a></li>
+        <li><a>bar</a></li>
+        <li><a>baz</a></li>
+    </ul>
+    <div>
+        <div>
+            <p>foo content</p>
+        </div>
+        <div>
+            <p>bar content</p>
+        </div>
+        <div>
+            <p>baz content</p>
+        </div>
+    </div>
 </div>
 </body>
 <script type="text/javascript">
-YUI({filter: 'raw'}).use('tablist', function(Y) {
-    var tablist = new Y.TabList({
+YUI({filter: 'raw'}).use('tabview', function(Y) {
+/*
+    var tablist = new Y.TabView({
+        contentBox:'#demo2'
+    });
+    tablist.render();
+    tablist.add({
+        boundingBox:Y.one('#demo2 li'),
+        panelNode: Y.one('#demo2 div div')
+    });
+    //tablist.add({boundingBox:Y.Node.create('<li><a>foo</a></li>')});
+    console.log(tablist.item(0).get('contentBox'));
+*/
+    var tablist = new Y.TabView({
+        boundingBox: '#demo',
         children: [{
             label: 'tab 1',
             content: 'tab 1 content'
@@ -41,12 +69,18 @@ YUI({filter: 'raw'}).use('tablist', function(Y) {
             content: 'tab 3 content'
         }]
     });
-    tablist.render('#demo');
-    tablist.selectChild(2);
-    tablist.get('selection').previous().set('selected', 1);
+    tablist.render();
+    tablist.selectChild(0);
+    tablist.remove(0);
+    //tablist.get('selection').next().set('selected', 1);
 
 /*
-    var tablist2 = new Y.TabList({
+    var tablist2 = new Y.TabView({
+        contentBox: '#demo2'
+    });
+    tablist2.render();
+
+    var tablist2 = new Y.TabView({
         children: [{
             label: 'tab 1',
             content: 'tab 1 content'

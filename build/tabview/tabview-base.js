@@ -1,3 +1,5 @@
+YUI.add('tabview-base', function(Y) {
+
 var getClassName = Y.ClassNameManager.getClassName,
     TABVIEW = 'tabview',
     TAB = 'tab',
@@ -152,3 +154,6 @@ Y.mix(TabviewBase.prototype, {
 });
 
 Y.TabviewBase = TabviewBase;
+
+
+}, '@VERSION@' ,{requires:['node-event-delegate', 'classnamemanager']});
