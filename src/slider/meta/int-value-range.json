@@ -1,0 +1,5 @@
+{
+    "int-value-range": {
+        "requires": [ "slider-base" ]
+    }
+}
