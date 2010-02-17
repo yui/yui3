@@ -167,7 +167,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
         suite = new Y.Test.Suite("yuisuite");
 
     window.Y = Y; // export Y global for Selenium
-    new Y.Console({node: '#yui-log', height: '80%' }).render('#yui-log');
+    new Y.Console({node: '#yui-log', height: '50em' }).render('#yui-log');
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -183,6 +183,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
                 nodes = Y.all('#test-nodes *');
 
             // return null 
+            Y.one("a[href$='?t=5']");
             Assert.isNull(Y.get(''), 'Y.get("")');
             Assert.isNull(Y.get(null), 'Y.get(null)');
             Assert.isNull(Y.get('#fake-id li'), 'Y.get("#fake-id li") === null');
@@ -431,6 +432,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             Assert.areEqual(1, Y.get('#test-select')._node.selectedIndex,
                     "Y.get('#test-select').set('selectedIndex', 1)");
 
+
+
+            Y.one('#test-select').set('value', 1);
+            Assert.areEqual(1, Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
+            Y.one('#test-select').set('value', 'baz');
+            Assert.areEqual('baz', Y.one('#test-select').get('value'), "Y.one('#test-select').set('value', 1)");
         },
 
         test_dom_methods: function() {

@@ -52,9 +52,9 @@ var c = new SimpleNode();
 a.addChild(b);
 b.addChild(c);
 
-Y.log(a + " parent is " + a.get('parent'), "info", "test");
-Y.log(b + " parent is " + b.get('parent'), "info", "test");
-Y.log(c + " parent is " + c.get('parent'), "info", "test");
+Y.log(a + " parent is " + a.one('parent'), "info", "test");
+Y.log(b + " parent is " + b.one('parent'), "info", "test");
+Y.log(c + " parent is " + c.one('parent'), "info", "test");
 
 c.fire("simplenode:test","tested");
 

@@ -103,7 +103,7 @@ YUI.add('dd-ddm', function(Y) {
                 width: '5px'
             });
             pg.set('id', Y.stamp(pg));
-            pg.addClass('yui-dd-shim');
+            pg.addClass('yui3-dd-shim');
             if (bd.get('firstChild')) {
                 bd.insertBefore(pg, bd.get('firstChild'));
             } else {

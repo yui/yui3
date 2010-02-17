@@ -1,0 +1,44 @@
+{
+    "anim": {
+        "submodules": {
+            "anim-base": {
+                "requires": [
+                    "base-base", 
+                    "node-style"
+                ]
+            }, 
+            "anim-color": {
+                "requires": [
+                    "anim-base"
+                ]
+            }, 
+            "anim-curve": {
+                "requires": [
+                    "anim-xy"
+                ]
+            }, 
+            "anim-easing": {
+                "requires": [
+                    "anim-base"
+                ]
+            }, 
+            "anim-node-plugin": {
+                "requires": [
+                    "node-pluginhost", 
+                    "anim-base"
+                ]
+            }, 
+            "anim-scroll": {
+                "requires": [
+                    "anim-base"
+                ]
+            }, 
+            "anim-xy": {
+                "requires": [
+                    "anim-base", 
+                    "node-screen"
+                ]
+            }
+        }
+    }
+}

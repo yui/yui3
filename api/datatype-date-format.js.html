@@ -244,7 +244,8 @@
 <span class="cm">	 *   This javascript implementation supports all the PHP specifiers and a few more.  The full list is below.</span>
 <span class="cm">	 *   &lt;/p&gt;</span>
 <span class="cm">	 *   &lt;p&gt;</span>
-<span class="cm">	 *   If not specified, it defaults to the ISO8601 standard date format: %Y-%m-%d.  This may be overridden by changing Y.config.dateFormat</span>
+<span class="cm">	 *   If not specified, it defaults to the ISO 8601 standard date format: %Y-%m-%d.</span>
+<span class="cm">     *   This may be overridden by the deprecated Y.config.dateFormat property.</span>
 <span class="cm">	 *   &lt;/p&gt;</span>
 <span class="cm">	 *   &lt;dl&gt;</span>
 <span class="cm">	 *	&lt;dt&gt;%a&lt;/dt&gt; &lt;dd&gt;abbreviated weekday name according to the current locale&lt;/dd&gt;</span>
@@ -294,10 +295,11 @@
 <span class="cm">	 *	&lt;dt&gt;%%&lt;/dt&gt; &lt;dd&gt;a literal &quot;%&quot; character&lt;/dd&gt;</span>
 <span class="cm">	 *   &lt;/dl&gt;</span>
 <span class="cm">	 *  &lt;/dd&gt;</span>
-<span class="cm">	 *  &lt;dt&gt;locale {String} (Optional)&lt;/dt&gt;</span>
+<span class="cm">	 *  &lt;dt&gt;locale {String} (Deprecated, optional)&lt;/dt&gt;</span>
 <span class="cm">	 *  &lt;dd&gt;</span>
+<span class="cm">     *   &lt;b&gt;Deprecated - use Y.config.lang instead, which provides access to a much larger set of built-in languages.&lt;/b&gt;</span>
 <span class="cm">	 *   The locale to use when displaying days of week, months of the year, and other locale specific</span>
-<span class="cm">	 *   strings. If not specified, this defaults to &quot;en&quot; (though this may be overridden by changing Y.config.locale).</span>
+<span class="cm">	 *   strings. If not specified, this defaults to &quot;en&quot; (though this may be overridden by the deprecated Y.config.locale).</span>
 <span class="cm">	 *   The following locales are built in:</span>
 <span class="cm">	 *   &lt;dl&gt;</span>
 <span class="cm">	 *    &lt;dt&gt;en&lt;/dt&gt;</span>
@@ -309,7 +311,7 @@
 <span class="cm">	 *    &lt;dt&gt;en-AU&lt;/dt&gt;</span>
 <span class="cm">	 *    &lt;dd&gt;Australian English (identical to British English)&lt;/dd&gt;</span>
 <span class="cm">	 *   &lt;/dl&gt;</span>
-<span class="cm">	 *   More locales may be added by subclassing of Y.DataType.Date.Locale[&quot;en&quot;].</span>
+<span class="cm">	 *   More locales may be added by subclassing of the deprecated Y.DataType.Date.Locale[&quot;en&quot;].</span>
 <span class="cm">	 *   See Y.DataType.Date.Locale for more information.</span>
 <span class="cm">	 *  &lt;/dd&gt;</span>
 <span class="cm">	 * &lt;/dl&gt;</span>
@@ -323,31 +325,39 @@
 			<span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">oDate</span><span class="p">)</span> <span class="o">?</span> <span class="nx">oDate</span> <span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
 		<span class="p">}</span>
 
-		<span class="kd">var</span> <span class="nx">format</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="p">.</span><span class="nx">format</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">dateFormat</span><span class="p">,</span>
-			<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="p">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span><span class="p">,</span>
+		<span class="kd">var</span> <span class="nx">format</span><span class="p">,</span> <span class="nx">resources</span><span class="p">,</span> <span class="nx">compatMode</span><span class="p">,</span> <span class="nx">sLocale</span><span class="p">,</span> <span class="nx">LOCALE</span><span class="p">;</span>
+
+        <span class="c1">// Y.config.dateFormat is deprecated - remove from YUI 3.2</span>
+        <span class="nx">format</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="p">.</span><span class="nx">format</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">dateFormat</span>  <span class="o">||</span> <span class="s2">&quot;%Y-%m-%d&quot;</span><span class="p">;</span>
+        <span class="c1">// compatMode supports deprecated features - remove from YUI 3.2</span>
+        <span class="nx">compatMode</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">lang</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">oConfig</span><span class="p">.</span><span class="nx">locale</span><span class="p">)</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span><span class="p">));</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">compatMode</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">oConfig</span><span class="p">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span><span class="p">;</span>
 			<span class="nx">LOCALE</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DataType</span><span class="p">.</span><span class="nb">Date</span><span class="p">.</span><span class="nx">Locale</span><span class="p">;</span>
-
-		<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/_/g</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">);</span>
-		
-		<span class="c1">// Make sure we have a definition for the requested locale, or default to en.</span>
-		<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">LOCALE</span><span class="p">[</span><span class="nx">sLocale</span><span class="p">])</span> <span class="p">{</span>
-			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;selected locale &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span> <span class="o">+</span> <span class="s2">&quot; not found, trying alternatives&quot;</span><span class="p">,</span> <span class="s2">&quot;WARN&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="p">);</span>
-			<span class="kd">var</span> <span class="nx">tmpLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/-[a-zA-Z]+$/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
-			<span class="k">if</span><span class="p">(</span><span class="nx">tmpLocale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="p">)</span> <span class="p">{</span>
-				<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">tmpLocale</span><span class="p">;</span>
-			<span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="p">)</span> <span class="p">{</span>
-				<span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span><span class="p">;</span>
-			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-				<span class="nx">sLocale</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">;</span>
-			<span class="p">}</span>
-			<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;falling back to &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="p">);</span>
-		<span class="p">}</span>
-
-		<span class="kd">var</span> <span class="nx">aLocale</span> <span class="o">=</span> <span class="nx">LOCALE</span><span class="p">[</span><span class="nx">sLocale</span><span class="p">];</span>
+            <span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/_/g</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">);</span>
+            
+            <span class="c1">// Make sure we have a definition for the requested locale, or default to en.</span>
+            <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">LOCALE</span><span class="p">[</span><span class="nx">sLocale</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;selected locale &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span> <span class="o">+</span> <span class="s2">&quot; not found, trying alternatives&quot;</span><span class="p">,</span> <span class="s2">&quot;WARN&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">tmpLocale</span> <span class="o">=</span> <span class="nx">sLocale</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/-[a-zA-Z]+$/</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">);</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">tmpLocale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">tmpLocale</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span> <span class="k">in</span> <span class="nx">LOCALE</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">sLocale</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">sLocale</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;falling back to &quot;</span> <span class="o">+</span> <span class="nx">sLocale</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+    
+            <span class="nx">resources</span> <span class="o">=</span> <span class="nx">LOCALE</span><span class="p">[</span><span class="nx">sLocale</span><span class="p">];</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">resources</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;datatype-date-format&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
 
 		<span class="kd">var</span> <span class="nx">replace_aggs</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m0</span><span class="p">,</span> <span class="nx">m1</span><span class="p">)</span> <span class="p">{</span>
 			<span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">Dt</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">[</span><span class="nx">m1</span><span class="p">];</span>
-			<span class="k">return</span> <span class="p">(</span><span class="nx">f</span> <span class="o">===</span> <span class="s2">&quot;locale&quot;</span> <span class="o">?</span> <span class="nx">aLocale</span><span class="p">[</span><span class="nx">m1</span><span class="p">]</span> <span class="o">:</span> <span class="nx">f</span><span class="p">);</span>
+			<span class="k">return</span> <span class="p">(</span><span class="nx">f</span> <span class="o">===</span> <span class="s2">&quot;locale&quot;</span> <span class="o">?</span> <span class="nx">resources</span><span class="p">[</span><span class="nx">m1</span><span class="p">]</span> <span class="o">:</span> <span class="nx">f</span><span class="p">);</span>
 		<span class="p">};</span>
 
 		<span class="kd">var</span> <span class="nx">replace_formats</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m0</span><span class="p">,</span> <span class="nx">m1</span><span class="p">)</span> <span class="p">{</span>
@@ -356,12 +366,13 @@
 				<span class="k">case</span> <span class="s2">&quot;string&quot;</span><span class="o">:</span>					<span class="c1">// string =&gt; built in date function</span>
 					<span class="k">return</span> <span class="nx">oDate</span><span class="p">[</span><span class="nx">f</span><span class="p">]();</span>
 				<span class="k">case</span> <span class="s2">&quot;function&quot;</span><span class="o">:</span>				<span class="c1">// function =&gt; our own function</span>
-					<span class="k">return</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">oDate</span><span class="p">,</span> <span class="nx">oDate</span><span class="p">,</span> <span class="nx">aLocale</span><span class="p">);</span>
+					<span class="k">return</span> <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">oDate</span><span class="p">,</span> <span class="nx">oDate</span><span class="p">,</span> <span class="nx">resources</span><span class="p">);</span>
 				<span class="k">case</span> <span class="s2">&quot;array&quot;</span><span class="o">:</span>					<span class="c1">// built in function with padding</span>
 					<span class="k">if</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">f</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="p">{</span>
 						<span class="k">return</span> <span class="nx">xPad</span><span class="p">(</span><span class="nx">oDate</span><span class="p">[</span><span class="nx">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]](),</span> <span class="nx">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
 					<span class="p">}</span> <span class="c1">// no break; (fall through to default:)</span>
 				<span class="k">default</span><span class="o">:</span>
+                    <span class="c1">// Y.config.dateFormat is deprecated - remove from YUI 3.2</span>
 					<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;unrecognised replacement type, please file a bug (format: &quot;</span> <span class="o">+</span> <span class="nx">oConfig</span><span class="p">.</span><span class="nx">format</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">dateFormat</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;WARN&quot;</span><span class="p">,</span> <span class="s2">&quot;datatype-date&quot;</span><span class="p">);</span>
 					<span class="k">return</span> <span class="nx">m1</span><span class="p">;</span>
 			<span class="p">}</span>
@@ -436,7 +447,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

@@ -685,6 +685,15 @@ Parent.prototype = {
 
     },
     
+    /**
+     * Selects the child at the given index (zero-based).
+     *
+     * @method selectChild
+     * @param {Number} i the index of the child to be selected
+     */
+    selectChild: function(i) {
+        this.item(i).set('selected', 1);
+    },
 
     /**
      * Selects all children.

@@ -1,0 +1,7 @@
+{
+    "async-queue": {
+        "requires": [
+            "event-custom"
+        ]
+    }
+}

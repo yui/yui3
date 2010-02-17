@@ -86,6 +86,15 @@ YUI.add('anim-base', function(Y) {
     };
 
     /**
+     * Time in milliseconds passed to setInterval for frame processing 
+     *
+     * @property intervalTime
+     * @default 20
+     * @static
+     */
+    Y.Anim._intervalTime = 20;
+
+    /**
      * Bucket for custom getters and setters
      *
      * @property behaviors
@@ -325,7 +334,7 @@ YUI.add('anim-base', function(Y) {
     
     Y.Anim._startTimer = function() {
         if (!_timer) {
-            _timer = setInterval(Y.Anim._runFrame, 1);
+            _timer = setInterval(Y.Anim._runFrame, Y.Anim._intervalTime);
         }
     };
 
@@ -439,6 +448,11 @@ YUI.add('anim-base', function(Y) {
         },
 
         _end: function(finish) {
+            var duration = this.get('duration') * 1000;
+            if (finish) { // jump to last frame
+                this._runAttrs(duration, duration, this.get(REVERSE));
+            }
+
             this._set(START_TIME, null);
             this._set(ELAPSED_TIME, 0);
             this._set(PAUSED, false);
@@ -448,38 +462,14 @@ YUI.add('anim-base', function(Y) {
         },
 
         _runFrame: function() {
-            var attr = this._runtimeAttr,
-                customAttr = Y.Anim.behaviors,
-                easing = attr.easing,
-                d = attr.duration,
+            var d = this._runtimeAttr.duration,
                 t = new Date() - this.get(START_TIME),
-                reversed = this.get(REVERSE),
+                reverse = this.get(REVERSE),
                 done = (t >= d),
-                lastFrame = d,
                 attribute,
                 setter;
                 
-            if (reversed) {
-                t = d - t;
-                done = (t <= 0);
-                lastFrame = 0;
-            }
-
-            for (var i in attr) {
-                if (attr[i].to) {
-                    attribute = attr[i];
-                    setter = (i in customAttr && 'set' in customAttr[i]) ?
-                            customAttr[i].set : Y.Anim.DEFAULT_SETTER;
-
-                    if (!done) {
-                        setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
-                    } else { // ensure final frame value is set
-                       // TODO: handle keyframes 
-                        setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
-                    }
-                }
-            }
-
+            this._runAttrs(t, d, reverse);
             this._actualFrames += 1;
             this._set(ELAPSED_TIME, t);
 
@@ -487,6 +477,37 @@ YUI.add('anim-base', function(Y) {
             if (done) {
                 this._lastFrame();
             }
+        },
+
+        _runAttrs: function(t, d, reverse) {
+            var attr = this._runtimeAttr,
+                customAttr = Y.Anim.behaviors,
+                easing = attr.easing,
+                lastFrame = d,
+                attribute,
+                setter,
+                i;
+
+            if (reverse) {
+                t = d - t;
+                lastFrame = 0;
+            }
+
+            for (i in attr) {
+                if (attr[i].to) {
+                    attribute = attr[i];
+                    setter = (i in customAttr && 'set' in customAttr[i]) ?
+                            customAttr[i].set : Y.Anim.DEFAULT_SETTER;
+
+                    if (t < d) {
+                        setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
+                    } else {
+                        setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
+                    }
+                }
+            }
+
+
         },
 
         _lastFrame: function() {
@@ -1136,5 +1157,5 @@ Y.Anim.behaviors.xy = {
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
 
 
-YUI.add('anim', function(Y){}, '@VERSION@' ,{skinnable:false, use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy']});
+YUI.add('anim', function(Y){}, '@VERSION@' ,{use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy'], skinnable:false});
 

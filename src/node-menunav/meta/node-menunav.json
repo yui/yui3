@@ -1,0 +1,12 @@
+{
+    "node-menunav": {
+        "requires": [
+            "node", 
+            "classnamemanager", 
+            "plugin", 
+            "node-focusmanager", 
+            "skin-sam-node-menunav"
+        ], 
+        "skinnable": true
+    }
+}

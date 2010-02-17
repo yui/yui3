@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Tabs</title>
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../build/tabview/tabview-base.js"></script>
+<script type="text/javascript" src="../../build/tabview/tabview-plugin.js"></script>
+<script type="text/javascript" src="../../build/tabview/tablist.js"></script>
+<script type="text/javascript" src="../../build/tabview/tab.js"></script>
+<script type="text/javascript" src="../../build/tabview/tabpanel.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../../src/tabview/css/tabview.css">
+<style>
+ul, li {
+    margin: 0;
+    padding: 0;
+}
+</style>
+</head>
+<body>
+<h1>Tabs</h1>
+
+<div id="demo">
+</div>
+
+<div id="demo2">
+</div>
+</body>
+<script type="text/javascript">
+YUI({filter: 'raw'}).use('tablist', function(Y) {
+    var tablist = new Y.TabList({
+        children: [{
+            label: 'tab 1',
+            content: 'tab 1 content'
+        },{
+            label: 'tab 2',
+            content: 'tab 2 content'
+
+        },{
+            label: 'tab 3',
+            content: 'tab 3 content'
+        }]
+    });
+    tablist.render('#demo');
+    tablist.selectChild(2);
+    tablist.get('selection').previous().set('selected', 1);
+
+/*
+    var tablist2 = new Y.TabList({
+        children: [{
+            label: 'tab 1',
+            content: 'tab 1 content'
+        },{
+            label: 'tab 2',
+            content: 'tab 2 content'
+        }]
+    });
+    tablist2.render('#demo2');
+    console.log(tablist2.get('contentBox'));
+*/
+});
+
+</script>
+</html>

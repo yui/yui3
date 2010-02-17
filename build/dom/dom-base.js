@@ -648,6 +648,16 @@ Y.DOM = {
                 }
 
                 attr.value = val;
+            },
+
+            select: function(node, val) {
+                for (var i = 0, options = node.getElementsByTagName('option'), option;
+                        option = options[i++];) {
+                    if (Y.DOM.getValue(option) === val) {
+                        Y.DOM.setAttribute(option, 'selected', true);
+                        break;
+                    }
+                }
             }
         });
     }
@@ -697,7 +707,7 @@ Y.DOM = {
                 // TODO: implement multipe select
                 if (node.multiple) {
                 } else {
-                    val = Y.DOM.getValue(options[node.selectedIndex], 'value');
+                    val = Y.DOM.getValue(options[node.selectedIndex]);
                 }
             }
 

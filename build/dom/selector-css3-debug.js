@@ -126,7 +126,15 @@ Y.mix(Y.Selector.pseudos, {
     },
 
     'checked': function(node) {
-        return node.checked === true;
+        return (node.checked === true || node.selected === true);
+    },
+
+    enabled: function(node) {
+        return (node.disabled !== undefined && !node.disabled);
+    },
+
+    disabled: function(node) {
+        return (node.disabled);
     }
 });
 

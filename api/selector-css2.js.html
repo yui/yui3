@@ -67,6 +67,7 @@
     <span class="nx">Selector</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">,</span>
 
     <span class="nx">SelectorCSS2</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">_reRegExpTokens</span><span class="o">:</span> <span class="sr">/([\^\$\?\[\]\*\+\-\.\(\)\|\\])/</span><span class="p">,</span> <span class="c1">// TODO: move?</span>
         <span class="nx">SORT_RESULTS</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
         <span class="nx">_children</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">tag</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">children</span><span class="p">,</span>
@@ -215,8 +216,9 @@
                             <span class="p">}</span>
 
                             <span class="k">if</span> <span class="p">((</span><span class="nx">operator</span> <span class="o">===</span> <span class="s1">&#39;=&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">value</span> <span class="o">!==</span> <span class="nx">test</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">||</span>  <span class="c1">// fast path for equality</span>
-                                <span class="p">(</span><span class="nx">operator</span><span class="p">.</span><span class="nx">test</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">operator</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="o">||</span>  <span class="c1">// regex test</span>
-                                <span class="p">(</span><span class="nx">operator</span><span class="p">.</span><span class="nx">call</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">operator</span><span class="p">(</span><span class="nx">tmpNode</span><span class="p">,</span> <span class="nx">test</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span> <span class="p">{</span> <span class="c1">// function test</span>
+                                <span class="p">(</span><span class="k">typeof</span> <span class="nx">operator</span> <span class="o">!==</span> <span class="s1">&#39;string&#39;</span> <span class="o">&amp;&amp;</span> <span class="c1">// protect against String.test monkey-patch (Moo)</span>
+                                <span class="nx">operator</span><span class="p">.</span><span class="nx">test</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">operator</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="o">||</span>  <span class="c1">// regex test</span>
+                                <span class="p">(</span><span class="k">typeof</span> <span class="nx">operator</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">operator</span><span class="p">(</span><span class="nx">tmpNode</span><span class="p">,</span> <span class="nx">test</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span> <span class="p">{</span> <span class="c1">// function test</span>
 
                                 <span class="c1">// skip non element nodes or non-matching tags</span>
                                 <span class="k">if</span> <span class="p">((</span><span class="nx">tmpNode</span> <span class="o">=</span> <span class="nx">tmpNode</span><span class="p">[</span><span class="nx">path</span><span class="p">]))</span> <span class="p">{</span>
@@ -299,6 +301,7 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">operator</span> <span class="k">in</span> <span class="nx">operators</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">test</span> <span class="o">=</span> <span class="nx">operators</span><span class="p">[</span><span class="nx">operator</span><span class="p">];</span>
                         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">test</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">].</span><span class="nx">replace</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">_reRegExpTokens</span><span class="p">,</span> <span class="s1">&#39;\\$1&#39;</span><span class="p">);</span>
                             <span class="nx">test</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getRegExp</span><span class="p">(</span><span class="nx">test</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;{val}&#39;</span><span class="p">,</span> <span class="nx">match</span><span class="p">[</span><span class="mi">3</span><span class="p">]));</span>
                         <span class="p">}</span>
                         <span class="nx">match</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">test</span><span class="p">;</span>
@@ -528,7 +531,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

@@ -359,7 +359,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         // Apply positioning to the bounding box if appropriate
         var style = this.get('style');
         if (style !== 'block') {
-            this.get('boundingBox').addClass('yui-'+style+'-console');
+            this.get('boundingBox').addClass('yui3-'+style+'-console');
         }
     },
 

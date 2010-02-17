@@ -1,0 +1,72 @@
+{
+    "dd": {
+        "submodules": {
+            "dd-constrain": {
+                "requires": [
+                    "dd-drag"
+                ]
+            }, 
+            "dd-ddm": {
+                "requires": [
+                    "dd-ddm-base", 
+                    "event-resize"
+                ]
+            }, 
+            "dd-ddm-base": {
+                "requires": [
+                    "node", 
+                    "base", 
+                    "yui-throttle"
+                ]
+            }, 
+            "dd-ddm-drop": {
+                "requires": [
+                    "dd-ddm"
+                ]
+            }, 
+            "dd-delegate": {
+                "optional": [
+                    "dd-drop-plugin"
+                ], 
+                "requires": [
+                    "dd-drag", 
+                    "event-mouseenter"
+                ]
+            }, 
+            "dd-drag": {
+                "requires": [
+                    "dd-ddm-base"
+                ]
+            }, 
+            "dd-drop": {
+                "requires": [
+                    "dd-ddm-drop"
+                ]
+            }, 
+            "dd-drop-plugin": {
+                "requires": [
+                    "dd-drop"
+                ]
+            }, 
+            "dd-plugin": {
+                "optional": [
+                    "dd-constrain", 
+                    "dd-proxy"
+                ], 
+                "requires": [
+                    "dd-drag"
+                ]
+            }, 
+            "dd-proxy": {
+                "requires": [
+                    "dd-drag"
+                ]
+            }, 
+            "dd-scroll": {
+                "requires": [
+                    "dd-drag"
+                ]
+            }
+        }
+    }
+}

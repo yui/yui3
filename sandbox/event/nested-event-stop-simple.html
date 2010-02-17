@@ -10,7 +10,7 @@
             YUI({filter:"raw"}).use("node", "event-custom-complex", function(Y) {
 
                 function log(m) {
-                    Y.get(document.body).append('<div>' + m + '</div>');
+                    Y.one(document.body).append('<div>' + m + '</div>');
                 }
 
                 var et = new Y.EventTarget({

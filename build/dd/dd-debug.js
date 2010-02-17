@@ -106,7 +106,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description The PREFIX to attach to all DD CSS class names
         * @type {String}
         */
-        CSS_PREFIX: 'yui-dd',
+        CSS_PREFIX: 'yui3-dd',
         _activateTargets: function() {},        
         /**
         * @private
@@ -454,7 +454,7 @@ YUI.add('dd-ddm', function(Y) {
                 width: '5px'
             });
             pg.set('id', Y.stamp(pg));
-            pg.addClass('yui-dd-shim');
+            pg.addClass('yui3-dd-shim');
             if (bd.get('firstChild')) {
                 bd.insertBefore(pg, bd.get('firstChild'));
             } else {

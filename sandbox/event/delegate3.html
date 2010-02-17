@@ -45,7 +45,7 @@ YUI(yConfig).use('node', function(Y) {
         e.stopPropagation();
     }, document, 'click', '*');
 
-    Y.get('#demo2').on('click', function(e) {
+    Y.one('#demo2').on('click', function(e) {
         console.log('Second: ', e);
     });
     /*

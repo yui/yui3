@@ -1,0 +1,7 @@
+{
+    "classnamemanager": {
+        "requires": [
+            "yui-base"
+        ]
+    }
+}

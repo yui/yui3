@@ -1,0 +1,12 @@
+{
+"a":["Min","Sen","Sel","Rab","Kam","Jum","Sab"]
+,"A":["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]
+,"b":["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"]
+,"B":["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"]
+,"c":"%a, %Y %b %d %H:%M:%S %Z"
+,"p":["AM","PM"]
+,"P":["am","pm"]
+,"r":"%I:%M:%S %p"
+,"x":"%Y-%m-%d"
+,"X":"%H:%M:%S"
+}

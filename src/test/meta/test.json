@@ -1,0 +1,12 @@
+{
+    "test": {
+        "requires": [
+            "substitute", 
+            "node", 
+            "json", 
+            "event-simulate", 
+            "skin-sam-test"
+        ], 
+        "skinnable": true
+    }
+}
