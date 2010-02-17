@@ -3,7 +3,12 @@ YUI Loader
 
 3.1.0
   * Added a 'patterns' property.  Modules that are not predefined will be created with the
-    default values if it matches one of the patterns defined for the instance.
+    default values if it matches one of the patterns defined for the instance.  
+  * Handles simulateous bootstrapping and loading better.
+  * Added support for dynamically loading language packs along with modules that have them.
+  * Metadata is managed per component instead of centrally.
+  * Extremely long combo urls are split into multiple requests.
+  * Loader defends itself against metadata that creates circular dependencies.
 
 3.0.0
   * Extracted from the YUI seed.  Now fetched dynamically if
