@@ -739,7 +739,7 @@ YUI.prototype = {
 
     YUI._attach(['yui-base']);
 
-    if (typeof window != 'undefined') {
+    if (hasWin) {
         // add a window load event at load time so we can capture
         // the case where it fires before dynamic loading is
         // complete.
@@ -750,6 +750,10 @@ YUI.prototype = {
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
+
+    if (typeof exports == 'object') {
+        exports.YUI = YUI;
+    }
 
 })();
 
