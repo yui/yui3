@@ -274,7 +274,7 @@ ATTRS[WIDTH] = {
  * @type Object
  */
 ATTRS[STRINGS] = {
-    valueFn: "_defStrValue",
+    value: (Y.Intl && Y.Intl.get) ? Y.Intl.get(moduleName) : {},
     setter: "_strSetter",
     getter: "_strGetter"
 };
@@ -1136,7 +1136,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     _defStrValue : function() {
-        return (Y.Intl && Y.Intl.get) ? Y.Intl.get(moduleName) : {};
+        return ;
     },
 
     getString : function(key) {
