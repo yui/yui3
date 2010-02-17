@@ -1,5 +1,9 @@
-YUI.add('widget-i18n', function(Y) {
-
+/**
+ * Provides string support for widget with BCP 47 language tag lookup.
+ *
+ * @module widget-locale
+ * @deprecated This module has been deprecated. It's replaced by the "intl" module which provides generic internationalization and BCP language tag support with externalization.
+ */
 var TRUE = true,
     LOCALE = "locale",
     INIT_VALUE = "initValue",
@@ -9,6 +13,7 @@ var TRUE = true,
 
 /**
  * @attribute locale
+ * @deprecated Use Y.config.lang and Y.Intl externalization support
  * @description
  * The default locale for the widget. NOTE: Using get/set on the "strings" attribute will
  * return/set strings for this locale.
@@ -67,6 +72,7 @@ Y.mix(Widget.prototype, {
     
         locale = (locale || this.get(LOCALE)).toLowerCase();
     
+        Y.log("getStrings: For " + locale, "info", "widget"); 
     
         var defLocale = this.getDefaultLocale().toLowerCase(),
             defStrs = this._getStrings(defLocale),
@@ -82,6 +88,7 @@ Y.mix(Widget.prototype, {
             for (i = 0, l = localeSegments.length; i < l; ++i) {
                 lookup += localeSegments[i];
     
+                Y.log("getStrings: Merging in strings from: " + lookup, "info", "widget"); 
     
                 localeStrs = this._getStrings(lookup);
                 if (localeStrs) {
@@ -108,6 +115,7 @@ Y.mix(Widget.prototype, {
 
         locale = (locale || this.get(LOCALE)).toLowerCase();
     
+        Y.log("getString: For " + locale, "info", "widget"); 
     
         var defLocale = (this.getDefaultLocale()).toLowerCase(),
             strs = this._getStrings(defLocale) || {},
@@ -117,6 +125,7 @@ Y.mix(Widget.prototype, {
         // If locale is different than the default, or needs lookup support
         if (locale !== defLocale || idx != -1) {
             do {
+                Y.log("getString: Performing lookup for: " + locale, "info", "widget"); 
     
                 strs = this._getStrings(locale);
                 if (strs && key in strs) {
@@ -154,6 +163,3 @@ Y.mix(Widget.prototype, {
         return this._getStrings(this.get(LOCALE));
     }
 }, true);
-
-
-}, '@VERSION@' ,{requires:['widget-base']});

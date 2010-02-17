@@ -1,3 +1,11 @@
+YUI.add('widget-locale', function(Y) {
+
+/**
+ * Provides string support for widget with BCP 47 language tag lookup.
+ *
+ * @module widget-locale
+ * @deprecated This module has been deprecated. It's replaced by the "intl" module which provides generic internationalization and BCP language tag support with externalization.
+ */
 var TRUE = true,
     LOCALE = "locale",
     INIT_VALUE = "initValue",
@@ -7,6 +15,7 @@ var TRUE = true,
 
 /**
  * @attribute locale
+ * @deprecated Use Y.config.lang and Y.Intl externalization support
  * @description
  * The default locale for the widget. NOTE: Using get/set on the "strings" attribute will
  * return/set strings for this locale.
@@ -156,3 +165,6 @@ Y.mix(Widget.prototype, {
         return this._getStrings(this.get(LOCALE));
     }
 }, true);
+
+
+}, '@VERSION@' ,{requires:['widget-base']});

@@ -821,11 +821,6 @@ META = {
                 "requires": [
                     "widget-base"
                 ]
-            }, 
-            "widget-i18n": {
-                "requires": [
-                    "widget-base"
-                ]
             }
         }
     }, 
@@ -833,6 +828,11 @@ META = {
         "requires": [
             "plugin", 
             "anim-base"
+        ]
+    }, 
+    "widget-locale": {
+        "requires": [
+            "widget-base"
         ]
     }, 
     "yui": {
