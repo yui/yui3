@@ -293,6 +293,12 @@
     "datatype": {
         "submodules": {
             "datatype-date": {
+                "lang": [
+                    "en", 
+                    "en-US", 
+                    "fr-FR", 
+                    "ko-KR"
+                ], 
                 "requires": [
                     "yui-base"
                 ]
@@ -508,14 +514,10 @@
         ]
     }, 
     "intl": {
-        "submodules": {
-            "intl-lang": {
-                "requires": [
-                    "event-custom"
-                ]
-            }, 
-            "intl-load": {}
-        }
+        "requires": [
+            "intl-base", 
+            "event-custom"
+        ]
     }, 
     "io": {
         "submodules": {
@@ -800,11 +802,6 @@
                 "requires": [
                     "widget-base"
                 ]
-            }, 
-            "widget-i18n": {
-                "requires": [
-                    "widget-base"
-                ]
             }
         }
     }, 
@@ -814,9 +811,15 @@
             "anim-base"
         ]
     }, 
+    "widget-locale": {
+        "requires": [
+            "widget-base"
+        ]
+    }, 
     "yui": {
         "submodules": {
             "get": {}, 
+            "intl-base": {}, 
             "yui-base": {}, 
             "yui-later": {}, 
             "yui-log": {}, 

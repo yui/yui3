@@ -9,7 +9,9 @@
 
 (function() {
 
-    var doc = document,
+    var hasWin = (typeof window != 'undefined'),
+        win = (hasWin) ? window : null,
+        doc = (hasWin) ? win.document : null,
         docEl = doc && doc.documentElement,
         docElClass = docEl && docEl.className,
         DOCUMENT_CLASS = 'yui3-js-enabled',
@@ -42,7 +44,9 @@
         globalListener = function() {
             YUI.Env.windowLoaded = true;
             YUI.Env.DOMReady = true;
-            remove(window, 'load', globalListener);
+            if (hasWin) {
+                remove(window, 'load', globalListener);
+            }
         },
 
 // @TODO: this needs to be created at build time from module metadata
@@ -157,6 +161,8 @@ YUI.prototype = {
 
         Y.version = v;
 
+        Y.gallery = 'gallery-2010.02.10-01'; // @TODO build time
+
         if (!Y.Env) {
 
             Y.Env = {
@@ -192,7 +198,7 @@ YUI.prototype = {
         // configuration defaults
         Y.config = Y.config || {
 
-            win: window || {},
+            win: win,
             doc: doc,
             debug: true,
             useBrowserConsole: true,
@@ -258,7 +264,7 @@ YUI.prototype = {
         var Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
+            extras = Y.config.core || ['get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
 
 
         for (i=0; i<extras.length; i++) {
@@ -377,7 +383,7 @@ YUI.prototype = {
                 // this.log('attaching ' + name, 'info', 'yui');
 
                 if (m.fn) {
-                    m.fn(this);
+                    m.fn(this, name);
                 }
 
                 if (use) {
@@ -429,7 +435,8 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            boot = Y.config.bootstrap,
+            config = Y.config,
+            boot = config.bootstrap,
             k, i, l, missing = [], 
             r = [], 
             css = Y.config.fetchCSS,
@@ -543,12 +550,13 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
-            loader = new Y.Loader(Y.config);
+            loader = new Y.Loader(config);
             loader.require(a);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
             // loader.calculate(null, (css && css == 'force') ? null : 'js');
             // loader.calculate();
+            // loader.calculate(null, (css) ? null : 'js');
             loader.calculate(null, (css) ? null : 'js');
             a = loader.sorted;
         }
@@ -575,8 +583,9 @@ YUI.prototype = {
         // dynamic load
         if (boot && l && Y.Loader) {
             Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
+
             Y._loading = true;
-            loader = new Y.Loader(Y.config);
+            loader = new Y.Loader(config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
@@ -602,8 +611,8 @@ YUI.prototype = {
                 queue.add(onEnd);
             } else {
                 YUI.Env._bootstrapping = true;
-                Y.log('Fetching loader: ' + Y.id + ", " + Y.config.base + Y.config.loaderPath, 'info', 'yui');
-                Y.Get.script(Y.config.base + Y.config.loaderPath, {
+                Y.log('Fetching loader: ' + Y.id + ", " + config.base + config.loaderPath, 'info', 'yui');
+                Y.Get.script(config.base + config.loaderPath, {
                     onEnd: onEnd 
                 });
             }
@@ -748,10 +757,14 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
     YUI._attach(['yui-base']);
 
-    // add a window load event at load time so we can capture
-    // the case where it fires before dynamic loading is
-    // complete.
-    add(window, 'load', globalListener);
+    if (typeof window != 'undefined') {
+        // add a window load event at load time so we can capture
+        // the case where it fires before dynamic loading is
+        // complete.
+        add(window, 'load', globalListener);
+    } else {
+        globalListener();
+    }
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
@@ -1075,16 +1088,23 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * when boostrapping with the get utility alone.
  *
  * @property loaderPath
+ * @type string
  * @default loader/loader-min.js
  */
 
-/*
- * 
+/**
  * Specifies whether or not YUI().use(...) will attempt to load CSS
  * resources at all.  Any truthy value will cause CSS dependencies
  * to load when fetching script.  The special value 'force' will 
  * cause CSS dependencies to be loaded even if no script is needed.
  *
  * @property fetchCSS
+ * @type boolean|string
  * @default true
+ */
+
+/**
+ * The default gallery version to create gallery module urls
+ * @property gallery
+ * @type string
  */

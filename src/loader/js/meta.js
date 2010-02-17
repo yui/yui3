@@ -1,8 +1,7 @@
 (function() {
-
 var VERSION = Y.version,
 ROOT = VERSION + '/build/',
-GALLERY_VERSION = 'gallery-2009-10-19', // @TODO build time
+GALLERY_VERSION = Y.config.gallery || Y.gallery,
 GALLERY_ROOT = GALLERY_VERSION + '/build/',
 GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
 META = {
@@ -313,6 +312,12 @@ META = {
     "datatype": {
         "submodules": {
             "datatype-date": {
+                "lang": [
+                    "en", 
+                    "en-US", 
+                    "fr-FR", 
+                    "ko-KR"
+                ], 
                 "requires": [
                     "yui-base"
                 ]
@@ -528,14 +533,10 @@ META = {
         ]
     }, 
     "intl": {
-        "submodules": {
-            "intl-lang": {
-                "requires": [
-                    "event-custom"
-                ]
-            }, 
-            "intl-load": {}
-        }
+        "requires": [
+            "intl-base", 
+            "event-custom"
+        ]
     }, 
     "io": {
         "submodules": {
@@ -820,11 +821,6 @@ META = {
                 "requires": [
                     "widget-base"
                 ]
-            }, 
-            "widget-i18n": {
-                "requires": [
-                    "widget-base"
-                ]
             }
         }
     }, 
@@ -834,9 +830,15 @@ META = {
             "anim-base"
         ]
     }, 
+    "widget-locale": {
+        "requires": [
+            "widget-base"
+        ]
+    }, 
     "yui": {
         "submodules": {
             "get": {}, 
+            "intl-base": {}, 
             "yui-base": {}, 
             "yui-later": {}, 
             "yui-log": {}, 
@@ -862,6 +864,35 @@ META = {
             filter: {
                 'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
+            }
+        },
+
+        // expand 'lang|module|lang'
+        'lang|': {
+            action: function(data) {
+                // Y.log('testing data: ' + data);
+
+                var parts = data.split('|'),
+                    name = parts[1],
+                    lang = parts[2],
+                    packName, mod;
+
+                if (lang) {
+
+                    packName = this.getLangPackName(lang, name);
+
+                    if ('create' == parts[3]) {
+                        mod = this.getModule(packName);
+                        if (!mod) {
+                            mod = this.getModule(name);
+                            // Y.log('action creating ' + packName);
+                            this._addLangPack(lang, mod, packName);
+                        }
+                    }
+
+                    this.require(packName);
+                }
+                delete this.required[data];
             }
         }
     }

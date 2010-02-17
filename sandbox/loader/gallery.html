@@ -7,9 +7,10 @@
     <script type="text/javascript" charset="utf-8">                                                                                                                 
         YUI({
             // fetchCSS: 'force',
+            fetchCSS: false,
             // bootstrap: false
             gallerybase: '../../gallerybuild/'
-        }).use('gallery-mygal', function(Y) {
+        }).use('slider', 'gallery-mygal', function(Y) {
             console.log(Y.Base);
         });                                                                                                                                 
         // console.log(A.Widget);                                                                                                                                  

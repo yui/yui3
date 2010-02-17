@@ -46,8 +46,9 @@ YUI.add('json-parse', function(Y) {
      * @type {Object}
      * @private
      */
-var _JSON  = Y.config.win.JSON,
+var _JSON  = (Y.config.win || {}).JSON,
     Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
+    useNative = !!Native,
 
     /**
      * Replace certain Unicode characters that JavaScript may handle incorrectly
@@ -190,6 +191,21 @@ Y.namespace('JSON').parse = function (s,reviver) {
         Native.parse(s,reviver) : _parse(s,reviver);
 };
 
+function workingNative( k, v ) {
+    return k === "ok" ? true : v;
+}
+
+// Double check basic functionality.  This is mainly to catch early broken
+// implementations of the JSON API in Firefox 3.1 beta1 and beta2
+if ( Native ) {
+    try {
+        useNative = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
+    }
+    catch ( e ) {
+        useNative = false;
+    }
+}
+
 /**
  * Leverage native JSON parse if the browser has a native implementation.
  * In general, this is a good idea.  See the Known Issues section in the
@@ -201,7 +217,7 @@ Y.namespace('JSON').parse = function (s,reviver) {
  * @default true
  * @static
  */
-Y.JSON.useNativeParse = !!Native;
+Y.JSON.useNativeParse = useNative;
 
 
 }, '@VERSION@' );
@@ -215,13 +231,14 @@ YUI.add('json-stringify', function(Y) {
  * @for JSON
  * @static
  */
-var _JSON     = Y.config.win.JSON,
+var _JSON     = (Y.config.win || {}).JSON,
     Lang      = Y.Lang,
     isFunction= Lang.isFunction,
     isObject  = Lang.isObject,
     isArray   = Lang.isArray,
     _toStr    = Object.prototype.toString,
     Native    = (_toStr.call(_JSON) === '[object JSON]' && _JSON),
+    useNative = !!Native,
     UNDEFINED = 'undefined',
     OBJECT    = 'object',
     NULL      = 'null',
@@ -413,6 +430,16 @@ function _stringify(o,w,space) {
     return _serialize({'':o},'');
 }
 
+// Double check basic native functionality.  This is primarily to catch broken
+// early JSON API implementations in Firefox 3.1 beta1 and beta2.
+if ( Native ) {
+    try {
+        useNative = ( '0' === Native.stringify(0) );
+    } catch ( e ) {
+        useNative = false;
+    }
+}
+
 Y.mix(Y.namespace('JSON'),{
     /**
      * Leverage native JSON stringify if the browser has a native
@@ -425,7 +452,7 @@ Y.mix(Y.namespace('JSON'),{
      * @default true
      * @static
      */
-    useNativeStringify : !!Native,
+    useNativeStringify : useNative,
 
     /**
      * Serializes a Date instance as a UTC date string.  Used internally by

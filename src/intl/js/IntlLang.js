@@ -89,23 +89,45 @@ Y.mix(Y.namespace("Intl"), {
      * @method get
      *
      * @param {String} module The module name.
-     * @param {String} key Optional. If not provided, returns all strings, using merge to protect the originals.
+     * @param {String} key Optional. If not provided, returns a shallow cloned hash of all strings (to protect the originals).
      * @param {String} lang Optional. The BCP 47 langauge tag.
      * @return String | Object
      */
     get : function(module, key, lang) {
         var mod = this._mod(module),
-            strs,
-            str;
+            strs;
 
         lang = lang || mod[ACTIVE];
-        strs = mod[lang];
+        strs = mod[lang] || {};
 
-        if (strs) {
-            str = (key) ? strs[key] : Y.merge(strs);
+        return (key) ? strs[key] : Y.merge(strs);
+    },
+
+    /**
+     * Obtains the list of languages for which resource bundles are available for a given module, based on the module
+     * meta-data (part of loader). If loader is not on the page, returns an empty array.
+     *
+     * @param {String} module The name of the module
+     * @return {Array} The list of languages available.
+     */
+    getAvailableLangs : function(module) {
+        var availLangs = [],
+            allLangs = Y.Env && Y.Env.lang,
+            lang;
+
+        // Y.Env.lang[lang][m.name]
+
+        if(allLangs) {
+            for (lang in allLangs) {
+                if (lang && allLangs.hasOwnProperty(lang)) {
+                    if (allLangs[lang][module]) {
+                        availLangs[availLangs.length] = lang;
+                    }
+                }
+            }
         }
 
-        return str;
+        return availLangs;
     }
 });
 

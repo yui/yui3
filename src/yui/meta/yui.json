@@ -5,7 +5,8 @@
             "yui-base": {}, 
             "yui-later": {}, 
             "yui-log": {}, 
-            "yui-throttle": {}
+            "yui-throttle": {},
+            "intl-base": {}
         }
     }
 }

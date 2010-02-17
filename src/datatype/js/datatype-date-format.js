@@ -66,7 +66,7 @@ Y.config.dateFormat = Y.config.dateFormat || "%Y-%m-%d";
  * @property locale
  * @type String
  * @value "en"
- */
+*/
 Y.config.locale = Y.config.locale || "en";
 
 var Dt = {
