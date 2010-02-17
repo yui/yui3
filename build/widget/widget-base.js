@@ -68,7 +68,9 @@ var L = Y.Lang,
     _delegates = {},
 
     // Widget nodeguid-to-instance map.
-    _instances = {};
+    _instances = {},
+
+    moduleName = arguments[1];
 
 /**
  * A base class for widgets, providing:
@@ -90,6 +92,7 @@ var L = Y.Lang,
 function Widget(config) {
 
     this._strs = {};
+
     this._cssPrefix = this.constructor.CSS_PREFIX || _getClassName(this.constructor.NAME.toLowerCase());
 
     Widget.superclass.constructor.apply(this, arguments);
@@ -272,7 +275,7 @@ ATTRS[WIDTH] = {
  * @type Object
  */
 ATTRS[STRINGS] = {
-    value: {},
+    valueFn: "_defStrValue",
     setter: "_strSetter",
     getter: "_strGetter"
 };
@@ -1130,6 +1133,10 @@ Y.extend(Widget, Y.Base, {
         return Y.merge(this.get(STRINGS), strings);
     },
 
+    _defStrValue : function() {
+        return (Y.Intl && Y.Intl.get) ? Y.Intl.get(moduleName) : {};
+    },
+
     getString : function(key) {
         return this.get(STRINGS)[key];
     },
@@ -1285,4 +1292,4 @@ Y.extend(Widget, Y.Base, {
 Y.Widget = Widget;
 
 
-}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base', 'node', 'classnamemanager']});
+}, '@VERSION@' ,{requires:['attribute', 'event-focus', 'base', 'node', 'classnamemanager', 'intl']});

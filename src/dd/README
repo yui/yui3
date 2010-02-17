@@ -1,3 +1,23 @@
+**** version 3.1.0 ***
+
+#2527964 DD constrain2node cached position causes misalignment when that node is moved
+#2528229 Configuration to override region caching in Constrain plugin
+#2528395 Add a DD.Drag delegate class
+#2528457 Add invalid selector check to Delegate
+#2528488 Delegate errors without Drop plugin
+#2528509 Drag and drop slow on linux ff3.5.6 
+#2528539 drag:start should fire before drag:enter
+#2528540 DDConstrained using cacheRegion set to false throws js errors when drag starts
+#2528560 drag:over event is not firing when useShim is false
+#2528578 DDConstrained has no default constraining config
+#2528585 drag:dropmiss being fired on simple click
+#2528592 Add throttle support to DD mousemove
+#2528596 Support Node instances as handles in Drag 
+#2528607 Drop events not firing when attached to a Drag target
+#2528608 Default Drag throttleTime should be -1
+#2528613 dragNode XY not sync with the mouse if it has its dimensions changed on drag:start
+
+
 **** version 3.0.0 ***
 
 #2528096 Updated initialization routine so plugins load before DD attachs to the node.

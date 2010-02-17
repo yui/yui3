@@ -95,17 +95,12 @@ Y.mix(Y.namespace("Intl"), {
      */
     get : function(module, key, lang) {
         var mod = this._mod(module),
-            strs,
-            str;
+            strs;
 
         lang = lang || mod[ACTIVE];
-        strs = mod[lang];
+        strs = mod[lang] || {};
 
-        if (strs) {
-            str = (key) ? strs[key] : Y.merge(strs);
-        }
-
-        return str;
+        return (key) ? strs[key] : Y.merge(strs);
     },
 
     /**
@@ -124,9 +119,9 @@ Y.mix(Y.namespace("Intl"), {
 
         if(allLangs) {
             for (lang in allLangs) {
-                if (allLangs.hasOwnProperty(lang)) {
+                if (lang && allLangs.hasOwnProperty(lang)) {
                     if (allLangs[lang][module]) {
-                        availLangs.push(lang);
+                        availLangs[availLangs.length] = lang;
                     }
                 }
             }
