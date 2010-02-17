@@ -70,8 +70,31 @@
             // et1.detachAll("B");
             et1.detach("blah|*");
             // handle.detach("B");
-            
 
+            var o = new Y.EventTarget();
+
+            var ce = o.publish('foo');
+
+            o.on('foo', function() {
+                // not monitored
+            });
+
+            var handle = ce.monitor('attach', function() {
+                Y.log('foo attached');
+            });
+
+            Y.log(handle.evt.type);
+
+            o.on('foo', function() {
+                // monitored
+                var a;
+            });
+
+            ce.on('foo', function() {
+                // monitored
+                var a;
+            });
+            
         });
     
     </script>

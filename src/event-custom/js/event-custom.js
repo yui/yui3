@@ -18,7 +18,7 @@
 var AFTER = 'after', 
     CONFIGS = [
         'broadcast',
-        'monitor',
+        'monitored',
         'bubbles',
         'context',
         'contextFn',
@@ -79,6 +79,18 @@ Y.EventHandle.prototype = {
         }
 
         return detached;
+    },
+
+    /**
+     * Monitor the event state for the subscribed event.  The first parameter
+     * is what should be monitored, the rest are the normal parameters when
+     * subscribing to an event.
+     * @method monitor
+     * @param what {string} what to monitor ('attach', 'detach', 'publish')
+     * return {EventHandle} return value from the monitor event subscription
+     */
+    monitor: function(what) {
+        return this.evt.monitor.apply(this.evt, arguments);
     }
 };
 
@@ -120,10 +132,10 @@ Y.CustomEvent = function(type, o) {
     /**
      * Monitor when an event is attached or detached.
      * 
-     * @property monitor
+     * @property monitored
      * @type boolean
      */
-    // this.monitor = false;
+    // this.monitored = false;
 
     this.logSystem = (type == YUI_LOG);
 
@@ -317,7 +329,27 @@ Y.CustomEvent.prototype = {
         return (s + a);
     },
 
-    getSubs: function(when) {
+    /**
+     * Monitor the event state for the subscribed event.  The first parameter
+     * is what should be monitored, the rest are the normal parameters when
+     * subscribing to an event.
+     * @method monitor
+     * @param what {string} what to monitor ('detach', 'attach', 'publish')
+     * return {EventHandle} return value from the monitor event subscription
+     */
+    monitor: function(what) {
+        this.monitored = true;
+        var type = this.id + '|' + this.type + '_' + what,
+            args = Y.Array(arguments, 0, true);
+        args[0] = type;
+        return this.host.on.apply(this.host, args);
+    },
+
+    /**
+     * Get all of the subscribers to this event and any sibling event
+     * @return {Array} first item is the on subscribers, second the after
+     */
+    getSubs: function() {
         var s = Y.merge(this.subscribers), a = Y.merge(this.afters), sib = this.sibling;
 
         if (sib) {
@@ -387,6 +419,7 @@ Y.CustomEvent.prototype = {
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        this.host._monitor('attach', this.type, arguments);
         return this._on(fn, context, a, true);
     },
 

@@ -114,7 +114,7 @@ var L = Y.Lang,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
-                monitor: o.monitor,
+                monitored: o.monitored,
                 broadcast: o.broadcast,
                 defaultTargetOnly: o.defaulTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
@@ -457,7 +457,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *    </li>
      *
      *    <li>
-     *   'monitor': specifies whether or not this event should send notifications about
+     *   'monitored': specifies whether or not this event should send notifications about
      *   when the event has been attached, detached, or published.
      *    </li>
      *    <li>
@@ -521,11 +521,11 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     _monitor: function(what, type) {
         var args, monitorevt, ce = this.getEvent(type);
-        if ((this._yuievt.config.monitor && (!ce || ce.monitor)) || (ce && ce.monitor)) {
+        if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
             args = Y.Array(arguments, 0, true);
             monitorevt = type + '_' + what;
             args[0] = monitorevt;
-            Y.log('monitoring: ' + monitorevt);
+            // Y.log('monitoring: ' + monitorevt);
             this.fire.apply(this, args);
         }
     },
