@@ -85,7 +85,7 @@ YUI({
 			var detachReport = this.yInstance.Profiler.getFunctionReport('Y.detach');
 			this.yInstance.Profiler.unregisterFunction('Y.detach');
 			Y.detach(this.clickHandle);
-			Y.get('#profilerstop').removeClass('stopBtnActive');
+			Y.one('#profilerstop').removeClass('stopBtnActive');
 
 			var executionMethods = [
 				'_onloadTasks',

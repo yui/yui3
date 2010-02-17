@@ -769,7 +769,7 @@
                 testPrivateSet : function() {
                     var h = this.createHost();
 
-                    var expectedEvents = ["BeforeTryDAgain", "AfterTryDAgain", "BeforeTryEAgain", "AfterTryEAgain"];
+                    var expectedEvents = ["BeforeTryDAgain", "AfterTryDAgain", "BeforeTryEAgain", "Aftertryeagain"];
                     var actualEvents = [];
 
                     h.on("DChange", function(e) {
@@ -1257,7 +1257,7 @@
                 testPrivateSet : function() {
                     var h = this.createHost();
 
-                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "AfterTryEAgain"  ]; // Last entry: e.newVal is not "get" normalized 
+                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "Aftertryeagain"  ]; // Last entry: e.newVal is not "get" normalized 
                     var actualEvents = [];
 
                     h.on("DChange", function(e) {

@@ -84,6 +84,67 @@ YUI({
                 this.result = event;
             }
         });
+
+        //-------------------------------------------------------------------------
+        // UIEvent Test Case
+        //-------------------------------------------------------------------------
+    
+        function UIEventTestCase(type){
+            UIEventTestCase.superclass.constructor.call(this, type);
+            this.elementTagName = "input";
+        }
+    
+        Y.extend(UIEventTestCase, GenericEventTestCase, { 
+            /*
+             * Tests with default options.
+             */
+            testDefault : function () /*:Void*/{        
+                
+                //fire the click event
+                Y.Event.simulate(this.element, this.eventType);
+    
+                //test the data coming back
+                Assert.isObject(this.result, "No event object created.");
+                Assert.areSame(this.element, this.result.target || this.result.srcElement, "Target is not correct.");
+                Assert.areEqual(this.eventType, this.result.type, "Event type is incorrect.");
+                Assert.isTrue(this.result.bubbles, "bubbles is incorrect.");
+                Assert.isFalse(this.result.cancelable, "Cancelable is incorrect.");
+                Assert.areSame(window, this.result.view, "View is incorrect.");
+                Assert.areEqual(1, this.result.detail, "Details is incorrect.");
+                
+            }
+        });
+        
+        //-------------------------------------------------------------------------
+        // Focus/Blur Event Test Case
+        //-------------------------------------------------------------------------
+    
+        function FocusBlurEventTestCase(type){
+            FocusBlurEventTestCase.superclass.constructor.call(this, type);
+            this.elementTagName = "input";
+        }
+    
+        Y.extend(FocusBlurEventTestCase, GenericEventTestCase, { 
+            /*
+             * Tests with default options.
+             */
+            testDefault : function () /*:Void*/{        
+                
+                //fire the click event
+                Y.Event.simulate(this.element, this.eventType);
+    
+                //test the data coming back
+                Assert.isObject(this.result, "No event object created.");
+                Assert.areSame(this.element, this.result.target || this.result.srcElement, "Target is not correct.");
+                Assert.areEqual(this.eventType, this.result.type, "Event type is incorrect.");
+                Assert.isFalse(this.result.bubbles, "bubbles is incorrect.");
+                Assert.isFalse(this.result.cancelable, "Cancelable is incorrect.");
+                Assert.areSame(window, this.result.view, "View is incorrect.");
+                Assert.areEqual(1, this.result.detail, "Details is incorrect.");
+                
+            }
+        });
+        
         
         //-------------------------------------------------------------------------
         // MouseButtonEvent Test Case
@@ -489,6 +550,10 @@ YUI({
             = new Y.Test.Suite("KeyEvent Tests");
         suite.add(keyEventsSuite);
     
+        var uiEventsSuite /*:Y.Test.Suite*/ 
+            = new Y.Test.Suite("UIEvents Tests");
+        suite.add(uiEventsSuite);
+    
         //-------------------------------------------------------------------------
         // Mouse Tests
         //-------------------------------------------------------------------------
@@ -506,6 +571,14 @@ YUI({
         keyEventsSuite.add(new KeyDirectionEventTestCase("keydown"));
         keyEventsSuite.add(new TextEventTestCase("keypress"));        
     
+        //-------------------------------------------------------------------------
+        // UI Tests
+        //-------------------------------------------------------------------------
+        uiEventsSuite.add(new UIEventTestCase("change"));
+        uiEventsSuite.add(new UIEventTestCase("select"));
+        uiEventsSuite.add(new FocusBlurEventTestCase("blur"));
+        uiEventsSuite.add(new FocusBlurEventTestCase("focus"));
+        
         //return it
         return suite;
     

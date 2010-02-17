@@ -104,31 +104,6 @@ ArrayListProto = {
     },
 
     /**
-     * <p>Create a new ArrayList (or augmenting class instance) from a subset
-     * of items as determined by the boolean function passed as the
-     * argument.  The original ArrayList is unchanged.</p>
-     *
-     * <p>The validator signature is <code>validator( item )</code>.</p>
-     *
-     * @method filter
-     * @param validator { Function } Boolean function to determine in or out
-     * @return { ArrayList } New instance based on who passed the validator
-     */
-    filter: function ( validator ) {
-        var items = [];
-
-        YArray_each( this._items, function ( item, i ) {
-            item = this.item( i );
-
-            if ( validator( item ) ) {
-                items.push( item );
-            }
-        }, this);
-
-        return new this.constructor( items );
-    },
-
-    /**
      * How many items are in this list?
      *
      * @method size

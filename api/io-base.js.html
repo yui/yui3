@@ -233,7 +233,7 @@
    		<span class="kd">var</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
    			<span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
    			<span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span> <span class="o">||</span> <span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
-   			<span class="nx">m</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">:</span> <span class="s1">&#39;GET&#39;</span><span class="p">;</span>
+   			<span class="nx">m</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span><span class="p">;</span>
    			<span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">sync</span><span class="p">;</span>
 
 		<span class="c1">//To serialize an object into a key-value string, add the</span>
@@ -249,7 +249,7 @@
    			<span class="p">}</span>
    			<span class="k">else</span> <span class="p">{</span>
 				<span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">io</span><span class="p">.</span><span class="nx">_serialize</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
-				<span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span> <span class="o">||</span> <span class="nx">m</span> <span class="o">===</span> <span class="s1">&#39;PUT&#39;</span><span class="p">)</span> <span class="p">{</span>
 					<span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">f</span><span class="p">;</span>
 					<span class="nx">c</span><span class="p">.</span><span class="nx">headers</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span> <span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span> <span class="p">},</span> <span class="nx">c</span><span class="p">.</span><span class="nx">headers</span><span class="p">);</span>
 				<span class="p">}</span>
@@ -864,7 +864,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

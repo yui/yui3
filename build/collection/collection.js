@@ -399,31 +399,6 @@ ArrayListProto = {
     },
 
     /**
-     * <p>Create a new ArrayList (or augmenting class instance) from a subset
-     * of items as determined by the boolean function passed as the
-     * argument.  The original ArrayList is unchanged.</p>
-     *
-     * <p>The validator signature is <code>validator( item )</code>.</p>
-     *
-     * @method filter
-     * @param validator { Function } Boolean function to determine in or out
-     * @return { ArrayList } New instance based on who passed the validator
-     */
-    filter: function ( validator ) {
-        var items = [];
-
-        YArray_each( this._items, function ( item, i ) {
-            item = this.item( i );
-
-            if ( validator( item ) ) {
-                items.push( item );
-            }
-        }, this);
-
-        return new this.constructor( items );
-    },
-
-    /**
      * How many items are in this list?
      *
      * @method size
@@ -533,11 +508,20 @@ Y.mix( Y.ArrayList.prototype, {
      * @method add
      * @param item { mixed } Item presumably of the same type as others in the
      *                       ArrayList
+     * @param index {Number} (Optional.)  Number representing the position at 
+     * which the item should be inserted.
      * @return {ArrayList} the instance
      * @chainable
      */
-    add: function ( item ) {
-        this._items.push( item );
+    add: function ( item, index ) {
+        var items = this._items;
+
+        if (Y.Lang.isNumber(index)) {
+            items.splice(index, 0, item);
+        }
+        else {
+            items.push(item);
+        }
 
         return this;
     },
@@ -579,6 +563,49 @@ Y.mix( Y.ArrayList.prototype, {
      */
     itemsAreEqual: function ( a, b ) {
         return a === b;
+    }
+
+} );
+
+
+}, '@VERSION@' ,{requires:['arraylist']});
+YUI.add('arraylist-filter', function(Y) {
+
+/**
+ * Collection utilities beyond what is provided in the YUI core
+ * @module collection
+ * @submodule arraylist-filter
+ */
+
+/**
+ * Adds filter method to ArrayList prototype
+ * @class ArrayList~filter
+ */
+Y.mix( Y.ArrayList.prototype, {
+
+    /**
+     * <p>Create a new ArrayList (or augmenting class instance) from a subset
+     * of items as determined by the boolean function passed as the
+     * argument.  The original ArrayList is unchanged.</p>
+     *
+     * <p>The validator signature is <code>validator( item )</code>.</p>
+     *
+     * @method filter
+     * @param validator { Function } Boolean function to determine in or out
+     * @return { ArrayList } New instance based on who passed the validator
+     */
+    filter: function ( validator ) {
+        var items = [];
+
+        Y.Array.each( this._items, function ( item, i ) {
+            item = this.item( i );
+
+            if ( validator( item ) ) {
+                items.push( item );
+            }
+        }, this);
+
+        return new this.constructor( items );
     }
 
 } );
@@ -630,5 +657,5 @@ Y.Array.invoke = function ( items, name ) {
 }, '@VERSION@' );
 
 
-YUI.add('collection', function(Y){}, '@VERSION@' ,{use:['array-extras', 'arraylist', 'arraylist-add', 'array-invoke']});
+YUI.add('collection', function(Y){}, '@VERSION@' ,{use:['array-extras', 'arraylist', 'arraylist-add', 'arraylist-filter', 'array-invoke']});
 

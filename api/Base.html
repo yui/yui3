@@ -71,9 +71,6 @@
                         <dl class="subclasses" rel="yui:subclasses">
                             <dt>Known Subclasses:</dt>
                             <dd>
-                                    <span rel="yui:subclass" resource="Plugin.DragConstrained.html">
-                                    <a href="Plugin.DragConstrained.html" property="yui:name" title="Plugin.DragConstrained">Plugin.DragConstrained</a>
-                                    </span>
                                     <span rel="yui:subclass" resource="DataSource.Local.html">
                                     <a href="DataSource.Local.html" property="yui:name" title="DataSource.Local">DataSource.Local</a>
                                     </span>
@@ -100,6 +97,9 @@
                                     </span>
                                     <span rel="yui:subclass" resource="ImgLoadImgObj.html">
                                     <a href="ImgLoadImgObj.html" property="yui:name" title="ImgLoadImgObj">ImgLoadImgObj</a>
+                                    </span>
+                                    <span rel="yui:subclass" resource="Plugin.DDConstrained.html">
+                                    <a href="Plugin.DDConstrained.html" property="yui:name" title="Plugin.DDConstrained">Plugin.DDConstrained</a>
                                     </span>
                                     <span rel="yui:subclass" resource="DD.Drag.html">
                                     <a href="DD.Drag.html" property="yui:name" title="DD.Drag">DD.Drag</a>
@@ -156,7 +156,22 @@ all events fired by instances of that class.
                                                     <code><span property="yui:name">config</span>
                                                     &lt;<span property="yui:type">Object</span>&gt;
                                                     </code>
-                                                    <span property="yui:description"> Object with configuration property name/value pairs</span>
+                                                    <span property="yui:description"> Object with configuration property name/value pairs. The object can be 
+used to provide default values for the objects published attributes.
+<p>
+The config object can also contain the following non-attribute properties, providing a convenient 
+way to configure events listeners and plugins for the instance, as part of the constructor call:
+</p>
+<dl>
+<dt>on</dt>
+<dd>An event name to listener function map, to register event listeners for the "on" moment of the event. A constructor convenience property for the <a href="Base.html#method_on">on</a> method.</dd>
+<dt>after</dt>
+<dd>An event name to listener function map, to register event listeners for the "after" moment of the event. A constructor convenience property for the <a href="Base.html#method_after">after</a> method.</dd>
+<dt>bubbleTargets</dt>
+<dd>An object, or array of objects, to register as bubble targets for bubbled events fired by this instance. A constructor convenience property for the <a href="EventTarget.html#method_addTarget">addTarget</a> method.</dd>
+<dt>plugins</dt>
+<dd>A plugin, or array of plugins to be plugged into the instance (see PluginHost's plug method for signature details). A constructor convenience property for the <a href="Plugin.Host.html#method_plug">plug</a> method.</dd>
+</dl></span>
                                                 </dd>
                                         </dl>
                                     
@@ -194,7 +209,7 @@ each attribute (e.g. setter, getter, writeOnce, readOnly etc.)
                                         <div class="description" property="yui:description">
                                             The build configuration for the Base class.
 Defines the static fields which need to be aggregated
-when the Base class is used as the main class passed to 
+when the Base class is used as the main class passed to
 the <a href="#method_Base.build">Base.build</a> method.
                                         </div>
                                     </div>
@@ -684,6 +699,52 @@ across the class hierarchy for the instance.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method__preInitEventCfg">
+                                    <h4>
+                                        <a name="method__preInitEventCfg">_preInitEventCfg</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_preInitEventCfg</strong>
+                                           (
+                                                
+                                                        
+                                                         config
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Handles the special on, after and target properties which allow the user to
+easily configure on and after listeners as well as bubble targets during 
+construction, prior to init.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">config</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The user configuration object</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_Base.build">
                                     <h4>
                                         <a name="method_Base.build">Base.build</a></h4>
@@ -780,6 +841,143 @@ augmented/aggregated to the built class.</span>
                                                             Function
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">A custom class, created from the provided main and extension classes</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Base.create">
+                                    <h4>
+                                        <a name="method_Base.create">Base.create</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Function
+                                            <strong property="yui:name">Base.create</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         main
+                                                    
+                                                
+                                                        , 
+                                                         extensions
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>Creates a new class (constructor function) which extends the base class passed in as the second argument, 
+and mixes in the array of extensions provided.</p>
+<p>Prototype properties or methods can be added to the new class, using the px argument (similar to Y.extend).</p>
+<p>Static properties or methods can be added to the new class, using the sx argument (similar to Y.extend).</p>
+<p>
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">name</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The name of the newly created class. Used to defined the NAME property for the new class.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">main</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">extensions</span>
+                                                        &lt;<span property="yui:type">Function[]</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The list of extensions which will be mixed into the built class.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Function
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The newly created class.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_Base.mix">
+                                    <h4>
+                                        <a name="method_Base.mix">Base.mix</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Function
+                                            <strong property="yui:name">Base.mix</strong>
+                                           (
+                                                
+                                                        
+                                                         main
+                                                    
+                                                
+                                                        , 
+                                                         extensions
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>Mixes in a list of extensions to an existing class.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">main</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The existing class into which the extensions should be mixed.  The class needs to be Base or class derived from base (e.g. Widget)</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">extensions</span>
+                                                        &lt;<span property="yui:type">Function[]</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The set of extension classes which will mixed into the existing main class.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Function
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The modified main class, with extensions mixed in.</dd>
                                                 </dl>
 
 
@@ -1033,8 +1231,14 @@ and the instance ID.
                                             <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
                                             <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getTargets">                                        
+                                            <a class="" href="EventTarget.html#method_getTargets" property="yui:name" title="getTargets">getTargets</a><span class="">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_on">                                        
                                             <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_once">                                        
+                                            <a class="" href="EventTarget.html#method_once" property="yui:name" title="once">once</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
                                             <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
@@ -1479,7 +1683,8 @@ has been through the init lifecycle phase.
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
@@ -1525,7 +1730,10 @@ has been through the init lifecycle phase.
                                 <li class="protected"><a href="#method__getClasses" title="_getClasses">_getClasses</a></li>
                                 <li class="private"><a href="#method__initHierarchy" title="_initHierarchy">_initHierarchy</a></li>
                                 <li class="private"><a href="#method__initHierarchyData" title="_initHierarchyData">_initHierarchyData</a></li>
+                                <li class=""><a href="#method__preInitEventCfg" title="_preInitEventCfg">_preInitEventCfg</a></li>
                                 <li class=""><a href="#method_Base.build" title="Base.build">Base.build</a></li>
+                                <li class=""><a href="#method_Base.create" title="Base.create">Base.create</a></li>
+                                <li class=""><a href="#method_Base.mix" title="Base.mix">Base.mix</a></li>
                                 <li class=""><a href="#method_Base.plug" title="Base.plug">Base.plug</a></li>
                                 <li class=""><a href="#method_Base.unplug" title="Base.unplug">Base.unplug</a></li>
                                 <li class=""><a href="#method_destroy" title="destroy">destroy</a></li>
@@ -1562,7 +1770,7 @@ has been through the init lifecycle phase.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.ATTRS", "url": "Base.html#property_Base.ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "Base.build", "url": "Base.html#method_Base.build", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._buildCfg", "url": "Base.html#property_Base._buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "Base.NAME", "url": "Base.html#property_Base.NAME", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "private", "host": "Base", "name": "_aggregateAttrs", "url": "Base.html#method__aggregateAttrs", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._ATTR_CFG", "url": "Base.html#property_Base._ATTR_CFG", "type": "property"}, {"access": "", "host": "Base", "name": "Base.ATTRS", "url": "Base.html#property_Base.ATTRS", "type": "property"}, {"access": "", "host": "Base", "name": "Base.build", "url": "Base.html#method_Base.build", "type": "method"}, {"access": "private", "host": "Base", "name": "Base._buildCfg", "url": "Base.html#property_Base._buildCfg", "type": "property"}, {"access": "", "host": "Base", "name": "Base.create", "url": "Base.html#method_Base.create", "type": "method"}, {"access": "", "host": "Base", "name": "Base.mix", "url": "Base.html#method_Base.mix", "type": "method"}, {"access": "", "host": "Base", "name": "Base.NAME", "url": "Base.html#property_Base.NAME", "type": "property"}, {"access": "", "host": "Base", "name": "Base.plug", "url": "Base.html#method_Base.plug", "type": "method"}, {"access": "", "host": "Base", "name": "Base.unplug", "url": "Base.html#method_Base.unplug", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defDestroyFn", "url": "Base.html#method__defDestroyFn", "type": "method"}, {"access": "protected", "host": "Base", "name": "_defInitFn", "url": "Base.html#method__defInitFn", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#method_destroy", "type": "method"}, {"access": "", "host": "Base", "name": "destroy", "url": "Base.html#event_destroy", "type": "event"}, {"access": "", "host": "Base", "name": "destroyed", "url": "Base.html#config_destroyed", "type": "config"}, {"access": "", "host": "Base", "name": "destroyedChange", "url": "Base.html#event_destroyedChange", "type": "event"}, {"access": "private", "host": "Base", "name": "_destroyHierarchy", "url": "Base.html#method__destroyHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_filterAttrCfs", "url": "Base.html#method__filterAttrCfs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getAttrCfgs", "url": "Base.html#method__getAttrCfgs", "type": "method"}, {"access": "protected", "host": "Base", "name": "_getClasses", "url": "Base.html#method__getClasses", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#method_init", "type": "method"}, {"access": "", "host": "Base", "name": "init", "url": "Base.html#event_init", "type": "event"}, {"access": "private", "host": "Base", "name": "_initHierarchy", "url": "Base.html#method__initHierarchy", "type": "method"}, {"access": "private", "host": "Base", "name": "_initHierarchyData", "url": "Base.html#method__initHierarchyData", "type": "method"}, {"access": "", "host": "Base", "name": "initialized", "url": "Base.html#config_initialized", "type": "config"}, {"access": "", "host": "Base", "name": "initializedChange", "url": "Base.html#event_initializedChange", "type": "event"}, {"access": "", "host": "Base", "name": "name", "url": "Base.html#property_name", "type": "property"}, {"access": "", "host": "Base", "name": "_preInitEventCfg", "url": "Base.html#method__preInitEventCfg", "type": "method"}, {"access": "", "host": "Base", "name": "toString", "url": "Base.html#method_toString", "type": "method"}];
 </script>
 </body>
 </html>

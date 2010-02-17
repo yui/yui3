@@ -40,7 +40,7 @@ YUI({
         Y.on('delegate', 
 
          function(e) {
-            Y.log(e.type + ": " + e.target.get('innerHTML') + ' 1 ON CLICKABLE -- ' + arguments[1]);
+            Y.log(e.type + ": " + e.target.one('innerHTML') + ' 1 ON CLICKABLE -- ' + arguments[1]);
          }, 
          
          '#ul1', 
@@ -60,7 +60,7 @@ YUI({
         Y.on('delegate', 
 
          function(e) {
-            Y.log(e.type + ": " + e.target.get('innerHTML') + ' 4 ON LI -- ' + arguments[1]);
+            Y.log(e.type + ": " + e.target.one('innerHTML') + ' 4 ON LI -- ' + arguments[1]);
          }, 
          
          '#ul1', 
@@ -80,7 +80,7 @@ YUI({
         Y.on('delegate', 
 
          function(e) {
-            Y.log(e.type + ": " + e.target.get('innerHTML') + ' 2 ON CLICKABLE -- ' + arguments[1]);
+            Y.log(e.type + ": " + e.target.one('innerHTML') + ' 2 ON CLICKABLE -- ' + arguments[1]);
          }, 
          
          '#ul1', 
@@ -100,7 +100,7 @@ YUI({
         Y.on('delegate', 
 
          function(e) {
-            Y.log(e.type + ": " + e.target.get('innerHTML') + ' 3 ON CLICKABLE -- ' + arguments[1]);
+            Y.log(e.type + ": " + e.target.one('innerHTML') + ' 3 ON CLICKABLE -- ' + arguments[1]);
          }, 
          
          '#ul1', 

@@ -63,7 +63,7 @@
         <span class="nx">SOME</span> <span class="o">=</span> <span class="s1">&#39;some&#39;</span><span class="p">,</span>
 
         <span class="nx">dispatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">[</span><span class="nx">action</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">[</span><span class="nx">action</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span> <span class="o">!==</span> <span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nx">o</span><span class="p">[</span><span class="nx">action</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="k">switch</span> <span class="p">(</span><span class="nx">A</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">o</span><span class="p">))</span> <span class="p">{</span>
@@ -118,7 +118,7 @@
 
             <span class="c1">// sequester all of the functions in the supplier and replace with</span>
             <span class="c1">// one that will restore all of them.</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">sProto</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">sProto</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">replacements</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
 <span class="c1">// Y.log(&#39;sequestered function &quot;&#39; + k + &#39;&quot; executed.  Initializing EventTarget&#39;);</span>
@@ -151,7 +151,6 @@
                         <span class="c1">// Y.log(&#39;augment() applying non-function: &#39; + k);</span>
                         <span class="k">this</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
                     <span class="p">}</span>
-
                 <span class="p">}</span>
 
             <span class="p">},</span> <span class="nx">newProto</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
@@ -324,7 +323,7 @@
 
         <span class="c1">// #2528250 don&#39;t try to clone element properties</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">f</span> <span class="o">||</span> <span class="p">(</span><span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">c</span> <span class="o">||</span> <span class="k">this</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">))</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">!==</span> <span class="nx">CLONE_MARKER</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">===</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
@@ -338,7 +337,7 @@
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">cloned</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">marked</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">marked</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">delete</span> <span class="nx">v</span><span class="p">[</span><span class="nx">CLONE_MARKER</span><span class="p">];</span>
             <span class="p">});</span>
             <span class="nx">marked</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -447,7 +446,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

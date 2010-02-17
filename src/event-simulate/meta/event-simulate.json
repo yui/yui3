@@ -1,0 +1,7 @@
+{
+    "event-simulate": {
+        "requires": [
+            "event-base"
+        ]
+    }
+}

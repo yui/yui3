@@ -662,7 +662,8 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">state</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">attrName</span><span class="p">,</span> <span class="nx">PUBLISHED</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">host</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="p">{</span>
-                    <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span> 
+                    <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+                    <span class="nx">defaultTargetOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> 
                     <span class="nx">defaultFn</span><span class="o">:</span><span class="nx">host</span><span class="p">.</span><span class="nx">_defAttrChangeFn</span><span class="p">,</span> 
                     <span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
                     <span class="nx">broadcast</span> <span class="o">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">attrName</span><span class="p">,</span> <span class="nx">BROADCAST</span><span class="p">)</span>
@@ -689,20 +690,13 @@
 <span class="cm">         * @param {EventFacade} e The event object for attribute change events.</span>
 <span class="cm">         */</span>
         <span class="nx">_defAttrChangeFn</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-
-            <span class="c1">//  Temporary fix for bug #2528350</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span> <span class="o">===</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
-
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_setAttrVal</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">attrName</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">subAttrName</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">prevVal</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;State not updated and stopImmediatePropagation called for attribute: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">attrName</span> <span class="o">+</span> <span class="s1">&#39; , value:&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;attribute&#39;</span><span class="p">);</span>
-                    <span class="c1">// Prevent &quot;after&quot; listeners from being invoked since nothing changed.</span>
-                    <span class="nx">e</span><span class="p">.</span><span class="nx">stopImmediatePropagation</span><span class="p">();</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getStateVal</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">attrName</span><span class="p">);</span>
-                <span class="p">}</span>
-                
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_setAttrVal</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">attrName</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">subAttrName</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">prevVal</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;State not updated and stopImmediatePropagation called for attribute: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">attrName</span> <span class="o">+</span> <span class="s1">&#39; , value:&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;attribute&#39;</span><span class="p">);</span>
+                <span class="c1">// Prevent &quot;after&quot; listeners from being invoked since nothing changed.</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">stopImmediatePropagation</span><span class="p">();</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">attrName</span><span class="p">);</span>
             <span class="p">}</span>
-
         <span class="p">},</span>
 
         <span class="cm">/**</span>
@@ -1105,7 +1099,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

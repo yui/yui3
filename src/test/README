@@ -18,6 +18,7 @@ Documentation: http://developer.yahoo.com/yui/3/test
       in the results. Now, if you've only added one TestSuite to the TestRunner via add(), the specified
       TestSuite becomes the root. This may affect the reporting of test results if you're using TestReporter.
       To run tests in the old way, call TestRunner.run(true).    
+    * Added styles for console. (trac #2528275).
 
 3.0.0
     * Added missing space in assert failure message (trac #2528058).

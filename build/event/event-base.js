@@ -17,7 +17,7 @@ var GLOBAL_ENV = YUI.Env,
     doScrollCap = docElement.doScroll,
     add = YUI.Env.add,
     remove = YUI.Env.remove,
-    targetEvent = (doScrollCap) ? 'onreadystatechange' : 'DOMontentLoaded',
+    targetEvent = (doScrollCap) ? 'onreadystatechange' : 'DOMContentLoaded',
     pollInterval = config.pollInterval || 40,
     stateChangeListener,
 
@@ -86,6 +86,27 @@ var GLOBAL_ENV = YUI.Env,
         Y.fire('domready');
     };
 
+/**
+ * The domready event fires at the moment the browser's DOM is
+ * usable. In most cases, this is before images are fully
+ * downloaded, allowing you to provide a more responsive user
+ * interface.
+ *
+ * In YUI 3, domready subscribers will be notified immediately if
+ * that moment has already passed when the subscription is created.
+ *
+ * One exception is if the yui.js file is dynamically injected into
+ * the page.  If this is done, you must tell the YUI instance that
+ * you did this in order for DOMReady (and window load events) to
+ * fire normally.  That configuration option is 'injected' -- set
+ * it to true if the yui.js script is not included inline.
+ *
+ * This method is part of the 'event-ready' module, which is a
+ * submodule of 'event'.  
+ *
+ * @event domready
+ * @for YUI
+ */
 Y.publish('domready', {
     fireOnce: true
 });
@@ -1185,28 +1206,61 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * left out, all listeners will be removed
          * @static
          */
+        // purgeElement: function(el, recurse, type) {
+        //     // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
+        //     var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
+        //         lis = this.getListeners(oEl, type), i, len, props;
+        //     if (lis) {
+        //         for (i=0,len=lis.length; i<len ; ++i) {
+        //             props = lis[i];
+        //             props.detachAll();
+        //             remove(props.el, props.type, props.fn, props.capture);
+        //             delete _wrappers[props.key];
+        //             delete _el_events[props.domkey][props.key];
+        //         }
+
+        //     }
+
+        //     if (recurse && oEl && oEl.childNodes) {
+        //         for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
+        //             this.purgeElement(oEl.childNodes[i], recurse, type);
+        //         }
+        //     }
+
+        // },
+
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = this.getListeners(oEl, type), i, len, props;
+                lis = this.getListeners(oEl, type), i, len, props, children, child;
+
+            if (recurse && oEl) {
+                lis = lis || [];
+                children = Y.Selector.query('*', oEl);
+                i = 0;
+                len = children.length;
+                for (; i < len; ++i) {
+                    child = this.getListeners(children[i], type);
+                    if (child) {
+                        lis = lis.concat(child);
+                    }
+                }
+            }
+
             if (lis) {
-                for (i=0,len=lis.length; i<len ; ++i) {
+                i = 0;
+                len = lis.length;
+                for (; i < len; ++i) {
                     props = lis[i];
                     props.detachAll();
                     remove(props.el, props.type, props.fn, props.capture);
                     delete _wrappers[props.key];
                     delete _el_events[props.domkey][props.key];
                 }
-
-            }
-
-            if (recurse && oEl && oEl.childNodes) {
-                for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
-                    this.purgeElement(oEl.childNodes[i], recurse, type);
-                }
             }
 
         },
+
 
         /**
          * Returns all listeners attached to the given element via addListener.

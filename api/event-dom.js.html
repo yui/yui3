@@ -820,28 +820,61 @@
 <span class="cm">         * left out, all listeners will be removed</span>
 <span class="cm">         * @static</span>
 <span class="cm">         */</span>
+        <span class="c1">// purgeElement: function(el, recurse, type) {</span>
+        <span class="c1">//     // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,</span>
+        <span class="c1">//     var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,</span>
+        <span class="c1">//         lis = this.getListeners(oEl, type), i, len, props;</span>
+        <span class="c1">//     if (lis) {</span>
+        <span class="c1">//         for (i=0,len=lis.length; i&lt;len ; ++i) {</span>
+        <span class="c1">//             props = lis[i];</span>
+        <span class="c1">//             props.detachAll();</span>
+        <span class="c1">//             remove(props.el, props.type, props.fn, props.capture);</span>
+        <span class="c1">//             delete _wrappers[props.key];</span>
+        <span class="c1">//             delete _el_events[props.domkey][props.key];</span>
+        <span class="c1">//         }</span>
+
+        <span class="c1">//     }</span>
+
+        <span class="c1">//     if (recurse &amp;&amp; oEl &amp;&amp; oEl.childNodes) {</span>
+        <span class="c1">//         for (i=0,len=oEl.childNodes.length; i&lt;len ; ++i) {</span>
+        <span class="c1">//             this.purgeElement(oEl.childNodes[i], recurse, type);</span>
+        <span class="c1">//         }</span>
+        <span class="c1">//     }</span>
+
+        <span class="c1">// },</span>
+
         <span class="nx">purgeElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">recurse</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,</span>
             <span class="kd">var</span> <span class="nx">oEl</span> <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">el</span><span class="p">))</span> <span class="o">?</span>  <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="nx">el</span><span class="p">,</span>
-                <span class="nx">lis</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getListeners</span><span class="p">(</span><span class="nx">oEl</span><span class="p">,</span> <span class="nx">type</span><span class="p">),</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">props</span><span class="p">;</span>
+                <span class="nx">lis</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getListeners</span><span class="p">(</span><span class="nx">oEl</span><span class="p">,</span> <span class="nx">type</span><span class="p">),</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">props</span><span class="p">,</span> <span class="nx">children</span><span class="p">,</span> <span class="nx">child</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">recurse</span> <span class="o">&amp;&amp;</span> <span class="nx">oEl</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">lis</span> <span class="o">=</span> <span class="nx">lis</span> <span class="o">||</span> <span class="p">[];</span>
+                <span class="nx">children</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Selector</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="nx">oEl</span><span class="p">);</span>
+                <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">child</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getListeners</span><span class="p">(</span><span class="nx">children</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">type</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">lis</span> <span class="o">=</span> <span class="nx">lis</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">child</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="nx">lis</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nx">len</span><span class="o">=</span><span class="nx">lis</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="nx">len</span> <span class="o">=</span> <span class="nx">lis</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">props</span> <span class="o">=</span> <span class="nx">lis</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                     <span class="nx">props</span><span class="p">.</span><span class="nx">detachAll</span><span class="p">();</span>
                     <span class="nx">remove</span><span class="p">(</span><span class="nx">props</span><span class="p">.</span><span class="nx">el</span><span class="p">,</span> <span class="nx">props</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">props</span><span class="p">.</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">props</span><span class="p">.</span><span class="nx">capture</span><span class="p">);</span>
                     <span class="k">delete</span> <span class="nx">_wrappers</span><span class="p">[</span><span class="nx">props</span><span class="p">.</span><span class="nx">key</span><span class="p">];</span>
                     <span class="k">delete</span> <span class="nx">_el_events</span><span class="p">[</span><span class="nx">props</span><span class="p">.</span><span class="nx">domkey</span><span class="p">][</span><span class="nx">props</span><span class="p">.</span><span class="nx">key</span><span class="p">];</span>
                 <span class="p">}</span>
-
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">recurse</span> <span class="o">&amp;&amp;</span> <span class="nx">oEl</span> <span class="o">&amp;&amp;</span> <span class="nx">oEl</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nx">len</span><span class="o">=</span><span class="nx">oEl</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span> <span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">purgeElement</span><span class="p">(</span><span class="nx">oEl</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">recurse</span><span class="p">,</span> <span class="nx">type</span><span class="p">);</span>
-                <span class="p">}</span>
             <span class="p">}</span>
 
         <span class="p">},</span>
+
 
         <span class="cm">/**</span>
 <span class="cm">         * Returns all listeners attached to the given element via addListener.</span>
@@ -1006,7 +1039,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
@@ -1035,6 +1069,7 @@
                                 <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
                                 <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
                                 <li class=""><a href="resize-window.js.html" title="resize-window.js">resize-window.js</a></li>
+                                <li class=""><a href="synthetic.js.html" title="synthetic.js">synthetic.js</a></li>
                         </ul>
                     </div>
 

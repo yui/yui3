@@ -1,0 +1,14 @@
+body {
+	font-family:"Hoefler Text", serif;
+	text-align:center;
+	font-size:100%;
+	line-height:1.25;
+}
+#page {width:31em;margin:auto;}
+p {text-align:justify;}
+a {display:block;font-size:1.5em; text-decoration:none;font-style:italic;}
+a:hover {text-decoration:underline;}
+p a {display:inline; font-size:100%;}
+cite { font-style:italic;}
+#page-number { font-size:10em; line-height:1;}
+#page-number:before {content:'page';font-size:.25em;font-style:italic;}

@@ -2,9 +2,8 @@ YUI.add('base-base', function(Y) {
 
     /**
      * The base module provides the Base class, which objects requiring attribute and custom event support can extend. 
-     * The module also provides two ways to reuse code - An augmentable Plugin.Host interface which provides plugin support 
-     * (which is augmented to the Base class) and Base.build which provides a way to 
-     * build custom classes using extensions.
+     * The module also provides two ways to reuse code - It augments Base with the Plugin.Host interface which provides 
+     * plugin support and also provides the Base.build method which provides a way to build custom classes using extensions.
      *
      * @module base
      */
@@ -24,6 +23,8 @@ YUI.add('base-base', function(Y) {
         INITIALIZED = "initialized",
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
+        BUBBLETARGETS = "bubbleTargets",
+        _BUBBLETARGETS = "_bubbleTargets",
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DEEP = "deep",
         SHALLOW = "shallow",
@@ -45,12 +46,30 @@ YUI.add('base-base', function(Y) {
      * from Base will be used as the identifier for the class, and is used by Base to prefix 
      * all events fired by instances of that class.
      * </p>
+     *
      * @class Base
      * @constructor
      * @uses Attribute
      * @uses Plugin.Host
      *
-     * @param {Object} config Object with configuration property name/value pairs
+     * @param {Object} config Object with configuration property name/value pairs. The object can be 
+     * used to provide default values for the objects published attributes.
+     *
+     * <p>
+     * The config object can also contain the following non-attribute properties, providing a convenient 
+     * way to configure events listeners and plugins for the instance, as part of the constructor call:
+     * </p>
+     *
+     * <dl>
+     *     <dt>on</dt>
+     *     <dd>An event name to listener function map, to register event listeners for the "on" moment of the event. A constructor convenience property for the <a href="Base.html#method_on">on</a> method.</dd>
+     *     <dt>after</dt>
+     *     <dd>An event name to listener function map, to register event listeners for the "after" moment of the event. A constructor convenience property for the <a href="Base.html#method_after">after</a> method.</dd>
+     *     <dt>bubbleTargets</dt>
+     *     <dd>An object, or array of objects, to register as bubble targets for bubbled events fired by this instance. A constructor convenience property for the <a href="EventTarget.html#method_addTarget">addTarget</a> method.</dd>
+     *     <dt>plugins</dt>
+     *     <dd>A plugin, or array of plugins to be plugged into the instance (see PluginHost's plug method for signature details). A constructor convenience property for the <a href="Plugin.Host.html#method_plug">plug</a> method.</dd>
+     * </dl>
      */
     function Base() {
         Y.log('constructor called', 'life', 'base');
@@ -65,6 +84,16 @@ YUI.add('base-base', function(Y) {
         }
 
         if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
+
+        /**
+         * The string used to identify the class of this object.
+         *
+         * @deprecated Use this.constructor.NAME
+         * @property name
+         * @type String
+         */
+        this.name = this.constructor.NAME;
+        this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
 
         this.init.apply(this, arguments);
     }
@@ -156,14 +185,7 @@ YUI.add('base-base', function(Y) {
         init: function(config) {
             Y.log('init called', 'life', 'base');
 
-            /**
-             * The string used to identify the class of this object.
-             *
-             * @deprecated Use this.constructor.NAME
-             * @property name
-             * @type String
-             */
-            this._yuievt.config.prefix = this.name = this.constructor.NAME;
+            this._yuievt.config.prefix = this._eventPrefix;
 
             /**
              * <p>
@@ -185,9 +207,26 @@ YUI.add('base-base', function(Y) {
             this.publish(INIT, {
                 queuable:false,
                 fireOnce:true,
+                defaultTargetOnly:true,
                 defaultFn:this._defInitFn
             });
 
+            this._preInitEventCfg(config);
+
+            this.fire(INIT, {cfg: config});
+
+            return this;
+        },
+
+        /**
+         * Handles the special on, after and target properties which allow the user to
+         * easily configure on and after listeners as well as bubble targets during 
+         * construction, prior to init.
+         *
+         * @method _preInitEventCfg
+         * @param {Object} config The user configuration object
+         */
+        _preInitEventCfg : function(config) {
             if (config) {
                 if (config.on) {
                     this.on(config.on);
@@ -197,9 +236,19 @@ YUI.add('base-base', function(Y) {
                 }
             }
 
-            this.fire(INIT, {cfg: config});
+            var i, l, target,
+                userTargets = (config && BUBBLETARGETS in config);
 
-            return this;
+            if (userTargets || _BUBBLETARGETS in this) {
+                target = userTargets ? (config && config.bubbleTargets) : this._bubbleTargets;
+                if (L.isArray(target)) {
+                    for (i = 0, l = target.length; i < l; i++) { 
+                        this.addTarget(target[i]);
+                    }
+                } else if (target) {
+                    this.addTarget(target);
+                }
+            }
         },
 
         /**
@@ -240,6 +289,7 @@ YUI.add('base-base', function(Y) {
             this.publish(DESTROY, {
                 queuable:false,
                 fireOnce:true,
+                defaultTargetOnly:true,
                 defaultFn: this._defDestroyFn
             });
             this.fire(DESTROY);
@@ -516,6 +566,7 @@ YUI.add('base-base', function(Y) {
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         }
+
     };
 
     // Straightup augment, no wrapper functions
@@ -575,38 +626,180 @@ YUI.add('base-build', function(Y) {
      * @submodule base-build
      * @for Base
      */
-
     var Base = Y.Base,
         L = Y.Lang,
+        build;
 
-        mergeAttrs = function(m, e) {
-            if (!m.ATTRS && e.ATTRS) {
-                m.ATTRS = {};
+    Base._build = function(name, main, extensions, px, sx, cfg) {
+
+        var build = Base._build,
+
+            builtClass = build._ctor(main, cfg),
+            buildCfg = build._cfg(main, cfg),
+
+            _mixCust = build._mixCust,
+
+            aggregates = buildCfg.aggregates,
+            custom = buildCfg.custom,
+
+            dynamic = builtClass._yuibuild.dynamic,
+
+            i, l, val, extClass;
+
+        if (dynamic && aggregates) {
+            for (i = 0, l = aggregates.length; i < l; ++i) {
+                val = aggregates[i];
+                if (main.hasOwnProperty(val)) {
+                    builtClass[val] = L.isArray(main[val]) ? [] : {};
+                }
             }
+        }
 
-            if (e.ATTRS) {
-                Y.aggregate(m.ATTRS, e.ATTRS, true);
-            }
-        };
+        // Augment/Aggregate
+        for (i = 0, l = extensions.length; i < l; i++) {
+            extClass = extensions[i];
 
-    /**
-     * The build configuration for the Base class.
-     *
-     * Defines the static fields which need to be aggregated
-     * when the Base class is used as the main class passed to 
-     * the <a href="#method_Base.build">Base.build</a> method.
-     *
-     * @property Base._buildCfg
-     * @type Object
-     * @static
-     * @final
-     * @private
-     */
-    Base._buildCfg = {
-        // TODO: The name "custBuild" may change, not ready for public use.
-        custBuild : mergeAttrs,
-        aggregates : ["_PLUG", "_UNPLUG"]
+            // Prototype, old non-displacing augment
+            Y.mix(builtClass, extClass, true, null, 1);
+             // Custom Statics
+            _mixCust(builtClass, extClass, aggregates, custom);
+
+            builtClass._yuibuild.exts.push(extClass);
+        }
+
+        if (px) {
+            Y.mix(builtClass.prototype, px, true);
+        }
+
+        if (sx) {
+            Y.mix(builtClass, build._clean(sx, aggregates, custom), true);
+            _mixCust(builtClass, sx, aggregates, custom);
+        }
+
+        builtClass.prototype.hasImpl = build._impl;
+
+        if (dynamic) {
+            builtClass.NAME = name;
+            builtClass.prototype.constructor = builtClass;
+        }
+
+        return builtClass;
     };
+
+    build = Base._build;
+
+    Y.mix(build, {
+
+        _mixCust: function(r, s, aggregates, custom) {
+
+            if (aggregates) {
+                Y.aggregate(r, s, true, aggregates);
+            }
+
+            if (custom) {
+                for (var j in custom) {
+                    if (custom.hasOwnProperty(j)) {
+                        custom[j](j, r, s);
+                    }
+                }
+            }
+        },
+
+        _tmpl: function(main) {
+
+            function BuiltClass() {
+                BuiltClass.superclass.constructor.apply(this, arguments);
+            }
+            Y.extend(BuiltClass, main);
+
+            return BuiltClass;
+        },
+
+        _impl : function(extClass) {
+            var classes = this._getClasses(), i, l, cls, exts, ll, j;
+            for (i = 0, l = classes.length; i < l; i++) {
+                cls = classes[i];
+                if (cls._yuibuild) {
+                    exts = cls._yuibuild.exts;
+                    ll = exts.length;
+    
+                    for (j = 0; j < ll; j++) {
+                        if (exts[j] === extClass) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        },
+
+        _ctor : function(main, cfg) {
+
+           var dynamic = (cfg && false === cfg.dynamic) ? false : true,
+                builtClass = (dynamic) ? build._tmpl(main) : main;
+
+            builtClass._yuibuild = {
+                id: null,
+                exts : [],
+                dynamic: dynamic
+            };
+
+            return builtClass;
+        },
+
+        _cfg : function(main, cfg) {
+            var aggr = [], 
+                cust = {},
+                buildCfg,
+                cfgAggr = (cfg && cfg.aggregates),
+                cfgCustBuild = (cfg && cfg.custom),
+                c = main;
+
+            while (c && c.prototype) {
+                buildCfg = c._buildCfg; 
+                if (buildCfg) {
+                    if (buildCfg.aggregates) {
+                        aggr = aggr.concat(buildCfg.aggregates);
+                    }
+                    if (buildCfg.custom) {
+                        Y.mix(cust, buildCfg.custom, true);
+                    }
+                }
+                c = c.superclass ? c.superclass.constructor : null;
+            }
+
+            if (cfgAggr) {
+                aggr = aggr.concat(cfgAggr);
+            }
+            if (cfgCustBuild) {
+                Y.mix(cust, cfg.cfgBuild, true);
+            }
+
+            return {
+                aggregates: aggr,
+                custom: cust
+            };
+        },
+
+        _clean : function(sx, aggregates, custom) {
+            var prop, i, l, sxclone = Y.merge(sx);
+
+            for (prop in custom) {
+                if (sxclone.hasOwnProperty(prop)) {
+                    delete sxclone[prop];
+                }
+            }
+
+            for (i = 0, l = aggregates.length; i < l; i++) {
+                prop = aggregates[i];
+                if (sxclone.hasOwnProperty(prop)) {
+                    delete sxclone[prop];
+                }
+            }
+
+            return sxclone;
+        }
+    });
 
     /**
      * <p>
@@ -645,139 +838,64 @@ YUI.add('base-build', function(Y) {
      * @return {Function} A custom class, created from the provided main and extension classes
      */
     Base.build = function(name, main, extensions, cfg) {
-
-        var build = Base.build,
-            builtClass = build._getClass(main, cfg),
-            buildCfg = build._getBuildCfg(main, cfg),
-            aggregates = buildCfg.aggregates,
-            custBuildSteps = buildCfg.custBuild,
-            dynamic = builtClass._yuibuild.dynamic,
-            i, l, j, val, extClass;
-
-        // Shallow isolate aggregates
-        if (dynamic && aggregates) {
-            if (aggregates) {
-                for (i = 0, l = aggregates.length; i < l; ++i) {
-                    val = aggregates[i];
-                    if (main.hasOwnProperty(val)) {
-                        builtClass[val] = L.isArray(main[val]) ? [] : {};
-                    }
-                }
-                Y.aggregate(builtClass, main, true, aggregates);
-            }
-        }
-
-        // Augment/Aggregate
-        for (i = 0, l = extensions.length; i < l; i++) {
-            extClass = extensions[i];
-
-            if (aggregates) {
-                Y.aggregate(builtClass, extClass, true, aggregates);
-            }
-
-            if (custBuildSteps) {
-                for (j = 0; j < custBuildSteps.length; j++) {
-                    custBuildSteps[j](builtClass, extClass);
-                }
-            }
-
-            // Old non-displacing augment
-            Y.mix(builtClass, extClass, true, null, 1);
-
-            builtClass._yuibuild.exts.push(extClass);
-        }
-
-        builtClass.prototype.hasImpl = build._hasImpl;
-
-        if (dynamic) {
-            builtClass.NAME = name;
-            builtClass.prototype.constructor = builtClass;
-        }
-
-        return builtClass;
+        return build(name, main, extensions, null, null, cfg);
     };
 
-    Y.mix(Base.build, {
+    /**
+     * <p>Creates a new class (constructor function) which extends the base class passed in as the second argument, 
+     * and mixes in the array of extensions provided.</p>
+     * <p>Prototype properties or methods can be added to the new class, using the px argument (similar to Y.extend).</p>
+     * <p>Static properties or methods can be added to the new class, using the sx argument (similar to Y.extend).</p>
+     * <p>
+     * 
+     * </p>
+     * @method Base.create
+     * @static
+     * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.
+     * @param {Function} main The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).
+     * @param {Function[]} extensions The list of extensions which will be mixed into the built class.
+     * @return {Function} The newly created class.
+     */
+    Base.create = function(name, base, extensions, px, sx) {
+        return build(name, base, extensions, px, sx);
+    };
 
-        _template: function(main) {
+    /**
+     * <p>Mixes in a list of extensions to an existing class.</p>
+     * @method Base.mix
+     * @static
+     * @param {Function} main The existing class into which the extensions should be mixed.  The class needs to be Base or class derived from base (e.g. Widget)
+     * @param {Function[]} extensions The set of extension classes which will mixed into the existing main class.
+     * @return {Function} The modified main class, with extensions mixed in.
+     */
+    Base.mix = function(main, extensions) {
+        return build(null, main, extensions, null, null, {dynamic:false});
+    };
 
-            function BuiltClass() {
-                BuiltClass.superclass.constructor.apply(this, arguments);
-                return this;
-            }
-            Y.extend(BuiltClass, main);
-
-            return BuiltClass;
-        },
-
-        _hasImpl : function(extClass) {
-            var classes = this._getClasses();
-            for (var i = 0, l = classes.length; i < l; i++) {
-                var cls = classes[i];
-                 
-                if (cls._yuibuild) {
-                    var exts = cls._yuibuild.exts,
-                        ll = exts.length,
-                        j;
-    
-                    for (j = 0; j < ll; j++) {
-                        if (exts[j] === extClass) {
-                            return true;
-                        }
-                    }
+    /**
+     * The build configuration for the Base class.
+     *
+     * Defines the static fields which need to be aggregated
+     * when the Base class is used as the main class passed to
+     * the <a href="#method_Base.build">Base.build</a> method.
+     *
+     * @property Base._buildCfg
+     * @type Object
+     * @static
+     * @final
+     * @private
+     */
+    Base._buildCfg = {
+        custom : { 
+            ATTRS : function(prop, r, s) {
+                r[prop] = r[prop] || {};
+                if (s[prop]) {
+                    Y.aggregate(r[prop], s[prop], true);
                 }
             }
-            return false;
         },
-
-        _getClass : function(main, cfg) {
-
-           var dynamic = (cfg && false === cfg.dynamic) ? false : true,
-                builtClass = (dynamic) ? Base.build._template(main) : main;
-
-            builtClass._yuibuild = {
-                id: null,
-                exts : [],
-                dynamic : dynamic
-            };
-
-            return builtClass;
-        },
-        
-        _getBuildCfg : function(main, cfg) {
-            var aggr = [], 
-                steps = [],
-                buildCfg,
-                cfgAggr = (cfg && cfg.aggregates),
-                cfgCustBuild = (cfg && cfg.custBuild),
-                c = main;
-
-            while (c && c.prototype) {
-                buildCfg = c._buildCfg; 
-                if (buildCfg) {
-                    if (buildCfg.aggregates) {
-                        aggr = aggr.concat(buildCfg.aggregates);
-                    }
-                    if (buildCfg.custBuild) {
-                        steps.push(buildCfg.custBuild);
-                    }
-                }
-                c = c.superclass ? c.superclass.constructor : null;
-            }
-
-            if (cfgAggr) {
-                aggr = aggr.concat(cfgAggr);
-            }
-            if (cfgCustBuild) {
-                steps.push(cfg.cfgBuild);
-            }
-
-            return {
-                aggregates: aggr,
-                custBuild: steps
-            };
-        }
-    });
+        aggregates : ["_PLUG", "_UNPLUG"]
+    };
 
 
 }, '@VERSION@' ,{requires:['base-base']});

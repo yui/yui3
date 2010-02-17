@@ -301,7 +301,10 @@
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">root</span><span class="p">).</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">)];</span>
         <span class="p">}</span>
+    
         <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
    <span class="p">},</span>
 
@@ -597,12 +600,15 @@
 <span class="cm">     * @return {Object} The document for the given element or the default document. </span>
 <span class="cm">     */</span>
     <span class="nx">_getDoc</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">element</span> <span class="o">=</span> <span class="nx">element</span> <span class="o">||</span> <span class="p">{};</span>
-
-        <span class="k">return</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">NODE_TYPE</span><span class="p">]</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="c1">// element === document</span>
+        <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">doc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">element</span><span class="p">[</span><span class="nx">NODE_TYPE</span><span class="p">]</span> <span class="o">===</span> <span class="mi">9</span><span class="p">)</span> <span class="o">?</span> <span class="nx">element</span> <span class="o">:</span> <span class="c1">// element === document</span>
                 <span class="nx">element</span><span class="p">[</span><span class="nx">OWNER_DOCUMENT</span><span class="p">]</span> <span class="o">||</span> <span class="c1">// element === DOM node</span>
                 <span class="nx">element</span><span class="p">.</span><span class="nb">document</span> <span class="o">||</span> <span class="c1">// element === window</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span> <span class="c1">// default</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">doc</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -690,6 +696,16 @@
                 <span class="p">}</span>
 
                 <span class="nx">attr</span><span class="p">.</span><span class="nx">value</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+            <span class="p">},</span>
+
+            <span class="nx">select</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">options</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;option&#39;</span><span class="p">),</span> <span class="nx">option</span><span class="p">;</span>
+                        <span class="nx">option</span> <span class="o">=</span> <span class="nx">options</span><span class="p">[</span><span class="nx">i</span><span class="o">++</span><span class="p">];)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">option</span><span class="p">)</span> <span class="o">===</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">option</span><span class="p">,</span> <span class="s1">&#39;selected&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">});</span>
     <span class="p">}</span>
@@ -740,7 +756,7 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">multiple</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;multiple select normalization not implemented&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;DOM&#39;</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">options</span><span class="p">[</span><span class="nx">node</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">],</span> <span class="s1">&#39;value&#39;</span><span class="p">);</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">options</span><span class="p">[</span><span class="nx">node</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">]);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
@@ -804,7 +820,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

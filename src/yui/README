@@ -3,15 +3,28 @@ The YUI Global
     language/array/object utilities, browser detection, a setTimout/setInterval wrapper,
     and dynamic loading of script and css files.
 
-    The yui module is a rollup of the following modules:
-        yui-base
-        get
+    The yui module is a rollup yui-base (the core module registration/sandbox system and utilities),
+    and the following optional submodules:
+        get (for dynamic script loading)
+        yui-log (out of the box console log support)
+        yui-later (timer abstraction)
+        throttle (performance utilitity)
 
-3.next
+    yui-base contains
+        Module registration system
+        Lang
+        Object
+        Array
+        Core
+
+3.1.0
+* The document element (HTML) is now stamped with a class name (yui-js-enabled) indicating that JS is enabled allowing for the creation of JS-aware CSS style rules for Progressive Enhancement.
 * Added the ability to define a global configuration object (YUI_config).
 * Added Object.some().
-* Chrome detection
+* UA refinements for Chrome, Android and other browsers/platforms
 * Inserted script nodes get charset="utf-8" by default.
+* Added last() to Queue for LIFO support.
+* Added thottle utility to buffer expensive functions that are called frequently.
 
 3.0.0
 

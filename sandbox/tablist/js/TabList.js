@@ -1,42 +1,4 @@
-function TabList() {
-    TabList.superclass.constructor.apply(this,arguments);
-}
-
-Y.mix(TabList, {
-
-    NAME : "tablist",
-
-    ATTRS : {
-
-        defaultChildType: {  
-            value: "Tab"
-        },
-
-        //  Override of Widget's default tabIndex attribute since we don't 
-        //  want the bounding box of each TabList instance in the default
-        //  tab index.  The focusable pieces of a TabList's UI will be 
-        //  each tab's anchor element.
-        
-        tabIndex: {
-    		value: null,
-    		validator: "_validTabIndex"
-        }
-    }
-
-});
-
-Y.extend(TabList, Y.Widget, {
-
-    _onTabClick: function (event) {
-
-        //  Prevent the browser from navigating to the URL specified by the 
-        //  anchor's href attribute.
-
-        event.domEvent.preventDefault();
-
-        event.target.set("selected", 1);
-        
-    },
+Y.TabList = Y.Base.create("tabList", Y.Widget, [Y.WidgetParent], {
 
     bindUI: function() {
 
@@ -52,8 +14,6 @@ Y.extend(TabList, Y.Widget, {
                         circular: true
 
                     });
-        
-        this.on("tab:click", this._onTabClick);
 
     },
     
@@ -71,8 +31,23 @@ Y.extend(TabList, Y.Widget, {
         
     }
     
+}, {
+
+    ATTRS : {
+
+        defaultChildType: {  
+            value: "Tab"
+        },
+
+        //  Override of Widget's default tabIndex attribute since we don't 
+        //  want the bounding box of each TabList instance in the default
+        //  tab index.  The focusable pieces of a TabList's UI will be 
+        //  each tab's anchor element.
+        
+        tabIndex: {
+            value: null,
+            validator: "_validTabIndex"
+        }
+    }
+
 });
-
-Y.Base.build(TabList.NAME, TabList, [Y.WidgetParent], { dynamic: false });
-
-Y.TabList = TabList;

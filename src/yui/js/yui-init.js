@@ -17,7 +17,7 @@
     //     core = C.core;
     // } else {
     //     core = [];
-    //     extras = ['get', 'loader', 'yui-log', 'yui-later'];
+    //     extras = ['get', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
 
     //     for (i=0; i<extras.length; i++) {
     //         if (mods[extras[i]]) {

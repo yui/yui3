@@ -60,11 +60,11 @@ YUI(yui_config).use('node', function(Y) {
     divs.each(function(node, k) {
         node.addAttr('clicks', {value: 0});
         node.on('click', function(e) {
-            var count = this.get('clicks');
+            var count = this.one('clicks');
             this.set('clicks', ++count);
         });
         node.on('clicksChange', function(e) {
-            Y.log('element ' + this.get('id') + ' clicked ' + e.newVal + ' times');
+            Y.log('element ' + this.one('id') + ' clicked ' + e.newVal + ' times');
         });
     });
 
@@ -77,7 +77,7 @@ YUI(yui_config).use('node', function(Y) {
     // var nodes = Y.all('script'), yui_config = {};
 
     // nodes.some(function(node){
-    //     var src = node.get('src');
+    //     var src = node.one('src');
     //     // capture base in regexp, capture all variation of the yui file, 
     //     // allow querystring, common in cache-busting and versioning schemes
     //     var match = src.match(/^(.*)yui[\.-].*js(\?.*)?$/);
@@ -103,10 +103,10 @@ YUI(yui_config).use('node', function(Y) {
     //     }
     // }
 
-    var node = Y.get('#container');
+    var node = Y.one('#container');
     node.addAttr('foo', {value: 'foo'});
     node.set('foo', 'bar'); // set an attribute
-    Y.log(node.get('foo')); // read an attribute
+    Y.log(node.one('foo')); // read an attribute
 
 
 });
@@ -116,7 +116,7 @@ YUI(yui_config).use('node', function(Y) {
 (function(){
         var divs = YAHOO.util.Dom.getElementsBy(function(el){return true}, "div", "container");
         var objEl = {};
-        var echo = YAHOO.util.Dom.get("echo");
+        var echo = YAHOO.util.Dom.one("echo");
         for(var i = 0, l = divs.length; i<l; i++) {
             objEl[divs[i].id] = new YAHOO.util.Element(divs[i]);
             objEl[divs[i].id].setAttributeConfig("clicks",
@@ -125,12 +125,12 @@ YUI(yui_config).use('node', function(Y) {
                 }
             );
             objEl[divs[i].id].subscribe("clicksChange", function(args) {
-                echo.innerHTML = "element " + this.get("element").id + " was clicked " + args.newValue + " times";
+                echo.innerHTML = "element " + this.one("element").id + " was clicked " + args.newValue + " times";
             });
         }
         YAHOO.util.Event.addListener(divs, "click", function(ev) {
                 var el = YAHOO.util.Event.getTarget(ev);
-                var clicks = objEl[el.id].get("clicks");
+                var clicks = objEl[el.id].one("clicks");
                 clicks += 1;
                 objEl[el.id].set("clicks", clicks);
         });

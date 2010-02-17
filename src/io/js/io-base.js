@@ -184,7 +184,7 @@
    		var f, o, d, m, r, s;
    			c = Y.Object(c);
    			o = _create(c.xdr || c.form, i);
-   			m = c.method ? c.method.toUpperCase() : 'GET';
+   			m = c.method ? c.method = c.method.toUpperCase() : c.method = 'GET';
    			s = c.sync;
 
 		//To serialize an object into a key-value string, add the
@@ -200,7 +200,7 @@
    			}
    			else {
 				f = Y.io._serialize(c.form, c.data);
-				if (m === 'POST') {
+				if (m === 'POST' || m === 'PUT') {
 					c.data = f;
 					c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded' }, c.headers);
 				}

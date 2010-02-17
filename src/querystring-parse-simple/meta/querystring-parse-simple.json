@@ -1,0 +1,8 @@
+{
+    "querystring-parse-simple": {
+        "path": "querystring/querystring-parse-simple.js", 
+        "requires": [
+            "yui-base"
+        ]
+    }
+}

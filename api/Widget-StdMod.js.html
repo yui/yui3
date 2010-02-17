@@ -326,6 +326,13 @@
 <span class="cm">         */</span>
         <span class="nx">_renderUIStdMod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_stdModNode</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">Widget</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span><span class="nx">STDMOD</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdModSections</span><span class="p">();</span>
+        <span class="p">},</span>
+
+        <span class="nx">_renderStdModSections</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">STD_HEADER</span> <span class="o">+</span> <span class="nx">CONTENT_SUFFIX</span><span class="p">)))</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdMod</span><span class="p">(</span><span class="nx">STD_HEADER</span><span class="p">);</span> <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">STD_BODY</span> <span class="o">+</span> <span class="nx">CONTENT_SUFFIX</span><span class="p">)))</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdMod</span><span class="p">(</span><span class="nx">STD_BODY</span><span class="p">);</span> <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">STD_FOOTER</span> <span class="o">+</span> <span class="nx">CONTENT_SUFFIX</span><span class="p">)))</span> <span class="p">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdMod</span><span class="p">(</span><span class="nx">STD_FOOTER</span><span class="p">);</span> <span class="p">}</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
@@ -471,7 +478,8 @@
 <span class="cm">         * If not provided, the content will replace existing content in the section.</span>
 <span class="cm">         */</span>
         <span class="nx">_uiSetStdMod</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">section</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Using isValue, so that &quot;&quot; is valid content </span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">content</span><span class="p">))</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getStdModNode</span><span class="p">(</span><span class="nx">section</span><span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">_renderStdMod</span><span class="p">(</span><span class="nx">section</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">content</span> <span class="k">instanceof</span> <span class="nx">Node</span> <span class="o">||</span> <span class="nx">content</span> <span class="k">instanceof</span> <span class="nx">NodeList</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_addNodeRef</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">);</span>
@@ -839,7 +847,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class="selected"><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

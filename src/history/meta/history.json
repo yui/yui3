@@ -1,0 +1,7 @@
+{
+    "history": {
+        "requires": [
+            "node"
+        ]
+    }
+}

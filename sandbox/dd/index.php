@@ -214,16 +214,6 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     <div id="ft">&nbsp;</div>
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event-custom/event-custom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-screen-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
-
-<!--script src="http://yeshouseborn-lx.corp.yahoo.com/yui-clean/yui3/build/yui/yui-debug.js"></script-->
 
 
 <script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
@@ -268,7 +258,7 @@ var yConfig2 = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', 'yui-throttle', function(Y1) {
     //Y1.DD.DDM._debugShim = true;
     
     //dd4 = Y1.Base.create(Y1.DD.Proxy, [Y1.DD.DragConstrained], {
@@ -328,6 +318,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
     dd4.plug(Y1.Plugin.DDConstrained, {
         //tickX: 25,
         //tickY: 25,
+        //cacheRegion: false,
         constrain2node: '#drag4Cont',
         gutter:  '-20'
     });
@@ -385,7 +376,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', function(Y1) {
 
 });
 
-YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-throttle', function(Y) {
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
 //Y.on('event:ready', function() {
     Y.DD.DDM._debugShim = true;
@@ -394,12 +385,17 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     //Y.DD.DDM.mode = Y.DD.DDM.INTERSECT;
     //Y.DD.DDM = null;
     
+    Y.DD.DDM.set('throttleTime', 50);
+
     Y.DD.DDM.on('drop:over', function(e) {
         //console.log('DDM:drop:over :: ', arguments);
     });
     
     Y.DD.DDM.on('drag:drag', function(e) {
         //console.log('DDM:drag:drag :: ', e);
+    });
+    Y.DD.DDM.on('drag:dropmiss', function(e) {
+        console.log('DDM:drag:dropmiss :: ', e);
     });
     //Y.DD.DDM.set('multiDrop', false);
 
@@ -419,7 +415,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
   */
 
     Y.DD.DDM.on('ddm:start', function(e) {
-        //console.log('DDM:start :: ', e);
+        console.log('DDM:start :: ', e);
     });
     Y.DD.DDM.on('drag:end', function(e) {
         console.log('DDM:end :: ', e);
@@ -430,7 +426,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         groups: ['one', 'three'],
         target: true,
         dragMode: 'intersect',
-        handles: ['h2'],
+        handles: [Y.one('#drag h2')],
         //bubbles: false,
         //dragMode: 'strict',
         data: {
@@ -547,10 +543,20 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
     dd3 = Y.Node.get('#drag3');
     dd3.plug(Y.Plugin.Drag, {
         groups: ['one', 'three'],
-        dragMode: 'intersect'
+        dragMode: 'intersect',
+        handles: [Y.all('#drag3 h2')],
+        startCentered: true
     });
     dd3.dd.plug(Y.Plugin.DDProxy, {});
-    dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
+    //dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
+    dd3.dd.addInvalid('h2.one');
+    dd3.dd.after('drag:start', function(e) {
+        this.get('dragNode').setStyles({
+            width: '60px',
+            height: '30px'
+        });
+    });
+
     
 
 /*
@@ -640,7 +646,7 @@ YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', function
         });
         */
         drop.on('drop:hit', function(e) {
-            //console.log('drop:hit :: Drag: ' + e.drag.get('node').get('id') + ' ::: Drop: ' + this.get('node').get('id'), e);
+            console.log('drop:hit :: Drag: ' + e.drag.get('node').get('id') + ' ::: Drop: ' + this.get('node').get('id'), e);
             if (e.drag.get('data')) {
                 //console.log('Payload: ', e.drag.get('data'));
             }

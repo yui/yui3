@@ -8,11 +8,12 @@ YUI.add('widget-base', function(Y) {
 
 var L = Y.Lang,
     Node = Y.Node,
+
     ClassNameManager = Y.ClassNameManager,
 
     _getClassName = ClassNameManager.getClassName,
     _getWidgetClassName,
-    
+
     _toInitialCap = Y.cached(function(str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }),
@@ -41,6 +42,7 @@ var L = Y.Lang,
     STRINGS = "strings",
     DIV = "<div></div>",
     CHANGE = "Change",
+    LOADING = "loading",
     _UISET = "_uiSet",
 
     EMPTY_STR = "",
@@ -60,6 +62,10 @@ var L = Y.Lang,
     IE = Y.UA.ie,
 
     ContentUpdate = "contentUpdate",
+
+    //  Map of Node instances serving as a delegation containers for a specific
+    //  event type to Widget instances using that delegation container.
+    _delegates = {},
 
     // Widget nodeguid-to-instance map.
     _instances = {};
@@ -85,6 +91,7 @@ function Widget(config) {
     Y.log('constructor called', 'life', 'widget');
 
     this._strs = {};
+    this._cssPrefix = this.constructor.CSS_PREFIX || _getClassName(this.constructor.NAME.toLowerCase());
 
     Widget.superclass.constructor.apply(this, arguments);
 
@@ -182,7 +189,7 @@ ATTRS[BOUNDING_BOX] = {
  * @writeOnce
  */
 ATTRS[CONTENT_BOX] = {
-    value:null,
+    valueFn:"_defaultCB",
     setter: "_setCB",
     writeOnce: TRUE
 };
@@ -199,7 +206,7 @@ ATTRS[CONTENT_BOX] = {
  * @default 0
  */
 ATTRS[TAB_INDEX] = {
-	value: 0,
+	value: null,
 	validator: "_validTabIndex"
 };
 
@@ -284,13 +291,15 @@ ATTRS[RENDER] = {
 };
 
 /**
- * Cached lowercase version of Widget.NAME
+ * The css prefix which the static Widget.getClassName method should use when constructing class names
  *
- * @property Widget._NAME_LOWERCASE
+ * @property Widget.CSS_PREFIX
+ * @type String
+ * @default Widget.NAME.toLowerCase()
  * @private
  * @static
  */
-Widget._NAME = Widget.NAME.toLowerCase();
+Widget.CSS_PREFIX = _getClassName(Widget.NAME.toLowerCase());
 
 /**
  * Generate a standard prefixed classname for the Widget, prefixed by the default prefix defined
@@ -307,7 +316,7 @@ Widget._NAME = Widget.NAME.toLowerCase();
  */
 Widget.getClassName = function() {
     // arguments needs to be array'fied to concat
-    return _getClassName.apply(ClassNameManager, [Widget._NAME].concat(Y.Array(arguments)));
+    return _getClassName.apply(ClassNameManager, [Widget.CSS_PREFIX].concat(Y.Array(arguments), true));
 };
 
 _getWidgetClassName = Widget.getClassName;
@@ -330,7 +339,7 @@ Widget.getByNode = function(node) {
 
     node = Node.one(node);
     if (node) {
-        node = (node.hasClass(widgetMarker)) ? node : node.ancestor("." + widgetMarker);
+        node = node.ancestor("." + widgetMarker, true);
         if (node) {
             widget = _instances[Y.stamp(node, TRUE)];
         }
@@ -360,8 +369,33 @@ Y.extend(Widget, Y.Base, {
 	 * @param {String}+ One or more classname bits to be joined and prefixed
 	 */
 	getClassName: function () {
-        return _getClassName.apply(ClassNameManager, [this._name].concat(Y.Array(arguments)));
+        return _getClassName.apply(ClassNameManager, [this._cssPrefix].concat(Y.Array(arguments), true));
 	},
+
+    /**
+     * Returns the name of the skin that's currently applied to the widget.
+     * This is only really useful after the widget's DOM structure is in the
+     * document, either by render or by progressive enhancement.  Searches up
+     * the Widget's ancestor axis for a class yui3-skin-(name), and returns the
+     * (name) portion.  Otherwise, returns null.
+     *
+     * @method getSkinName
+     * @return {String} the name of the skin, or null (yui3-skin-sam => sam)
+     */
+    getSkinName: function () {
+        var root = this.get( CONTENT_BOX ) || this.get( BOUNDING_BOX ),
+            search = new RegExp( '\\b' + _getClassName( 'skin' ) + '-(\\S+)' ),
+            match;
+
+        if ( root ) {
+            root.ancestor( function ( node ) {
+                match = node.get( 'className' ).match( search );
+                return match;
+            } );
+        }
+
+        return ( match ) ? match[1] : null;
+    },
 
     /**
      * Initializer lifecycle implementation for the Widget class. Registers the 
@@ -373,8 +407,6 @@ Y.extend(Widget, Y.Base, {
      */
     initializer: function(config) {
         Y.log('initializer called', 'life', 'widget');
-
-        this._name = this.constructor.NAME.toLowerCase();
 
         _instances[Y.stamp(this.get(BOUNDING_BOX))] = this;
 
@@ -397,7 +429,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Descructor lifecycle implementation for the Widget class. Purges events attached
+     * Destructor lifecycle implementation for the Widget class. Purges events attached
      * to the bounding box (and all child nodes) and removes the Widget from the 
      * list of registered widgets.
      *
@@ -408,11 +440,26 @@ Y.extend(Widget, Y.Base, {
         Y.log('destructor called', 'life', 'widget');
 
         var boundingBox = this.get(BOUNDING_BOX),
-            guid = Y.stamp(boundingBox, TRUE);
+            bbGuid = Y.stamp(boundingBox, TRUE),
+            widgetGuid = Y.stamp(this, TRUE);
 
-        if (guid in _instances) {
-            delete _instances[guid];
+        if (bbGuid in _instances) {
+            delete _instances[bbGuid];
         }
+
+        Y.each(_delegates, function (info) {
+            if (info.instances[widgetGuid]) {
+                //  Unregister this Widget instance as needing this delegated
+                //  event listener.
+                delete info.instances[widgetGuid];
+
+                //  There are no more Widget instances using this delegated 
+                //  event listener, so detach it.
+                if (Y.Object.size(info.instances) === 0) {
+                    info.handle.detach();
+                }
+            }
+        });
 
         this._unbindUI(boundingBox);
         boundingBox.remove(TRUE);
@@ -467,6 +514,7 @@ Y.extend(Widget, Y.Base, {
             this.publish(RENDER, {
                 queuable:FALSE,
                 fireOnce:TRUE,
+                defaultTargetOnly:TRUE,
                 defaultFn: this._defRenderFn
             });
 
@@ -484,18 +532,15 @@ Y.extend(Widget, Y.Base, {
      * @param {Node} parentNode The parent node to render to, if passed in to the <code>render</code> method
      */
     _defRenderFn : function(e) {
-        // TODO: Remove target check, once fix/config is in event. 
-        // Currently prevents _defRenderFn from being called at all 
-        // levels in the heirarchy if events are bubbled.
-        if (e.target === this) {
-            this._renderUI(e.parentNode);
-            this._bindUI();
-            this._syncUI();
+        this._renderUI(e.parentNode);
+        this._bindUI();
+        this._syncUI();
 
-            this.renderer();
+        this.renderer();
 
-            this._set(RENDERED, TRUE);
-        }
+        this._set(RENDERED, TRUE);
+        
+        this._removeLoadingClassNames();
     },
 
     /**
@@ -656,6 +701,7 @@ Y.extend(Widget, Y.Base, {
         var contentBox = this.get(CONTENT_BOX),
             boundingBox = this.get(BOUNDING_BOX),
             srcNode = this.get(SRC_NODE),
+            defParentNode = this.DEF_PARENT_NODE,
 
             doc = (srcNode && srcNode.get(OWNER_DOCUMENT)) || boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT);
 
@@ -665,7 +711,6 @@ Y.extend(Widget, Y.Base, {
         }
 
         if (!boundingBox.compareTo(contentBox.get(PARENT_NODE)) && !boundingBox.compareTo(contentBox)) {
-
             // If contentBox box is already in the document, have boundingBox box take it's place
             if (contentBox.inDoc(doc)) {
                 contentBox.replace(boundingBox);
@@ -673,10 +718,11 @@ Y.extend(Widget, Y.Base, {
             boundingBox.appendChild(contentBox);
         }
 
+        parentNode = parentNode || (defParentNode && Node.one(defParentNode));
+
         if (parentNode) {
             parentNode.appendChild(boundingBox);
         } else if (!boundingBox.inDoc(doc)) {
-            // Special case when handling body as default (no parentNode), always try to insert.
             Node.one(BODY).insert(boundingBox, 0);
         }
 
@@ -705,6 +751,10 @@ Y.extend(Widget, Y.Base, {
      */
     _setCB: function(node) {
         return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE);
+    },
+
+    _defaultCB : function(node) {
+        return this.get(SRC_NODE) || null;
     },
 
     /**
@@ -747,6 +797,7 @@ Y.extend(Widget, Y.Base, {
      */
     _renderBoxClassNames : function() {
         var classes = this._getClasses(),
+            cl,
             boundingBox = this.get(BOUNDING_BOX),
             i;
 
@@ -754,12 +805,35 @@ Y.extend(Widget, Y.Base, {
 
         // Start from Widget Sub Class
         for (i = classes.length-3; i >= 0; i--) {
-            boundingBox.addClass(ClassNameManager.getClassName(classes[i].NAME.toLowerCase()));
+            cl = classes[i];
+            boundingBox.addClass(cl.CSS_PREFIX || _getClassName(cl.NAME.toLowerCase()));
         }
 
         // Use instance based name for content box
         this.get(CONTENT_BOX).addClass(this.getClassName(CONTENT));
     },
+
+
+    /**
+     * Removes class names representative of the widget's loading state from 
+     * the boundingBox.
+     *
+     * @method _removeLoadingClassNames
+     * @protected
+     */
+    _removeLoadingClassNames: function () {
+
+        var boundingBox = this.get(BOUNDING_BOX),
+            contentBox = this.get(CONTENT_BOX);
+
+        boundingBox.removeClass(_getWidgetClassName(LOADING));
+        boundingBox.removeClass(this.getClassName(LOADING));
+        
+        contentBox.removeClass(_getWidgetClassName(LOADING));
+        contentBox.removeClass(this.getClassName(LOADING));
+        
+    },
+
 
     /**
      * Sets up DOM and CustomEvent listeners for the widget.
@@ -957,8 +1031,18 @@ Y.extend(Widget, Y.Base, {
      * Default unit to use for dimension values
      * 
      * @property DEF_UNIT
+     * @type String
      */
     DEF_UNIT : "px",
+
+    /** 
+     * Default node to render the bounding box to. If not set,
+     * will default to the current document body.
+     * 
+     * @property DEF_PARENT_NODE
+     * @type String | Node
+     */ 
+    DEF_PARENT_NODE : null,
 
     /**
      * Property defining the markup template for content box. If your Widget doesn't
@@ -1059,6 +1143,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     _BIND_UI_ATTRS : UI_ATTRS,
+
     _SYNC_UI_ATTRS : UI_ATTRS.concat(TAB_INDEX),
 
     /**
@@ -1068,21 +1153,7 @@ Y.extend(Widget, Y.Base, {
      * @property UI_EVENTS
      * @type Object
      */
-    UI_EVENTS: {
-        click: TRUE,
-        contextmenu: TRUE,
-        dblclick: TRUE,
-        keydown: TRUE,
-        keypress: TRUE,
-        keyup: TRUE,
-        mousedown: TRUE,
-        mousemove: TRUE,
-        mouseout: TRUE,
-        mouseover: TRUE,
-        mouseup: TRUE,
-        mouseenter: TRUE,
-        mouseleave: TRUE
-    },
+    UI_EVENTS: Y.Node.DOM_EVENTS,
 
     /**
      * Returns the node on which to bind delegate listeners.
@@ -1106,34 +1177,113 @@ Y.extend(Widget, Y.Base, {
     _createUIEvent: function (type) {
 
         var uiEvtNode = this._getUIEventNode(),
-            uiEvts = this._uiEvts || {};
+            parentNode = uiEvtNode.get(PARENT_NODE),
+            key = (Y.stamp(parentNode) + type),
+            info = _delegates[key],
+            handle;
 
-        if (!uiEvts[type]) {
-            uiEvts[type] = uiEvtNode.get(PARENT_NODE).delegate(type, function (evt) {
+        //  For each Node instance: Ensure that there is only one delegated 
+        //  event listener used to fire Widget UI events.
+
+        if (!info) {
+
+            Y.log("Creating delegate for the " + type + " event.", "info", "widget");
+
+            handle = parentNode.delegate(type, function (evt) {
 
                 var widget = Widget.getByNode(this);
-
-                // widget.publish(evt.type);
 
                 //  Make the DOM event a property of the custom event
                 //  so that developers still have access to it.
                 widget.fire(evt.type, { domEvent: evt });
+
             }, "." + _getWidgetClassName());
 
-            this._uiEvts = uiEvts;
+            _delegates[key] = info = { instances: {}, handle: handle };
+
+        }
+
+        //  Register this Widget as using this Node as a delegation container.
+        info.instances[Y.stamp(this)] = 1;
+
+    },
+
+    /**
+     * Determines if the specified event is a UI event.
+     * 
+     * @private
+     * @method _isUIEvent
+     * @param type {String} String representing the name of the event
+     * @return {String} Event Returns the name of the UI Event, otherwise 
+     * undefined.
+     */
+    _getUIEvent: function (type) {
+        if (L.isString(type)) {
+            var sType = type.replace(UI_EVENT_REGEX, UI_EVENT_REGEX_REPLACE),
+                returnVal;
+
+            if (this.UI_EVENTS[sType]) {
+                returnVal = sType;
+            }
+
+            return returnVal;
+        }        
+    },
+
+    /**
+     * Sets up infastructure required to fire a UI event.
+     * 
+     * @private
+     * @method _initUIEvent
+     * @param type {String} String representing the name of the event
+     * @return {String}     
+     */
+    _initUIEvent: function (type) {
+        var sType = this._getUIEvent(type),
+            queue = this._uiEvtsInitQueue || {};
+
+        if (sType && !queue[sType]) {
+
+            Y.log("Deferring creation of " + type + " delegate until render.", "info", "widget");
+
+            this.after(RENDER, function() { 
+                this._createUIEvent(sType);
+                delete this._uiEvtsInitQueue[sType];
+            });
+            
+            this._uiEvtsInitQueue = queue[sType] = 1;
+
         }
     },
 
-    //  Override of on from Base to facilitate the firing of Widget events
+    //  Override of "on" from Base to facilitate the firing of Widget events
     //  based on DOM events of the same name/type (e.g. "click", "mouseover").
+    //  Temporary solution until we have the ability to listen to when 
+    //  someone adds an event listener (bug 2528230)
     on: function (type) {
-        if (L.isString(type)) {
-            var sType = type.replace(UI_EVENT_REGEX, UI_EVENT_REGEX_REPLACE);
-            if (this.UI_EVENTS[sType]) {
-                this.after(RENDER, function() { this._createUIEvent(sType); });
-            }
-        }
+        this._initUIEvent(type);
         return Widget.superclass.on.apply(this, arguments);
+    },
+
+    //  Override of "after" from Base to facilitate the firing of Widget events
+    //  based on DOM events of the same name/type (e.g. "click", "mouseover").    
+    //  Temporary solution until we have the ability to listen to when 
+    //  someone adds an event listener (bug 2528230)    
+    after: function (type) {
+        this._initUIEvent(type);
+        return Widget.superclass.after.apply(this, arguments);
+    },
+
+    //  Override of "publish" from Base to facilitate the firing of Widget events
+    //  based on DOM events of the same name/type (e.g. "click", "mouseover").    
+    //  Temporary solution until we have the ability to listen to when 
+    //  someone publishes an event (bug 2528230)     
+    publish: function (type, config) {
+        var sType = this._getUIEvent(type);
+        if (sType && config && config.defaultFn) {
+            this._initUIEvent(sType);
+        }        
+        return Widget.superclass.publish.apply(this, arguments);
     }
 
 });

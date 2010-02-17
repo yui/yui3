@@ -43,5 +43,4 @@ Y.mix(Y.namespace("DataType.Date"), {
 Y.namespace("Parsers").date = Y.DataType.Date.parse;
 
 
-
 }, '@VERSION@' );

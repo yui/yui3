@@ -279,6 +279,13 @@ YUI.add('widget-stdmod', function(Y) {
          */
         _renderUIStdMod : function() {
             this._stdModNode.addClass(Widget.getClassName(STDMOD));
+            this._renderStdModSections();
+        },
+
+        _renderStdModSections : function() {
+            if (L.isValue(this.get(STD_HEADER + CONTENT_SUFFIX))) { this._renderStdMod(STD_HEADER); }
+            if (L.isValue(this.get(STD_BODY + CONTENT_SUFFIX))) { this._renderStdMod(STD_BODY); }
+            if (L.isValue(this.get(STD_FOOTER + CONTENT_SUFFIX))) { this._renderStdMod(STD_FOOTER); }
         },
 
         /**
@@ -424,7 +431,8 @@ YUI.add('widget-stdmod', function(Y) {
          * If not provided, the content will replace existing content in the section.
          */
         _uiSetStdMod : function(section, content, where) {
-            if (content) {
+            // Using isValue, so that "" is valid content 
+            if (L.isValue(content)) {
                 var node = this.getStdModNode(section) || this._renderStdMod(section);
                 if (content instanceof Node || content instanceof NodeList) {
                     this._addNodeRef(node, content, where);

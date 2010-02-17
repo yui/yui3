@@ -1,4 +1,5 @@
 (function() {
+
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -94,653 +95,27 @@
  * </ul>
  */
 
-/*
- * Global loader queue
- * @property _loaderQueue
- * @type Queue
- * @private
- */
-YUI.Env._loaderQueue = YUI.Env._loaderQueue || new Y.Queue();
-
 var NOT_FOUND = {},
     NO_REQUIREMENTS = [],
+    MAX_URL_LENGTH = (Y.UA.ie) ? 2048 : 8192,
     GLOBAL_ENV = YUI.Env,
-    GLOBAL_LOADED,
-    BASE = 'base', 
+    GLOBAL_LOADED = GLOBAL_ENV._loaded,
     CSS = 'css',
     JS = 'js',
-    CSSRESET = 'cssreset',
-    CSSFONTS = 'cssfonts',
-    CSSGRIDS = 'cssgrids',
-    CSSBASE  = 'cssbase',
-    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 
-                 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
-    YUI_CSS = ['reset', 'fonts', 'grids', BASE],
     VERSION = Y.version,
-    GALLERY_VERSION = 'gallery-2009-10-19', // @TODO build time
-    ROOT = VERSION + '/build/',
-    GALLERY_ROOT = GALLERY_VERSION + '/build/',
-    GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
-    CONTEXT = '-context',
 
-    ANIMBASE = 'anim-base',
-	ATTRIBUTE = 'attribute',
-    ATTRIBUTEBASE = ATTRIBUTE + '-base',
-    BASEBASE = 'base-base',
-    DDDRAG = 'dd-drag',
-    DOM = 'dom',
-    DATASCHEMABASE = 'dataschema-base',
-    DATASOURCELOCAL = 'datasource-local',
-    DOMBASE = 'dom-base',
-    DOMSTYLE = 'dom-style',
-    DOMSCREEN = 'dom-screen',
-    DUMP = 'dump',
-    GET = 'get',
-    EVENTBASE = 'event-base',
-    EVENTCUSTOM = 'event-custom',
-    EVENTCUSTOMBASE = 'event-custom-base',
-    IOBASE = 'io-base',
-    NODE = 'node',
-    NODEBASE = 'node-base',
-    NODESTYLE = 'node-style',
-    NODESCREEN = 'node-screen',
-    NODEPLUGINHOST = 'node-pluginhost',
-    OOP = 'oop',
-    PLUGINHOST = 'pluginhost',
-    SELECTORCSS2 = 'selector-css2',
-    SUBSTITUTE = 'substitute',
-    WIDGET = 'widget',
-    WIDGETPOSITION = 'widget-position',
-    YUIBASE = 'yui-base',
+    _path = Y.cached(function(dir, file, type) {
+        return dir + '/' + file + '-min.' + (type || CSS);
+    }),
 
-	PLUGIN = 'plugin',
+    _queue = YUI.Env._loaderQueue,
 
-    META = {
+    META = GLOBAL_ENV[VERSION],
 
-    version: VERSION,
+    L     = Y.Lang;
 
-    root: ROOT,
-
-    base: 'http://yui.yahooapis.com/' + ROOT,
-
-    comboBase: 'http://yui.yahooapis.com/combo?',
-
-    skin: {
-        defaultSkin: 'sam',
-        base: 'assets/skins/',
-        path: 'skin.css',
-        after: CSS_AFTER
-        //rollup: 3
-    },
-
-    modules: {
-
-       dom: {
-            requires: [OOP],
-            submodules: {
-
-                'dom-base': {
-                    requires: [OOP]
-                },
-
-                'dom-style': {
-                    requires: [DOMBASE]
-                },
-
-                'dom-screen': {
-                    requires: [DOMBASE, DOMSTYLE]
-                },
-
-                'selector-native': {
-                    requires: [DOMBASE]
-                },
-
-                'selector-css2': {
-                    requires: ['selector-native']
-                },
-
-                'selector': {
-                    requires: [DOMBASE]
-                }
-
-            },
-
-            plugins: {
-                'selector-css3': {
-                    requires: [SELECTORCSS2]
-                }
-            }
-        },
-
-        node: {
-            requires: [DOM, EVENTBASE],
-            // expound: EVENT,
-
-            submodules: {
-                'node-base': {
-                    requires: [DOMBASE, SELECTORCSS2, EVENTBASE]
-                },
-
-                'node-style': {
-                    requires: [DOMSTYLE, NODEBASE]
-                },
-
-                'node-screen': {
-                    requires: [DOMSCREEN, NODEBASE]
-                },
-
-                'node-pluginhost': {
-                    requires: [NODEBASE, PLUGINHOST]
-                },
-
-
-                'node-event-delegate': {
-                    requires: [NODEBASE, 'event-delegate']
-                }
-            },
-
-            plugins: {
-                'node-event-simulate': {
-                    requires: [NODEBASE, 'event-simulate']
-                },
-
-                'align-plugin': {
-                    requires: [NODESCREEN, NODEPLUGINHOST]
-                },
-
-                'shim-plugin': {
-                    requires: [NODESTYLE, NODEPLUGINHOST]
-                }
-            }
-        },
-
-        anim: {
-            submodules: {
-
-                'anim-base': {
-                    requires: [BASEBASE, NODESTYLE]
-                },
-
-                'anim-color': {
-                    requires: [ANIMBASE]
-                },
-
-                'anim-easing': {
-                    requires: [ANIMBASE]
-                },
-
-                'anim-scroll': {
-                    requires: [ANIMBASE]
-                },
-
-                'anim-xy': {
-                    requires: [ANIMBASE, NODESCREEN]
-                },
-
-                'anim-curve': {
-                    requires: ['anim-xy']
-                },
-
-                'anim-node-plugin': {
-                     requires: ['node-pluginhost', ANIMBASE]
-                }
-            }
-        },
-
-        attribute: { 
-            submodules: {
-                'attribute-base': {
-                    requires: [EVENTCUSTOM]
-                },
-
-                'attribute-complex': {
-                    requires: [ATTRIBUTEBASE]
-                }
-            }
-        },
-
-        base: {
-            submodules: {
-                'base-base': {
-                    requires: [ATTRIBUTEBASE]
-                },
-
-                'base-build': {
-                    requires: [BASEBASE]
-                },
-
-                'base-pluginhost': {
-                    requires: [BASEBASE, PLUGINHOST]
-                }
-            }
-        },
-
-        cache: { 
-            requires: [PLUGIN]
-        },
-        
-        compat: { 
-            requires: [EVENTBASE, DOM, DUMP, SUBSTITUTE]
-        },
-
-        classnamemanager: { 
-            requires: [YUIBASE]
-        },
-
-        collection: { 
-            requires: [OOP]
-        },
-
-        console: {
-            requires: ['yui-log', WIDGET, SUBSTITUTE],
-            skinnable: true,
-            plugins: {
-                'console-filters': {
-                    requires: [PLUGIN, 'console'],
-                    skinnable: true
-                }
-            }
-        },
-        
-        cookie: { 
-            requires: [YUIBASE]
-        },
-
-        dataschema:{
-            submodules: {
-                'dataschema-base': {
-                    requires: [BASE]
-                },
-                'dataschema-array': {
-                    requires: [DATASCHEMABASE]
-                },
-                'dataschema-json': {
-                    requires: [DATASCHEMABASE, 'json']
-                },
-                'dataschema-text': {
-                    requires: [DATASCHEMABASE]
-                },
-                'dataschema-xml': {
-                    requires: [DATASCHEMABASE]
-                }
-            }
-        },
-
-        datasource:{
-            submodules: {
-                'datasource-local': {
-                    requires: [BASE]
-                },
-                'datasource-arrayschema': {
-                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-array']
-                },
-                'datasource-cache': {
-                    requires: [DATASOURCELOCAL, 'cache']
-                },
-                'datasource-function': {
-                    requires: [DATASOURCELOCAL]
-                },
-                'datasource-jsonschema': {
-                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-json']
-                },
-                'datasource-polling': {
-                    requires: [DATASOURCELOCAL]
-                },
-                'datasource-get': {
-                    requires: [DATASOURCELOCAL, GET]
-                },
-                'datasource-textschema': {
-                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-text']
-                },
-                'datasource-io': {
-                    requires: [DATASOURCELOCAL, IOBASE]
-                },
-                'datasource-xmlschema': {
-                    requires: [DATASOURCELOCAL, PLUGIN, 'dataschema-xml']
-                }
-            }
-        },
-
-        datatype:{
-            submodules: {
-                'datatype-date': {
-                    requires: [YUIBASE]
-                },
-                'datatype-number': {
-                    requires: [YUIBASE]
-                },
-                'datatype-xml': {
-                    requires: [YUIBASE]
-                }
-            }
-        },
-
-        dd:{
-            submodules: {
-                'dd-ddm-base': {
-                    requires: [NODE, BASE]
-                }, 
-                'dd-ddm':{
-                    requires: ['dd-ddm-base', 'event-resize']
-                }, 
-                'dd-ddm-drop':{
-                    requires: ['dd-ddm']
-                }, 
-                'dd-drag':{
-                    requires: ['dd-ddm-base']
-                }, 
-                'dd-drop':{
-                    requires: ['dd-ddm-drop']
-                }, 
-                'dd-proxy':{
-                    requires: [DDDRAG]
-                }, 
-                'dd-constrain':{
-                    requires: [DDDRAG]
-                }, 
-                'dd-scroll':{
-                    requires: [DDDRAG]
-                }, 
-                'dd-plugin':{
-                    requires: [DDDRAG],
-                    optional: ['dd-constrain', 'dd-proxy']
-                },
-                'dd-drop-plugin':{
-                    requires: ['dd-drop']
-                },
-                'dd-delegate': {
-                    requires: [DDDRAG, 'event-mouseenter'],
-                    optional: ['dd-drop-plugin']
-                }
-            }
-        },
-
-        dump: { 
-            requires: [YUIBASE]
-        },
-
-        event: { 
-            expound: NODEBASE,
-            submodules: {
-                'event-base': {
-                    expound: NODEBASE,
-                    requires: [EVENTCUSTOMBASE]
-                },
-                'event-delegate': {
-                    requires: [NODEBASE]
-                },
-                'event-focus': {
-                    requires: [NODEBASE]
-                },
-                'event-key': {
-                    requires: [NODEBASE]
-                },
-                'event-mouseenter': {
-                    requires: [NODEBASE]
-                },
-                'event-mousewheel': {
-                    requires: [NODEBASE]
-                },
-                'event-resize': {
-                    requires: [NODEBASE]
-                }
-            }
-        },
-
-        'event-custom': { 
-            submodules: {
-                'event-custom-base': {
-                    requires: [OOP, 'yui-later']
-                },
-                'event-custom-complex': {
-                    requires: [EVENTCUSTOMBASE]
-                }
-            }
-        },
-
-        'event-simulate': { 
-            requires: [EVENTBASE]
-        },
-
-        'node-focusmanager': { 
-            requires: [ATTRIBUTE, NODE, PLUGIN, 'node-event-simulate', 'event-key', 'event-focus']
-        },
-
-        history: { 
-            requires: [NODE]
-        },
-
-        imageloader: { 
-            requires: [BASEBASE, NODESTYLE, NODESCREEN]
-        },
-        
-        io:{
-            submodules: {
-
-                'io-base': {
-                    requires: [EVENTCUSTOMBASE, 'querystring-stringify-simple']
-                }, 
-
-                'io-xdr': {
-                    requires: [IOBASE, 'datatype-xml']
-                }, 
-
-                'io-form': {
-                    requires: [IOBASE, NODEBASE, NODESTYLE]
-                }, 
-
-                'io-upload-iframe': {
-                    requires: [IOBASE, NODEBASE]
-                },
-
-                'io-queue': {
-                    requires: [IOBASE, 'queue-promote']
-                }
-            }
-        },
-
-        json: {
-            submodules: {
-                'json-parse': {
-                    requires: [YUIBASE]
-                },
-
-                'json-stringify': {
-                    requires: [YUIBASE]
-                }
-            }
-        },
-
-        loader: { 
-            requires: [GET]
-        },
-
-        'node-menunav': {
-            requires: [NODE, 'classnamemanager', PLUGIN, 'node-focusmanager'],
-            skinnable: true
-        },
-        
-        oop: { 
-            requires: [YUIBASE]
-        },
-
-        overlay: {
-            requires: [WIDGET, WIDGETPOSITION, 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
-            skinnable: true
-        },
-
-        plugin: { 
-            requires: [BASEBASE]
-        },
-
-        pluginhost: { 
-            requires: [YUIBASE]
-        },
-
-        profiler: { 
-            requires: [YUIBASE]
-        },
-
-        'queue-promote': {
-            requires: [YUIBASE]
-        },
-
-        // deprecated package, replaced with async-queue
-        'queue-run': {
-            requires: [EVENTCUSTOM],
-            path: 'async-queue/async-queue-min.js'
-        },
-
-        'async-queue': {
-            requires: [EVENTCUSTOM],
-            supersedes: ['queue-run']
-        },
-
-        'querystring-stringify-simple': {
-            requires: [YUIBASE],
-            path: 'querystring/querystring-stringify-simple.js'
-        },
-        'querystring-parse-simple': {
-            requires: [YUIBASE],
-            path: 'querystring/querystring-parse-simple.js'
-        },
-        'querystring': {
-            submodules: {
-                'querystring-parse': {
-                    supersedes: ['querystring-parse-simple'],
-                    requires: [YUIBASE]
-                },
-                'querystring-stringify': {
-                    supersedes: ['querystring-stringify-simple'],
-                    requires: [YUIBASE]
-                }
-            }
-        },
-
-        slider: {
-            requires: [WIDGET, 'dd-constrain'],
-            skinnable: true
-        },
-
-        sortable: {
-            requires: ['dd-delegate', 'dd-drop-plugin', 'dd-proxy']
-        },
-
-        stylesheet: { 
-            requires: [YUIBASE]
-        },
-
-        substitute: {
-            optional: [DUMP]
-        },
-
-        widget: {
-            submodules : {
-                'widget-base'  : {
-                    requires: [ATTRIBUTE, 'event-focus', BASE, NODE, 'classnamemanager']
-                },
-                'widget-htmlparser' : {
-                    requires: ['widget-base']
-                },
-                'widget-i18n' : {
-                    requires: ['widget-base']
-                }
-            },
-            plugins: {
-                'widget-parent': { },
-                'widget-child': { },                
-                'widget-position': { },
-                'widget-position-ext': {
-                    requires: [WIDGETPOSITION]
-                },
-                'widget-stack': {
-                    skinnable: true
-                },
-                'widget-stdmod': { }
-            },
-            skinnable: true
-        },
-
-        yui: {
-            submodules: {
-                'yui-base': {},
-                get: {},
-                'yui-log': {},
-                'yui-later': {}
-            }
-        },
-
-        test: {                                                                                                                                                        
-            requires: [SUBSTITUTE, NODE, 'json', 'event-simulate']                                                                                                                     
-        }  
-
-    },
-
-    // Patterns are module definitions which will be added with 
-    // the default options if a definition is not found. The
-    // assumption is that the module itself will be in the default
-    // location, and if there are any additional dependencies, they
-    // will have to be fetched with a second request.  This could
-    // happen multiple times, each segment resulting in a new
-    // dependency list.
-    //
-    // types: regex, prefix, function
-    patterns: {
-        'gallery-': { 
-            // http://yui.yahooapis.com/3.0.0/build/
-            // http://yui.yahooapis.com/gallery-/build/
-            base: GALLERY_BASE,  // explicit declaration of the base attribute
-            filter: {
-                'searchExp': VERSION,
-                'replaceStr': GALLERY_VERSION
-            }
-        }
-    }
-},
-
-_path = Y.cached(function(dir, file, type) {
-    return dir + '/' + file + '-min.' + (type || CSS);
-}),
-
-_queue = YUI.Env._loaderQueue,
-
-mods  = META.modules, i, bname, mname, contextname,
-L     = Y.Lang;
-
-// Create the metadata for both the regular and context-aware
-// versions of the YUI CSS foundation.
-for (i=0; i<YUI_CSS.length; i=i+1) {
-    bname = YUI_CSS[i];
-    mname = CSS + bname;
-
-    mods[mname] = {
-        type: CSS,
-        path: _path(mname, bname)
-    };
-
-    // define -context module
-    contextname = mname + CONTEXT;
-    bname = bname + CONTEXT;
-
-    mods[contextname] = {
-        type: CSS,
-        path: _path(mname, bname)
-    };
-
-    if (mname == CSSGRIDS) {
-        mods[mname].requires = [CSSFONTS];
-        mods[mname].optional = [CSSRESET];
-        mods[contextname].requires = [CSSFONTS + CONTEXT];
-        mods[contextname].optional = [CSSRESET + CONTEXT];
-    } else if (mname == CSSBASE) {
-        mods[mname].after = CSS_AFTER;
-        mods[contextname].after = CSS_AFTER;
-    }
-}
 
 Y.Env.meta = META;
-
-GLOBAL_LOADED = GLOBAL_ENV._loaded;
 
 Y.Loader = function(o) {
 
@@ -856,6 +231,28 @@ Y.Loader = function(o) {
      * @default true if a base dir isn't in the config
      */
     this.combine = o.base && (o.base.indexOf( this.comboBase.substr(0, 20)) > -1);
+
+    /**
+     * Max url length for combo urls.  The default is 2048 for
+     * internet explorer, and 8192 otherwise.  This is the URL
+     * limit for the Yahoo! hosted combo servers.  If consuming
+     * a different combo service that has a different URL limit
+     * it is possible to override this default by supplying 
+     * the maxURLLength config option.  The config option will
+     * only take effect if lower than the default.
+     *
+     * Browsers:
+     *    IE: 2048
+     *    Other A-Grade Browsers: Higher that what is typically supported 
+     *    'Capable' mobile browsers: @TODO
+     *
+     * Servers:
+     *    Apache: 8192
+     *
+     * @property maxURLLength
+     * @type int
+     */
+    this.maxURLLength = MAX_URL_LENGTH;
 
     /**
      * Ignore modules registered on the YUI global
@@ -1008,7 +405,7 @@ Y.Loader = function(o) {
      */
      this.skin = Y.merge(Y.Env.meta.skin);
     
-    var defaults = Y.Env.meta.modules, i, onPage = YUI.Env.mods;
+    var defaults = Y.Env.meta.modules, i, onPage = GLOBAL_ENV.mods;
 
     this._internal = true;
     for (i in defaults) {
@@ -1122,14 +519,14 @@ Y.Loader.prototype = {
                     if (i == 'require') {
                         this.require(val);
                     } else if (i == 'modules') {
-
                         // add a hash of module definitions
                         for (j in val) {
                             if (val.hasOwnProperty(j)) {
                                 this.addModule(val[j], j);
                             }
                         }
-
+                    } else if (i == 'maxURLLength') {
+                        this[i] = Math.min(MAX_URL_LENGTH, val);
                     } else {
                         this[i] = val;
                     }
@@ -2045,50 +1442,63 @@ Y.Loader.prototype = {
             return;
         }
 
-        var s, len, i, m, url, self=this, type=this.loadType, fn, msg, attr,
+        var s, len, i, m, url, type=this.loadType, fn, msg, attr,
+            combining, urls, comboBase, frag, self = this,
+
             callback=function(o) {
                 Y.log('Combo complete: ' + o.data, "info", "loader");
-                this._combineComplete[type] = true;
-
-                var c=this._combining, len=c.length, i;
+                self._combineComplete[type] = true;
+                var len=combining.length, i;
 
                 for (i=0; i<len; i=i+1) {
-                    this.inserted[c[i]] = true;
+                    self.inserted[combining[i]] = true;
                 }
 
-                this.loadNext(o.data);
+                self.loadNext(o.data);
             },
+
             onsuccess=function(o) {
                 // Y.log('loading next, just loaded' + o.data);
                 self.loadNext(o.data);
             };
 
-        // @TODO this will need to handle the two phase insert when
-        // CSS support is added
         if (this.combine && (!this._combineComplete[type])) {
 
-            this._combining = []; 
-            s=this.sorted;
-            len=s.length;
-            url=this.comboBase;
+            combining = [];
+
+            this._combining = combining; 
+            s = this.sorted;
+            len = s.length;
+            comboBase = this.comboBase;
+            url = comboBase;
+            urls = [];
 
 
-            for (i=0; i<len; i=i+1) {
+            for (i=0; i<len; i++) {
                 m = this.getModule(s[i]);
                 // Do not try to combine non-yui JS
                 if (m && (m.type === type) && !m.ext) {
-                    url += this.root + m.path;
-                    if (i < len-1) {
+                    frag = this.root + m.path;
+
+                    if ((url !== comboBase) && (i < (len - 1)) && ((frag.length + url.length) > this.maxURLLength)) {
+                        urls.push(this._filter(url));
+                        url = comboBase;
+                    }
+
+                    url += frag;
+                    if (i < (len - 1)) {
                         url += '&';
                     }
 
-                    this._combining.push(s[i]);
+                    combining.push(s[i]);
                 }
             }
 
-            if (this._combining.length) {
+            if (combining.length) {
 
-Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
+                urls.push(this._filter(url));
+
+Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
                 // if (m.type === CSS) {
                 if (type === CSS) {
@@ -2100,7 +1510,7 @@ Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
                 }
 
                 // @TODO get rid of the redundant Get code
-                fn(this._filter(url), {
+                fn(urls, {
                     data: this._loading,
                     onSuccess: callback,
                     onFailure: this._onFailure,
@@ -2110,7 +1520,7 @@ Y.log('Attempting to use combo: ' + this._combining, "info", "loader");
                     attributes: attr,
                     timeout: this.timeout,
                     autopurge: false,
-                    context: self 
+                    context: this
                 });
 
                 return;
@@ -2142,8 +1552,6 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
                         data: this.data
                     });
             }
-
-
         }
 
         s=this.sorted;
@@ -2195,7 +1603,7 @@ Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader"
                     attr = this.jsAttributes;
                 }
 
-                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i], this.galleryBase || m.base);
+                url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i], m.base);
 
                 fn(url, {
                     data: s[i],

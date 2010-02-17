@@ -20,33 +20,24 @@
 		YUI({ 
 
     		base: "../../build/",
-		    filter: "debug", 
+            filter: "raw", 
     		modules: {
     			"tablist": {
     				fullpath: "./build_files/tablist-debug.js",
     				requires: ["widget", "widget-parent", "widget-child", "node-focusmanager"]
-    			}			    
+    			}
     		}                
 		    
-		 }).use("tablist", function (Y) {
+		 }).use("tablist", "dump", function (Y) {
 
-            //  Three different ways to add a Tab
-
-            //  1)  Via the constructor
-            var tablist = new Y.TabList({ children: [ 
+            var tablist = new Y.TabList({ id: "#tabview-1", children: [ 
             
                     { type: "Tab", label: "Tab One", content: "Tab one content" },
                     { type: Y.Tab, label: "Tab Two", content: "Tab two content" } 
             
                  ] });
 
-            //  2)  Via creating a new instance of Y.Tab
-            // var tab = new Y.Tab({ label: "Item Four", content: "Tab four content" });
-            // tablist.add(tab);
-
-            //  3)  Via passing the configuration for a Y.Tab instance
-            //      directly to the add() method
-            tablist.add({ label: "Item Three", content: "Tab three content" });
+            tablist.add({ label: "Tab Three", content: "Tab three content" });
 
             tablist.render(Y.one("body"));
 

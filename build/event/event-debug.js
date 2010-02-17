@@ -17,7 +17,7 @@ var GLOBAL_ENV = YUI.Env,
     doScrollCap = docElement.doScroll,
     add = YUI.Env.add,
     remove = YUI.Env.remove,
-    targetEvent = (doScrollCap) ? 'onreadystatechange' : 'DOMontentLoaded',
+    targetEvent = (doScrollCap) ? 'onreadystatechange' : 'DOMContentLoaded',
     pollInterval = config.pollInterval || 40,
     stateChangeListener,
 
@@ -86,6 +86,27 @@ var GLOBAL_ENV = YUI.Env,
         Y.fire('domready');
     };
 
+/**
+ * The domready event fires at the moment the browser's DOM is
+ * usable. In most cases, this is before images are fully
+ * downloaded, allowing you to provide a more responsive user
+ * interface.
+ *
+ * In YUI 3, domready subscribers will be notified immediately if
+ * that moment has already passed when the subscription is created.
+ *
+ * One exception is if the yui.js file is dynamically injected into
+ * the page.  If this is done, you must tell the YUI instance that
+ * you did this in order for DOMReady (and window load events) to
+ * fire normally.  That configuration option is 'injected' -- set
+ * it to true if the yui.js script is not included inline.
+ *
+ * This method is part of the 'event-ready' module, which is a
+ * submodule of 'event'.  
+ *
+ * @event domready
+ * @for YUI
+ */
 Y.publish('domready', {
     fireOnce: true
 });
@@ -1195,28 +1216,61 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * left out, all listeners will be removed
          * @static
          */
+        // purgeElement: function(el, recurse, type) {
+        //     // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
+        //     var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
+        //         lis = this.getListeners(oEl, type), i, len, props;
+        //     if (lis) {
+        //         for (i=0,len=lis.length; i<len ; ++i) {
+        //             props = lis[i];
+        //             props.detachAll();
+        //             remove(props.el, props.type, props.fn, props.capture);
+        //             delete _wrappers[props.key];
+        //             delete _el_events[props.domkey][props.key];
+        //         }
+
+        //     }
+
+        //     if (recurse && oEl && oEl.childNodes) {
+        //         for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
+        //             this.purgeElement(oEl.childNodes[i], recurse, type);
+        //         }
+        //     }
+
+        // },
+
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = this.getListeners(oEl, type), i, len, props;
+                lis = this.getListeners(oEl, type), i, len, props, children, child;
+
+            if (recurse && oEl) {
+                lis = lis || [];
+                children = Y.Selector.query('*', oEl);
+                i = 0;
+                len = children.length;
+                for (; i < len; ++i) {
+                    child = this.getListeners(children[i], type);
+                    if (child) {
+                        lis = lis.concat(child);
+                    }
+                }
+            }
+
             if (lis) {
-                for (i=0,len=lis.length; i<len ; ++i) {
+                i = 0;
+                len = lis.length;
+                for (; i < len; ++i) {
                     props = lis[i];
                     props.detachAll();
                     remove(props.el, props.type, props.fn, props.capture);
                     delete _wrappers[props.key];
                     delete _el_events[props.domkey][props.key];
                 }
-
-            }
-
-            if (recurse && oEl && oEl.childNodes) {
-                for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
-                    this.purgeElement(oEl.childNodes[i], recurse, type);
-                }
             }
 
         },
+
 
         /**
          * Returns all listeners attached to the given element via addListener.
@@ -1424,7 +1478,7 @@ var Event = Y.Event,
 				returnVal = false;
 			}
 			else {
-				returnVal = Y.Selector.test(el, selector) ? el: getMatch(el.parentNode, selector, container);
+				returnVal = Y.Selector.test(el, selector, container) ? el: getMatch(el.parentNode, selector, container);
 			}
 			
 			return returnVal;
@@ -1444,15 +1498,15 @@ var Event = Y.Event,
 				if (Y.Selector.test(target, spec, el)) {
 					matched = target;
 				}
-				else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
-						
-					//	The target is a descendant of an element matching 
-					//	the selector, so crawl up to find the ancestor that 
-					//	matches the selector
-					
-					matched = getMatch(target, spec, el);
-					
-				}
+                else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
+                     
+                 //  The target is a descendant of an element matching 
+                 //  the selector, so crawl up to find the ancestor that 
+                 //  matches the selector
+                 
+                 matched = getMatch(target, spec, el);
+                 
+                }
 
 
 				if (matched) {
@@ -1462,7 +1516,7 @@ var Event = Y.Event,
                         ev.container = ev.currentTarget;
                     }
 
-                    ev.currentTarget = Y.Node.get(matched);
+                    ev.currentTarget = Y.one(matched);
 
 					Y.publish(ename, {
 			               contextFn: function() {
@@ -1513,53 +1567,6 @@ var Event = Y.Event,
         return str.replace(/[|,:]/g, '~');
     });
 
-/**
- * Sets up event delegation on a container element.  The delegated event
- * will use a supplied selector to test if the target or one of the
- * descendants of the target match it.  The supplied callback function 
- * will only be executed if a match was encountered, and, in fact, 
- * will be executed for each element that matches if you supply an 
- * ambiguous selector.
- *
- * The event object for the delegated event is supplied to the callback
- * function.  It is modified slightly in order to support all properties
- * that may be needed for event delegation.  'currentTarget' is set to
- * the element that matched the delegation specifcation.  'container' is
- * set to the element that the listener is bound to (this normally would
- * be the 'currentTarget').
- *
- * @event delegate
- * @param type {string} 'delegate'
- * @param fn {function} the callback function to execute.  This function
- * will be provided the event object for the delegated event.
- * @param el {string|node} the element that is the delegation container
- * @param delegateType {string} the event type to delegate
- * @param spec {string} a selector that must match the target of the
- * event.
- * @param context optional argument that specifies what 'this' refers to.
- * @param args* 0..n additional arguments to pass on to the callback function.
- * These arguments will be added after the event object.
- * @return {EventHandle} the detach handle
- * @for YUI
- * @deprecated use Y.delegate
- */
-Y.Env.evt.plugins.delegate = {
-
-    on: function(type, fn, el, delegateType, spec) {
-
-        Y.log('delegate event is deprecated, use Y.delegate()', 'warn', 'deprecated');
-
-		var args = Y.Array(arguments, 0, true);
-		
-		args.splice(3, 1);
-		
-		args[0] = delegateType;
-
-		return Y.delegate.apply(Y, args);
-
-    }
-
-};
 
 
 /**
@@ -2109,8 +2116,18 @@ var UA = Y.UA,
 
 	attach = function (args, config) {
 
-	    var a = Y.Array(args, 0, true);
-		a[0] = eventNames[a[0]];
+	    var a = Y.Array(args, 0, true),
+            el = args[2];
+        
+        if (el) {
+            if (Y.DOM.isWindow(el)) {
+                config.capture = false;
+            }
+            else {
+		        a[0] = eventNames[a[0]];
+		    }
+        }
+
 	    return Event._attach(a, config);
 
 	},

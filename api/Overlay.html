@@ -56,6 +56,10 @@
                             <span class="extends" rel="yui:extends">
                           - uses 
                             
+                                <span rel="extend" resource="WidgetStdMod.html">
+                                <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>
+                                </span>
+                            , 
                                 <span rel="extend" resource="WidgetPosition.html">
                                 <a href="WidgetPosition.html" property="yui:name" title="WidgetPosition">WidgetPosition</a>
                                 </span>
@@ -64,12 +68,12 @@
                                 <a href="WidgetStack.html" property="yui:name" title="WidgetStack">WidgetStack</a>
                                 </span>
                             , 
-                                <span rel="extend" resource="WidgetPositionExt.html">
-                                <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>
+                                <span rel="extend" resource="WidgetPositionAlign.html">
+                                <a href="WidgetPositionAlign.html" property="yui:name" title="WidgetPositionAlign">WidgetPositionAlign</a>
                                 </span>
                             , 
-                                <span rel="extend" resource="WidgetStdMod.html">
-                                <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>
+                                <span rel="extend" resource="WidgetPositionConstrain.html">
+                                <a href="WidgetPositionConstrain.html" property="yui:name" title="WidgetPositionConstrain">WidgetPositionConstrain</a>
                                 </span>
                             
                             
@@ -132,6 +136,10 @@ body and footer section support.
                                         <a class="" href="Widget.html#property_CONTENT_TEMPLATE" property="yui:name" title="CONTENT_TEMPLATE">CONTENT_TEMPLATE</a><span class="">,</span>
                                         </span>
                                     
+                                        <span rel="yui:property" resource="Widget.html#property_DEF_PARENT_NODE">
+                                        <a class="" href="Widget.html#property_DEF_PARENT_NODE" property="yui:name" title="DEF_PARENT_NODE">DEF_PARENT_NODE</a><span class="">,</span>
+                                        </span>
+                                    
                                         <span rel="yui:property" resource="Widget.html#property_DEF_UNIT">
                                         <a class="" href="Widget.html#property_DEF_UNIT" property="yui:name" title="DEF_UNIT">DEF_UNIT</a><span class="">,</span>
                                         </span>
@@ -143,8 +151,8 @@ body and footer section support.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionExt.html">
-                            <h4>Properties inherited from <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStack.html">
+                            <h4>Properties inherited from <a href="WidgetStack.html" property="yui:name" title="WidgetStack">WidgetStack</a>:</h4>
                             <div class="content" rel="yui:properties">
                                 <code>
                                     
@@ -159,8 +167,8 @@ body and footer section support.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStack.html">
-                            <h4>Properties inherited from <a href="WidgetStack.html" property="yui:name" title="WidgetStack">WidgetStack</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionAlign.html">
+                            <h4>Properties inherited from <a href="WidgetPositionAlign.html" property="yui:name" title="WidgetPositionAlign">WidgetPositionAlign</a>:</h4>
                             <div class="content" rel="yui:properties">
                                 <code>
                                     
@@ -181,6 +189,14 @@ body and footer section support.
                         </div>
                         <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStdMod.html">
                             <h4>Properties inherited from <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionConstrain.html">
+                            <h4>Properties inherited from <a href="WidgetPositionConstrain.html" property="yui:name" title="WidgetPositionConstrain">WidgetPositionConstrain</a>:</h4>
                             <div class="content" rel="yui:properties">
                                 <code>
                                     
@@ -264,11 +280,20 @@ body and footer section support.
                                             <span rel="yui:method" resource="Widget.html#method__guid">                                        
                                             <a class="protected" href="Widget.html#method__guid" property="yui:name" title="_guid">_guid</a><span class="protected">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="Widget.html#method__initUIEvent">                                        
+                                            <a class="private" href="Widget.html#method__initUIEvent" property="yui:name" title="_initUIEvent">_initUIEvent</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__isUIEvent">                                        
+                                            <a class="private" href="Widget.html#method__isUIEvent" property="yui:name" title="_isUIEvent">_isUIEvent</a><span class="private">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="Widget.html#method__onDocFocus">                                        
                                             <a class="protected" href="Widget.html#method__onDocFocus" property="yui:name" title="_onDocFocus">_onDocFocus</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__onDocMouseDown">                                        
                                             <a class="protected" href="Widget.html#method__onDocMouseDown" property="yui:name" title="_onDocMouseDown">_onDocMouseDown</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method__removeLoadingClassNames">                                        
+                                            <a class="protected" href="Widget.html#method__removeLoadingClassNames" property="yui:name" title="_removeLoadingClassNames">_removeLoadingClassNames</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__renderBox">                                        
                                             <a class="private" href="Widget.html#method__renderBox" property="yui:name" title="_renderBox">_renderBox</a><span class="private">,</span>
@@ -356,6 +381,9 @@ body and footer section support.
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method_getDefaultLocale">                                        
                                             <a class="" href="Widget.html#method_getDefaultLocale" property="yui:name" title="getDefaultLocale">getDefaultLocale</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Widget.html#method_getSkinName">                                        
+                                            <a class="" href="Widget.html#method_getSkinName" property="yui:name" title="getSkinName">getSkinName</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method_getString">                                        
                                             <a class="" href="Widget.html#method_getString" property="yui:name" title="getString">getString</a><span class="">,</span>
@@ -527,33 +555,33 @@ body and footer section support.
                                     </code>
                                 </div>
                             </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionExt.html">
-                                <h4>Methods inherited from <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>:</h4>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionAlign.html">
+                                <h4>Methods inherited from <a href="WidgetPositionAlign.html" property="yui:name" title="WidgetPositionAlign">WidgetPositionAlign</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__afterAlignChange">                                        
-                                            <a class="protected" href="WidgetPositionExt.html#method__afterAlignChange" property="yui:name" title="_afterAlignChange">_afterAlignChange</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="WidgetPositionAlign.html#method__afterAlignChange">                                        
+                                            <a class="protected" href="WidgetPositionAlign.html#method__afterAlignChange" property="yui:name" title="_afterAlignChange">_afterAlignChange</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__bindUIStack">                                        
-                                            <a class="protected" href="WidgetPositionExt.html#method__bindUIStack" property="yui:name" title="_bindUIStack">_bindUIStack</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="WidgetPositionAlign.html#method__bindUIStack">                                        
+                                            <a class="protected" href="WidgetPositionAlign.html#method__bindUIStack" property="yui:name" title="_bindUIStack">_bindUIStack</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__doAlign">                                        
-                                            <a class="private" href="WidgetPositionExt.html#method__doAlign" property="yui:name" title="_doAlign">_doAlign</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="WidgetPositionAlign.html#method__doAlign">                                        
+                                            <a class="private" href="WidgetPositionAlign.html#method__doAlign" property="yui:name" title="_doAlign">_doAlign</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__setAlignCenter">                                        
-                                            <a class="protected" href="WidgetPositionExt.html#method__setAlignCenter" property="yui:name" title="_setAlignCenter">_setAlignCenter</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="WidgetPositionAlign.html#method__setAlignCenter">                                        
+                                            <a class="protected" href="WidgetPositionAlign.html#method__setAlignCenter" property="yui:name" title="_setAlignCenter">_setAlignCenter</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__syncUIPosExtras">                                        
-                                            <a class="protected" href="WidgetPositionExt.html#method__syncUIPosExtras" property="yui:name" title="_syncUIPosExtras">_syncUIPosExtras</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="WidgetPositionAlign.html#method__syncUIPosAlgin">                                        
+                                            <a class="protected" href="WidgetPositionAlign.html#method__syncUIPosAlgin" property="yui:name" title="_syncUIPosAlgin">_syncUIPosAlgin</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="WidgetPositionExt.html#method__uiSetAlign">                                        
-                                            <a class="protected" href="WidgetPositionExt.html#method__uiSetAlign" property="yui:name" title="_uiSetAlign">_uiSetAlign</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="WidgetPositionAlign.html#method__uiSetAlign">                                        
+                                            <a class="protected" href="WidgetPositionAlign.html#method__uiSetAlign" property="yui:name" title="_uiSetAlign">_uiSetAlign</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="WidgetPositionExt.html#method_align">                                        
-                                            <a class="" href="WidgetPositionExt.html#method_align" property="yui:name" title="align">align</a><span class="">,</span>
+                                            <span rel="yui:method" resource="WidgetPositionAlign.html#method_align">                                        
+                                            <a class="" href="WidgetPositionAlign.html#method_align" property="yui:name" title="align">align</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="WidgetPositionExt.html#method_centered">                                        
-                                            <a class="" href="WidgetPositionExt.html#method_centered" property="yui:name" title="centered">centered</a>
+                                            <span rel="yui:method" resource="WidgetPositionAlign.html#method_centered">                                        
+                                            <a class="" href="WidgetPositionAlign.html#method_centered" property="yui:name" title="centered">centered</a>
                                             </span>
                                     </code>
                                 </div>
@@ -592,8 +620,14 @@ body and footer section support.
                                             <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
                                             <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getTargets">                                        
+                                            <a class="" href="EventTarget.html#method_getTargets" property="yui:name" title="getTargets">getTargets</a><span class="">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_on">                                        
                                             <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_once">                                        
+                                            <a class="" href="EventTarget.html#method_once" property="yui:name" title="once">once</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
                                             <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
@@ -643,6 +677,9 @@ body and footer section support.
                                             </span>
                                             <span rel="yui:method" resource="Base.html#method__initHierarchyData">                                        
                                             <a class="private" href="Base.html#method__initHierarchyData" property="yui:name" title="_initHierarchyData">_initHierarchyData</a><span class="private">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Base.html#method__preInitEventCfg">                                        
+                                            <a class="" href="Base.html#method__preInitEventCfg" property="yui:name" title="_preInitEventCfg">_preInitEventCfg</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Base.html#method_destroy">                                        
                                             <a class="" href="Base.html#method_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
@@ -732,6 +769,43 @@ body and footer section support.
                                     </code>
                                 </div>
                             </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionConstrain.html">
+                                <h4>Methods inherited from <a href="WidgetPositionConstrain.html" property="yui:name" title="WidgetPositionConstrain">WidgetPositionConstrain</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method__afterAlignChange">                                        
+                                            <a class="protected" href="WidgetPositionConstrain.html#method__afterAlignChange" property="yui:name" title="_afterAlignChange">_afterAlignChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method__afterConstrainChange">                                        
+                                            <a class="" href="WidgetPositionConstrain.html#method__afterConstrainChange" property="yui:name" title="_afterConstrainChange">_afterConstrainChange</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method__bindUIPosConstrained">                                        
+                                            <a class="protected" href="WidgetPositionConstrain.html#method__bindUIPosConstrained" property="yui:name" title="_bindUIPosConstrained">_bindUIPosConstrained</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method__constrain">                                        
+                                            <a class="" href="WidgetPositionConstrain.html#method__constrain" property="yui:name" title="_constrain">_constrain</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method__getRegion">                                        
+                                            <a class="" href="WidgetPositionConstrain.html#method__getRegion" property="yui:name" title="_getRegion">_getRegion</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method__preventOverlap">                                        
+                                            <a class="" href="WidgetPositionConstrain.html#method__preventOverlap" property="yui:name" title="_preventOverlap">_preventOverlap</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method__setConstrain">                                        
+                                            <a class="" href="WidgetPositionConstrain.html#method__setConstrain" property="yui:name" title="_setConstrain">_setConstrain</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method_constrain">                                        
+                                            <a class="" href="WidgetPositionConstrain.html#method_constrain" property="yui:name" title="constrain">constrain</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method_enable or disable constraints listeners">                                        
+                                            <a class="" href="WidgetPositionConstrain.html#method_enable or disable constraints listeners" property="yui:name" title="enable or disable constraints listeners">enable or disable constraints listeners</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="WidgetPositionConstrain.html#method_getConstrainedXY">                                        
+                                            <a class="" href="WidgetPositionConstrain.html#method_getConstrainedXY" property="yui:name" title="getConstrainedXY">getConstrainedXY</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -815,20 +889,6 @@ body and footer section support.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionExt.html">
-                            <h4>Events inherited from <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>:</h4>
-                            <div class="content" rel="yui:events">
-                                <code>
-                                        <span rel="yui:event" resource="WidgetPositionExt.html#event_alignChange">
-                                        <a class="" href="WidgetPositionExt.html#event_alignChange" property="yui:name" title="alignChange">alignChange</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="WidgetPositionExt.html#event_centeredChange">
-                                        <a class="" href="WidgetPositionExt.html#event_centeredChange" property="yui:name" title="centeredChange">centeredChange</a><span class="">,</span>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
                         <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStdMod.html">
                             <h4>Events inherited from <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>:</h4>
                             <div class="content" rel="yui:events">
@@ -844,6 +904,20 @@ body and footer section support.
                                         </span>
                                                                             <span rel="yui:event" resource="WidgetStdMod.html#event_headerContentChange">
                                         <a class="" href="WidgetStdMod.html#event_headerContentChange" property="yui:name" title="headerContentChange">headerContentChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionAlign.html">
+                            <h4>Events inherited from <a href="WidgetPositionAlign.html" property="yui:name" title="WidgetPositionAlign">WidgetPositionAlign</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="WidgetPositionAlign.html#event_alignChange">
+                                        <a class="" href="WidgetPositionAlign.html#event_alignChange" property="yui:name" title="alignChange">alignChange</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="WidgetPositionAlign.html#event_centeredChange">
+                                        <a class="" href="WidgetPositionAlign.html#event_centeredChange" property="yui:name" title="centeredChange">centeredChange</a><span class="">,</span>
                                         </span>
                                     
                                 </code>
@@ -933,20 +1007,6 @@ body and footer section support.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionExt.html">
-                            <h4>Configuration attributes inherited from <a href="WidgetPositionExt.html" property="yui:name" title="WidgetPositionExt">WidgetPositionExt</a>:</h4>
-                            <div class="content" rel="yui:attributes">
-                                <code>
-                                        <span rel="yui:attribute" resource="WidgetPositionExt.html#config_align">                                        
-                                        <a class="" href="WidgetPositionExt.html#config_align" property="yui:name" title="align">align</a>
-                                        </span>
-                                                                                <span rel="yui:attribute" resource="WidgetPositionExt.html#config_centered">                                        
-                                        <a class="" href="WidgetPositionExt.html#config_centered" property="yui:name" title="centered">centered</a>
-                                        </span>
-                                        
-                                </code>
-                            </div>
-                        </div>
                         <div class="section field inheritance" rel="yui:superclass"  resource="WidgetStdMod.html">
                             <h4>Configuration attributes inherited from <a href="WidgetStdMod.html" property="yui:name" title="WidgetStdMod">WidgetStdMod</a>:</h4>
                             <div class="content" rel="yui:attributes">
@@ -962,6 +1022,20 @@ body and footer section support.
                                         </span>
                                                                                 <span rel="yui:attribute" resource="WidgetStdMod.html#config_headerContent">                                        
                                         <a class="" href="WidgetStdMod.html#config_headerContent" property="yui:name" title="headerContent">headerContent</a>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="WidgetPositionAlign.html">
+                            <h4>Configuration attributes inherited from <a href="WidgetPositionAlign.html" property="yui:name" title="WidgetPositionAlign">WidgetPositionAlign</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="WidgetPositionAlign.html#config_align">                                        
+                                        <a class="" href="WidgetPositionAlign.html#config_align" property="yui:name" title="align">align</a>
+                                        </span>
+                                                                                <span rel="yui:attribute" resource="WidgetPositionAlign.html#config_centered">                                        
+                                        <a class="" href="WidgetPositionAlign.html#config_centered" property="yui:name" title="centered">centered</a>
                                         </span>
                                         
                                 </code>
@@ -1035,7 +1109,8 @@ body and footer section support.
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

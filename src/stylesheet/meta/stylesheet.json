@@ -1,0 +1,7 @@
+{
+    "stylesheet": {
+        "requires": [
+            "yui-base"
+        ]
+    }
+}

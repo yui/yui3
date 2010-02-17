@@ -1,0 +1,10 @@
+{
+    "slider": {
+        "requires": [
+            "widget", 
+            "dd-value", 
+            "skin-sam-slider"
+        ], 
+        "skinnable": true
+    }
+}

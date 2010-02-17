@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>history-lite : event loop test case</title>
+		<link rel="stylesheet" href="site.css">
+	</head>
+	<body>
+		<div id="page">
+			
+			<div id="page-number">1</div>
+		
+			<a id="next" href="#page=2" title="click this or press →">next page →</a>
+			
+			<p>This page attempts to induce the <a href="http://yuilibrary.com/gallery/show/history-lite"><cite>history-lite</cite></a> module to fire the <code>history-lite:change</code> the event continously. On Safari 4 and Firefox 3 on Mac OS X Snow-Leopard, I’ve only been able to do this when the browser back button takes the user back to the original landing page.</p>
+
+			<p>Open the console, and <a href="index.html">reload</a> the page with no anchor parameters and no <code>#</code> character in the location URL. When the page is first loaded, the <code>draw_anchor</code> function is called in <a href="site.js">site.js</a> – it draws the page number based any <code>page=</code> anchor values in the URL. If there are none, the page number defaults to <code>1</code>.</p>
+
+			<p>Press → or click the <code>next</code> link to increase the page value. The <cite>history-lite</cite> module's <code>add</code> method gets called every time the value of the page is changed – a second parameter value of <code>true</code> is passed to <code>add</code> to indicate I don’t want the <code>history-lite:change</code> event to fire … </p>
+
+			<p>Now click the browser back button until the URL returns to its original state, without any anchor parameters. At this point, glancing at the console, it appears the <code>history-lite:change</code> event fires continuously.</p>
+				
+		</div>
+
+        <!-- YUI3 with event-custom-base (buggy) -->
+        <!--
+        <script src="http://yui.yahooapis.com/combo?3.0.0/build/yui/yui-base.js&3.0.0/build/yui/yui-later.js&3.0.0/build/oop/oop.js&3.0.0/build/dom/dom.js&3.0.0/build/event-custom/event-custom-base.js&3.0.0/build/event/event.js&3.0.0/build/pluginhost/pluginhost.js&3.0.0/build/node/node.js"></script>
+        -->
+        <script src="../../build/yui/yui-base-debug.js"></script>
+        <script src="../../build/yui/yui-log-debug.js"></script>
+        <script src="../../build/yui/yui-later-debug.js"></script>
+        <script src="../../build/oop/oop-debug.js"></script>
+        <script src="../../build/dom/dom.js"></script>
+        <script src="../../build/event-custom/event-custom-base-debug.js"></script>
+        <script src="../../build/event/event.js"></script>
+        <script src="../../build/pluginhost/pluginhost.js"></script>
+        <script src="../../build/node/node.js"></script>
+        
+        <!-- YUI3 with event-custom-base & event-custom-complex (works) -->
+        <!-- <script type="text/javascript" src="http://yui.yahooapis.com/combo?3.0.0/build/yui/yui-base.js&3.0.0/build/yui/yui-later.js&3.0.0/build/oop/oop.js&3.0.0/build/dom/dom.js&3.0.0/build/event-custom/event-custom-base.js&3.0.0/build/event/event.js&3.0.0/build/pluginhost/pluginhost.js&3.0.0/build/node/node.js&3.0.0/build/event-custom/event-custom-complex.js"></script> -->
+
+        <!-- history-lite requires the event-custom rollup -->
+		<script src="history-lite.js"></script>
+		<script src="site.js"></script>
+
+	</body>
+</html>

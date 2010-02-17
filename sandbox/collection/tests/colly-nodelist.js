@@ -1,6 +1,5 @@
 YUI.add('colly-nodelist', function(Y) {
 
-(function () {
 var Node       = Y.Node,
     getDOMNode = Node.getDOMNode,
     Array_each = Y.Array.each;
@@ -11,6 +10,8 @@ function NodeList( nodes ) {
         nodes = Y.Selector.query( nodes );
     } else if ( nodes.nodeType || nodes instanceof Node ) {
         nodes = [ getDOMNode( nodes ) ];
+    } else if ( nodes instanceof NodeList ) {
+        return nodes;
     } else {
         // array of DOM nodes or Node instances
         Array_each( nodes, function ( node, i ) {
@@ -185,7 +186,31 @@ Node.all = function ( nodes ) {
 };
 
 Y.NodeList = NodeList;
-})();
+Y.mix( Y.NodeList.prototype, {
+
+    modulus: function ( n, r ) {
+        r = r || 0;
+
+        var items = [];
+
+        Y.Array.each( this._items, function ( item, i ) {
+            if ( i % n === r ) {
+                items.push( item );
+            }
+        }, this);
+
+        return Y.all( items );
+    },
+
+    odd: function () {
+        return this.modulus( 2, 1 );
+    },
+
+    even: function () {
+        return this.modulus( 2 );
+    }
+
+});
 
 
 }, '@VERSION@' ,{requires:['node-base', 'colly']});

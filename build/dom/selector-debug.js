@@ -285,6 +285,7 @@ var PARENT_NODE = 'parentNode',
     Selector = Y.Selector,
 
     SelectorCSS2 = {
+        _reRegExpTokens: /([\^\$\?\[\]\*\+\-\.\(\)\|\\])/, // TODO: move?
         SORT_RESULTS: true,
         _children: function(node, tag) {
             var ret = node.children,
@@ -433,8 +434,9 @@ var PARENT_NODE = 'parentNode',
                             }
 
                             if ((operator === '=' && value !== test[2]) ||  // fast path for equality
-                                (operator.test && !operator.test(value)) ||  // regex test
-                                (operator.call && !operator(tmpNode, test[0]))) { // function test
+                                (typeof operator !== 'string' && // protect against String.test monkey-patch (Moo)
+                                operator.test && !operator.test(value)) ||  // regex test
+                                (typeof operator === 'function' && !operator(tmpNode, test[0]))) { // function test
 
                                 // skip non element nodes or non-matching tags
                                 if ((tmpNode = tmpNode[path])) {
@@ -517,6 +519,7 @@ var PARENT_NODE = 'parentNode',
                     if (operator in operators) {
                         test = operators[operator];
                         if (typeof test === 'string') {
+                            match[3] = match[3].replace(Y.Selector._reRegExpTokens, '\\$1');
                             test = Y.DOM._getRegExp(test.replace('{val}', match[3]));
                         }
                         match[2] = test;

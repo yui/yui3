@@ -1,0 +1,26 @@
+total 156K
+drwxrwxr-x  5 adamoore users  170 2010-02-11 15:25 ./
+drwxrwxr-x 55 adamoore users 1.9K 2010-02-08 11:38 ../
+-rw-rw-r--  1 adamoore users  67K 2010-02-11 15:25 loader-debug.js
+-rw-rw-r--  1 adamoore users  17K 2010-02-11 15:25 loader-min.js
+-rw-rw-r--  1 adamoore users  65K 2010-02-11 15:25 loader.js
+
+5.5k gzip  (original)
+
+total 176K
+drwxrwxr-x  6 adamoore users  204 2010-02-11 15:46 ./
+drwxrwxr-x 55 adamoore users 1.9K 2010-02-08 11:38 ../
+-rw-rw-r--  1 adamoore users  73K 2010-02-11 15:46 loader-debug.js
+-rw-rw-r--  1 adamoore users  19K 2010-02-11 15:46 loader-min.js
+-rw-rw-r--  1 adamoore users  70K 2010-02-11 15:46 loader.js
+
+5.6k gzip (constants still there, json metadata)
+
+total 168K
+drwxrwxr-x  6 adamoore users  204 2010-02-11 22:06 ./
+drwxrwxr-x 55 adamoore users 1.9K 2010-02-08 11:38 ../
+-rw-rw-r--  1 adamoore users  71K 2010-02-11 22:06 loader-debug.js
+-rw-rw-r--  1 adamoore users  18K 2010-02-11 22:06 loader-min.js
+-rw-rw-r--  1 adamoore users  68K 2010-02-11 22:06 loader.js
+
+5.3k gzip (removed constants)

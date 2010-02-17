@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Nested Widget Example</title>
+
+	<link rel="stylesheet" type="text/css" href="/yui3/build/cssreset/reset-min.css">
+	<link rel="stylesheet" type="text/css" href="/yui3/build/cssfonts/fonts-min.css">
+
+	<script src="../../build/yui/yui.js" type="text/javascript"></script>
+	
+</head>
+<body class="yui-skin-sam">
+
+    <button id="test">Test</button>
+
+    	<script type="text/javascript">
+
+    		YUI({ 
+    		    filter: "raw"
+    		 }).use("widget", "widget-parent", "widget-child", function (Y) {
+
+                 var Parent = Y.Base.build("parent", Y.Widget, [Y.WidgetParent, Y.WidgetChild]);
+                 var Child = Y.Base.build("child", Y.Widget, [Y.WidgetChild]);
+
+                 var root = new Parent();
+                 
+                 root.add(new Parent());
+                 root.add(new Child());
+
+                 root.item(0).one("contentBox").set("innerHTML", "Child One");
+                 root.item(1).one("contentBox").set("innerHTML", "Child Two");
+
+                 root.render();
+                 
+                 // The following two listeners will not be called if 
+                 // line 481 of Widget.js is commented out
+                 
+                 root.on("child:click", function (e) {
+                    
+                    alert("You clicked: " + e.domEvent);
+                     
+                 });
+                 
+                 root.on("parent:click", function (e) {
+                    
+                    alert("You clicked: " + e.domEvent);
+                     
+                 });
+
+    		});
+
+    	</script>
+
+</body>
+</html>

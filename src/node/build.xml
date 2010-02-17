@@ -6,18 +6,21 @@
 	<ant antfile="build.node.xml" target="local" />
 	<ant antfile="build.shim.xml" target="local" />
 	<ant antfile="build.align.xml" target="local" />
+	<ant antfile="build.event-html5.xml" target="local" />
     </target>
 
     <target name="deploy">
 	<ant antfile="build.node.xml" target="deploy" />
 	<ant antfile="build.shim.xml" target="deploy" />
 	<ant antfile="build.align.xml" target="deploy" />
+	<ant antfile="build.event-html5.xml" target="deploy" />
     </target>
 
     <target name="all">
 	<ant antfile="build.node.xml" target="all" />
 	<ant antfile="build.shim.xml" target="all" />
 	<ant antfile="build.align.xml" target="all" />
+	<ant antfile="build.event-html5.xml" target="all" />
     </target>
 
 </project>

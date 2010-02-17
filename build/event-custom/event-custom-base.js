@@ -323,6 +323,7 @@ var AFTER = 'after',
         'contextFn',
         'currentTarget',
         'defaultFn',
+        'defaultTargetOnly',
         'details',
         'emitFacade',
         'fireOnce',
@@ -812,6 +813,8 @@ Y.CustomEvent.prototype = {
     },
 
     fireSimple: function(args) {
+        this.stopped = 0;
+        this.prevented = 0;
         if (this.hasSubs()) {
             // this._procSubs(Y.merge(this.subscribers, this.afters), args);
             var subs = this.getSubs();
@@ -944,7 +947,13 @@ Y.Subscriber = function(fn, context, args) {
      * @property events
      * @type {EventTarget}
      */
-    this.events = null;
+    // this.events = null;
+
+    /**
+     * This listener only reacts to the event once
+     * @property once
+     */
+    // this.once = false;
     
 };
 
@@ -967,6 +976,10 @@ Y.Subscriber.prototype = {
                 } else {
                     ret = this.fn.call(c);
                 }
+        }
+
+        if (this.once) {
+            ce._delete(this);
         }
 
         return ret;
@@ -1125,6 +1138,8 @@ var L = Y.Lang,
 
             chain: ('chain' in o) ? o.chain : Y.config.chain,
 
+            bubbling: false,
+
             defaults: {
                 context: o.context || this, 
                 host: this,
@@ -1132,6 +1147,7 @@ var L = Y.Lang,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
                 broadcast: o.broadcast,
+                defaultTargetOnly: o.defaulTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -1140,6 +1156,21 @@ var L = Y.Lang,
 
 
 ET.prototype = {
+
+    /**
+     * Listen to a custom event hosted by this object one time.  
+     * This is the equivalent to <code>on</code> except the
+     * listener is immediatelly detached when it is executed.
+     * @method once
+     * @param type    {string}   The type of the event
+     * @param fn {Function} The callback
+     * @return the event target or a detach handle per 'chain' config
+     */
+    once: function() {
+        var handle = this.on.apply(this, arguments);
+        handle.sub.once = true;
+        return handle;
+    },
 
     /**
      * Subscribe to a custom event hosted by this object
@@ -1152,7 +1183,7 @@ ET.prototype = {
 
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
-            Node = Y.Node, n, domevent;
+            Node = Y.Node, n, domevent, isArr;
 
         if (L.isObject(type)) {
 
@@ -1164,17 +1195,22 @@ ET.prototype = {
             c = context; 
             args = Y.Array(arguments, 0, true);
             ret = {};
-            after = type._after;
-            delete type._after;
+
+            if (L.isArray(type)) {
+                isArr = true;
+            } else {
+                after = type._after;
+                delete type._after;
+            }
 
             Y.each(type, function(v, k) {
 
-                if (v) {
-                    f = v.fn || ((Y.Lang.isFunction(v)) ? v : f);
+                if (L.isObject(v)) {
+                    f = v.fn || ((L.isFunction(v)) ? v : f);
                     c = v.context || c;
                 }
 
-                args[0] = (after) ? AFTER_PREFIX + k : k;
+                args[0] = (isArr) ? v : ((after) ? AFTER_PREFIX + k : k);
                 args[1] = f;
                 args[2] = c;
 
@@ -1534,22 +1570,15 @@ ET.prototype = {
 
         // this event has not been published or subscribed to
         if (!ce) {
-            
             if (this._yuievt.hasTargets) {
                 return this.bubble({ type: t }, args, this);
             }
 
             // otherwise there is nothing to be done
             ret = true;
-
         } else {
-
             ce.sibling = ce2;
-
             ret = ce.fire.apply(ce, args);
-
-            // clear target for next fire()
-            ce.target = null;
         }
 
         return (this._yuievt.chain) ? this : ret;
@@ -1742,6 +1771,26 @@ Y.Global = YUI.Env.globalEvents;
  * @return the event target or a detach handle per 'chain' config
  * @for YUI
  */
+
+ /**
+  * Listen for an event one time.  Equivalent to <code>on</code>, except that
+  * the listener is immediately detached when executed.
+  * @see on
+  * @method once
+  * @param type** event type (this parameter does not apply for function events)
+  * @param fn the callback
+  * @param target** a descriptor for the target (applies to custom events only).
+  * For function events, this is the object that contains the function to
+  * execute.
+  * @param extra** 0..n Extra information a particular event may need.  These
+  * will be documented with the event.  In the case of function events, this
+  * is the name of the function to execute on the host.  In the case of
+  * delegate listeners, this is the event delegation specification.
+  * @param context optionally change the value of 'this' in the callback
+  * @param args* 0..n additional arguments to pass to the callback.
+  * @return the event target or a detach handle per 'chain' config
+  * @for YUI
+  */
 
 /**
  * after() is a unified interface for subscribing to

@@ -60,6 +60,27 @@
         <span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">);</span>
     <span class="p">};</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * The domready event fires at the moment the browser&#39;s DOM is</span>
+<span class="cm"> * usable. In most cases, this is before images are fully</span>
+<span class="cm"> * downloaded, allowing you to provide a more responsive user</span>
+<span class="cm"> * interface.</span>
+<span class="cm"> *</span>
+<span class="cm"> * In YUI 3, domready subscribers will be notified immediately if</span>
+<span class="cm"> * that moment has already passed when the subscription is created.</span>
+<span class="cm"> *</span>
+<span class="cm"> * One exception is if the yui.js file is dynamically injected into</span>
+<span class="cm"> * the page.  If this is done, you must tell the YUI instance that</span>
+<span class="cm"> * you did this in order for DOMReady (and window load events) to</span>
+<span class="cm"> * fire normally.  That configuration option is &#39;injected&#39; -- set</span>
+<span class="cm"> * it to true if the yui.js script is not included inline.</span>
+<span class="cm"> *</span>
+<span class="cm"> * This method is part of the &#39;event-ready&#39; module, which is a</span>
+<span class="cm"> * submodule of &#39;event&#39;.  </span>
+<span class="cm"> *</span>
+<span class="cm"> * @event domready</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">fireOnce</span><span class="o">:</span> <span class="kc">true</span>
 <span class="p">});</span>
@@ -128,7 +149,8 @@
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
@@ -157,6 +179,7 @@
                                 <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
                                 <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
                                 <li class=""><a href="resize-window.js.html" title="resize-window.js">resize-window.js</a></li>
+                                <li class=""><a href="synthetic.js.html" title="synthetic.js">synthetic.js</a></li>
                         </ul>
                     </div>
 

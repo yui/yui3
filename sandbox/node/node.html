@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Node</title>
+
+<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+</head>
+
+<body>
+<script type="text/javascript">
+
+
+YUI().use('node', function(Y) {
+    
+    var oDIV = document.createElement('div');
+    
+    oDIV.innerHTML = '<div id="foo"><div class="bar"></div></div>';
+    
+    var oNode = Y.one(oDIV);
+    
+    var oFoo = oNode.one('#foo');
+    
+    var oBar = oFoo.one('.bar');
+    
+    alert(oBar.get('nodeName'));
+    
+});
+
+
+
+</script>
+</body>
+</html>
+

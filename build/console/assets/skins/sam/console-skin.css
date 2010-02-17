@@ -1,11 +1,11 @@
-.yui-skin-sam .yui-separate-console {
+.yui3-skin-sam .yui3-separate-console {
     position:absolute;
     right:1em;
     top:1em;
     z-index:999;
 }
 
-.yui-skin-sam .yui-inline-console {
+.yui3-skin-sam .yui3-inline-console {
     /* xbrowser inline-block styles */
     display: -moz-inline-stack; /* FF2 */
     display: inline-block;
@@ -13,11 +13,11 @@
     zoom: 1;
     vertical-align: top;
 }
-.yui-skin-sam .yui-inline-console .yui-console-content {
+.yui3-skin-sam .yui3-inline-console .yui3-console-content {
     position: relative;
 }
 
-.yui-skin-sam .yui-console-content {
+.yui3-skin-sam .yui3-console-content {
     background: #777;
     _background: #D8D8DA url(bg.png) repeat-x 0 0;
     font: normal 13px/1.3 Arial, sans-serif;
@@ -29,18 +29,18 @@
     -webkit-border-radius: 10px;
 }
 
-.yui-skin-sam .yui-console-hd,
-.yui-skin-sam .yui-console-bd,
-.yui-skin-sam .yui-console-ft {
+.yui3-skin-sam .yui3-console-hd,
+.yui3-skin-sam .yui3-console-bd,
+.yui3-skin-sam .yui3-console-ft {
     position: relative;
 }
 
-.yui-skin-sam .yui-console-hd,
-.yui-skin-sam .yui-console-ft .yui-console-controls {
+.yui3-skin-sam .yui3-console-hd,
+.yui3-skin-sam .yui3-console-ft .yui3-console-controls {
     text-align: right;
 }
 
-.yui-skin-sam .yui-console-hd {
+.yui3-skin-sam .yui3-console-hd {
     background: #D8D8DA url(bg.png) repeat-x 0 0;
     padding: 1ex;
 
@@ -54,7 +54,7 @@
     -webkit-border-top-left-radius: 10px;
 }
 
-.yui-skin-sam .yui-console-bd {
+.yui3-skin-sam .yui3-console-bd {
     background: #fff;
     border-top: 1px solid #777;
     border-bottom: 1px solid #777;
@@ -66,7 +66,7 @@
     _width: 100%;
 }
 
-.yui-skin-sam .yui-console-ft {
+.yui3-skin-sam .yui3-console-ft {
     background: #D8D8DA url(bg.png) repeat-x 0 0;
 
     border: 1px solid transparent;
@@ -79,12 +79,12 @@
     -webkit-border-bottom-left-radius: 10px;
 }
 
-.yui-skin-sam .yui-console-controls {
+.yui3-skin-sam .yui3-console-controls {
     padding: 4px 1ex;
     zoom: 1;
 }
 
-.yui-skin-sam .yui-console-title {
+.yui3-skin-sam .yui3-console-title {
     color: #000;
     display: inline;
     float: left;
@@ -96,90 +96,90 @@
     padding-left: 1ex;
 }
 
-.yui-skin-sam .yui-console-pause-label {
+.yui3-skin-sam .yui3-console-pause-label {
     float: left;
 }
-.yui-skin-sam .yui-console-button {
+.yui3-skin-sam .yui3-console-button {
     line-height: 1.3;
 }
 
-.yui-skin-sam .yui-console-collapsed .yui-console-bd,
-.yui-skin-sam .yui-console-collapsed .yui-console-ft {
+.yui3-skin-sam .yui3-console-collapsed .yui3-console-bd,
+.yui3-skin-sam .yui3-console-collapsed .yui3-console-ft {
     display: none;
 }
-.yui-skin-sam .yui-console-content.yui-console-collapsed {
+.yui3-skin-sam .yui3-console-content.yui3-console-collapsed {
     -webkit-border-radius: 0;
 }
-.yui-skin-sam .yui-console-collapsed .yui-console-hd {
+.yui3-skin-sam .yui3-console-collapsed .yui3-console-hd {
     border-radius: 10px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 0;
 }
 
 /* Log entries */
-.yui-skin-sam .yui-console-entry {
+.yui3-skin-sam .yui3-console-entry {
     border-bottom: 1px solid #aaa;
     min-height: 32px;
     _height: 32px;
 }
 
-.yui-skin-sam .yui-console-entry-meta {
+.yui3-skin-sam .yui3-console-entry-meta {
     margin: 0;
     overflow: hidden;
 }
 
-.yui-skin-sam .yui-console-entry-content {
+.yui3-skin-sam .yui3-console-entry-content {
     margin: 0;
     padding: 0 1ex;
     white-space: pre-wrap;
     word-wrap: break-word;
 }
 
-.yui-skin-sam .yui-console-entry-meta .yui-console-entry-src {
+.yui3-skin-sam .yui3-console-entry-meta .yui3-console-entry-src {
     color: #000;
     font-style: italic;
     font-weight: bold;
     float: right;
     margin: 2px 5px 0 0;
 }
-.yui-skin-sam .yui-console-entry-meta .yui-console-entry-time {
+.yui3-skin-sam .yui3-console-entry-meta .yui3-console-entry-time {
     color: #777;
     padding-left: 1ex;
 }
-.yui-skin-sam .yui-console-entry-warn .yui-console-entry-meta .yui-console-entry-time {
+.yui3-skin-sam .yui3-console-entry-warn .yui3-console-entry-meta .yui3-console-entry-time {
     color: #555;
 }
 
-.yui-skin-sam .yui-console-entry-info .yui-console-entry-meta .yui-console-entry-cat,
-.yui-skin-sam .yui-console-entry-warn .yui-console-entry-meta .yui-console-entry-cat,
-.yui-skin-sam .yui-console-entry-error .yui-console-entry-meta .yui-console-entry-cat {
+.yui3-skin-sam .yui3-console-entry-info .yui3-console-entry-meta .yui3-console-entry-cat,
+.yui3-skin-sam .yui3-console-entry-warn .yui3-console-entry-meta .yui3-console-entry-cat,
+.yui3-skin-sam .yui3-console-entry-error .yui3-console-entry-meta .yui3-console-entry-cat {
     display: none;
 }
-.yui-skin-sam .yui-console-entry-warn {
+.yui3-skin-sam .yui3-console-entry-warn {
     background: #aee url(warn_error.png) no-repeat -15px 15px;
 }
-.yui-skin-sam .yui-console-entry-error {
+.yui3-skin-sam .yui3-console-entry-error {
     background: #ffa url(warn_error.png) no-repeat 5px -24px;
     color: #900;
 }
-.yui-skin-sam .yui-console-entry-warn .yui-console-entry-content,
-.yui-skin-sam .yui-console-entry-error .yui-console-entry-content {
+.yui3-skin-sam .yui3-console-entry-warn .yui3-console-entry-content,
+.yui3-skin-sam .yui3-console-entry-error .yui3-console-entry-content {
     padding-left: 24px;
 }
-.yui-skin-sam .yui-console-entry-cat {
+.yui3-skin-sam .yui3-console-entry-cat {
     text-transform: uppercase;
     padding: 1px 4px;
     background-color: #ccc;
 }
-.yui-skin-sam .yui-console-entry-info .yui-console-entry-cat {
+.yui3-skin-sam .yui3-console-entry-info .yui3-console-entry-cat {
     background-color: #ac2;
 }
-.yui-skin-sam .yui-console-entry-warn .yui-console-entry-cat {
+.yui3-skin-sam .yui3-console-entry-warn .yui3-console-entry-cat {
     background-color: #e81;
 }
-.yui-skin-sam .yui-console-entry-error .yui-console-entry-cat {
+.yui3-skin-sam .yui3-console-entry-error .yui3-console-entry-cat {
     background-color: #b00;
     color: #fff;
 }
 
-.yui-skin-sam .yui-console-hidden { display: none; }
+.yui3-skin-sam .yui3-console-hidden { display: none; }
