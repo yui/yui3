@@ -521,7 +521,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      */
     _monitor: function(what, type) {
         var args, monitorevt, ce = this.getEvent(type);
-        if (this._yuievt.config.monitor && (!ce || ce.monitor)) {
+        if ((this._yuievt.config.monitor && (!ce || ce.monitor)) || (ce && ce.monitor)) {
             args = Y.Array(arguments, 0, true);
             monitorevt = type + '_' + what;
             args[0] = monitorevt;

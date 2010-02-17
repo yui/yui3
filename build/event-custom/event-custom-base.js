@@ -1485,6 +1485,11 @@ ET.prototype = {
      *    <li>
      *   'stoppedFn': a function that is executed when stopPropagation is called
      *    </li>
+     *
+     *    <li>
+     *   'monitor': specifies whether or not this event should send notifications about
+     *   when the event has been attached, detached, or published.
+     *    </li>
      *    <li>
      *   'type': the event type (valid option if not provided as the first parameter to publish)
      *    </li>
@@ -1532,11 +1537,21 @@ ET.prototype = {
         return events[type];
     },
 
+    /**
+     * This is the entry point for the event monitoring system.
+     * You can monitor 'attach', 'detach', and 'publish.  When
+     * configured, these events generate an event.  click ->
+     * click_attach, click_detach, click_publish -- these can
+     * be subscribed to like other events to monitor the event
+     * system.  Inividual published events can have monitoring
+     * turned on or off (publish can't be turned off before it
+     * it published) by setting the events 'monitor' config.
+     *
+     * @private
+     */
     _monitor: function(what, type) {
         var args, monitorevt, ce = this.getEvent(type);
-        // if (this._yuievt.config.monitor && ce && ce.monitor) {
-        // if (this._yuievt.config.monitor) {
-        if (this._yuievt.config.monitor && (!ce || ce.monitor)) {
+        if ((this._yuievt.config.monitor && (!ce || ce.monitor)) || (ce && ce.monitor)) {
             args = Y.Array(arguments, 0, true);
             monitorevt = type + '_' + what;
             args[0] = monitorevt;
@@ -1602,7 +1617,6 @@ ET.prototype = {
 
         return (this._yuievt.chain) ? this : ret;
     },
-
 
     getSibling: function(type, ce) {
         var ce2;
