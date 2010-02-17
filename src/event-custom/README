@@ -8,8 +8,8 @@ YUI Custom Events
     - Added EventTarget::once, which is equivalent to on(), except the listener
       automatically detaches itself once executed.
     - Added event monitoring.  When configured, an event target will
-      emit events for publish, attach, and detach operations on the
-      hosted events.
+      emit events for publish, attach, fire, and detach operations on 
+      the hosted events.
     - EventTarget::on's type parameter is overloaded to accept arrays and objects
       for attaching multiple types at once.
     - EventTarget::detach returns the event target like the API docs 

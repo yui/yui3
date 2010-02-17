@@ -419,7 +419,9 @@ Y.CustomEvent.prototype = {
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
-        this.host._monitor('attach', this.type, arguments);
+        this.host._monitor('attach', this.type, {
+            args: arguments
+        });
         return this._on(fn, context, a, true);
     },
 
@@ -539,6 +541,9 @@ Y.CustomEvent.prototype = {
 
             var args = Y.Array(arguments, 0, true);
 
+            // this doesn't happen if the event isn't published
+            // this.host._monitor('fire', this.type, args);
+
             this.fired = true;
             this.firedWith = args;
 
@@ -637,7 +642,10 @@ Y.CustomEvent.prototype = {
             delete this.afters[s.id];
         }
 
-        this.host._monitor('detach', this.type, this, s);
+        this.host._monitor('detach', this.type, {
+            ce: this, 
+            sub: s
+        });
     }
 };
 
