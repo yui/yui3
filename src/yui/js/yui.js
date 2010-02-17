@@ -9,7 +9,9 @@
 
 (function() {
 
-    var doc = document,
+    var hasWin = (typeof window != 'undefined'),
+        win = (hasWin) ? window : null,
+        doc = (hasWin) ? win.document : null,
         docEl = doc && doc.documentElement,
         docElClass = docEl && docEl.className,
         DOCUMENT_CLASS = 'yui3-js-enabled',
@@ -42,7 +44,9 @@
         globalListener = function() {
             YUI.Env.windowLoaded = true;
             YUI.Env.DOMReady = true;
-            remove(window, 'load', globalListener);
+            if (hasWin) {
+                remove(window, 'load', globalListener);
+            }
         },
 
 // @TODO: this needs to be created at build time from module metadata
@@ -194,7 +198,7 @@ YUI.prototype = {
         // configuration defaults
         Y.config = Y.config || {
 
-            win: window || {},
+            win: win,
             doc: doc,
             debug: true,
             useBrowserConsole: true,
@@ -753,10 +757,14 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
     YUI._attach(['yui-base']);
 
-    // add a window load event at load time so we can capture
-    // the case where it fires before dynamic loading is
-    // complete.
-    add(window, 'load', globalListener);
+    if (typeof window != 'undefined') {
+        // add a window load event at load time so we can capture
+        // the case where it fires before dynamic loading is
+        // complete.
+        add(window, 'load', globalListener);
+    } else {
+        globalListener();
+    }
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
