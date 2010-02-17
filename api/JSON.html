@@ -164,6 +164,27 @@ values with ']' characters.
 
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:property" resource="#property_JSON.useNativeStringify">
+                                    <h4><a name="property_JSON.useNativeStringify" property="yui:name">JSON.useNativeStringify</a>
+                                        - <code>static <span property="yui:type">Boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Leverage native JSON stringify if the browser has a native
+implementation.  In general, this is a good idea.  See the Known Issues
+section in the JSON user guide for caveats.  The default value is true
+for browsers with native JSON support.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="private" rel="yui:property" resource="#property_Native">
                                     <h4><a name="property_Native" property="yui:name">Native</a>
                                         - <code>private <span property="yui:type">{Object}</span></code>
@@ -264,6 +285,59 @@ returned object.
                                                             MIXED
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">The results of the filtered data</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_dateToString">
+                                    <h4>
+                                        <a name="method_dateToString">dateToString</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        String
+                                            <strong property="yui:name">dateToString</strong>
+                                           (
+                                                
+                                                        
+                                                         d
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Serializes a Date instance as a UTC date string.  Used internally by
+stringify.  Override this method if you need Dates serialized in a
+different format.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">d</span>
+                                                        &lt;<span property="yui:type">Date</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The Date to serialize</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ</dd>
                                                 </dl>
 
 
@@ -388,6 +462,91 @@ pair of object literals, allowing pruning or altering values</span>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_stringify">
+                                    <h4>
+                                        <a name="method_stringify">stringify</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        string
+                                            <strong property="yui:name">stringify</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         w
+                                                    
+                                                
+                                                        , 
+                                                         ind
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>Converts an arbitrary value to a JSON string representation.</p>
+<p>Objects with cyclical references will trigger an exception.</p>
+<p>If a whitelist is provided, only matching object keys will be
+included.  Alternately, a replacer function may be passed as the
+second parameter.  This function is executed on every value in the
+input, and its return value will be used in place of the original value.
+This is useful to serialize specialized objects or class instances.</p>
+<p>If a positive integer or non-empty string is passed as the third
+parameter, the output will be formatted with carriage returns and
+indentation for readability.  If a String is passed (such as "\t") it
+will be used once for each indentation level.  If a number is passed,
+that number of spaces will be used.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">o</span>
+                                                        &lt;<span property="yui:type">MIXED</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  any arbitrary value to convert to JSON string</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">w</span>
+                                                        &lt;<span property="yui:type">Array|Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  (optional) whitelist of acceptable object
+keys to include, or a replacer function to modify the
+raw value before serialization</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">ind</span>
+                                                        &lt;<span property="yui:type">Number|String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  (optional) indentation character or depth of
+spaces to format the output.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            string
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">JSON string representation of the input</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -474,6 +633,7 @@ pair of object literals, allowing pruning or altering values</span>
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="parse.js.html" title="parse.js">parse.js</a></li>
+                                <li class=""><a href="stringify.js.html" title="stringify.js">stringify.js</a></li>
                         </ul>
                     </div>
 
@@ -485,6 +645,7 @@ pair of object literals, allowing pruning or altering values</span>
                                 <li class="private"><a href="#property__UNICODE_EXCEPTIONS" title="_UNICODE_EXCEPTIONS">_UNICODE_EXCEPTIONS</a></li>
                                 <li class="private"><a href="#property__UNSAFE" title="_UNSAFE">_UNSAFE</a></li>
                                 <li class="private"><a href="#property__VALUES" title="_VALUES">_VALUES</a></li>
+                                <li class=""><a href="#property_JSON.useNativeStringify" title="JSON.useNativeStringify">JSON.useNativeStringify</a></li>
                                 <li class="private"><a href="#property_Native" title="Native">Native</a></li>
                                 <li class=""><a href="#property_useNativeParse" title="useNativeParse">useNativeParse</a></li>
                         </ul>
@@ -494,8 +655,10 @@ pair of object literals, allowing pruning or altering values</span>
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class="private"><a href="#method__revive" title="_revive">_revive</a></li>
+                                <li class=""><a href="#method_dateToString" title="dateToString">dateToString</a></li>
                                 <li class="private"><a href="#method_escapeException" title="escapeException">escapeException</a></li>
                                 <li class=""><a href="#method_parse" title="parse">parse</a></li>
+                                <li class=""><a href="#method_stringify" title="stringify">stringify</a></li>
                         </ul>
                     </div>
 
@@ -511,7 +674,7 @@ pair of object literals, allowing pruning or altering values</span>
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "private", "host": "JSON", "name": "Native", "url": "JSON.html#property_Native", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_UNSAFE", "url": "JSON.html#property__UNSAFE", "type": "property"}, {"access": "", "host": "JSON", "name": "useNativeParse", "url": "JSON.html#property_useNativeParse", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "private", "host": "JSON", "name": "_BRACKETS", "url": "JSON.html#property__BRACKETS", "type": "property"}, {"access": "", "host": "JSON", "name": "dateToString", "url": "JSON.html#method_dateToString", "type": "method"}, {"access": "private", "host": "JSON", "name": "escapeException", "url": "JSON.html#method_escapeException", "type": "method"}, {"access": "private", "host": "JSON", "name": "_ESCAPES", "url": "JSON.html#property__ESCAPES", "type": "property"}, {"access": "", "host": "JSON", "name": "JSON.useNativeStringify", "url": "JSON.html#property_JSON.useNativeStringify", "type": "property"}, {"access": "private", "host": "JSON", "name": "Native", "url": "JSON.html#property_Native", "type": "property"}, {"access": "", "host": "JSON", "name": "parse", "url": "JSON.html#method_parse", "type": "method"}, {"access": "private", "host": "JSON", "name": "_revive", "url": "JSON.html#method__revive", "type": "method"}, {"access": "", "host": "JSON", "name": "stringify", "url": "JSON.html#method_stringify", "type": "method"}, {"access": "private", "host": "JSON", "name": "_UNICODE_EXCEPTIONS", "url": "JSON.html#property__UNICODE_EXCEPTIONS", "type": "property"}, {"access": "private", "host": "JSON", "name": "_UNSAFE", "url": "JSON.html#property__UNSAFE", "type": "property"}, {"access": "", "host": "JSON", "name": "useNativeParse", "url": "JSON.html#property_useNativeParse", "type": "property"}, {"access": "private", "host": "JSON", "name": "_VALUES", "url": "JSON.html#property__VALUES", "type": "property"}];
 </script>
 </body>
 </html>

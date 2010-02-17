@@ -56,7 +56,9 @@
 
 <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-    <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nb">document</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">hasWin</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">window</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">),</span>
+        <span class="nx">win</span> <span class="o">=</span> <span class="p">(</span><span class="nx">hasWin</span><span class="p">)</span> <span class="o">?</span> <span class="nb">window</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">doc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">hasWin</span><span class="p">)</span> <span class="o">?</span> <span class="nx">win</span><span class="p">.</span><span class="nb">document</span> <span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         <span class="nx">docEl</span> <span class="o">=</span> <span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
         <span class="nx">docElClass</span> <span class="o">=</span> <span class="nx">docEl</span> <span class="o">&amp;&amp;</span> <span class="nx">docEl</span><span class="p">.</span><span class="nx">className</span><span class="p">,</span>
         <span class="nx">DOCUMENT_CLASS</span> <span class="o">=</span> <span class="s1">&#39;yui3-js-enabled&#39;</span><span class="p">,</span>
@@ -89,7 +91,9 @@
         <span class="nx">globalListener</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">windowLoaded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">DOMReady</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="nx">remove</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">globalListener</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">hasWin</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">remove</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">globalListener</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">},</span>
 
 <span class="c1">// @TODO: this needs to be created at build time from module metadata</span>
@@ -241,7 +245,7 @@
         <span class="c1">// configuration defaults</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span> <span class="o">||</span> <span class="p">{</span>
 
-            <span class="nx">win</span><span class="o">:</span> <span class="nb">window</span> <span class="o">||</span> <span class="p">{},</span>
+            <span class="nx">win</span><span class="o">:</span> <span class="nx">win</span><span class="p">,</span>
             <span class="nx">doc</span><span class="o">:</span> <span class="nx">doc</span><span class="p">,</span>
             <span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">useBrowserConsole</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -800,10 +804,14 @@
 
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;yui-base&#39;</span><span class="p">]);</span>
 
-    <span class="c1">// add a window load event at load time so we can capture</span>
-    <span class="c1">// the case where it fires before dynamic loading is</span>
-    <span class="c1">// complete.</span>
-    <span class="nx">add</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">globalListener</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">window</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// add a window load event at load time so we can capture</span>
+        <span class="c1">// the case where it fires before dynamic loading is</span>
+        <span class="c1">// complete.</span>
+        <span class="nx">add</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="nx">globalListener</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">globalListener</span><span class="p">();</span>
+    <span class="p">}</span>
 
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="nx">add</span><span class="p">;</span>
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">remove</span><span class="p">;</span>
