@@ -110,17 +110,5 @@ Y.mix(Y.namespace("Intl"), {
         }
 
         return "";
-    },
-
-    _explodeLang : function() {
-        // LOADER STUB
-    },
-
-    _useLang : function(module, lang) {
-        // LOADER STUB
-    },
-
-    getAvailableLangs : function(module) {
-        // META-DATA STUB
     }
 });
