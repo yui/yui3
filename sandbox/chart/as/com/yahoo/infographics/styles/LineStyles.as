@@ -200,7 +200,6 @@ package com.yahoo.infographics.styles
 		 */
 		public function set connectDiscontinuousPoints(value:Boolean):void
 		{
-			trace("set connect: " + value);
 			this._connectDiscontinuousPoints = value;
 		}
 
