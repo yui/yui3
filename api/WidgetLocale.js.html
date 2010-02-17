@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: widget   WidgetI18N.js  (YUI Library)</title>
+	<title>API: widget   WidgetLocale.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget.html" title="widget">widget</a>
                 
-                 &gt; WidgetI18N.js (source view) 
+                 &gt; WidgetLocale.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,7 +47,13 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TRUE</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides string support for widget with BCP 47 language tag lookup.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module widget-locale</span>
+<span class="cm"> * @deprecated This module has been deprecated. It&#39;s replaced by the &quot;intl&quot; module which provides generic internationalization and BCP language tag support with externalization.</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">TRUE</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">LOCALE</span> <span class="o">=</span> <span class="s2">&quot;locale&quot;</span><span class="p">,</span>
     <span class="nx">INIT_VALUE</span> <span class="o">=</span> <span class="s2">&quot;initValue&quot;</span><span class="p">,</span>
     <span class="nx">HYPHEN</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
@@ -56,6 +62,7 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * @attribute locale</span>
+<span class="cm"> * @deprecated Use Y.config.lang and Y.Intl externalization support</span>
 <span class="cm"> * @description</span>
 <span class="cm"> * The default locale for the widget. NOTE: Using get/set on the &quot;strings&quot; attribute will</span>
 <span class="cm"> * return/set strings for this locale.</span>
@@ -238,6 +245,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -258,6 +266,7 @@
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class="selected"><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
@@ -279,7 +288,7 @@
                         <ul class="content">        
                                 <li class=""><a href="Widget.js.html" title="Widget.js">Widget.js</a></li>
                                 <li class=""><a href="WidgetHTMLParser.js.html" title="WidgetHTMLParser.js">WidgetHTMLParser.js</a></li>
-                                <li class="selected"><a href="WidgetI18N.js.html" title="WidgetI18N.js">WidgetI18N.js</a></li>
+                                <li class="selected"><a href="WidgetLocale.js.html" title="WidgetLocale.js">WidgetLocale.js</a></li>
                         </ul>
                     </div>
 
