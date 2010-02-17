@@ -804,7 +804,7 @@
 
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">_attach</span><span class="p">([</span><span class="s1">&#39;yui-base&#39;</span><span class="p">]);</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">window</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">hasWin</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// add a window load event at load time so we can capture</span>
         <span class="c1">// the case where it fires before dynamic loading is</span>
         <span class="c1">// complete.</span>
@@ -815,6 +815,10 @@
 
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="nx">add</span><span class="p">;</span>
     <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">remove</span> <span class="o">=</span> <span class="nx">remove</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">exports</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">exports</span><span class="p">.</span><span class="nx">YUI</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">;</span>
+    <span class="p">}</span>
 
 <span class="p">})();</span>
 

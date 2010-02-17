@@ -158,6 +158,11 @@
             <span class="s2">&quot;yui-base&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;clickable-rail&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;slider-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;collection&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;array-extras&quot;</span><span class="o">:</span> <span class="p">{},</span> 
@@ -581,6 +586,11 @@
             <span class="s2">&quot;node-screen&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;int-value-range&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;slider-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;intl&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;intl-base&quot;</span><span class="p">,</span> 
@@ -792,8 +802,16 @@
     <span class="p">},</span> 
     <span class="s2">&quot;slider&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;slider-base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;int-value-range&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;clickable-rail&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;slider-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;dd-value&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;dd-constrain&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;substitute&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;skin-sam-slider&quot;</span>
         <span class="p">],</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
@@ -820,8 +838,7 @@
             <span class="s2">&quot;substitute&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;json&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;event-simulate&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;skin-sam-test&quot;</span>
+            <span class="s2">&quot;event-simulate&quot;</span>
         <span class="p">],</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span> 
