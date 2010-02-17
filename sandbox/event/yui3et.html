@@ -11,7 +11,7 @@
     <script type="text/javascript" src="../../build/yui/yui.js"></script>
     <script type="text/javascript">
 
-        YUI({ filter: "debug"}).use("event-custom-complex", function (Y) {
+        YUI({ filter: "debug"}).use("event-custom-complex", "dump", function (Y) {
            
             var et1 = new Y.EventTarget({
                 monitor: true,
@@ -79,8 +79,14 @@
                 // not monitored
             });
 
-            var handle = ce.monitor('attach', function() {
-                Y.log('foo attached');
+            handle = ce.monitor('attach', function(data) {
+                Y.log('foo attached: ' + Y.dump(data));
+            });
+
+            Y.log(handle.evt.type);
+
+            handle = ce.monitor('fire', function(data) {
+                Y.log('foo fired: ' + Y.dump(data));
             });
 
             Y.log(handle.evt.type);
@@ -90,10 +96,15 @@
                 var a;
             });
 
-            ce.on('foo', function() {
+            ce.on(function() {
                 // monitored
                 var a;
             });
+
+
+            o.fire('foo');
+            // ce.fire();
+
             
         });
     

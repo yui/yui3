@@ -155,7 +155,11 @@ ET.prototype = {
             Node = Y.Node, n, domevent, isArr;
 
         // full name, args, detachcategory, after
-        this._monitor('attach', parts[1], arguments, parts[0], parts[2]);
+        this._monitor('attach', parts[1], {
+            args: arguments, 
+            category: parts[0],
+            after: parts[2]
+        });
 
         if (L.isObject(type)) {
 
@@ -473,7 +477,9 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         type = (pre) ? _getType(type, pre) : type;
 
-        this._monitor('publish', type, arguments);
+        this._monitor('publish', type, {
+            args: arguments
+        });
 
         if (L.isObject(type)) {
             ret = {};
@@ -509,8 +515,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
     /**
      * This is the entry point for the event monitoring system.
-     * You can monitor 'attach', 'detach', and 'publish.  When
-     * configured, these events generate an event.  click ->
+     * You can monitor 'attach', 'detach', 'fire', and 'publish'.  
+     * When configured, these events generate an event.  click ->
      * click_attach, click_detach, click_publish -- these can
      * be subscribed to like other events to monitor the event
      * system.  Inividual published events can have monitoring
@@ -519,14 +525,13 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *
      * @private
      */
-    _monitor: function(what, type) {
-        var args, monitorevt, ce = this.getEvent(type);
+    _monitor: function(what, type, o) {
+        var monitorevt, ce = this.getEvent(type);
         if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
-            args = Y.Array(arguments, 0, true);
             monitorevt = type + '_' + what;
-            args[0] = monitorevt;
             // Y.log('monitoring: ' + monitorevt);
-            this.fire.apply(this, args);
+            o.monitored = what;
+            this.fire.call(this, monitorevt, o);
         }
     },
 
@@ -562,10 +567,15 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, ret, pre=this._yuievt.config.prefix, ce2,
+            ce, ret, pre = this._yuievt.config.prefix, ce2,
             args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
+
+        this._monitor('fire', t, { 
+            args: args 
+        });
+
         ce = this.getEvent(t, true);
         ce2 = this.getSibling(t, ce);
 

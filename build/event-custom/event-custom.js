@@ -716,7 +716,9 @@ Y.CustomEvent.prototype = {
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
-        this.host._monitor('attach', this.type, arguments);
+        this.host._monitor('attach', this.type, {
+            args: arguments
+        });
         return this._on(fn, context, a, true);
     },
 
@@ -835,6 +837,9 @@ Y.CustomEvent.prototype = {
 
             var args = Y.Array(arguments, 0, true);
 
+            // this doesn't happen if the event isn't published
+            // this.host._monitor('fire', this.type, args);
+
             this.fired = true;
             this.firedWith = args;
 
@@ -932,7 +937,10 @@ Y.CustomEvent.prototype = {
             delete this.afters[s.id];
         }
 
-        this.host._monitor('detach', this.type, this, s);
+        this.host._monitor('detach', this.type, {
+            ce: this, 
+            sub: s
+        });
     }
 };
 
@@ -1223,7 +1231,11 @@ ET.prototype = {
             Node = Y.Node, n, domevent, isArr;
 
         // full name, args, detachcategory, after
-        this._monitor('attach', parts[1], arguments, parts[0], parts[2]);
+        this._monitor('attach', parts[1], {
+            args: arguments, 
+            category: parts[0],
+            after: parts[2]
+        });
 
         if (L.isObject(type)) {
 
@@ -1536,7 +1548,9 @@ ET.prototype = {
 
         type = (pre) ? _getType(type, pre) : type;
 
-        this._monitor('publish', type, arguments);
+        this._monitor('publish', type, {
+            args: arguments
+        });
 
         if (L.isObject(type)) {
             ret = {};
@@ -1582,13 +1596,12 @@ ET.prototype = {
      *
      * @private
      */
-    _monitor: function(what, type) {
-        var args, monitorevt, ce = this.getEvent(type);
+    _monitor: function(what, type, o) {
+        var monitorevt, ce = this.getEvent(type);
         if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
-            args = Y.Array(arguments, 0, true);
             monitorevt = type + '_' + what;
-            args[0] = monitorevt;
-            this.fire.apply(this, args);
+            o.monitored = what;
+            this.fire.call(this, monitorevt, o);
         }
     },
 
@@ -1624,10 +1637,15 @@ ET.prototype = {
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, ret, pre=this._yuievt.config.prefix, ce2,
+            ce, ret, pre = this._yuievt.config.prefix, ce2,
             args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
+
+        this._monitor('fire', t, { 
+            args: args 
+        });
+
         ce = this.getEvent(t, true);
         ce2 = this.getSibling(t, ce);
 
