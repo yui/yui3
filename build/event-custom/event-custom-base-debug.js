@@ -376,6 +376,7 @@ Y.EventHandle.prototype = {
                 evt._delete(this.sub);
                 detached = 1;
             }
+
         }
 
         return detached;
@@ -903,6 +904,8 @@ Y.CustomEvent.prototype = {
             delete this.subscribers[s.id];
             delete this.afters[s.id];
         }
+
+        this.host._monitor('detach', this.type, this, s);
     }
 };
 
@@ -1154,6 +1157,7 @@ var L = Y.Lang,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
+                monitor: o.monitor,
                 broadcast: o.broadcast,
                 defaultTargetOnly: o.defaulTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
@@ -1192,6 +1196,9 @@ ET.prototype = {
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n, domevent, isArr;
+
+        // full name, args, detachcategory, after
+        this._monitor('attach', parts[1], arguments, parts[0], parts[2]);
 
         if (L.isObject(type)) {
 
@@ -1504,6 +1511,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         type = (pre) ? _getType(type, pre) : type;
 
+        this._monitor('publish', type, arguments);
 
         if (L.isObject(type)) {
             ret = {};
@@ -1537,6 +1545,18 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         return events[type];
     },
 
+    _monitor: function(what, type) {
+        var args, monitorevt, ce = this.getEvent(type);
+        // if (this._yuievt.config.monitor && ce && ce.monitor) {
+        // if (this._yuievt.config.monitor) {
+        if (this._yuievt.config.monitor && (!ce || ce.monitor)) {
+            args = Y.Array(arguments, 0, true);
+            monitorevt = type + '_' + what;
+            args[0] = monitorevt;
+            Y.log('monitoring: ' + monitorevt);
+            this.fire.apply(this, args);
+        }
+    },
 
    /**
      * Fire a custom event by name.  The callback functions will be executed

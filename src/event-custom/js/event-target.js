@@ -114,6 +114,7 @@ var L = Y.Lang,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
+                monitor: o.monitor,
                 broadcast: o.broadcast,
                 defaultTargetOnly: o.defaulTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
@@ -152,6 +153,9 @@ ET.prototype = {
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n, domevent, isArr;
+
+        // full name, args, detachcategory, after
+        this._monitor('attach', parts[1], arguments, parts[0], parts[2]);
 
         if (L.isObject(type)) {
 
@@ -451,6 +455,11 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *    <li>
      *   'stoppedFn': a function that is executed when stopPropagation is called
      *    </li>
+     *
+     *    <li>
+     *   'monitor': specifies whether or not this event should send notifications about
+     *   when the event has been attached, detached, or published.
+     *    </li>
      *    <li>
      *   'type': the event type (valid option if not provided as the first parameter to publish)
      *    </li>
@@ -464,6 +473,7 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         type = (pre) ? _getType(type, pre) : type;
 
+        this._monitor('publish', type, arguments);
 
         if (L.isObject(type)) {
             ret = {};
@@ -497,6 +507,28 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         return events[type];
     },
 
+    /**
+     * This is the entry point for the event monitoring system.
+     * You can monitor 'attach', 'detach', and 'publish.  When
+     * configured, these events generate an event.  click ->
+     * click_attach, click_detach, click_publish -- these can
+     * be subscribed to like other events to monitor the event
+     * system.  Inividual published events can have monitoring
+     * turned on or off (publish can't be turned off before it
+     * it published) by setting the events 'monitor' config.
+     *
+     * @private
+     */
+    _monitor: function(what, type) {
+        var args, monitorevt, ce = this.getEvent(type);
+        if (this._yuievt.config.monitor && (!ce || ce.monitor)) {
+            args = Y.Array(arguments, 0, true);
+            monitorevt = type + '_' + what;
+            args[0] = monitorevt;
+            Y.log('monitoring: ' + monitorevt);
+            this.fire.apply(this, args);
+        }
+    },
 
    /**
      * Fire a custom event by name.  The callback functions will be executed
@@ -556,7 +588,6 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         return (this._yuievt.chain) ? this : ret;
     },
-
 
     getSibling: function(type, ce) {
         var ce2;

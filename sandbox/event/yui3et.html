@@ -11,9 +11,22 @@
     <script type="text/javascript" src="../../build/yui/yui.js"></script>
     <script type="text/javascript">
 
-        YUI({filter:"raw"}).use("event-custom-complex", function (Y) {
+        YUI({ filter: "debug"}).use("event-custom-complex", function (Y) {
            
-            var et1 = new Y.EventTarget();
+            var et1 = new Y.EventTarget({
+                monitor: true,
+                prefix: 'et1'
+            });
+
+            et1.on('A_publish', function() {
+                Y.log('A_publish');
+            });
+            et1.on('A_attach', function() {
+                Y.log('A_attach');
+            });
+            et1.on('A_detach', function() {
+                Y.log('A_detach');
+            });
 
             et1.publish("A", {
                 queueable: false,
@@ -31,7 +44,7 @@
                 }
             });
 
-            et1.on("A", function (e) {
+            et1.on("blah|A", function (e) {
                 Y.log("A:on");
             });
 
@@ -40,11 +53,11 @@
                 Y.log("A:after");
             });
 
-            et1.on("B", function (e) {
+            et1.on("blah|B", function (e) {
                 Y.log("B:on");
             });
 
-            et1.after("B", function (e) {
+            var handle = et1.after("B", function (e) {
                 Y.log("B:after");
             });
 
@@ -53,6 +66,12 @@
             }
 
             test();
+
+            // et1.detachAll("B");
+            et1.detach("blah|*");
+            // handle.detach("B");
+            
+
         });
     
     </script>

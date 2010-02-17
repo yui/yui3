@@ -75,6 +75,7 @@ Y.EventHandle.prototype = {
                 evt._delete(this.sub);
                 detached = 1;
             }
+
         }
 
         return detached;
@@ -602,6 +603,8 @@ Y.CustomEvent.prototype = {
             delete this.subscribers[s.id];
             delete this.afters[s.id];
         }
+
+        this.host._monitor('detach', this.type, this, s);
     }
 };
 

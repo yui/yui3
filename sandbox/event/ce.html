@@ -309,19 +309,19 @@ Y.extend(Test, Y.Base, {
     }
 });
 
-                var count = 0;
+    var count = 0;
 
-                Y.once('foo', function(e) {
-                    count++;
-                });
+    Y.once('foo', function(e) {
+        count++;
+    });
 
-                Y.fire('foo', 'bar');
+    Y.fire('foo', 'bar');
 
-                console.log("FIRST: " + count);
+    console.log("FIRST: " + count);
 
-                Y.fire('foo', 'bar');
+    Y.fire('foo', 'bar');
 
-                console.log("SECOND: " + count);
+    console.log("SECOND: " + count);
 
 new Test({});
 
