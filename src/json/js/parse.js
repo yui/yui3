@@ -44,7 +44,7 @@
      * @type {Object}
      * @private
      */
-var _JSON  = Y.config.win.JSON,
+var _JSON  = (Y.config.win || {}).JSON,
     Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
     useNative = !!Native,
 

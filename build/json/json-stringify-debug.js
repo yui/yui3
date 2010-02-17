@@ -8,7 +8,7 @@ YUI.add('json-stringify', function(Y) {
  * @for JSON
  * @static
  */
-var _JSON     = Y.config.win.JSON,
+var _JSON     = (Y.config.win || {}).JSON,
     Lang      = Y.Lang,
     isFunction= Lang.isFunction,
     isObject  = Lang.isObject,
