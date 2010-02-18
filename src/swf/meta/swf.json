@@ -3,8 +3,7 @@
         "requires": [
             "event-custom", 
             "node", 
-            "swf-detect"
-        ], 
-        "skinnable": false
+            "swfdetect"
+        ] 
     }
 }
