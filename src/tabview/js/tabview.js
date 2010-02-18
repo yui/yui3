@@ -1,6 +1,9 @@
 var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
     DOT = '.',
+    _isGeckoIEWin = ((Y.UA.gecko || Y.UA.ie) && navigator.userAgent.indexOf("Windows") > -1),
+    getClassName = Y.ClassNameManager.getClassName;
+
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
     _afterChildRemoved: function(e) { // update the selected tab when removed
         var i = e.index,
@@ -14,12 +17,39 @@ var _queries = Y.TabviewBase._queries,
         }
     },
 
+    _initAria: function() {
+        var contentBox = this.get('contentBox'),
+            tablist = contentBox.one(_queries.tabviewList);
+
+        if (tablist) {
+            tablist.setAttrs({
+                //'aria-labelledby': 
+                role: tablist
+            });
+        }
+
+        //  Since the anchor's "href" attribute has been removed, the
+        //  element will not fire the click event in Firefox when the
+        //  user presses the enter key.  To fix this, dispatch the
+        //  "click" event to the anchor when the user presses the
+        //  enter key.
+     
+        if (_isGeckoIEWin) {
+            tabView.delegate('keydown', function (event) {
+                if (event.charCode === 13) {
+                    this.simulate("click");
+                }
+     
+            }, ">ul>li>a");
+     
+        }
+    },
+
     bindUI: function() {
         //  Use the Node Focus Manager to add keyboard support:
         //  Pressing the left and right arrow keys will move focus
         //  among each of the tabs.
-        this.get('boundingBox').plug(Y.Plugin.NodeFocusManager, {
-        
+        this.get('contentBox').plug(Y.Plugin.NodeFocusManager, {
                         descendants: _queries.tabLabel,
                         keys: { next: 'down:39', // Right arrow
                                 previous: 'down:37' },  // Left arrow
@@ -66,7 +96,7 @@ var _queries = Y.TabviewBase._queries,
 
     _renderTabs: function(contentBox) {
         var tabs = contentBox.all(_queries.tab),
-            panels = contentBox.all(_queries.tabPanel);
+            panels = contentBox.all(_queries.tabPanel),
             tabview = this;
 
         if (tabs) { // add classNames and fill in Tab fields from markup when possible

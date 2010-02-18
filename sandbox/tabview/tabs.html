@@ -71,8 +71,9 @@ YUI({filter: 'raw'}).use('tabview', function(Y) {
         label: 'foobar',
         content: 'foobar content'
     });
+    console.log(tabview2.get('contentBox').focusManager.get('descendants'));
     tabview2.selectChild(2);
-    tabview2.add(tabview.item(1));
+    //tabview2.add(tabview.item(1));
 });
 
 </script>

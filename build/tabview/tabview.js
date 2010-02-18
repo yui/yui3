@@ -3,6 +3,9 @@ YUI.add('tabview', function(Y) {
 var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
     DOT = '.',
+    _isGeckoIEWin = ((Y.UA.gecko || Y.UA.ie) && navigator.userAgent.indexOf("Windows") > -1),
+    getClassName = Y.ClassNameManager.getClassName;
+
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
     _afterChildRemoved: function(e) { // update the selected tab when removed
         var i = e.index,
@@ -16,12 +19,39 @@ var _queries = Y.TabviewBase._queries,
         }
     },
 
+    _initAria: function() {
+        var contentBox = this.get('contentBox'),
+            tablist = contentBox.one(_queries.tabviewList);
+
+        if (tablist) {
+            tablist.setAttrs({
+                //'aria-labelledby': 
+                role: tablist
+            });
+        }
+
+        //  Since the anchor's "href" attribute has been removed, the
+        //  element will not fire the click event in Firefox when the
+        //  user presses the enter key.  To fix this, dispatch the
+        //  "click" event to the anchor when the user presses the
+        //  enter key.
+     
+        if (_isGeckoIEWin) {
+            tabView.delegate('keydown', function (event) {
+                if (event.charCode === 13) {
+                    this.simulate("click");
+                }
+     
+            }, ">ul>li>a");
+     
+        }
+    },
+
     bindUI: function() {
         //  Use the Node Focus Manager to add keyboard support:
         //  Pressing the left and right arrow keys will move focus
         //  among each of the tabs.
-        this.get('boundingBox').plug(Y.Plugin.NodeFocusManager, {
-        
+        this.get('contentBox').plug(Y.Plugin.NodeFocusManager, {
                         descendants: _queries.tabLabel,
                         keys: { next: 'down:39', // Right arrow
                                 previous: 'down:37' },  // Left arrow
@@ -68,7 +98,7 @@ var _queries = Y.TabviewBase._queries,
 
     _renderTabs: function(contentBox) {
         var tabs = contentBox.all(_queries.tab),
-            panels = contentBox.all(_queries.tabPanel);
+            panels = contentBox.all(_queries.tabPanel),
             tabview = this;
 
         if (tabs) { // add classNames and fill in Tab fields from markup when possible
@@ -113,6 +143,7 @@ Y.TabView = TabView;
 var Lang = Y.Lang,
     _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
+    _isGeckoIEWin = ((Y.UA.gecko || Y.UA.ie) && navigator.userAgent.indexOf("Windows") > -1),
     getClassName = Y.ClassNameManager.getClassName;
 
 Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
@@ -136,6 +167,36 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         }
     },
 
+    _initAria: function() {
+        var anchor = this.get('contentBox'),
+            id = anchor.get('id'),
+            panel = this.get('panelNode');
+ 
+        if (!id) {
+            id = Y.guid();
+            anchor.set('id', id);
+        }
+        //  Apply the ARIA roles, states and properties to each tab
+        anchor.set('role', 'tab');
+        anchor.get('parentNode').set('role', 'presentation');
+ 
+ 
+        //  Remove the "href" attribute from the anchor element to
+        //  prevent JAWS and NVDA from reading the value of the "href"
+        //  attribute when the anchor is focused
+ 
+        if (_isGeckoIEWin) {
+            anchor.removeAttribute('href');
+        }
+ 
+        //  Apply the ARIA roles, states and properties to each panel
+ 
+        panel.setAttrs({
+            role: 'tabpanel',
+            'aria-labelledby': id
+        });
+    },
+
     syncUI: function() {
         this._uiSetSelectedPanel(this.get('selected'));
     },
@@ -151,6 +212,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
 
         this._renderLabel(contentBox, parentContentBox);
         this._renderPanel(contentBox, parentContentBox);
+        this._initAria();
     },
 
     _renderLabel: function(contentBox, parentContentBox) {
@@ -187,21 +249,27 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         this.get('boundingBox').remove();
         this.get('panelNode').remove();
     },
+
+    _onActivate: function(e) {
+         if (e.target === this) {
+             //  Prevent the browser from navigating to the URL specified by the 
+             //  anchor's href attribute.
+             e.domEvent.preventDefault();
+             e.target.set('selected', 1);
+         }
+    },
     
     initializer: function() {
-         this.publish('click', { 
-             defaultFn: function(event) {
-                 if (event.target == this) {
-                     //  Prevent the browser from navigating to the URL specified by the 
-                     //  anchor's href attribute.
-                     event.domEvent.preventDefault();
-                     event.target.set('selected', 1);
-                 }
-             }
-          });
+       this.publish(this.get('triggerEvent'), { 
+           defaultFn: this._onActivate
+       });
     }
 }, {
     ATTRS: {
+        triggerEvent: {
+            value: 'click'
+        },
+
         label: { 
             validator: Lang.isString
         },
@@ -232,4 +300,4 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
 });
 
 
-}, '@VERSION@' ,{requires:['substitute', 'tabview-base', 'widget', 'widget-parent', 'widget-child']});
+}, '@VERSION@' ,{requires:['substitute', 'node-focusmanager', 'tabview-base', 'widget', 'widget-parent', 'widget-child']});

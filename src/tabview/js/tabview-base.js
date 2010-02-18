@@ -18,16 +18,6 @@ var getClassName = Y.ClassNameManager.getClassName,
         selectedPanel: getClassName(TAB, PANEL, SELECTED)
     },
 
-    roles = {
-        tabList: 'aria-tablist',
-        tab: 'aria-tab',
-        tabLabel: getClassName(TAB, 'label'),
-        tabviewPanel: getClassName(TABVIEW, PANEL),
-        tabPanel: getClassName(TAB, PANEL),
-        selectedTab: getClassName(TAB, SELECTED),
-        selectedPanel: getClassName(TAB, CONTENT, SELECTED)
-    },
-
     _queries = {
         tabview: DOT + _classNames.tabview,
         tabviewList: '> ul',
