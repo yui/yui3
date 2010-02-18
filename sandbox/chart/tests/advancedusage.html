@@ -9,7 +9,8 @@
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
 </style>
 <!-- BEGIN EXAMPLE CODE -->
-	<script type="text/javascript" src="../build/yui/yui.js"></script>
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<script type="text/javascript" src="../build/chart/chart.js"></script>
 	<script>	
 			var getData = function()
 			{
@@ -81,21 +82,7 @@
 			<div id="output"></div>
 		<script>
 
-			YUI({
-					base: '../build/',
-					filter: "raw",
-					modules:  { 
-						swfdetect: { 
-							path: "swfdetect/swfdetect.js" 
-						},
-						swf: {
-							path: "swf/swf.js"
-						},
-						chart: {
-							path: "chart/chart.js"
-						}
-					}
-				}).use('node', 'event-custom', 'swfdetect', 'swf', 'chart', function (Y)
+			YUI().use('node', 'event-custom', 'swfdetect', 'swf', 'chart', function (Y)
 				{
 					// Create application level styles
 					var chartstyles = {
@@ -191,7 +178,7 @@
 					}
 					
 					// Create chart and set dataProvider
-					var mychart = new Y.Chart("#testdiv", {styles:chartstyles});
+					var mychart = new Y.Chart("#testdiv", {swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
 					mychart.setDataProvider(mydata);
 					
 					// Create axes
@@ -219,8 +206,6 @@
 <!-- END EXAMPLE CODE -->
 
 <p><strong>Note:</strong> There is currently no finalized API for the charts package. The files and classes used to create this example are temporary JavaScript wrappers used to display and test the functionality of the current state of the charts package. The draft API will be announced when the first beta of the Charts component is released.</p>
-
-<p>Check <a href="testsetup.html">here</a> to see how to set up your development environment for viewing the examples.</p>
 <h3>Getting Started</h3>		
 <p>In the previous examples, we have created chart applications using the SimpleChart class. The advantage to using such a class is that it makes it easy to instantiate a chart with very little code. SimpleChart uses composition to build a chart with several different classes. If you want or need more control and flexibility in creating a chart application, you can use these individual classes to create your own custom chart. In the following example, we are going to create a chart with two vertical axes and two line graphs.</p>
 
@@ -332,10 +317,10 @@
 </pre>
 
 <h3>Create the Chart Application</h3>
-<p>Now, we'll create an instance of <code>Y.Chart</code>, assigning the application-level style object through the optional styles argument:</p>
+<p>Now, we'll create an instance of <code>Y.Chart</code>, assigning the swf url and the application-level style object through the config argument:</p>
 
 <pre>
-	var mychart = new Y.Chart("#testdiv", {styles:chartstyles});
+	var mychart = new Y.Chart("#testdiv", {swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
 	mychart.setDataProvider(mydata);
 </pre>
 
