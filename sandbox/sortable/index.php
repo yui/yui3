@@ -140,7 +140,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
 
     sel.join(sel2, 'outer');
 
-    sel.destroy();
+    //sel.destroy();
 
     /*
     console.log(Y.DD.DDM.getDelegate(Y.one('#three')));
