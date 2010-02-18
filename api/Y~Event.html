@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: event   mousewheel.js  (YUI Library)</title>
+	<title>API: event  Y~Event   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,8 +19,8 @@
         <h3>event&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
+                 &gt; Y~Event 
                 
-                 &gt; mousewheel.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,58 +43,108 @@
                 </fieldset>
             </form>
 
-                    <div id="srcout">
-                        <style>
-                            #doc3 .classopts { display:none; }
-                        </style>
-                        <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Adds mousewheel event support</span>
-<span class="cm"> * @module event</span>
-<span class="cm"> * @submodule event-mousewheel</span>
-<span class="cm"> */</span>
-<span class="kd">var</span> <span class="nx">DOM_MOUSE_SCROLL</span> <span class="o">=</span> <span class="s1">&#39;DOMMouseScroll&#39;</span><span class="p">,</span>
-    <span class="nx">fixArgs</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span> <span class="nx">target</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">DOM_MOUSE_SCROLL</span><span class="p">;</span>
-            <span class="nx">target</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">target</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">;</span>
-        <span class="p">}</span>
+                    <h2>
+                        
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">target</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">a</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
-        <span class="p">}</span>
+                        
+                        
+                            Class <b property="yui:name">Y~Event</b>
+                        <span class="extends">
+                        </span>
 
-        <span class="k">return</span> <span class="nx">a</span><span class="p">;</span>
-    <span class="p">};</span>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
 
-<span class="cm">/**</span>
-<span class="cm"> * Mousewheel event.  This listener is automatically attached to the</span>
-<span class="cm"> * correct target, so one should not be supplied.  Mouse wheel </span>
-<span class="cm"> * direction and velocity is stored in the &#39;mouseDelta&#39; field.</span>
-<span class="cm"> * @event mousewheel</span>
-<span class="cm"> * @param type {string} &#39;mousewheel&#39;</span>
-<span class="cm"> * @param fn {function} the callback to execute</span>
-<span class="cm"> * @param context optional context object</span>
-<span class="cm"> * @param args 0..n additional arguments to provide to the listener.</span>
-<span class="cm"> * @return {EventHandle} the detach handle</span>
-<span class="cm"> * @for YUI</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">mousewheel</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">fixArgs</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
-    <span class="p">},</span>
+                    <div class="summary description" property="yui:description">
+                        Static method added to <code>Y.Event</code>
+                    </div>
 
-    <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">fixArgs</span><span class="p">(</span><span class="nx">arguments</span><span class="p">));</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-</pre></div>
+                    
+                    <div rel="yui:properties" resource="#properties">
 
                     </div>
+
+                    <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_Event.define">
+                                    <h4>
+                                        <a name="method_Event.define">Event.define</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">Event.define</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         cfg
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>Static method to register a synthetic event definition and implementation
+in the DOM Event subsystem. See <code>Y.SyntheticEvent</code> for the
+configuration object signature required.</p>
+<p>Pass either a string <code>type</code> and configuration object as
+separate parameters or a configuration object that includes a
+<code>type</code> property as a single parameter.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">type</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Name given to the synthetic event</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">cfg</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  configuration object.  Pass this as the first
+parameter if it includes the <code>type</code> property.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div rel="yui:events" resource="#events">
+
+
+                    </div>
+
+                    <div rel="yui:attributes" resource="#configattributes">
+
+                    </div>
+
 			</div>
 		</div>
 		<div class="yui-b">
@@ -163,7 +213,7 @@
                                 <li class=""><a href="DOMEventFacade.html" title="DOMEventFacade">DOMEventFacade</a></li>
                                 <li class=""><a href="Event.html" title="Event">Event</a></li>
                                 <li class=""><a href="SyntheticEvent.html" title="SyntheticEvent">SyntheticEvent</a></li>
-                                <li class=""><a href="Y~Event.html" title="Y~Event">Y~Event</a></li>
+                                <li class="selected"><a href="Y~Event.html" title="Y~Event">Y~Event</a></li>
                         </ul>
                     </div>
 
@@ -179,13 +229,19 @@
                                 <li class=""><a href="focusblur.js.html" title="focusblur.js">focusblur.js</a></li>
                                 <li class=""><a href="key.js.html" title="key.js">key.js</a></li>
                                 <li class=""><a href="mouseentermouseleave.js.html" title="mouseentermouseleave.js">mouseentermouseleave.js</a></li>
-                                <li class="selected"><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
+                                <li class=""><a href="mousewheel.js.html" title="mousewheel.js">mousewheel.js</a></li>
                                 <li class=""><a href="resize-window.js.html" title="resize-window.js">resize-window.js</a></li>
                                 <li class=""><a href="synthetic.js.html" title="synthetic.js">synthetic.js</a></li>
                         </ul>
                     </div>
 
 
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method_Event.define" title="Event.define">Event.define</a></li>
+                        </ul>
+                    </div>
 
 
 
