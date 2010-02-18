@@ -113,8 +113,19 @@ Y.mix(TabviewBase.prototype, {
         this._select(activeIndex);
     },
 
+    // collapse extra space between list-items
+    _scrubTextNodes: function() {
+        this._node.one(_queries.tabviewList).get('childNodes').each(function(node) {
+        console.log(node);
+            if (node.get('nodeType') === 3) { // text node
+                node.remove();
+            }
+        });
+    },
+
     // base renderer only enlivens existing markup
     refresh: function() {
+        this._scrubTextNodes();
         this.initClassNames();
         this.initState();
         this.initEvents();
