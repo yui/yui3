@@ -82,7 +82,7 @@
         <span class="nx">delegate</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;sortable-&#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">(),</span> <span class="nx">c</span><span class="p">,</span>
-                <span class="nx">del</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">Delegate</span><span class="p">({</span>
+                <span class="nx">delConfig</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="nx">container</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONT</span><span class="p">),</span>
                     <span class="nx">nodes</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODES</span><span class="p">),</span>
                     <span class="nx">target</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -90,7 +90,12 @@
                     <span class="nx">dragConfig</span><span class="o">:</span> <span class="p">{</span>
                         <span class="nx">groups</span><span class="o">:</span> <span class="p">[</span> <span class="nx">id</span> <span class="p">]</span>
                     <span class="p">}</span>
-                <span class="p">});</span>
+                <span class="p">},</span> <span class="nx">del</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;handles&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">delConfig</span><span class="p">.</span><span class="nx">handles</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;handles&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">del</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">Delegate</span><span class="p">(</span><span class="nx">delConfig</span><span class="p">);</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">ID</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
 
@@ -108,11 +113,23 @@
             <span class="nx">del</span><span class="p">.</span><span class="nx">on</span><span class="p">({</span>
                 <span class="s1">&#39;drag:start&#39;</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDragStart</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span>
                 <span class="s1">&#39;drag:end&#39;</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDragEnd</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span>
-                <span class="s1">&#39;drag:over&#39;</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDragOver</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+                <span class="s1">&#39;drag:over&#39;</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDragOver</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span>
+                <span class="s1">&#39;drag:drag&#39;</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onDrag</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
             <span class="p">});</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">delegate</span> <span class="o">=</span> <span class="nx">del</span><span class="p">;</span>
             <span class="nx">Sortable</span><span class="p">.</span><span class="nx">reg</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">_up</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">_y</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">_onDrag</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_y</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">_up</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> 
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_y</span><span class="p">)</span> <span class="p">{</span> 
+                <span class="k">this</span><span class="p">.</span><span class="nx">_up</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span> 
+            <span class="p">}</span> 
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_y</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span><span class="p">;</span>
         <span class="p">},</span>
         <span class="cm">/**</span>
 <span class="cm">        * @private</span>
@@ -143,6 +160,10 @@
             <span class="p">}</span>
 
             <span class="k">switch</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;moveType&#39;</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="s1">&#39;insert&#39;</span><span class="o">:</span>
+                    <span class="kd">var</span> <span class="nx">dir</span> <span class="o">=</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_up</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;before&#39;</span> <span class="o">:</span> <span class="s1">&#39;after&#39;</span><span class="p">);</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">).</span><span class="nx">insert</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">NODE</span><span class="p">),</span> <span class="nx">dir</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
                 <span class="k">case</span> <span class="s1">&#39;swap&#39;</span><span class="o">:</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">DD</span><span class="p">.</span><span class="nx">DDM</span><span class="p">.</span><span class="nx">swapNode</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">drag</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">drop</span><span class="p">);</span>
                     <span class="k">break</span><span class="p">;</span>
@@ -301,6 +322,14 @@
         <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;sortable&#39;</span><span class="p">,</span>
         <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
             <span class="cm">/**</span>
+<span class="cm">            * @attribute handles</span>
+<span class="cm">            * @description Drag handles to pass on to the internal DD.Delegate instance.</span>
+<span class="cm">            * @type Array</span>
+<span class="cm">            */</span>    
+            <span class="nx">handles</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+            <span class="p">},</span>
+            <span class="cm">/**</span>
 <span class="cm">            * @attribute container</span>
 <span class="cm">            * @description A selector query to get the container to listen for mousedown events on. All &quot;nodes&quot; should be a child of this container.</span>
 <span class="cm">            * @type String</span>
@@ -342,11 +371,11 @@
             <span class="p">},</span>
             <span class="cm">/**</span>
 <span class="cm">            * @attribute moveType</span>
-<span class="cm">            * @description How should an item move to another list: swap, move, copy. Default: swap</span>
+<span class="cm">            * @description How should an item move to another list: insert, swap, move, copy. Default: insert</span>
 <span class="cm">            * @type String</span>
 <span class="cm">            */</span>        
             <span class="nx">moveType</span><span class="o">:</span> <span class="p">{</span>
-                <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;swap&#39;</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;insert&#39;</span>
             <span class="p">},</span>
             <span class="cm">/**</span>
 <span class="cm">            * @attribute invalid</span>
@@ -499,7 +528,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Sortable", "name": "container", "url": "Sortable.html#config_container", "type": "config"}, {"access": "", "host": "Sortable", "name": "containerChange", "url": "Sortable.html#event_containerChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "delegate", "url": "Sortable.html#property_delegate", "type": "property"}, {"access": "", "host": "Sortable", "name": "getSortable", "url": "Sortable.html#method_getSortable", "type": "method"}, {"access": "", "host": "Sortable", "name": "id", "url": "Sortable.html#config_id", "type": "config"}, {"access": "", "host": "Sortable", "name": "idChange", "url": "Sortable.html#event_idChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "invalid", "url": "Sortable.html#config_invalid", "type": "config"}, {"access": "", "host": "Sortable", "name": "invalidChange", "url": "Sortable.html#event_invalidChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "join", "url": "Sortable.html#method_join", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_full", "url": "Sortable.html#method__join_full", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_inner", "url": "Sortable.html#method__join_inner", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_none", "url": "Sortable.html#method__join_none", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_outer", "url": "Sortable.html#method__join_outer", "type": "method"}, {"access": "", "host": "Sortable", "name": "moveType", "url": "Sortable.html#config_moveType", "type": "config"}, {"access": "", "host": "Sortable", "name": "moveTypeChange", "url": "Sortable.html#event_moveTypeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "nodes", "url": "Sortable.html#config_nodes", "type": "config"}, {"access": "", "host": "Sortable", "name": "nodesChange", "url": "Sortable.html#event_nodesChange", "type": "event"}, {"access": "private", "host": "Sortable", "name": "_onDragEnd", "url": "Sortable.html#method__onDragEnd", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_onDragOver", "url": "Sortable.html#method__onDragOver", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_onDragStart", "url": "Sortable.html#method__onDragStart", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_onDropOver", "url": "Sortable.html#method__onDropOver", "type": "method"}, {"access": "", "host": "Sortable", "name": "opacity", "url": "Sortable.html#config_opacity", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityChange", "url": "Sortable.html#event_opacityChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "opacityNode", "url": "Sortable.html#config_opacityNode", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityNodeChange", "url": "Sortable.html#event_opacityNodeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "plug", "url": "Sortable.html#method_plug", "type": "method"}, {"access": "", "host": "Sortable", "name": "reg", "url": "Sortable.html#method_reg", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_sortables", "url": "Sortable.html#property__sortables", "type": "property"}, {"access": "", "host": "Sortable", "name": "unreg", "url": "Sortable.html#method_unreg", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Sortable", "name": "container", "url": "Sortable.html#config_container", "type": "config"}, {"access": "", "host": "Sortable", "name": "containerChange", "url": "Sortable.html#event_containerChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "delegate", "url": "Sortable.html#property_delegate", "type": "property"}, {"access": "", "host": "Sortable", "name": "getSortable", "url": "Sortable.html#method_getSortable", "type": "method"}, {"access": "", "host": "Sortable", "name": "handles", "url": "Sortable.html#config_handles", "type": "config"}, {"access": "", "host": "Sortable", "name": "handlesChange", "url": "Sortable.html#event_handlesChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "id", "url": "Sortable.html#config_id", "type": "config"}, {"access": "", "host": "Sortable", "name": "idChange", "url": "Sortable.html#event_idChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "invalid", "url": "Sortable.html#config_invalid", "type": "config"}, {"access": "", "host": "Sortable", "name": "invalidChange", "url": "Sortable.html#event_invalidChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "join", "url": "Sortable.html#method_join", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_full", "url": "Sortable.html#method__join_full", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_inner", "url": "Sortable.html#method__join_inner", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_none", "url": "Sortable.html#method__join_none", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_outer", "url": "Sortable.html#method__join_outer", "type": "method"}, {"access": "", "host": "Sortable", "name": "moveType", "url": "Sortable.html#config_moveType", "type": "config"}, {"access": "", "host": "Sortable", "name": "moveTypeChange", "url": "Sortable.html#event_moveTypeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "nodes", "url": "Sortable.html#config_nodes", "type": "config"}, {"access": "", "host": "Sortable", "name": "nodesChange", "url": "Sortable.html#event_nodesChange", "type": "event"}, {"access": "private", "host": "Sortable", "name": "_onDragEnd", "url": "Sortable.html#method__onDragEnd", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_onDragOver", "url": "Sortable.html#method__onDragOver", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_onDragStart", "url": "Sortable.html#method__onDragStart", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_onDropOver", "url": "Sortable.html#method__onDropOver", "type": "method"}, {"access": "", "host": "Sortable", "name": "opacity", "url": "Sortable.html#config_opacity", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityChange", "url": "Sortable.html#event_opacityChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "opacityNode", "url": "Sortable.html#config_opacityNode", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityNodeChange", "url": "Sortable.html#event_opacityNodeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "plug", "url": "Sortable.html#method_plug", "type": "method"}, {"access": "", "host": "Sortable", "name": "reg", "url": "Sortable.html#method_reg", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_sortables", "url": "Sortable.html#property__sortables", "type": "property"}, {"access": "", "host": "Sortable", "name": "unreg", "url": "Sortable.html#method_unreg", "type": "method"}];
 </script>
 </body>
 </html>
