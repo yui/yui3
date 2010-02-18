@@ -525,6 +525,11 @@ META = {
             "event-base"
         ]
     }, 
+    "event-synthetic": {
+        "requires": [
+            "node-base"
+        ]
+    }, 
     "history": {
         "requires": [
             "node"
