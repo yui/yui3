@@ -99,25 +99,6 @@
 	<span class="k">return</span> <span class="nx">x</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
 <span class="p">};</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Default date format.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @for config</span>
-<span class="cm"> * @property dateFormat</span>
-<span class="cm"> * @type String</span>
-<span class="cm"> * @value &quot;%Y-%m-%d&quot;</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">dateFormat</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">dateFormat</span> <span class="o">||</span> <span class="s2">&quot;%Y-%m-%d&quot;</span><span class="p">;</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * Default locale for the YUI instance.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @property locale</span>
-<span class="cm"> * @type String</span>
-<span class="cm"> * @value &quot;en&quot;</span>
-<span class="cm">*/</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">locale</span> <span class="o">||</span> <span class="s2">&quot;en&quot;</span><span class="p">;</span>
-
 <span class="kd">var</span> <span class="nx">Dt</span> <span class="o">=</span> <span class="p">{</span>
 	<span class="nx">formats</span><span class="o">:</span> <span class="p">{</span>
 		<span class="nx">a</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">d</span><span class="p">,</span> <span class="nx">l</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">l</span><span class="p">.</span><span class="nx">a</span><span class="p">[</span><span class="nx">d</span><span class="p">.</span><span class="nx">getDay</span><span class="p">()];</span> <span class="p">},</span>

@@ -1023,6 +1023,7 @@ var NOT_FOUND = {},
     CSS = 'css',
     JS = 'js',
     VERSION = Y.version,
+    ROOT_LANG = "",
 
     _path = Y.cached(function(dir, file, type) {
         return dir + '/' + file + '-min.' + (type || CSS);
@@ -1838,10 +1839,11 @@ Y.Loader.prototype = {
             supersedes: []
         }, packName, true);
 
-
-        Y.Env.lang = Y.Env.lang || {};
-        Y.Env.lang[lang] = Y.Env.lang[lang] || {};
-        Y.Env.lang[lang][m.name] = true;
+        if (lang) {
+            Y.Env.lang = Y.Env.lang || {};
+            Y.Env.lang[lang] = Y.Env.lang[lang] || {};
+            Y.Env.lang[lang][m.name] = true;
+        }
 
         return this.moduleInfo[packName];
     },
@@ -1883,6 +1885,11 @@ Y.Loader.prototype = {
                         packName = this.getLangPackName(lang, name);
                         this._addLangPack(lang, m, packName);
                     }
+
+                    // Setup root package if the module has lang defined, 
+                    // it needs to provide a root language pack
+                    packName = this.getLangPackName(ROOT_LANG, name);
+                    this._addLangPack(null, m, packName);
                 }
             }
         }
@@ -1932,7 +1939,7 @@ Y.Loader.prototype = {
      * @return {string} the language pack module name
      */
     getLangPackName: Y.cached(function(lang, mname) {
-        return ('lang/' + mname + '_' + lang);
+        return ('lang/' + mname + ((lang) ? '_' + lang : ''));
     }),
 
     /**
@@ -1958,16 +1965,15 @@ Y.Loader.prototype = {
             if (m) {
 
 
-                if (Y.Intl && this.lang && m.lang) {
-                    lang = Y.Intl.lookupBestLang(this.lang, m.lang);
+                if (Y.Intl && m.lang) {
+                    lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, m.lang);
                     packName = this.getLangPackName(lang, m.name);
-                    if (lang) {
-                        // this._addLangPack(lang, m, packName); // add on demand?
-                        r.intl = true;
-                        r[packName] = true;
-                        delete r[m.name];
-                        r[m.name] = true;
-                    }
+
+                    // this._addLangPack(lang, m, packName); // add on demand?
+                    r.intl = true;
+                    r[packName] = true;
+                    delete r[m.name];
+                    r[m.name] = true;
                 }
 
                 if (expound) {
@@ -1979,7 +1985,6 @@ Y.Loader.prototype = {
                 reqs = this.getRequires(m);
 
                 Y.mix(r, Y.Array.hash(reqs));
-
             }
 
         }, this);
