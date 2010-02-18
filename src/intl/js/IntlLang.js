@@ -50,7 +50,7 @@ Y.mix(Y.namespace("Intl"), {
 
         if (exists) {
             langs[ACTIVE_LANG] = lang;
-            this.fire("intl:langChange", {module: module, prevVal: currLang, newVal: lang});
+            this.fire("intl:langChange", {module: module, prevVal: currLang, newVal: (lang === ROOT_LANG) ? "" : lang});
         }
 
         return exists;
@@ -68,7 +68,7 @@ Y.mix(Y.namespace("Intl"), {
      */
     getLang : function(module) {
         var lang = this._mod(module)[ACTIVE_LANG]; 
-        return (lang === ROOT_LANG) ? null : lang;
+        return (lang === ROOT_LANG) ? "" : lang;
     },
 
     /**
