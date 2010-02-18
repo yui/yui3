@@ -784,6 +784,14 @@ META = {
             "dump"
         ]
     }, 
+    "swf": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "swfdetect"
+        ]
+    }, 
+    "swfdetect": {}, 
     "test": {
         "requires": [
             "substitute", 

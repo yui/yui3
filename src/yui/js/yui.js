@@ -769,9 +769,14 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
     YUI.Env.add = add;
     YUI.Env.remove = remove;
 
-    if (typeof exports == 'object') {
-        exports.YUI = YUI;
-    }
+    /*global exports*/
+    // Support the CommonJS method for exporting our single global
+    // @TODO make sure doing this is being a good citizen, or better
+    // yet, just what if anything should be plumbed in to make it
+    // work out of the box.
+    // if (typeof exports == 'object') {
+    //     exports.YUI = YUI;
+    // }
 
 })();
 
@@ -1111,4 +1116,11 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * The default gallery version to create gallery module urls
  * @property gallery
  * @type string
+ */
+
+/**
+ * Alternative console log function for use in environments without
+ * a supported native console
+ * @property logFn
+ * @type Function
  */
