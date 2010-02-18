@@ -1,7 +1,7 @@
 YUI.add('tabview', function(Y) {
 
-var _queries = Y.TabviewBase.queries,
-    _classNames = Y.TabviewBase.classNames,
+var _queries = Y.TabviewBase._queries,
+    _classNames = Y.TabviewBase._classNames,
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
     _afterChildRemoved: function(e) { // update the selected tab when removed
         var i = e.index,
@@ -21,7 +21,7 @@ var _queries = Y.TabviewBase.queries,
         //  among each of the tabs.
         this.get('boundingBox').plug(Y.Plugin.NodeFocusManager, {
         
-                        descendants: _queries.link,
+                        descendants: _queries.tabLabel,
                         keys: { next: 'down:39', // Right arrow
                                 previous: 'down:37' },  // Left arrow
                         circular: true
@@ -47,13 +47,13 @@ var _queries = Y.TabviewBase.queries,
     },
 
     _renderListBox: function(contentBox) {
-        if (!contentBox.one(_queries.tablist)) {
+        if (!contentBox.one(_queries.tabviewList)) {
             contentBox.append(TabView.LIST_TEMPLATE);
         }
     },
 
     _renderPanelBox: function(contentBox) {
-        if (!contentBox.one(_queries.content)) {
+        if (!contentBox.one(_queries.tabviewPanel)) {
             contentBox.append(TabView.PANEL_TEMPLATE);
         }
     }
@@ -90,10 +90,10 @@ var Lang = Y.Lang,
 Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     BOUNDING_TEMPLATE : '<li></li>',
     CONTENT_TEMPLATE : '<a></a>',
-    PANEL_TEMPLATE: '<div class="' + getClassName('tab-panel') + '"></div>',
+    PANEL_TEMPLATE: '<div class="' + _classNames.tabPanel + '"></div>',
 
     _uiSetSelectedPanel: function(selected) {
-        this.get('panelNode').toggleClass(_classNames.selectedContent, selected);
+        this.get('panelNode').toggleClass(_classNames.selectedPanel, selected);
     },
 
     _afterTabSelectedChange: function(event) {
@@ -128,18 +128,15 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     _renderLabel: function(contentBox, parentContentBox) {
         var label = this.get('label');
         contentBox.setContent(label);
-        parentContentBox.one(_queries.tablist).appendChild(this.get('boundingBox'));
+        parentContentBox.one(_queries.tabviewList).appendChild(this.get('boundingBox'));
     },
 
     _renderPanel: function(contentBox, parentContentBox) {
-        if (!this.get('panelNode')) {
-            var panel = parentContentBox.all(_queries.tabPanel).item(this.get('index'));
-            if (!panel) {
-                panel = Y.Node.create(this.PANEL_TEMPLATE);
-                panel.setContent(this.get('content'));
-                parentContentBox.one(_queries.content).appendChild(panel);
-            }
-            this._set('panelNode', panel);
+        var panel = parentContentBox.all(_queries.tabPanel).item(this.get('index'));
+        if (!panel) {
+            panel = Y.Node.create(this.PANEL_TEMPLATE);
+            panel.setContent(this.get('content'));
+            parentContentBox.one(_queries.tabviewPanel).appendChild(panel);
         }
     },
 
@@ -170,8 +167,6 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
             validator: Lang.isString
         },
         
-        panelNode: {},
-
         //  Override of Widget's default tabIndex attribute since we don't 
         //  want the bounding box (<li>) of each Tab instance in the default
         //  tab index. The focusable pieces of a TabView's UI will be 

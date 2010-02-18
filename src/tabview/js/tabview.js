@@ -1,5 +1,5 @@
-var _queries = Y.TabviewBase.queries,
-    _classNames = Y.TabviewBase.classNames,
+var _queries = Y.TabviewBase._queries,
+    _classNames = Y.TabviewBase._classNames,
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
     _afterChildRemoved: function(e) { // update the selected tab when removed
         var i = e.index,
@@ -19,7 +19,7 @@ var _queries = Y.TabviewBase.queries,
         //  among each of the tabs.
         this.get('boundingBox').plug(Y.Plugin.NodeFocusManager, {
         
-                        descendants: _queries.link,
+                        descendants: _queries.tabLabel,
                         keys: { next: 'down:39', // Right arrow
                                 previous: 'down:37' },  // Left arrow
                         circular: true
@@ -45,13 +45,13 @@ var _queries = Y.TabviewBase.queries,
     },
 
     _renderListBox: function(contentBox) {
-        if (!contentBox.one(_queries.tablist)) {
+        if (!contentBox.one(_queries.tabviewList)) {
             contentBox.append(TabView.LIST_TEMPLATE);
         }
     },
 
     _renderPanelBox: function(contentBox) {
-        if (!contentBox.one(_queries.content)) {
+        if (!contentBox.one(_queries.tabviewPanel)) {
             contentBox.append(TabView.PANEL_TEMPLATE);
         }
     }
@@ -74,9 +74,6 @@ var _queries = Y.TabviewBase.queries,
             validator: '_validTabIndex'
         }
     }
-});
-
-Y.mix(TabView.HTML_PARSER, {
 });
 
 Y.TabView = TabView;
