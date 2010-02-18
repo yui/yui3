@@ -59,8 +59,8 @@ var _queries = Y.TabviewBase._queries,
     }
 }, {
 
-    LIST_TEMPLATE: '<ul></ul>',
-    PANEL_TEMPLATE: '<div></div>',
+    LIST_TEMPLATE: '<ul class="' + _classNames.tabviewList + '"></ul>',
+    PANEL_TEMPLATE: '<div class="' + _classNames.tabviewPanel + '"></div>',
 
     ATTRS: {
         defaultChildType: {  
@@ -78,18 +78,15 @@ var _queries = Y.TabviewBase._queries,
     }
 });
 
-Y.mix(TabView.HTML_PARSER, {
-});
-
 Y.TabView = TabView;
 var Lang = Y.Lang,
-    _queries = Y.TabviewBase.queries,
-    _classNames = Y.TabviewBase.classNames,
+    _queries = Y.TabviewBase._queries,
+    _classNames = Y.TabviewBase._classNames,
     getClassName = Y.ClassNameManager.getClassName;
 
 Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
-    BOUNDING_TEMPLATE : '<li></li>',
-    CONTENT_TEMPLATE : '<a></a>',
+    BOUNDING_TEMPLATE : '<li class="' + _classNames.tab + '"></li>',
+    CONTENT_TEMPLATE : '<a class="' + _classNames.tabLabel + '"></a>',
     PANEL_TEMPLATE: '<div class="' + _classNames.tabPanel + '"></div>',
 
     _uiSetSelectedPanel: function(selected) {
@@ -138,6 +135,8 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
             panel.setContent(this.get('content'));
             parentContentBox.one(_queries.tabviewPanel).appendChild(panel);
         }
+
+        this._set('panelNode', panel);
     },
 
     _remove: function() {
@@ -166,6 +165,8 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         content: {
             validator: Lang.isString
         },
+
+        panelNode: {},
         
         //  Override of Widget's default tabIndex attribute since we don't 
         //  want the bounding box (<li>) of each Tab instance in the default

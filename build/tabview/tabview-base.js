@@ -102,8 +102,6 @@ Y.mix(TabviewBase.prototype, {
             newContent.addClass(_classNames.selectedPanel);
             newContent.removeClass(_classNames.hiddenPanel);
         }
-
-        newContent.siblings().addClass(_classNames.hiddenPanel);
     },
 
     initState: function() {

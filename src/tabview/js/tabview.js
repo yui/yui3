@@ -57,8 +57,8 @@ var _queries = Y.TabviewBase._queries,
     }
 }, {
 
-    LIST_TEMPLATE: '<ul></ul>',
-    PANEL_TEMPLATE: '<div></div>',
+    LIST_TEMPLATE: '<ul class="' + _classNames.tabviewList + '"></ul>',
+    PANEL_TEMPLATE: '<div class="' + _classNames.tabviewPanel + '"></div>',
 
     ATTRS: {
         defaultChildType: {  
