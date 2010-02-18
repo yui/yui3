@@ -35,7 +35,7 @@ YUI.add('sortable', function(Y) {
         delegate: null,
         initializer: function() {
             var id = 'sortable-' + Y.guid(), c,
-                del = new Y.DD.Delegate({
+                delConfig = {
                     container: this.get(CONT),
                     nodes: this.get(NODES),
                     target: true,
@@ -43,7 +43,12 @@ YUI.add('sortable', function(Y) {
                     dragConfig: {
                         groups: [ id ]
                     }
-                });
+                }, del;
+
+            if (this.get('handles')) {
+                delConfig.handles = this.get('handles');
+            }
+            del = new Y.DD.Delegate(delConfig);
 
             this.set(ID, id);
 
@@ -269,6 +274,14 @@ YUI.add('sortable', function(Y) {
     }, {
         NAME: 'sortable',
         ATTRS: {
+            /**
+            * @attribute handles
+            * @description Drag handles to pass on to the internal DD.Delegate instance.
+            * @type Array
+            */    
+            handles: {
+                value: false
+            },
             /**
             * @attribute container
             * @description A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
