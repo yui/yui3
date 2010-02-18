@@ -132,7 +132,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         if (!e.newVal) {
             this._remove();
         } else {
-            this.render();
+            this._add();
         }
     },
 
@@ -170,6 +170,19 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         this._set('panelNode', panel);
     },
 
+    _add: function() {
+        var parentNode = this.get('parent').get('contentBox'),
+            list = parentNode.one(_queries.tabviewList),
+            tabviewPanel = parentNode.one(_queries.tabviewPanel);
+        if (list) {
+            list.appendChild(this.get('boundingBox'));
+        }
+
+        if (tabviewPanel) {
+            tabviewPanel.appendChild(this.get('panelNode'));
+        }
+    },
+    
     _remove: function() {
         this.get('boundingBox').remove();
         this.get('panelNode').remove();
