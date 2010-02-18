@@ -6,7 +6,6 @@ var getClassName = Y.ClassNameManager.getClassName,
     CONTENT = 'content',
     PANEL = 'panel',
     SELECTED = 'selected',
-    HIDDEN = 'hidden',
     EMPTY_OBJ = {},
     DOT = '.',
 
@@ -18,8 +17,7 @@ var getClassName = Y.ClassNameManager.getClassName,
         tabLabel: getClassName(TAB, 'label'),
         tabPanel: getClassName(TAB, PANEL),
         selectedTab: getClassName(TAB, SELECTED),
-        selectedPanel: getClassName(TAB, PANEL, SELECTED),
-        hiddenPanel: getClassName(TAB, PANEL, HIDDEN)
+        selectedPanel: getClassName(TAB, PANEL, SELECTED)
     },
 
     roles = {
@@ -40,8 +38,7 @@ var getClassName = Y.ClassNameManager.getClassName,
         tabviewPanel: '> div',
         tabPanel: '> div > div',
         selectedTab: '> ul > ' + DOT + _classNames.selectedTab,
-        selectedPanel: '> div ' + DOT + _classNames.selectedPanel,
-        hiddenPanel: '> div ' + DOT + _classNames.hiddenPanel
+        selectedPanel: '> div ' + DOT + _classNames.selectedPanel
     },
 
     TabviewBase = function(config) {
@@ -100,7 +97,6 @@ Y.mix(TabviewBase.prototype, {
 
         if (newContent) {
             newContent.addClass(_classNames.selectedPanel);
-            newContent.removeClass(_classNames.hiddenPanel);
         }
     },
 

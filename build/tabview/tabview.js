@@ -2,6 +2,7 @@ YUI.add('tabview', function(Y) {
 
 var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
+    DOT = '.',
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
     _afterChildRemoved: function(e) { // update the selected tab when removed
         var i = e.index,
@@ -34,6 +35,7 @@ var _queries = Y.TabviewBase._queries,
         var contentBox = this.get('contentBox'); 
         this._renderListBox(contentBox);
         this._renderPanelBox(contentBox);
+        this._renderTabs(contentBox);
         this._setDefSelection(contentBox);
 
     },
@@ -47,15 +49,44 @@ var _queries = Y.TabviewBase._queries,
     },
 
     _renderListBox: function(contentBox) {
-        if (!contentBox.one(_queries.tabviewList)) {
+        var list = contentBox.one(_queries.tabviewList);
+        if (!list) {
             contentBox.append(TabView.LIST_TEMPLATE);
+        } else {
+            list.addClass(_classNames.tabviewList);
         }
     },
 
     _renderPanelBox: function(contentBox) {
-        if (!contentBox.one(_queries.tabviewPanel)) {
+        var panel = contentBox.one(_queries.tabviewPanel);
+        if (!panel) {
             contentBox.append(TabView.PANEL_TEMPLATE);
+        } else {
+            panel.addClass(_classNames.tabviewPanel);
         }
+    },
+
+    _renderTabs: function(contentBox) {
+        var tabs = contentBox.all(_queries.tab),
+            panels = contentBox.all(_queries.tabPanel);
+            tabview = this;
+
+        if (tabs) { // add classNames and fill in Tab fields from markup when possible
+            tabs.addClass(_classNames.tab);
+            contentBox.all(_queries.tabLabel).addClass(_classNames.tabLabel);
+            contentBox.all(_queries.tabPanel).addClass(_classNames.tabPanel);
+
+            tabs.each(function(node, i) {
+                var panelNode = panels.item(i);
+                tabview.add({
+                    boundingBox: node,
+                    contentBox: node.one(DOT + _classNames.tabLabel),
+                    label: node.one(DOT + _classNames.tabLabel).get('text'),
+                    content: panelNode ? panelNode.get('innerHTML') : null
+                });
+            });
+        }
+
     }
 }, {
 
@@ -177,6 +208,12 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
             validator: '_validTabIndex'
         }        
 
+    },
+
+    HTML_PARSER: {
+        selection: function(contentBox) {
+            return this.get('boundingBox').hasClass(_classNames.selectedTab);
+        }
     }
 
 });
