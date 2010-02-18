@@ -66,7 +66,7 @@ foreach (range(1, $count) as $k) {
 <ul id="two">
 <?php
 foreach (range(1, $count) as $k) {
-    echo('  <li class="item list-item2">'.$k.'</li>'."\n");
+    echo('  <li class="item list-item2"><strong>[|]</strong> '.$k.'</li>'."\n");
 }
 ?>
 </ul>
@@ -128,7 +128,8 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     var sel2 = new Y.Sortable({
         container: '#two',
         nodes: '.item',
-        moveType: 'copy'
+        moveType: 'insert',
+        handles: ['strong']
     });
     sel2.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'
