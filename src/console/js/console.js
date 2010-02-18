@@ -59,7 +59,7 @@ var getCN = Y.ClassNameManager.getClassName,
     C_PAUSE_LABEL      = getCN(CONSOLE,PAUSE,'label'),
 
     RE_INLINE_SOURCE = /^(\S+)\s/,
-    RE_AMP = /&/g,
+    RE_AMP = /&(?!#?[a-z0-9]+;)/g,
     RE_GT  = />/g,
     RE_LT  = /</g,
 

@@ -1,10 +1,9 @@
 YUI.add('loader', function(Y) {
 
 (function() {
-
 var VERSION = Y.version,
 ROOT = VERSION + '/build/',
-GALLERY_VERSION = 'gallery-2009-10-19', // @TODO build time
+GALLERY_VERSION = Y.config.gallery || Y.gallery,
 GALLERY_ROOT = GALLERY_VERSION + '/build/',
 GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
 META = {
@@ -110,6 +109,11 @@ META = {
     "classnamemanager": {
         "requires": [
             "yui-base"
+        ]
+    }, 
+    "clickable-rail": {
+        "requires": [
+            "slider-base"
         ]
     }, 
     "collection": {
@@ -315,6 +319,12 @@ META = {
     "datatype": {
         "submodules": {
             "datatype-date": {
+                "lang": [
+                    "en", 
+                    "en-US", 
+                    "fr-FR", 
+                    "ko-KR"
+                ], 
                 "requires": [
                     "yui-base"
                 ]
@@ -529,15 +539,16 @@ META = {
             "node-screen"
         ]
     }, 
+    "int-value-range": {
+        "requires": [
+            "slider-base"
+        ]
+    }, 
     "intl": {
-        "submodules": {
-            "intl-lang": {
-                "requires": [
-                    "event-custom"
-                ]
-            }, 
-            "intl-load": {}
-        }
+        "requires": [
+            "intl-base", 
+            "event-custom"
+        ]
     }, 
     "io": {
         "submodules": {
@@ -744,8 +755,16 @@ META = {
     }, 
     "slider": {
         "requires": [
+            "slider-base", 
+            "int-value-range", 
+            "clickable-rail"
+        ]
+    }, 
+    "slider-base": {
+        "requires": [
             "widget", 
-            "dd-value", 
+            "dd-constrain", 
+            "substitute", 
             "skin-sam-slider"
         ], 
         "skinnable": true
@@ -767,13 +786,20 @@ META = {
             "dump"
         ]
     }, 
+    "swf": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "swfdetect"
+        ]
+    }, 
+    "swfdetect": {}, 
     "test": {
         "requires": [
             "substitute", 
             "node", 
             "json", 
-            "event-simulate", 
-            "skin-sam-test"
+            "event-simulate"
         ], 
         "skinnable": true
     }, 
@@ -822,11 +848,6 @@ META = {
                 "requires": [
                     "widget-base"
                 ]
-            }, 
-            "widget-i18n": {
-                "requires": [
-                    "widget-base"
-                ]
             }
         }
     }, 
@@ -836,9 +857,15 @@ META = {
             "anim-base"
         ]
     }, 
+    "widget-locale": {
+        "requires": [
+            "widget-base"
+        ]
+    }, 
     "yui": {
         "submodules": {
             "get": {}, 
+            "intl-base": {}, 
             "yui-base": {}, 
             "yui-later": {}, 
             "yui-log": {}, 
@@ -864,6 +891,33 @@ META = {
             filter: {
                 'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
+            }
+        },
+
+        // expand 'lang|module|lang'
+        'lang|': {
+            action: function(data) {
+
+                var parts = data.split('|'),
+                    name = parts[1],
+                    lang = parts[2],
+                    packName, mod;
+
+                if (lang) {
+
+                    packName = this.getLangPackName(lang, name);
+
+                    if ('create' == parts[3]) {
+                        mod = this.getModule(packName);
+                        if (!mod) {
+                            mod = this.getModule(name);
+                            this._addLangPack(lang, mod, packName);
+                        }
+                    }
+
+                    this.require(packName);
+                }
+                delete this.required[data];
             }
         }
     }
@@ -977,6 +1031,7 @@ var NOT_FOUND = {},
     CSS = 'css',
     JS = 'js',
     VERSION = Y.version,
+    ROOT_LANG = "",
 
     _path = Y.cached(function(dir, file, type) {
         return dir + '/' + file + '-min.' + (type || CSS);
@@ -1096,6 +1151,11 @@ Y.Loader = function(o) {
      * @default http://yui.yahooapis.com/combo?
      */
     this.comboBase = Y.Env.meta.comboBase;
+
+    /*
+     * Base path for language packs.
+     */
+    // this.langBase = Y.Env.meta.langBase;
 
     /**
      * If configured, YUI JS resources will use the combo
@@ -1277,11 +1337,12 @@ Y.Loader = function(o) {
      *   </code>
      *   @property skin
      */
-     this.skin = Y.merge(Y.Env.meta.skin);
+    this.skin = Y.merge(Y.Env.meta.skin);
     
     var defaults = Y.Env.meta.modules, i, onPage = GLOBAL_ENV.mods;
 
     this._internal = true;
+
     for (i in defaults) {
         if (defaults.hasOwnProperty(i)) {
             this.addModule(defaults[i], i);
@@ -1293,6 +1354,7 @@ Y.Loader = function(o) {
             this.addModule(onPage[i].details, i);
         }
     }
+
     this._internal = false;
 
     /**
@@ -1530,10 +1592,12 @@ Y.Loader.prototype = {
      * @method addModule
      * @param o An object containing the module data
      * @param name the module name (optional), required if not in the module data
+     * @param persist {boolean} persist the availability of this module across instances
+     *
      * @return {boolean} true if the module was added, false if 
      * the object passed in did not provide all required attributes
      */
-    addModule: function(o, name) {
+    addModule: function(o, name, persist) {
 
         name = name || o.name;
         o.name = name;
@@ -1558,7 +1622,8 @@ Y.Loader.prototype = {
         this.moduleInfo[name] = o;
 
         // Handle submodule logic
-        var subs = o.submodules, i, l, sup, s, smod, plugins, plug;
+        var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
+            j, langs, packName, supName, flatSup, flatLang, lang;
         if (subs) {
             sup = []; 
             l   = 0;
@@ -1566,13 +1631,49 @@ Y.Loader.prototype = {
             for (i in subs) {
                 if (subs.hasOwnProperty(i)) {
                     s = subs[i];
+
                     s.path = _path(name, i, o.type);
+                    s.pkg = name;
                     this.addModule(s, i);
                     sup.push(i);
 
                     if (o.skinnable) {
                         smod = this._addSkin(this.skin.defaultSkin, i, name);
                         sup.push(smod.name);
+                    }
+
+                    // looks like we are expected to work out the metadata
+                    // for the parent module language packs from what is
+                    // specified in the child modules.
+                    if (s.lang && s.lang.length) {
+                        langs = Y.Array(s.lang);
+                        for (j=0; j < langs.length; j++) {
+                            lang = langs[j];
+                            packName = this.getLangPackName(lang, name);
+                            supName = this.getLangPackName(lang, i);
+                            smod = this.moduleInfo[packName];
+
+                            if (!smod) {
+                                smod = this._addLangPack(lang, o, packName);
+                            }
+
+                            flatSup = flatSup || Y.Array.hash(smod.supersedes);
+
+                            if (!(supName in flatSup)) {
+                                smod.supersedes.push(supName);
+                            }
+
+                            o.lang = o.lang || [];
+
+                            flatLang = flatLang || Y.Array.hash(o.lang);
+
+                            if (!(lang in flatLang)) {
+                                o.lang.push(lang);
+                            }
+
+
+                            // Add rollup file, need to add to supersedes list too 
+                        }
                     }
 
                     l++;
@@ -1599,8 +1700,13 @@ Y.Loader.prototype = {
             }
         }
 
-        this.dirty = true;
+        // if (silent) {
+            this.dirty = true;
+        // }
 
+        if (persist) {
+            Y.Env.meta.modules[name] = o;
+        }
 
         return o;
     },
@@ -1730,6 +1836,26 @@ Y.Loader.prototype = {
         }
     },
 
+    _addLangPack: function(lang, m, packName) {
+        // var packName = this.getLangPackName(lang, m.name);
+        var packPath = _path((m.pkg || m.name), packName, JS);
+        this.addModule({
+            path: packPath,
+            after: ['intl'],
+            requires: ['intl'],
+            ext: m.ext,
+            supersedes: []
+        }, packName, true);
+
+        if (lang) {
+            Y.Env.lang = Y.Env.lang || {};
+            Y.Env.lang[lang] = Y.Env.lang[lang] || {};
+            Y.Env.lang[lang][m.name] = true;
+        }
+
+        return this.moduleInfo[packName];
+    },
+
     /**
      * Investigates the current YUI configuration on the page.  By default,
      * modules already detected will not be loaded again unless a force
@@ -1739,7 +1865,8 @@ Y.Loader.prototype = {
      */
     _setup: function() {
 
-        var info = this.moduleInfo, name, i, j, m, o, l, smod;
+        var info = this.moduleInfo, name, i, j, m, o, l, smod,
+        langs, lang, packName;
 
         // Create skin modules
         for (name in info) {
@@ -1756,6 +1883,21 @@ Y.Loader.prototype = {
                     }
 
                     m.requires.push(smod);
+                }
+
+                if (m && m.lang && m.lang.length) {
+                    langs = Y.Array(m.lang);
+                    for (i=0; i<langs.length; i=i+1) {
+                        // create the module definition
+                        lang = langs[i];
+                        packName = this.getLangPackName(lang, name);
+                        this._addLangPack(lang, m, packName);
+                    }
+
+                    // Setup root package if the module has lang defined, 
+                    // it needs to provide a root language pack
+                    packName = this.getLangPackName(ROOT_LANG, name);
+                    this._addLangPack(null, m, packName);
                 }
             }
         }
@@ -1797,6 +1939,16 @@ Y.Loader.prototype = {
 
     },
     
+    /**
+     * Builds a module name for a language pack
+     * @function getLangPackName
+     * @param lang {string} the language code
+     * @param mname {string} the module to build it for
+     * @return {string} the language pack module name
+     */
+    getLangPackName: Y.cached(function(lang, mname) {
+        return ('lang/' + mname + ((lang) ? '_' + lang : ''));
+    }),
 
     /**
      * Inspects the required modules list looking for additional 
@@ -1807,7 +1959,7 @@ Y.Loader.prototype = {
      */
     _explode: function() {
 
-        var r = this.required, m, reqs;
+        var r = this.required, m, reqs, lang, packName;
 
         // the setup phase is over, all modules have been created
         this.dirty = false;
@@ -1819,6 +1971,18 @@ Y.Loader.prototype = {
             var expound = m && m.expound;
 
             if (m) {
+
+
+                if (Y.Intl && m.lang) {
+                    lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, m.lang);
+                    packName = this.getLangPackName(lang, m.name);
+
+                    // this._addLangPack(lang, m, packName); // add on demand?
+                    r.intl = true;
+                    r[packName] = true;
+                    delete r[m.name];
+                    r[m.name] = true;
+                }
 
                 if (expound) {
                     r[expound] = this.getModule(expound);
@@ -1832,6 +1996,8 @@ Y.Loader.prototype = {
             }
 
         }, this);
+
+
     },
 
     getModule: function(name) {
@@ -1840,37 +2006,44 @@ Y.Loader.prototype = {
             return null;
         }
 
-        var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, add = false;
+        var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, found;
 
         // check the patterns library to see if we should automatically add
         // the module with defaults
         if (!m) {
 
             for (i in patterns) {
-                p = patterns[i];
-                type = p.type;
+                if (patterns.hasOwnProperty(i)) {
+                    p = patterns[i];
+                    type = p.type;
 
-                // switch (type) {
-                    // case 'regex':
-                    //     break;
-                    // case 'function':
-                    //     break;
-                    // default: // prefix
-                    //     if (name.indexOf(i) > -1) {
-                    //         add = true;
-                    //     }
-                // }
+                    // switch (type) {
+                        // case 'regex':
+                        //     break;
+                        // case 'function':
+                        //     break;
+                        // default: // prefix
+                        //     if (name.indexOf(i) > -1) {
+                        //         add = true;
+                        //     }
+                    // }
 
-                // use the metadata supplied for the pattern
-                // as the module definition.
-                if (name.indexOf(i) > -1) {
-                    add = p;
+                    // use the metadata supplied for the pattern
+                    // as the module definition.
+                    if (name.indexOf(i) > -1) {
+                        found = p;
+                        break;
+                    }
                 }
             }
 
-            if (add) {
-                // ext true or false?
-                m = this.addModule(add, name);
+            if (found) {
+                if (p.action) {
+                    p.action.call(this, name, i);
+                } else {
+                    // ext true or false?
+                    m = this.addModule(found, name);
+                }
             }
         }
 

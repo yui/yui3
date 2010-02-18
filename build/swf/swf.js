@@ -177,6 +177,13 @@ SWF.prototype =
 		}
 	},
 	
+	applyMethod: function (instanceId, methodName, args) {
+		if (!args) {args = []};
+		if (this._swf._node["applyMethod"]) {
+			this._swf._node.applyMethod(instanceId, methodName, args);
+		}
+	},
+	
 	exposeMethod: function (instanceId, methodName, exposedName) {
 		if (this._swf._node["exposeMethod"]) {
 			this._swf._node.exposeMethod(instanceId, methodName, exposedName);

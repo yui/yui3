@@ -115,7 +115,9 @@
     <span class="nx">_delegates</span> <span class="o">=</span> <span class="p">{},</span>
 
     <span class="c1">// Widget nodeguid-to-instance map.</span>
-    <span class="nx">_instances</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="nx">_instances</span> <span class="o">=</span> <span class="p">{},</span>
+
+    <span class="nx">moduleName</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * A base class for widgets, providing:</span>
@@ -138,6 +140,7 @@
     <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;constructor called&#39;</span><span class="p">,</span> <span class="s1">&#39;life&#39;</span><span class="p">,</span> <span class="s1">&#39;widget&#39;</span><span class="p">);</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">_strs</span> <span class="o">=</span> <span class="p">{};</span>
+
     <span class="k">this</span><span class="p">.</span><span class="nx">_cssPrefix</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">CSS_PREFIX</span> <span class="o">||</span> <span class="nx">_getClassName</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">NAME</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">());</span>
 
     <span class="nx">Widget</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
@@ -320,7 +323,7 @@
 <span class="cm"> * @type Object</span>
 <span class="cm"> */</span>
 <span class="nx">ATTRS</span><span class="p">[</span><span class="nx">STRINGS</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">value</span><span class="o">:</span> <span class="p">{},</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">get</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">moduleName</span><span class="p">)</span> <span class="o">:</span> <span class="p">{},</span>
     <span class="nx">setter</span><span class="o">:</span> <span class="s2">&quot;_strSetter&quot;</span><span class="p">,</span>
     <span class="nx">getter</span><span class="o">:</span> <span class="s2">&quot;_strGetter&quot;</span>
 <span class="p">};</span>
@@ -1181,6 +1184,10 @@
         <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">STRINGS</span><span class="p">),</span> <span class="nx">strings</span><span class="p">);</span>
     <span class="p">},</span>
 
+    <span class="nx">_defStrValue</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">},</span>
+
     <span class="nx">getString</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">STRINGS</span><span class="p">)[</span><span class="nx">key</span><span class="p">];</span>
     <span class="p">},</span>
@@ -1369,6 +1376,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -1389,6 +1397,7 @@
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class="selected"><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
@@ -1410,7 +1419,7 @@
                         <ul class="content">        
                                 <li class="selected"><a href="Widget.js.html" title="Widget.js">Widget.js</a></li>
                                 <li class=""><a href="WidgetHTMLParser.js.html" title="WidgetHTMLParser.js">WidgetHTMLParser.js</a></li>
-                                <li class=""><a href="WidgetI18N.js.html" title="WidgetI18N.js">WidgetI18N.js</a></li>
+                                <li class=""><a href="WidgetLocale.js.html" title="WidgetLocale.js">WidgetLocale.js</a></li>
                         </ul>
                     </div>
 

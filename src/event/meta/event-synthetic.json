@@ -1,0 +1,7 @@
+{
+    "event-synthetic": {
+        "requires": [
+            "node-base"
+        ]
+    }
+}

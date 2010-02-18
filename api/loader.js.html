@@ -152,6 +152,7 @@
     <span class="nx">CSS</span> <span class="o">=</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span>
     <span class="nx">JS</span> <span class="o">=</span> <span class="s1">&#39;js&#39;</span><span class="p">,</span>
     <span class="nx">VERSION</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span>
+    <span class="nx">ROOT_LANG</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
 
     <span class="nx">_path</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">file</span> <span class="o">+</span> <span class="s1">&#39;-min.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">||</span> <span class="nx">CSS</span><span class="p">);</span>
@@ -271,6 +272,11 @@
 <span class="cm">     * @default http://yui.yahooapis.com/combo?</span>
 <span class="cm">     */</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">comboBase</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">comboBase</span><span class="p">;</span>
+
+    <span class="cm">/*</span>
+<span class="cm">     * Base path for language packs.</span>
+<span class="cm">     */</span>
+    <span class="c1">// this.langBase = Y.Env.meta.langBase;</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * If configured, YUI JS resources will use the combo</span>
@@ -452,11 +458,12 @@
 <span class="cm">     *   &lt;/code&gt;</span>
 <span class="cm">     *   @property skin</span>
 <span class="cm">     */</span>
-     <span class="k">this</span><span class="p">.</span><span class="nx">skin</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">skin</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">skin</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">skin</span><span class="p">);</span>
     
     <span class="kd">var</span> <span class="nx">defaults</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">modules</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">onPage</span> <span class="o">=</span> <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">mods</span><span class="p">;</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">_internal</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">defaults</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">defaults</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">defaults</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">i</span><span class="p">);</span>
@@ -468,6 +475,7 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">onPage</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">details</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
+
     <span class="k">this</span><span class="p">.</span><span class="nx">_internal</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
     <span class="cm">/**</span>
@@ -708,10 +716,12 @@
 <span class="cm">     * @method addModule</span>
 <span class="cm">     * @param o An object containing the module data</span>
 <span class="cm">     * @param name the module name (optional), required if not in the module data</span>
+<span class="cm">     * @param persist {boolean} persist the availability of this module across instances</span>
+<span class="cm">     *</span>
 <span class="cm">     * @return {boolean} true if the module was added, false if </span>
 <span class="cm">     * the object passed in did not provide all required attributes</span>
 <span class="cm">     */</span>
-    <span class="nx">addModule</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">addModule</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">persist</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">||</span> <span class="nx">o</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
         <span class="nx">o</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
@@ -737,7 +747,8 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
 
         <span class="c1">// Handle submodule logic</span>
-        <span class="kd">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">submodules</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">sup</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">smod</span><span class="p">,</span> <span class="nx">plugins</span><span class="p">,</span> <span class="nx">plug</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">submodules</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">sup</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">smod</span><span class="p">,</span> <span class="nx">plugins</span><span class="p">,</span> <span class="nx">plug</span><span class="p">,</span>
+            <span class="nx">j</span><span class="p">,</span> <span class="nx">langs</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">supName</span><span class="p">,</span> <span class="nx">flatSup</span><span class="p">,</span> <span class="nx">flatLang</span><span class="p">,</span> <span class="nx">lang</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">sup</span> <span class="o">=</span> <span class="p">[];</span> 
             <span class="nx">l</span>   <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -745,13 +756,50 @@
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">s</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
                     <span class="nx">s</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+                    <span class="nx">s</span><span class="p">.</span><span class="nx">pkg</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
                     <span class="nx">sup</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">skinnable</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">skin</span><span class="p">.</span><span class="nx">defaultSkin</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
                         <span class="nx">sup</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">smod</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="c1">// looks like we are expected to work out the metadata</span>
+                    <span class="c1">// for the parent module language packs from what is</span>
+                    <span class="c1">// specified in the child modules.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">lang</span> <span class="o">&amp;&amp;</span> <span class="nx">s</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">langs</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">lang</span><span class="p">);</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">langs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">lang</span> <span class="o">=</span> <span class="nx">langs</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+                            <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                            <span class="nx">supName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+                            <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">packName</span><span class="p">];</span>
+
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">smod</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addLangPack</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">packName</span><span class="p">);</span>
+                            <span class="p">}</span>
+
+                            <span class="nx">flatSup</span> <span class="o">=</span> <span class="nx">flatSup</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">smod</span><span class="p">.</span><span class="nx">supersedes</span><span class="p">);</span>
+
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">supName</span> <span class="k">in</span> <span class="nx">flatSup</span><span class="p">))</span> <span class="p">{</span>
+                                <span class="nx">smod</span><span class="p">.</span><span class="nx">supersedes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">supName</span><span class="p">);</span>
+                            <span class="p">}</span>
+
+                            <span class="nx">o</span><span class="p">.</span><span class="nx">lang</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="p">[];</span>
+
+                            <span class="nx">flatLang</span> <span class="o">=</span> <span class="nx">flatLang</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">lang</span><span class="p">);</span>
+
+                            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">lang</span> <span class="k">in</span> <span class="nx">flatLang</span><span class="p">))</span> <span class="p">{</span>
+                                <span class="nx">o</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">lang</span><span class="p">);</span>
+                            <span class="p">}</span>
+
+                            <span class="c1">// Y.log(&#39;pack &#39; + packName + &#39; should supersede &#39; + supName);</span>
+
+                            <span class="c1">// Add rollup file, need to add to supersedes list too </span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
 
                     <span class="nx">l</span><span class="o">++</span><span class="p">;</span>
@@ -778,9 +826,14 @@
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="c1">// if (silent) {</span>
+            <span class="c1">// Y.log(&quot;addModule (sets dirty to true): &quot; + name);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="c1">// }</span>
 
-        <span class="c1">// Y.log(&quot;addModule (sets dirty to true): &quot; + name);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">persist</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">modules</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
     <span class="p">},</span>
@@ -915,6 +968,26 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
+    <span class="nx">_addLangPack</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">packName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// var packName = this.getLangPackName(lang, m.name);</span>
+        <span class="kd">var</span> <span class="nx">packPath</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">((</span><span class="nx">m</span><span class="p">.</span><span class="nx">pkg</span> <span class="o">||</span> <span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">),</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">JS</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">({</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="nx">packPath</span><span class="p">,</span>
+            <span class="nx">after</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;intl&#39;</span><span class="p">],</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;intl&#39;</span><span class="p">],</span>
+            <span class="nx">ext</span><span class="o">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">ext</span><span class="p">,</span>
+            <span class="nx">supersedes</span><span class="o">:</span> <span class="p">[]</span>
+        <span class="p">},</span> <span class="nx">packName</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">[</span><span class="nx">lang</span><span class="p">][</span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">packName</span><span class="p">];</span>
+    <span class="p">},</span>
+
     <span class="cm">/**</span>
 <span class="cm">     * Investigates the current YUI configuration on the page.  By default,</span>
 <span class="cm">     * modules already detected will not be loaded again unless a force</span>
@@ -924,7 +997,8 @@
 <span class="cm">     */</span>
     <span class="nx">_setup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">smod</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">smod</span><span class="p">,</span>
+        <span class="nx">langs</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span> <span class="nx">packName</span><span class="p">;</span>
 
         <span class="c1">// Create skin modules</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
@@ -942,6 +1016,21 @@
                     <span class="p">}</span>
 
                     <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">smod</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">langs</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">);</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">langs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// create the module definition</span>
+                        <span class="nx">lang</span> <span class="o">=</span> <span class="nx">langs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                        <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">_addLangPack</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">packName</span><span class="p">);</span>
+                    <span class="p">}</span>
+
+                    <span class="c1">// Setup root package if the module has lang defined, </span>
+                    <span class="c1">// it needs to provide a root language pack</span>
+                    <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_addLangPack</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">packName</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -986,6 +1075,16 @@
 
     <span class="p">},</span>
     
+    <span class="cm">/**</span>
+<span class="cm">     * Builds a module name for a language pack</span>
+<span class="cm">     * @function getLangPackName</span>
+<span class="cm">     * @param lang {string} the language code</span>
+<span class="cm">     * @param mname {string} the module to build it for</span>
+<span class="cm">     * @return {string} the language pack module name</span>
+<span class="cm">     */</span>
+    <span class="nx">getLangPackName</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">mname</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;lang/&#39;</span> <span class="o">+</span> <span class="nx">mname</span> <span class="o">+</span> <span class="p">((</span><span class="nx">lang</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">lang</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">));</span>
+    <span class="p">}),</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Inspects the required modules list looking for additional </span>
@@ -996,7 +1095,7 @@
 <span class="cm">     */</span>
     <span class="nx">_explode</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">required</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">reqs</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">required</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">reqs</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span> <span class="nx">packName</span><span class="p">;</span>
 
         <span class="c1">// the setup phase is over, all modules have been created</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
@@ -1009,6 +1108,22 @@
             <span class="c1">// Y.log(&#39;exploding &#39; + i);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="c1">// Y.log(&#39;checking intl: &#39; + m.name + &#39;, &#39; + m.lang + &#39;, &#39; + this.lang);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">lookupBestLang</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">);</span>
+                    <span class="c1">// Y.log(&#39;lang pack: &#39; + lang);</span>
+                    <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+
+                    <span class="c1">// Y.log(&#39;pack name: &#39; + packName);</span>
+                    <span class="c1">// this._addLangPack(lang, m, packName); // add on demand?</span>
+                    <span class="nx">r</span><span class="p">.</span><span class="nx">intl</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">r</span><span class="p">[</span><span class="nx">packName</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="k">delete</span> <span class="nx">r</span><span class="p">[</span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">];</span>
+                    <span class="nx">r</span><span class="p">[</span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="c1">// Y.log(&#39;added: &#39; + packName);</span>
+                <span class="p">}</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">expound</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">r</span><span class="p">[</span><span class="nx">expound</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">expound</span><span class="p">);</span>
@@ -1023,6 +1138,8 @@
             <span class="p">}</span>
 
         <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+
+
     <span class="p">},</span>
 
     <span class="nx">getModule</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
@@ -1031,38 +1148,48 @@
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">patterns</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">patterns</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">add</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">patterns</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">patterns</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">found</span><span class="p">;</span>
 
         <span class="c1">// check the patterns library to see if we should automatically add</span>
         <span class="c1">// the module with defaults</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
+           <span class="c1">// Y.log(&#39;testing patterns &#39; + Y.Object.keys(patterns));</span>
 
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">patterns</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">p</span> <span class="o">=</span> <span class="nx">patterns</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                <span class="nx">type</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">patterns</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="c1">// Y.log(&#39;testing pattern &#39; + i);</span>
+                    <span class="nx">p</span> <span class="o">=</span> <span class="nx">patterns</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="nx">type</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
 
-                <span class="c1">// switch (type) {</span>
-                    <span class="c1">// case &#39;regex&#39;:</span>
-                    <span class="c1">//     break;</span>
-                    <span class="c1">// case &#39;function&#39;:</span>
-                    <span class="c1">//     break;</span>
-                    <span class="c1">// default: // prefix</span>
-                    <span class="c1">//     if (name.indexOf(i) &gt; -1) {</span>
-                    <span class="c1">//         add = true;</span>
-                    <span class="c1">//     }</span>
-                <span class="c1">// }</span>
+                    <span class="c1">// switch (type) {</span>
+                        <span class="c1">// case &#39;regex&#39;:</span>
+                        <span class="c1">//     break;</span>
+                        <span class="c1">// case &#39;function&#39;:</span>
+                        <span class="c1">//     break;</span>
+                        <span class="c1">// default: // prefix</span>
+                        <span class="c1">//     if (name.indexOf(i) &gt; -1) {</span>
+                        <span class="c1">//         add = true;</span>
+                        <span class="c1">//     }</span>
+                    <span class="c1">// }</span>
 
-                <span class="c1">// use the metadata supplied for the pattern</span>
-                <span class="c1">// as the module definition.</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">add</span> <span class="o">=</span> <span class="nx">p</span><span class="p">;</span>
+                    <span class="c1">// use the metadata supplied for the pattern</span>
+                    <span class="c1">// as the module definition.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">found</span> <span class="o">=</span> <span class="nx">p</span><span class="p">;</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">add</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Module does not exist: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, but matched a pattern so creating with defaults&#39;</span><span class="p">);</span>
-                <span class="c1">// ext true or false?</span>
-                <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">add</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">found</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// Y.log(&#39;executing pattern action: &#39; + i);</span>
+                    <span class="nx">p</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Module does not exist: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, but matched a pattern so creating with defaults&#39;</span><span class="p">);</span>
+                    <span class="c1">// ext true or false?</span>
+                    <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">found</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -1189,6 +1316,7 @@
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
+        <span class="c1">// Y.log(&#39;required now: &#39; + Y.Object.keys(r));</span>
     <span class="p">},</span>
 
     <span class="nx">_attach</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -1769,6 +1897,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class="selected"><a href="module_loader.html" title="loader">loader</a></li>
@@ -1789,6 +1918,7 @@
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
@@ -1827,7 +1957,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Loader", "name": "addModule", "url": "Loader.html#method_addModule", "type": "method"}, {"access": "private", "host": "Loader", "name": "_addSkin", "url": "Loader.html#method__addSkin", "type": "method"}, {"access": "", "host": "Loader", "name": "allowRollup", "url": "Loader.html#property_allowRollup", "type": "property"}, {"access": "", "host": "Loader", "name": "attaching", "url": "Loader.html#property_attaching", "type": "property"}, {"access": "", "host": "Loader", "name": "base", "url": "Loader.html#property_base", "type": "property"}, {"access": "", "host": "Loader", "name": "calculate", "url": "Loader.html#method_calculate", "type": "method"}, {"access": "", "host": "Loader", "name": "charset", "url": "Loader.html#property_charset", "type": "property"}, {"access": "", "host": "Loader", "name": "combine", "url": "Loader.html#property_combine", "type": "property"}, {"access": "", "host": "Loader", "name": "comboBase", "url": "Loader.html#property_comboBase", "type": "property"}, {"access": "", "host": "Loader", "name": "context", "url": "Loader.html#property_context", "type": "property"}, {"access": "", "host": "Loader", "name": "cssAttributes", "url": "Loader.html#property_cssAttributes", "type": "property"}, {"access": "", "host": "Loader", "name": "data", "url": "Loader.html#property_data", "type": "property"}, {"access": "", "host": "Loader", "name": "dirty", "url": "Loader.html#property_dirty", "type": "property"}, {"access": "private", "host": "Loader", "name": "_explode", "url": "Loader.html#method__explode", "type": "method"}, {"access": "", "host": "Loader", "name": "filter", "url": "Loader.html#property_filter", "type": "property"}, {"access": "private", "host": "Loader", "name": "_filter", "url": "Loader.html#method__filter", "type": "method"}, {"access": "", "host": "Loader", "name": "filters", "url": "Loader.html#property_filters", "type": "property"}, {"access": "", "host": "Loader", "name": "force", "url": "Loader.html#property_force", "type": "property"}, {"access": "", "host": "Loader", "name": "formatSkin", "url": "Loader.html#method_formatSkin", "type": "method"}, {"access": "", "host": "Loader", "name": "getProvides", "url": "Loader.html#method_getProvides", "type": "method"}, {"access": "", "host": "Loader", "name": "getRequires", "url": "Loader.html#method_getRequires", "type": "method"}, {"access": "", "host": "Loader", "name": "ignore", "url": "Loader.html#property_ignore", "type": "property"}, {"access": "", "host": "Loader", "name": "ignoreRegistered", "url": "Loader.html#property_ignoreRegistered", "type": "property"}, {"access": "", "host": "Loader", "name": "insert", "url": "Loader.html#method_insert", "type": "method"}, {"access": "", "host": "Loader", "name": "insertBefore", "url": "Loader.html#property_insertBefore", "type": "property"}, {"access": "", "host": "Loader", "name": "inserted", "url": "Loader.html#property_inserted", "type": "property"}, {"access": "private", "host": "Loader", "name": "_internalCallback", "url": "Loader.html#property__internalCallback", "type": "property"}, {"access": "", "host": "Loader", "name": "jsAttributes", "url": "Loader.html#property_jsAttributes", "type": "property"}, {"access": "", "host": "Loader", "name": "loaded", "url": "Loader.html#property_loaded", "type": "property"}, {"access": "", "host": "Loader", "name": "loadNext", "url": "Loader.html#method_loadNext", "type": "method"}, {"access": "", "host": "Loader", "name": "loadOptional", "url": "Loader.html#property_loadOptional", "type": "property"}, {"access": "", "host": "Loader", "name": "maxURLLength", "url": "Loader.html#property_maxURLLength", "type": "property"}, {"access": "", "host": "Loader", "name": "moduleInfo", "url": "Loader.html#property_moduleInfo", "type": "property"}, {"access": "", "host": "Loader", "name": "onCSS", "url": "Loader.html#method_onCSS", "type": "method"}, {"access": "", "host": "Loader", "name": "onFailure", "url": "Loader.html#method_onFailure", "type": "method"}, {"access": "", "host": "Loader", "name": "onProgress", "url": "Loader.html#method_onProgress", "type": "method"}, {"access": "", "host": "Loader", "name": "onSuccess", "url": "Loader.html#method_onSuccess", "type": "method"}, {"access": "", "host": "Loader", "name": "onTimeout", "url": "Loader.html#method_onTimeout", "type": "method"}, {"access": "", "host": "Loader", "name": "patterns", "url": "Loader.html#property_patterns", "type": "property"}, {"access": "private", "host": "Loader", "name": "_reduce", "url": "Loader.html#method__reduce", "type": "method"}, {"access": "", "host": "Loader", "name": "require", "url": "Loader.html#method_require", "type": "method"}, {"access": "", "host": "Loader", "name": "required", "url": "Loader.html#property_required", "type": "property"}, {"access": "private", "host": "Loader", "name": "_rollup", "url": "Loader.html#method__rollup", "type": "method"}, {"access": "", "host": "Loader", "name": "rollups", "url": "Loader.html#property_rollups", "type": "property"}, {"access": "", "host": "Loader", "name": "root", "url": "Loader.html#property_root", "type": "property"}, {"access": "private", "host": "Loader", "name": "_setup", "url": "Loader.html#method__setup", "type": "method"}, {"access": "", "host": "Loader", "name": "skin", "url": "Loader.html#property_skin", "type": "property"}, {"access": "", "host": "Loader", "name": "skipped", "url": "Loader.html#property_skipped", "type": "property"}, {"access": "private", "host": "Loader", "name": "_sort", "url": "Loader.html#method__sort", "type": "method"}, {"access": "", "host": "Loader", "name": "sorted", "url": "Loader.html#property_sorted", "type": "property"}, {"access": "", "host": "Loader", "name": "timeout", "url": "Loader.html#property_timeout", "type": "property"}, {"access": "private", "host": "Loader", "name": "_url", "url": "Loader.html#method__url", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Loader", "name": "addModule", "url": "Loader.html#method_addModule", "type": "method"}, {"access": "private", "host": "Loader", "name": "_addSkin", "url": "Loader.html#method__addSkin", "type": "method"}, {"access": "", "host": "Loader", "name": "allowRollup", "url": "Loader.html#property_allowRollup", "type": "property"}, {"access": "", "host": "Loader", "name": "attaching", "url": "Loader.html#property_attaching", "type": "property"}, {"access": "", "host": "Loader", "name": "base", "url": "Loader.html#property_base", "type": "property"}, {"access": "", "host": "Loader", "name": "calculate", "url": "Loader.html#method_calculate", "type": "method"}, {"access": "", "host": "Loader", "name": "charset", "url": "Loader.html#property_charset", "type": "property"}, {"access": "", "host": "Loader", "name": "combine", "url": "Loader.html#property_combine", "type": "property"}, {"access": "", "host": "Loader", "name": "comboBase", "url": "Loader.html#property_comboBase", "type": "property"}, {"access": "", "host": "Loader", "name": "context", "url": "Loader.html#property_context", "type": "property"}, {"access": "", "host": "Loader", "name": "cssAttributes", "url": "Loader.html#property_cssAttributes", "type": "property"}, {"access": "", "host": "Loader", "name": "data", "url": "Loader.html#property_data", "type": "property"}, {"access": "", "host": "Loader", "name": "dirty", "url": "Loader.html#property_dirty", "type": "property"}, {"access": "private", "host": "Loader", "name": "_explode", "url": "Loader.html#method__explode", "type": "method"}, {"access": "", "host": "Loader", "name": "filter", "url": "Loader.html#property_filter", "type": "property"}, {"access": "private", "host": "Loader", "name": "_filter", "url": "Loader.html#method__filter", "type": "method"}, {"access": "", "host": "Loader", "name": "filters", "url": "Loader.html#property_filters", "type": "property"}, {"access": "", "host": "Loader", "name": "force", "url": "Loader.html#property_force", "type": "property"}, {"access": "", "host": "Loader", "name": "formatSkin", "url": "Loader.html#method_formatSkin", "type": "method"}, {"access": "", "host": "Loader", "name": "getLangPackName", "url": "Loader.html#method_getLangPackName", "type": "method"}, {"access": "", "host": "Loader", "name": "getProvides", "url": "Loader.html#method_getProvides", "type": "method"}, {"access": "", "host": "Loader", "name": "getRequires", "url": "Loader.html#method_getRequires", "type": "method"}, {"access": "", "host": "Loader", "name": "ignore", "url": "Loader.html#property_ignore", "type": "property"}, {"access": "", "host": "Loader", "name": "ignoreRegistered", "url": "Loader.html#property_ignoreRegistered", "type": "property"}, {"access": "", "host": "Loader", "name": "insert", "url": "Loader.html#method_insert", "type": "method"}, {"access": "", "host": "Loader", "name": "insertBefore", "url": "Loader.html#property_insertBefore", "type": "property"}, {"access": "", "host": "Loader", "name": "inserted", "url": "Loader.html#property_inserted", "type": "property"}, {"access": "private", "host": "Loader", "name": "_internalCallback", "url": "Loader.html#property__internalCallback", "type": "property"}, {"access": "", "host": "Loader", "name": "jsAttributes", "url": "Loader.html#property_jsAttributes", "type": "property"}, {"access": "", "host": "Loader", "name": "loaded", "url": "Loader.html#property_loaded", "type": "property"}, {"access": "", "host": "Loader", "name": "loadNext", "url": "Loader.html#method_loadNext", "type": "method"}, {"access": "", "host": "Loader", "name": "loadOptional", "url": "Loader.html#property_loadOptional", "type": "property"}, {"access": "", "host": "Loader", "name": "maxURLLength", "url": "Loader.html#property_maxURLLength", "type": "property"}, {"access": "", "host": "Loader", "name": "moduleInfo", "url": "Loader.html#property_moduleInfo", "type": "property"}, {"access": "", "host": "Loader", "name": "onCSS", "url": "Loader.html#method_onCSS", "type": "method"}, {"access": "", "host": "Loader", "name": "onFailure", "url": "Loader.html#method_onFailure", "type": "method"}, {"access": "", "host": "Loader", "name": "onProgress", "url": "Loader.html#method_onProgress", "type": "method"}, {"access": "", "host": "Loader", "name": "onSuccess", "url": "Loader.html#method_onSuccess", "type": "method"}, {"access": "", "host": "Loader", "name": "onTimeout", "url": "Loader.html#method_onTimeout", "type": "method"}, {"access": "", "host": "Loader", "name": "patterns", "url": "Loader.html#property_patterns", "type": "property"}, {"access": "private", "host": "Loader", "name": "_reduce", "url": "Loader.html#method__reduce", "type": "method"}, {"access": "", "host": "Loader", "name": "require", "url": "Loader.html#method_require", "type": "method"}, {"access": "", "host": "Loader", "name": "required", "url": "Loader.html#property_required", "type": "property"}, {"access": "private", "host": "Loader", "name": "_rollup", "url": "Loader.html#method__rollup", "type": "method"}, {"access": "", "host": "Loader", "name": "rollups", "url": "Loader.html#property_rollups", "type": "property"}, {"access": "", "host": "Loader", "name": "root", "url": "Loader.html#property_root", "type": "property"}, {"access": "private", "host": "Loader", "name": "_setup", "url": "Loader.html#method__setup", "type": "method"}, {"access": "", "host": "Loader", "name": "skin", "url": "Loader.html#property_skin", "type": "property"}, {"access": "", "host": "Loader", "name": "skipped", "url": "Loader.html#property_skipped", "type": "property"}, {"access": "private", "host": "Loader", "name": "_sort", "url": "Loader.html#method__sort", "type": "method"}, {"access": "", "host": "Loader", "name": "sorted", "url": "Loader.html#property_sorted", "type": "property"}, {"access": "", "host": "Loader", "name": "timeout", "url": "Loader.html#property_timeout", "type": "property"}, {"access": "private", "host": "Loader", "name": "_url", "url": "Loader.html#method__url", "type": "method"}];
 </script>
 </body>
 </html>

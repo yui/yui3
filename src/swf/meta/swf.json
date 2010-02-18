@@ -1,0 +1,9 @@
+{
+    "swf": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "swfdetect"
+        ] 
+    }
+}

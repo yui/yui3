@@ -47,32 +47,47 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">Evt</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Define new DOM events that can be subscribed from any Node.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module event</span>
+<span class="cm"> * @submodule event-synthetic</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">Evt</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">,</span>
     <span class="nx">DOMWrappers</span> <span class="o">=</span> <span class="nx">Evt</span><span class="p">.</span><span class="nx">dom_wrappers</span><span class="p">,</span>
     <span class="nx">DOMMap</span>      <span class="o">=</span> <span class="nx">Evt</span><span class="p">.</span><span class="nx">dom_map</span><span class="p">,</span>
     <span class="nx">EvtPlugins</span>  <span class="o">=</span> <span class="nx">Evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">,</span>
     <span class="nx">DOMEvents</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">,</span>
     <span class="nx">isFunction</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">;</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * Adds the following method to CustomEvent&#39;s prototype.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class CustomEvent~extras</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Returns the first subscriber that matches the provided function and/or</span>
+<span class="cm"> * context.  Both function and context parameters are optional.  Omitting</span>
+<span class="cm"> * either will return the first match on the other parameter, and omitting both</span>
+<span class="cm"> * will return the first subscriber.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method getSubscriber</span>
+<span class="cm"> * @param fn {Function} Optional. The subscribed callback function</span>
+<span class="cm"> * @param ctx {Object} Optional.  The context override for the callback</span>
+<span class="cm"> * @return {Subscriber} or null</span>
+<span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">getSubscriber</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">subs</span>   <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">,</span>
-        <span class="nx">afters</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">afters</span><span class="p">,</span>
-        <span class="nx">id</span><span class="p">,</span> <span class="nx">sub</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getSubs</span><span class="p">(),</span> <span class="c1">// on, after subs and their *:type siblings</span>
+        <span class="nx">i</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">sub</span><span class="p">;</span>
 
-    <span class="k">for</span> <span class="p">(</span><span class="nx">id</span> <span class="k">in</span> <span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">sub</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span> <span class="o">===</span> <span class="nx">fn</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">ctx</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span> <span class="o">===</span> <span class="nx">ctx</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">sub</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-    <span class="k">for</span> <span class="p">(</span><span class="nx">id</span> <span class="k">in</span> <span class="nx">afters</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">afters</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">sub</span> <span class="o">=</span> <span class="nx">afters</span><span class="p">[</span><span class="nx">id</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span> <span class="o">===</span> <span class="nx">fn</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">ctx</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span> <span class="o">===</span> <span class="nx">ctx</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">sub</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">id</span> <span class="k">in</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">sub</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">id</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="nx">fn</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span> <span class="o">===</span> <span class="nx">fn</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">ctx</span> <span class="o">||</span> <span class="nx">sub</span><span class="p">.</span><span class="nx">context</span> <span class="o">===</span> <span class="nx">ctx</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">sub</span><span class="p">;</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -80,17 +95,87 @@
     <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
 <span class="p">};</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;Wrapper class for the integration of new events into the YUI event</span>
+<span class="cm"> * infrastructure.  Don&#39;t instantiate this object directly, use</span>
+<span class="cm"> * &lt;code&gt;Y.Event.define( config )&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;The configuration object must include the event &lt;code&gt;type&lt;/code&gt;, and should include implementation methods for &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt;.  This is the full list of configuration properties:&lt;/p&gt;</span>
+<span class="cm"> * &lt;dl&gt;</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;type&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;REQUIRED.  The name of the synthetic event.  What goes</span>
+<span class="cm"> *       &lt;code&gt;node.on(&lt;strong&gt;HERE&lt;/strong&gt;, callback )&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;on&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
+<span class="cm"> *       implementation logic for subscription.  Any special setup you need to</span>
+<span class="cm"> *       do to create the environment for the event being fired.  E.g. native</span>
+<span class="cm"> *       DOM event subscriptions.  Store subscription related objects and</span>
+<span class="cm"> *       information on the &lt;code&gt;subscription&lt;/code&gt; object.  When the</span>
+<span class="cm"> *       criteria have been met to fire the synthetic event, call</span>
+<span class="cm"> *       &lt;code&gt;fireEvent.fire()&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;detach&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
+<span class="cm"> *       implementation logic for cleaning up a detached subscription. E.g.</span>
+<span class="cm"> *       detach any DOM subscriptions done in &lt;code&gt;on&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;publishConfig&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;(Object) The configuration object that will be used to instantiate</span>
+<span class="cm"> *       the underlying CustomEvent.  By default, the event is defined with</span>
+<span class="cm"> *       &lt;code&gt;emitFacade: true&lt;/code&gt; so subscribers will receive a DOM-like</span>
+<span class="cm"> *       event object.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;processArgs&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( argArray )&lt;/code&gt;  Optional method to extract any</span>
+<span class="cm"> *       additional arguments from the subscription signature.  Using this</span>
+<span class="cm"> *       allows &lt;code&gt;on&lt;/code&gt; signatures like &lt;code&gt;node.on(</span>
+<span class="cm"> *       &amp;quot;hover&amp;quot;, overCallback, outCallback )&lt;/code&gt;.  Be sure that</span>
+<span class="cm"> *       the args passed in is pruned of any additional arguments using, for</span>
+<span class="cm"> *       example, &lt;code&gt;argArray.splice(2,1);&lt;/code&gt;.  Data returned from the</span>
+<span class="cm"> *       function will be stored on the &lt;code&gt;subscription&lt;/code&gt; object passed</span>
+<span class="cm"> *       to &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt; under</span>
+<span class="cm"> *       &lt;code&gt;subscription._extra&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *   &lt;dt&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class SyntheticEvent</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @param cfg {Object} Implementation pieces and configuration</span>
+<span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">SyntheticEvent</span><span class="p">(</span><span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">(</span><span class="nx">cfg</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="nx">SyntheticEvent</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Initializes the synthetic event.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _init</span>
+<span class="cm">     * @param cfg {Object} The configuration object passed to the constructor</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
     <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">impl</span> <span class="o">=</span> <span class="nx">cfg</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_publishConfig</span> <span class="o">=</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">publishConfig</span> <span class="o">||</span> <span class="p">{</span> <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span> <span class="p">};</span>
     <span class="p">},</span>
 
+    <span class="cm">/**</span>
+<span class="cm">     * Initial receiver of the event subscription.  Passes off control to the</span>
+<span class="cm">     * implementation &lt;code&gt;on&lt;/code&gt; specified in the constructor</span>
+<span class="cm">     * configuration after setting up the boiler plate code necessary for clean</span>
+<span class="cm">     * detaching and destruction in the Event infrastructure.  Note that the</span>
+<span class="cm">     * implementation function specified in the configuration will be called</span>
+<span class="cm">     * once for each node passed in &lt;code&gt;el&lt;/code&gt;, and each will be a Node</span>
+<span class="cm">     * instance.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method on</span>
+<span class="cm">     * @param type {String} the synthetic event name</span>
+<span class="cm">     * @param fn {Function} the callback function</span>
+<span class="cm">     * @param el {HTMLElement | Node | HTMLElement[] | NodeList} </span>
+<span class="cm">     *                          subscription target(s)</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
     <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">true</span><span class="p">),</span>
             <span class="nx">self</span> <span class="o">=</span> <span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">type</span><span class="p">],</span> <span class="c1">// event system calls on.apply(Y, ...)</span>
@@ -193,6 +278,21 @@
         <span class="k">return</span> <span class="nx">handle</span><span class="p">;</span>
     <span class="p">},</span>
 
+    <span class="cm">/**</span>
+<span class="cm">     * Initial receiver of the event detach.  Passes off control to the</span>
+<span class="cm">     * implementation &lt;code&gt;detach&lt;/code&gt; specified in the constructor</span>
+<span class="cm">     * configuration after doing the necessary infrastructure cleanup.</span>
+<span class="cm">     * Note that the implementation function specified in the configuration</span>
+<span class="cm">     * will be called once for each node passed in &lt;code&gt;el&lt;/code&gt;, and each</span>
+<span class="cm">     * will be a Node instance.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method detach</span>
+<span class="cm">     * @param type { String } the synthetic event name</span>
+<span class="cm">     * @param fn {Function} the callback function</span>
+<span class="cm">     * @param el {HTMLElement | Node | HTMLElement[] | NodeList}</span>
+<span class="cm">     *                      subscription target(s)</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
     <span class="nx">detach</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">el</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
             <span class="nx">self</span> <span class="o">=</span> <span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">type</span><span class="p">],</span>
@@ -263,6 +363,15 @@
         <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
     <span class="p">},</span>
 
+    <span class="cm">/**</span>
+<span class="cm">     * Stub implementation.  Specify this in the configuration object passed to </span>
+<span class="cm">     * the constructor (rather, passed to &lt;code&gt;Y.Event.define&lt;/code&gt;).</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _processArgs</span>
+<span class="cm">     * @param args {Array} Array of arguments passed to &lt;code&gt;on&lt;/code&gt;</span>
+<span class="cm">     * @return {MIXED} null by default, but override to return useful data</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
     <span class="nx">_processArgs</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
     <span class="p">}</span>
@@ -270,6 +379,27 @@
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span> <span class="o">=</span> <span class="nx">SyntheticEvent</span><span class="p">;</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * Static method added to &lt;code&gt;Y.Event&lt;/code&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class Y~Event</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;Static method to register a synthetic event definition and implementation</span>
+<span class="cm"> * in the DOM Event subsystem. See &lt;code&gt;Y.SyntheticEvent&lt;/code&gt; for the</span>
+<span class="cm"> * configuration object signature required.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;Pass either a string &lt;code&gt;type&lt;/code&gt; and configuration object as</span>
+<span class="cm"> * separate parameters or a configuration object that includes a</span>
+<span class="cm"> * &lt;code&gt;type&lt;/code&gt; property as a single parameter.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @method Event.define</span>
+<span class="cm"> * @param type {String} Name given to the synthetic event</span>
+<span class="cm"> * @param cfg {Object} configuration object.  Pass this as the first</span>
+<span class="cm"> *                  parameter if it includes the &lt;code&gt;type&lt;/code&gt; property.</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span> <span class="o">?</span>
                 <span class="nx">type</span> <span class="o">:</span>
@@ -313,6 +443,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -333,6 +464,7 @@
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
@@ -345,8 +477,11 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="CustomEvent~extras.html" title="CustomEvent~extras">CustomEvent~extras</a></li>
                                 <li class=""><a href="DOMEventFacade.html" title="DOMEventFacade">DOMEventFacade</a></li>
                                 <li class=""><a href="Event.html" title="Event">Event</a></li>
+                                <li class=""><a href="SyntheticEvent.html" title="SyntheticEvent">SyntheticEvent</a></li>
+                                <li class=""><a href="Y~Event.html" title="Y~Event">Y~Event</a></li>
                         </ul>
                     </div>
 
@@ -382,7 +517,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Event", "name": "attach", "url": "Event.html#method_attach", "type": "method"}, {"access": "private", "host": "Event", "name": "_avail", "url": "Event.html#property__avail", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "button", "url": "DOMEventFacade.html#property_button", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "charCode", "url": "DOMEventFacade.html#property_charCode", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "currentTarget", "url": "DOMEventFacade.html#property_currentTarget", "type": "property"}, {"access": "", "host": "Event", "name": "detach", "url": "Event.html#method_detach", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "detach", "url": "SyntheticEvent.html#method_detach", "type": "method"}, {"access": "", "host": "Event", "name": "DOMReady", "url": "Event.html#property_DOMReady", "type": "property"}, {"access": "private", "host": "Event", "name": "_dri", "url": "Event.html#property__dri", "type": "property"}, {"access": "private", "host": "Event", "name": "_el_events", "url": "Event.html#property__el_events", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "_event", "url": "DOMEventFacade.html#property__event", "type": "property"}, {"access": "", "host": "Y~Event", "name": "Event.define", "url": "Y~Event.html#method_Event.define", "type": "method"}, {"access": "", "host": "Event", "name": "generateId", "url": "Event.html#method_generateId", "type": "method"}, {"access": "", "host": "Event", "name": "getEvent", "url": "Event.html#method_getEvent", "type": "method"}, {"access": "", "host": "Event", "name": "getListeners", "url": "Event.html#method_getListeners", "type": "method"}, {"access": "", "host": "CustomEvent~extras", "name": "getSubscriber", "url": "CustomEvent~extras.html#method_getSubscriber", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "halt", "url": "DOMEventFacade.html#method_halt", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "_init", "url": "SyntheticEvent.html#method__init", "type": "method"}, {"access": "private", "host": "Event", "name": "_interval", "url": "Event.html#property__interval", "type": "property"}, {"access": "private", "host": "Event", "name": "_isValidCollection", "url": "Event.html#method__isValidCollection", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "keyCode", "url": "DOMEventFacade.html#property_keyCode", "type": "property"}, {"access": "", "host": "Event", "name": "lastError", "url": "Event.html#property_lastError", "type": "property"}, {"access": "private", "host": "Event", "name": "_load", "url": "Event.html#method__load", "type": "method"}, {"access": "private", "host": "Event", "name": "_loadComplete", "url": "Event.html#property__loadComplete", "type": "property"}, {"access": "private", "host": "Event", "name": "nativeAdd", "url": "Event.html#method_nativeAdd", "type": "method"}, {"access": "private", "host": "Event", "name": "nativeRemove", "url": "Event.html#method_nativeRemove", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "on", "url": "SyntheticEvent.html#method_on", "type": "method"}, {"access": "", "host": "Event", "name": "onAvailable", "url": "Event.html#method_onAvailable", "type": "method"}, {"access": "", "host": "Event", "name": "onContentReady", "url": "Event.html#method_onContentReady", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "pageX", "url": "DOMEventFacade.html#property_pageX", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "pageY", "url": "DOMEventFacade.html#property_pageY", "type": "property"}, {"access": "private", "host": "Event", "name": "_poll", "url": "Event.html#method__poll", "type": "method"}, {"access": "", "host": "Event", "name": "POLL_INTERVAL", "url": "Event.html#property_POLL_INTERVAL", "type": "property"}, {"access": "", "host": "Event", "name": "POLL_RETRYS", "url": "Event.html#property_POLL_RETRYS", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "preventDefault", "url": "DOMEventFacade.html#method_preventDefault", "type": "method"}, {"access": "protected", "host": "SyntheticEvent", "name": "_processArgs", "url": "SyntheticEvent.html#method__processArgs", "type": "method"}, {"access": "", "host": "Event", "name": "purgeElement", "url": "Event.html#method_purgeElement", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "relatedTarget", "url": "DOMEventFacade.html#property_relatedTarget", "type": "property"}, {"access": "private", "host": "DOMEventFacade", "name": "resolve", "url": "DOMEventFacade.html#method_resolve", "type": "method"}, {"access": "private", "host": "Event", "name": "_retryCount", "url": "Event.html#property__retryCount", "type": "property"}, {"access": "private", "host": "Event", "name": "startInterval", "url": "Event.html#method_startInterval", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopImmediatePropagation", "url": "DOMEventFacade.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "stopPropagation", "url": "DOMEventFacade.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "DOMEventFacade", "name": "target", "url": "DOMEventFacade.html#property_target", "type": "property"}, {"access": "private", "host": "Event", "name": "_unload", "url": "Event.html#method__unload", "type": "method"}, {"access": "private", "host": "DOMEventFacade", "name": "webkitKeymap", "url": "DOMEventFacade.html#property_webkitKeymap", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "wheelDelta", "url": "DOMEventFacade.html#property_wheelDelta", "type": "property"}, {"access": "", "host": "DOMEventFacade", "name": "which", "url": "DOMEventFacade.html#property_which", "type": "property"}, {"access": "private", "host": "Event", "name": "_wrappers", "url": "Event.html#property__wrappers", "type": "property"}];
 </script>
 </body>
 </html>
