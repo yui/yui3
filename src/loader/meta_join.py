@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim: et sw=4 ts=4
 
-import os, sys, simplejson, codecs
+import os, simplejson, codecs
 
 class MetaJoin(object):
 
@@ -56,8 +56,8 @@ class MetaJoin(object):
                             for k, v in data.iteritems():
                                 modules[k] = v
 
-
         jsonstr = simplejson.dumps(modules, ensure_ascii=False, sort_keys=True, indent=4)
+
         print jsonstr
 
         jsstr = readFile(template_path, TEMPLATE_FILE)

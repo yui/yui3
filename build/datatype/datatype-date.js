@@ -97,25 +97,6 @@ var xPad=function (x, pad, r)
 	return x.toString();
 };
 
-/**
- * Default date format.
- *
- * @for config
- * @property dateFormat
- * @type String
- * @value "%Y-%m-%d"
- */
-Y.config.dateFormat = Y.config.dateFormat || "%Y-%m-%d";
-
-/**
- * Default locale for the YUI instance.
- *
- * @property locale
- * @type String
- * @value "en"
- */
-Y.config.locale = Y.config.locale || "en";
-
 var Dt = {
 	formats: {
 		a: function (d, l) { return l.a[d.getDay()]; },
@@ -488,8 +469,8 @@ Y.DataType.Date.Locale["en-AU"] = Y.merge(YDateEn);
 
 
 
-}, '@VERSION@' ,{lang:['ar','ar-JO','ca','ca-ES','da','da-DK','de','de-AT','de-DE','el','el-GR','en','en-AU','en-CA','en-GB','en-GY','en-IE','en-IN','en-JO','en-MY','en-NZ','en-PH','en-SG','en-US','es','es-AR','es-BO','es-CL','es-CO','es-EC','es-ES','es-MX','es-PE','es-PY','es-US','es-UY','es-VE','fi','fi-FI','fr','fr-BE','fr-CA','fr-FR','fr-GF','hi','hi-IN','id','id-ID','it','it-IT','ja','ja-JP','ko','ko-KR','ms','ms-MY','nb','nb-NO','nl','nl-BE','nl-NL','nl-SR','pl','pl-PL','pt','pt-BR','ro','ro-RO','ru','ru-RU','sv','sv-SE','th','th-TH','tr','tr-TR','vi','vi-VN','zh-Hans','zh-Hans-CN','zh-Hant','zh-Hant-HK','zh-Hant-TW']});
+}, '@VERSION@' ,{lang:['en', 'en-US', 'fr-FR', 'ko-KR']});
 
 
-YUI.add('datatype-date', function(Y){}, '@VERSION@' ,{lang:['ar','ar-JO','ca','ca-ES','da','da-DK','de','de-AT','de-DE','el','el-GR','en','en-AU','en-CA','en-GB','en-GY','en-IE','en-IN','en-JO','en-MY','en-NZ','en-PH','en-SG','en-US','es','es-AR','es-BO','es-CL','es-CO','es-EC','es-ES','es-MX','es-PE','es-PY','es-US','es-UY','es-VE','fi','fi-FI','fr','fr-BE','fr-CA','fr-FR','fr-GF','hi','hi-IN','id','id-ID','it','it-IT','ja','ja-JP','ko','ko-KR','ms','ms-MY','nb','nb-NO','nl','nl-BE','nl-NL','nl-SR','pl','pl-PL','pt','pt-BR','ro','ro-RO','ru','ru-RU','sv','sv-SE','th','th-TH','tr','tr-TR','vi','vi-VN','zh-Hans','zh-Hans-CN','zh-Hant','zh-Hant-HK','zh-Hant-TW'], use:['datatype-date-parse', 'datatype-date-format']});
+YUI.add('datatype-date', function(Y){}, '@VERSION@' ,{use:['datatype-date-parse', 'datatype-date-format']});
 

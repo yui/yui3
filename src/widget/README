@@ -1,4 +1,4 @@
-Development Master
+3.1.0
 
 * "render" event now published with the defaultTargetOnly set to true.
 
@@ -46,11 +46,14 @@ Development Master
 * Split widget module into the following sub-modules
 
   - widget-base : Core lifecycle and API support. 
-  - widget-i18n : Internationalization support (WIP).
   - widget-htmlparser : HTML parser support.
 
-  The "widget" module, rolled up from these submodules is 
-  equivalent to the existing "widget" module
+  The "widget" module, is a roll up of the widget-base and widget-locale 
+  submodules. 
+
+  The widget-locale is a standalone module, which conains the deprecated
+  Internationalization support and has been replaced by the Y.Intl language
+  pack support, to allow strings to be defined separately from code.
 
 * Removed moveStyles support for 3.1. Can be re-added if required, but 
   currently does not seem to be in use. 

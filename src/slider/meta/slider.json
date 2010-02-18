@@ -1,10 +1,9 @@
 {
     "slider": {
         "requires": [
-            "widget", 
-            "dd-value", 
-            "skin-sam-slider"
-        ], 
-        "skinnable": true
+            "slider-base",
+            "int-value-range",
+            "clickable-rail"
+        ]
     }
 }

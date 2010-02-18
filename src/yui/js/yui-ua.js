@@ -27,8 +27,10 @@ Y.UA = function() {
                 return (c++ == 1) ? '' : '.';
             }));
         },
+
+        win = Y.config.win,
     
-        nav = navigator,
+        nav = win && win.navigator,
 
         o = {
 
@@ -125,7 +127,7 @@ Y.UA = function() {
          * @property caja
          * @type float
          */
-        caja: nav.cajaVersion,
+        caja: nav && nav.cajaVersion,
 
         /**
          * Set to true if the page appears to be in SSL
@@ -147,7 +149,7 @@ Y.UA = function() {
 
     ua = nav && nav.userAgent, 
 
-    loc = Y.config.win.location,
+    loc = win && win.location,
 
     href = loc && loc.href,
     

@@ -1,5 +1,3 @@
-
-
 /**
  * The YUI module contains the components required for building the YUI seed file.
  * This includes the script loading mechanism, a simple queue, and the core utilities for the library.
@@ -7,9 +5,57 @@
  * @submodule yui-base
  */
 
+// reduce to one or the other
+if (typeof YUI === 'undefined' || !YUI) {
+
+/**
+ * The YUI global namespace object.  If YUI is already defined, the
+ * existing YUI object will not be overwritten so that defined
+ * namespaces are preserved.  
+ *
+ * @class YUI
+ * @constructor
+ * @global
+ * @uses EventTarget
+ * @param o* Up to five optional configuration objects.  This object is stored
+ * in YUI.config.  See config for the list of supported properties.
+ */
+    /*global YUI*/
+    /*global YUI_config*/
+    // @TODO Advice was to make a function, disallow direct instantiation.
+    var YUI = function(o1, o2, o3, o4, o5) {
+
+        var Y = this, a = arguments, i, l = a.length,
+            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
+
+        // Allow instantiation without the new operator
+        if (!(Y instanceof YUI)) {
+            return new YUI(o1, o2, o3, o4, o5);
+        } else {
+            // set up the core environment
+            Y._init();
+
+            if (globalConfig) {
+                Y._config(globalConfig);
+            }
+
+            for (i=0; i<l; i++) {
+                Y._config(a[i]);
+            }
+
+            // bind the specified additional modules for this instance
+            Y._setup();
+
+            return Y;
+        }
+    };
+}
+
 (function() {
 
-    var doc = document,
+    var hasWin = (typeof window != 'undefined'),
+        win = (hasWin) ? window : null,
+        doc = (hasWin) ? win.document : null,
         docEl = doc && doc.documentElement,
         docElClass = docEl && docEl.className,
         DOCUMENT_CLASS = 'yui3-js-enabled',
@@ -42,7 +88,9 @@
         globalListener = function() {
             YUI.Env.windowLoaded = true;
             YUI.Env.DOMReady = true;
-            remove(window, 'load', globalListener);
+            if (hasWin) {
+                remove(window, 'load', globalListener);
+            }
         },
 
 // @TODO: this needs to be created at build time from module metadata
@@ -66,52 +114,6 @@ if (docEl && docElClass.indexOf(DOCUMENT_CLASS) == -1) {
 }
 
         
-// reduce to one or the other
-if (typeof YUI === 'undefined' || !YUI) {
-
-/**
- * The YUI global namespace object.  If YUI is already defined, the
- * existing YUI object will not be overwritten so that defined
- * namespaces are preserved.  
- *
- * @class YUI
- * @constructor
- * @global
- * @uses EventTarget
- * @param o* Up to five optional configuration objects.  This object is stored
- * in YUI.config.  See config for the list of supported properties.
- */
-
-    /*global YUI*/
-    /*global YUI_config*/
-    // @TODO Advice was to make a function, disallow direct instantiation.
-    YUI = function(o1, o2, o3, o4, o5) {
-
-        var Y = this, a = arguments, i, l = a.length,
-            globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
-
-        // Allow instantiation without the new operator
-        if (!(Y instanceof YUI)) {
-            return new YUI(o1, o2, o3, o4, o5);
-        } else {
-            // set up the core environment
-            Y._init();
-
-            if (globalConfig) {
-                Y._config(globalConfig);
-            }
-
-            for (i=0; i<l; i++) {
-                Y._config(a[i]);
-            }
-
-            // bind the specified additional modules for this instance
-            Y._setup();
-
-            return Y;
-        }
-    };
-}
 
 // The prototype contains the functions that are required to allow the external
 // modules to be registered and for the instance to be initialized.
@@ -157,6 +159,8 @@ YUI.prototype = {
 
         Y.version = v;
 
+        Y.gallery = 'gallery-2010.02.10-01'; // @TODO build time
+
         if (!Y.Env) {
 
             Y.Env = {
@@ -192,7 +196,7 @@ YUI.prototype = {
         // configuration defaults
         Y.config = Y.config || {
 
-            win: window || {},
+            win: win,
             doc: doc,
             debug: true,
             useBrowserConsole: true,
@@ -258,7 +262,7 @@ YUI.prototype = {
         var Y = this,
             core = [],
             mods = YUI.Env.mods,
-            extras = Y.config.core || ['get', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
+            extras = Y.config.core || ['get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
 
 
         for (i=0; i<extras.length; i++) {
@@ -377,7 +381,7 @@ YUI.prototype = {
                 // this.log('attaching ' + name, 'info', 'yui');
 
                 if (m.fn) {
-                    m.fn(this);
+                    m.fn(this, name);
                 }
 
                 if (use) {
@@ -429,7 +433,8 @@ YUI.prototype = {
             firstArg = a[0], 
             dynamic = false,
             callback = a[a.length-1],
-            boot = Y.config.bootstrap,
+            config = Y.config,
+            boot = config.bootstrap,
             k, i, l, missing = [], 
             r = [], 
             css = Y.config.fetchCSS,
@@ -543,12 +548,13 @@ YUI.prototype = {
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
-            loader = new Y.Loader(Y.config);
+            loader = new Y.Loader(config);
             loader.require(a);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
             // loader.calculate(null, (css && css == 'force') ? null : 'js');
             // loader.calculate();
+            // loader.calculate(null, (css) ? null : 'js');
             loader.calculate(null, (css) ? null : 'js');
             a = loader.sorted;
         }
@@ -575,8 +581,9 @@ YUI.prototype = {
         // dynamic load
         if (boot && l && Y.Loader) {
             Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
+
             Y._loading = true;
-            loader = new Y.Loader(Y.config);
+            loader = new Y.Loader(config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
@@ -602,8 +609,8 @@ YUI.prototype = {
                 queue.add(onEnd);
             } else {
                 YUI.Env._bootstrapping = true;
-                Y.log('Fetching loader: ' + Y.id + ", " + Y.config.base + Y.config.loaderPath, 'info', 'yui');
-                Y.Get.script(Y.config.base + Y.config.loaderPath, {
+                Y.log('Fetching loader: ' + Y.id + ", " + config.base + config.loaderPath, 'info', 'yui');
+                Y.Get.script(config.base + config.loaderPath, {
                     onEnd: onEnd 
                 });
             }
@@ -748,13 +755,23 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
     YUI._attach(['yui-base']);
 
-    // add a window load event at load time so we can capture
-    // the case where it fires before dynamic loading is
-    // complete.
-    add(window, 'load', globalListener);
+    if (hasWin) {
+        // add a window load event at load time so we can capture
+        // the case where it fires before dynamic loading is
+        // complete.
+        add(window, 'load', globalListener);
+    } else {
+        globalListener();
+    }
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
+
+    /*global exports*/
+    // Support the CommonJS method for exporting our single global
+    if (typeof exports == 'object') {
+        exports.YUI = YUI;
+    }
 
 })();
 
@@ -1075,18 +1092,32 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * when boostrapping with the get utility alone.
  *
  * @property loaderPath
+ * @type string
  * @default loader/loader-min.js
  */
 
-/*
- * 
+/**
  * Specifies whether or not YUI().use(...) will attempt to load CSS
  * resources at all.  Any truthy value will cause CSS dependencies
  * to load when fetching script.  The special value 'force' will 
  * cause CSS dependencies to be loaded even if no script is needed.
  *
  * @property fetchCSS
+ * @type boolean|string
  * @default true
+ */
+
+/**
+ * The default gallery version to create gallery module urls
+ * @property gallery
+ * @type string
+ */
+
+/**
+ * Alternative console log function for use in environments without
+ * a supported native console
+ * @property logFn
+ * @type Function
  */
 YUI.add('yui-base', function(Y) {
 
@@ -2043,8 +2074,10 @@ Y.UA = function() {
                 return (c++ == 1) ? '' : '.';
             }));
         },
+
+        win = Y.config.win,
     
-        nav = navigator,
+        nav = win && win.navigator,
 
         o = {
 
@@ -2141,7 +2174,7 @@ Y.UA = function() {
          * @property caja
          * @type float
          */
-        caja: nav.cajaVersion,
+        caja: nav && nav.cajaVersion,
 
         /**
          * Set to true if the page appears to be in SSL
@@ -2163,7 +2196,7 @@ Y.UA = function() {
 
     ua = nav && nav.userAgent, 
 
-    loc = Y.config.win.location,
+    loc = win && win.location,
 
     href = loc && loc.href,
     
@@ -2996,6 +3029,125 @@ Y.Get = function() {
 
 
 }, '@VERSION@' );
+YUI.add('intl-base', function(Y) {
+
+
+    /* Loader/MetaData Touch Points
+
+    a) _explodeLang()
+
+        1) Explode static meta-data "lang" property into first class modules
+
+           var langModuleName = loader._formatLang(lang, module);
+
+    b) _useLang(lang)
+
+        Support for Y.use("lang:fr-CA"); or Y.use("lang:fr-CA;module");
+
+        1) Y.Intl.lookupBestLang(module, lang)
+
+        2) loader._formatLang(module, lang)
+        3) loader.insert(module_lang)
+
+        4) Y._attach(module_lang)
+
+    c) getAvailableLangs(module)
+
+        1) Loop through meta-data for the module, to get available langs
+
+        getAvailableLangs() support feasible?
+
+            Loop through meta-data for all "loaded" modules, to get the common
+            subset (could be presented as an app level dropdown for example).  
+
+    d) Register custom langs
+
+        1). Same as any module?
+
+    */
+
+/** 
+ * The Intl utility provides a central location for managing language specific sets of strings and formatting patterns.
+ * @module intl
+ */
+
+/**
+ * The intl-load sub-module provides utilities for loader language support
+ * 
+ * @module yui
+ * @submodule intl-base
+ */
+
+/** 
+ * The Intl utility provides a central location for managing language specific sets of strings and formatting patterns.
+ * 
+ * @class Intl
+ * @static
+ */
+
+var SPLIT_REGEX = /[, ]/;
+
+Y.mix(Y.namespace("Intl"), {
+
+    /**
+     * Finds the best language match, from the list of available languages based on BCP 47 lookup.
+     *
+     * @method lookupBestLang
+     * @param {String} lang The BCP 47 language tag to find the best match for
+     * @param {Array} supportedLangs An array of supported langauge codes
+     *
+     * @return {String} The BCP 47 language tag
+     */
+    lookupBestLang : function (preferredLanguages, availableLanguages) {
+
+        var i, language, result, index;
+
+        // check whether the list of available languages contains language; if so return it
+        function scan(language) {
+            var i;
+            for (i = 0; i < availableLanguages.length; i += 1) {
+                if (language.toLowerCase() === availableLanguages[i].toLowerCase()) {
+                    return availableLanguages[i];
+                }
+            }
+        }
+
+        if (Y.Lang.isString(preferredLanguages)) {
+            preferredLanguages = preferredLanguages.split(SPLIT_REGEX);
+        }
+
+        for (i = 0; i < preferredLanguages.length; i += 1) {
+            language = preferredLanguages[i];
+            if (!language || language === "*") {
+                continue;
+            }
+            // check the fallback sequence for one language
+            while (language.length > 0) {
+                result = scan(language);
+                if (result) {
+                    return result;
+                } else {
+                    index = language.lastIndexOf("-");
+                    if (index >= 0) {
+                        language = language.substring(0, index);
+                        // one-character subtags get cut along with the following subtag
+                        if (index >= 2 && language.charAt(index - 2) === "-") {
+                            language = language.substring(0, index - 2);
+                        }
+                    } else {
+                        // nothing available for this language
+                        break;
+                    }
+                }
+            }
+        }
+
+        return "";
+    }
+});
+
+
+}, '@VERSION@' ,{requires:['yui-base']});
 YUI.add('yui-log', function(Y) {
 
 /**
@@ -3052,7 +3204,9 @@ INSTANCE.log = function(msg, cat, src, silent) {
 
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
-                if (typeof console != UNDEFINED && console.log) {
+                if (Y.Lang.isFunction(c.logFn)) {
+                    c.logFn(msg, cat, src);
+                } if (typeof console != UNDEFINED && console.log) {
                     f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
                 } else if (typeof opera != UNDEFINED) {
@@ -3223,5 +3377,5 @@ Y.throttle = throttle;
 }, '@VERSION@' ,{requires:['yui-base']});
 
 
-YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','yui-log','yui-later','yui-throttle']});
+YUI.add('yui', function(Y){}, '@VERSION@' ,{use:['yui-base','get','intl-base','yui-log','yui-later','yui-throttle']});
 

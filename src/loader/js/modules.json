@@ -90,6 +90,11 @@
             "yui-base"
         ]
     }, 
+    "clickable-rail": {
+        "requires": [
+            "slider-base"
+        ]
+    }, 
     "collection": {
         "submodules": {
             "array-extras": {}, 
@@ -293,6 +298,12 @@
     "datatype": {
         "submodules": {
             "datatype-date": {
+                "lang": [
+                    "en", 
+                    "en-US", 
+                    "fr-FR", 
+                    "ko-KR"
+                ], 
                 "requires": [
                     "yui-base"
                 ]
@@ -495,6 +506,11 @@
             "event-base"
         ]
     }, 
+    "event-synthetic": {
+        "requires": [
+            "node-base"
+        ]
+    }, 
     "history": {
         "requires": [
             "node"
@@ -507,15 +523,16 @@
             "node-screen"
         ]
     }, 
+    "int-value-range": {
+        "requires": [
+            "slider-base"
+        ]
+    }, 
     "intl": {
-        "submodules": {
-            "intl-lang": {
-                "requires": [
-                    "event-custom"
-                ]
-            }, 
-            "intl-load": {}
-        }
+        "requires": [
+            "intl-base", 
+            "event-custom"
+        ]
     }, 
     "io": {
         "submodules": {
@@ -722,8 +739,16 @@
     }, 
     "slider": {
         "requires": [
+            "slider-base", 
+            "int-value-range", 
+            "clickable-rail"
+        ]
+    }, 
+    "slider-base": {
+        "requires": [
             "widget", 
-            "dd-value", 
+            "dd-constrain", 
+            "substitute", 
             "skin-sam-slider"
         ], 
         "skinnable": true
@@ -745,13 +770,20 @@
             "dump"
         ]
     }, 
+    "swf": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "swfdetect"
+        ]
+    }, 
+    "swfdetect": {}, 
     "test": {
         "requires": [
             "substitute", 
             "node", 
             "json", 
-            "event-simulate", 
-            "skin-sam-test"
+            "event-simulate"
         ], 
         "skinnable": true
     }, 
@@ -800,11 +832,6 @@
                 "requires": [
                     "widget-base"
                 ]
-            }, 
-            "widget-i18n": {
-                "requires": [
-                    "widget-base"
-                ]
             }
         }
     }, 
@@ -814,9 +841,15 @@
             "anim-base"
         ]
     }, 
+    "widget-locale": {
+        "requires": [
+            "widget-base"
+        ]
+    }, 
     "yui": {
         "submodules": {
             "get": {}, 
+            "intl-base": {}, 
             "yui-base": {}, 
             "yui-later": {}, 
             "yui-log": {}, 

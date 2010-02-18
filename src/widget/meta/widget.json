@@ -44,12 +44,13 @@
                 "requires": [
                     "widget-base"
                 ]
-            }, 
-            "widget-i18n": {
-                "requires": [
-                    "widget-base"
-                ]
-            }
+            } 
         }
+    },
+
+    "widget-locale" : {
+	"requires" : [
+	    "widget-base"
+	]
     }
 }

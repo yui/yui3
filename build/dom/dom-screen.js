@@ -77,7 +77,7 @@ Y.mix(Y_DOM, {
      */
     docScrollX: function(node, doc) {
         doc = doc || (node) ? Y_DOM._getDoc(node) : Y.config.doc; // perf optimization
-        return Math.max(doc[DOCUMENT_ELEMENT].scrollLeft, doc.body.scrollLeft);
+        return Math.max(doc[DOCUMENT_ELEMENT].scrollLeft, doc.body.scrollLeft, doc.defaultView.pageXOffset);
     },
 
     /**
@@ -87,7 +87,7 @@ Y.mix(Y_DOM, {
      */
     docScrollY:  function(node, doc) {
         doc = doc || (node) ? Y_DOM._getDoc(node) : Y.config.doc; // perf optimization
-        return Math.max(doc[DOCUMENT_ELEMENT].scrollTop, doc.body.scrollTop);
+        return Math.max(doc[DOCUMENT_ELEMENT].scrollTop, doc.body.scrollTop, doc.defaultView.pageYOffset);
     },
 
     /**
