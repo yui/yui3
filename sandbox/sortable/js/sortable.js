@@ -61,11 +61,23 @@ YUI.add('sortable', function(Y) {
             del.on({
                 'drag:start': Y.bind(this._onDragStart, this),
                 'drag:end': Y.bind(this._onDragEnd, this),
-                'drag:over': Y.bind(this._onDragOver, this)
+                'drag:over': Y.bind(this._onDragOver, this),
+                'drag:drag': Y.bind(this._onDrag, this)
             });
 
             this.delegate = del;
             Sortable.reg(this);
+        },
+        _up: null,
+        _y: null,
+        _onDrag: function(e) {
+            if (e.pageY < this._y) {
+                this._up = true; 
+            } else if (e.pageY > this._y) { 
+                this._up = false; 
+            } 
+
+            this._y = e.pageY;
         },
         /**
         * @private
@@ -96,6 +108,10 @@ YUI.add('sortable', function(Y) {
             }
 
             switch (this.get('moveType').toLowerCase()) {
+                case 'insert':
+                    var dir = ((this._up) ? 'before' : 'after');
+                    e.drop.get(NODE).insert(e.drag.get(NODE), dir);
+                    break;
                 case 'swap':
                     Y.DD.DDM.swapNode(e.drag, e.drop);
                     break;
@@ -295,11 +311,11 @@ YUI.add('sortable', function(Y) {
             },
             /**
             * @attribute moveType
-            * @description How should an item move to another list: swap, move, copy. Default: swap
+            * @description How should an item move to another list: insert, swap, move, copy. Default: insert
             * @type String
             */        
             moveType: {
-                value: 'swap'
+                value: 'insert'
             },
             /**
             * @attribute invalid
