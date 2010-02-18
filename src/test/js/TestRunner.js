@@ -188,7 +188,7 @@
                 this.BEGIN_EVENT
             ];
             for (var i=0; i < events.length; i++){
-                this.subscribe(events[i], this._logEvent, this, true);
+                this.on(events[i], this._logEvent, this, true);
             }      
        
         }

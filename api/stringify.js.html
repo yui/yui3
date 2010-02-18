@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: json   json-stringify.js  (YUI Library)</title>
+	<title>API: json   stringify.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_json.html" title="json">json</a>
                 
-                 &gt; json-stringify.js (source view) 
+                 &gt; stringify.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -55,13 +55,14 @@
 <span class="cm"> * @for JSON</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
-<span class="kd">var</span> <span class="nx">_JSON</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nx">JSON</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">_JSON</span>     <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">||</span> <span class="p">{}).</span><span class="nx">JSON</span><span class="p">,</span>
     <span class="nx">Lang</span>      <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
     <span class="nx">isFunction</span><span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">,</span>
     <span class="nx">isObject</span>  <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">,</span>
     <span class="nx">isArray</span>   <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">,</span>
     <span class="nx">_toStr</span>    <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">,</span>
     <span class="nx">Native</span>    <span class="o">=</span> <span class="p">(</span><span class="nx">_toStr</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">_JSON</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;[object JSON]&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">_JSON</span><span class="p">),</span>
+    <span class="nx">useNative</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">Native</span><span class="p">,</span>
     <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">,</span>
     <span class="nx">OBJECT</span>    <span class="o">=</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
     <span class="nx">NULL</span>      <span class="o">=</span> <span class="s1">&#39;null&#39;</span><span class="p">,</span>
@@ -253,6 +254,16 @@
     <span class="k">return</span> <span class="nx">_serialize</span><span class="p">({</span><span class="s1">&#39;&#39;</span><span class="o">:</span><span class="nx">o</span><span class="p">},</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
 <span class="p">}</span>
 
+<span class="c1">// Double check basic native functionality.  This is primarily to catch broken</span>
+<span class="c1">// early JSON API implementations in Firefox 3.1 beta1 and beta2.</span>
+<span class="k">if</span> <span class="p">(</span> <span class="nx">Native</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">useNative</span> <span class="o">=</span> <span class="p">(</span> <span class="s1">&#39;0&#39;</span> <span class="o">===</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">useNative</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;JSON&#39;</span><span class="p">),{</span>
     <span class="cm">/**</span>
 <span class="cm">     * Leverage native JSON stringify if the browser has a native</span>
@@ -265,7 +276,7 @@
 <span class="cm">     * @default true</span>
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
-    <span class="nx">useNativeStringify</span> <span class="o">:</span> <span class="o">!!</span><span class="nx">Native</span><span class="p">,</span>
+    <span class="nx">useNativeStringify</span> <span class="o">:</span> <span class="nx">useNative</span><span class="p">,</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Serializes a Date instance as a UTC date string.  Used internally by</span>
@@ -355,6 +366,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class="selected"><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -375,6 +387,7 @@
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
@@ -394,8 +407,8 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="json-parse.js.html" title="json-parse.js">json-parse.js</a></li>
-                                <li class="selected"><a href="json-stringify.js.html" title="json-stringify.js">json-stringify.js</a></li>
+                                <li class=""><a href="parse.js.html" title="parse.js">parse.js</a></li>
+                                <li class="selected"><a href="stringify.js.html" title="stringify.js">stringify.js</a></li>
                         </ul>
                     </div>
 

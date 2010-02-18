@@ -9,7 +9,9 @@
 
 (function() {
 
-    var doc = document,
+    var hasWin = (typeof window != 'undefined'),
+        win = (hasWin) ? window : null,
+        doc = (hasWin) ? win.document : null,
         docEl = doc && doc.documentElement,
         docElClass = docEl && docEl.className,
         DOCUMENT_CLASS = 'yui3-js-enabled',
@@ -42,7 +44,9 @@
         globalListener = function() {
             YUI.Env.windowLoaded = true;
             YUI.Env.DOMReady = true;
-            remove(window, 'load', globalListener);
+            if (hasWin) {
+                remove(window, 'load', globalListener);
+            }
         },
 
 // @TODO: this needs to be created at build time from module metadata
@@ -194,7 +198,7 @@ YUI.prototype = {
         // configuration defaults
         Y.config = Y.config || {
 
-            win: window || {},
+            win: win,
             doc: doc,
             debug: true,
             useBrowserConsole: true,
@@ -753,13 +757,21 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
     YUI._attach(['yui-base']);
 
-    // add a window load event at load time so we can capture
-    // the case where it fires before dynamic loading is
-    // complete.
-    add(window, 'load', globalListener);
+    if (hasWin) {
+        // add a window load event at load time so we can capture
+        // the case where it fires before dynamic loading is
+        // complete.
+        add(window, 'load', globalListener);
+    } else {
+        globalListener();
+    }
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
+
+    if (typeof exports == 'object') {
+        exports.YUI = YUI;
+    }
 
 })();
 
@@ -2055,8 +2067,10 @@ Y.UA = function() {
                 return (c++ == 1) ? '' : '.';
             }));
         },
+
+        win = Y.config.win,
     
-        nav = navigator,
+        nav = win && win.navigator,
 
         o = {
 
@@ -2153,7 +2167,7 @@ Y.UA = function() {
          * @property caja
          * @type float
          */
-        caja: nav.cajaVersion,
+        caja: nav && nav.cajaVersion,
 
         /**
          * Set to true if the page appears to be in SSL
@@ -2175,7 +2189,7 @@ Y.UA = function() {
 
     ua = nav && nav.userAgent, 
 
-    loc = Y.config.win.location,
+    loc = win && win.location,
 
     href = loc && loc.href,
     

@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: json   json-parse.js  (YUI Library)</title>
+	<title>API: json   parse.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_json.html" title="json">json</a>
                 
-                 &gt; json-parse.js (source view) 
+                 &gt; parse.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -93,8 +93,9 @@
 <span class="cm">     * @type {Object}</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
-<span class="kd">var</span> <span class="nx">_JSON</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">.</span><span class="nx">JSON</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">_JSON</span>  <span class="o">=</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">||</span> <span class="p">{}).</span><span class="nx">JSON</span><span class="p">,</span>
     <span class="nx">Native</span> <span class="o">=</span> <span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">_JSON</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;[object JSON]&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">_JSON</span><span class="p">),</span>
+    <span class="nx">useNative</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">Native</span><span class="p">,</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Replace certain Unicode characters that JavaScript may handle incorrectly</span>
@@ -237,6 +238,21 @@
         <span class="nx">Native</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">)</span> <span class="o">:</span> <span class="nx">_parse</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">);</span>
 <span class="p">};</span>
 
+<span class="kd">function</span> <span class="nx">workingNative</span><span class="p">(</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">k</span> <span class="o">===</span> <span class="s2">&quot;ok&quot;</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="nx">v</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Double check basic functionality.  This is mainly to catch early broken</span>
+<span class="c1">// implementations of the JSON API in Firefox 3.1 beta1 and beta2</span>
+<span class="k">if</span> <span class="p">(</span> <span class="nx">Native</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">useNative</span> <span class="o">=</span> <span class="p">(</span> <span class="nx">Native</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span> <span class="s1">&#39;{&quot;ok&quot;:false}&#39;</span><span class="p">,</span> <span class="nx">workingNative</span> <span class="p">)</span> <span class="p">).</span><span class="nx">ok</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">catch</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">useNative</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
 <span class="cm">/**</span>
 <span class="cm"> * Leverage native JSON parse if the browser has a native implementation.</span>
 <span class="cm"> * In general, this is a good idea.  See the Known Issues section in the</span>
@@ -248,7 +264,7 @@
 <span class="cm"> * @default true</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">useNativeParse</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">Native</span><span class="p">;</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">useNativeParse</span> <span class="o">=</span> <span class="nx">useNative</span><span class="p">;</span>
 </pre></div>
 
                     </div>
@@ -282,6 +298,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class="selected"><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -302,6 +319,7 @@
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
@@ -321,8 +339,8 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="json-parse.js.html" title="json-parse.js">json-parse.js</a></li>
-                                <li class=""><a href="json-stringify.js.html" title="json-stringify.js">json-stringify.js</a></li>
+                                <li class="selected"><a href="parse.js.html" title="parse.js">parse.js</a></li>
+                                <li class=""><a href="stringify.js.html" title="stringify.js">stringify.js</a></li>
                         </ul>
                     </div>
 

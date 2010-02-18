@@ -46,7 +46,7 @@ YUI.add('json-parse', function(Y) {
      * @type {Object}
      * @private
      */
-var _JSON  = Y.config.win.JSON,
+var _JSON  = (Y.config.win || {}).JSON,
     Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
     useNative = !!Native,
 
@@ -231,7 +231,7 @@ YUI.add('json-stringify', function(Y) {
  * @for JSON
  * @static
  */
-var _JSON     = Y.config.win.JSON,
+var _JSON     = (Y.config.win || {}).JSON,
     Lang      = Y.Lang,
     isFunction= Lang.isFunction,
     isObject  = Lang.isObject,
