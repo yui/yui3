@@ -109,6 +109,11 @@ META = {
             "yui-base"
         ]
     }, 
+    "clickable-rail": {
+        "requires": [
+            "slider-base"
+        ]
+    }, 
     "collection": {
         "submodules": {
             "array-extras": {}, 
@@ -532,6 +537,11 @@ META = {
             "node-screen"
         ]
     }, 
+    "int-value-range": {
+        "requires": [
+            "slider-base"
+        ]
+    }, 
     "intl": {
         "requires": [
             "intl-base", 
@@ -743,8 +753,16 @@ META = {
     }, 
     "slider": {
         "requires": [
+            "slider-base", 
+            "int-value-range", 
+            "clickable-rail"
+        ]
+    }, 
+    "slider-base": {
+        "requires": [
             "widget", 
-            "dd-value", 
+            "dd-constrain", 
+            "substitute", 
             "skin-sam-slider"
         ], 
         "skinnable": true
@@ -766,13 +784,20 @@ META = {
             "dump"
         ]
     }, 
+    "swf": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "swfdetect"
+        ]
+    }, 
+    "swfdetect": {}, 
     "test": {
         "requires": [
             "substitute", 
             "node", 
             "json", 
-            "event-simulate", 
-            "skin-sam-test"
+            "event-simulate"
         ], 
         "skinnable": true
     }, 

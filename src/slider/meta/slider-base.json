@@ -1,0 +1,11 @@
+{
+    "slider-base": {
+        "requires": [
+            "widget", 
+            "dd-constrain", 
+            "substitute",
+            "skin-sam-slider"
+        ], 
+        "skinnable": true
+    }
+}

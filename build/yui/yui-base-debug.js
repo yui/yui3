@@ -757,7 +757,7 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
     YUI._attach(['yui-base']);
 
-    if (typeof window != 'undefined') {
+    if (hasWin) {
         // add a window load event at load time so we can capture
         // the case where it fires before dynamic loading is
         // complete.
@@ -768,6 +768,15 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
     YUI.Env.add = add;
     YUI.Env.remove = remove;
+
+    /*global exports*/
+    // Support the CommonJS method for exporting our single global
+    // @TODO make sure doing this is being a good citizen, or better
+    // yet, just what if anything should be plumbed in to make it
+    // work out of the box.
+    // if (typeof exports == 'object') {
+    //     exports.YUI = YUI;
+    // }
 
 })();
 
@@ -1107,6 +1116,13 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * The default gallery version to create gallery module urls
  * @property gallery
  * @type string
+ */
+
+/**
+ * Alternative console log function for use in environments without
+ * a supported native console
+ * @property logFn
+ * @type Function
  */
 YUI.add('yui-base', function(Y) {
 

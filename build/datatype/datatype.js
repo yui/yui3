@@ -242,25 +242,6 @@ var xPad=function (x, pad, r)
 	return x.toString();
 };
 
-/**
- * Default date format.
- *
- * @for config
- * @property dateFormat
- * @type String
- * @value "%Y-%m-%d"
- */
-Y.config.dateFormat = Y.config.dateFormat || "%Y-%m-%d";
-
-/**
- * Default locale for the YUI instance.
- *
- * @property locale
- * @type String
- * @value "en"
-*/
-Y.config.locale = Y.config.locale || "en";
-
 var Dt = {
 	formats: {
 		a: function (d, l) { return l.a[d.getDay()]; },

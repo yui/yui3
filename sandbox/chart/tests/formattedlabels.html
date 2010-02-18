@@ -3,7 +3,8 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<head>
-	<script type="text/javascript" src="../build/yui/yui.js"></script>
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<script type="text/javascript" src="../build/chart/chart.js"></script>
 
 <style>
 /*Supplemental CSS for the YUI distribution*/
@@ -80,21 +81,7 @@
 				This content will be replaced by an instance of a Flash player.
 			</div>
 			<script>
-				YUI({
-						base: '../build/',
-						filter: "raw",
-						modules:  { 
-							swfdetect: { 
-								path: "swfdetect/swfdetect.js" 
-							},
-							swf: {
-								path: "swf/swf.js"
-							},
-							chart: {
-								path: "chart/chart.js"
-							}
-						}
-					}).use('node', 'event-custom', 'swfdetect', 'swf', 'chart', 'simplechart', function (Y)
+				YUI().use('node', 'event-custom', 'swfdetect', 'swf', 'chart', function (Y)
 					{
 						var myData = monthlyFinancialData();
 						var myStyles = {
@@ -126,7 +113,7 @@
 								dataFormat:{prefix:"$", decimalPlaces:2}
 							}
 						}
-						var mychart = new Y.SimpleChart("#testdiv", "line", {xaxisprops:{key:"date", type:"Time"}, yaxisprops:{key:"expenses"}, styles:myStyles});					
+						var mychart = new Y.SimpleChart("#testdiv", "line", {swfurl:"../build/chart/assets/cartesiancanvas.swf", xaxisprops:{key:"date", type:"Time"}, yaxisprops:{key:"expenses"}, styles:myStyles});					
 						mychart.setData(myData, "date", "expenses");
 
 					});
@@ -134,8 +121,6 @@
 <!-- END EXAMPLE CODE -->
 <br/>
 <p><strong>Note:</strong> There is currently no finalized API for the charts package. The files and classes used to create this example are temporary JavaScript wrappers used to display and test the functionality of the current state of the charts package. The draft API will be announced when the first beta of the Charts component is released.</p>
-
-<p>Check <a href="testsetup.html">here</a> to see how to set up your development environment for viewing the examples.</p>
 <h3>Getting Started</h3>			
 <p>In this example, we are going to create a simple chart with a time axis and a numeric axis. We will specify the number of labels on the x-axis and format the string values of all axes' labels. Axis types are specified in the xaxisprops property of the constructor's config argument and label formatting is determined by axis style properties.</p>
 
@@ -192,10 +177,10 @@ The following style object formats our labels as necessary:
 </pre>
 
 <h3>Creating the Chart</h3>
-<p>Now, we will create a SimpleChart instance, specifying the X-axis type and the appropriate axis and data keys.</p>
+<p>Now, we will create a SimpleChart instance, specifying the swf url, the X-axis type and the appropriate axis and data keys.</p>
 
 <pre>
-var mychart = new Y.SimpleChart("#testdiv", "line", {xaxisprops:{key:"date", type:"Time"}, yaxisprops:{key:"expenses"}, styles:myStyles});					
+var mychart = new Y.SimpleChart("#testdiv", "line", {swfurl:"../build/chart/assets/cartesiancanvas.swf", xaxisprops:{key:"date", type:"Time"}, yaxisprops:{key:"expenses"}, styles:myStyles});		
 mychart.setData(myData, "date", "expenses");
 </pre>	
 </div>

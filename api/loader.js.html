@@ -152,6 +152,7 @@
     <span class="nx">CSS</span> <span class="o">=</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span>
     <span class="nx">JS</span> <span class="o">=</span> <span class="s1">&#39;js&#39;</span><span class="p">,</span>
     <span class="nx">VERSION</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span>
+    <span class="nx">ROOT_LANG</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
 
     <span class="nx">_path</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">file</span> <span class="o">+</span> <span class="s1">&#39;-min.&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">type</span> <span class="o">||</span> <span class="nx">CSS</span><span class="p">);</span>
@@ -978,11 +979,11 @@
             <span class="nx">supersedes</span><span class="o">:</span> <span class="p">[]</span>
         <span class="p">},</span> <span class="nx">packName</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 
-        <span class="c1">// Y.log(&#39;add pack path: &#39; + packPath);</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">[</span><span class="nx">lang</span><span class="p">][</span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">[</span><span class="nx">lang</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lang</span><span class="p">[</span><span class="nx">lang</span><span class="p">][</span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">packName</span><span class="p">];</span>
     <span class="p">},</span>
@@ -1025,6 +1026,11 @@
                         <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
                         <span class="k">this</span><span class="p">.</span><span class="nx">_addLangPack</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">packName</span><span class="p">);</span>
                     <span class="p">}</span>
+
+                    <span class="c1">// Setup root package if the module has lang defined, </span>
+                    <span class="c1">// it needs to provide a root language pack</span>
+                    <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_addLangPack</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">packName</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1077,7 +1083,7 @@
 <span class="cm">     * @return {string} the language pack module name</span>
 <span class="cm">     */</span>
     <span class="nx">getLangPackName</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">cached</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">mname</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;lang/&#39;</span> <span class="o">+</span> <span class="nx">mname</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">lang</span><span class="p">);</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;lang/&#39;</span> <span class="o">+</span> <span class="nx">mname</span> <span class="o">+</span> <span class="p">((</span><span class="nx">lang</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nx">lang</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">));</span>
     <span class="p">}),</span>
 
     <span class="cm">/**</span>
@@ -1105,19 +1111,18 @@
 
                 <span class="c1">// Y.log(&#39;checking intl: &#39; + m.name + &#39;, &#39; + m.lang + &#39;, &#39; + this.lang);</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">lang</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">lookupBestLang</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">lookupBestLang</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nx">lang</span><span class="p">);</span>
                     <span class="c1">// Y.log(&#39;lang pack: &#39; + lang);</span>
                     <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+
                     <span class="c1">// Y.log(&#39;pack name: &#39; + packName);</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="c1">// this._addLangPack(lang, m, packName); // add on demand?</span>
-                        <span class="nx">r</span><span class="p">.</span><span class="nx">intl</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                        <span class="nx">r</span><span class="p">[</span><span class="nx">packName</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                        <span class="k">delete</span> <span class="nx">r</span><span class="p">[</span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">];</span>
-                        <span class="nx">r</span><span class="p">[</span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                        <span class="c1">// Y.log(&#39;added: &#39; + packName);</span>
-                    <span class="p">}</span>
+                    <span class="c1">// this._addLangPack(lang, m, packName); // add on demand?</span>
+                    <span class="nx">r</span><span class="p">.</span><span class="nx">intl</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="nx">r</span><span class="p">[</span><span class="nx">packName</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="k">delete</span> <span class="nx">r</span><span class="p">[</span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">];</span>
+                    <span class="nx">r</span><span class="p">[</span><span class="nx">m</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                    <span class="c1">// Y.log(&#39;added: &#39; + packName);</span>
                 <span class="p">}</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">expound</span><span class="p">)</span> <span class="p">{</span>
@@ -1130,7 +1135,6 @@
 
                 <span class="c1">// Y.log(&#39;via explode: &#39; + reqs);</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">reqs</span><span class="p">));</span>
-
             <span class="p">}</span>
 
         <span class="p">},</span> <span class="k">this</span><span class="p">);</span>

@@ -3,7 +3,8 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<head>
-	<script type="text/javascript" src="../build/yui/yui.js"></script>
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<script type="text/javascript" src="../build/chart/chart.js"></script>
 
 <style>
 /*Supplemental CSS for the YUI distribution*/
@@ -22,21 +23,7 @@
 			</div>
 			<script>
 
-				YUI({
-						base: '../build/',
-						filter: "raw",
-						modules:  { 
-							swfdetect: { 
-								path: "swfdetect/swfdetect.js" 
-							},
-							swf: {
-								path: "swf/swf.js"
-							},
-							chart: {
-								path: "chart/chart.js"
-							}
-						}
-					}).use('node', 'event-custom', 'swfdetect', 'swf', 'chart', 'simplechart', function (Y)
+				YUI().use('node', 'event-custom', 'swfdetect', 'swf', 'chart', function (Y)
 					{
 
 						var myStyles = {
@@ -77,7 +64,7 @@
 								{day:"Monday", hours:37}, {day:"Tuesday", hours:91}, {day:"Wednesday", hours:11}, {day:"Thursday", hours:19}, {day:"Friday", hours:70}
 							]
 						};					
-						var mychart = new Y.SimpleChart("#testdiv", "line", {xaxisprops:{key:"day"}, yaxisprops:{key:"hours"}, styles:myStyles});					
+						var mychart = new Y.SimpleChart("#testdiv", "line", {swfurl:"../build/chart/assets/cartesiancanvas.swf", xaxisprops:{key:"day"}, yaxisprops:{key:"hours"}, styles:myStyles});
 						mychart.setData(myData.data, "day", "hours");
 
 					});
@@ -87,7 +74,6 @@
 <br/>
 <p><strong>Note:</strong> There is currently no finalized API for the charts package. The files and classes used to create this example are temporary JavaScript wrappers used to display and test the functionality of the current state of the charts package. The draft API will be announced when the first beta of the Charts component is released.</p>
 
-<p>Check <a href="testsetup.html">here</a> to see how to set up your development environment for viewing the examples.</p>
 <h3>Getting Started</h3>				
 <p>In this example, we will change the SimpleChart's default data keys and customize multiple styles. Let's start by creating a data source. We will change the item and value keys to "day" and "hours", respectively. We will need to specify these keys in our SimpleChart constructor later in the code.</p>
 <pre>
@@ -180,8 +166,8 @@ The following code will accomplish that:</p>
 <h3>Creating the chart.</h3>
 <p>Finally, let's construct our simple chart instance, defining the axis data keys and the styles in the optional configuration parameter of the constructor. We will also pass the key ids when setting the data source for the chart.</p>
 <pre>
-	var mychart = new Y.SimpleChart("#testdiv", "line", {xaxisprops:{key:"day"}, yaxisprops:{key:"hours"}, styles:myStyles});					
-	mychart.setData(myData.data, "day", "hours");
+var mychart = new Y.SimpleChart("#testdiv", "line", {swfurl:"../build/chart/assets/cartesiancanvas.swf", xaxisprops:{key:"day"}, yaxisprops:{key:"hours"}, styles:myStyles});					
+mychart.setData(myData.data, "day", "hours");
 </pre>	
 </div>
 </body>

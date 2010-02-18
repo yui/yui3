@@ -111,6 +111,11 @@ META = {
             "yui-base"
         ]
     }, 
+    "clickable-rail": {
+        "requires": [
+            "slider-base"
+        ]
+    }, 
     "collection": {
         "submodules": {
             "array-extras": {}, 
@@ -534,6 +539,11 @@ META = {
             "node-screen"
         ]
     }, 
+    "int-value-range": {
+        "requires": [
+            "slider-base"
+        ]
+    }, 
     "intl": {
         "requires": [
             "intl-base", 
@@ -745,8 +755,16 @@ META = {
     }, 
     "slider": {
         "requires": [
+            "slider-base", 
+            "int-value-range", 
+            "clickable-rail"
+        ]
+    }, 
+    "slider-base": {
+        "requires": [
             "widget", 
-            "dd-value", 
+            "dd-constrain", 
+            "substitute", 
             "skin-sam-slider"
         ], 
         "skinnable": true
@@ -768,13 +786,20 @@ META = {
             "dump"
         ]
     }, 
+    "swf": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "swfdetect"
+        ]
+    }, 
+    "swfdetect": {}, 
     "test": {
         "requires": [
             "substitute", 
             "node", 
             "json", 
-            "event-simulate", 
-            "skin-sam-test"
+            "event-simulate"
         ], 
         "skinnable": true
     }, 
@@ -1008,6 +1033,7 @@ var NOT_FOUND = {},
     CSS = 'css',
     JS = 'js',
     VERSION = Y.version,
+    ROOT_LANG = "",
 
     _path = Y.cached(function(dir, file, type) {
         return dir + '/' + file + '-min.' + (type || CSS);
@@ -1834,11 +1860,11 @@ Y.Loader.prototype = {
             supersedes: []
         }, packName, true);
 
-        // Y.log('add pack path: ' + packPath);
-
-        Y.Env.lang = Y.Env.lang || {};
-        Y.Env.lang[lang] = Y.Env.lang[lang] || {};
-        Y.Env.lang[lang][m.name] = true;
+        if (lang) {
+            Y.Env.lang = Y.Env.lang || {};
+            Y.Env.lang[lang] = Y.Env.lang[lang] || {};
+            Y.Env.lang[lang][m.name] = true;
+        }
 
         return this.moduleInfo[packName];
     },
@@ -1881,6 +1907,11 @@ Y.Loader.prototype = {
                         packName = this.getLangPackName(lang, name);
                         this._addLangPack(lang, m, packName);
                     }
+
+                    // Setup root package if the module has lang defined, 
+                    // it needs to provide a root language pack
+                    packName = this.getLangPackName(ROOT_LANG, name);
+                    this._addLangPack(null, m, packName);
                 }
             }
         }
@@ -1933,7 +1964,7 @@ Y.Loader.prototype = {
      * @return {string} the language pack module name
      */
     getLangPackName: Y.cached(function(lang, mname) {
-        return ('lang/' + mname + '_' + lang);
+        return ('lang/' + mname + ((lang) ? '_' + lang : ''));
     }),
 
     /**
@@ -1961,19 +1992,18 @@ Y.Loader.prototype = {
 
                 // Y.log('checking intl: ' + m.name + ', ' + m.lang + ', ' + this.lang);
 
-                if (Y.Intl && this.lang && m.lang) {
-                    lang = Y.Intl.lookupBestLang(this.lang, m.lang);
+                if (Y.Intl && m.lang) {
+                    lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, m.lang);
                     // Y.log('lang pack: ' + lang);
                     packName = this.getLangPackName(lang, m.name);
+
                     // Y.log('pack name: ' + packName);
-                    if (lang) {
-                        // this._addLangPack(lang, m, packName); // add on demand?
-                        r.intl = true;
-                        r[packName] = true;
-                        delete r[m.name];
-                        r[m.name] = true;
-                        // Y.log('added: ' + packName);
-                    }
+                    // this._addLangPack(lang, m, packName); // add on demand?
+                    r.intl = true;
+                    r[packName] = true;
+                    delete r[m.name];
+                    r[m.name] = true;
+                    // Y.log('added: ' + packName);
                 }
 
                 if (expound) {
@@ -1986,7 +2016,6 @@ Y.Loader.prototype = {
 
                 // Y.log('via explode: ' + reqs);
                 Y.mix(r, Y.Array.hash(reqs));
-
             }
 
         }, this);
