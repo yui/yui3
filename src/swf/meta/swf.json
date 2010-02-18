@@ -1,0 +1,10 @@
+{
+    "swf": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "swf-detect"
+        ], 
+        "skinnable": false
+    }
+}
