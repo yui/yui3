@@ -6,26 +6,28 @@ var _mods = {},
     ACTIVE_LANG = "yuiActiveLang";
 
 /** 
- * The intl-lang sub-module adds the ability to store and retrieve multiple sets of language strings on the client.
+ * Provides utilities to support the management of localized resources (strings and formatting patterns).
  *
  * @module intl
- * @submodule intl-lang
  */
 
 /** 
- * The Intl utility provides a central location for managing language specific sets of strings and formatting patterns.
+ * The Intl utility provides a central location for managing sets of localized resources (strings and formatting patterns).
  *
  * @class Intl
+ * @uses EventTarget
  * @static
  */
 Y.mix(Y.namespace("Intl"), {
 
     /**
+     * Private method to retrieve the language hash for a given module. 
+     *  
      * @method _mod
      * @private
      *
      * @param {String} module The name of the module
-     * @return {Object} The hash of localized strings for the module, keyed by BCP language tag
+     * @return {Object} The hash of localized resources for the module, keyed by BCP language tag
      */
     _mod : function(module) {
         if (!_mods[module]) {
@@ -44,6 +46,7 @@ Y.mix(Y.namespace("Intl"), {
      *
      * @param {String} module The module name.
      * @param {String} lang The BCP 47 language tag.
+     * @return boolean true if successful, false if not. 
      */
     _setLang : function(module, lang) {
         var langs = this._mod(module),
@@ -59,14 +62,12 @@ Y.mix(Y.namespace("Intl"), {
     },
 
     /**
-     * Get the active language for the given module.
+     * Get the currently active language for the given module.
      *
      * @method getLang
      *
      * @param {String} module The module name.
-     * @param {String} lang The BCP 47 language tag.
-     *
-     * @return {String} The current BCP 47 language tag.
+     * @return {String} The BCP 47 language tag.
      */
     getLang : function(module) {
         var lang = this._mod(module)[ACTIVE_LANG]; 
@@ -74,13 +75,13 @@ Y.mix(Y.namespace("Intl"), {
     },
 
     /**
-     * Register a set of strings for the given module and language
+     * Register a hash of localized resources for the given module and language
      *
      * @method add
      *
      * @param {String} module The module name.
      * @param {String} lang The BCP 47 language tag.
-     * @param {Object} strings The hash of strings.
+     * @param {Object} strings The hash of localized values, keyed by the string name.
      */
     add : function(module, lang, strings) {
         lang = lang || ROOT_LANG;
@@ -89,14 +90,14 @@ Y.mix(Y.namespace("Intl"), {
     },
 
     /**
-     * Get the module strings for the given BCP language tag.
+     * Gets the module's localized resources for the given BCP language tag.
      *
      * @method get
      *
      * @param {String} module The module name.
-     * @param {String} key Optional. If not provided, returns a shallow cloned hash of all strings (to protect the originals).
+     * @param {String} key Optional. A single resource key. If not provided, returns a copy (shallow clone) of all resources.
      * @param {String} lang Optional. The BCP 47 langauge tag.
-     * @return String | Object
+     * @return String | Object A copy of the module's localized resources, or a single value if key is provided.  
      */
     get : function(module, key, lang) {
         var mod = this._mod(module),
@@ -109,11 +110,12 @@ Y.mix(Y.namespace("Intl"), {
     },
 
     /**
-     * Obtains the list of languages for which resource bundles are available for a given module, based on the module
+     * Gets the list of languages for which localized resources are available for a given module, based on the module
      * meta-data (part of loader). If loader is not on the page, returns an empty array.
      *
+     * @method getAvailableLangs
      * @param {String} module The name of the module
-     * @return {Array} The list of languages available.
+     * @return {Array} The array of languages available.
      */
     getAvailableLangs : function(module) {
         var availLangs = [],
@@ -138,6 +140,19 @@ Y.mix(Y.namespace("Intl"), {
 
 Y.augment(Y.Intl, Y.EventTarget);
 
+/**
+ * Notification event to indicate when the lang for a module has changed. There is no default behavior associated with this event,
+ * so the on and after moments are equivalent.
+ *
+ * @event intl:langChange
+ * @param {EventFacade} e The event facade
+ * <p>The event facade contains:</p>
+ * <dl>
+ *     <dt>module</dt><dd>The name of the module for which the language changed</dd>
+ *     <dt>newVal</dt><dd>The new language tag</dd>
+ *     <dt>prevVal</dt><dd>The current language tag</dd>
+ * </dl>
+ */
 Y.Intl.publish("intl:langChange", {emitFacade:true});
 
 
