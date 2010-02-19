@@ -99,6 +99,52 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
+                                    <div class="protected" rel="yui:property" resource="#property__factor">
+                                    <h4><a name="property__factor" property="yui:name">_factor</a>
+                                        - <code>protected <span property="yui:type">{ Number }</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Factor used to translate value -&gt; position -&gt; value.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property__offsetXY">
+                                    <h4><a name="property__offsetXY" property="yui:name">_offsetXY</a>
+                                        - <code>protected <span property="yui:type">{ Number }</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Cached X or Y offset for the constraining element to avoid extraneous
+<code>getXY()</code> calls during run time calculation.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:property" resource="#property_ATTRS">
+                                    <h4><a name="property_ATTRS" property="yui:name">ATTRS</a>
+                                        - <code>protected static <span property="yui:type">{Object}</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Attributes that will be added onto host class.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:property" resource="#property_Slider.ATTRS">
                                     <h4><a name="property_Slider.ATTRS" property="yui:name">Slider.ATTRS</a>
                                         - <code>protected static <span property="yui:type">Object</span></code>
@@ -192,6 +238,391 @@ the Widget.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="protected" rel="yui:method" resource="#method__afterMaxChange">
+                                    <h4>
+                                        <a name="method__afterMaxChange">_afterMaxChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterMaxChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Update position according to new max value.  If the new max results
+in the current value being out of range, the value is set to the
+closer of min or max.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type"> EventFacade </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The <code>max</code> attribute change event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterMinChange">
+                                    <h4>
+                                        <a name="method__afterMinChange">_afterMinChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterMinChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Update position according to new min value.  If the new min results
+in the current value being out of range, the value is set to the
+closer of min or max.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type"> EventFacade </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The <code>min</code> attribute change event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__afterValueChange">
+                                    <h4>
+                                        <a name="method__afterValueChange">_afterValueChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_afterValueChange</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Propagate change to the thumb position unless the change originated
+from the thumbMove event.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type"> EventFacade </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The <code>valueChange</code> event.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__cacheRailOffset">
+                                    <h4>
+                                        <a name="method__cacheRailOffset">_cacheRailOffset</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_cacheRailOffset</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Captures the current top left of the rail to avoid excessive DOM
+lookups at run time.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__calculateFactor">
+                                    <h4>
+                                        <a name="method__calculateFactor">_calculateFactor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_calculateFactor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Calculates and caches
+(range between max and min) / (rail width or height)
+for fast runtime calculation of position -&gt; value.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__defThumbMoveFn">
+                                    <h4>
+                                        <a name="method__defThumbMoveFn">_defThumbMoveFn</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_defThumbMoveFn</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Dispatch the new position of the thumb into the value setting
+operations.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type"> EventFacade </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The host's thumbMove event</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__initSliderValueRange">
+                                    <h4>
+                                        <a name="method__initSliderValueRange">_initSliderValueRange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_initSliderValueRange</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Attach event listeners to keep the UI in sync with the min/max/value
+attributes and thumb position.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__nearestValue">
+                                    <h4>
+                                        <a name="method__nearestValue">_nearestValue</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                         Number 
+                                            <strong property="yui:name">_nearestValue</strong>
+                                           (
+                                                
+                                                        
+                                                         value
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the nearest valid value to the value input.  If the provided
+value is outside the min - max range, accounting for min > max
+scenarios, the nearest of either min or max is returned.  Otherwise,
+the provided value is returned.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type"> mixed </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Value to test against current min - max range</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Number 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Current min, max, or value if within range</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__offsetToValue">
+                                    <h4>
+                                        <a name="method__offsetToValue">_offsetToValue</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                         mixed 
+                                            <strong property="yui:name">_offsetToValue</strong>
+                                           (
+                                                
+                                                        
+                                                         X
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>Converts a pixel position into a value.  Calculates current
+position minus xy offsets of the constraining element multiplied by the
+ratio of <code>(max - min) / (constraining dim)</code>.</p>
+<p>Override this if you want to use a different value mapping
+algorithm.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">X</span>
+                                                        &lt;<span property="yui:type"> Number </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> or Y pixel position</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             mixed 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Value corresponding to the provided pixel position</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__setAxis">
                                     <h4>
                                         <a name="method__setAxis">_setAxis</a></h4>
@@ -235,6 +666,310 @@ Converts to lower case for storage.
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">lowercased first character of the input string</dd>
                                                 </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setPosition">
+                                    <h4>
+                                        <a name="method__setPosition">_setPosition</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setPosition</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Positions the thumb in accordance with the translated value.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method__syncThumbPosition">
+                                    <h4>
+                                        <a name="method__syncThumbPosition">_syncThumbPosition</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_syncThumbPosition</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Cache rail offsets and dims for faster value translation and move
+thumb to appropriate position if necessary.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__validateNewMax">
+                                    <h4>
+                                        <a name="method__validateNewMax">_validateNewMax</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                         Boolean 
+                                            <strong property="yui:name">_validateNewMax</strong>
+                                           (
+                                                
+                                                        
+                                                         value
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Validates new values assigned to <code>max</code> attribute.  Numbers
+are acceptable.  Override this to enforce different rules.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type"> mixed </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Value assigned to <code>max</code> attribute.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Boolean 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">True for numbers.  False otherwise.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__validateNewMin">
+                                    <h4>
+                                        <a name="method__validateNewMin">_validateNewMin</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                         Boolean 
+                                            <strong property="yui:name">_validateNewMin</strong>
+                                           (
+                                                
+                                                        
+                                                         value
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Validates new values assigned to <code>min</code> attribute.  Numbers
+are acceptable.  Override this to enforce different rules.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type"> mixed </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Value assigned to <code>min</code> attribute.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Boolean 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">True for numbers.  False otherwise.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__validateNewValue">
+                                    <h4>
+                                        <a name="method__validateNewValue">_validateNewValue</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                         Boolean 
+                                            <strong property="yui:name">_validateNewValue</strong>
+                                           (
+                                                
+                                                        
+                                                         value
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Validates new values assigned to <code>value</code> attribute.
+Numbers between the configured <code>min</code> and <code>max</code>
+are acceptable.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type"> mixed </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Value assigned to <code>value</code> attribute</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Boolean 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">True if value is a number between the configured
+<code>min</code> and <code>max</code>.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__valueToOffset">
+                                    <h4>
+                                        <a name="method__valueToOffset">_valueToOffset</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                         Array 
+                                            <strong property="yui:name">_valueToOffset</strong>
+                                           (
+                                                
+                                                        
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Converts a value into a positional pixel value for use in positioning
+the DD element according to the reverse of the
+<code>_offsetToValue( xy )</code> operation.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type"> Number </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  The value to map to pixel X or Y position</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Array 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo"><code>[ <em>X</em>px, <em>Y</em>px ] positional values</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__verifyValue">
+                                    <h4>
+                                        <a name="method__verifyValue">_verifyValue</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_verifyValue</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Verifies that the current value is within the min - max range.  If
+not, value is set to either min or max, depending on which is
+closer.
+                                        </div>
+
+                                        <div class="description">
+
+
 
 
              
@@ -873,6 +1608,94 @@ taken into consideration for calculations.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_maxChange">
+                                    <h4>
+                                        <a name="event_maxChange">maxChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">maxChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'max' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_minChange">
+                                    <h4>
+                                        <a name="event_minChange">minChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">minChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'min' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_slideEnd">
                                     <h4>
                                         <a name="event_slideEnd">slideEnd</a></h4>
@@ -1070,6 +1893,50 @@ instance</dd>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:event" resource="#event_valueChange">
+                                    <h4>
+                                        <a name="event_valueChange">valueChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">valueChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'value' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -1193,6 +2060,44 @@ horizontal, &quot;y&quot; for vertical.
 
                                     <hr />
                                     </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_max">
+                                    <h4><a name="config_max">max</a>
+                                        <code>- <span property="yui:type">{ Number }</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The value associated with the farthest bottom, right position of
+the rail.  Can be less than the configured <code>min</code> if
+you want values to increase from right-to-left or bottom-to-top.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 100
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_min">
+                                    <h4><a name="config_min">min</a>
+                                        <code>- <span property="yui:type">{ Number }</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The value associated with the farthest top, left position of the
+rail.  Can be greater than the configured <code>max</code> if you
+want values to increase from right-to-left or bottom-to-top.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 0
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_thumbUrl">
                                     <h4><a name="config_thumbUrl">thumbUrl</a>
                                         <code>- <span property="yui:type">{ String }</span></code>
@@ -1209,6 +2114,26 @@ thumb-y.png in the skin directory of the current skin.
                                     <div class="default">
                                         Default Value: thumb-x.png or thumb-y.png in the sam skin directory of the
 current build path for Slider
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_value">
+                                    <h4><a name="config_value">value</a>
+                                        <code>- <span property="yui:type">{ Number }</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The value associated with the thumb's current position on the
+rail. Defaults to the value inferred from the thumb's current
+position. Specifying value in the constructor will move the
+thumb to the position that corresponds to the supplied value.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: (inferred from current thumb position)
                                     </div>        
 
                                     <hr />
@@ -1300,6 +2225,7 @@ current build path for Slider
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
+                                <li class=""><a href="module_clickable-rail.html" title="clickable-rail">clickable-rail</a></li>
                                 <li class=""><a href="module_collection.html" title="collection">collection</a></li>
                                 <li class=""><a href="module_console.html" title="console">console</a></li>
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
@@ -1355,16 +2281,17 @@ current build path for Slider
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="clickable-rail.js.html" title="clickable-rail.js">clickable-rail.js</a></li>
-                                <li class=""><a href="int-value-range.js.html" title="int-value-range.js">int-value-range.js</a></li>
-                                <li class=""><a href="slider-base.js.html" title="slider-base.js">slider-base.js</a></li>
                                 <li class=""><a href="slider.js.html" title="slider.js">slider.js</a></li>
+                                <li class=""><a href="value-range.js.html" title="value-range.js">value-range.js</a></li>
                         </ul>
                     </div>
 
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class="protected"><a href="#property__factor" title="_factor">_factor</a></li>
+                                <li class="protected"><a href="#property__offsetXY" title="_offsetXY">_offsetXY</a></li>
+                                <li class="protected"><a href="#property_ATTRS" title="ATTRS">ATTRS</a></li>
                                 <li class="protected"><a href="#property_Slider.ATTRS" title="Slider.ATTRS">Slider.ATTRS</a></li>
                                 <li class="protected"><a href="#property_Slider.NAME" title="Slider.NAME">Slider.NAME</a></li>
                         </ul>
@@ -1373,7 +2300,23 @@ current build path for Slider
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class="protected"><a href="#method__afterMaxChange" title="_afterMaxChange">_afterMaxChange</a></li>
+                                <li class="protected"><a href="#method__afterMinChange" title="_afterMinChange">_afterMinChange</a></li>
+                                <li class="protected"><a href="#method__afterValueChange" title="_afterValueChange">_afterValueChange</a></li>
+                                <li class="protected"><a href="#method__cacheRailOffset" title="_cacheRailOffset">_cacheRailOffset</a></li>
+                                <li class="protected"><a href="#method__calculateFactor" title="_calculateFactor">_calculateFactor</a></li>
+                                <li class="protected"><a href="#method__defThumbMoveFn" title="_defThumbMoveFn">_defThumbMoveFn</a></li>
+                                <li class="protected"><a href="#method__initSliderValueRange" title="_initSliderValueRange">_initSliderValueRange</a></li>
+                                <li class="protected"><a href="#method__nearestValue" title="_nearestValue">_nearestValue</a></li>
+                                <li class="protected"><a href="#method__offsetToValue" title="_offsetToValue">_offsetToValue</a></li>
                                 <li class="protected"><a href="#method__setAxis" title="_setAxis">_setAxis</a></li>
+                                <li class="protected"><a href="#method__setPosition" title="_setPosition">_setPosition</a></li>
+                                <li class=""><a href="#method__syncThumbPosition" title="_syncThumbPosition">_syncThumbPosition</a></li>
+                                <li class="protected"><a href="#method__validateNewMax" title="_validateNewMax">_validateNewMax</a></li>
+                                <li class="protected"><a href="#method__validateNewMin" title="_validateNewMin">_validateNewMin</a></li>
+                                <li class="protected"><a href="#method__validateNewValue" title="_validateNewValue">_validateNewValue</a></li>
+                                <li class="protected"><a href="#method__valueToOffset" title="_valueToOffset">_valueToOffset</a></li>
+                                <li class="protected"><a href="#method__verifyValue" title="_verifyValue">_verifyValue</a></li>
                                 <li class="protected"><a href="#method_bindUI" title="bindUI">bindUI</a></li>
                                 <li class="protected"><a href="#method_initializer" title="initializer">initializer</a></li>
                                 <li class="protected"><a href="#method_renderUI" title="renderUI">renderUI</a></li>
@@ -1386,10 +2329,13 @@ current build path for Slider
                         <ul class="content">        
                                 <li class=""><a href="#event_axisChange" title="axisChange">axisChange</a></li>
                                 <li class=""><a href="#event_lengthChange" title="lengthChange">lengthChange</a></li>
+                                <li class=""><a href="#event_maxChange" title="maxChange">maxChange</a></li>
+                                <li class=""><a href="#event_minChange" title="minChange">minChange</a></li>
                                 <li class=""><a href="#event_slideEnd" title="slideEnd">slideEnd</a></li>
                                 <li class=""><a href="#event_slideStart" title="slideStart">slideStart</a></li>
                                 <li class=""><a href="#event_thumbMove" title="thumbMove">thumbMove</a></li>
                                 <li class=""><a href="#event_thumbUrlChange" title="thumbUrlChange">thumbUrlChange</a></li>
+                                <li class=""><a href="#event_valueChange" title="valueChange">valueChange</a></li>
                         </ul>
                     </div>
 
@@ -1398,7 +2344,10 @@ current build path for Slider
                         <ul class="content">        
                                 <li class=""><a href="#config_axis" title="axis">axis</a></li>
                                 <li class=""><a href="#config_length" title="length">length</a></li>
+                                <li class=""><a href="#config_max" title="max">max</a></li>
+                                <li class=""><a href="#config_min" title="min">min</a></li>
                                 <li class=""><a href="#config_thumbUrl" title="thumbUrl">thumbUrl</a></li>
+                                <li class=""><a href="#config_value" title="value">value</a></li>
                         </ul>
                     </div>
 
@@ -1412,7 +2361,7 @@ current build path for Slider
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "", "host": "Slider", "name": "length", "url": "Slider.html#config_length", "type": "config"}, {"access": "", "host": "Slider", "name": "lengthChange", "url": "Slider.html#event_lengthChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxis", "url": "Slider.html#method__setAxis", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "protected", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumbMove", "url": "Slider.html#event_thumbMove", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbUrl", "url": "Slider.html#config_thumbUrl", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbUrlChange", "url": "Slider.html#event_thumbUrlChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "Slider", "name": "_afterMaxChange", "url": "Slider.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterMinChange", "url": "Slider.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_afterValueChange", "url": "Slider.html#method__afterValueChange", "type": "method"}, {"access": "protected", "host": "Slider", "name": "ATTRS", "url": "Slider.html#property_ATTRS", "type": "property"}, {"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_cacheRailOffset", "url": "Slider.html#method__cacheRailOffset", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_calculateFactor", "url": "Slider.html#method__calculateFactor", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_defThumbMoveFn", "url": "Slider.html#method__defThumbMoveFn", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_factor", "url": "Slider.html#property__factor", "type": "property"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_initSliderValueRange", "url": "Slider.html#method__initSliderValueRange", "type": "method"}, {"access": "", "host": "Slider", "name": "length", "url": "Slider.html#config_length", "type": "config"}, {"access": "", "host": "Slider", "name": "lengthChange", "url": "Slider.html#event_lengthChange", "type": "event"}, {"access": "", "host": "Slider", "name": "max", "url": "Slider.html#config_max", "type": "config"}, {"access": "", "host": "Slider", "name": "maxChange", "url": "Slider.html#event_maxChange", "type": "event"}, {"access": "", "host": "Slider", "name": "min", "url": "Slider.html#config_min", "type": "config"}, {"access": "", "host": "Slider", "name": "minChange", "url": "Slider.html#event_minChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_nearestValue", "url": "Slider.html#method__nearestValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_offsetToValue", "url": "Slider.html#method__offsetToValue", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_offsetXY", "url": "Slider.html#property__offsetXY", "type": "property"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxis", "url": "Slider.html#method__setAxis", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setPosition", "url": "Slider.html#method__setPosition", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "protected", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "", "host": "Slider", "name": "_syncThumbPosition", "url": "Slider.html#method__syncThumbPosition", "type": "method"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumbMove", "url": "Slider.html#event_thumbMove", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbUrl", "url": "Slider.html#config_thumbUrl", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbUrlChange", "url": "Slider.html#event_thumbUrlChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_validateNewMax", "url": "Slider.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewMin", "url": "Slider.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_validateNewValue", "url": "Slider.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "Slider", "name": "value", "url": "Slider.html#config_value", "type": "config"}, {"access": "", "host": "Slider", "name": "valueChange", "url": "Slider.html#event_valueChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "_valueToOffset", "url": "Slider.html#method__valueToOffset", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_verifyValue", "url": "Slider.html#method__verifyValue", "type": "method"}];
 </script>
 </body>
 </html>
