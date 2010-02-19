@@ -5,8 +5,7 @@
  * @submodule yui-base
  */
 
-// reduce to one or the other
-if (typeof YUI === 'undefined' || !YUI) {
+if (typeof YUI === 'undefined') {
 
 /**
  * The YUI global namespace object.  If YUI is already defined, the
@@ -22,7 +21,6 @@ if (typeof YUI === 'undefined' || !YUI) {
  */
     /*global YUI*/
     /*global YUI_config*/
-    // @TODO Advice was to make a function, disallow direct instantiation.
     var YUI = function(o1, o2, o3, o4, o5) {
 
         var Y = this, a = arguments, i, l = a.length,
@@ -34,18 +32,14 @@ if (typeof YUI === 'undefined' || !YUI) {
         } else {
             // set up the core environment
             Y._init();
-
             if (globalConfig) {
                 Y._config(globalConfig);
             }
-
             for (i=0; i<l; i++) {
                 Y._config(a[i]);
             }
-
             // bind the specified additional modules for this instance
             Y._setup();
-
             return Y;
         }
     };
@@ -53,79 +47,62 @@ if (typeof YUI === 'undefined' || !YUI) {
 
 (function() {
 
-    var hasWin = (typeof window != 'undefined'),
-        win = (hasWin) ? window : null,
-        doc = (hasWin) ? win.document : null,
-        docEl = doc && doc.documentElement,
-        docElClass = docEl && docEl.className,
-        DOCUMENT_CLASS = 'yui3-js-enabled',
-        NOOP = function() {},
-    
-        _instances = {}, 
-        _startTime = new Date().getTime(), 
-        p, 
-        i,
+    var p, i,
+        DOC_LABEL     = 'yui3-js-enabled',
+        NOOP          = function() {},
+        // the functions applyTo can call. this should be done at build time
+        APPLY_TO_AUTH = { 'io.xdrReady':      1,
+                          'io.xdrResponse':   1,
+                          'SWF.eventHandler': 1 },
+        SLICE         = Array.prototype.slice,
+        hasWin        = (typeof window != 'undefined'),
+        win           = (hasWin) ? window : null,
+        doc           = (hasWin) ? win.document : null,
+        docEl         = doc && doc.documentElement,
+        docClass      = docEl && docEl.className,
+        instances     = {}, 
+        time          = new Date().getTime(), 
+        add           = function(el, type, fn, capture) {
+                            if (el && el.addEventListener) {
+                                el.addEventListener(type, fn, capture);
+                            } else if (el && el.attachEvent) {
+                                el.attachEvent("on" + type, fn);
+                            } 
+                        },
+        remove        = function (el, type, fn, capture) {
+                            if (el && el.removeEventListener) {
+                                el.removeEventListener(type, fn, capture);
+                            } else if (el && el.detachEvent) {
+                                el.detachEvent("on" + type, fn);
+                            }
+                        },
+        handleLoad    = function() {
+                            YUI.Env.windowLoaded = true;
+                            YUI.Env.DOMReady = true;
+                            if (hasWin) {
+                                remove(window, 'load', handleLoad);
+                            }
+                        };
 
-        add = function(el, type, fn, capture) {
-            if (el && el.addEventListener) {
-                el.addEventListener(type, fn, (!!capture));
-            } else if (el && el.attachEvent) {
-                el.attachEvent("on" + type, fn);
-            } 
-            // else {
-            //     YUI.log('could not attach DOM event listener: ' + type + ' to ' + el);
-            // }
-        },
-
-        remove = function (el, type, fn, capture) {
-            if (el && el.removeEventListener) {
-                el.removeEventListener(type, fn, !!capture);
-            } else if (el && el.detachEvent) {
-                el.detachEvent("on" + type, fn);
-            }
-        },
-
-        globalListener = function() {
-            YUI.Env.windowLoaded = true;
-            YUI.Env.DOMReady = true;
-            if (hasWin) {
-                remove(window, 'load', globalListener);
-            }
-        },
-
-// @TODO: this needs to be created at build time from module metadata
-
-        _APPLY_TO_WHITE_LIST = {
-          'io.xdrReady': 1,
-          'io.xdrResponse':1,
-          'SWF.eventHandler':1
-        },
-
-        SLICE = Array.prototype.slice;
 
 //  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
 //  enable styles that need to key off of JS being enabled.
-if (docEl && docElClass.indexOf(DOCUMENT_CLASS) == -1) {
-    if (docElClass) {
-        docElClass += ' ';
+if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
+    if (docClass) {
+        docClass += ' ';
     }
-    docElClass += DOCUMENT_CLASS;
-    docEl.className = docElClass;
+    docClass += DOC_LABEL;
+    docEl.className = docClass;
 }
 
         
-
 // The prototype contains the functions that are required to allow the external
 // modules to be registered and for the instance to be initialized.
 YUI.prototype = {
 
     _config: function(o) {
-
         o = o || {};
-
-        var c = this.config, i, j, m, mods;
-
-        mods = c.modules;
+        var config = this.config, i, j, m, mods = config.modules;
         for (i in o) {
             if (mods && i == 'modules') {
                 m = o[i];
@@ -135,10 +112,10 @@ YUI.prototype = {
                     }
                 }
             } else if (i == 'win') {
-                c[i] = o[i].contentWindow || o[i];
-                c.doc = c[i].document;
+                config[i] = o[i].contentWindow || o[i];
+                config.doc = config[i].document;
             } else {
-                c[i] = o[i];
+                config[i] = o[i];
             }
         }
     },
@@ -148,21 +125,14 @@ YUI.prototype = {
      * @private
      */
     _init: function() {
-
-        // find targeted window/frame
-        // @TODO create facades
         var v = '@VERSION@', Y = this, filter;
-
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
-
         Y.version = v;
-
         Y.gallery = 'gallery-2010.02.10-01'; // @TODO build time
 
         if (!Y.Env) {
-
             Y.Env = {
                 // @todo expand the new module metadata
                 mods: {},
@@ -182,14 +152,13 @@ YUI.prototype = {
 
             if (YUI.Env && Y !== YUI) {
                 Y.Env._yidx = (++YUI.Env._yidx);
-                Y.Env._guidp = ('yui_' + v + '_' + Y.Env._yidx + '_' + _startTime).replace(/\./g, '_');
+                Y.Env._guidp = ('yui_' + v + '_' + Y.Env._yidx + '_' + time).replace(/\./g, '_');
             }
 
             Y.id = Y.stamp(Y);
-            _instances[Y.id] = Y;
+            instances[Y.id] = Y;
 
         }
-
 
         Y.constructor = YUI;
 
@@ -288,27 +257,21 @@ YUI.prototype = {
      */
     applyTo: function(id, method, args) {
 
-        if (!(method in _APPLY_TO_WHITE_LIST)) {
+        if (!(method in APPLY_TO_AUTH)) {
             this.log(method + ': applyTo not allowed', 'warn', 'yui');
             return null;
         }
 
-        var instance = _instances[id], nest, m, i;
-
+        var instance = instances[id], nest, m, i;
         if (instance) {
-
             nest = method.split('.'); 
             m = instance;
-
             for (i=0; i<nest.length; i=i+1) {
-
                 m = m[nest[i]];
-
                 if (!m) {
                     this.log('applyTo not found: ' + method, 'warn', 'yui');
                 }
             }
-
             return m.apply(instance, args);
         }
 
@@ -350,17 +313,15 @@ YUI.prototype = {
 
     _attach: function(r, fromLoader) {
 
-        var mods = YUI.Env.mods,
+        var i, name, m, d, req, use,
+            mods     = YUI.Env.mods,
             attached = this.Env._attached,
-            i, l = r.length, name, m, d, req, use;
+            len      = r.length;
 
-        for (i=0; i<l; i=i+1) {
+        for (i=0; i<len; i=i++) {
 
             name = r[i]; 
             m    = mods[name];
-
-            // console.log(name + '::' + m);
-            // if (!m) { }
 
             if (!attached[name] && m) {
 
@@ -369,9 +330,6 @@ YUI.prototype = {
                 d   = m.details; 
                 req = d.requires; 
                 use = d.use;
-
-                // console.log(req);
-                // console.log(use);
 
                 if (req) {
                     this._attach(this.Array(req));
@@ -415,29 +373,22 @@ YUI.prototype = {
      * @return {YUI} the YUI instance
      */
     use: function() {
-
-        if (this._loading) {
-            this._useQueue = this._useQueue || new this.Queue();
-            this._useQueue.add(SLICE.call(arguments, 0));
-            return this;
-        }
-
-        var Y = this, 
-            a=SLICE.call(arguments, 0), 
-            mods = YUI.Env.mods, 
-            used = Y.Env._used,
-            loader, 
-            queue = YUI.Env._loaderQueue,
-            onEnd,
-            firstArg = a[0], 
-            dynamic = false,
-            callback = a[a.length-1],
-            config = Y.config,
-            boot = config.bootstrap,
-            k, i, l, missing = [], 
-            r = [], 
-            css = Y.config.fetchCSS,
-            f = function(name) {
+        var k, i, len, loader, handleEnd,
+            Y        = this, 
+            G_ENV    = YUI.Env,
+            args     = SLICE.call(arguments, 0), 
+            mods     = G_ENV.mods, 
+            used     = Y.Env._used,
+            queue    = G_ENV._loaderQueue,
+            firstArg = args[0], 
+            dynamic  = false,
+            callback = args[args.length - 1],
+            config   = Y.config,
+            boot     = config.bootstrap,
+            missing  = [], 
+            r        = [], 
+            fetchCSS = config.fetchCSS,
+            process  = function(name) {
 
                 // only attach a module once
                 if (used[name]) {
@@ -447,16 +398,12 @@ YUI.prototype = {
                 var m = mods[name], j, req, use;
 
                 if (m) {
-
-
                     used[name] = true;
-
                     req = m.details.requires;
                     use = m.details.use;
                 } else {
-
                     // CSS files don't register themselves, see if it has been loaded
-                    if (!YUI.Env._loaded[Y.version][name]) {
+                    if (!G_ENV._loaded[Y.version][name]) {
                         missing.push(name);
                     } else {
                         // probably css
@@ -466,12 +413,11 @@ YUI.prototype = {
 
                 // make sure requirements are attached
                 if (req) {
-                    // if (Y.Lang.isString(req)) {
                     if (typeof req == 'string') {
-                        f(req);
+                        process(req);
                     } else {
                         for (j = 0; j < req.length; j = j + 1) {
-                            f(req[j]);
+                            process(req[j]);
                         }
                     }
                 }
@@ -480,133 +426,123 @@ YUI.prototype = {
                 r.push(name);
 
             },
+            handleComplete = function(fromLoader) {
+                fromLoader = fromLoader || {
+                    success: true,
+                    msg: 'not dynamic'
+                };
+                if (callback) {
+                    callback(Y, fromLoader);
+                }
+                if (Y.fire) {
+                    Y.fire('yui:load', Y, fromLoader);
+                }
+                // process queued use requests as long until done 
+                // or dynamic load happens again.
+                Y._loading = false;
+                if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
+                    Y.use.apply(Y, Y._useQueue.next());
+                }
+            };
 
-            onComplete;
+        if (this._loading) {
+            this._useQueue = this._useQueue || new this.Queue();
+            this._useQueue.add(args);
+            return this;
+        }
 
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
-            a.pop();
+            args.pop();
         } else {
             callback = null;
         }
-
-        onComplete = function(fromLoader) {
-
-
-            fromLoader = fromLoader || {
-                success: true,
-                msg: 'not dynamic'
-            };
-
-            if (callback) {
-                callback(Y, fromLoader);
-            }
-
-            if (Y.fire) {
-                Y.fire('yui:load', Y, fromLoader);
-            }
-
-            // process queued use requests as long until done 
-            // or dynamic load happens again.
-            Y._loading = false;
-
-            if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
-                Y.use.apply(Y, Y._useQueue.next());
-            }
-        };
  
-
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
-            a = [];
+            args = [];
             for (k in mods) {
                 if (mods.hasOwnProperty(k)) {
-                    a.push(k);
+                    args.push(k);
                 }
             }
             
             if (callback) {
-                a.push(callback);
+                args.push(callback);
             }
 
-            return Y.use.apply(Y, a);
+            return Y.use.apply(Y, args);
         }
         
-
         // use loader to expand dependencies and sort the 
         // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
             loader = new Y.Loader(config);
-            loader.require(a);
+            loader.require(args);
             loader.ignoreRegistered = true;
             loader.allowRollup = false;
-            // loader.calculate(null, (css && css == 'force') ? null : 'js');
-            // loader.calculate();
-            // loader.calculate(null, (css) ? null : 'js');
-            loader.calculate(null, (css) ? null : 'js');
-            a = loader.sorted;
+            loader.calculate(null, (fetchCSS) ? null : 'js');
+            args = loader.sorted;
         }
 
-
-        l = a.length;
+        len = args.length;
 
         // process each requirement and any additional requirements 
         // the module metadata specifies
-        for (i=0; i<l; i=i+1) {
-            f(a[i]);
+        for (i=0; i<len; i++) {
+            process(args[i]);
         }
 
-        l = missing.length;
+        len = missing.length;
 
 
-        if (l) {
+        if (len) {
             missing = Y.Object.keys(Y.Array.hash(missing));
         }
 
         // dynamic load
-        if (boot && l && Y.Loader) {
-
+        if (boot && len && Y.Loader) {
             Y._loading = true;
             loader = new Y.Loader(config);
-            loader.onSuccess = onComplete;
-            loader.onFailure = onComplete;
-            loader.onTimeout = onComplete;
+            loader.onSuccess = handleComplete;
+            loader.onFailure = handleComplete;
+            loader.onTimeout = handleComplete;
             loader.context = Y;
-            loader.attaching = a;
-            // loader.require(missing);
-            loader.require((css) ? missing : a);
-            loader.insert(null, (css) ? null : 'js');
-        } else if (boot && l && Y.Get && !Y.Env.bootstrapped) {
-            Y._loading = true;
+            loader.attaching = args;
+            loader.require((fetchCSS) ? missing : args);
+            loader.insert(null, (fetchCSS) ? null : 'js');
+        } else if (boot && len && Y.Get && !Y.Env.bootstrapped) {
 
-            a = Y.Array(arguments, 0, true);
-            onEnd = function() {
+            Y._loading = true;
+            args = Y.Array(arguments, 0, true);
+
+            handleEnd = function() {
                 Y._loading = false;
                 queue.running = false;
                 Y.Env.bootstrapped = true;
                 Y._attach(['loader']);
-                Y.use.apply(Y, a);
+                Y.use.apply(Y, args);
             };
 
-            if (YUI.Env._bootstrapping) {
-                queue.add(onEnd);
+            if (G_ENV._bootstrapping) {
+                queue.add(handleEnd);
             } else {
-                YUI.Env._bootstrapping = true;
+                G_ENV._bootstrapping = true;
                 Y.Get.script(config.base + config.loaderPath, {
-                    onEnd: onEnd 
+                    onEnd: handleEnd 
                 });
             }
 
             return Y;
 
         } else {
-            if (l) {
+            if (len) {
                 Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
             }
             Y._attach(r);
-            onComplete();
+            handleComplete();
         }
 
         return Y; // chain support var yui = YUI().use('dragdrop');
@@ -741,9 +677,9 @@ YUI.prototype = {
         // add a window load event at load time so we can capture
         // the case where it fires before dynamic loading is
         // complete.
-        add(window, 'load', globalListener);
+        add(window, 'load', handleLoad);
     } else {
-        globalListener();
+        handleLoad();
     }
 
     YUI.Env.add = add;
