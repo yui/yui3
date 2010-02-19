@@ -1,3 +1,6 @@
+An extension, which can be used with Base.build to add zIndex and 
+shimming support to a Widget class.
+
 3.1.0
 
 * No changes
@@ -13,9 +16,3 @@
 No Changes
 
 3.0.0PR2 - Initial release
-
-Module Name: "widget-stack"
-
-An extension, which can be used with Base.build to add zIndex and 
-shimming support to a Widget class.
-
