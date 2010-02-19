@@ -582,14 +582,11 @@
 <span class="cm">     * @param {Node} parentNode The parent node to render to, if passed in to the &lt;code&gt;render&lt;/code&gt; method</span>
 <span class="cm">     */</span>
     <span class="nx">_defRenderFn</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_renderUI</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_bindUI</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_syncUI</span><span class="p">();</span>
-
+        <span class="k">this</span><span class="p">.</span><span class="nx">_parentNode</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+         
         <span class="k">this</span><span class="p">.</span><span class="nx">renderer</span><span class="p">();</span>
-
         <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="nx">RENDERED</span><span class="p">,</span> <span class="nx">TRUE</span><span class="p">);</span>
-        
+
         <span class="k">this</span><span class="p">.</span><span class="nx">_removeLoadingClassNames</span><span class="p">();</span>
     <span class="p">},</span>
 
@@ -603,8 +600,13 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">renderer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderUI</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">renderUI</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_bindUI</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">bindUI</span><span class="p">();</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_syncUI</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">syncUI</span><span class="p">();</span>
     <span class="p">},</span>
 
@@ -832,11 +834,10 @@
 <span class="cm">     *</span>
 <span class="cm">     * @method _renderUI</span>
 <span class="cm">     * @protected</span>
-<span class="cm">     * @param {Node} The parent node to rendering the widget into</span>
 <span class="cm">     */</span>
-    <span class="nx">_renderUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_renderUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_renderBoxClassNames</span><span class="p">();</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_renderBox</span><span class="p">(</span><span class="nx">parentNode</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderBox</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_parentNode</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
