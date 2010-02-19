@@ -1,1 +1,1 @@
-YUI.add("slider",function(A){A.Slider=A.Base.build("slider",A.SliderBase,[A.IntValueRange,A.ClickableRail],{dynamic:true});},"@VERSION@",{requires:["slider-base","clickable-rail","int-value-range"]});
+YUI.add("slider",function(A){A.Slider=A.Base.build("slider",A.SliderBase,[A.SliderValueRange,A.ClickableRail],{dynamic:true});},"@VERSION@",{requires:["slider-base","clickable-rail","int-value-range"]});
