@@ -1,7 +1,5 @@
+Provides utilities to support the management of localized resources (strings and formatting patterns).
+
 3.1.0
 
 * Initial Release.
-
-Module Name: "intl"
-
-Provides utilities to support the management of localized resources (strings and formatting patterns).
