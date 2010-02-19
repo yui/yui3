@@ -1,5 +1,0 @@
-{
-    "slider-value-range": {
-        "requires": [ "slider-base" ]
-    }
-}

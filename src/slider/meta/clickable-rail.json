@@ -1,5 +1,0 @@
-{
-    "clickable-rail": {
-        "requires": [ "slider-base" ]
-    }
-}

@@ -2,7 +2,8 @@
  * Adds support for mouse interaction with the Slider rail triggering thumb
  * movement.
  *
- * @module clickable-rail
+ * @module slider
+ * @submodule clickable-rail
  */
 
 /**

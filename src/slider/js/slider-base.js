@@ -3,12 +3,15 @@
  * background element.
  * 
  * @module slider
+ * @submodule slider-base
  */
 
 /**
- * Create a slider to represent an integer value between a given minimum and
- * maximum.  Sliders may be aligned vertically or horizontally, based on the
- * <code>axis</code> configuration.
+ * Create a slider to represent an input control capable of representing a
+ * series of intermediate states based on the position of the slider's thumb.
+ * These states are typically aligned to a value algorithm whereby the thumb
+ * position corresponds to a given value. Sliders may be aligned vertically or
+ * horizontally, based on the <code>axis</code> configuration.
  *
  * @class SliderBase
  * @extends Widget

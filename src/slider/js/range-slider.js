@@ -3,6 +3,7 @@
  * background rail element.
  * 
  * @module slider
+ * @submodule range-slider
  */
 
 /**
@@ -10,13 +11,13 @@
  * maximum.  Sliders may be aligned vertically or horizontally, based on the
  * <code>axis</code> configuration.
  *
- * @class Slider
+ * @class RangeSlider
  * @constructor
  * @extends SliderBase
  * @uses SliderValueRange
  * @uses ClickableRail
  * @param config {Object} Configuration object
  */
-Y.Slider = Y.Base.build( 'slider', Y.SliderBase,
+Y.RangeSlider = Y.Base.build( 'slider', Y.SliderBase,
     [ Y.SliderValueRange, Y.ClickableRail ],
     { dynamic: true } );
