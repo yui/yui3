@@ -2,7 +2,7 @@
     "slider": {
         "requires": [
             "slider-base",
-            "int-value-range",
+            "slider-value-range",
             "clickable-rail"
         ]
     }
