@@ -33,6 +33,7 @@ META = {
             // http://yui.yahooapis.com/3.0.0/build/
             // http://yui.yahooapis.com/gallery-/build/
             base: GALLERY_BASE,  // explicit declaration of the base attribute
+            ext: false,
             filter: {
                 'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
@@ -41,6 +42,7 @@ META = {
 
         // expand 'lang|module|lang'
         'lang|': {
+            ext: false,
             action: function(data) {
                 // Y.log('testing data: ' + data);
 

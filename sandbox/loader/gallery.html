@@ -3,14 +3,16 @@
 <head>
 <title>use('*')</title>
     <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
-    <script src="../../build/loader/loader-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <script src="../../build/dump/dump.js" type="text/javascript" charset="utf-8"></script>                                                                   
     <script type="text/javascript" charset="utf-8">                                                                                                                 
         YUI({
             // fetchCSS: 'force',
-            fetchCSS: false,
+            // fetchCSS: false,
+            filter: 'debug',
+            core: ['get', 'dump', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'],
             // bootstrap: false
-            gallerybase: '../../gallerybuild/'
-        }).use('slider', 'gallery-mygal', function(Y) {
+            // gallerybase: '../../gallerybuild/'
+        }).use('gallery-treeview', function(Y) {
             console.log(Y.Base);
         });                                                                                                                                 
         // console.log(A.Widget);                                                                                                                                  

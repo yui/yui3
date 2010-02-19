@@ -109,11 +109,6 @@ META = {
             "yui-base"
         ]
     }, 
-    "clickable-rail": {
-        "requires": [
-            "slider-base"
-        ]
-    }, 
     "collection": {
         "submodules": {
             "array-extras": {}, 
@@ -409,11 +404,6 @@ META = {
             }
         }
     }, 
-    "dd-value": {
-        "requires": [
-            "dd-constrain"
-        ]
-    }, 
     "dom": {
         "plugins": {
             "selector-css3": {
@@ -540,11 +530,6 @@ META = {
             "base-base", 
             "node-style", 
             "node-screen"
-        ]
-    }, 
-    "int-value-range": {
-        "requires": [
-            "slider-base"
         ]
     }, 
     "intl": {
@@ -757,20 +742,34 @@ META = {
         ]
     }, 
     "slider": {
-        "requires": [
-            "slider-base", 
-            "int-value-range", 
-            "clickable-rail"
-        ]
-    }, 
-    "slider-base": {
-        "requires": [
-            "widget", 
-            "dd-constrain", 
-            "substitute", 
-            "skin-sam-slider"
-        ], 
-        "skinnable": true
+        "submodules": {
+            "clickable-rail": {
+                "requires": [
+                    "slider-base"
+                ]
+            }, 
+            "range-slider": {
+                "requires": [
+                    "slider-base", 
+                    "slider-value-range", 
+                    "clickable-rail"
+                ]
+            }, 
+            "slider-base": {
+                "requires": [
+                    "widget", 
+                    "dd-constrain", 
+                    "substitute", 
+                    "skin-sam-slider"
+                ], 
+                "skinnable": true
+            }, 
+            "slider-value-range": {
+                "requires": [
+                    "slider-base"
+                ]
+            }
+        }
     }, 
     "sortable": {
         "requires": [
@@ -891,6 +890,7 @@ META = {
             // http://yui.yahooapis.com/3.0.0/build/
             // http://yui.yahooapis.com/gallery-/build/
             base: GALLERY_BASE,  // explicit declaration of the base attribute
+            ext: false,
             filter: {
                 'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
@@ -899,6 +899,7 @@ META = {
 
         // expand 'lang|module|lang'
         'lang|': {
+            ext: false,
             action: function(data) {
                 // Y.log('testing data: ' + data);
 

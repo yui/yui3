@@ -111,11 +111,6 @@ META = {
             "yui-base"
         ]
     }, 
-    "clickable-rail": {
-        "requires": [
-            "slider-base"
-        ]
-    }, 
     "collection": {
         "submodules": {
             "array-extras": {}, 
@@ -411,11 +406,6 @@ META = {
             }
         }
     }, 
-    "dd-value": {
-        "requires": [
-            "dd-constrain"
-        ]
-    }, 
     "dom": {
         "plugins": {
             "selector-css3": {
@@ -542,11 +532,6 @@ META = {
             "base-base", 
             "node-style", 
             "node-screen"
-        ]
-    }, 
-    "int-value-range": {
-        "requires": [
-            "slider-base"
         ]
     }, 
     "intl": {
@@ -759,20 +744,34 @@ META = {
         ]
     }, 
     "slider": {
-        "requires": [
-            "slider-base", 
-            "int-value-range", 
-            "clickable-rail"
-        ]
-    }, 
-    "slider-base": {
-        "requires": [
-            "widget", 
-            "dd-constrain", 
-            "substitute", 
-            "skin-sam-slider"
-        ], 
-        "skinnable": true
+        "submodules": {
+            "clickable-rail": {
+                "requires": [
+                    "slider-base"
+                ]
+            }, 
+            "range-slider": {
+                "requires": [
+                    "slider-base", 
+                    "slider-value-range", 
+                    "clickable-rail"
+                ]
+            }, 
+            "slider-base": {
+                "requires": [
+                    "widget", 
+                    "dd-constrain", 
+                    "substitute", 
+                    "skin-sam-slider"
+                ], 
+                "skinnable": true
+            }, 
+            "slider-value-range": {
+                "requires": [
+                    "slider-base"
+                ]
+            }
+        }
     }, 
     "sortable": {
         "requires": [
@@ -893,6 +892,7 @@ META = {
             // http://yui.yahooapis.com/3.0.0/build/
             // http://yui.yahooapis.com/gallery-/build/
             base: GALLERY_BASE,  // explicit declaration of the base attribute
+            ext: false,
             filter: {
                 'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
@@ -901,6 +901,7 @@ META = {
 
         // expand 'lang|module|lang'
         'lang|': {
+            ext: false,
             action: function(data) {
 
                 var parts = data.split('|'),
@@ -1355,7 +1356,7 @@ Y.Loader = function(o) {
     }
 
     for (i in onPage) {
-        if (onPage.hasOwnProperty(i) && !this.moduleInfo[i] && onPage[i].details) {
+        if (!this.moduleInfo[i] && onPage[i].details) {
             this.addModule(onPage[i].details, i);
         }
     }
@@ -1428,6 +1429,8 @@ Y.Loader = function(o) {
 
 
     // Y.on('yui:load', this.loadNext, this);
+
+    this.config = o;
 
     this._config(o);
 
@@ -2047,7 +2050,7 @@ Y.Loader.prototype = {
                     p.action.call(this, name, i);
                 } else {
                     // ext true or false?
-                    m = this.addModule(found, name);
+                    m = this.addModule(Y.merge(found), name);
                 }
             }
         }
@@ -2174,87 +2177,119 @@ Y.Loader.prototype = {
         }
     },
 
-    _attach: function() {
-        // this is the full list of items the YUI needs attached,
-        // which is needed if some dependencies are already on
-        // the page without their dependencies.
-        if (this.attaching) {
-            Y._attach(this.attaching);
-        } else {
-            Y._attach(this.sorted);
+    _attach: function(success) {
+
+        // Test for new requirements
+        var loader, 
+            attaching = this.attaching || this.sorted,
+            ret = false, loadMore = false;
+
+        if (success) {
+            loader = new Y.Loader(this.config);
+            loader.require(this.sorted);
+            loader.onEnd = this._attach;
+            loader.context = this;
+            loader.calculate();
+            if (loader.sorted.length) {
+                loadMore = true;
+            }
         }
 
-        // this._pushEvents();
+        if (loadMore) {
+            loader.attaching = loader.sorted.concat(attaching);
+            _queue.running = false;
+            loader.insert(null, 'js');
+        } else {
+            Y._attach(attaching);
+            ret = true;
+        }
 
+        // return true when we are done fetching new dependencies
+        return ret;
     },
 
-    _finish: function() {
+    _finish: function(msg, success) {
+
         _queue.running = false;
+
+        var onEnd = this.onEnd;
+
+        if (onEnd) {
+            onEnd.call(this.context, {
+                msg: msg,
+                data: this.data,
+                success: success
+            });
+        }
+
         this._continue();
     },
 
     _onSuccess: function() {
 
 
-        this._attach();
+        var skipped = this.skipped, i, f, ret = this._attach(true);
 
-        var skipped = this.skipped, i, f;
+        if (ret) {
 
-        for (i in skipped) {
-            if (skipped.hasOwnProperty(i)) {
-                delete this.inserted[i];
+            for (i in skipped) {
+                if (skipped.hasOwnProperty(i)) {
+                    delete this.inserted[i];
+                }
             }
+
+            this.skipped = {};
+
+            f = this.onSuccess;
+
+            if (f) {
+                f.call(this.context, {
+                    msg: 'success',
+                    data: this.data,
+                    success: true,
+                    skipped: skipped
+                });
+            }
+
+
+            this._finish('success', true);
         }
-
-        this.skipped = {};
-
-        f = this.onSuccess;
-
-        if (f) {
-            f.call(this.context, {
-                msg: 'success',
-                data: this.data,
-                success: true,
-                skipped: skipped
-            });
-        }
-
-        this._finish();
 
     },
 
     _onFailure: function(o) {
 
 
-        this._attach();
+        if (this._attach()) {
+            var f = this.onFailure, msg = 'failure: ' + o.msg;
+            if (f) {
+                f.call(this.context, {
+                    msg: msg,
+                    data: this.data,
+                    success: false
+                });
+            }
 
-        var f = this.onFailure;
-        if (f) {
-            f.call(this.context, {
-                msg: 'failure: ' + o.msg,
-                data: this.data,
-                success: false
-            });
+            this._finish(msg, false);
         }
-
-        this._finish();
     },
 
     _onTimeout: function() {
 
 
-        this._attach();
+        if (this._attach()) {
 
-        var f = this.onTimeout;
-        if (f) {
-            f.call(this.context, {
-                msg: 'timeout',
-                data: this.data,
-                success: false
-            });
+            var f = this.onTimeout;
+            if (f) {
+                f.call(this.context, {
+                    msg: 'timeout',
+                    data: this.data,
+                    success: false
+                });
+            }
+
+            this._finish('timeout', false);
         }
-
-        this._finish();
     },
     
     /**
@@ -2480,7 +2515,7 @@ Y.Loader.prototype = {
                 self.loadNext(o.data);
             },
 
-            onsuccess=function(o) {
+            handleSuccess = function(o) {
                 self.loadNext(o.data);
             };
 
@@ -2597,14 +2632,12 @@ Y.Loader.prototype = {
             m = this.getModule(s[i]);
 
             if (!m) {
-
                 msg = "Undefined module " + s[i] + " skipped";
                 this.inserted[s[i]] = true;
                 this.skipped[s[i]] = true;
                 continue;
 
             }
-
 
             // The load type is stored to offer the possibility to load
             // the css separately from the script.
@@ -2623,7 +2656,7 @@ Y.Loader.prototype = {
 
                 fn(url, {
                     data: s[i],
-                    onSuccess: onsuccess,
+                    onSuccess: handleSuccess,
                     insertBefore: this.insertBefore,
                     charset: this.charset,
                     attributes: attr,
