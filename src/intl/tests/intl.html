@@ -100,6 +100,19 @@ YUI({
 
         testAdd: function() {
 
+            var eventStack = [],
+
+                expectedEventStack = [
+                    {module:"modA", newVal:"en-US", prevVal:undefined},
+                    {module:"modA", newVal:"fr", prevVal:"en-US"},
+                    {module:"modA", newVal:"ja-JP", prevVal:"fr"},
+                    {module:"modA", newVal:"fr", prevVal:"ja-JP"},
+                ];
+
+            Y.Intl.after("intl:langChange", function(e) {
+                eventStack.push({module:e.module, newVal:e.newVal, prevVal:e.prevVal});
+            });
+
             Y.Intl.add("modA", "en-US", {
                 hello:"Hello"
             });
@@ -119,7 +132,17 @@ YUI({
             ASSERT.areSame(Y.Intl.get("modA").hello, "こんにちは");
 
             Y.Intl._setLang("modA", "fr");
-            ASSERT.areSame(Y.Intl.get("modA").hello, "Bonjour");                
+            ASSERT.areSame(Y.Intl.get("modA").hello, "Bonjour");
+
+            ARRAYASSERT.itemsAreEquivalent(expectedEventStack, eventStack, function(a, b) {
+                var equal = true;
+                try {
+                    areObjectsReallyEqual(a, b);
+                } catch(e) {
+                    equal = false;
+                }
+                return equal;
+            });
         },
 
         testRoot : function() {
@@ -161,7 +184,6 @@ YUI({
             ASSERT.areSame(Y.Intl.get("modC", "hello"), origSet.hello);
             ASSERT.areSame(Y.Intl.get("modC", "world"), origSet.world);
         }
-
     });
 
     Y.Test.Runner.add(testLookupBestLanguage);
