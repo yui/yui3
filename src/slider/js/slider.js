@@ -16,5 +16,5 @@
  * @constructor
  */
 Y.Slider = Y.Base.build( 'slider', Y.SliderBase,
-    [ Y.IntValueRange, Y.ClickableRail ],
+    [ Y.SliderValueRange, Y.ClickableRail ],
     { dynamic: true } );
