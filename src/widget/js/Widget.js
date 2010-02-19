@@ -836,7 +836,6 @@ Y.extend(Widget, Y.Base, {
         
     },
 
-
     /**
      * Sets up DOM and CustomEvent listeners for the widget.
      *
@@ -853,7 +852,6 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _unbindUI : function(boundingBox) {
-        this._unbindAttrUI(this._BIND_UI_ATTRS);
         this._unbindDOM(boundingBox);
     },
 
@@ -1082,27 +1080,27 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     * Binds after listeners for the list of attributes provided
+     * 
      * @method _bindAttrUI
-     * @protected
-     * @param {Object} attrs
+     * @private
+     * @param {Array} attrs
      */
     _bindAttrUI : function(attrs) {
-        this._doBindAttrUI(attrs, TRUE);
+        var i, 
+            l = attrs.length; 
+
+        for (i = 0; i < l; i++) {
+            this.after(attrs[i] + CHANGE, this._setAttrUI);
+        }
     },
 
     /**
-     * @method _unbindAttrUI
-     * @protected
-     * @param {Object} attrs
-     */
-    _unbindAttrUI : function(attrs) {
-        this._doBindAttrUI(attrs, FALSE);
-    },
-
-    /**
+     * Invokes the _uiSet&#61;ATTR NAME&#62; method for the list of attributes provided  
+     *
      * @method _syncAttrUI
-     * @protected
-     * @param {Object} attrs
+     * @private
+     * @param {Array} attrs
      */
     _syncAttrUI : function(attrs) {
         var i, l = attrs.length, attr;
@@ -1113,43 +1111,67 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * @method _doBindAttrUI
+     * @method _setAttrUI
      * @private
-     * @param {Array} attrs Array of attribute to bind/unbind
-     * @param {boolean} bind If true, bind, else unbind
+     * @param {EventFacade} e
      */
-    _doBindAttrUI : function(attrs, bind) {
-        var i, 
-            l = attrs.length, 
-            methodName = (bind) ? "after" : "detach";
-
-        for (i = 0; i < l; i++) {
-            this[methodName](attrs[i] + CHANGE, this._setAttrUI);
-        }
-    },
-
     _setAttrUI : function(e) {
         this[_UISET + _toInitialCap(e.attrName)](e.newVal, e.src);
     },
 
+    /**
+     * The default setter for the strings attribute. Merges partial sets
+     * into the full string set, to allow users to partial sets of strings  
+     *
+     * @method _strSetter
+     * @protected
+     * @param {Object} strings
+     * @return {String} The full set of strings to set
+     */
     _strSetter : function(strings) {
         return Y.merge(this.get(STRINGS), strings);
     },
 
-    _defStrValue : function() {
-        return ;
-    },
-
+    /**
+     * Helper method to get a specific string value
+     *
+     * @deprecated Used by deprecated WidgetLocale implementations. 
+     * @method getString
+     * @param {String} key
+     * @return {String} The string
+     */
     getString : function(key) {
         return this.get(STRINGS)[key];
     },
 
+    /**
+     * Helper method to get the complete set of strings for the widget
+     *
+     * @deprecated  Used by deprecated WidgetLocale implementations.
+     * @method getString
+     * @param {String} key
+     * @return {String} The string
+     */
     getStrings : function() {
         return this.get(STRINGS);
     },
 
+    /**
+     * The list of UI attributes to bind for Widget's _bindUI implementation
+     *
+     * @property _BIND_UI_ATTRS
+     * @type Array
+     * @private
+     */
     _BIND_UI_ATTRS : UI_ATTRS,
 
+    /**
+     * The list of UI attributes to sync for Widget's _syncUI implementation
+     *
+     * @property _SYNC_UI_ATTRS
+     * @type Array
+     * @private
+     */
     _SYNC_UI_ATTRS : UI_ATTRS.concat(TAB_INDEX),
 
     /**
