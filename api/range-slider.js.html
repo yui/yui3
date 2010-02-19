@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: slider   clickable-rail.js  (YUI Library)</title>
+	<title>API: slider   range-slider.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_slider.html" title="slider">slider</a>
                 
-                 &gt; clickable-rail.js (source view) 
+                 &gt; range-slider.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -48,183 +48,28 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Adds support for mouse interaction with the Slider rail triggering thumb</span>
-<span class="cm"> * movement.</span>
-<span class="cm"> *</span>
+<span class="cm"> * Create a sliding value range input visualized as a draggable thumb on a</span>
+<span class="cm"> * background rail element.</span>
+<span class="cm"> * </span>
 <span class="cm"> * @module slider</span>
-<span class="cm"> * @submodule clickable-rail</span>
+<span class="cm"> * @submodule range-slider</span>
 <span class="cm"> */</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Slider extension that allows clicking on the Slider&#39;s rail element,</span>
-<span class="cm"> * triggering the thumb to align with the location of the click.</span>
+<span class="cm"> * Create a slider to represent an integer value between a given minimum and</span>
+<span class="cm"> * maximum.  Sliders may be aligned vertically or horizontally, based on the</span>
+<span class="cm"> * &lt;code&gt;axis&lt;/code&gt; configuration.</span>
 <span class="cm"> *</span>
-<span class="cm"> * @class ClickableRail</span>
+<span class="cm"> * @class RangeSlider</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @extends SliderBase</span>
+<span class="cm"> * @uses SliderValueRange</span>
+<span class="cm"> * @uses ClickableRail</span>
+<span class="cm"> * @param config {Object} Configuration object</span>
 <span class="cm"> */</span>
-<span class="kd">function</span> <span class="nx">ClickableRail</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">_initClickableRail</span><span class="p">();</span>
-<span class="p">}</span>
-
-<span class="nx">Y</span><span class="p">.</span><span class="nx">ClickableRail</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span> <span class="nx">ClickableRail</span><span class="p">,</span> <span class="p">{</span>
-
-    <span class="c1">// Prototype methods added to host class</span>
-    <span class="nx">prototype</span><span class="o">:</span> <span class="p">{</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Initializes the internal state and sets up events.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @method _initClickableRail</span>
-<span class="cm">         * @protected</span>
-<span class="cm">         */</span>
-        <span class="nx">_initClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">||</span> <span class="p">(</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="p">);</span>
-
-            <span class="cm">/**</span>
-<span class="cm">             * Broadcasts when the rail has received a mousedown event and</span>
-<span class="cm">             * triggers the thumb positioning.  Use</span>
-<span class="cm">             * &lt;code&gt;e.preventDefault()&lt;/code&gt; or</span>
-<span class="cm">             * &lt;code&gt;set(&amp;quot;clickableRail&amp;quot;, false)&lt;/code&gt; to prevent</span>
-<span class="cm">             * the thumb positioning.</span>
-<span class="cm">             *</span>
-<span class="cm">             * @event railMouseDown</span>
-<span class="cm">             * @preventable _defRailMouseDownFn</span>
-<span class="cm">             */</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span> <span class="s1">&#39;railMouseDown&#39;</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRailMouseDownFn</span>
-            <span class="p">}</span> <span class="p">);</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="s1">&#39;render&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_bindClickableRail</span> <span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="s1">&#39;destroy&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_unbindClickableRail</span> <span class="p">);</span>
-        <span class="p">},</span>
-
-        <span class="cm">/** </span>
-<span class="cm">         * Attaches DOM event subscribers to support rail interaction.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @method _bindClickableRail</span>
-<span class="cm">         * @protected</span>
-<span class="cm">         */</span>
-        <span class="nx">_bindClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">addHandle</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">rail</span> <span class="p">);</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">rail</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">+</span> <span class="s1">&#39;mousedown&#39;</span><span class="p">,</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_onRailMouseDown</span><span class="p">,</span> <span class="k">this</span> <span class="p">);</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Detaches DOM event subscribers for cleanup/destruction cycle.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @method _unbindClickableRail</span>
-<span class="cm">         * @protected</span>
-<span class="cm">         */</span>
-        <span class="nx">_unbindClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;rendered&#39;</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;contentBox&#39;</span> <span class="p">),</span>
-                    <span class="nx">rail</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">(</span> <span class="s1">&#39;rail&#39;</span> <span class="p">)</span> <span class="p">);</span>
-
-                <span class="nx">rail</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">evtGuid</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Dispatches the railMouseDown event.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @method _onRailMouseDown</span>
-<span class="cm">         * @param e {DOMEvent} the mousedown event object</span>
-<span class="cm">         * @protected</span>
-<span class="cm">         */</span>
-        <span class="nx">_onRailMouseDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;clickableRail&#39;</span> <span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;disabled&#39;</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span> <span class="s1">&#39;railMouseDown&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">ev</span><span class="o">:</span> <span class="nx">e</span> <span class="p">}</span> <span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Default behavior for the railMouseDown event.  Centers the thumb at</span>
-<span class="cm">         * the click location and passes control to the DDM to behave as though</span>
-<span class="cm">         * the thumb itself were clicked in preparation for a drag operation.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @method _defRailMouseDownFn</span>
-<span class="cm">         * @param e {Event} the EventFacade for the railMouseDown custom event</span>
-<span class="cm">         * @protected</span>
-<span class="cm">         */</span>
-        <span class="nx">_defRailMouseDownFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">ev</span><span class="p">;</span>
-
-            <span class="c1">// Logic that determines which thumb should be used is abstracted</span>
-            <span class="c1">// to someday support multi-thumb sliders</span>
-            <span class="kd">var</span> <span class="nx">thumb</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_resolveThumb</span><span class="p">(</span> <span class="nx">e</span> <span class="p">),</span>
-                <span class="nx">xy</span><span class="p">;</span>
-                
-            <span class="k">if</span> <span class="p">(</span> <span class="nx">thumb</span> <span class="p">)</span> <span class="p">{</span>
-
-                <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">thumb</span><span class="p">.</span><span class="nx">startXY</span> <span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">thumb</span><span class="p">.</span><span class="nx">_setStartPosition</span><span class="p">(</span> <span class="nx">thumb</span><span class="p">.</span><span class="nx">getXY</span><span class="p">()</span> <span class="p">);</span>
-                <span class="p">}</span>
-
-                <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getThumbDestination</span><span class="p">(</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">thumb</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;dragNode&#39;</span> <span class="p">)</span> <span class="p">);</span>
-
-                <span class="nx">thumb</span><span class="p">.</span><span class="nx">_alignNode</span><span class="p">(</span> <span class="nx">xy</span> <span class="p">);</span>
-
-                <span class="c1">// Delegate to DD&#39;s natural behavior</span>
-                <span class="nx">thumb</span><span class="p">.</span><span class="nx">_handleMouseDownEvent</span><span class="p">(</span> <span class="nx">e</span> <span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Resolves which thumb to actuate if any.  Override this if you want to</span>
-<span class="cm">         * support multiple thumbs.  By default, returns the Drag instance for</span>
-<span class="cm">         * the thumb stored by the Slider.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @method _resolveThumb</span>
-<span class="cm">         * @param e {DOMEvent} the mousedown event object</span>
-<span class="cm">         * @return {Y.DD.Drag} the Drag instance that should be moved</span>
-<span class="cm">         * @protected</span>
-<span class="cm">         */</span>
-        <span class="nx">_resolveThumb</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">primaryOnly</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;primaryButtonOnly&#39;</span> <span class="p">),</span>
-                <span class="nx">validClick</span>  <span class="o">=</span> <span class="o">!</span><span class="nx">primaryOnly</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">button</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span>
-
-            <span class="k">return</span> <span class="p">(</span> <span class="nx">validClick</span> <span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="p">},</span>
-
-        <span class="cm">/**</span>
-<span class="cm">         * Calculates the top left position the thumb should be moved to to</span>
-<span class="cm">         * align the click XY with the center of the specified node.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @method _getThumbDestination</span>
-<span class="cm">         * @param e {DOMEvent} The mousedown event object</span>
-<span class="cm">         * @param node {Node} The node to position</span>
-<span class="cm">         * @return {Array} the [top, left] pixel position of the destination</span>
-<span class="cm">         */</span>
-        <span class="nx">_getThumbDestination</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">node</span> <span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">offsetWidth</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;offsetWidth&#39;</span> <span class="p">),</span>
-                <span class="nx">offsetHeight</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;offsetHeight&#39;</span> <span class="p">);</span>
-
-            <span class="c1">// center</span>
-            <span class="k">return</span> <span class="p">[</span>
-                <span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageX</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span> <span class="p">(</span> <span class="nx">offsetWidth</span>  <span class="o">/</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">)</span> <span class="p">),</span>
-                <span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">pageY</span> <span class="o">-</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span> <span class="p">(</span> <span class="nx">offsetHeight</span> <span class="o">/</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
-            <span class="p">];</span>
-        <span class="p">}</span>
-
-    <span class="p">},</span>
-
-    <span class="c1">// Static properties added onto host class</span>
-    <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
-        <span class="cm">/**</span>
-<span class="cm">         * Enable or disable clickable rail support.</span>
-<span class="cm">         *</span>
-<span class="cm">         * @attribute clickableRail</span>
-<span class="cm">         * @type {Boolean}</span>
-<span class="cm">         * @default true</span>
-<span class="cm">         */</span>
-        <span class="nx">clickableRail</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-            <span class="nx">validator</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isBoolean</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-<span class="p">},</span> <span class="kc">true</span> <span class="p">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">RangeSlider</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">build</span><span class="p">(</span> <span class="s1">&#39;slider&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">SliderBase</span><span class="p">,</span>
+    <span class="p">[</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">SliderValueRange</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClickableRail</span> <span class="p">],</span>
+    <span class="p">{</span> <span class="nx">dynamic</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}</span> <span class="p">);</span>
 </pre></div>
 
                     </div>
@@ -301,8 +146,8 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="clickable-rail.js.html" title="clickable-rail.js">clickable-rail.js</a></li>
-                                <li class=""><a href="range-slider.js.html" title="range-slider.js">range-slider.js</a></li>
+                                <li class=""><a href="clickable-rail.js.html" title="clickable-rail.js">clickable-rail.js</a></li>
+                                <li class="selected"><a href="range-slider.js.html" title="range-slider.js">range-slider.js</a></li>
                                 <li class=""><a href="slider-base.js.html" title="slider-base.js">slider-base.js</a></li>
                                 <li class=""><a href="value-range.js.html" title="value-range.js">value-range.js</a></li>
                         </ul>
