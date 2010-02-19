@@ -1,5 +1,13 @@
-YUI.add('int-value-range', function(Y) {
+YUI.add('slider-value-range', function(Y) {
 
+/**
+ * Adds value support for Slider as a range of integers between a configured
+ * minimum and maximum value.  For use with <code>Y.Base.build(..)</code> to
+ * add the plumbing to <code>Y.SliderBase</code>.
+ *
+ * @module slider
+ * @submodule slider-value-range
+ */
 // Constants for compression or performance
 var MIN       = 'min',
     MAX       = 'max',
@@ -7,11 +15,11 @@ var MIN       = 'min',
 
     round = Math.round;
 
-function IntValueRange() {
-    this._initIntValueRange();
+function SliderValueRange() {
+    this._initSliderValueRange();
 }
 
-Y.IntValueRange = Y.mix( IntValueRange, {
+Y.SliderValueRange = Y.mix( SliderValueRange, {
 
     // Prototype properties and methods that will be added onto host class
     prototype: {
@@ -38,10 +46,10 @@ Y.IntValueRange = Y.mix( IntValueRange, {
          * Attach event listeners to keep the UI in sync with the min/max/value
          * attributes and thumb position.
          *
-         * @method _initIntValueRange
+         * @method _initSliderValueRange
          * @protected
          */
-        _initIntValueRange: function () {
+        _initSliderValueRange: function () {
             this._key = this._key || {};
 
             Y.mix( this._key, ( this.axis === 'y' ) ?
@@ -374,4 +382,4 @@ Y.IntValueRange = Y.mix( IntValueRange, {
 }, true );
 
 
-}, '@VERSION@' ,{requires:['base-build', 'node-base']});
+}, '@VERSION@' ,{requires:['slider-base']});
