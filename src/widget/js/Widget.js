@@ -533,14 +533,11 @@ Y.extend(Widget, Y.Base, {
      * @param {Node} parentNode The parent node to render to, if passed in to the <code>render</code> method
      */
     _defRenderFn : function(e) {
-        this._renderUI(e.parentNode);
-        this._bindUI();
-        this._syncUI();
-
+        this._parentNode = e.parentNode;
+         
         this.renderer();
-
         this._set(RENDERED, TRUE);
-        
+
         this._removeLoadingClassNames();
     },
 
@@ -554,8 +551,13 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     renderer: function() {
+        this._renderUI();
         this.renderUI();
+
+        this._bindUI();
         this.bindUI();
+
+        this._syncUI();
         this.syncUI();
     },
 
@@ -783,11 +785,10 @@ Y.extend(Widget, Y.Base, {
      *
      * @method _renderUI
      * @protected
-     * @param {Node} The parent node to rendering the widget into
      */
-    _renderUI: function(parentNode) {
+    _renderUI: function() {
         this._renderBoxClassNames();
-        this._renderBox(parentNode);
+        this._renderBox(this._parentNode);
     },
 
     /**
