@@ -325,6 +325,7 @@ YUI.add('base-base', function(Y) {
             if (this._destroyPlugins) {
                 this._destroyPlugins();
             }
+            this.detachAll();
             this._set(DESTROYED, true);
         },
 

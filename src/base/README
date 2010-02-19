@@ -1,5 +1,8 @@
 3.1.0
 
+* As the final step in the destroy phase, Base now does a detachAll() to avoid invoking listeners 
+  which may be waiting to be in an async. step which occurs after destruction.
+
 * "init" and "destroy" events are now publish with the defaultTargetOnly property set to true
 
 * Added support for MyClass.EVENT_PREFIX to allow developers
