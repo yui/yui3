@@ -1,56 +1,10 @@
 YUI.add('intl-base', function(Y) {
 
-
-    /* Loader/MetaData Touch Points
-
-    a) _explodeLang()
-
-        1) Explode static meta-data "lang" property into first class modules
-
-           var langModuleName = loader._formatLang(lang, module);
-
-    b) _useLang(lang)
-
-        Support for Y.use("lang:fr-CA"); or Y.use("lang:fr-CA;module");
-
-        1) Y.Intl.lookupBestLang(module, lang)
-
-        2) loader._formatLang(module, lang)
-        3) loader.insert(module_lang)
-
-        4) Y._attach(module_lang)
-
-    c) getAvailableLangs(module)
-
-        1) Loop through meta-data for the module, to get available langs
-
-        getAvailableLangs() support feasible?
-
-            Loop through meta-data for all "loaded" modules, to get the common
-            subset (could be presented as an app level dropdown for example).  
-
-    d) Register custom langs
-
-        1). Same as any module?
-
-    */
-
 /** 
- * The Intl utility provides a central location for managing language specific sets of strings and formatting patterns.
- * @module intl
- */
-
-/**
- * The intl-load sub-module provides utilities for loader language support
- * 
- * @module yui
- * @submodule intl-base
- */
-
-/** 
- * The Intl utility provides a central location for managing language specific sets of strings and formatting patterns.
- * 
+ * The Intl utility provides a central location for managing sets of localized resources (strings and formatting patterns).
+ *
  * @class Intl
+ * @uses EventTarget
  * @static
  */
 
@@ -58,15 +12,25 @@ var SPLIT_REGEX = /[, ]/;
 
 Y.mix(Y.namespace("Intl"), {
 
-    /**
-     * Finds the best language match, from the list of available languages based on BCP 47 lookup.
-     *
-     * @method lookupBestLang
-     * @param {String} lang The BCP 47 language tag to find the best match for
-     * @param {Array} supportedLangs An array of supported langauge codes
-     *
-     * @return {String} The BCP 47 language tag
-     */
+ /**
+    * Returns the language among those available that
+    * best matches the preferred language list, using the Lookup
+    * algorithm of BCP 47.
+    * If none of the available languages meets the user's preferences,
+    * then "" is returned.
+    * Extended language ranges are not supported.
+    *
+    * @method lookupBestLang
+    * @param {String[] | String} preferredLanguages The list of preferred languages
+    * in descending preference order, represented as BCP 47 language
+    * tags. A string array or a comma-separated list.
+    * @param {String[]} availableLanguages The list of languages
+    * that the application supports, represented as BCP 47 language
+    * tags.
+    *
+    * @return {String} The available language that best matches the
+    * preferred language list, or "".
+    */
     lookupBestLang : function (preferredLanguages, availableLanguages) {
 
         var i, language, result, index;

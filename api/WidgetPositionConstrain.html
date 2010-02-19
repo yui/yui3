@@ -59,7 +59,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Widget extension, which can be used to add extended XY positioning support to the base Widget class,
+                        A widget extension, which can be used to add constrained xy positioning support to the base Widget class,
 through the <a href="Base.html#method_build">Base.build</a> method. This extension requires that 
 the WidgetPosition extension be added to the Widget (before WidgetPositionConstrain, if part of the same 
 extension list passed to Base.build).
@@ -70,6 +70,22 @@ extension list passed to Base.build).
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
+                                    <div class="protected" rel="yui:property" resource="#property_WidgetPositionConstrain._PREVENT_OVERLAP">
+                                    <h4><a name="property_WidgetPositionConstrain._PREVENT_OVERLAP" property="yui:name">WidgetPositionConstrain._PREVENT_OVERLAP</a>
+                                        - <code>protected static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The set of positions for which to prevent
+overlap.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:property" resource="#property_WidgetPositionConstrain.ATTRS">
                                     <h4><a name="property_WidgetPositionConstrain.ATTRS" property="yui:name">WidgetPositionConstrain.ATTRS</a>
                                         - <code>static <span property="yui:type">Object</span></code>
@@ -95,57 +111,12 @@ configuration introduced by WidgetPositionConstrain.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="protected" rel="yui:method" resource="#method__afterAlignChange">
-                                    <h4>
-                                        <a name="method__afterAlignChange">_afterAlignChange</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_afterAlignChange</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Default attribute change listener for the align attribute, responsible
-for updating the UI, in response to attribute changes.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The event facade for the attribute change</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method__afterConstrainChange">
+                                    <div class="protected" rel="yui:method" resource="#method__afterConstrainChange">
                                     <h4>
                                         <a name="method__afterConstrainChange">_afterConstrainChange</a></h4>
                                     <div class="detail" >
                                         <code>
-                                        
+                                         protected 
                                         
                                         
                                         void
@@ -160,7 +131,8 @@ for updating the UI, in response to attribute changes.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            
+                                            After change listener for the "constrain" attribute, responsible
+for updating the UI, in response to attribute changes.
                                         </div>
 
                                         <div class="description">
@@ -171,7 +143,7 @@ for updating the UI, in response to attribute changes.
                                                         <code><span property="yui:name">e</span>
                                                         &lt;<span property="yui:type">EventFacade</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The event facade</span>
                                                         </dd>
                                                 </dl>
 
@@ -200,7 +172,7 @@ for updating the UI, in response to attribute changes.
                                         
                                         <div class="description" property="yui:description">
                                             Binds event listeners responsible for updating the UI state in response to 
-Widget extended positioning related state changes.
+Widget constrained positioning related state changes.
 <p>
 This method is invoked after bindUI is invoked for the Widget class
 using YUI's aop infrastructure.
@@ -219,15 +191,15 @@ using YUI's aop infrastructure.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method__constrain">
+                                    <div class="protected" rel="yui:method" resource="#method__constrain">
                                     <h4>
                                         <a name="method__constrain">_constrain</a></h4>
                                     <div class="detail" >
                                         <code>
+                                         protected 
                                         
                                         
-                                        
-                                        void
+                                        Number
                                             <strong property="yui:name">_constrain</strong>
                                            (
                                                 
@@ -251,7 +223,8 @@ using YUI's aop infrastructure.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            
+                                            The method which performs the actual constrain calculations for a given axis ("x" or "y") based
+on the regions provided.
                                         </div>
 
                                         <div class="description">
@@ -262,28 +235,35 @@ using YUI's aop infrastructure.
                                                         <code><span property="yui:name">val</span>
                                                         &lt;<span property="yui:type">Number</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The value to constrain</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">axis</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The axis to use for constrainment</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">nodeRegion</span>
                                                         &lt;<span property="yui:type">Region</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The region of the node to constrain</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">constrainingRegion</span>
                                                         &lt;<span property="yui:type">Region</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The region of the node (or viewport) to constrain to</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Number
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The constrained value</dd>
+                                                </dl>
 
 
              
@@ -293,27 +273,28 @@ using YUI's aop infrastructure.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method__getRegion">
+                                    <div class="protected" rel="yui:method" resource="#method__constrainOnXYChange">
                                     <h4>
-                                        <a name="method__getRegion">_getRegion</a></h4>
+                                        <a name="method__constrainOnXYChange">_constrainOnXYChange</a></h4>
                                     <div class="detail" >
                                         <code>
-                                        
+                                         protected 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_getRegion</strong>
+                                            <strong property="yui:name">_constrainOnXYChange</strong>
                                            (
                                                 
                                                         
-                                                         (Optional)
+                                                         e
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            
+                                            The on change listener for the "xy" attribute. Modifies the event facade's
+newVal property with the constrained XY value.
                                         </div>
 
                                         <div class="description">
@@ -321,10 +302,10 @@ using YUI's aop infrastructure.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">(Optional)</span>
-                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> node</span>
+                                                        <span property="yui:description"> The event facade for the attribute change</span>
                                                         </dd>
                                                 </dl>
 
@@ -337,15 +318,60 @@ using YUI's aop infrastructure.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method__preventOverlap">
+                                    <div class="private" rel="yui:method" resource="#method__getRegion">
+                                    <h4>
+                                        <a name="method__getRegion">_getRegion</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_getRegion</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Utility method to normalize region retrieval from a node instance, 
+or the viewport, if no node is provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">node</span>
+                                                        &lt;<span property="yui:type">Node</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Optional.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__preventOverlap">
                                     <h4>
                                         <a name="method__preventOverlap">_preventOverlap</a></h4>
                                     <div class="detail" >
                                         <code>
+                                         protected 
                                         
                                         
-                                        
-                                        void
+                                        Number
                                             <strong property="yui:name">_preventOverlap</strong>
                                            (
                                                 
@@ -369,7 +395,8 @@ using YUI's aop infrastructure.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            
+                                            The method which performs the preventOverlap calculations for a given axis ("x" or "y") based
+on the value and regions provided.
                                         </div>
 
                                         <div class="description">
@@ -380,28 +407,35 @@ using YUI's aop infrastructure.
                                                         <code><span property="yui:name">val</span>
                                                         &lt;<span property="yui:type">Number</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The value being constrain</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">axis</span>
                                                         &lt;<span property="yui:type">String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The axis to being constrained</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">nodeRegion</span>
                                                         &lt;<span property="yui:type">Region</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The region of the node being constrained</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">constrainingRegion</span>
                                                         &lt;<span property="yui:type">Region</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The region of the node (or viewport) we need to constrain to</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Number
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The constrained value</dd>
+                                                </dl>
 
 
              
@@ -411,12 +445,12 @@ using YUI's aop infrastructure.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method__setConstrain">
+                                    <div class="protected" rel="yui:method" resource="#method__setConstrain">
                                     <h4>
                                         <a name="method__setConstrain">_setConstrain</a></h4>
                                     <div class="detail" >
                                         <code>
-                                        
+                                         protected 
                                         
                                         
                                         void
@@ -431,7 +465,7 @@ using YUI's aop infrastructure.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            
+                                            The setter implementation for the "constrain" attribute.
                                         </div>
 
                                         <div class="description">
@@ -440,9 +474,9 @@ using YUI's aop infrastructure.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">val</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        &lt;<span property="yui:type">Node | boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The attribute value</span>
                                                         </dd>
                                                 </dl>
 
@@ -479,7 +513,9 @@ using YUI's aop infrastructure.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            
+                                            Constrains the widget's bounding box to a node (or the viewport). If xy or node are not 
+passed in, the current position and the value of "constrain" will be used respectively.
+The widget's position will be changed to the constrained position.
                                         </div>
 
                                         <div class="description">
@@ -488,15 +524,15 @@ using YUI's aop infrastructure.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">xy</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> Optional. The xy values to constrain</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">node</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        &lt;<span property="yui:type">Node | boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> Optional. The node to constrain to, or true for the viewport</span>
                                                         </dd>
                                                 </dl>
 
@@ -509,12 +545,12 @@ using YUI's aop infrastructure.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_enable or disable constraints listeners">
+                                    <div class="private" rel="yui:method" resource="#method_enable or disable constraints listeners">
                                     <h4>
                                         <a name="method_enable or disable constraints listeners">enable or disable constraints listeners</a></h4>
                                     <div class="detail" >
                                         <code>
-                                        
+                                         private 
                                         
                                         
                                         void
@@ -529,7 +565,8 @@ using YUI's aop infrastructure.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            
+                                            Updates the UI if enabling constraints, and sets up the xyChange event listeners
+to constrain whenever the widget is moved. Disabling constraints removes the listeners.
                                         </div>
 
                                         <div class="description">
@@ -538,9 +575,9 @@ using YUI's aop infrastructure.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">enable</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> Enable or disable constraints</span>
                                                         </dd>
                                                 </dl>
 
@@ -577,7 +614,9 @@ using YUI's aop infrastructure.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            
+                                            Calculates the constrained positions for the XY positions provided, using
+the provided node argument is passed in. If no node value is passed in, the value of 
+the "constrain" attribute is used.
                                         </div>
 
                                         <div class="description">
@@ -588,13 +627,13 @@ using YUI's aop infrastructure.
                                                         <code><span property="yui:name">xy</span>
                                                         &lt;<span property="yui:type">Array</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> The xy values to constrain</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">node</span>
                                                         &lt;<span property="yui:type">Node | boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"></span>
+                                                        <span property="yui:description"> Optional. The node to constrain to, or true for the viewport</span>
                                                         </dd>
                                                 </dl>
 
@@ -603,7 +642,7 @@ using YUI's aop infrastructure.
                                                     <code property="yui:return">
                                                             Array
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">The constrained XY values</dd>
+                                                    <dd property="yui:returnInfo">The constrained xy values</dd>
                                                 </dl>
 
 
@@ -620,11 +659,145 @@ using YUI's aop infrastructure.
                     </div>
 
                     <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_constrainChange">
+                                    <h4>
+                                        <a name="event_constrainChange">constrainChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">constrainChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'constrain' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_preventOverlapChange">
+                                    <h4>
+                                        <a name="event_preventOverlapChange">preventOverlapChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">preventOverlapChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'preventOverlap' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
                     </div>
 
                     <div rel="yui:attributes" resource="#configattributes">
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_constrain">
+                                    <h4><a name="config_constrain">constrain</a>
+                                        <code>- <span property="yui:type">boolean | Node</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The node to constrain the widget's bounding box to, when setting xy. Can also be
+set to true, to constrain to the viewport.
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: null
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_preventOverlap">
+                                    <h4><a name="config_preventOverlap">preventOverlap</a>
+                                        <code>- <span property="yui:type">boolean</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            If set to true, and WidgetPositionAlign is also added to the Widget, 
+constrained positioning will attempt to prevent the widget's bounding box from overlapping 
+the element to which it has been aligned, by flipping the orientation of the alignment
+for corner based alignments
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
 
                     </div>
 
@@ -658,7 +831,6 @@ using YUI's aop infrastructure.
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
-                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -706,6 +878,7 @@ using YUI's aop infrastructure.
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class="protected"><a href="#property_WidgetPositionConstrain._PREVENT_OVERLAP" title="WidgetPositionConstrain._PREVENT_OVERLAP">WidgetPositionConstrain._PREVENT_OVERLAP</a></li>
                                 <li class=""><a href="#property_WidgetPositionConstrain.ATTRS" title="WidgetPositionConstrain.ATTRS">WidgetPositionConstrain.ATTRS</a></li>
                         </ul>
                     </div>
@@ -713,20 +886,34 @@ using YUI's aop infrastructure.
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="protected"><a href="#method__afterAlignChange" title="_afterAlignChange">_afterAlignChange</a></li>
-                                <li class=""><a href="#method__afterConstrainChange" title="_afterConstrainChange">_afterConstrainChange</a></li>
+                                <li class="protected"><a href="#method__afterConstrainChange" title="_afterConstrainChange">_afterConstrainChange</a></li>
                                 <li class="protected"><a href="#method__bindUIPosConstrained" title="_bindUIPosConstrained">_bindUIPosConstrained</a></li>
-                                <li class=""><a href="#method__constrain" title="_constrain">_constrain</a></li>
-                                <li class=""><a href="#method__getRegion" title="_getRegion">_getRegion</a></li>
-                                <li class=""><a href="#method__preventOverlap" title="_preventOverlap">_preventOverlap</a></li>
-                                <li class=""><a href="#method__setConstrain" title="_setConstrain">_setConstrain</a></li>
+                                <li class="protected"><a href="#method__constrain" title="_constrain">_constrain</a></li>
+                                <li class="protected"><a href="#method__constrainOnXYChange" title="_constrainOnXYChange">_constrainOnXYChange</a></li>
+                                <li class="private"><a href="#method__getRegion" title="_getRegion">_getRegion</a></li>
+                                <li class="protected"><a href="#method__preventOverlap" title="_preventOverlap">_preventOverlap</a></li>
+                                <li class="protected"><a href="#method__setConstrain" title="_setConstrain">_setConstrain</a></li>
                                 <li class=""><a href="#method_constrain" title="constrain">constrain</a></li>
-                                <li class=""><a href="#method_enable or disable constraints listeners" title="enable or disable constraints listeners">enable or disable constraints listeners</a></li>
+                                <li class="private"><a href="#method_enable or disable constraints listeners" title="enable or disable constraints listeners">enable or disable constraints listeners</a></li>
                                 <li class=""><a href="#method_getConstrainedXY" title="getConstrainedXY">getConstrainedXY</a></li>
                         </ul>
                     </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_constrainChange" title="constrainChange">constrainChange</a></li>
+                                <li class=""><a href="#event_preventOverlapChange" title="preventOverlapChange">preventOverlapChange</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="configList" class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#config_constrain" title="constrain">constrain</a></li>
+                                <li class=""><a href="#config_preventOverlap" title="preventOverlap">preventOverlap</a></li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
@@ -738,7 +925,7 @@ using YUI's aop infrastructure.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPositionConstrain", "name": "_afterAlignChange", "url": "WidgetPositionConstrain.html#method__afterAlignChange", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_afterConstrainChange", "url": "WidgetPositionConstrain.html#method__afterConstrainChange", "type": "method"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_bindUIPosConstrained", "url": "WidgetPositionConstrain.html#method__bindUIPosConstrained", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_constrain", "url": "WidgetPositionConstrain.html#method__constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "constrain", "url": "WidgetPositionConstrain.html#method_constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "enable or disable constraints listeners", "url": "WidgetPositionConstrain.html#method_enable or disable constraints listeners", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "getConstrainedXY", "url": "WidgetPositionConstrain.html#method_getConstrainedXY", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_getRegion", "url": "WidgetPositionConstrain.html#method__getRegion", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_preventOverlap", "url": "WidgetPositionConstrain.html#method__preventOverlap", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_setConstrain", "url": "WidgetPositionConstrain.html#method__setConstrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "WidgetPositionConstrain.ATTRS", "url": "WidgetPositionConstrain.html#property_WidgetPositionConstrain.ATTRS", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPositionConstrain", "name": "_afterConstrainChange", "url": "WidgetPositionConstrain.html#method__afterConstrainChange", "type": "method"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_bindUIPosConstrained", "url": "WidgetPositionConstrain.html#method__bindUIPosConstrained", "type": "method"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_constrain", "url": "WidgetPositionConstrain.html#method__constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "constrain", "url": "WidgetPositionConstrain.html#method_constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "constrain", "url": "WidgetPositionConstrain.html#config_constrain", "type": "config"}, {"access": "", "host": "WidgetPositionConstrain", "name": "constrainChange", "url": "WidgetPositionConstrain.html#event_constrainChange", "type": "event"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_constrainOnXYChange", "url": "WidgetPositionConstrain.html#method__constrainOnXYChange", "type": "method"}, {"access": "private", "host": "WidgetPositionConstrain", "name": "enable or disable constraints listeners", "url": "WidgetPositionConstrain.html#method_enable or disable constraints listeners", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "getConstrainedXY", "url": "WidgetPositionConstrain.html#method_getConstrainedXY", "type": "method"}, {"access": "private", "host": "WidgetPositionConstrain", "name": "_getRegion", "url": "WidgetPositionConstrain.html#method__getRegion", "type": "method"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_preventOverlap", "url": "WidgetPositionConstrain.html#method__preventOverlap", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "preventOverlap", "url": "WidgetPositionConstrain.html#config_preventOverlap", "type": "config"}, {"access": "", "host": "WidgetPositionConstrain", "name": "preventOverlapChange", "url": "WidgetPositionConstrain.html#event_preventOverlapChange", "type": "event"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_setConstrain", "url": "WidgetPositionConstrain.html#method__setConstrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "WidgetPositionConstrain.ATTRS", "url": "WidgetPositionConstrain.html#property_WidgetPositionConstrain.ATTRS", "type": "property"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "WidgetPositionConstrain._PREVENT_OVERLAP", "url": "WidgetPositionConstrain.html#property_WidgetPositionConstrain._PREVENT_OVERLAP", "type": "property"}];
 </script>
 </body>
 </html>

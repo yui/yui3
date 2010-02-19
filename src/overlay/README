@@ -1,3 +1,9 @@
+3.1.0
+
+* Added WidgetConstrain support to the packaged Overlay class.
+
+* Fixed centering when content is set in constructor.
+
 3.0.0
 
 * Modified progressive enhancement use case, to use document

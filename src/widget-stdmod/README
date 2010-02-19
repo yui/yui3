@@ -1,4 +1,4 @@
-Development Master
+3.1.0
 
 * Setting section content to "" will now create the respective section. 
 
@@ -11,6 +11,7 @@ Development Master
   because of a typo in the event name.
 
 3.0.0
+
 * Cleaned up the way headerContent, bodyContent, footerContent are configured,
   so that the actual stored value is always accurate, without the need for a 
   getter which talks to the DOM directly.
