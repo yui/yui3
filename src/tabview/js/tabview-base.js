@@ -5,67 +5,50 @@ var getClassName = Y.ClassNameManager.getClassName,
     PANEL = 'panel',
     SELECTED = 'selected',
     EMPTY_OBJ = {},
+    DOT = '.',
 
-    classNames = {
-        view: getClassName(TABVIEW),
-        tabList: getClassName(TABVIEW, 'tablist'),
+    _classNames = {
+        tabview: getClassName(TABVIEW),
+        tabviewPanel: getClassName(TABVIEW, PANEL),
+        tabviewList: getClassName(TABVIEW, 'list'),
         tab: getClassName(TAB),
-        tabControl: getClassName(TAB, 'link'),
         tabLabel: getClassName(TAB, 'label'),
-        content: getClassName(TABVIEW, CONTENT),
         tabPanel: getClassName(TAB, PANEL),
         selectedTab: getClassName(TAB, SELECTED),
-        selectedContent: getClassName(TAB, CONTENT, SELECTED)
+        selectedPanel: getClassName(TAB, PANEL, SELECTED)
     },
 
-    roles = {
-        tabList: 'aria-tablist',
-        tab: 'aria-tab',
-        tabControl: getClassName(TAB, 'link'),
-        tabLabel: getClassName(TAB, 'label'),
-        content: getClassName(TABVIEW, CONTENT),
-        tabPanel: getClassName(TAB, PANEL),
-        selectedTab: getClassName(TAB, SELECTED),
-        selectedContent: getClassName(TAB, CONTENT, SELECTED)
-    },
-
-    queries = {
-        tabview: '.' + classNames.view,
-        tablist: 'ul',
-        tab: 'ul > li',
-        link: 'ul > li > a',
-        label: 'ul > li > a > em',
-        content:'div',
-        tabPanel:'div > div',
-        selectedTab: '.' + classNames.selectedTab,
-        selectedContent: '.' + classNames.selectedContent
+    _queries = {
+        tabview: DOT + _classNames.tabview,
+        tabviewList: '> ul',
+        tab: '> ul > li',
+        tabLabel: '> ul > li > a ',
+        tabviewPanel: '> div',
+        tabPanel: '> div > div',
+        selectedTab: '> ul > ' + DOT + _classNames.selectedTab,
+        selectedPanel: '> div ' + DOT + _classNames.selectedPanel
     },
 
     TabviewBase = function(config) {
-        if (TabviewBase.superclass) {
-            TabviewBase.superclass.constructor.apply(this, arguments);
-        } else {
-            this.initializer.apply(this, arguments);
-        }
-
+        this.init.apply(this, arguments);
     };
 
 TabviewBase.NAME = 'tabviewBase';
-TabviewBase.queries = queries;
-TabviewBase.classNames = classNames;
+TabviewBase._queries = _queries;
+TabviewBase._classNames = _classNames;
 
 Y.mix(TabviewBase.prototype, {
-    initializer: function(config) {
+    init: function(config) {
         config = config || EMPTY_OBJ;
         this._node = config.host || Y.one(config.node);
 
-        this.render();
+        this.refresh();
     },
 
     initClassNames: function(index) {
-        Y.Object.each(queries, function(query, name) {
+        Y.Object.each(_queries, function(query, name) {
             // this === tabview._node
-            if (classNames[name]) {
+            if (_classNames[name]) {
                 var result = this.all(query);
                 
                 if (index !== undefined) {
@@ -73,55 +56,63 @@ Y.mix(TabviewBase.prototype, {
                 }
 
                 if (result) {
-                    result.addClass(classNames[name]);
+                    result.addClass(_classNames[name]);
                 }
             }
         }, this._node);
+
+        this._node.addClass(_classNames.tabview);
     },
 
     _select: function(index) {
         var node = this._node,
-            oldItem = node.one(queries.selectedTab),
-            oldContent = node.one(queries.selectedContent),
-            newItem = node.all(queries.tab).item(index),
-            newContent = node.all(queries.tabPanel).item(index);
+            oldItem = node.one(_queries.selectedTab),
+            oldContent = node.one(_queries.selectedPanel),
+            newItem = node.all(_queries.tab).item(index),
+            newContent = node.all(_queries.tabPanel).item(index);
 
         if (oldItem) {
-            oldItem.removeClass(classNames.selectedTab);
+            oldItem.removeClass(_classNames.selectedTab);
         }
 
         if (oldContent) {
-            oldContent.removeClass(classNames.selectedContent);
+            oldContent.removeClass(_classNames.selectedPanel);
         }
 
         if (newItem) {
-            newItem.addClass(classNames.selectedTab);
+            newItem.addClass(_classNames.selectedTab);
         }
 
         if (newContent) {
-            newContent.addClass(classNames.selectedContent);
+            newContent.addClass(_classNames.selectedPanel);
         }
     },
 
     initState: function() {
         var node = this._node,
-            activeNode = node.one(queries.selectedTab),
+            activeNode = node.one(_queries.selectedTab),
             activeIndex = activeNode ?
-                    node.all(queries.tab).indexOf(activeNode) : 0;
+                    node.all(_queries.tab).indexOf(activeNode) : 0;
 
         this._select(activeIndex);
     },
 
+    // collapse extra space between list-items
+    _scrubTextNodes: function() {
+        this._node.one(_queries.tabviewList).get('childNodes').each(function(node) {
+        console.log(node);
+            if (node.get('nodeType') === 3) { // text node
+                node.remove();
+            }
+        });
+    },
+
     // base renderer only enlivens existing markup
-    renderer: function() {
+    refresh: function() {
+        this._scrubTextNodes();
         this.initClassNames();
         this.initState();
         this.initEvents();
-    },
-
-    render: function() {
-        this.renderer.apply(this, arguments);
-        return this;
     },
 
     tabEventName: 'click',
@@ -131,23 +122,18 @@ Y.mix(TabviewBase.prototype, {
         // this._node.delegate('tabview|' + this.tabEventName),
         this._node.delegate(this.tabEventName,
             this.onTabEvent,
-            queries.tab,
+            _queries.tab,
             this
         );
     },
 
     onTabEvent: function(e) {
         e.preventDefault();
-        this._select(this._node.all(queries.tab).indexOf(e.currentTarget));
-    },
-
-    destructor: function() {
-        // remove events via detach prefix
-        this._node.detach('tabview|*');
+        this._select(this._node.all(_queries.tab).indexOf(e.currentTarget));
     },
 
     destroy: function() {
-        this.destructor.apply(this, arguments);
+        this._node.detach('tabview|*');
     }
 });
 

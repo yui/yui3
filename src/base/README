@@ -1,4 +1,4 @@
-Development Master
+3.1.0
 
 * "init" and "destroy" events are now publish with the defaultTargetOnly property set to true
 

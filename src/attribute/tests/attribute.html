@@ -5,21 +5,21 @@
     <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
     <style type="text/css">
-        #console .yui-console-entry {
+        #console .yui3-console-entry {
             padding:2px;
             margin:0px;
             min-height:0;
         }
-        
-        #console .yui-console-entry-fail .yui-console-entry-cat {
+
+        #console .yui3-console-entry-fail .yui3-console-entry-cat {
             background-color:red;
         }
 
-        #console .yui-console-entry-pass .yui-console-entry-cat {
+        #console .yui3-console-entry-pass .yui3-console-entry-cat {
             background-color:green;
         }
 
-        #console .yui-console-entry-perf .yui-console-entry-cat {
+        #console .yui3-console-entry-perf .yui3-console-entry-cat {
             background-color:blue;
         }
 
@@ -34,7 +34,7 @@
 
     <script type="text/javascript">
 
-        YUI({filter:"raw", useBrowserConsole:false}).use("dump", "attribute-complex", "base", "console", "test", function(Y) {
+        YUI({useBrowserConsole:false}).use("dump", "attribute-complex", "base", "console", "test", function(Y) {
 
             function areObjectsReallyEqual(o1, o2) {
                 Y.ObjectAssert.areEqual(o1, o2);
@@ -1640,11 +1640,10 @@
             new Y.Console({
                 width:"100%",
                 height:"95%",
-                boundingBox:"#console",
+                id:"console",
                 verbose : false,
                 printTimeout: 0,
                 newestOnTop : false,
-
                 entryTemplate: '<pre class="{entry_class} {cat_class} {src_class}">'+
                         '<span class="{entry_cat_class}">{label}</span>'+
                         '<span class="{entry_content_class}">{message}</span>'+
@@ -1666,7 +1665,5 @@
         });
     </script>
 </head>
-<body class="yui-skin-sam">
-    <div id="console"></div>
-</body>
+<body class="yui3-skin-sam"></body>
 </html>
