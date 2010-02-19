@@ -125,7 +125,12 @@ YUI.prototype = {
      * @private
      */
     _init: function() {
-        var v = '@VERSION@', Y = this, filter;
+        var filter,
+            v = '@VERSION@', 
+            Y = this, 
+            G_ENV = YUI.Env;
+            G_ENV = YUI.Env;
+
         if (v.indexOf('@') > -1) {
             v = 'test';
         }
@@ -150,8 +155,8 @@ YUI.prototype = {
 
             Y.Env._loaded[v] = {};
 
-            if (YUI.Env && Y !== YUI) {
-                Y.Env._yidx = (++YUI.Env._yidx);
+            if (G_ENV && Y !== YUI) {
+                Y.Env._yidx  = ++G_ENV._yidx;
                 Y.Env._guidp = ('yui_' + v + '_' + Y.Env._yidx + '_' + time).replace(/\./g, '_');
             }
 
@@ -318,7 +323,7 @@ YUI.prototype = {
             attached = this.Env._attached,
             len      = r.length;
 
-        for (i=0; i<len; i=i++) {
+        for (i=0; i<len; i++) {
 
             name = r[i]; 
             m    = mods[name];
@@ -631,13 +636,10 @@ YUI.prototype = {
      * @return {string} The object's guid or null
      */
     stamp: function(o, readOnly) {
-
         if (!o) {
             return o;
         }
-
         var uid = (typeof o === 'string') ? o : o._yuid;
-
         if (!uid) {
             uid = this.guid();
             if (!readOnly) {
@@ -648,7 +650,6 @@ YUI.prototype = {
                 }
             }
         }
-
         return uid;
     }
 };
