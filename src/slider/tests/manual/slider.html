@@ -107,15 +107,11 @@
 <div id="audio-light"  class="yui3-skin-audio-light"></div>
 
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../../../build/slider/slider-base.js"></script>
-<script src="../../../../build/slider/int-value-range.js"></script>
-<script src="../../../../build/slider/clickable-rail.js"></script>
-<script src="../../../../build/slider/slider.js"></script>
-<!--script src="../../../../build/substitute/substitute.js"></script-->
+<!--script src="../../../../build/slider/slider.js"></script-->
 <script>
 YUI( {
     filter: 'raw'
-} ).use( 'slider', /*'substitute',*/ function ( Y ) {
+} ).use( 'slider', function ( Y ) {
 
 var base = Y.config.base + 'slider/assets/skins',
     alts = {
