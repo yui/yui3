@@ -35,8 +35,29 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @protected
      */
     initializer : function () {
+        /**
+         * The configured axis, stored for fast lookup since it's a writeOnce
+         * attribute.  This is for use by extension classes.  For
+         * implementation code, use <code>get( &quot;axis&quot; )</code> for
+         * authoritative source.  Never write to this property.
+         *
+         * @property axis
+         * @type {String}
+         * @protected
+         */
         this.axis = this.get( 'axis' );
 
+        /**
+         * Cached fast access map for DOM properties and attributes that
+         * pertain to accessing dimensional or positioning information
+         * according to the Slider's axis (e.g. &quot;height&quot; vs.
+         * &quot;width&quot;).  Extension classes should add to this collection
+         * for axis related strings if necessary.
+         *
+         * @property _key
+         * @type {Object}
+         * @protected
+         */
         this._key = {
             dim    : ( this.axis === 'y' ) ? 'height' : 'width',
             minEdge: ( this.axis === 'y' ) ? 'top'    : 'left',
@@ -57,7 +78,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          */
         this.publish( 'thumbMove', {
             defaultFn: this._defThumbMoveFn,
-            queue    : true
+            queuable : true
         } );
     },
 
@@ -70,10 +91,24 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
     renderUI : function () {
         var contentBox = this.get( 'contentBox' );
 
+        /**
+         * The Node instance of the Slider's rail element.  Do not write to
+         * this property.
+         *
+         * @property rail
+         * @type {Node}
+         */
         this.rail = this._renderRail();
 
-        this._uiSetRailLength();
+        this._uiSetRailLength( this.get( 'length' ) );
 
+        /**
+         * The Node instance of the Slider's thumb element.  Do not write to
+         * this property.
+         *
+         * @property thumb
+         * @type {Node}
+         */
         this.thumb = this._renderThumb();
 
         this.rail.appendChild( this.thumb );
@@ -108,10 +143,11 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * Sets the rail length according to the <code>length</code> attribute.
      *
      * @method _uiSetRailLength
+     * @param length {String} the length to apply to the rail style
      * @protected
      */
-    _uiSetRailLength: function () {
-        this.rail.setStyle( this._key.dim, this.get( 'length' ) );
+    _uiSetRailLength: function ( length ) {
+        this.rail.setStyle( this._key.dim, length );
     },
 
     /**
@@ -165,6 +201,13 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         // { constrain: rail, stickX: true }
         config[ 'stick' + this.axis.toUpperCase() ] = true;
 
+        /** 
+         * The DD.Drag instance linked to the thumb node.
+         *
+         * @property _dd
+         * @type {DD.Drag}
+         * @protected
+         */
         this._dd = new Y.DD.Drag( {
             node   : this.thumb,
             bubble : false,
@@ -267,7 +310,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @protected
      */
     _afterLengthChange: function ( e ) {
-        this._uiSetRailLength();
+        this._uiSetRailLength( e.newVal );
     },
 
     /**
@@ -1087,8 +1130,7 @@ YUI.add('range-slider', function(Y) {
  * @param config {Object} Configuration object
  */
 Y.Slider = Y.Base.build( 'slider', Y.SliderBase,
-    [ Y.SliderValueRange, Y.ClickableRail ],
-    { dynamic: true } );
+    [ Y.SliderValueRange, Y.ClickableRail ] );
 
 
 }, '@VERSION@' ,{requires:['slider-base', 'clickable-rail', 'slider-value-range']});

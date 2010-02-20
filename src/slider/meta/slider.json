@@ -7,7 +7,7 @@
                     "widget", 
                     "dd-constrain", 
                     "substitute",
-                    "skin-sam-slider"
+                    "skin-sam-slider-base"
                 ], 
                 "skinnable": true
             },
