@@ -47,12 +47,15 @@
 
 <div id="out"></div>
 
+<h1>Editor Testing</h1>
 
-<div id="test1">
-    <div>
-    <button>Bold</button>
-    <button>Italic</button>
-    <button>Underline</button>
+<div id="test1" role="widget">
+    <div role="toolbar">
+        <button>Bold</button>
+        <button>Italic</button>
+        <button>Underline</button>
+        <button>Foo</button>
+        <button>InsertImage</button>
     </div>
     <div id="test"></div>
 </div>
@@ -86,7 +89,6 @@ var yConfig = {
     throwFail: true
 };
 
-//YUI(yConfig).use('node', 'selector-css3', 'base', 'iframe', 'substitute', 'anim', 'dd', function(Y) {
 YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-command', function(Y) {
     //console.log(Y, Y.id);
 
@@ -100,23 +102,23 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
         use: ['node','selector-css3']
     }).plug(Y.Plugin.ExecCommand);
 
+    Y.Plugin.ExecCommand.COMMANDS.foo = function() {
+        alert('You clicked on Foo');
+    };
+    Y.Plugin.ExecCommand.COMMANDS.insertimage = function() {
+        //alert('You clicked on insertimage');
+        var host = this.get('host');
+        //Using the private methods because we are an override..
+        host._execCommand('insertimage', 'http://farm3.static.flickr.com/2723/4014885243_58772b8ff8_s_d.jpg');
+    };
+
     iframe.render('#test');
 
-    //console.log(iframe);
-
-    iframe.on('ready', function() {
-        var inst = this.getInstance();
-        inst.config.bootstrap = true;
-        inst.use('cssfonts', 'cssreset', 'cssbase', function() {
-            inst.config.bootstrap = false;
-        });
-    });
     iframe.after('ready', function() {
+        this._iframe.set('role', 'textbox').set('aria-multiline', true);
+        this._iframe.set('tabindex', -1);
+        Y.one('#test').set('tabindex', -1);
         var inst = this.getInstance();
-
-        if (!Y.UA.ie) {
-            this.exec.command('styleWithCSS', false, false);
-        }
 
         out('frame1: ' + Y.all('p'));
 
@@ -135,8 +137,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
     Y.delegate('click', function(e) {
         e.target.toggleClass('selected');
         var val = e.target.get('innerHTML').toLowerCase();
+        iframe._iframe.focus();
         iframe.execCommand(val);
-        //iframe.exec.command(val);
     }, '#test1 > div', 'button');
     
 });

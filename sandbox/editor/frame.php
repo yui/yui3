@@ -48,8 +48,6 @@
 </head>
 <body class="yui-skin-sam">
 
-<button id="openWindow">Open Window</button>
-
 <div id="out"></div>
 
 <div id="test">Click me to render the Frame</div>
@@ -66,6 +64,11 @@ foreach (range(0, $count) as $num) {
 $str .= <<<END
 <strong>Action</strong><br>
 <a href="http://yuilibrary.com/">Click Me</a><br>
+<ul>
+    <li>Testing</li>
+    <li dir="ltr">Testing</li>
+    <li>Testing</li>
+</ul>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse posuere pellentesque interdum.</p>
 <p>Quisque vel quam sapien. Aliquam quis ante libero. In lectus ipsum, eleifend ut fringilla sit amet, vehicula ac nisi.</p>
 <p>Phasellus malesuada consequat nunc, in pharetra sapien lobortis in. Maecenas in arcu vestibulum risus tristique tincidunt.</p>
@@ -116,83 +119,15 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         Y.one('#out').prepend('<p>' + str + '</p>');
     };
 
-    Y.on('click', function() {
-        var win = new Y.Frame({
-            type: 'window',
-            windowFeatures: 'width=800,height=500',
-            windowTitle: 'My New Open Window',
-            src: 'local.htm',
-            content: Y.one('#stub').get('innerHTML'),
-            use: ['node','selector-css3', 'anim', 'substitute', 'frame']
-        }).render();
-
-        win.after('ready', function() {
-            
-            //console.info('After ready iframe #1');
-            var Y1 = this.getInstance();
-
-            out('win1: ' + Y1.all('p'));
-            out('win1: ' + Y1.all('strong'));
-            
-            Y1.one('strong').set('innerHTML', 'Click Me for Animation').on('click', function() {
-                new Y1.Anim({
-                    node: 'strong',
-                    to: {
-                        opacity: 0
-                    }
-                }).run();
-            });
-
-            this.delegate('click', function(e) {
-                Y1.all('p').setStyle('border', 'none');
-                e.currentTarget.setStyle('border', '1px solid red');
-                //console.log('iframe1 delegate', arguments);
-            }, 'p');
-
-            var cont = Y1.one('p').insert('<div style="height: 300px; border: 3px solid black;"></div>', 'after').next();
-            var iframe4 = new Y1.Frame({
-                designMode: true,
-                content: Y.one('#stub').get('innerHTML'),
-                use: ['node','selector-css3', 'dd']
-            }).render(cont);
-            iframe4.after('ready', function() {
-                
-                //console.info('After ready iframe #1');
-                var Y2 = this.getInstance();
-                //Y.one('doc').set('designMode', 'On');
-                Y2.one('strong').set('innerHTML', 'Drag Me');
-
-                out('frame4: ' + Y2.all('p'));
-                out('frame4: ' + Y2.all('strong'));
-
-                if (Y2.DD) {
-                    var dd = new Y2.DD.Drag({ node: 'strong' });
-                }
-
-                this.delegate('click', function(e) {
-                    Y2.all('p').setStyle('border', 'none');
-                    e.currentTarget.setStyle('border', '1px solid red');
-                    //console.log('iframe1 delegate', arguments);
-                }, 'p');
-
-            });
-            
-        });
-
-        win.on('click', function(e) {
-            //console.log(e.type, e);
-            e.halt();
-        });
-    }, '#openWindow');
 
     var iframe = new Y.Frame({
         designMode: true,
-        type: 'foo',
         content: Y.one('#stub').get('innerHTML'),
         use: ['node','selector-css3', 'dd-drag', 'dd-ddm']
     });
 
     iframe.after('ready', function() {
+        this.set('content', 'My <strong>new</strong> HTML');
         
         //console.info('After ready iframe #1');
         var Y = this.getInstance();
@@ -213,7 +148,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
             //console.log('iframe1 delegate', arguments);
         }, 'p');
 
+
     });
+
+    //iframe.on('contentready', console.log);
 
     iframe.on('click', function(e) {
         //console.log(e.type, e);
@@ -235,6 +173,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
     
     var iframe2 = new Y.Frame({
         container: '#test2',
+        dir: 'rtl',
         basehref: 'http://foo.com/assets/',
         content: Y.one('#stub').get('innerHTML'),
         use: ['node','selector-css3', 'anim']
