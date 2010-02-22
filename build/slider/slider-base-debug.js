@@ -8,6 +8,8 @@ YUI.add('slider-base', function(Y) {
  * @submodule slider-base
  */
 
+var INVALID_VALUE = Y.Attribute.INVALID_VALUE;
+
 /**
  * Create a slider to represent an input control capable of representing a
  * series of intermediate states based on the position of the slider's thumb.
@@ -299,18 +301,23 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @protected
      */
     _afterDisabledChange: function ( e ) {
-        this._dd.set( 'lock', true );
+        this._dd.set( 'lock', e.newVal );
     },
 
     /**
-     * Handles changes to the <code>length</code> attribute.  By default, it triggers an update to the UI.
+     * Handles changes to the <code>length</code> attribute.  By default, it
+     * triggers an update to the UI.
      *
      * @method _afterLengthChange
      * @param e {Event} The lengthChange event object
      * @protected
      */
     _afterLengthChange: function ( e ) {
-        this._uiSetRailLength( e.newVal );
+        if ( this.get( 'rendered' ) ) {
+            this._uiSetRailLength( e.newVal );
+
+            this.syncUI();
+        }
     },
 
     /**
@@ -319,6 +326,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @method syncUI
      */
     syncUI : function () {
+        this._dd.con.resetCache();
+
         this._syncThumbPosition();
 
         // Forces a reflow of the bounding box to address IE8 inline-block
@@ -349,7 +358,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
     _setAxis : function (v) {
         v = ( v + '' ).toLowerCase();
 
-        return ( v === 'x' || v === 'y' ) ? v : Y.Attribute.INVALID_VALUE;
+        return ( v === 'x' || v === 'y' ) ? v : INVALID_VALUE;
     },
 
     /** 
@@ -369,7 +378,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         var length = parseFloat( v, 10 ),
             units  = v.replace( /[\d\.\-]/g, '' ) || this.DEF_UNIT;
 
-        return length > 0 ? ( length + units ) : Y.Attribute.INVALID_VALUE;
+        return length > 0 ? ( length + units ) : INVALID_VALUE;
     },
 
     /**

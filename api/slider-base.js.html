@@ -55,6 +55,8 @@
 <span class="cm"> * @submodule slider-base</span>
 <span class="cm"> */</span>
 
+<span class="kd">var</span> <span class="nx">INVALID_VALUE</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">INVALID_VALUE</span><span class="p">;</span>
+
 <span class="cm">/**</span>
 <span class="cm"> * Create a slider to represent an input control capable of representing a</span>
 <span class="cm"> * series of intermediate states based on the position of the slider&#39;s thumb.</span>
@@ -346,18 +348,23 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterDisabledChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="s1">&#39;lock&#39;</span><span class="p">,</span> <span class="kc">true</span> <span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span> <span class="s1">&#39;lock&#39;</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span> <span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Handles changes to the &lt;code&gt;length&lt;/code&gt; attribute.  By default, it triggers an update to the UI.</span>
+<span class="cm">     * Handles changes to the &lt;code&gt;length&lt;/code&gt; attribute.  By default, it</span>
+<span class="cm">     * triggers an update to the UI.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _afterLengthChange</span>
 <span class="cm">     * @param e {Event} The lengthChange event object</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterLengthChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetRailLength</span><span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span> <span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;rendered&#39;</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetRailLength</span><span class="p">(</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span> <span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">syncUI</span><span class="p">();</span>
+        <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -366,6 +373,8 @@
 <span class="cm">     * @method syncUI</span>
 <span class="cm">     */</span>
     <span class="nx">syncUI</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">con</span><span class="p">.</span><span class="nx">resetCache</span><span class="p">();</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">_syncThumbPosition</span><span class="p">();</span>
 
         <span class="c1">// Forces a reflow of the bounding box to address IE8 inline-block</span>
@@ -396,7 +405,7 @@
     <span class="nx">_setAxis</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">v</span> <span class="o">=</span> <span class="p">(</span> <span class="nx">v</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span> <span class="p">).</span><span class="nx">toLowerCase</span><span class="p">();</span>
 
-        <span class="k">return</span> <span class="p">(</span> <span class="nx">v</span> <span class="o">===</span> <span class="s1">&#39;x&#39;</span> <span class="o">||</span> <span class="nx">v</span> <span class="o">===</span> <span class="s1">&#39;y&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="nx">v</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">INVALID_VALUE</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">(</span> <span class="nx">v</span> <span class="o">===</span> <span class="s1">&#39;x&#39;</span> <span class="o">||</span> <span class="nx">v</span> <span class="o">===</span> <span class="s1">&#39;y&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="nx">v</span> <span class="o">:</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/** </span>
@@ -416,7 +425,7 @@
         <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nb">parseFloat</span><span class="p">(</span> <span class="nx">v</span><span class="p">,</span> <span class="mi">10</span> <span class="p">),</span>
             <span class="nx">units</span>  <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span> <span class="sr">/[\d\.\-]/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span> <span class="p">)</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">DEF_UNIT</span><span class="p">;</span>
 
-        <span class="k">return</span> <span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="p">(</span> <span class="nx">length</span> <span class="o">+</span> <span class="nx">units</span> <span class="p">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Attribute</span><span class="p">.</span><span class="nx">INVALID_VALUE</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="p">(</span> <span class="nx">length</span> <span class="o">+</span> <span class="nx">units</span> <span class="p">)</span> <span class="o">:</span> <span class="nx">INVALID_VALUE</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
