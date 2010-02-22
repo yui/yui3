@@ -68,9 +68,7 @@ var L = Y.Lang,
     _delegates = {},
 
     // Widget nodeguid-to-instance map.
-    _instances = {},
-
-    moduleName = arguments[1];
+    _instances = {};
 
 /**
  * A base class for widgets, providing:
@@ -275,7 +273,7 @@ ATTRS[WIDTH] = {
  * @type Object
  */
 ATTRS[STRINGS] = {
-    value: (Y.Intl && Y.Intl.get) ? Y.Intl.get(moduleName) : {},
+    value: {},
     setter: "_strSetter",
     getter: "_strGetter"
 };
