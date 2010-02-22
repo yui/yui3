@@ -49,16 +49,11 @@
 
     </div>
 	<!-- YUI3 Core //-->
-	<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 	<!-- Initialization process //-->
 	<script type="text/javascript">
 		YUI({
-		    base: "../../../build/",
-		    filter: 'debug',
-		    combine: false,
-	        useConsole: true,
-	        logExclude: {deprecated: 1,
-            Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+	        logExclude: { Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
 		}).use('console', 'test', 'event', 'event-simulate', function (Y) {
 			
 		    // creating the console...

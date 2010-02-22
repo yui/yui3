@@ -4,7 +4,7 @@
 <title>YUI dump Tests</title>
 </head>
 
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
 <h1>dump Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
@@ -13,16 +13,11 @@
 
 (function() {
     YUI({
-        base: "../../../build/",
         filter: "debug",
-        useConsole: true,
-        // logInclude: ['event', 'test']
-        //logExclude: ['Dom', 'Selector', 'Node', 'attribute']
-        logExclude: {Dom:true, 
-        Selector:true, Node:true, attribute:true, event:true, base:true}
+        logExclude: {Dom:true, Selector:true, Node:true, attribute:true, event:true, base:true}
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
-        var button = Y.get('#btnRun'),
+        var button = Y.one('#btnRun'),
             Assert = Y.Assert,
             ObjectAssert = Y.ObjectAssert;
 
@@ -32,7 +27,7 @@
             Y.Test.Runner.run();
         }, button);
 
-        // var myConsole = new Y.Console().render();
+        var myConsole = new Y.Console().render();
  
         var testdump= new Y.Test.Case({
             name: "dump tests",
@@ -45,7 +40,6 @@
             }
 
         });
-            
 
         Y.Test.Runner.add(testdump);
         Y.Test.Runner.run();

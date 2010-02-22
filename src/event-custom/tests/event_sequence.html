@@ -37,15 +37,11 @@
 <h1>Testing event firing sequence</h1>
 
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../../build/event-custom/event-custom-debug.js"></script>
-<script type="text/javascript" src="../../../build/console/console-debug.js"></script>
-<script type="text/javascript" src="../../../build/test/test-debug.js"></script>
+<script type="text/javascript" src="../../../build/event-custom/event-custom.js"></script>
+<script type="text/javascript" src="../../../build/console/console.js"></script>
+<script type="text/javascript" src="../../../build/test/test.js"></script>
 <script type="text/javascript">
 YUI({
-    base : '../../../build/',
-    filter : 'debug',
-    useBrowserConsole : false,
-    logInclude : { TestRunner: true }
 }).use('test','console',function (Y) {
 
 var suite = new Y.Test.Suite("Event firing sequence test");
@@ -534,6 +530,7 @@ suite.add(new Y.Test.Case({
 }));
 */
 
+/*
 suite.add(new Y.Test.Case({
     name : "bubble",
 
@@ -800,6 +797,7 @@ suite.add(new Y.Test.Case({
     }
 
 }));
+*/
 
 // Work around for Y.substitute handling "{key:value}" as tokens
 Y.Console.prototype.printLogEntry = function (m) {
@@ -811,7 +809,7 @@ Y.Console.prototype.printLogEntry = function (m) {
             src_class : this.getClassName('entry',m.source)
         });
     
-    var n = Y.Node.create(this.get('entryTemplate').replace(/\{([\w-]+)\}/g,
+    var n = Y.Node.create(this.one('entryTemplate').replace(/\{([\w-]+)\}/g,
             function (_,k) { return k in m ? m[k] : ''; }));
     
     this._addToConsole(n);
