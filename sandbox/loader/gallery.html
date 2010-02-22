@@ -1,19 +1,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html debug="true">
 <head>
-<title>use('*')</title>
+<title>use('gallery-')</title>
     <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
-    <script src="../../build/dump/dump.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <script src="../../build/dump/dump-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
     <script type="text/javascript" charset="utf-8">                                                                                                                 
+
         YUI({
             // fetchCSS: 'force',
             // fetchCSS: false,
             filter: 'debug',
-            core: ['get', 'dump', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'],
+            // core: ['get', 'dump', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'],
+            combine: true,
+            onProgress: function(e) {
+                this.log('LOAD: ' + e.name);
+            }
             // bootstrap: false
             // gallerybase: '../../gallerybuild/'
-        }).use('gallery-treeview', function(Y) {
-            console.log(Y.Base);
+        }).use('node', 'gallery-port', 'gallery-treeview', function(Y) {
+            console.log('BASE: ' + Y.Base);
         });                                                                                                                                 
         // console.log(A.Widget);                                                                                                                                  
     </script>     

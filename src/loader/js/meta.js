@@ -3,12 +3,13 @@ var VERSION = Y.version,
 ROOT = VERSION + '/build/',
 GALLERY_VERSION = Y.config.gallery || Y.gallery,
 GALLERY_ROOT = GALLERY_VERSION + '/build/',
+COMBO_BASE = 'http://yui.yahooapis.com/combo?',
 GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
 META = {
     version: VERSION,
     root: ROOT,
     base: 'http://yui.yahooapis.com/' + ROOT,
-    comboBase: 'http://yui.yahooapis.com/combo?',
+    comboBase: COMBO_BASE,
     skin: {
         defaultSkin: 'sam',
         base: 'assets/skins/',
@@ -16,6 +17,8 @@ META = {
         after: ['cssreset', 'cssfonts', 'cssreset-context', 'cssfonts-context']
         //rollup: 3
     },
+
+    groups: {},
 
     modules: {
     "anim": {
@@ -760,7 +763,7 @@ META = {
                     "widget", 
                     "dd-constrain", 
                     "substitute", 
-                    "skin-sam-slider"
+                    "skin-sam-slider-base"
                 ], 
                 "skinnable": true
             }, 
@@ -889,14 +892,15 @@ META = {
         'gallery-': { 
             // http://yui.yahooapis.com/3.0.0/build/
             // http://yui.yahooapis.com/gallery-/build/
-            base: GALLERY_BASE,  // explicit declaration of the base attribute
+            group: 'gallery',
             ext: false,
             filter: {
                 'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
             }
-        },
+        }
 
+        /*
         // expand 'lang|module|lang'
         'lang|': {
             ext: false,
@@ -926,7 +930,17 @@ META = {
                 delete this.required[data];
             }
         }
+        */
     }
+};
+
+META.groups[VERSION] = {};
+
+META.groups.gallery = {
+    base:      GALLERY_BASE,
+    combine:   true,
+    root:      GALLERY_ROOT,
+    comboBase: COMBO_BASE
 };
 
 YUI.Env[VERSION] = META;
