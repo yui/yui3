@@ -90,8 +90,8 @@ Y.mix(Y.namespace("Intl"), {
     /**
      * Gets the module's localized resources for the currently active language (as provided by the <a href="#method_getLang">getLang</a> method).
      * <p>
-     * Optionally, the localized resources for alternate langauges which have been added to Intl (see the <a href="#method_add">add</a> method) can 
-     * be retrieved by providing the BCP language tag as the lang parameter.   
+     * Optionally, the localized resources for alternate languages which have been added to Intl (see the <a href="#method_add">add</a> method) can 
+     * be retrieved by providing the BCP 47 language tag as the lang parameter.   
      * </p>
      * @method get
      *

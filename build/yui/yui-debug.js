@@ -247,7 +247,7 @@ YUI.prototype = {
         Y.use('yui-base');
         Y.use.apply(Y, core);
 
-        console.log(Y.id + ' initialized', 'info', 'yui');
+        // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
 
     /**
