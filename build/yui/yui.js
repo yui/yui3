@@ -161,7 +161,8 @@ YUI.prototype = {
 
             if (G_ENV && Y !== YUI) {
                 Env._yidx  = ++G_ENV._yidx;
-Env._guidp = ('yui_' + VERSION + '_' + Env._yidx + '_' + time).replace(/\./g, '_');
+                Env._guidp = ('yui_' + VERSION + '_' + 
+                             Env._yidx + '_' + time).replace(/\./g, '_');
             }
 
             Y.id = Y.stamp(Y);
@@ -174,41 +175,34 @@ Env._guidp = ('yui_' + VERSION + '_' + Env._yidx + '_' + time).replace(/\./g, '_
         // configuration defaults
         Y.config = Y.config || {
 
-            win: win,
-            doc: doc,
-            debug: true,
+            win:               win,
+            doc:               doc,
+            debug:             true,
             useBrowserConsole: true,
-            throwFail: true,
-            bootstrap: true,
-            fetchCSS: true,
+            throwFail:         true,
+            bootstrap:         true,
+            fetchCSS:          true,
         
             // base: (Y === YUI) ? Env.cdn : function() {
             base: (YUI.config && YUI.config.base) || function() {
                 var b, nodes, i, src, match;
-
                 // get from querystring
                 nodes = (doc && doc.getElementsByTagName('script')) || [];
-
                 for (i=0; i<nodes.length; i=i+1) {
                     src = nodes[i].src;
-
                     if (src) {
-// DEBUG
-//src = "http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js";
-//console.log('src) ' + src);
-// DEBUG
+                        //src = "http://yui.yahooapis.com/combo?2.8.0r4/b
+                        //uild/yuiloader-dom-event/yuiloader-dom-event.js
+                        //&3.0.0/build/yui/yui-min.js"; // debug url
+                        //console.log('src) ' + src);
                         match = src.match(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/);
                         b = match && match[1];
-
                         if (b) {
-
-                            // this is to set up the path to the loader.  The file filter for loader should match
-                            // the yui include.
+                            // this is to set up the path to the loader.  The file 
+                            // filter for loader should match the yui include.
                             filter = match[2];
-
-// extract correct path for mixed combo urls
-// http://yuilibrary.com/projects/yui3/ticket/2528423
-// http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js
+                            // extract correct path for mixed combo urls
+                            // http://yuilibrary.com/projects/yui3/ticket/2528423
                             match = src.match(/^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
                             if (match && match[3]) {
                                 b = match[1] + match[3];
@@ -224,7 +218,8 @@ Env._guidp = ('yui_' + VERSION + '_' + Env._yidx + '_' + time).replace(/\./g, '_
 
             }(),
 
-            loaderPath: (YUI.config && YUI.config.loaderPath) || 'loader/loader' + (filter || '-min.') + 'js'
+            loaderPath: (YUI.config && YUI.config.loaderPath) || 
+                        'loader/loader' + (filter || '-min.') + 'js'
         };
 
     },
@@ -1965,9 +1960,11 @@ O.getValue = function (o, path) {
         return UNDEFINED;
     }
 
-    var p=Y.Array(path), l=p.length, i;
+    var i,
+        p = Y.Array(path), 
+        l = p.length;
 
-    for (i=0; o !== UNDEFINED && i < l; i=i+1) {
+    for (i=0; o !== UNDEFINED && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -1988,11 +1985,13 @@ O.getValue = function (o, path) {
  *                      undefined, if the path was invalid.
  */
 O.setValue = function(o, path, val) {
-
-    var p=Y.Array(path), leafIdx=p.length-1, i, ref=o;
+    var i, 
+        p       = Y.Array(path), 
+        leafIdx = p.length-1, 
+        ref     = o;
 
     if (leafIdx >= 0) {
-        for (i=0; ref !== UNDEFINED && i < leafIdx; i=i+1) {
+        for (i=0; ref !== UNDEFINED && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
@@ -2005,7 +2004,6 @@ O.setValue = function(o, path, val) {
 
     return o;
 };
-
 
 })();
 
@@ -3065,11 +3063,14 @@ YUI.add('yui-log', function(Y) {
  */
 (function() {
 
-var INSTANCE = Y,
-    LOGEVENT = 'yui:log',
+var _published,
+    INSTANCE  = Y,
+    LOGEVENT  = 'yui:log',
     UNDEFINED = 'undefined',
-    LEVELS = { debug: 1, info: 1, warn: 1, error: 1 },
-    _published;
+    LEVELS    = { debug: 1, 
+                  info:  1, 
+                  warn:  1, 
+                  error: 1 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -3091,7 +3092,9 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var Y = INSTANCE, c = Y.config, bail = false, excl, incl, m, f;
+    var bail, excl, incl, m, f,
+        Y = INSTANCE, 
+        c = Y.config;
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
@@ -3099,16 +3102,13 @@ INSTANCE.log = function(msg, cat, src, silent) {
         if (src) {
             excl = c.logExclude; 
             incl = c.logInclude;
-
             if (incl && !(src in incl)) {
                 bail = 1;
             } else if (excl && (src in excl)) {
                 bail = 1;
             }
         }
-
         if (!bail) {
-
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
@@ -3120,7 +3120,6 @@ INSTANCE.log = function(msg, cat, src, silent) {
                     opera.postError(m);
                 }
             }
-
             if (Y.fire && !silent) {
                 if (!_published) {
                     Y.publish(LOGEVENT, {
@@ -3274,7 +3273,7 @@ var throttle = function(fn, ms) {
 
 Y.throttle = throttle;
 
-// Added the redundant definition to later for backwards compatibility.
+// We added the redundant definition to later for backwards compatibility.
 // I don't think we need to do the same thing here
 // Y.Lang.throttle = throttle;
 
