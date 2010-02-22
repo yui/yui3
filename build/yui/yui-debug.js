@@ -463,7 +463,7 @@ YUI.prototype = {
                         // Env._retry = true;
                         newData = data.concat();
                         newData.push(function() {
-                            Y.log('Nested USE callback: ' + data);
+                            Y.log('Nested USE callback: ' + data, 'info', 'yui');
                             Y._attach(data);
                             callback(Y, response);
                         });

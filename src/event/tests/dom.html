@@ -17,13 +17,9 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
-            base: "../../../build/",
-            filter: 'debug',
-            combine: false,
-            useConsole: true,
             logExclude: {
                 yui:true, get: true, 'selector-native': true, loader: true, 
-                deprecated:1, Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+                Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
         }).use('console', 'test', 'node', 'event-simulate', function (Y) {
             
             // creating the console...
