@@ -1,7 +1,9 @@
-Development Master
+Provides a Widget Animation plugin to animate hide/show on a Widget. 
 
-3.1 - Initial release
+Packaged with fadeIn, fadeOut animations for the initial release, but 
+will be augmented with other animation implementations in future releases.
 
-Module Name: "widget-anim"
+3.1.0
 
-Provides a Widget Animation plugin to animate hide/show on a Widget. Packaged with fadeIn, fadeOut animations for the initial release, but will be augmented with other animation implementations in future releases.
+* Initial release
+

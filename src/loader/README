@@ -2,8 +2,11 @@ YUI Loader
     Processes dependencies and dynamically loads script and css for YUI and external modules.
 
 3.1.0
+  * Intrinsic yui3-gallery support.
   * Added a 'patterns' property.  Modules that are not predefined will be created with the
-    default values if it matches one of the patterns defined for the instance.  
+    default values if it matches one of the patterns defined for the instance.
+  * Added module groups.  This allows for specifying the base path and the combo properties
+    for a group of modules.  The combo support now allows for multiple combo domains.
   * Handles simulateous bootstrapping and loading better.
   * Added support for dynamically loading language packs along with modules that have them.
   * Metadata is managed per component instead of centrally.

@@ -3,6 +3,7 @@
  * background rail element.
  * 
  * @module slider
+ * @submodule range-slider
  */
 
 /**
@@ -11,10 +12,11 @@
  * <code>axis</code> configuration.
  *
  * @class Slider
- * @extends Widget
- * @param config {Object} Configuration object
  * @constructor
+ * @extends SliderBase
+ * @uses SliderValueRange
+ * @uses ClickableRail
+ * @param config {Object} Configuration object
  */
 Y.Slider = Y.Base.build( 'slider', Y.SliderBase,
-    [ Y.IntValueRange, Y.ClickableRail ],
-    { dynamic: true } );
+    [ Y.SliderValueRange, Y.ClickableRail ] );

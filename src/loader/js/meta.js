@@ -3,12 +3,13 @@ var VERSION = Y.version,
 ROOT = VERSION + '/build/',
 GALLERY_VERSION = Y.config.gallery || Y.gallery,
 GALLERY_ROOT = GALLERY_VERSION + '/build/',
+COMBO_BASE = 'http://yui.yahooapis.com/combo?',
 GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
 META = {
     version: VERSION,
     root: ROOT,
     base: 'http://yui.yahooapis.com/' + ROOT,
-    comboBase: 'http://yui.yahooapis.com/combo?',
+    comboBase: COMBO_BASE,
     skin: {
         defaultSkin: 'sam',
         base: 'assets/skins/',
@@ -16,6 +17,8 @@ META = {
         after: ['cssreset', 'cssfonts', 'cssreset-context', 'cssfonts-context']
         //rollup: 3
     },
+
+    groups: {},
 
     modules: {
     "anim": {
@@ -107,11 +110,6 @@ META = {
     "classnamemanager": {
         "requires": [
             "yui-base"
-        ]
-    }, 
-    "clickable-rail": {
-        "requires": [
-            "slider-base"
         ]
     }, 
     "collection": {
@@ -409,11 +407,6 @@ META = {
             }
         }
     }, 
-    "dd-value": {
-        "requires": [
-            "dd-constrain"
-        ]
-    }, 
     "dom": {
         "plugins": {
             "selector-css3": {
@@ -540,11 +533,6 @@ META = {
             "base-base", 
             "node-style", 
             "node-screen"
-        ]
-    }, 
-    "int-value-range": {
-        "requires": [
-            "slider-base"
         ]
     }, 
     "intl": {
@@ -757,20 +745,34 @@ META = {
         ]
     }, 
     "slider": {
-        "requires": [
-            "slider-base", 
-            "int-value-range", 
-            "clickable-rail"
-        ]
-    }, 
-    "slider-base": {
-        "requires": [
-            "widget", 
-            "dd-constrain", 
-            "substitute", 
-            "skin-sam-slider"
-        ], 
-        "skinnable": true
+        "submodules": {
+            "clickable-rail": {
+                "requires": [
+                    "slider-base"
+                ]
+            }, 
+            "range-slider": {
+                "requires": [
+                    "slider-base", 
+                    "slider-value-range", 
+                    "clickable-rail"
+                ]
+            }, 
+            "slider-base": {
+                "requires": [
+                    "widget", 
+                    "dd-constrain", 
+                    "substitute", 
+                    "skin-sam-slider-base"
+                ], 
+                "skinnable": true
+            }, 
+            "slider-value-range": {
+                "requires": [
+                    "slider-base"
+                ]
+            }
+        }
     }, 
     "sortable": {
         "requires": [
@@ -890,15 +892,18 @@ META = {
         'gallery-': { 
             // http://yui.yahooapis.com/3.0.0/build/
             // http://yui.yahooapis.com/gallery-/build/
-            base: GALLERY_BASE,  // explicit declaration of the base attribute
+            group: 'gallery',
+            ext: false,
             filter: {
                 'searchExp': VERSION,
                 'replaceStr': GALLERY_VERSION
             }
-        },
+        }
 
+        /*
         // expand 'lang|module|lang'
         'lang|': {
+            ext: false,
             action: function(data) {
                 // Y.log('testing data: ' + data);
 
@@ -925,7 +930,17 @@ META = {
                 delete this.required[data];
             }
         }
+        */
     }
+};
+
+META.groups[VERSION] = {};
+
+META.groups.gallery = {
+    base:      GALLERY_BASE,
+    combine:   true,
+    root:      GALLERY_ROOT,
+    comboBase: COMBO_BASE
 };
 
 YUI.Env[VERSION] = META;

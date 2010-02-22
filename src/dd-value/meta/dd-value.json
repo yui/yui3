@@ -1,7 +1,0 @@
-{
-    "dd-value": {
-        "requires": [
-            "dd-constrain"
-        ]
-    }
-}

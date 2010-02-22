@@ -291,6 +291,8 @@
                 defaultFn: this._defDestroyFn
             });
             this.fire(DESTROY);
+
+            this.detachAll();
             return this;
         },
 

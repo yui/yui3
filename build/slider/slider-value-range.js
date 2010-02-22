@@ -1,4 +1,13 @@
-YUI.add('int-value-range', function(Y) {
+YUI.add('slider-value-range', function(Y) {
+
+/**
+ * Adds value support for Slider as a range of integers between a configured
+ * minimum and maximum value.  For use with <code>Y.Base.build(..)</code> to
+ * add the plumbing to <code>Y.SliderBase</code>.
+ *
+ * @module slider
+ * @submodule slider-value-range
+ */
 
 // Constants for compression or performance
 var MIN       = 'min',
@@ -7,20 +16,29 @@ var MIN       = 'min',
 
     round = Math.round;
 
-function IntValueRange() {
-    this._initIntValueRange();
+/**
+ * One class of value algorithm that can be built onto SliderBase.  By default,
+ * values range between 0 and 100, but you can configure these on the
+ * built Slider class by setting the <code>min</code> and <code>max</code>
+ * configurations.  Set the initial value (will cause the thumb to move to the
+ * appropriate location on the rail) in configuration as well if appropriate.
+ *
+ * @class SliderValueRange
+ */
+function SliderValueRange() {
+    this._initSliderValueRange();
 }
 
-Y.IntValueRange = Y.mix( IntValueRange, {
+Y.SliderValueRange = Y.mix( SliderValueRange, {
 
     // Prototype properties and methods that will be added onto host class
     prototype: {
         /**
-         * Cached X or Y offset for the constraining element to avoid extraneous
+         * Cached X or Y offset for the rail to avoid extraneous
          * <code>getXY()</code> calls during run time calculation.
          *
          * @property _offsetXY
-         * @type { Number }
+         * @type {Number}
          * @protected
          */
         _offsetXY: null,
@@ -29,7 +47,7 @@ Y.IntValueRange = Y.mix( IntValueRange, {
          * Factor used to translate value -&gt; position -&gt; value.
          *
          * @property _factor
-         * @type { Number }
+         * @type {Number}
          * @protected
          */
         _factor: 1,
@@ -38,10 +56,10 @@ Y.IntValueRange = Y.mix( IntValueRange, {
          * Attach event listeners to keep the UI in sync with the min/max/value
          * attributes and thumb position.
          *
-         * @method _initIntValueRange
+         * @method _initSliderValueRange
          * @protected
          */
-        _initIntValueRange: function () {
+        _initSliderValueRange: function () {
             this._key = this._key || {};
 
             Y.mix( this._key, ( this.axis === 'y' ) ?
@@ -57,6 +75,14 @@ Y.IntValueRange = Y.mix( IntValueRange, {
                 } );
         },
 
+        /**
+         * Override of stub method in SliderBase that is called at the end of
+         * its bindUI stage of render().  Subscribes to internal events to
+         * trigger UI and related state updates.
+         *
+         * @method _bindValueLogic
+         * @protected
+         */
         _bindValueLogic: function () {
             this.after( {
                 minChange  : this._afterMinChange,
@@ -66,10 +92,12 @@ Y.IntValueRange = Y.mix( IntValueRange, {
         },
 
         /**
-         * Cache rail offsets and dims for faster value translation and move
-         * thumb to appropriate position if necessary.
+         * Move the thumb to appropriate position if necessary.  Also resets
+         * the cached offsets and recalculates the conversion factor to
+         * translate position to value.
          *
          * @method _syncThumbPosition
+         * @protected
          */
         _syncThumbPosition: function () {
             this._cacheRailOffset();
@@ -129,7 +157,7 @@ Y.IntValueRange = Y.mix( IntValueRange, {
 
         /**
          * <p>Converts a pixel position into a value.  Calculates current
-         * position minus xy offsets of the constraining element multiplied by the
+         * position minus xy offsets of the rail multiplied by the
          * ratio of <code>(max - min) / (constraining dim)</code>.</p>
          *
          * <p>Override this if you want to use a different value mapping
@@ -150,7 +178,7 @@ Y.IntValueRange = Y.mix( IntValueRange, {
 
         /**
          * Converts a value into a positional pixel value for use in positioning
-         * the DD element according to the reverse of the
+         * the thumb according to the reverse of the
          * <code>_offsetToValue( xy )</code> operation.
          *
          * @method _valueToOffset
@@ -374,4 +402,4 @@ Y.IntValueRange = Y.mix( IntValueRange, {
 }, true );
 
 
-}, '@VERSION@' ,{requires:['base-build', 'node-base']});
+}, '@VERSION@' ,{requires:['slider-base']});

@@ -90,11 +90,6 @@
             "yui-base"
         ]
     }, 
-    "clickable-rail": {
-        "requires": [
-            "slider-base"
-        ]
-    }, 
     "collection": {
         "submodules": {
             "array-extras": {}, 
@@ -390,11 +385,6 @@
             }
         }
     }, 
-    "dd-value": {
-        "requires": [
-            "dd-constrain"
-        ]
-    }, 
     "dom": {
         "plugins": {
             "selector-css3": {
@@ -521,11 +511,6 @@
             "base-base", 
             "node-style", 
             "node-screen"
-        ]
-    }, 
-    "int-value-range": {
-        "requires": [
-            "slider-base"
         ]
     }, 
     "intl": {
@@ -738,20 +723,34 @@
         ]
     }, 
     "slider": {
-        "requires": [
-            "slider-base", 
-            "int-value-range", 
-            "clickable-rail"
-        ]
-    }, 
-    "slider-base": {
-        "requires": [
-            "widget", 
-            "dd-constrain", 
-            "substitute", 
-            "skin-sam-slider"
-        ], 
-        "skinnable": true
+        "submodules": {
+            "clickable-rail": {
+                "requires": [
+                    "slider-base"
+                ]
+            }, 
+            "range-slider": {
+                "requires": [
+                    "slider-base", 
+                    "slider-value-range", 
+                    "clickable-rail"
+                ]
+            }, 
+            "slider-base": {
+                "requires": [
+                    "widget", 
+                    "dd-constrain", 
+                    "substitute", 
+                    "skin-sam-slider-base"
+                ], 
+                "skinnable": true
+            }, 
+            "slider-value-range": {
+                "requires": [
+                    "slider-base"
+                ]
+            }
+        }
     }, 
     "sortable": {
         "requires": [

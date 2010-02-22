@@ -1,9 +1,5 @@
-Development Master
+Provides utilities to support the management of localized resources (strings and formatting patterns).
 
-NOTE: Not currently functional. Needs loader/meta-data stubs filled out.
+3.1.0
 
-3.1 - Initial release
-
-Module Name: "intl"
-
-Intl currently provides a central location to retrieve module specific string bundles, for the currently established lang (configured for the YUI instance).
+* Initial Release.

@@ -1,9 +1,32 @@
 {
     "slider": {
-        "requires": [
-            "slider-base",
-            "int-value-range",
-            "clickable-rail"
-        ]
+        "submodules": {
+
+            "slider-base": {
+                "requires": [
+                    "widget", 
+                    "dd-constrain", 
+                    "substitute",
+                    "skin-sam-slider-base"
+                ], 
+                "skinnable": true
+            },
+
+            "slider-value-range": {
+                "requires": [ "slider-base" ]
+            },
+
+            "clickable-rail": {
+                "requires": [ "slider-base" ]
+            },
+
+            "range-slider": {
+                "requires": [
+                    "slider-base",
+                    "slider-value-range",
+                    "clickable-rail"
+                ]
+            }
+        }
     }
 }

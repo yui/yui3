@@ -1,4 +1,7 @@
-Development Master
+An extension, which can be used with Base.build to add standard
+module (header, body, footer) support to a Widget class.
+
+3.1.0
 
 * Setting section content to "" will now create the respective section. 
 
@@ -11,6 +14,7 @@ Development Master
   because of a typo in the event name.
 
 3.0.0
+
 * Cleaned up the way headerContent, bodyContent, footerContent are configured,
   so that the actual stored value is always accurate, without the need for a 
   getter which talks to the DOM directly.
@@ -28,9 +32,3 @@ Development Master
 No Changes
 
 3.0.0PR2 - Initial release
-
-Module Name: "widget-stdmod"
-
-An extension, which can be used with Base.build to add standard
-module (header, body, footer) support to a Widget class.
-

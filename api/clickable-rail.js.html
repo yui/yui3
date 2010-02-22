@@ -47,7 +47,21 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="kd">function</span> <span class="nx">ClickableRail</span><span class="p">()</span> <span class="p">{</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds support for mouse interaction with the Slider rail triggering thumb</span>
+<span class="cm"> * movement.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module slider</span>
+<span class="cm"> * @submodule clickable-rail</span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Slider extension that allows clicking on the Slider&#39;s rail element,</span>
+<span class="cm"> * triggering the thumb to align with the location of the click.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class ClickableRail</span>
+<span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">ClickableRail</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_initClickableRail</span><span class="p">();</span>
 <span class="p">}</span>
 
@@ -56,10 +70,26 @@
     <span class="c1">// Prototype methods added to host class</span>
     <span class="nx">prototype</span><span class="o">:</span> <span class="p">{</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * Initializes the internal state and sets up events.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _initClickableRail</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="nx">_initClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_evtGuid</span> <span class="o">||</span> <span class="p">(</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;|&#39;</span> <span class="p">);</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span> <span class="s1">&#39;railMouseDown&#39;</span><span class="p">,</span> <span class="p">{</span> 
+            <span class="cm">/**</span>
+<span class="cm">             * Broadcasts when the rail has received a mousedown event and</span>
+<span class="cm">             * triggers the thumb positioning.  Use</span>
+<span class="cm">             * &lt;code&gt;e.preventDefault()&lt;/code&gt; or</span>
+<span class="cm">             * &lt;code&gt;set(&amp;quot;clickableRail&amp;quot;, false)&lt;/code&gt; to prevent</span>
+<span class="cm">             * the thumb positioning.</span>
+<span class="cm">             *</span>
+<span class="cm">             * @event railMouseDown</span>
+<span class="cm">             * @preventable _defRailMouseDownFn</span>
+<span class="cm">             */</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span> <span class="s1">&#39;railMouseDown&#39;</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defRailMouseDownFn</span>
             <span class="p">}</span> <span class="p">);</span>
 
@@ -67,6 +97,12 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span> <span class="s1">&#39;destroy&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_unbindClickableRail</span> <span class="p">);</span>
         <span class="p">},</span>
 
+        <span class="cm">/** </span>
+<span class="cm">         * Attaches DOM event subscribers to support rail interaction.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _bindClickableRail</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="nx">_bindClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">addHandle</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">rail</span> <span class="p">);</span>
 
@@ -74,6 +110,12 @@
                 <span class="k">this</span><span class="p">.</span><span class="nx">_onRailMouseDown</span><span class="p">,</span> <span class="k">this</span> <span class="p">);</span>
         <span class="p">},</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * Detaches DOM event subscribers for cleanup/destruction cycle.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _unbindClickableRail</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="nx">_unbindClickableRail</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;rendered&#39;</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;contentBox&#39;</span> <span class="p">),</span>
@@ -83,12 +125,28 @@
             <span class="p">}</span>
         <span class="p">},</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * Dispatches the railMouseDown event.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _onRailMouseDown</span>
+<span class="cm">         * @param e {DOMEvent} the mousedown event object</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="nx">_onRailMouseDown</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;clickableRail&#39;</span> <span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;disabled&#39;</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span> <span class="s1">&#39;railMouseDown&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">ev</span><span class="o">:</span> <span class="nx">e</span> <span class="p">}</span> <span class="p">);</span>
             <span class="p">}</span>
         <span class="p">},</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * Default behavior for the railMouseDown event.  Centers the thumb at</span>
+<span class="cm">         * the click location and passes control to the DDM to behave as though</span>
+<span class="cm">         * the thumb itself were clicked in preparation for a drag operation.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _defRailMouseDownFn</span>
+<span class="cm">         * @param e {Event} the EventFacade for the railMouseDown custom event</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="nx">_defRailMouseDownFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
             <span class="nx">e</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">ev</span><span class="p">;</span>
 
@@ -112,6 +170,16 @@
             <span class="p">}</span>
         <span class="p">},</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * Resolves which thumb to actuate if any.  Override this if you want to</span>
+<span class="cm">         * support multiple thumbs.  By default, returns the Drag instance for</span>
+<span class="cm">         * the thumb stored by the Slider.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _resolveThumb</span>
+<span class="cm">         * @param e {DOMEvent} the mousedown event object</span>
+<span class="cm">         * @return {Y.DD.Drag} the Drag instance that should be moved</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="nx">_resolveThumb</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span> <span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">primaryOnly</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;primaryButtonOnly&#39;</span> <span class="p">),</span>
                 <span class="nx">validClick</span>  <span class="o">=</span> <span class="o">!</span><span class="nx">primaryOnly</span> <span class="o">||</span> <span class="nx">e</span><span class="p">.</span><span class="nx">button</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span>
@@ -119,6 +187,15 @@
             <span class="k">return</span> <span class="p">(</span> <span class="nx">validClick</span> <span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dd</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">},</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * Calculates the top left position the thumb should be moved to to</span>
+<span class="cm">         * align the click XY with the center of the specified node.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _getThumbDestination</span>
+<span class="cm">         * @param e {DOMEvent} The mousedown event object</span>
+<span class="cm">         * @param node {Node} The node to position</span>
+<span class="cm">         * @return {Array} the [top, left] pixel position of the destination</span>
+<span class="cm">         */</span>
         <span class="nx">_getThumbDestination</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">node</span> <span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">offsetWidth</span>  <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;offsetWidth&#39;</span> <span class="p">),</span>
                 <span class="nx">offsetHeight</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s1">&#39;offsetHeight&#39;</span> <span class="p">);</span>
@@ -134,6 +211,13 @@
 
     <span class="c1">// Static properties added onto host class</span>
     <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * Enable or disable clickable rail support.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @attribute clickableRail</span>
+<span class="cm">         * @type {Boolean}</span>
+<span class="cm">         * @default true</span>
+<span class="cm">         */</span>
         <span class="nx">clickableRail</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">validator</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isBoolean</span>
@@ -174,7 +258,6 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
-                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -208,7 +291,10 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="ClickableRail.html" title="ClickableRail">ClickableRail</a></li>
                                 <li class=""><a href="Slider.html" title="Slider">Slider</a></li>
+                                <li class=""><a href="SliderBase.html" title="SliderBase">SliderBase</a></li>
+                                <li class=""><a href="SliderValueRange.html" title="SliderValueRange">SliderValueRange</a></li>
                         </ul>
                     </div>
 
@@ -216,9 +302,9 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class="selected"><a href="clickable-rail.js.html" title="clickable-rail.js">clickable-rail.js</a></li>
-                                <li class=""><a href="int-value-range.js.html" title="int-value-range.js">int-value-range.js</a></li>
+                                <li class=""><a href="range-slider.js.html" title="range-slider.js">range-slider.js</a></li>
                                 <li class=""><a href="slider-base.js.html" title="slider-base.js">slider-base.js</a></li>
-                                <li class=""><a href="slider.js.html" title="slider.js">slider.js</a></li>
+                                <li class=""><a href="value-range.js.html" title="value-range.js">value-range.js</a></li>
                         </ul>
                     </div>
 
@@ -236,7 +322,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "", "host": "Slider", "name": "length", "url": "Slider.html#config_length", "type": "config"}, {"access": "", "host": "Slider", "name": "lengthChange", "url": "Slider.html#event_lengthChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxis", "url": "Slider.html#method__setAxis", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "protected", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumbMove", "url": "Slider.html#event_thumbMove", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbUrl", "url": "Slider.html#config_thumbUrl", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbUrlChange", "url": "Slider.html#event_thumbUrlChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "SliderBase", "name": "_afterAlign", "url": "SliderBase.html#method__afterAlign", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterDisabledChange", "url": "SliderBase.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterLengthChange", "url": "SliderBase.html#method__afterLengthChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMaxChange", "url": "SliderValueRange.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMinChange", "url": "SliderValueRange.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterValueChange", "url": "SliderValueRange.html#method__afterValueChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "ATTRS", "url": "SliderValueRange.html#property_ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#property_axis", "type": "property"}, {"access": "", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#config_axis", "type": "config"}, {"access": "", "host": "SliderBase", "name": "axisChange", "url": "SliderBase.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_bindClickableRail", "url": "ClickableRail.html#method__bindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindThumbDD", "url": "SliderBase.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "bindUI", "url": "SliderBase.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindValueLogic", "url": "SliderBase.html#method__bindValueLogic", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_bindValueLogic", "url": "SliderValueRange.html#method__bindValueLogic", "type": "method"}, {"access": "", "host": "SliderBase", "name": "BOUNDING_TEMPLATE", "url": "SliderBase.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderValueRange", "name": "_cacheRailOffset", "url": "SliderValueRange.html#method__cacheRailOffset", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_calculateFactor", "url": "SliderValueRange.html#method__calculateFactor", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "clickableRail", "url": "ClickableRail.html#config_clickableRail", "type": "config"}, {"access": "", "host": "ClickableRail", "name": "clickableRailChange", "url": "ClickableRail.html#event_clickableRailChange", "type": "event"}, {"access": "", "host": "SliderBase", "name": "CONTENT_TEMPLATE", "url": "SliderBase.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_dd", "url": "SliderBase.html#property__dd", "type": "property"}, {"access": "protected", "host": "ClickableRail", "name": "_defRailMouseDownFn", "url": "ClickableRail.html#method__defRailMouseDownFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_defThumbMoveFn", "url": "SliderValueRange.html#method__defThumbMoveFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_factor", "url": "SliderValueRange.html#property__factor", "type": "property"}, {"access": "", "host": "ClickableRail", "name": "_getThumbDestination", "url": "ClickableRail.html#method__getThumbDestination", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_initClickableRail", "url": "ClickableRail.html#method__initClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "initializer", "url": "SliderBase.html#method_initializer", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_initSliderValueRange", "url": "SliderValueRange.html#method__initSliderValueRange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_initThumbUrl", "url": "SliderBase.html#method__initThumbUrl", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_key", "url": "SliderBase.html#property__key", "type": "property"}, {"access": "", "host": "SliderBase", "name": "length", "url": "SliderBase.html#config_length", "type": "config"}, {"access": "", "host": "SliderBase", "name": "lengthChange", "url": "SliderBase.html#event_lengthChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "max", "url": "SliderValueRange.html#config_max", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "maxChange", "url": "SliderValueRange.html#event_maxChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "min", "url": "SliderValueRange.html#config_min", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "minChange", "url": "SliderValueRange.html#event_minChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_nearestValue", "url": "SliderValueRange.html#method__nearestValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_offsetToValue", "url": "SliderValueRange.html#method__offsetToValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_offsetXY", "url": "SliderValueRange.html#property__offsetXY", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_onDragEnd", "url": "SliderBase.html#method__onDragEnd", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_onDragStart", "url": "SliderBase.html#method__onDragStart", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_onRailMouseDown", "url": "ClickableRail.html#method__onRailMouseDown", "type": "method"}, {"access": "", "host": "SliderBase", "name": "rail", "url": "SliderBase.html#property_rail", "type": "property"}, {"access": "", "host": "ClickableRail", "name": "railMouseDown", "url": "ClickableRail.html#event_railMouseDown", "type": "event"}, {"access": "", "host": "SliderBase", "name": "RAIL_TEMPLATE", "url": "SliderBase.html#property_RAIL_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_renderRail", "url": "SliderBase.html#method__renderRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_renderThumb", "url": "SliderBase.html#method__renderThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "renderUI", "url": "SliderBase.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_resolveThumb", "url": "ClickableRail.html#method__resolveThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setAxis", "url": "SliderBase.html#method__setAxis", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setLength", "url": "SliderBase.html#method__setLength", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_setPosition", "url": "SliderValueRange.html#method__setPosition", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.ATTRS", "url": "SliderBase.html#property_SliderBase.ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.NAME", "url": "SliderBase.html#property_SliderBase.NAME", "type": "property"}, {"access": "", "host": "SliderBase", "name": "slideStart", "url": "SliderBase.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_syncThumbPosition", "url": "SliderBase.html#method__syncThumbPosition", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_syncThumbPosition", "url": "SliderValueRange.html#method__syncThumbPosition", "type": "method"}, {"access": "", "host": "SliderBase", "name": "syncUI", "url": "SliderBase.html#method_syncUI", "type": "method"}, {"access": "", "host": "SliderBase", "name": "thumb", "url": "SliderBase.html#property_thumb", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbMove", "url": "SliderBase.html#event_thumbMove", "type": "event"}, {"access": "", "host": "SliderBase", "name": "THUMB_TEMPLATE", "url": "SliderBase.html#property_THUMB_TEMPLATE", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbUrl", "url": "SliderBase.html#config_thumbUrl", "type": "config"}, {"access": "", "host": "SliderBase", "name": "thumbUrlChange", "url": "SliderBase.html#event_thumbUrlChange", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_uiSetRailLength", "url": "SliderBase.html#method__uiSetRailLength", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_unbindClickableRail", "url": "ClickableRail.html#method__unbindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMax", "url": "SliderValueRange.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMin", "url": "SliderValueRange.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewValue", "url": "SliderValueRange.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "value", "url": "SliderValueRange.html#config_value", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "valueChange", "url": "SliderValueRange.html#event_valueChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_valueToOffset", "url": "SliderValueRange.html#method__valueToOffset", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_verifyValue", "url": "SliderValueRange.html#method__verifyValue", "type": "method"}];
 </script>
 </body>
 </html>

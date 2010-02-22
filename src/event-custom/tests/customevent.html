@@ -5,7 +5,7 @@
 <script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
 </head>
 
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
 <h1>Event Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 <div id="adiv">a div</div>
@@ -32,12 +32,12 @@
             Dom: true, 
             Selector: true, 
             Node: true, 
-            yui: true,
+            // yui: true,
             attribute: true, 
             event: true, 
             // deprecated: true, 
             base: true, 
-            loader: true, 
+            // loader: true, 
             widget: true
         },
 
@@ -53,7 +53,7 @@
         //     console.log('GLOBAL LOG: ' + e.msg);
         // });
 
-        var button = Y.get('#btnRun');
+        var button = Y.one('#btnRun');
 
         // Set up the page
         button.set("disabled", false);

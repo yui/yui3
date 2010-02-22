@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: slider   int-value-range.js  (YUI Library)</title>
+	<title>API: slider   value-range.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_slider.html" title="slider">slider</a>
                 
-                 &gt; int-value-range.js (source view) 
+                 &gt; value-range.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,27 +47,45 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="c1">// Constants for compression or performance</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Adds value support for Slider as a range of integers between a configured</span>
+<span class="cm"> * minimum and maximum value.  For use with &lt;code&gt;Y.Base.build(..)&lt;/code&gt; to</span>
+<span class="cm"> * add the plumbing to &lt;code&gt;Y.SliderBase&lt;/code&gt;.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module slider</span>
+<span class="cm"> * @submodule slider-value-range</span>
+<span class="cm"> */</span>
+
+<span class="c1">// Constants for compression or performance</span>
 <span class="kd">var</span> <span class="nx">MIN</span>       <span class="o">=</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span>
     <span class="nx">MAX</span>       <span class="o">=</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span>
     <span class="nx">VALUE</span>     <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
 
     <span class="nx">round</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">;</span>
 
-<span class="kd">function</span> <span class="nx">IntValueRange</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">_initIntValueRange</span><span class="p">();</span>
+<span class="cm">/**</span>
+<span class="cm"> * One class of value algorithm that can be built onto SliderBase.  By default,</span>
+<span class="cm"> * values range between 0 and 100, but you can configure these on the</span>
+<span class="cm"> * built Slider class by setting the &lt;code&gt;min&lt;/code&gt; and &lt;code&gt;max&lt;/code&gt;</span>
+<span class="cm"> * configurations.  Set the initial value (will cause the thumb to move to the</span>
+<span class="cm"> * appropriate location on the rail) in configuration as well if appropriate.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class SliderValueRange</span>
+<span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">SliderValueRange</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_initSliderValueRange</span><span class="p">();</span>
 <span class="p">}</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">IntValueRange</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span> <span class="nx">IntValueRange</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">SliderValueRange</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span> <span class="nx">SliderValueRange</span><span class="p">,</span> <span class="p">{</span>
 
     <span class="c1">// Prototype properties and methods that will be added onto host class</span>
     <span class="nx">prototype</span><span class="o">:</span> <span class="p">{</span>
         <span class="cm">/**</span>
-<span class="cm">         * Cached X or Y offset for the constraining element to avoid extraneous</span>
+<span class="cm">         * Cached X or Y offset for the rail to avoid extraneous</span>
 <span class="cm">         * &lt;code&gt;getXY()&lt;/code&gt; calls during run time calculation.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @property _offsetXY</span>
-<span class="cm">         * @type { Number }</span>
+<span class="cm">         * @type {Number}</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
         <span class="nx">_offsetXY</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
@@ -76,7 +94,7 @@
 <span class="cm">         * Factor used to translate value -&amp;gt; position -&amp;gt; value.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @property _factor</span>
-<span class="cm">         * @type { Number }</span>
+<span class="cm">         * @type {Number}</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
         <span class="nx">_factor</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -85,10 +103,10 @@
 <span class="cm">         * Attach event listeners to keep the UI in sync with the min/max/value</span>
 <span class="cm">         * attributes and thumb position.</span>
 <span class="cm">         *</span>
-<span class="cm">         * @method _initIntValueRange</span>
+<span class="cm">         * @method _initSliderValueRange</span>
 <span class="cm">         * @protected</span>
 <span class="cm">         */</span>
-        <span class="nx">_initIntValueRange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">_initSliderValueRange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_key</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span> <span class="o">||</span> <span class="p">{};</span>
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">_key</span><span class="p">,</span> <span class="p">(</span> <span class="k">this</span><span class="p">.</span><span class="nx">axis</span> <span class="o">===</span> <span class="s1">&#39;y&#39;</span> <span class="p">)</span> <span class="o">?</span>
@@ -104,6 +122,14 @@
                 <span class="p">}</span> <span class="p">);</span>
         <span class="p">},</span>
 
+        <span class="cm">/**</span>
+<span class="cm">         * Override of stub method in SliderBase that is called at the end of</span>
+<span class="cm">         * its bindUI stage of render().  Subscribes to internal events to</span>
+<span class="cm">         * trigger UI and related state updates.</span>
+<span class="cm">         *</span>
+<span class="cm">         * @method _bindValueLogic</span>
+<span class="cm">         * @protected</span>
+<span class="cm">         */</span>
         <span class="nx">_bindValueLogic</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span> <span class="p">{</span>
                 <span class="nx">minChange</span>  <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterMinChange</span><span class="p">,</span>
@@ -113,10 +139,12 @@
         <span class="p">},</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * Cache rail offsets and dims for faster value translation and move</span>
-<span class="cm">         * thumb to appropriate position if necessary.</span>
+<span class="cm">         * Move the thumb to appropriate position if necessary.  Also resets</span>
+<span class="cm">         * the cached offsets and recalculates the conversion factor to</span>
+<span class="cm">         * translate position to value.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @method _syncThumbPosition</span>
+<span class="cm">         * @protected</span>
 <span class="cm">         */</span>
         <span class="nx">_syncThumbPosition</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_cacheRailOffset</span><span class="p">();</span>
@@ -176,7 +204,7 @@
 
         <span class="cm">/**</span>
 <span class="cm">         * &lt;p&gt;Converts a pixel position into a value.  Calculates current</span>
-<span class="cm">         * position minus xy offsets of the constraining element multiplied by the</span>
+<span class="cm">         * position minus xy offsets of the rail multiplied by the</span>
 <span class="cm">         * ratio of &lt;code&gt;(max - min) / (constraining dim)&lt;/code&gt;.&lt;/p&gt;</span>
 <span class="cm">         *</span>
 <span class="cm">         * &lt;p&gt;Override this if you want to use a different value mapping</span>
@@ -197,7 +225,7 @@
 
         <span class="cm">/**</span>
 <span class="cm">         * Converts a value into a positional pixel value for use in positioning</span>
-<span class="cm">         * the DD element according to the reverse of the</span>
+<span class="cm">         * the thumb according to the reverse of the</span>
 <span class="cm">         * &lt;code&gt;_offsetToValue( xy )&lt;/code&gt; operation.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @method _valueToOffset</span>
@@ -452,7 +480,6 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
-                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -486,7 +513,10 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="ClickableRail.html" title="ClickableRail">ClickableRail</a></li>
                                 <li class=""><a href="Slider.html" title="Slider">Slider</a></li>
+                                <li class=""><a href="SliderBase.html" title="SliderBase">SliderBase</a></li>
+                                <li class=""><a href="SliderValueRange.html" title="SliderValueRange">SliderValueRange</a></li>
                         </ul>
                     </div>
 
@@ -494,9 +524,9 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="clickable-rail.js.html" title="clickable-rail.js">clickable-rail.js</a></li>
-                                <li class="selected"><a href="int-value-range.js.html" title="int-value-range.js">int-value-range.js</a></li>
+                                <li class=""><a href="range-slider.js.html" title="range-slider.js">range-slider.js</a></li>
                                 <li class=""><a href="slider-base.js.html" title="slider-base.js">slider-base.js</a></li>
-                                <li class=""><a href="slider.js.html" title="slider.js">slider.js</a></li>
+                                <li class="selected"><a href="value-range.js.html" title="value-range.js">value-range.js</a></li>
                         </ul>
                     </div>
 
@@ -514,7 +544,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Slider", "name": "axis", "url": "Slider.html#config_axis", "type": "config"}, {"access": "", "host": "Slider", "name": "axisChange", "url": "Slider.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "bindUI", "url": "Slider.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "initializer", "url": "Slider.html#method_initializer", "type": "method"}, {"access": "", "host": "Slider", "name": "length", "url": "Slider.html#config_length", "type": "config"}, {"access": "", "host": "Slider", "name": "lengthChange", "url": "Slider.html#event_lengthChange", "type": "event"}, {"access": "protected", "host": "Slider", "name": "renderUI", "url": "Slider.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "Slider", "name": "_setAxis", "url": "Slider.html#method__setAxis", "type": "method"}, {"access": "", "host": "Slider", "name": "slideEnd", "url": "Slider.html#event_slideEnd", "type": "event"}, {"access": "protected", "host": "Slider", "name": "Slider.ATTRS", "url": "Slider.html#property_Slider.ATTRS", "type": "property"}, {"access": "protected", "host": "Slider", "name": "Slider.NAME", "url": "Slider.html#property_Slider.NAME", "type": "property"}, {"access": "", "host": "Slider", "name": "slideStart", "url": "Slider.html#event_slideStart", "type": "event"}, {"access": "", "host": "Slider", "name": "syncUI", "url": "Slider.html#method_syncUI", "type": "method"}, {"access": "", "host": "Slider", "name": "thumbMove", "url": "Slider.html#event_thumbMove", "type": "event"}, {"access": "", "host": "Slider", "name": "thumbUrl", "url": "Slider.html#config_thumbUrl", "type": "config"}, {"access": "", "host": "Slider", "name": "thumbUrlChange", "url": "Slider.html#event_thumbUrlChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "SliderBase", "name": "_afterAlign", "url": "SliderBase.html#method__afterAlign", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterDisabledChange", "url": "SliderBase.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterLengthChange", "url": "SliderBase.html#method__afterLengthChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMaxChange", "url": "SliderValueRange.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMinChange", "url": "SliderValueRange.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterValueChange", "url": "SliderValueRange.html#method__afterValueChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "ATTRS", "url": "SliderValueRange.html#property_ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#property_axis", "type": "property"}, {"access": "", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#config_axis", "type": "config"}, {"access": "", "host": "SliderBase", "name": "axisChange", "url": "SliderBase.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_bindClickableRail", "url": "ClickableRail.html#method__bindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindThumbDD", "url": "SliderBase.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "bindUI", "url": "SliderBase.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindValueLogic", "url": "SliderBase.html#method__bindValueLogic", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_bindValueLogic", "url": "SliderValueRange.html#method__bindValueLogic", "type": "method"}, {"access": "", "host": "SliderBase", "name": "BOUNDING_TEMPLATE", "url": "SliderBase.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderValueRange", "name": "_cacheRailOffset", "url": "SliderValueRange.html#method__cacheRailOffset", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_calculateFactor", "url": "SliderValueRange.html#method__calculateFactor", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "clickableRail", "url": "ClickableRail.html#config_clickableRail", "type": "config"}, {"access": "", "host": "ClickableRail", "name": "clickableRailChange", "url": "ClickableRail.html#event_clickableRailChange", "type": "event"}, {"access": "", "host": "SliderBase", "name": "CONTENT_TEMPLATE", "url": "SliderBase.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_dd", "url": "SliderBase.html#property__dd", "type": "property"}, {"access": "protected", "host": "ClickableRail", "name": "_defRailMouseDownFn", "url": "ClickableRail.html#method__defRailMouseDownFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_defThumbMoveFn", "url": "SliderValueRange.html#method__defThumbMoveFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_factor", "url": "SliderValueRange.html#property__factor", "type": "property"}, {"access": "", "host": "ClickableRail", "name": "_getThumbDestination", "url": "ClickableRail.html#method__getThumbDestination", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_initClickableRail", "url": "ClickableRail.html#method__initClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "initializer", "url": "SliderBase.html#method_initializer", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_initSliderValueRange", "url": "SliderValueRange.html#method__initSliderValueRange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_initThumbUrl", "url": "SliderBase.html#method__initThumbUrl", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_key", "url": "SliderBase.html#property__key", "type": "property"}, {"access": "", "host": "SliderBase", "name": "length", "url": "SliderBase.html#config_length", "type": "config"}, {"access": "", "host": "SliderBase", "name": "lengthChange", "url": "SliderBase.html#event_lengthChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "max", "url": "SliderValueRange.html#config_max", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "maxChange", "url": "SliderValueRange.html#event_maxChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "min", "url": "SliderValueRange.html#config_min", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "minChange", "url": "SliderValueRange.html#event_minChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_nearestValue", "url": "SliderValueRange.html#method__nearestValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_offsetToValue", "url": "SliderValueRange.html#method__offsetToValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_offsetXY", "url": "SliderValueRange.html#property__offsetXY", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_onDragEnd", "url": "SliderBase.html#method__onDragEnd", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_onDragStart", "url": "SliderBase.html#method__onDragStart", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_onRailMouseDown", "url": "ClickableRail.html#method__onRailMouseDown", "type": "method"}, {"access": "", "host": "SliderBase", "name": "rail", "url": "SliderBase.html#property_rail", "type": "property"}, {"access": "", "host": "ClickableRail", "name": "railMouseDown", "url": "ClickableRail.html#event_railMouseDown", "type": "event"}, {"access": "", "host": "SliderBase", "name": "RAIL_TEMPLATE", "url": "SliderBase.html#property_RAIL_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_renderRail", "url": "SliderBase.html#method__renderRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_renderThumb", "url": "SliderBase.html#method__renderThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "renderUI", "url": "SliderBase.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_resolveThumb", "url": "ClickableRail.html#method__resolveThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setAxis", "url": "SliderBase.html#method__setAxis", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setLength", "url": "SliderBase.html#method__setLength", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_setPosition", "url": "SliderValueRange.html#method__setPosition", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.ATTRS", "url": "SliderBase.html#property_SliderBase.ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.NAME", "url": "SliderBase.html#property_SliderBase.NAME", "type": "property"}, {"access": "", "host": "SliderBase", "name": "slideStart", "url": "SliderBase.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_syncThumbPosition", "url": "SliderBase.html#method__syncThumbPosition", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_syncThumbPosition", "url": "SliderValueRange.html#method__syncThumbPosition", "type": "method"}, {"access": "", "host": "SliderBase", "name": "syncUI", "url": "SliderBase.html#method_syncUI", "type": "method"}, {"access": "", "host": "SliderBase", "name": "thumb", "url": "SliderBase.html#property_thumb", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbMove", "url": "SliderBase.html#event_thumbMove", "type": "event"}, {"access": "", "host": "SliderBase", "name": "THUMB_TEMPLATE", "url": "SliderBase.html#property_THUMB_TEMPLATE", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbUrl", "url": "SliderBase.html#config_thumbUrl", "type": "config"}, {"access": "", "host": "SliderBase", "name": "thumbUrlChange", "url": "SliderBase.html#event_thumbUrlChange", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_uiSetRailLength", "url": "SliderBase.html#method__uiSetRailLength", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_unbindClickableRail", "url": "ClickableRail.html#method__unbindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMax", "url": "SliderValueRange.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMin", "url": "SliderValueRange.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewValue", "url": "SliderValueRange.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "value", "url": "SliderValueRange.html#config_value", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "valueChange", "url": "SliderValueRange.html#event_valueChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_valueToOffset", "url": "SliderValueRange.html#method__valueToOffset", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_verifyValue", "url": "SliderValueRange.html#method__verifyValue", "type": "method"}];
 </script>
 </body>
 </html>
