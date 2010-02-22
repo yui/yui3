@@ -172,7 +172,7 @@ yuidoc.initUI = function(altdata) {
     YAHOO.util.Event.onDOMReady(function() {
         if (typeof ALL_YUI_PROPS != "undefined") {
             YAHOO.yuidoc.initUI();
-        }
+        });
     });
 
 })();
