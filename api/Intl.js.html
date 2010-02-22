@@ -137,14 +137,17 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Gets the module&#39;s localized resources for the given BCP language tag.</span>
-<span class="cm">     *</span>
+<span class="cm">     * Gets the module&#39;s localized resources for the currently active language (as provided by the &lt;a href=&quot;#method_getLang&quot;&gt;getLang&lt;/a&gt; method).</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Optionally, the localized resources for alternate langauges which have been added to Intl (see the &lt;a href=&quot;#method_add&quot;&gt;add&lt;/a&gt; method) can </span>
+<span class="cm">     * be retrieved by providing the BCP language tag as the lang parameter.   </span>
+<span class="cm">     * &lt;/p&gt;</span>
 <span class="cm">     * @method get</span>
 <span class="cm">     *</span>
 <span class="cm">     * @param {String} module The module name.</span>
 <span class="cm">     * @param {String} key Optional. A single resource key. If not provided, returns a copy (shallow clone) of all resources.</span>
-<span class="cm">     * @param {String} lang Optional. The BCP 47 langauge tag.</span>
-<span class="cm">     * @return String | Object A copy of the module&#39;s localized resources, or a single value if key is provided.  </span>
+<span class="cm">     * @param {String} lang Optional. The BCP 47 language tag. If not provided, the module&#39;s currently active language is used.</span>
+<span class="cm">     * @return String | Object A copy of the module&#39;s localized resources, or a single value if key is provided.</span>
 <span class="cm">     */</span>
     <span class="nx">get</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">mod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_mod</span><span class="p">(</span><span class="nx">module</span><span class="p">),</span>
