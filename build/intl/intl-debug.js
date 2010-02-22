@@ -90,14 +90,17 @@ Y.mix(Y.namespace("Intl"), {
     },
 
     /**
-     * Gets the module's localized resources for the given BCP language tag.
-     *
+     * Gets the module's localized resources for the currently active language (as provided by the <a href="#method_getLang">getLang</a> method).
+     * <p>
+     * Optionally, the localized resources for alternate langauges which have been added to Intl (see the <a href="#method_add">add</a> method) can 
+     * be retrieved by providing the BCP language tag as the lang parameter.   
+     * </p>
      * @method get
      *
      * @param {String} module The module name.
      * @param {String} key Optional. A single resource key. If not provided, returns a copy (shallow clone) of all resources.
      * @param {String} lang Optional. The BCP 47 langauge tag.
-     * @return String | Object A copy of the module's localized resources, or a single value if key is provided.  
+     * @return String | Object A copy of the module's localized resources, or a single value if key is provided.
      */
     get : function(module, key, lang) {
         var mod = this._mod(module),
