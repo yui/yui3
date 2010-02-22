@@ -259,8 +259,8 @@ If not supplied, the sorted list of dependencies are applied.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            If configured, YUI JS resources will use the combo
-handler
+                                            If configured, the loader will attempt to use the combo
+service for YUI resources and configured external resources.
                                         </div>
                                     </div>
      
@@ -731,7 +731,7 @@ is called
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Timeout value in milliseconds.  If set, this value will be used by
+                                            Timeout value in milliseconds.  If set, self value will be used by
 the get utility.  the timeout event will fire if
 a timeout occurs.
                                         </div>
@@ -1122,11 +1122,12 @@ method _url
                                         <div class="description" property="yui:description">
                                             Add a new module group
 <dl>
-<dt>name:</dt>       <dd>required, the group name</dd>
-<dt>base:</dt>       <dd>The base dir for this module group</dd>
-<dt>combine:</dt>    <dd>combo handle</dd>
-<dt>comboBase:</dt>  <dd>combo service base path</dd>
-<dt>modules:</dt>    <dd>the group of modules</dd>
+<dt>name:</dt>      <dd>required, the group name</dd>
+<dt>base:</dt>      <dd>The base dir for this module group</dd>
+<dt>root:</dt>      <dd>The root path to add to each combo resource path</dd>
+<dt>combine:</dt>   <dd>combo handle</dd>
+<dt>comboBase:</dt> <dd>combo service base path</dd>
+<dt>modules:</dt>   <dd>the group of modules</dd>
 </dl>
                                         </div>
 

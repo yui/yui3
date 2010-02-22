@@ -69,7 +69,7 @@
 <span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-    <span class="kd">var</span> <span class="nx">numberfy</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">numberify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
             <span class="k">return</span> <span class="nb">parseFloat</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\./g</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="p">(</span><span class="nx">c</span><span class="o">++</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span> <span class="o">:</span> <span class="s1">&#39;.&#39;</span><span class="p">;</span>
@@ -222,7 +222,7 @@
         <span class="c1">// Modern WebKit browsers are at least X-Grade</span>
         <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/AppleWebKit\/([^\s]*)/</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
-            <span class="nx">o</span><span class="p">.</span><span class="nx">webkit</span><span class="o">=</span><span class="nx">numberfy</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+            <span class="nx">o</span><span class="p">.</span><span class="nx">webkit</span><span class="o">=</span><span class="nx">numberify</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
 
             <span class="c1">// Mobile browser check</span>
             <span class="k">if</span> <span class="p">(</span><span class="sr">/ Mobile\//</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">ua</span><span class="p">))</span> <span class="p">{</span>
@@ -236,7 +236,7 @@
 
             <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/Chrome\/([^\s]*)/</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
-                <span class="nx">o</span><span class="p">.</span><span class="nx">chrome</span> <span class="o">=</span> <span class="nx">numberfy</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="c1">// Chrome</span>
+                <span class="nx">o</span><span class="p">.</span><span class="nx">chrome</span> <span class="o">=</span> <span class="nx">numberify</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span> <span class="c1">// Chrome</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/AdobeAIR\/([^\s]*)/</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
@@ -249,7 +249,7 @@
             <span class="c1">// @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)</span>
             <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/Opera[\s\/]([^\s]*)/</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
-                <span class="nx">o</span><span class="p">.</span><span class="nx">opera</span><span class="o">=</span><span class="nx">numberfy</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="nx">o</span><span class="p">.</span><span class="nx">opera</span><span class="o">=</span><span class="nx">numberify</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
                 <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/Opera Mini[^;]*/</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">o</span><span class="p">.</span><span class="nx">mobile</span> <span class="o">=</span> <span class="nx">m</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="c1">// ex: Opera Mini/2.0.4509/1316</span>
@@ -257,14 +257,14 @@
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// not opera or webkit</span>
                 <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/MSIE\s([^;]*)/</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="nx">o</span><span class="p">.</span><span class="nx">ie</span><span class="o">=</span><span class="nx">numberfy</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                    <span class="nx">o</span><span class="p">.</span><span class="nx">ie</span><span class="o">=</span><span class="nx">numberify</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// not opera, webkit, or ie</span>
                     <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/Gecko\/([^\s]*)/</span><span class="p">);</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">o</span><span class="p">.</span><span class="nx">gecko</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// Gecko detected, look for revision</span>
                         <span class="nx">m</span><span class="o">=</span><span class="nx">ua</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/rv:([^\s\)]*)/</span><span class="p">);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="o">&amp;&amp;</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
-                            <span class="nx">o</span><span class="p">.</span><span class="nx">gecko</span><span class="o">=</span><span class="nx">numberfy</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                            <span class="nx">o</span><span class="p">.</span><span class="nx">gecko</span><span class="o">=</span><span class="nx">numberify</span><span class="p">(</span><span class="nx">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>

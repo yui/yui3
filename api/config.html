@@ -129,7 +129,9 @@ metadata to dynamically load additional dependencies.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Use the YUI combo service to reduce the number of http connections 
-required to load your dependencies.
+required to load your dependencies.  Turning this off will
+disable combo handling for YUI and all module groups configured
+with a combo service.
 For dynamic loading.
                                         </div>
                                     </div>
@@ -505,12 +507,13 @@ a supported native console
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            A list of module definitions to add to the list of YUI components.  
+                                            A hash of module definitions to add to the list of YUI components.  
 These components can then be dynamically loaded side by side with
 YUI via the use() method. This is a hash, the key is the module
 name, and the value is an object literal specifying the metdata
 for the module.  * See Loader.addModule for the supported module
-metadata fields.
+metadata fields.  Also @see groups, which provides a way to
+configure the base and combo spec for a 
 <code>
 modules: {
 &nbsp; mymod1: {
@@ -596,7 +599,7 @@ a linked style sheet will also remove the style definitions.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            The root path to prepend to module names for the combo service. Ex: 3.0.0b1/build/
+                                            The root path to prepend to module path for the combo service. Ex: 3.0.0b1/build/
 For dynamic loading.
                                         </div>
                                     </div>

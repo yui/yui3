@@ -55,11 +55,14 @@
 <span class="cm"> */</span>
 <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-<span class="kd">var</span> <span class="nx">INSTANCE</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">,</span>
-    <span class="nx">LOGEVENT</span> <span class="o">=</span> <span class="s1">&#39;yui:log&#39;</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">_published</span><span class="p">,</span>
+    <span class="nx">INSTANCE</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">,</span>
+    <span class="nx">LOGEVENT</span>  <span class="o">=</span> <span class="s1">&#39;yui:log&#39;</span><span class="p">,</span>
     <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span><span class="p">,</span>
-    <span class="nx">LEVELS</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">debug</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">info</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">warn</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">error</span><span class="o">:</span> <span class="mi">1</span> <span class="p">},</span>
-    <span class="nx">_published</span><span class="p">;</span>
+    <span class="nx">LEVELS</span>    <span class="o">=</span> <span class="p">{</span> <span class="nx">debug</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> 
+                  <span class="nx">info</span><span class="o">:</span>  <span class="mi">1</span><span class="p">,</span> 
+                  <span class="nx">warn</span><span class="o">:</span>  <span class="mi">1</span><span class="p">,</span> 
+                  <span class="nx">error</span><span class="o">:</span> <span class="mi">1</span> <span class="p">};</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * If the &#39;debug&#39; config is true, a &#39;yui:log&#39; event will be</span>
@@ -81,7 +84,9 @@
 <span class="cm"> * @return {YUI}      YUI instance</span>
 <span class="cm"> */</span>
 <span class="nx">INSTANCE</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">cat</span><span class="p">,</span> <span class="nx">src</span><span class="p">,</span> <span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="nx">INSTANCE</span><span class="p">,</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> <span class="nx">bail</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">excl</span><span class="p">,</span> <span class="nx">incl</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">f</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">bail</span><span class="p">,</span> <span class="nx">excl</span><span class="p">,</span> <span class="nx">incl</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span>
+        <span class="nx">Y</span> <span class="o">=</span> <span class="nx">INSTANCE</span><span class="p">,</span> 
+        <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">;</span>
     <span class="c1">// suppress log message if the config is off or the event stack</span>
     <span class="c1">// or the event call stack contains a consumer of the yui:log event</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">debug</span><span class="p">)</span> <span class="p">{</span>
@@ -89,16 +94,13 @@
         <span class="k">if</span> <span class="p">(</span><span class="nx">src</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">excl</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">logExclude</span><span class="p">;</span> 
             <span class="nx">incl</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">logInclude</span><span class="p">;</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="nx">incl</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="p">(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">incl</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">bail</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">excl</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">excl</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">bail</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
-
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">bail</span><span class="p">)</span> <span class="p">{</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">useBrowserConsole</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">m</span> <span class="o">=</span> <span class="p">(</span><span class="nx">src</span><span class="p">)</span> <span class="o">?</span> <span class="nx">src</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span> <span class="o">:</span> <span class="nx">msg</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">logFn</span><span class="p">))</span> <span class="p">{</span>
@@ -110,7 +112,6 @@
                     <span class="nx">opera</span><span class="p">.</span><span class="nx">postError</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">fire</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_published</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">LOGEVENT</span><span class="p">,</span> <span class="p">{</span>
