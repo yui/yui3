@@ -115,9 +115,7 @@
     <span class="nx">_delegates</span> <span class="o">=</span> <span class="p">{},</span>
 
     <span class="c1">// Widget nodeguid-to-instance map.</span>
-    <span class="nx">_instances</span> <span class="o">=</span> <span class="p">{},</span>
-
-    <span class="nx">moduleName</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+    <span class="nx">_instances</span> <span class="o">=</span> <span class="p">{};</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * A base class for widgets, providing:</span>
@@ -323,7 +321,7 @@
 <span class="cm"> * @type Object</span>
 <span class="cm"> */</span>
 <span class="nx">ATTRS</span><span class="p">[</span><span class="nx">STRINGS</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">value</span><span class="o">:</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">get</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">moduleName</span><span class="p">)</span> <span class="o">:</span> <span class="p">{},</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="p">{},</span>
     <span class="nx">setter</span><span class="o">:</span> <span class="s2">&quot;_strSetter&quot;</span><span class="p">,</span>
     <span class="nx">getter</span><span class="o">:</span> <span class="s2">&quot;_strGetter&quot;</span>
 <span class="p">};</span>
