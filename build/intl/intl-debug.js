@@ -99,7 +99,7 @@ Y.mix(Y.namespace("Intl"), {
      *
      * @param {String} module The module name.
      * @param {String} key Optional. A single resource key. If not provided, returns a copy (shallow clone) of all resources.
-     * @param {String} lang Optional. The BCP 47 langauge tag.
+     * @param {String} lang Optional. The BCP 47 language tag. If not provided, the module's currently active language is used.
      * @return String | Object A copy of the module's localized resources, or a single value if key is provided.
      */
     get : function(module, key, lang) {
