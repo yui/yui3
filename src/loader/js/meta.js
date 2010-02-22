@@ -323,6 +323,9 @@ META = {
                 ], 
                 "requires": [
                     "yui-base"
+                ], 
+                "supersedes": [
+                    "datatype-date-format"
                 ]
             }, 
             "datatype-number": {
@@ -336,6 +339,9 @@ META = {
                 ]
             }
         }
+    }, 
+    "datatype-date-format": {
+        "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
         "submodules": {

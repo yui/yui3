@@ -30,11 +30,13 @@
             // fetchCSS: 'force'
             // fetchCSS: false,
             // bootstrap: false
-        }).use('*');                                                                                                                                 
+        }).use('*', function(Y) {
+            console.log('callback: ' + A.Widget);                                                                                                                                  
+        });                                                                                                                                 
 
         // }).use('widget', 'queue-promot');                                                                                                                                 
 
-        console.log('asdf: ' + A.Widget);                                                                                                                                  
+        console.log('inline: ' + A.Widget);                                                                                                                                  
 
     </script>     
 <body>
