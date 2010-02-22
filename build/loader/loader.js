@@ -1070,13 +1070,16 @@ Y.Env.meta = META;
 
 Y.Loader = function(o) {
 
+    var defaults = Y.Env.meta.modules, i, onPage = GLOBAL_ENV.mods,
+        self = this;
+
     /**
      * Internal callback to handle multiple internal insert() calls
      * so that css is inserted prior to js
      * @property _internalCallback
      * @private
      */
-    // this._internalCallback = null;
+    // self._internalCallback = null;
 
     /**
      * Callback that will be executed when the loader is finished
@@ -1084,14 +1087,14 @@ Y.Loader = function(o) {
      * @method onSuccess
      * @type function
      */
-    // this.onSuccess = null;
+    // self.onSuccess = null;
 
     /**
      * Callback that will be executed if there is a failure
      * @method onFailure
      * @type function
      */
-    // this.onFailure = null;
+    // self.onFailure = null;
 
     /**
      * Callback for the 'CSSComplete' event.  When loading YUI components with CSS
@@ -1100,41 +1103,41 @@ Y.Loader = function(o) {
      * @method onCSS
      * @type function
      */
-    // this.onCSS = null;
+    // self.onCSS = null;
 
     /**
      * Callback executed each time a script or css file is loaded
      * @method onProgress
      * @type function
      */
-    // this.onProgress = null;
+    // self.onProgress = null;
 
     /**
      * Callback that will be executed if a timeout occurs
      * @method onTimeout
      * @type function
      */
-    // this.onTimeout = null;
+    // self.onTimeout = null;
 
     /**
      * The execution context for all callbacks
      * @property context
      * @default {YUI} the YUI instance
      */
-    this.context = Y;
+    self.context = Y;
 
     /**
      * Data that is passed to all callbacks
      * @property data
      */
-    // this.data = null;
+    // self.data = null;
 
     /**
      * Node reference or id where new nodes should be inserted before
      * @property insertBefore
      * @type string|HTMLElement
      */
-    // this.insertBefore = null;
+    // self.insertBefore = null;
 
     /**
      * The charset attribute for inserted nodes
@@ -1142,21 +1145,21 @@ Y.Loader = function(o) {
      * @type string
      * @deprecated, use cssAttributes or jsAttributes
      */
-    // this.charset = null;
+    // self.charset = null;
 
     /**
      * An object literal containing attributes to add to link nodes
      * @property cssAttributes
      * @type object
      */
-    // this.cssAttributes = null;
+    // self.cssAttributes = null;
 
     /**
      * An object literal containing attributes to add to script nodes
      * @property jsAttributes
      * @type object
      */
-    // this.jsAttributes = null;
+    // self.jsAttributes = null;
 
     /**
      * The base directory.
@@ -1164,7 +1167,7 @@ Y.Loader = function(o) {
      * @type string
      * @default http://yui.yahooapis.com/[YUI VERSION]/build/
      */
-    this.base = Y.Env.meta.base;
+    self.base = Y.Env.meta.base;
 
     /**
      * Base path for the combo service
@@ -1172,21 +1175,21 @@ Y.Loader = function(o) {
      * @type string
      * @default http://yui.yahooapis.com/combo?
      */
-    this.comboBase = Y.Env.meta.comboBase;
+    self.comboBase = Y.Env.meta.comboBase;
 
     /*
      * Base path for language packs.
      */
-    // this.langBase = Y.Env.meta.langBase;
+    // self.langBase = Y.Env.meta.langBase;
 
     /**
-     * If configured, YUI JS resources will use the combo
-     * handler
+     * If configured, the loader will attempt to use the combo
+     * service for YUI resources and configured external resources.
      * @property combine
      * @type boolean
      * @default true if a base dir isn't in the config
      */
-    this.combine = o.base && (o.base.indexOf( this.comboBase.substr(0, 20)) > -1);
+    self.combine = o.base && (o.base.indexOf( self.comboBase.substr(0, 20)) > -1);
 
     /**
      * Max url length for combo urls.  The default is 2048 for
@@ -1208,14 +1211,14 @@ Y.Loader = function(o) {
      * @property maxURLLength
      * @type int
      */
-    this.maxURLLength = MAX_URL_LENGTH;
+    self.maxURLLength = MAX_URL_LENGTH;
 
     /**
      * Ignore modules registered on the YUI global
      * @property ignoreRegistered
      * @default false
      */
-    // this.ignoreRegistered = false;
+    // self.ignoreRegistered = false;
 
     /**
      * Root path to prepend to module path for the combo
@@ -1224,16 +1227,16 @@ Y.Loader = function(o) {
      * @type string
      * @default [YUI VERSION]/build/
      */
-    this.root = Y.Env.meta.root;
+    self.root = Y.Env.meta.root;
 
     /**
-     * Timeout value in milliseconds.  If set, this value will be used by
+     * Timeout value in milliseconds.  If set, self value will be used by
      * the get utility.  the timeout event will fire if
      * a timeout occurs.
      * @property timeout
      * @type int
      */
-    this.timeout = 0;
+    self.timeout = 0;
 
     /**
      * A list of modules that should not be loaded, even if
@@ -1241,7 +1244,7 @@ Y.Loader = function(o) {
      * @property ignore
      * @type string[]
      */
-    // this.ignore = null;
+    // self.ignore = null;
 
     /**
      * A list of modules that should always be loaded, even
@@ -1249,9 +1252,9 @@ Y.Loader = function(o) {
      * @property force
      * @type string[]
      */
-    // this.force = null;
+    // self.force = null;
 
-    this.forceMap = {};
+    self.forceMap = {};
 
     /**
      * Should we allow rollups
@@ -1259,7 +1262,7 @@ Y.Loader = function(o) {
      * @type boolean
      * @default true
      */
-    this.allowRollup = true;
+    self.allowRollup = true;
 
     /**
      * A filter to apply to result urls.  This filter will modify the default
@@ -1285,7 +1288,7 @@ Y.Loader = function(o) {
      * @property filter
      * @type string|{searchExp: string, replaceStr: string}
      */
-    // this.filter = null;
+    // self.filter = null;
 
     /**
      * per-component filter specification.  If specified for a given component, this 
@@ -1293,14 +1296,14 @@ Y.Loader = function(o) {
      * @property filters
      * @type object
      */
-    this.filters = {};
+    self.filters = {};
 
     /**
      * The list of requested modules
      * @property required
      * @type {string: boolean}
      */
-    this.required = {};
+    self.required = {};
 
     /**
      * If a module name is predefined when requested, it is checked againsts
@@ -1312,16 +1315,16 @@ Y.Loader = function(o) {
      * @property patterns
      * @type Object
      */
-    this.patterns = Y.merge(Y.Env.meta.patterns);
+    self.patterns = Y.merge(Y.Env.meta.patterns);
 
     /**
      * The library metadata
      * @property moduleInfo
      */
-    // this.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
-    this.moduleInfo = {};
+    // self.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
+    self.moduleInfo = {};
 
-    this.groups = Y.merge(Y.Env.meta.groups);
+    self.groups = Y.merge(Y.Env.meta.groups);
 
     /**
      * Provides the information used to skin the skinnable components.
@@ -1361,12 +1364,10 @@ Y.Loader = function(o) {
      *   </code>
      *   @property skin
      */
-    this.skin = Y.merge(Y.Env.meta.skin);
+    self.skin = Y.merge(Y.Env.meta.skin);
     
-    var defaults = Y.Env.meta.modules, i, onPage = GLOBAL_ENV.mods,
-        self = this;
 
-    this._internal = true;
+    self._internal = true;
 
     // YObject.each(defaults, function(k, v) {
     //     self.addModule(v, k);
@@ -1374,23 +1375,23 @@ Y.Loader = function(o) {
 
     for (i in defaults) {
         if (defaults.hasOwnProperty(i)) {
-            this.addModule(defaults[i], i);
+            self.addModule(defaults[i], i);
         }
     }
 
     for (i in onPage) {
-        if (!this.moduleInfo[i] && onPage[i].details) {
-            this.addModule(onPage[i].details, i);
+        if (!self.moduleInfo[i] && onPage[i].details) {
+            self.addModule(onPage[i].details, i);
         }
     }
 
-    this._internal = false;
+    self._internal = false;
 
     /**
      * List of rollup files found in the library metadata
      * @property rollups
      */
-    // this.rollups = null;
+    // self.rollups = null;
 
     /**
      * Whether or not to load optional dependencies for 
@@ -1399,7 +1400,7 @@ Y.Loader = function(o) {
      * @type boolean
      * @default false
      */
-    // this.loadOptional = false;
+    // self.loadOptional = false;
 
     /**
      * All of the derived dependencies in sorted order, which
@@ -1408,7 +1409,7 @@ Y.Loader = function(o) {
      * @property sorted
      * @type string[]
      */
-    this.sorted = [];
+    self.sorted = [];
 
     /**
      * Set when beginning to compute the dependency tree. 
@@ -1418,14 +1419,14 @@ Y.Loader = function(o) {
      * @propery loaded
      * @type {string: boolean}
      */
-    this.loaded = GLOBAL_LOADED[VERSION];
+    self.loaded = GLOBAL_LOADED[VERSION];
 
     /**
      * A list of modules to attach to the YUI instance when complete.
      * If not supplied, the sorted list of dependencies are applied.
      * @property attaching
      */
-    // this.attaching = null;
+    // self.attaching = null;
 
     /**
      * Flag to indicate the dependency tree needs to be recomputed
@@ -1434,27 +1435,27 @@ Y.Loader = function(o) {
      * @type boolean
      * @default true
      */
-    this.dirty = true;
+    self.dirty = true;
 
     /**
      * List of modules inserted by the utility
      * @property inserted
      * @type {string: boolean}
      */
-    this.inserted = {};
+    self.inserted = {};
 
     /**
      * List of skipped modules during insert() because the module
      * was not defined
      * @property skipped
      */
-    this.skipped = {};
+    self.skipped = {};
 
-    // Y.on('yui:load', this.loadNext, this);
+    // Y.on('yui:load', self.loadNext, self);
 
-    this.config = o;
+    self.config = o;
 
-    this._config(o);
+    self._config(o);
 
 };
 
@@ -1619,11 +1620,12 @@ Y.Loader.prototype = {
 
     /** Add a new module group
      * <dl>
-     *     <dt>name:</dt>       <dd>required, the group name</dd>
-     *     <dt>base:</dt>       <dd>The base dir for this module group</dd>
-     *     <dt>combine:</dt>    <dd>combo handle</dd>
-     *     <dt>comboBase:</dt>  <dd>combo service base path</dd>
-     *     <dt>modules:</dt>    <dd>the group of modules</dd>
+     *   <dt>name:</dt>      <dd>required, the group name</dd>
+     *   <dt>base:</dt>      <dd>The base dir for this module group</dd>
+     *   <dt>root:</dt>      <dd>The root path to add to each combo resource path</dd>
+     *   <dt>combine:</dt>   <dd>combo handle</dd>
+     *   <dt>comboBase:</dt> <dd>combo service base path</dd>
+     *   <dt>modules:</dt>   <dd>the group of modules</dd>
      * </dl>
      * @method addGroup
      * @param o An object containing the module data
@@ -2457,6 +2459,8 @@ Y.Loader.prototype = {
 
     },
 
+    // Once a loader operation is completely finished, process
+    // any additional queued items.
     _continue: function() {
         if (!(_queue.running) && _queue.size() > 0) {
             _queue.running = true;
@@ -2562,37 +2566,39 @@ Y.Loader.prototype = {
             }
 
             for (j in comboSources) {
-                url = j;
-                mods = comboSources[j];
-                len = mods.length;
+                if (comboSources.hasOwnProperty(j)) {
+                    url = j;
+                    mods = comboSources[j];
+                    len = mods.length;
 
 
-                for (i=0; i<len; i++) {
-                    // m = this.getModule(s[i]);
-                    m = mods[i];
+                    for (i=0; i<len; i++) {
+                        // m = this.getModule(s[i]);
+                        m = mods[i];
 
-                    // Do not try to combine non-yui JS unless combo def is found
-                    if (m && (m.type === type) && (j != comboBase || !m.ext)) {
+                        // Do not try to combine non-yui JS unless combo def is found
+                        if (m && (m.type === type) && (j != comboBase || !m.ext)) {
 
-                        frag = (m.root || this.root) + m.path;
+                            frag = (m.root || this.root) + m.path;
 
-                        if ((url !== j) && (i < (len - 1)) && ((frag.length + url.length) > this.maxURLLength)) {
-                            urls.push(this._filter(url));
-                            url = j;
+                            if ((url !== j) && (i < (len - 1)) && ((frag.length + url.length) > this.maxURLLength)) {
+                                urls.push(this._filter(url));
+                                url = j;
+                            }
+
+                            url += frag;
+                            if (i < (len - 1)) {
+                                url += '&';
+                            }
+
+                            combining.push(s[i]);
                         }
 
-                        url += frag;
-                        if (i < (len - 1)) {
-                            url += '&';
-                        }
-
-                        combining.push(s[i]);
                     }
 
-                }
-
-                if (combining.length && (url != j)) {
-                    urls.push(this._filter(url));
+                    if (combining.length && (url != j)) {
+                        urls.push(this._filter(url));
+                    }
                 }
             }
 

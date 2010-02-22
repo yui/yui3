@@ -9,6 +9,7 @@ The YUI Global
         yui-log (out of the box console log support)
         yui-later (timer abstraction)
         throttle (performance utilitity)
+        intl-base (for dynamically loading language packs)
 
     yui-base contains
         Module registration system

@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Intl Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+    <script src="../../build/yui/yui-debug.js"></script>
+
+    <script>
+        // YUI({filter:"raw", lang:"en-US"}).use("lang/datatype-date_en-US", "datatype-date", function(Y) {
+        YUI({
+            filter:"raw", lang:"en-US"
+        }).use("blah", "lang/datatype-date_en-US", function(Y) {
+            console.log(Y.Intl.get("datatype-date-format"));
+        });
+    </script>
+</body>
+</html>
