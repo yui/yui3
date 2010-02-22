@@ -233,7 +233,7 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_finish</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Finishing transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+        <span class="c1">// Y.log(&quot;Finishing transaction &quot; + id, &quot;info&quot;, &quot;get&quot;);</span>
         <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">sc</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// q.timer.cancel();</span>
@@ -283,7 +283,7 @@
 <span class="cm">     */</span>
     <span class="nx">_next</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">loaded</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;_next: &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;, loaded: &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">loaded</span> <span class="o">||</span> <span class="s2">&quot;nothing&quot;</span><span class="p">),</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+        <span class="c1">// Y.log(&quot;_next: &quot; + id + &quot;, loaded: &quot; + (loaded || &quot;nothing&quot;), &quot;info&quot;, &quot;get&quot;);</span>
 
         <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
 
@@ -362,7 +362,7 @@
             <span class="nx">h</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
         <span class="p">}</span>
         
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Appending node: &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+        <span class="c1">// Y.log(&quot;Appending node: &quot; + url, &quot;info&quot;, &quot;get&quot;);</span>
 
         <span class="c1">// FireFox does not support the onload event for link nodes, so there is</span>
         <span class="c1">// no way to make the css requests synchronous. This means that the css </span>
@@ -477,7 +477,7 @@
             <span class="nx">n</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">rs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">readyState</span><span class="p">;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;loaded&quot;</span> <span class="o">===</span> <span class="nx">rs</span> <span class="o">||</span> <span class="s2">&quot;complete&quot;</span> <span class="o">===</span> <span class="nx">rs</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; onreadstatechange &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+                    <span class="c1">// Y.log(id + &quot; onreadstatechange &quot; + url, &quot;info&quot;, &quot;get&quot;);</span>
                     <span class="nx">n</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
                     <span class="nx">f</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -489,7 +489,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="c1">// Safari 3.x supports the load event for script nodes (DOM2)</span>
                 <span class="nx">n</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; DOM2 onload &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+                    <span class="c1">// Y.log(id + &quot; DOM2 onload &quot; + url, &quot;info&quot;, &quot;get&quot;);</span>
                     <span class="nx">f</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
                 <span class="p">});</span>
             <span class="p">}</span> 
@@ -500,7 +500,7 @@
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> 
 
             <span class="nx">n</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; onload &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
+                <span class="c1">// Y.log(id + &quot; onload &quot; + url, &quot;info&quot;, &quot;get&quot;);</span>
                 <span class="nx">f</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
             <span class="p">};</span>
 
