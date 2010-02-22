@@ -17,7 +17,6 @@
 (function() {
 
     YUI({
-        base: "../../../build/",
         logExclude: {
             attribute: true, 
             dom: true, 
@@ -30,7 +29,7 @@
         useConsole: true
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
-        var button = Y.get('#btnRun');
+        var button = Y.one('#btnRun');
 
         // Set up the page
         button.set("disabled", false);
