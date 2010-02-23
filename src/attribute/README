@@ -6,6 +6,13 @@ for changes in attribute values.
 
 3.1.0
 
+* writeOnce can be set to "initOnly", which can be used 
+  to prevent the user from setting the value outside of the initial
+  configuration when using the addAttrs. 
+
+  When used with Base, this means that the user can only define a 
+  value for the Attribute during construction.
+
 * Attribute change events are now publish with the defaultTargetOnly property set to true.
 
 * newVal property of event object passed to change event listeners will now be the value returned from the Attribute's getter (if defined)
