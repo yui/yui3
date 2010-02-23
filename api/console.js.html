@@ -438,7 +438,7 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;button.&#39;</span><span class="o">+</span><span class="nx">C_CLEAR</span><span class="p">).</span>
             <span class="nx">on</span><span class="p">(</span><span class="nx">CLICK</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">_onClearClick</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
-        
+
         <span class="c1">// Attribute changes</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;stringsChange&#39;</span><span class="p">,</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_afterStringsChange</span><span class="p">);</span>
@@ -1305,13 +1305,7 @@
 <span class="cm">         * @type Object</span>
 <span class="cm">         */</span>
         <span class="nx">strings</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="p">{</span>
-                <span class="nx">title</span> <span class="o">:</span> <span class="s2">&quot;Log Console&quot;</span><span class="p">,</span>
-                <span class="nx">pause</span> <span class="o">:</span> <span class="s2">&quot;Pause&quot;</span><span class="p">,</span>
-                <span class="nx">clear</span> <span class="o">:</span> <span class="s2">&quot;Clear&quot;</span><span class="p">,</span>
-                <span class="nx">collapse</span> <span class="o">:</span> <span class="s2">&quot;Collapse&quot;</span><span class="p">,</span>
-                <span class="nx">expand</span>   <span class="o">:</span> <span class="s2">&quot;Expand&quot;</span>
-            <span class="p">}</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;console&quot;</span><span class="p">)</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
