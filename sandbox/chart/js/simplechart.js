@@ -66,7 +66,7 @@
 		{
 			this.data = data;
 			
-			this.chart.setDataProvider(this.data);
+			this.chart.set("dataProvider", this.data);
 			this.xaxis.addKey(this._xAxisProps.key);
 			this.yaxis.addKey(this._yAxisProps.key);
 			
@@ -116,14 +116,6 @@
 			color:0x000000,
 			alpha:1,
 			weight:"2"
-		},
-
-		_complexStyleKeys:{
-			label:"label",
-			line:"line",
-			margin:"margin",
-			padding:"padding",
-			majorTicks:"majorTicks"
 		},
 
 		_parseConfig: function(config)
@@ -236,7 +228,7 @@
 			{
 				if(configStyles.hasOwnProperty(i))
 				{
-					if(this._complexStyleKeys.hasOwnProperty(i))
+					if(defaultStyles.hasOwnProperty(i) && Y.Lang.isObject(defaultStyles[i]))
 					{
 						defaultStyles[i] = this._parseStyles(defaultStyles[i], configStyles[i]);
 					}

@@ -46,17 +46,6 @@
 		itemsQueue: {},
 		
 		/**
-		 * @private (override)
-		 */
-		_parseConfigs: function(config)
-		{
-			if(config && config.props)
-			{
-				this.props.push(config.props);
-			}
-		},
-
-		/**
 		 * Reference to corresponding Actionscript class.
 		 */
 		className:  "BorderContainer",
@@ -79,7 +68,7 @@
 			this.swfowner = swfowner;
 			this.appswf = this.swfowner.appswf;
 			this.swfReadyFlag = true;
-			this._setStyles();
+			this._updateStyles();
 			for(i in this.itemsQueue)
 			{
 				if(this.itemsQueue.hasOwnProperty(i))

@@ -43,7 +43,13 @@
 	 */
 	function Chart (p_oElement /*:String*/, config /*:Object*/ ) 
 	{
+		this._attributeConfig = Y.merge(this._attributeConfig, Chart.superclass._attributeConfig);
 		Chart.superclass.constructor.apply(this, arguments);
+		this._dataId = this._id + "data";
+		if(this.get("autoLoad"))
+		{
+			this.loadswf();
+		}
 	}
 
 	/**
@@ -52,24 +58,151 @@
 	Y.extend(Chart, Y.Container, 
 	{
 		/**
-		 * URL used for swf
-		 */
-		swfurl:Y.config.base + "chart/assets/cartesiancanvas.swf",
-
-		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		className: "CartesianCanvas",
+		CLASSNAME: "CartesianCanvas",
 
 		/**
 		 * Constant used to generate unique id.
 		 */
 		GUID: "yuichart",
 	
-		/**
-		 * Reference to the BorderContainer instance that contains graphs and axes of a cartesian chart.
-		 */
-		chartContainer: null,
+		_attributeConfig:
+		{
+			/**
+			 * URL used for swf
+			 */
+			swfurl:
+			{
+				value: Y.config.base + "chart/assets/cartesiancanvas.swf"
+			},
+
+			/**
+			 * Reference to the BorderContainer instance that contains graphs and axes of a cartesian chart.
+			 */
+			chartContainer: 
+			{
+				value: null,
+
+				setter: function(val)
+				{
+					return this.setChartContainer(val);
+				},
+
+				validator: function(val)
+				{	
+					return Y.Lang.isObject(val);
+				}
+			},
+			/**
+			 * Collection of attributes to be used for the swf embed.
+			 */
+			params: 
+			{
+				value:
+				{
+					version: "10.0.0",
+					useExpressInstall: true,
+					fixedAttributes: {allowScriptAccess:"always", allowNetworking:"all", bgcolor:"#ffffff"}
+				},
+
+				setOnce: true,
+
+				setter: function(val)
+				{
+					return this._mergeStyles(val,{version: "10.0.0",
+					useExpressInstall: true,
+					fixedAttributes: {allowScriptAccess:"always", allowNetworking:"all", bgcolor:"#ffffff"}});
+				},
+
+				validator: function(val)
+				{
+					return Y.Lang.isObject(val);
+				}
+			},
+
+			/**
+			 * Key value pairs passed to application swf at load time.
+			 */
+			flashvars:
+			{
+				value: {appname:this._id},
+
+				setOnce: true,
+
+				setter: function(val)
+				{
+					if(!val)
+					{
+						return;
+					}
+					
+					if(!val.hasOwnProperty("appname") || !val.appname)
+					{
+						val.appname = this._id;
+					}
+
+					if(this.get("params").flashVars && Y.Lang.isObject(this.get("params").flashVars))
+					{
+						this.get("params").flashVars = this._mergeStyles(val, this.get("params").flashVars);
+					}
+					else
+					{
+						this.get("params").flashVars  = val;
+					}
+				},
+				
+				validator: function(val)
+				{
+					return Y.Lang.isObject(val);
+				}
+			},
+			/**
+			 * Indicates whether or not to call the loadswf method upon instantiation.
+			 */
+			autoLoad: 
+			{
+				value: true
+			},
+			/**
+			 * Indicates whether the swf draws automatically.
+			 *
+			 * @private
+			 */
+			_autoRender: 
+			{
+				value: true,
+
+				setter: function(val)
+				{
+					return this.setAutoRender(val);
+				}
+			},
+			/**
+			 * Id used to insantiate a ChartDataProvider in the flash application.
+			 *
+			 * @private
+			 */
+			_dataId: 
+			{
+				value: null
+
+			},
+			/**
+			 * Reference to the dataProvider for the chart.
+			 * @private
+			 */
+			dataProvider: 
+			{
+				value: null,
+
+				setter: function(val)
+				{
+					this._dataProvider = val;
+					this._initDataProvider();
+				}
+			}
+		},
 
 		/**
 		 * Specifies different properties of the chartContainer
@@ -89,6 +222,7 @@
 				this.chartContainer = containerHash.classInstance;
 				if(containerHash.hasOwnProperty("added") && !containerHash.added)
 				{
+					this._styleObjHash.chart = this.chartContainer._id;
 					return;
 				}
 			}
@@ -96,6 +230,7 @@
 			{
 				this.chartContainer = new BorderContainer(this);
 			}
+			this._styleObjHash.chart = this.chartContainer._id;
 			this.chartContainer.oElement.addItem(this.chartContainer);
 		},
 
@@ -127,87 +262,16 @@
 			}
 		},
 
-		/**
-		 * Id used to insantiate a ChartDataProvider in the flash application.
-		 *
-		 * @private
-		 */
-		_dataId: null,
-
-		/**
-		 * Sets properties based on a configuration hash.
-		 * @private
-		 */
-		_parseConfigs: function(config)
-		{
-			var containerHash, i, styles, flashvars = {appname:this._id};
-			if(config)
-			{
-				if(config.hasOwnProperty("swfurl"))
-				{
-					this.swfurl = config.swfurl;
-				}
-				if(config.hasOwnProperty("flashvars"))
-				{
-					for(i in config.flashvars) 
-					{
-						if(config.flashvars.hasOwnProperty(i))
-						{
-							flashvars[i] = config.flashvars[i];
-						}
-					}
-				}
-				if(config.hasOwnProperty("autoLoad"))
-				{
-					this.autoLoad = config.autoLoad;
-				}
-				if(config.hasOwnProperty("chartContainer"))
-				{
-					containerHash = config.chartContainer;
-				}
-				if(config.hasOwnProperty("childContainers") && typeof config.childContainers == "array")
-				{
-					this.addChildContainers(config.childContainers);
-				}
-				if(config.hasOwnProperty("styles"))
-				{
-					styles = config.styles;
-				}
-			}
-			this.params.flashVars = flashvars;
-			this.setChartContainer(containerHash);
-			this._styleObjHash.chart = this.chartContainer._id;
-			this.setStyles(styles);
-			this._dataId = this._id + "data";
-			if(this.autoLoad)
-			{
-				this.loadswf();
-			}
-		},
-
-		/**
-		 * Indicates whether or not to call the loadswf method upon instantiation.
-		 */
-		autoLoad: true,
 
 		/**
 		 * Creates swf instance and event listeners for the chart application.
 		 */
 		loadswf: function()
 		{
-			this.appswf = new Y.SWF(this.oElement, this.swfurl, this.params);
+			this.appswf = new Y.SWF(this.oElement, this.get("swfurl"), this.get("params"));
 			this.appswf.on ("swfReady", this._init, this);
 		},
 
-		/**
-		 * Collection of attributes to be used for the swf embed.
-		 */
-		params: 
-		{
-			version: "10.0.0",
-			useExpressInstall: true,
-			fixedAttributes: {allowScriptAccess:"always", allowNetworking:"all", bgcolor:"#ffffff"}
-		},
 
 		/**
 		 * Event handler for the swfReady event.
@@ -232,26 +296,9 @@
 				item = this._items[i];
 				this.addItem(item.item, item.props);
 			}
-			this._setStyles();
+			this._updateStyles();
 		},
 		
-		/**
-		 * Reference to the dataProvider for the chart.
-		 * @private
-		 */
-		_dataProvider: null,
-
-		/**
-		 * Sets the dataprovider for the chart application.
-		 *
-		 * @method setDataProvider
-		 * @param {Object} data to be used by the chart application.
-		 */
-		setDataProvider: function(data)
-		{
-			this._dataProvider = data;
-	 		this._initDataProvider();
-		},
 		
 		/**
 		 * Instantiates a DataProvider in the flash application.
@@ -330,13 +377,6 @@
 				item._init(this);
 			}
 		},
-
-		/**
-		 * Indicates whether the swf draws automatically.
-		 *
-		 * @private
-		 */
-		_autoRender: true,
 
 		/**
 		 * Sets the autoRender property for the swf.

@@ -20,14 +20,26 @@
 	{
 		this._id = Y.guid(this.GUID);
 		this._setParent(p_oElement);
-		this._parseConfigs(config);
+		this.addAttrs(this._attributeConfig, config);
 	}
 
-	/**
-	 * Need to refactor to augment or extend Attribute
-	 */
-	Container.prototype =
+	Container.prototype = 
 	{
+		_items:[],
+		/**
+		 * Sets the parent.
+		 * @private
+		 */
+		_setParent: function(p_oElement)
+		{
+			this.oElement = p_oElement;
+		},
+
+		/**
+		 * Reference to corresponding Actionscript class.
+		 */
+		CLASSNAME: "Container",
+		
 		/**
 		 * Indicates whether or not the swf has initialized.
 		 * @type Boolean
@@ -43,68 +55,15 @@
 		_backgroundId:"background",
 			  
 		/**
-		 * Hash of optional layout parameters to be used by a parent container.
-		 * @type Object
-		 */
-		props: null,
-		
-		/**
-		 * Sets the parent.
-		 * @private
-		 */
-		_setParent: function(p_oElement)
-		{
-			this.oElement = p_oElement;
-		},
-
-		/**
-		 * Sets properties based on a configuration hash.
-		 * @private
-		 */
-		_parseConfigs: function(config)
-		{
-			if(config && config.hasOwnProperty("layout")) 
-			{
-				this.layout = config.layout;
-			}
-			this.swfargs.push(this.layout);
-			if(config && config.hasOwnProperty("props"))
-			{
-				this.props = this.config.props;
-			}
-			if(config && config.hasOWnProperty("styles"))
-			{
-				this.setStyles(config.styles);
-			}
-		},
-		
-		/**
-		 * An array of constructor arguments used when creating an actionscript instance
-		 * of the Container.
-		 */
-		swfargs: [],
-
-		/**
-		 * Reference to corresponding Actionscript class.
-		 */
-		className:  "Container",
-		
-		/**
 		 * Constant used to generate unique id.
 		 */
 		GUID: "yuicontainer",
 
 		/**
-		 * Reference to the layout strategy used for displaying child items.
-		 */
-		layout:  "LayoutStrategy",
-
-		/**
-		 * Array of layoutChildren added to the Container instance.
-		 *
 		 * @private
+		 * Available layout strategies
 		 */
-		_items: [],
+		LAYOUTS: ["LayoutStrategy", "HLayout", "VLayout", "HFlowLayout", "VFlowLayout", "LayerStack", "BorderContainer"],
 
 		/**
 		 * @private
@@ -127,7 +86,7 @@
 				item = this._items[i];
 				this.addItem(item.item, item.props);
 			}
-			this._setStyles();
+			this._updateStyles();
 		},
 
 		/**
@@ -220,48 +179,96 @@
 			}
 			if(this.swfReadyFlag)
 			{
-				this._setStyles();
+				this._updateStyles();
 			}
 		},
 
 		/**
 		 * Sets multiple style properties on the instance.
 		 *
-		 * @method setStyles
+		 * @method _setStyles
 		 * @param {Object} styles Hash of styles to be applied.
 		 */
-		setStyles: function(styles)
+		_setStyles: function(styles)
 		{
-			var i;
+			var i, j, defaults = this._defaultStyles;
+			if(!defaults.hasOwnProperty(this._id))
+			{
+				defaults[this._id] = {};
+			}
 			for(i in styles)
 			{
 				if(styles.hasOwnProperty(i))
 				{
 					if(this._styleObjHash.hasOwnProperty(i))
 					{
-						this._defaultStyles[this._styleObjHash[i]] = styles[i];
-						continue;
+						j = this._styleObjHash[i];
+						if(defaults && defaults.hasOwnProperty(j) && Y.Lang.isObject(defaults[j])) 
+						{
+							defaults[j] = this._mergeStyles(styles[i], defaults[j]);
+						}
+						else
+						{
+							defaults[j] = styles[i];
+						}
 					}
-					if(!this._defaultStyles.hasOwnProperty(this._id))
+					else
 					{
-						this._defaultStyles[this._id] = {};
+						j = this._id;
+						if(defaults && defaults.hasOwnProperty(j) && defaults[j].hasOwnProperty(i) && Y.Lang.isObject(defaults[j][i]))
+						{
+							defaults[j][i] = this._mergeStyles(styles[i], defaults[j][i]);
+						}
+						else
+						{
+							defaults[j][i] = styles[i];
+						}
 					}
-					this._defaultStyles[this._id][i] = styles[i];
 				}
 			}
+			this._defaultStyles = defaults;
 			if(this.swfReadyFlag)
 			{
-				this._setStyles();
+				this._updateStyles();
 			}
+		},
+
+		/**
+		 * Merges to object literals only overriding properties explicitly.
+		 * 
+		 * @private
+		 * @param {Object} newHash hash of properties to set
+		 * @param {Object} default hash of properties to be overwritten
+		 * @return {Object}
+		 */
+		_mergeStyles: function(a, b)
+		{
+			var i;
+			for(i in a)
+			{
+				if(a.hasOwnProperty(i))
+				{
+					if(b.hasOwnProperty(i) && Y.Lang.isObject(a[i]))
+					{
+						b[i] = this._mergeStyles(a[i], b[i]);
+					}
+					else
+					{
+						b[i] = a[i];
+					}
+
+				}
+			}
+			return b;
 		},
 		
 		/**
 		 * Updates and applies styles to the appropriate object in the flash application.
 		 *
-		 * @method _setStyles
+		 * @method _updateStyles
 		 * @private
 		 */
-		_setStyles: function()
+		_updateStyles: function()
 		{
 			for(var id in this._defaultStyles)
 			{
@@ -275,6 +282,112 @@
 		},
 
 		/**
+		 * Attribute config
+		 * @private
+		 */
+		_attributeConfig:
+		{
+			/**
+			 * Hash of optional layout parameters to be used by a parent container.
+			 * @type Object
+			 */
+			props:{
+				value: null,
+				
+				setter: function(val)
+				{
+					return val;
+				},
+
+				validator: function(val)
+				{
+					return Y.Lang.isObject(val);
+				}
+			},
+			/**
+			 * An array of constructor arguments used when creating an actionscript instance
+			 * of the Container.
+			 */
+			swfargs: 
+			{
+				value: [],
+
+				validator: function(val)
+				{
+					return Y.Lang.isArray(val);
+				}
+			},
+			/**
+			 * Reference to corresponding Actionscript class.
+			 */
+			className:  
+			{
+				value:this.CLASSNAME,
+
+				readOnly:true
+			},
+			/**
+			 * Reference to the layout strategy used for displaying child items.
+			 */
+			layout:  
+			{
+				value:"LayoutStrategy",
+
+				//needs a setter
+
+				validator: function(val)
+				{
+					return this.LAYOUTS.hasOwnProperty(val);
+				}
+			},
+			
+			/**
+			 * Array of layoutChildren added to the Container instance.
+			 *
+			 * @private
+			 */
+			items:
+			{
+				value:[],
+
+				setter: function(val)
+				{
+					this._items = val;
+				},
+
+				getter: function()
+				{
+					return this._items;
+				},
+
+				validator: function(val)
+				{
+					return Y.Lang.isArray(val);
+				}
+			},
+
+			/**
+			 * Hash of style properties for container
+			 */
+
+			styles:
+			{
+				value: null,
+
+				setter: function(val)
+				{
+					this._setStyles(val);
+				},
+
+				validator: function(val)
+				{
+					return Y.Lang.isObject(val);
+				}
+
+			}
+
+		},	
+		/**
 		 * Public accessor to the unique name of the Container instance.
 		 *
 		 * @method toString
@@ -286,4 +399,5 @@
 		}
 	};
 
+	Y.augment(Container, Y.Attribute);
 	Y.Container = Container;

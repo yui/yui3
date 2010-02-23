@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<head>
 <style>
 /*Supplemental CSS for the YUI distribution*/
 #custom-doc { width: 95%; min-width: 950px; }
@@ -179,7 +178,7 @@
 					
 					// Create chart and set dataProvider
 					var mychart = new Y.Chart("#testdiv", {swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
-					mychart.setDataProvider(mydata);
+					mychart.set("dataProvider", mydata);
 					
 					// Create axes
 					var mybottomaxis = new Y.Axis("Time", {styles:bottomaxisstyles});
@@ -210,13 +209,12 @@
 <p>In the previous examples, we have created chart applications using the SimpleChart class. The advantage to using such a class is that it makes it easy to instantiate a chart with very little code. SimpleChart uses composition to build a chart with several different classes. If you want or need more control and flexibility in creating a chart application, you can use these individual classes to create your own custom chart. In the following example, we are going to create a chart with two vertical axes and two line graphs.</p>
 
 <h3>The Building Blocks</h3>
-<p>A Cartesian chart, in its purest form, consists of a graph and two axes. To build our application, we'll use the following classes:
+<p>A Cartesian chart, in its purest form, consists of a graph and two axes. To build our application, we'll use the following classes:</p>
 <ul>
 	<li>Chart: Aggregates and manages layout for the different pieces of a Cartesian chart.</li>
 	<li>Axis: Creates a horizontal or vertical axis to use in a Cartesian chart.</li>
 	<li>LineGraph: Create a line graph for a Cartesian chart.</li>
 </ul>
-</p>
 
 <h3>Styles</h3>
 <p>As with the previous examples, we'll start by defining the styles for our chart. Since we are using the individual classes, we'll create a style hash for each object.</p> 
