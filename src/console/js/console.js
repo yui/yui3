@@ -1256,7 +1256,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * @type Object
          */
         strings : {
-            value: Y.Intl.get("console")
+            valueFn: function() { return Y.Intl.get("console"); }
         },
 
         /**
