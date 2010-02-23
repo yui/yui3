@@ -194,7 +194,6 @@ YUI.prototype = {
                         //src = "http://yui.yahooapis.com/combo?2.8.0r4/b
                         //uild/yuiloader-dom-event/yuiloader-dom-event.js
                         //&3.0.0/build/yui/yui-min.js"; // debug url
-                        //console.log('src) ' + src);
                         match = src.match(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/);
                         b = match && match[1];
                         if (b) {
@@ -433,12 +432,11 @@ YUI.prototype = {
                         success: true,
                         msg: 'not dynamic'
                     }, 
-                    newData, redo, missingFlat, origMissing,
+                    newData, redo, origMissing,
                     data = response.data;
 
                 Y._loading = false;
 
-                // console.log('Use complete: ' + data);
 
                 if (callback) {
                     if (data) {
@@ -447,16 +445,13 @@ YUI.prototype = {
                         Y.Array.each(data, process);
                         redo = missing.length;
                         if (redo) {
-                            missingFlat = missing.sort().join();
-                            if (missingFlat == origMissing.sort().join()) {
+                            if (missing.sort().join() == origMissing.sort().join()) {
                                 redo = false;
                             }
                         }
                     }
 
-                    // if (redo && data && !Env._retry) {
                     if (redo && data) {
-                        // Env._retry = true;
                         newData = data.concat();
                         newData.push(function() {
                             Y._attach(data);
@@ -464,7 +459,6 @@ YUI.prototype = {
                         });
                         Y._loading  = false;
                         Y.use.apply(Y, newData);
-                        // Env._retry = false;
                     } else {
                         if (data) {
                             Y._attach(data);

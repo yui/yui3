@@ -2274,6 +2274,9 @@ Y.Loader.prototype = {
             delete this.inserted[k];
         }, this);
         this.skipped = {};
+
+        Y.mix(this.loaded, this.inserted);
+
         fn = this.onSuccess;
         if (fn) {
             fn.call(this.context, {
@@ -2559,8 +2562,10 @@ Y.Loader.prototype = {
                     group = this.groups[groupName];
 
                     if (!group.combine) {
+                        m.combine = false;
                         continue;
                     }
+                    m.combine = true;
                     if (group.comboBase) {
                         comboSource = group.comboBase;
                     }
@@ -2581,13 +2586,12 @@ Y.Loader.prototype = {
                     mods = comboSources[j];
                     len = mods.length;
 
-
                     for (i=0; i<len; i++) {
                         // m = this.getModule(s[i]);
                         m = mods[i];
 
                         // Do not try to combine non-yui JS unless combo def is found
-                        if (m && (m.type === type) && (j != comboBase || !m.ext)) {
+                        if (m && (m.type === type) && (m.combine || !m.ext)) {
 
                             frag = (m.root || this.root) + m.path;
 
@@ -2601,7 +2605,7 @@ Y.Loader.prototype = {
                                 url += '&';
                             }
 
-                            combining.push(s[i]);
+                            combining.push(m.name);
                         }
 
                     }
@@ -2613,8 +2617,6 @@ Y.Loader.prototype = {
             }
 
             if (combining.length) {
-
-                // urls.push(this._filter(url));
 
 
                 // if (m.type === CSS) {

@@ -243,7 +243,7 @@
                         <span class="c1">//src = &quot;http://yui.yahooapis.com/combo?2.8.0r4/b</span>
                         <span class="c1">//uild/yuiloader-dom-event/yuiloader-dom-event.js</span>
                         <span class="c1">//&amp;3.0.0/build/yui/yui-min.js&quot;; // debug url</span>
-                        <span class="c1">//console.log(&#39;src) &#39; + src);</span>
+                        <span class="c1">//Y.log(&#39;src) &#39; + src);</span>
                         <span class="nx">match</span> <span class="o">=</span> <span class="nx">src</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/</span><span class="p">);</span>
                         <span class="nx">b</span> <span class="o">=</span> <span class="nx">match</span> <span class="o">&amp;&amp;</span> <span class="nx">match</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
@@ -483,12 +483,12 @@
                         <span class="nx">success</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
                         <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;not dynamic&#39;</span>
                     <span class="p">},</span> 
-                    <span class="nx">newData</span><span class="p">,</span> <span class="nx">redo</span><span class="p">,</span> <span class="nx">missingFlat</span><span class="p">,</span> <span class="nx">origMissing</span><span class="p">,</span>
+                    <span class="nx">newData</span><span class="p">,</span> <span class="nx">redo</span><span class="p">,</span> <span class="nx">origMissing</span><span class="p">,</span>
                     <span class="nx">data</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
 
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-                <span class="c1">// console.log(&#39;Use complete: &#39; + data);</span>
+                <span class="c1">// Y.log(&#39;Use complete: &#39; + data);</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
@@ -497,19 +497,16 @@
                         <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">process</span><span class="p">);</span>
                         <span class="nx">redo</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">missingFlat</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">();</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">missingFlat</span> <span class="o">==</span> <span class="nx">origMissing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">())</span> <span class="p">{</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">missing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">()</span> <span class="o">==</span> <span class="nx">origMissing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">())</span> <span class="p">{</span>
                                 <span class="nx">redo</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
 
-                    <span class="c1">// if (redo &amp;&amp; data &amp;&amp; !Env._retry) {</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
                         <span class="c1">// Y.log(&#39;redo: &#39; + r);</span>
                         <span class="c1">// Y.log(&#39;redo: &#39; + missing);</span>
                         <span class="c1">// Y.log(&#39;redo: &#39; + args);</span>
-                        <span class="c1">// Env._retry = true;</span>
                         <span class="nx">newData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
                         <span class="nx">newData</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Nested USE callback: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
@@ -518,9 +515,7 @@
                         <span class="p">});</span>
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span>  <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">newData</span><span class="p">);</span>
-                        <span class="c1">// Env._retry = false;</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                        <span class="c1">//Y.log(&#39;No data handleLoader: &#39;);</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
                         <span class="p">}</span>
