@@ -348,6 +348,9 @@ YUI.add('frame', function(Y) {
                 inst.one('body').set('innerHTML', html);
             }
             return html;
+        },
+        focus: function() {
+            this._iframe.focus();
         }
     }, {
         /**
