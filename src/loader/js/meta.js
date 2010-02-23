@@ -138,6 +138,10 @@ META = {
         ]
     }, 
     "console": {
+        "lang": [
+            "en", 
+            "es"
+        ], 
         "plugins": {
             "console-filters": {
                 "requires": [

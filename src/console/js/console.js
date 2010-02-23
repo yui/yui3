@@ -389,7 +389,7 @@ Y.Console = Y.extend(Console, Y.Widget,
 
         this.get(CONTENT_BOX).one('button.'+C_CLEAR).
             on(CLICK,this._onClearClick,this);
-        
+
         // Attribute changes
         this.after(this._evtCat + 'stringsChange',
             this._afterStringsChange);
@@ -1256,13 +1256,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * @type Object
          */
         strings : {
-            value : {
-                title : "Log Console",
-                pause : "Pause",
-                clear : "Clear",
-                collapse : "Collapse",
-                expand   : "Expand"
-            }
+            value: Y.Intl.get("console")
         },
 
         /**
