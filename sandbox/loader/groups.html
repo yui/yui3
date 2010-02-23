@@ -9,17 +9,18 @@
         -->
 
         <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
-        <script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
+        <script type="text/javascript" src="../../build/dump/dump-debug.js"></script>
 
     </head>
     <body>
 
         <script>
         YUI({
-            comboBase: 'http://l.yimg.com/a/lib/yui/combo?',
+            // comboBase: 'http://l.yimg.com/a/lib/yui/combo?',
             combine: true,
             filter:"raw",
-            maxURLLength: 300,
+            core: ['get', 'dump', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'],
+            // maxURLLength: 300,
             attributes: {
                 language: 'javascript1.2'
             },
@@ -57,7 +58,7 @@
         // }).use('yui2_anim', 'json2_org', 'json_org', function(Y) {
         }).use('yui2_anim', 'node', function(Y) {
 
-            console.log('done');
+            Y.log(YAHOO.util.Anim);
 
 
         });

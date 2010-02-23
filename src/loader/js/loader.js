@@ -1191,7 +1191,7 @@ Y.Loader.prototype = {
                     // Y.log('executing pattern action: ' + i);
                     // p.action.call(this, name, i);
                 } else {
-                    Y.log('Module does not exist: ' + name + ', but matched a pattern so creating with defaults');
+Y.log('Undefined module: ' + name + ', matched a pattern: ' + i, 'info', 'loader');
                     // ext true or false?
                     m = this.addModule(Y.merge(found), name);
                 }
@@ -1329,7 +1329,7 @@ Y.Loader.prototype = {
     // },
 
     _finish: function(msg, success) {
-        // Y.log('loader finishing: ' + msg, "info", "loader");
+        Y.log('loader finishing: ' + msg + ', ' + this.data, "info", "loader");
         _queue.running = false;
         var onEnd = this.onEnd;
         if (onEnd) {
@@ -1343,13 +1343,16 @@ Y.Loader.prototype = {
     },
 
     _onSuccess: function() {
-        // Y.log('loader _onSuccess: ' + Y.id, "info", "loader");
+        // Y.log('loader _onSuccess, skipping: ' + Y.Object.keys(this.skipped), "info", "loader");
         var skipped = Y.merge(this.skipped), fn;
         // this._attach();
         YObject.each(skipped, function(k) {
             delete this.inserted[k];
         }, this);
         this.skipped = {};
+
+        Y.mix(this.loaded, this.inserted);
+
         fn = this.onSuccess;
         if (fn) {
             fn.call(this.context, {
@@ -1567,7 +1570,7 @@ Y.Loader.prototype = {
      * @param type {string} the type of dependency to insert
      */
     insert: function(o, type) {
-        Y.log('public insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
+        Y.log('public insert() ' + (type || '') + ', ' + Y.Object.keys(this.required), "info", "loader");
         var self = this, copy = Y.merge(this, true);
         delete copy.require;
         delete copy.dirty;
@@ -1641,11 +1644,11 @@ Y.Loader.prototype = {
 
                     group = this.groups[groupName];
 
-                    // Y.log('combo group: ' + groupName);
                     if (!group.combine) {
-                        // Y.log('not combining');
+                        m.combine = false;
                         continue;
                     }
+                    m.combine = true;
                     if (group.comboBase) {
                         comboSource = group.comboBase;
                     }
@@ -1654,7 +1657,6 @@ Y.Loader.prototype = {
                         m.root = group.root;
                     }
 
-                    // Y.log('combo source: ' + comboSource);
                 }
 
                 comboSources[comboSource] = comboSources[comboSource] || [];
@@ -1667,14 +1669,12 @@ Y.Loader.prototype = {
                     mods = comboSources[j];
                     len = mods.length;
 
-                    // Y.log('combo source: ' + j + ', ' + len);
-
                     for (i=0; i<len; i++) {
                         // m = this.getModule(s[i]);
                         m = mods[i];
 
                         // Do not try to combine non-yui JS unless combo def is found
-                        if (m && (m.type === type) && (j != comboBase || !m.ext)) {
+                        if (m && (m.type === type) && (m.combine || !m.ext)) {
 
                             frag = (m.root || this.root) + m.path;
 
@@ -1688,7 +1688,7 @@ Y.Loader.prototype = {
                                 url += '&';
                             }
 
-                            combining.push(s[i]);
+                            combining.push(m.name);
                         }
 
                     }
@@ -1700,8 +1700,6 @@ Y.Loader.prototype = {
             }
 
             if (combining.length) {
-
-                // urls.push(this._filter(url));
 
 Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
@@ -1742,7 +1740,7 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
                 return;
             }
 
-// Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader");
+Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader");
 
             // The global handler that is called when each module is loaded
             // will pass that module name to this function.  Storing this
@@ -1766,7 +1764,7 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
             // this.inserted keeps track of what the loader has loaded.
             // move on if this item is done.
             if (s[i] in this.inserted) {
-                // Y.log(s[i] + " alread loaded ");
+                // Y.log(s[i] + " already loaded ");
                 continue;
             }
 
