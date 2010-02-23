@@ -22,7 +22,7 @@ YUI().use("console", function(Y) {
    Y.log("Default Language");
 });
 
-YUI({lang:"en"}).use("console", function(Y) {
+YUI({lang:"en", filter:"raw"}).use("console", function(Y) {
    new Y.Console({id:"en", render:true});
    Y.log("English");
 });
