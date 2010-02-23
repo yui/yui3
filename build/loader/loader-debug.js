@@ -1067,8 +1067,14 @@ var NOT_FOUND = {},
     YObject = Y.Object,
     YArray = Y.Array,
 
-    _path = Y.cached(function(dir, file, type) {
-        return dir + '/' + file + '-min.' + (type || CSS);
+    _path = Y.cached(function(dir, file, type, nomin) {
+        var path = dir + '/' + file;
+        if (!nomin) {
+            path += '-min';
+        }
+        path +='.' + (type || CSS);
+
+        return path;
     }),
 
     _queue = YUI.Env._loaderQueue,
@@ -1935,7 +1941,7 @@ Y.Loader.prototype = {
 
     _addLangPack: function(lang, m, packName) {
         // var packName = this.getLangPackName(lang, m.name);
-        var packPath = _path((m.pkg || m.name), packName, JS);
+        var packPath = _path((m.pkg || m.name), packName, JS, true);
         this.addModule({
             path: packPath,
             after: ['intl'],
