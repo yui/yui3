@@ -9,18 +9,21 @@ YUI.add('exec-command', function(Y) {
                 var action = e.action,
                     value = e.value,
                     host = this.get('host'),
-                    inst = host.getInstance(),
-                    fn = ExecCommand[action];
+                    fn = ExecCommand.COMMANDS[action];
 
                 //console.log('execCommand: ', action, value);
                 if (fn) {
                     fn.call(this, action, value);  
                 } else {
-                    try {
-                        inst.config.doc.execCommand(action, false, value);
-                    } catch (e) {
-                        Y.Throw(e.message);
-                    }
+                    this._execCommand(action, value);
+                }
+            },
+            _execCommand: function(action, value) {
+                var inst = this.get('host').getInstance();
+                try {
+                    inst.config.doc.execCommand(action, false, value);
+                } catch (e) {
+                    console.log(e.message);
                 }
             },
             command: function(action, value) {
@@ -30,6 +33,9 @@ YUI.add('exec-command', function(Y) {
                 Y.mix(this.get('host'), {
                     execCommand: function(action, value) {
                         this.exec.fire('command', { value: value, action: action });
+                    },
+                    _execCommand: function(action, value) {
+                        this.exec._execCommand(action, value);
                     }
                 });
 
@@ -50,8 +56,7 @@ YUI.add('exec-command', function(Y) {
                     value: false
                 }
             },
-            COMMANDS: {
-            }
+            COMMANDS: {}
         });
         Y.namespace('Plugin');
         Y.Plugin.ExecCommand = ExecCommand;

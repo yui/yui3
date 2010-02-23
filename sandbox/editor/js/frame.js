@@ -19,6 +19,13 @@ YUI.add('frame', function(Y) {
     Y.extend(Frame, Y.Base, {
         /**
         * @private
+        * @property _ready
+        * @description Internal reference set when the content is ready.
+        * @type Boolean
+        */
+        _ready: null,
+        /**
+        * @private
         * @property _rendered
         * @description Internal reference set when render is called.
         * @type Boolean
@@ -46,25 +53,16 @@ YUI.add('frame', function(Y) {
         * @type Object
         */
         _create: function() {
-            var win, doc, res,
-                title = Y.guid().replace(/-/g, '_');
-            if (this.get('type') == 'iframe') {
-                this._iframe = Y.Node.create(Frame.HTML);
-                this._iframe.setStyle('visibility', 'hidden');
-                this.get('container').append(this._iframe);
-                this._iframe.set('src', this.get('src'));
-                res = this._resolveWinDoc();
-                win = res.win;
-                doc = res.doc;
-            }
-            if (this.get('type') === 'window') {
-                win = window.open(this.get('src'), title, this.get('windowFeatures'));
-                win.onload = Y.bind(function() {
-                    this._onContentReady({ target: Y.one(this._iframe._node.document) });
-                }, this);
-                doc = win.document;
-                this._iframe = Y.one(win);
-            }
+            var win, doc, res;
+
+            this._iframe = Y.Node.create(Frame.HTML);
+            this._iframe.setStyle('visibility', 'hidden');
+            this.get('container').append(this._iframe);
+            this._iframe.set('src', this.get('src'));
+            res = this._resolveWinDoc();
+            win = res.win;
+            doc = res.doc;
+
             return {
                 win: win,
                 doc: doc
@@ -80,14 +78,8 @@ YUI.add('frame', function(Y) {
         */
         _resolveWinDoc: function(c) {
             var config = (c) ? c : {};
-            if (this.get('type') == 'iframe') {
-                config.win = Y.Node.getDOMNode(this._iframe.get('contentWindow'));
-                config.doc = Y.Node.getDOMNode(this._iframe.get('contentWindow.document'));
-            }
-            if (this.get('type') == 'window') {
-                config.win = Y.Node.getDOMNode(this._iframe);
-                config.doc = config.win.document;
-            }
+            config.win = Y.Node.getDOMNode(this._iframe.get('contentWindow'));
+            config.doc = Y.Node.getDOMNode(this._iframe.get('contentWindow.document'));
             return config;
         },
         /**
@@ -100,14 +92,12 @@ YUI.add('frame', function(Y) {
         * @param EventFacade e
         */
         _onDomEvent: function(e) {
-            var xy = (this.get('type') == 'window') ? [0, 0] : this._iframe.getXY(),
+            var xy = this._iframe.getXY(),
                 node = this._instance.one('win');
 
             //Y.log('onDOMEvent: ' + e.type, 'info', 'frame');
-            if (this.get('type') == 'iframe') {
-                e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
-                e.frameY = xy[1] + e.pageY - node.get('scrollTop');
-            }
+            e.frameX = xy[0] + e.pageX - node.get('scrollLeft');
+            e.frameY = xy[1] + e.pageY - node.get('scrollTop');
 
             e.frameTarget = e.target;
             e.frameCurrentTarget = e.currentTarget;
@@ -142,9 +132,6 @@ YUI.add('frame', function(Y) {
                     inst.on(k, fn, inst.config.doc);
                 }
             });
-            if ((this.get('type') == 'window') && this.get('designMode')) {
-                inst.config.doc.designMode = 'on';
-            }
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
 
@@ -179,12 +166,13 @@ YUI.add('frame', function(Y) {
         * @description Called once the content is available in the frame/window and calls the final use call
         * on the internal instance so that the modules are loaded properly.
         */
-        _ready: null,
         _onContentReady: function(e) {
             if (!this._ready) {
                 this._ready = true;
                 var inst = this.getInstance(),
                     args = Y.clone(this.get('use'));
+
+                this.fire('contentready');
 
                 Y.log('On available for body of iframe', 'info', 'frame');
                 if (e) {
@@ -197,7 +185,7 @@ YUI.add('frame', function(Y) {
                 Y.log('Calling use on internal instance: ', 'info', 'frame');
                 inst.use.apply(inst, args);
 
-                inst.one('doc').set('title', this.get('windowTitle')).get('documentElement').addClass('yui-js-enabled');
+                inst.one('doc').get('documentElement').addClass('yui-js-enabled');
             }
         },
         /**
@@ -209,24 +197,16 @@ YUI.add('frame', function(Y) {
         */
         _instanceLoaded: function(inst) {
             this._instance = inst;
-            if (this.get('type') == 'iframe') {
-                this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
-            } else {
-                if (Y.UA.webkit || Y.UA.ie) {
-                    //Hack for Webkit and no windowload event :(
-                    Y.later(100, this, function() {
-                        this._onContentReady({ target: Y.one(this._iframe._node.document) });
-                    });
-                } else {
-                    this._iframe.on('load', Y.bind(this._onContentReady, this));
-                }
-            }
+            this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
+
             var html = '',
                 doc = this._instance.config.doc;
 
             if (this.get('src').indexOf('javascript') === 0) {
                 Y.log('Creating the document from a javascript URL', 'info', 'frame');
                 html = Y.substitute(Frame.PAGE_HTML, {
+                    DIR: this.get('dir'),
+                    LANG: this.get('lang'),
                     TITLE: this.get('windowTitle'),
                     META: Frame.META,
                     CONTENT: this.get('content'),
@@ -245,6 +225,10 @@ YUI.add('frame', function(Y) {
                 doc.close();
                 if (this.get('designMode')) {
                     doc.designMode = 'on';
+                    if (!Y.UA.ie) {
+                        //Force other browsers into non CSS styling
+                        doc.execCommand('styleWithCSS', false, false);
+                    }
                 }
             }
         },
@@ -339,21 +323,31 @@ YUI.add('frame', function(Y) {
         },
         /**
         * @private
-        * @method _getType
-        * @description Getter method for the type attribute.
-        * @param String type The type of frame to create
+        * @method _getHTML
+        * @description Get the content from the iframe
+        * @param String html The raw HTML from the body of the iframe.
         * @return String
         */
-        _getType: function(type) {
-            switch (type.toLowerCase()) {
-                case 'window':
-                case 'iframe':
-                    break;
-                default:
-                    type = 'iframe';
-                    break;
+        _getHTML: function(html) {
+            if (this._ready) {
+                var inst = this.getInstance();
+                html = inst.one('body').get('innerHTML');
             }
-            return type;
+            return html;
+        },
+        /**
+        * @private
+        * @method _setHTML
+        * @description Set the content of the iframe
+        * @param String html The raw HTML to set the body of the iframe to.
+        * @return String
+        */
+        _setHTML: function(html) {
+            if (this._ready) {
+                var inst = this.getInstance();
+                inst.one('body').set('innerHTML', html);
+            }
+            return html;
         }
     }, {
         /**
@@ -369,7 +363,7 @@ YUI.add('frame', function(Y) {
         * @description The template used to create the page when created dynamically.
         * @type String
         */
-        PAGE_HTML: '<html><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/></head><body>{CONTENT}</body></html>',
+        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/></head><body>{CONTENT}</body></html>',
         /**
         * @static
         * @property DOC_TYPE
@@ -393,6 +387,22 @@ YUI.add('frame', function(Y) {
         NAME: 'iframe',
         ATTRS: {
             /**
+            * @config dir
+            * @description The default text direction for this new frame. Default: ltr
+            * @type String
+            */
+            dir: {
+                value: 'ltr'
+            },
+            /**
+            * @config lang
+            * @description The default language. Default: en-US
+            * @type String
+            */
+            lang: {
+                value: 'en-US'
+            },
+            /**
             * @config src
             * @description The src of the iframe/window. Defaults to javascript:;
             * @type String
@@ -400,28 +410,6 @@ YUI.add('frame', function(Y) {
             src: {
                 //Hackish, IE needs the false in the Javascript URL
                 value: 'javascript' + ((Y.UA.ie) ? ':false' : ':') + ';'
-            },
-            /**
-            * @config type
-            * @description The type of frame to make. (iframe or window)
-            * @type String
-            * @writeonce
-            */
-            type: {
-                writeOnce: true,
-                value: 'iframe',
-                getter: '_getType'
-            },
-            /**
-            * @config windowFeatures
-            * @description The extra options to pass to window.open. Default: resizable=yes,width=450,height=550
-            * @type String
-            */
-            windowFeatures: {
-                value: 'resizable=yes,width=450,height=550'
-            },
-            windowTitle: {
-                value: 'Page Title'
             },
             /**
             * @config designMode
@@ -439,8 +427,15 @@ YUI.add('frame', function(Y) {
             * @type String
             */
             content: {
-                value: '<br>'
+                value: '<br>',
+                setter: '_setHTML',
+                getter: '_getHTML'
             },
+            /**
+            * @config basehref
+            * @description The base href to use in the iframe.
+            * @type String
+            */
             basehref: {
                 value: false,
                 getter: '_resolveBaseHref'
