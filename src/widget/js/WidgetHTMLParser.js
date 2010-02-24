@@ -1,3 +1,12 @@
+/**
+ * Adds HTML Parser support to the base Widget class
+ *
+ * @module widget
+ * @submodule widget-htmlparser
+ * @for Widget
+ */
+
+
 var Widget = Y.Widget,
     Node = Y.Node,
     Lang = Y.Lang,
