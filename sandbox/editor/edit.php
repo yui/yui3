@@ -63,8 +63,22 @@
 </div>
 
 <div id="stub">
+<style>
+del {
+    background-color: yellow;
+    font-weight: bold;
+    color: black;
+}
+</style>
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+<p>This <strong>is</strong> another test.</p>
+<ul>
+    <li>Item #1</li>
+    <li>Item #1</li>
+    <li>Item #1</li>
+</ul>
 <p>This is another test.</p>
+<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
@@ -111,31 +125,14 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
     Y.Plugin.ExecCommand.COMMANDS.wrap = function() {
         var inst = this.getInstance();
         var sel = new inst.Selection();
-        var tmp = inst.Node.create('<tmp></tmp>');
-        console.log(tmp);
-        console.log(sel);
-        //console.log(sel.cloneContents());
-        tmp.append(sel.cloneContents().childNodes);
-        var chi = tmp.get('childNodes');
-        console.log(chi);
-        chi.each(function(n) {
-            n.set('innerHTML', '<span style="color: red; background-color: blue; font-weight: bold;">' + n.get('innerHTML') + '</span>');
-        });
-        var html = tmp.get('innerHTML');
-        console.log(html);
-        sel.setContent(html);
-        //sel.setContent
-        //iframe.focus();
-        //sel.setCursor();
-        
-        
+        sel.wrapContent('del');
     };
     Y.Plugin.ExecCommand.COMMANDS.inserthtml = function() {
         //alert('You clicked on insertimage');
         var inst = this.getInstance();
         var sel = new inst.Selection();
         var html = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
-        sel.setContent(html);
+        sel.insertContent(html);
     };
     Y.Plugin.ExecCommand.COMMANDS.insertimage = function() {
         //alert('You clicked on insertimage');
@@ -170,7 +167,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
         this.on('keyup', function(e) {
             //console.log(e);
             var sel = new inst.Selection();
-            updateButtons(sel.anchorNode);
+            if (sel.anchorNode) {
+                updateButtons(sel.anchorNode);
+            }
 
             /* Cursor Position Test.. Opera fails this..
             var sel = new inst.Selection();
