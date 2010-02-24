@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: datasource  DataSource.Local   (YUI Library)</title>
+	<title>API: widget-anim  Plugin.WidgetAnim   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,10 +16,10 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>datasource&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>widget-anim&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_datasource.html" title="datasource">datasource</a>
-                 &gt; DataSource.Local 
+            &gt; <a href="./module_widget-anim.html" title="widget-anim">widget-anim</a>
+                 &gt; Plugin.WidgetAnim 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,88 +48,95 @@
 
                         
                         
-                            Class <b property="yui:name">DataSource.Local</b>
+                            Class <b property="yui:name">Plugin.WidgetAnim</b>
                         <span class="extends">
-                           - extends <a href="Base.html" title="Base">Base</a>
+                           - extends <a href="Plugin.Base.html" title="Plugin.Base">Plugin.Base</a>
                         </span>
 
                     </h2>
                     <!-- class tree goes here -->
                     
-                        <dl class="subclasses" rel="yui:subclasses">
-                            <dt>Known Subclasses:</dt>
-                            <dd>
-                                    <span rel="yui:subclass" resource="Pollable.html">
-                                    <a href="Pollable.html" property="yui:name" title="Pollable">Pollable</a>
-                                    </span>
-                                    <span rel="yui:subclass" resource="DataSource.Get.html">
-                                    <a href="DataSource.Get.html" property="yui:name" title="DataSource.Get">DataSource.Get</a>
-                                    </span>
-                                    <span rel="yui:subclass" resource="DataSource.IO.html">
-                                    <a href="DataSource.IO.html" property="yui:name" title="DataSource.IO">DataSource.IO</a>
-                                    </span>
-                                    <span rel="yui:subclass" resource="DataSource.Function.html">
-                                    <a href="DataSource.Function.html" property="yui:name" title="DataSource.Function">DataSource.Function</a>
-                                    </span>
-                            </dd>
-                       </dl>
                 
   
 
                     <div class="summary description" property="yui:description">
-                        Base class for the DataSource Utility.
+                        A plugin class which can be used to animate widget visibility changes.
                     </div>
 
-                        <div class="section constructor details" rel="yui:constructor" resource="#constructor">
-                        <h3 id="constructor">Constructor</h3>
-                        <div class="content">
-                            <div class="detail">
-                                <strong property="yui:name">DataSource.Local</strong>
-                                <code>
-                                    (
-                                    )
-                                </code>
-                                <div class="description">
-                                    
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     
                     <div rel="yui:properties" resource="#properties">
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:property" resource="#property_DataSource._tId">
-                                    <h4><a name="property_DataSource._tId" property="yui:name">DataSource._tId</a>
-                                        - <code>private static <span property="yui:type">Number</span></code>
+                                    <div class="" rel="yui:property" resource="#property_WidgetAnim.ANIMATIONS">
+                                    <h4><a name="property_WidgetAnim.ANIMATIONS" property="yui:name">WidgetAnim.ANIMATIONS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Global transaction counter.
+                                            Pre-Packaged Animation implementations, which can be used for animShow and animHide attribute 
+values.
                                         </div>
                                     </div>
      
                                         
                                     <div class="default" property="yui:defaultValue">
-                                        Default Value: 0
+                                        Default Value: "pluginWidgetAnim"
                                     </div>        
 
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_NAME">
-                                    <h4><a name="property_NAME" property="yui:name">NAME</a>
-                                        - <code>static final <span property="yui:type">String</span></code>
+                                    <div class="" rel="yui:property" resource="#property_WidgetAnim.ATTRS">
+                                    <h4><a name="property_WidgetAnim.ATTRS" property="yui:name">WidgetAnim.ATTRS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Class name.
+                                            Static property used to define the default attribute 
+configuration for the plugin.
                                         </div>
                                     </div>
      
                                         
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetAnim.NAME">
+                                    <h4><a name="property_WidgetAnim.NAME" property="yui:name">WidgetAnim.NAME</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The NAME of the WidgetAnim class. Used to prefix events generated
+by the plugin class.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: "pluginWidgetAnim"
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_WidgetAnim.NS">
+                                    <h4><a name="property_WidgetAnim.NS" property="yui:name">WidgetAnim.NS</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The namespace for the plugin. This will be the property on the widget, which will 
+reference the plugin instance, when it's plugged in.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default" property="yui:defaultValue">
+                                        Default Value: "anim"
+                                    </div>        
 
 
                                     <hr />
@@ -158,6 +165,18 @@
                                 </code>
                             </div>
                         </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                            <h4>Properties inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                            <div class="content" rel="yui:properties">
+                                <code>
+                                    
+                                        <span rel="yui:property" resource="Plugin.Base.html#property__handles">
+                                        <a class="private" href="Plugin.Base.html#property__handles" property="yui:name" title="_handles">_handles</a>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
                         </div>
                     </div>
 
@@ -165,198 +184,22 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="protected" rel="yui:method" resource="#method__defDataFn">
+                                    <div class="private" rel="yui:method" resource="#method__bindAnimHide">
                                     <h4>
-                                        <a name="method__defDataFn">_defDataFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_defDataFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Normalizes raw data into a response that includes results and meta properties.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Event Facade with the following properties:
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-</dl>
-</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-</dl></span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__defRequestFn">
-                                    <h4>
-                                        <a name="method__defRequestFn">_defRequestFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_defRequestFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Manages request/response transaction. Must fire <code>response</code>
-event when response is received. This method should be implemented by
-subclasses to achieve more complex behavior such as accessing remote data.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Event Facadewith the following properties:
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-</dl>
-</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-</dl></span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__defResponseFn">
-                                    <h4>
-                                        <a name="method__defResponseFn">_defResponseFn</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_defResponseFn</strong>
-                                           (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Sends data as a normalized response to callback.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Event Facade with the following properties:
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-</dl>
-</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-<dt>response (Object)</dt> <dd>Normalized response object with the following properties:
-<dl>
-<dt>results (Object)</dt> <dd>Parsed results.</dd>
-<dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-<dt>error (Boolean)</dt> <dd>Error flag.</dd>
-</dl>
-</dd>
-</dl></span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private" rel="yui:method" resource="#method__initEvents">
-                                    <h4>
-                                        <a name="method__initEvents">_initEvents</a></h4>
+                                        <a name="method__bindAnimHide">_bindAnimHide</a></h4>
                                     <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_initEvents</strong>
+                                            <strong property="yui:name">_bindAnimHide</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            This method creates all the events for this module.
+                                            Binds a listener to invoke the original visibility handling when the animHide animation is complete
                                         </div>
 
                                         <div class="description">
@@ -371,35 +214,61 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_DataSource.issueCallback">
+                                    <div class="private" rel="yui:method" resource="#method__bindAnimShow">
                                     <h4>
-                                        <a name="method_DataSource.issueCallback">DataSource.issueCallback</a></h4>
+                                        <a name="method__bindAnimShow">_bindAnimShow</a></h4>
                                     <div class="detail" >
                                         <code>
+                                         private 
                                         
-                                         static 
                                         
                                         void
-                                            <strong property="yui:name">DataSource.issueCallback</strong>
+                                            <strong property="yui:name">_bindAnimShow</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Binds a listener to invoke the original visibility handling when the animShow animation is started
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__uiAnimSetVisible">
+                                    <h4>
+                                        <a name="method__uiAnimSetVisible">_uiAnimSetVisible</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiAnimSetVisible</strong>
                                            (
                                                 
                                                         
-                                                         callback
-                                                    
-                                                
-                                                        , 
-                                                         params
-                                                    
-                                                
-                                                        , 
-                                                         error
+                                                         val
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Executes a given callback.  The third param determines whether to execute
+                                            The injected method used to override the host widget's _uiSetVisible implementation with
+an animated version of the same.
+<p>This method replaces the default _uiSetVisible handler
+Widget provides, by injecting itself before _uiSetVisible,
+and preventing the default behavior. </p>
                                         </div>
 
                                         <div class="description">
@@ -407,22 +276,10 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  The callback object.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">params</span>
-                                                        &lt;<span property="yui:type">Array</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  params to be passed to the callback method</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">error</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  whether an error occurred</span>
+                                                        <span property="yui:description"> true, if making the widget visible. false, if hiding it.</span>
                                                         </dd>
                                                 </dl>
 
@@ -435,12 +292,89 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method_initializer">
+                                    <div class="private" rel="yui:method" resource="#method__uiSetVisible">
+                                    <h4>
+                                        <a name="method__uiSetVisible">_uiSetVisible</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_uiSetVisible</strong>
+                                           (
+                                                
+                                                        
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            The original Widget _uiSetVisible implementation. This currently needs to be replicated,
+so it can be invoked before or after the animation starts or stops, since the original
+methods is not available to the AOP implementation.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">val</span>
+                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> true, if making the widget visible. false, if hiding it.</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_destructor">
+                                    <h4>
+                                        <a name="method_destructor">destructor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">destructor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            The initializer destructor implementation. Responsible for destroying the configured
+animation instances.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_initializer">
                                     <h4>
                                         <a name="method_initializer">initializer</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         private 
+                                        
                                         
                                         
                                         void
@@ -455,7 +389,8 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Internal init() handler.
+                                            The initializer lifecycle implementation. Modifies the host widget's 
+visibililty implementation to add animation.
                                         </div>
 
                                         <div class="description">
@@ -466,78 +401,10 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                                         <code><span property="yui:name">config</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Config object.</span>
+                                                        <span property="yui:description"> The user configuration for the plugin</span>
                                                         </dd>
                                                 </dl>
 
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_sendRequest">
-                                    <h4>
-                                        <a name="method_sendRequest">sendRequest</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Number
-                                            <strong property="yui:name">sendRequest</strong>
-                                           (
-                                                
-                                                        
-                                                         request
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Generates a unique transaction ID and fires <code>request</code> event.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">request</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  An object literal with the following properties:
-<dl>
-<dt><code>request</code></dt>
-<dd>The request to send to the live data source, if any.</dd>
-<dt><code>callback</code></dt>
-<dd>An object literal with the following properties:
-<dl>
-<dt><code>success</code></dt>
-<dd>The function to call when the data is ready.</dd>
-<dt><code>failure</code></dt>
-<dd>The function to call upon a response failure condition.</dd>
-<dt><code>argument</code></dt>
-<dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
-</dl>
-</dd>
-<dt><code>cfg</code></dt>
-<dd>Configuration object, if any.</dd>
-</dl></span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Number
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Transaction ID.</dd>
-                                                </dl>
 
 
              
@@ -774,6 +641,37 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                     </code>
                                 </div>
                             </div>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                                <h4>Methods inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                                <div class="content" rel="yui:methods">
+                                    <code>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostEvent">                                        
+                                            <a class="" href="Plugin.Base.html#method_afterHostEvent" property="yui:name" title="afterHostEvent">afterHostEvent</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostMethod">                                        
+                                            <a class="" href="Plugin.Base.html#method_afterHostMethod" property="yui:name" title="afterHostMethod">afterHostMethod</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_beforeHostMethod">                                        
+                                            <a class="" href="Plugin.Base.html#method_beforeHostMethod" property="yui:name" title="beforeHostMethod">beforeHostMethod</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_destructor">                                        
+                                            <a class="" href="Plugin.Base.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_doAfter">                                        
+                                            <a class="" href="Plugin.Base.html#method_doAfter" property="yui:name" title="doAfter">doAfter</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_doBefore">                                        
+                                            <a class="" href="Plugin.Base.html#method_doBefore" property="yui:name" title="doBefore">doBefore</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_initializer">                                        
+                                            <a class="" href="Plugin.Base.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="Plugin.Base.html#method_onHostEvent">                                        
+                                            <a class="" href="Plugin.Base.html#method_onHostEvent" property="yui:name" title="onHostEvent">onHostEvent</a>
+                                            </span>
+                                    </code>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -781,256 +679,15 @@ subclasses to achieve more complex behavior such as accessing remote data.
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
-                                    <div class="" rel="yui:event" resource="#event_data">
+                                    <div class="" rel="yui:event" resource="#event_animShowChange">
                                     <h4>
-                                        <a name="event_data">data</a></h4>
+                                        <a name="event_animShowChange">animShowChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">data</strong>
-
-                                            (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fired when raw data is received.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">e</span>
-                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description">  Event Facade with the following properties:
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-</dl>
-</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-</dl></span>
-                                                        </dd>
-                                                        
-                                                </dl>
-
-                                            <div class="preventable">
-                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defDataFn.
-                                            </div>        
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_error">
-                                    <h4>
-                                        <a name="event_error">error</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">error</strong>
-
-                                            (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fired when an error is encountered.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">e</span>
-                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description">  Event Facade with the following properties:
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-</dl>
-</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-<dt>response (Object)</dt> <dd>Normalized response object with the following properties:
-<dl>
-<dt>results (Object)</dt> <dd>Parsed results.</dd>
-<dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-<dt>error (Object)</dt> <dd>Error object.</dd>
-</dl>
-</dd>
-</dl></span>
-                                                        </dd>
-                                                        
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_request">
-                                    <h4>
-                                        <a name="event_request">request</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">request</strong>
-
-                                            (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fired when a data request is received.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">e</span>
-                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description">  Event Facade with the following properties:
-<dl>                          
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object.</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-</dl></span>
-                                                        </dd>
-                                                        
-                                                </dl>
-
-                                            <div class="preventable">
-                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defRequestFn.
-                                            </div>        
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_response">
-                                    <h4>
-                                        <a name="event_response">response</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">response</strong>
-
-                                            (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fired when response is returned.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">e</span>
-                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description">  Event Facade with the following properties:
-<dl>
-<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>
-<dt>request (Object)</dt> <dd>The request.</dd>
-<dt>callback (Object)</dt> <dd>The callback object with the following properties:
-<dl>
-<dt>success (Function)</dt> <dd>Success handler.</dd>
-<dt>failure (Function)</dt> <dd>Failure handler.</dd>
-</dl>
-</dd>
-<dt>cfg (Object)</dt> <dd>Configuration object.</dd>
-<dt>data (Object)</dt> <dd>Raw data.</dd>
-<dt>response (Object)</dt> <dd>Normalized response object with the following properties:
-<dl>
-<dt>results (Object)</dt> <dd>Parsed results.</dd>
-<dt>meta (Object)</dt> <dd>Parsed meta data.</dd>
-<dt>error (Boolean)</dt> <dd>Error flag.</dd>
-</dl>
-</dd>
-</dl></span>
-                                                        </dd>
-                                                        
-                                                </dl>
-
-                                            <div class="preventable">
-                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defResponseFn.
-                                            </div>        
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_sourceChange">
-                                    <h4>
-                                        <a name="event_sourceChange">sourceChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">sourceChange</strong>
+                                            <strong property="yui:name">animShowChange</strong>
 
                                             (
                                                 
@@ -1043,7 +700,51 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'source' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                            Fires when the value for the configuration attribute 'animShow' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_durationChange">
+                                    <h4>
+                                        <a name="event_durationChange">durationChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">durationChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'duration' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -1091,6 +792,17 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                 </code>
                             </div>
                         </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                            <h4>Events inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                            <div class="content" rel="yui:events">
+                                <code>
+                                        <span rel="yui:event" resource="Plugin.Base.html#event_hostChange">
+                                        <a class="" href="Plugin.Base.html#event_hostChange" property="yui:name" title="hostChange">hostChange</a><span class="">,</span>
+                                        </span>
+                                    
+                                </code>
+                            </div>
+                        </div>
                         </div>
                     </div>
 
@@ -1098,19 +810,36 @@ subclasses to achieve more complex behavior such as accessing remote data.
                         <div class="section field details">
                             <h3 id="configattributes">Configuration Attributes</h3>
                             <div class="content">
-                                    <div class="" rel="yui:attribute" resource="#config_source">
-                                    <h4><a name="config_source">source</a>
-                                        <code>- <span property="yui:type">MIXED</span></code>
+                                    <div class="" rel="yui:attribute" resource="#config_animShow">
+                                    <h4><a name="config_animShow">animShow</a>
+                                        <code>- <span property="yui:type">Anim</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Pointer to live data.
+                                            Default animation instance used for showing the widget (opacity fade-in)
                                         </div>
                                     </div>
  
      
                                     <div class="default">
-                                        Default Value: null
+                                        Default Value: WidgetAnim.ANIMATIONS.fadeIn
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_duration">
+                                    <h4><a name="config_duration">duration</a>
+                                        <code>- <span property="yui:type">Number</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Default duration in seconds. Used as the default duration for the default animation implementations
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: 0.2 (seconds
                                     </div>        
 
                                     <hr />
@@ -1129,6 +858,17 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
                                         <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a>
+                                        </span>
+                                        
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
+                            <h4>Configuration attributes inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
+                            <div class="content" rel="yui:attributes">
+                                <code>
+                                        <span rel="yui:attribute" resource="Plugin.Base.html#config_host">                                        
+                                        <a class="" href="Plugin.Base.html#config_host" property="yui:name" title="host">host</a>
                                         </span>
                                         
                                 </code>
@@ -1157,7 +897,7 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                 <li class=""><a href="module_console-filters.html" title="console-filters">console-filters</a></li>
                                 <li class=""><a href="module_cookie.html" title="cookie">cookie</a></li>
                                 <li class=""><a href="module_dataschema.html" title="dataschema">dataschema</a></li>
-                                <li class="selected"><a href="module_datasource.html" title="datasource">datasource</a></li>
+                                <li class=""><a href="module_datasource.html" title="datasource">datasource</a></li>
                                 <li class=""><a href="module_datatype.html" title="datatype">datatype</a></li>
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
@@ -1190,7 +930,7 @@ subclasses to achieve more complex behavior such as accessing remote data.
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class="selected"><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
@@ -1206,71 +946,52 @@ subclasses to achieve more complex behavior such as accessing remote data.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="DataSource.Function.html" title="DataSource.Function">DataSource.Function</a></li>
-                                <li class=""><a href="DataSource.Get.html" title="DataSource.Get">DataSource.Get</a></li>
-                                <li class=""><a href="DataSource.IO.html" title="DataSource.IO">DataSource.IO</a></li>
-                                <li class="selected"><a href="DataSource.Local.html" title="DataSource.Local">DataSource.Local</a></li>
-                                <li class=""><a href="DataSourceArraySchema.html" title="DataSourceArraySchema">DataSourceArraySchema</a></li>
-                                <li class=""><a href="DataSourceCache.html" title="DataSourceCache">DataSourceCache</a></li>
-                                <li class=""><a href="DataSourceJSONSchema.html" title="DataSourceJSONSchema">DataSourceJSONSchema</a></li>
-                                <li class=""><a href="DataSourceTextSchema.html" title="DataSourceTextSchema">DataSourceTextSchema</a></li>
-                                <li class=""><a href="DataSourceXMLSchema.html" title="DataSourceXMLSchema">DataSourceXMLSchema</a></li>
-                                <li class=""><a href="Pollable.html" title="Pollable">Pollable</a></li>
+                                <li class="selected"><a href="Plugin.WidgetAnim.html" title="Plugin.WidgetAnim">Plugin.WidgetAnim</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="datasource-arrayschema.js.html" title="datasource-arrayschema.js">datasource-arrayschema.js</a></li>
-                                <li class=""><a href="datasource-cache.js.html" title="datasource-cache.js">datasource-cache.js</a></li>
-                                <li class=""><a href="datasource-function.js.html" title="datasource-function.js">datasource-function.js</a></li>
-                                <li class=""><a href="datasource-get.js.html" title="datasource-get.js">datasource-get.js</a></li>
-                                <li class=""><a href="datasource-io.js.html" title="datasource-io.js">datasource-io.js</a></li>
-                                <li class=""><a href="datasource-jsonschema.js.html" title="datasource-jsonschema.js">datasource-jsonschema.js</a></li>
-                                <li class=""><a href="datasource-local.js.html" title="datasource-local.js">datasource-local.js</a></li>
-                                <li class=""><a href="datasource-polling.js.html" title="datasource-polling.js">datasource-polling.js</a></li>
-                                <li class=""><a href="datasource-textschema.js.html" title="datasource-textschema.js">datasource-textschema.js</a></li>
-                                <li class=""><a href="datasource-xmlschema.js.html" title="datasource-xmlschema.js">datasource-xmlschema.js</a></li>
+                                <li class=""><a href="WidgetAnim.js.html" title="WidgetAnim.js">WidgetAnim.js</a></li>
                         </ul>
                     </div>
 
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#property_DataSource._tId" title="DataSource._tId">DataSource._tId</a></li>
-                                <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
+                                <li class=""><a href="#property_WidgetAnim.ANIMATIONS" title="WidgetAnim.ANIMATIONS">WidgetAnim.ANIMATIONS</a></li>
+                                <li class=""><a href="#property_WidgetAnim.ATTRS" title="WidgetAnim.ATTRS">WidgetAnim.ATTRS</a></li>
+                                <li class=""><a href="#property_WidgetAnim.NAME" title="WidgetAnim.NAME">WidgetAnim.NAME</a></li>
+                                <li class=""><a href="#property_WidgetAnim.NS" title="WidgetAnim.NS">WidgetAnim.NS</a></li>
                         </ul>
                     </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="protected"><a href="#method__defDataFn" title="_defDataFn">_defDataFn</a></li>
-                                <li class="protected"><a href="#method__defRequestFn" title="_defRequestFn">_defRequestFn</a></li>
-                                <li class="protected"><a href="#method__defResponseFn" title="_defResponseFn">_defResponseFn</a></li>
-                                <li class="private"><a href="#method__initEvents" title="_initEvents">_initEvents</a></li>
-                                <li class=""><a href="#method_DataSource.issueCallback" title="DataSource.issueCallback">DataSource.issueCallback</a></li>
-                                <li class="private"><a href="#method_initializer" title="initializer">initializer</a></li>
-                                <li class=""><a href="#method_sendRequest" title="sendRequest">sendRequest</a></li>
+                                <li class="private"><a href="#method__bindAnimHide" title="_bindAnimHide">_bindAnimHide</a></li>
+                                <li class="private"><a href="#method__bindAnimShow" title="_bindAnimShow">_bindAnimShow</a></li>
+                                <li class="protected"><a href="#method__uiAnimSetVisible" title="_uiAnimSetVisible">_uiAnimSetVisible</a></li>
+                                <li class="private"><a href="#method__uiSetVisible" title="_uiSetVisible">_uiSetVisible</a></li>
+                                <li class=""><a href="#method_destructor" title="destructor">destructor</a></li>
+                                <li class=""><a href="#method_initializer" title="initializer">initializer</a></li>
                         </ul>
                     </div>
 
                     <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
-                                <li class=""><a href="#event_data" title="data">data</a></li>
-                                <li class=""><a href="#event_error" title="error">error</a></li>
-                                <li class=""><a href="#event_request" title="request">request</a></li>
-                                <li class=""><a href="#event_response" title="response">response</a></li>
-                                <li class=""><a href="#event_sourceChange" title="sourceChange">sourceChange</a></li>
+                                <li class=""><a href="#event_animShowChange" title="animShowChange">animShowChange</a></li>
+                                <li class=""><a href="#event_durationChange" title="durationChange">durationChange</a></li>
                         </ul>
                     </div>
 
                     <div id="configList" class="module">
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
-                                <li class=""><a href="#config_source" title="source">source</a></li>
+                                <li class=""><a href="#config_animShow" title="animShow">animShow</a></li>
+                                <li class=""><a href="#config_duration" title="duration">duration</a></li>
                         </ul>
                     </div>
 
@@ -1284,7 +1005,7 @@ subclasses to achieve more complex behavior such as accessing remote data.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "DataSource.Get", "name": "asyncMode", "url": "DataSource.Get.html#config_asyncMode", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "asyncModeChange", "url": "DataSource.Get.html#event_asyncModeChange", "type": "event"}, {"access": "protected", "host": "DataSourceArraySchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "url": "DataSourceArraySchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "type": "method"}, {"access": "protected", "host": "DataSourceJSONSchema", "name": "_beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "url": "DataSourceJSONSchema.html#method__beforeDefDataFn\n<dl>\n<dt>tId (Number)</dt> <dd>Unique transaction ID.</dd>\n<dt>request (Object)</dt> <dd>The request.</dd>\n<dt>callback (Object)</dt> <dd>The callback object with the following properties:\n<dl>\n<dt>success (Function)</dt> <dd>Success handler.</dd>\n<dt>failure (Function)</dt> <dd>Failure handler.</dd>\n</dl>\n</dd>\n<dt>data (Object)</dt> <dd>Raw data.</dd>\n</dl>", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefRequestFn", "url": "DataSourceCache.html#method__beforeDefRequestFn", "type": "method"}, {"access": "protected", "host": "DataSourceCache", "name": "_beforeDefResponseFn", "url": "DataSourceCache.html#method__beforeDefResponseFn", "type": "method"}, {"access": "", "host": "DataSource.Local", "name": "data", "url": "DataSource.Local.html#event_data", "type": "event"}, {"access": "", "host": "DataSource.Local", "name": "DataSource.issueCallback", "url": "DataSource.Local.html#method_DataSource.issueCallback", "type": "method"}, {"access": "private", "host": "DataSource.Local", "name": "DataSource._tId", "url": "DataSource.Local.html#property_DataSource._tId", "type": "property"}, {"access": "protected", "host": "DataSource.Local", "name": "_defDataFn", "url": "DataSource.Local.html#method__defDataFn", "type": "method"}, {"access": "protected", "host": "DataSource.Function", "name": "_defRequestFn", "url": "DataSource.Function.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Get", "name": "_defRequestFn", "url": "DataSource.Get.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.IO", "name": "_defRequestFn", "url": "DataSource.IO.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Local", "name": "_defRequestFn", "url": "DataSource.Local.html#method__defRequestFn", "type": "method"}, {"access": "protected", "host": "DataSource.Local", "name": "_defResponseFn", "url": "DataSource.Local.html#method__defResponseFn", "type": "method"}, {"access": "", "host": "DataSource.Local", "name": "error", "url": "DataSource.Local.html#event_error", "type": "event"}, {"access": "protected", "host": "DataSource.Get", "name": "_generateRequest", "url": "DataSource.Get.html#method__generateRequest", "type": "method"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallback", "url": "DataSource.Get.html#config_generateRequestCallback", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "generateRequestCallbackChange", "url": "DataSource.Get.html#event_generateRequestCallbackChange", "type": "event"}, {"access": "", "host": "DataSource.Get", "name": "get", "url": "DataSource.Get.html#config_get", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "getChange", "url": "DataSource.Get.html#event_getChange", "type": "event"}, {"access": "private", "host": "DataSource.Local", "name": "_initEvents", "url": "DataSource.Local.html#method__initEvents", "type": "method"}, {"access": "private", "host": "DataSourceArraySchema", "name": "initializer", "url": "DataSourceArraySchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceCache", "name": "initializer", "url": "DataSourceCache.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSource.IO", "name": "initializer", "url": "DataSource.IO.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSourceJSONSchema", "name": "initializer", "url": "DataSourceJSONSchema.html#method_initializer", "type": "method"}, {"access": "private", "host": "DataSource.Local", "name": "initializer", "url": "DataSource.Local.html#method_initializer", "type": "method"}, {"access": "", "host": "DataSource.IO", "name": "io", "url": "DataSource.IO.html#config_io", "type": "config"}, {"access": "", "host": "DataSource.IO", "name": "ioChange", "url": "DataSource.IO.html#event_ioChange", "type": "event"}, {"access": "protected", "host": "DataSource.Get", "name": "_last", "url": "DataSource.Get.html#property__last", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NAME", "url": "DataSourceArraySchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NAME", "url": "DataSourceCache.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Function", "name": "NAME", "url": "DataSource.Function.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Get", "name": "NAME", "url": "DataSource.Get.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.IO", "name": "NAME", "url": "DataSource.IO.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceJSONSchema", "name": "NAME", "url": "DataSourceJSONSchema.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSource.Local", "name": "NAME", "url": "DataSource.Local.html#property_NAME", "type": "property"}, {"access": "", "host": "DataSourceArraySchema", "name": "NS", "url": "DataSourceArraySchema.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceCache", "name": "NS", "url": "DataSourceCache.html#property_NS", "type": "property"}, {"access": "", "host": "DataSourceJSONSchema", "name": "NS", "url": "DataSourceJSONSchema.html#property_NS", "type": "property"}, {"access": "private", "host": "DataSource.IO", "name": "_queue", "url": "DataSource.IO.html#property__queue", "type": "property"}, {"access": "", "host": "DataSource.Local", "name": "request", "url": "DataSource.Local.html#event_request", "type": "event"}, {"access": "", "host": "DataSource.Local", "name": "response", "url": "DataSource.Local.html#event_response", "type": "event"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParam", "url": "DataSource.Get.html#config_scriptCallbackParam", "type": "config"}, {"access": "", "host": "DataSource.Get", "name": "scriptCallbackParamChange", "url": "DataSource.Get.html#event_scriptCallbackParamChange", "type": "event"}, {"access": "", "host": "DataSource.Local", "name": "sendRequest", "url": "DataSource.Local.html#method_sendRequest", "type": "method"}, {"access": "", "host": "DataSource.Function", "name": "source", "url": "DataSource.Function.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Local", "name": "source", "url": "DataSource.Local.html#config_source", "type": "config"}, {"access": "", "host": "DataSource.Function", "name": "sourceChange", "url": "DataSource.Function.html#event_sourceChange", "type": "event"}, {"access": "", "host": "DataSource.Local", "name": "sourceChange", "url": "DataSource.Local.html#event_sourceChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.WidgetAnim", "name": "animShow", "url": "Plugin.WidgetAnim.html#config_animShow", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "animShowChange", "url": "Plugin.WidgetAnim.html#event_animShowChange", "type": "event"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimHide", "url": "Plugin.WidgetAnim.html#method__bindAnimHide", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimShow", "url": "Plugin.WidgetAnim.html#method__bindAnimShow", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "destructor", "url": "Plugin.WidgetAnim.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "duration", "url": "Plugin.WidgetAnim.html#config_duration", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "durationChange", "url": "Plugin.WidgetAnim.html#event_durationChange", "type": "event"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "initializer", "url": "Plugin.WidgetAnim.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.WidgetAnim", "name": "_uiAnimSetVisible", "url": "Plugin.WidgetAnim.html#method__uiAnimSetVisible", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_uiSetVisible", "url": "Plugin.WidgetAnim.html#method__uiSetVisible", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ANIMATIONS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ANIMATIONS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ATTRS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NAME", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NAME", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NS", "type": "property"}];
 </script>
 </body>
 </html>

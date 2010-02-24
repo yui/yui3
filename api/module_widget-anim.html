@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: widget-position-align   (YUI Library)</title>
+	<title>API: widget-anim   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget-position-align&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>widget-anim&nbsp; <span class="subtitle">3.0.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_widget-position-align.html" title="widget-position-align">widget-position-align</a>
+            &gt; <a href="./module_widget-anim.html" title="widget-anim">widget-anim</a>
                 
                 
         <form onsubmit="return false">
@@ -44,15 +44,13 @@
             </form>
 
                    
-                    <h3>Module: widget-position-align
+                    <h3>Module: widget-anim
                     
 
 
                     </h3>
                     <div class="description summary">
-                        Provides extended/advanced XY positioning support for Widgets, through an extension.
-It builds on top of the widget-position module, to provide alignmentment and centering support.
-Future releases aim to add constrained and fixed positioning support.
+                        Provides a plugin which can be used to animate widget visibility changes.
                     </div>
 
 
@@ -62,11 +60,11 @@ Future releases aim to add constrained and fixed positioning support.
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Widget extension, which can be used to add extended XY positioning support to the base Widget class,\nthrough the <a href=\"Base.html#method_build\">Base.build</a> method. This extension requires that \nthe WidgetPosition extension be added to the Widget (before WidgetPositionAlign, if part of the same \nextension list passed to Base.build).", "guessedname": "WidgetPositionAlign", "name": "WidgetPositionAlign"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget", "Attribute": "Attribute", "Plugin.Host": "Plugin.Host", "Base": "Base", "Plugin.Base": "Plugin.Base"}, "events": {"Base": [{"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "destroyedChange"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "initializedChange"}], "Plugin.Base": [{"access": "", "deprecated": false, "name": "hostChange"}]}, "configs": {"Base": [{"access": "", "deprecated": false, "name": "destroyed"}, {"access": "", "deprecated": false, "name": "initialized"}], "Plugin.Base": [{"access": "", "deprecated": false, "name": "host"}]}, "properties": {"Attribute": [], "Base": [{"access": "", "deprecated": true, "name": "name"}], "Plugin.Base": [{"access": "private", "deprecated": false, "name": "_handles"}]}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}], "Attribute": [{"access": "private", "deprecated": false, "name": "_addAttrs"}, {"access": "private", "deprecated": false, "name": "_addLazyAttr"}, {"access": "private", "deprecated": false, "name": "_defAttrChangeFn"}, {"access": "private", "deprecated": false, "name": "_fireAttrChange"}, {"access": "protected", "deprecated": false, "name": "_getAttr"}, {"access": "private", "deprecated": false, "name": "_getAttrInitVal"}, {"access": "protected", "deprecated": false, "name": "_getAttrs"}, {"access": "private", "deprecated": false, "name": "_getStateVal"}, {"access": "private", "deprecated": false, "name": "_isLazyAttr"}, {"access": "private", "deprecated": false, "name": "_normAttrVals"}, {"access": "protected", "deprecated": false, "name": "_protectAttrs"}, {"access": "protected", "deprecated": false, "name": "_set"}, {"access": "protected", "deprecated": false, "name": "_setAttr"}, {"access": "protected", "deprecated": false, "name": "_setAttrs"}, {"access": "private", "deprecated": false, "name": "_setAttrVal"}, {"access": "private", "deprecated": false, "name": "_setStateVal"}, {"access": "", "deprecated": false, "name": "addAttr"}, {"access": "", "deprecated": false, "name": "addAttrs"}, {"access": "", "deprecated": false, "name": "attrAdded"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "getAttrs"}, {"access": "", "deprecated": false, "name": "modifyAttr"}, {"access": "", "deprecated": false, "name": "removeAttr"}, {"access": "", "deprecated": false, "name": "reset"}, {"access": "", "deprecated": false, "name": "set"}, {"access": "", "deprecated": false, "name": "setAttrs"}], "Plugin.Host": [{"access": "private", "deprecated": false, "name": "_destroyPlugins"}, {"access": "private", "deprecated": false, "name": "_initPlugins"}, {"access": "private", "deprecated": false, "name": "_plug"}, {"access": "private", "deprecated": false, "name": "_unplug"}, {"access": "", "deprecated": false, "name": "hasPlugin"}, {"access": "", "deprecated": false, "name": "plug"}, {"access": "", "deprecated": false, "name": "unplug"}], "Base": [{"access": "private", "deprecated": false, "name": "_aggregateAttrs"}, {"access": "protected", "deprecated": false, "name": "_defDestroyFn"}, {"access": "protected", "deprecated": false, "name": "_defInitFn"}, {"access": "private", "deprecated": false, "name": "_destroyHierarchy"}, {"access": "private", "deprecated": false, "name": "_filterAttrCfs"}, {"access": "protected", "deprecated": false, "name": "_getAttrCfgs"}, {"access": "protected", "deprecated": false, "name": "_getClasses"}, {"access": "private", "deprecated": false, "name": "_initHierarchy"}, {"access": "private", "deprecated": false, "name": "_initHierarchyData"}, {"access": "", "deprecated": false, "name": "_preInitEventCfg"}, {"access": "", "deprecated": false, "name": "destroy"}, {"access": "", "deprecated": false, "name": "init"}, {"access": "", "deprecated": false, "name": "toString"}], "Plugin.Base": [{"access": "", "deprecated": false, "name": "afterHostEvent"}, {"access": "", "deprecated": false, "name": "afterHostMethod"}, {"access": "", "deprecated": false, "name": "beforeHostMethod"}, {"access": "", "deprecated": false, "name": "destructor"}, {"access": "", "deprecated": false, "name": "doAfter"}, {"access": "", "deprecated": false, "name": "doBefore"}, {"access": "", "deprecated": false, "name": "initializer"}, {"access": "", "deprecated": false, "name": "onHostEvent"}]}}, "description": "A plugin class which can be used to animate widget visibility changes.", "guessedname": "Plugin.WidgetAnim", "name": "Plugin.WidgetAnim"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
-                                    <li><a href="WidgetPositionAlign.html" title="WidgetPositionAlign" id="class_0">WidgetPositionAlign</a></li>
+                                    <li><a href="Plugin.WidgetAnim.html" title="Plugin.WidgetAnim" id="class_0">Plugin.WidgetAnim</a></li>
                                 </ul>
                             </div>
                     </div>
@@ -128,12 +126,12 @@ Future releases aim to add constrained and fixed positioning support.
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class="selected"><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
-                                <li class="selected"><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
@@ -144,14 +142,14 @@ Future releases aim to add constrained and fixed positioning support.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="WidgetPositionAlign.html" title="WidgetPositionAlign">WidgetPositionAlign</a></li>
+                                <li class=""><a href="Plugin.WidgetAnim.html" title="Plugin.WidgetAnim">Plugin.WidgetAnim</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="Widget-PositionAlign.js.html" title="Widget-PositionAlign.js">Widget-PositionAlign.js</a></li>
+                                <li class=""><a href="WidgetAnim.js.html" title="WidgetAnim.js">WidgetAnim.js</a></li>
                         </ul>
                     </div>
 
@@ -169,7 +167,7 @@ Future releases aim to add constrained and fixed positioning support.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPositionAlign", "name": "_afterAlignChange", "url": "WidgetPositionAlign.html#method__afterAlignChange", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "align", "url": "WidgetPositionAlign.html#method_align", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "align", "url": "WidgetPositionAlign.html#config_align", "type": "config"}, {"access": "", "host": "WidgetPositionAlign", "name": "alignChange", "url": "WidgetPositionAlign.html#event_alignChange", "type": "event"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_bindUIStack", "url": "WidgetPositionAlign.html#method__bindUIStack", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "centered", "url": "WidgetPositionAlign.html#method_centered", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "centered", "url": "WidgetPositionAlign.html#config_centered", "type": "config"}, {"access": "", "host": "WidgetPositionAlign", "name": "centeredChange", "url": "WidgetPositionAlign.html#event_centeredChange", "type": "event"}, {"access": "private", "host": "WidgetPositionAlign", "name": "_doAlign", "url": "WidgetPositionAlign.html#method__doAlign", "type": "method"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_setAlignCenter", "url": "WidgetPositionAlign.html#method__setAlignCenter", "type": "method"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_syncUIPosAlgin", "url": "WidgetPositionAlign.html#method__syncUIPosAlgin", "type": "method"}, {"access": "protected", "host": "WidgetPositionAlign", "name": "_uiSetAlign", "url": "WidgetPositionAlign.html#method__uiSetAlign", "type": "method"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.ATTRS", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.ATTRS", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.BC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.BC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.BL", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.BL", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.BR", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.BR", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.CC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.CC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.LC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.LC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.RC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.RC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.TC", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.TC", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.TL", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.TL", "type": "property"}, {"access": "", "host": "WidgetPositionAlign", "name": "WidgetPositionAlign.TR", "url": "WidgetPositionAlign.html#property_WidgetPositionAlign.TR", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.WidgetAnim", "name": "animShow", "url": "Plugin.WidgetAnim.html#config_animShow", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "animShowChange", "url": "Plugin.WidgetAnim.html#event_animShowChange", "type": "event"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimHide", "url": "Plugin.WidgetAnim.html#method__bindAnimHide", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimShow", "url": "Plugin.WidgetAnim.html#method__bindAnimShow", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "destructor", "url": "Plugin.WidgetAnim.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "duration", "url": "Plugin.WidgetAnim.html#config_duration", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "durationChange", "url": "Plugin.WidgetAnim.html#event_durationChange", "type": "event"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "initializer", "url": "Plugin.WidgetAnim.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.WidgetAnim", "name": "_uiAnimSetVisible", "url": "Plugin.WidgetAnim.html#method__uiAnimSetVisible", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_uiSetVisible", "url": "Plugin.WidgetAnim.html#method__uiSetVisible", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ANIMATIONS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ANIMATIONS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ATTRS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NAME", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NAME", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NS", "type": "property"}];
 </script>
 </body>
 </html>
