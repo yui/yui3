@@ -575,7 +575,8 @@
 
         <span class="c1">// dynamic load</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">boot</span> <span class="o">&amp;&amp;</span> <span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Using loader to fetch missing dependencies: &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+            <span class="c1">// Y.log(&#39;Using loader to fetch missing dependencies: &#39; + missing, &#39;info&#39;, &#39;yui&#39;);</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Using Loader&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
             <span class="nx">loader</span><span class="p">.</span><span class="nx">onEnd</span> <span class="o">=</span> <span class="nx">handleLoader</span><span class="p">;</span>
@@ -659,7 +660,6 @@
     <span class="c1">// this is replaced if the log module is included</span>
     <span class="nx">log</span><span class="o">:</span> <span class="nx">NOOP</span><span class="p">,</span>
     <span class="nx">message</span><span class="o">:</span> <span class="nx">NOOP</span><span class="p">,</span>
-    
 
     <span class="cm">/**</span>
 <span class="cm">     * Report an error.  The reporting mechanism is controled by</span>
