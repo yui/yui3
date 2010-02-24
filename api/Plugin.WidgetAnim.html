@@ -679,6 +679,50 @@ visibililty implementation to add animation.
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_animHideChange">
+                                    <h4>
+                                        <a name="event_animHideChange">animHideChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">animHideChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'animHide' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:event" resource="#event_animShowChange">
                                     <h4>
                                         <a name="event_animShowChange">animShowChange</a></h4>
@@ -810,6 +854,23 @@ visibililty implementation to add animation.
                         <div class="section field details">
                             <h3 id="configattributes">Configuration Attributes</h3>
                             <div class="content">
+                                    <div class="" rel="yui:attribute" resource="#config_animHide">
+                                    <h4><a name="config_animHide">animHide</a>
+                                        <code>- <span property="yui:type">Anim</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Default animation instance used for hiding the widget (opacity fade-out)
+                                        </div>
+                                    </div>
+ 
+     
+                                    <div class="default">
+                                        Default Value: WidgetAnim.ANIMATIONS.fadeOut
+                                    </div>        
+
+                                    <hr />
+                                    </div>        
                                     <div class="" rel="yui:attribute" resource="#config_animShow">
                                     <h4><a name="config_animShow">animShow</a>
                                         <code>- <span property="yui:type">Anim</span></code>
@@ -982,6 +1043,7 @@ visibililty implementation to add animation.
                     <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
+                                <li class=""><a href="#event_animHideChange" title="animHideChange">animHideChange</a></li>
                                 <li class=""><a href="#event_animShowChange" title="animShowChange">animShowChange</a></li>
                                 <li class=""><a href="#event_durationChange" title="durationChange">durationChange</a></li>
                         </ul>
@@ -990,6 +1052,7 @@ visibililty implementation to add animation.
                     <div id="configList" class="module">
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
+                                <li class=""><a href="#config_animHide" title="animHide">animHide</a></li>
                                 <li class=""><a href="#config_animShow" title="animShow">animShow</a></li>
                                 <li class=""><a href="#config_duration" title="duration">duration</a></li>
                         </ul>
@@ -1005,7 +1068,7 @@ visibililty implementation to add animation.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.WidgetAnim", "name": "animShow", "url": "Plugin.WidgetAnim.html#config_animShow", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "animShowChange", "url": "Plugin.WidgetAnim.html#event_animShowChange", "type": "event"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimHide", "url": "Plugin.WidgetAnim.html#method__bindAnimHide", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimShow", "url": "Plugin.WidgetAnim.html#method__bindAnimShow", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "destructor", "url": "Plugin.WidgetAnim.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "duration", "url": "Plugin.WidgetAnim.html#config_duration", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "durationChange", "url": "Plugin.WidgetAnim.html#event_durationChange", "type": "event"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "initializer", "url": "Plugin.WidgetAnim.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.WidgetAnim", "name": "_uiAnimSetVisible", "url": "Plugin.WidgetAnim.html#method__uiAnimSetVisible", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_uiSetVisible", "url": "Plugin.WidgetAnim.html#method__uiSetVisible", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ANIMATIONS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ANIMATIONS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ATTRS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NAME", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NAME", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NS", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.WidgetAnim", "name": "animHide", "url": "Plugin.WidgetAnim.html#config_animHide", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "animHideChange", "url": "Plugin.WidgetAnim.html#event_animHideChange", "type": "event"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "animShow", "url": "Plugin.WidgetAnim.html#config_animShow", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "animShowChange", "url": "Plugin.WidgetAnim.html#event_animShowChange", "type": "event"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimHide", "url": "Plugin.WidgetAnim.html#method__bindAnimHide", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimShow", "url": "Plugin.WidgetAnim.html#method__bindAnimShow", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "destructor", "url": "Plugin.WidgetAnim.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "duration", "url": "Plugin.WidgetAnim.html#config_duration", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "durationChange", "url": "Plugin.WidgetAnim.html#event_durationChange", "type": "event"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "initializer", "url": "Plugin.WidgetAnim.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.WidgetAnim", "name": "_uiAnimSetVisible", "url": "Plugin.WidgetAnim.html#method__uiAnimSetVisible", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_uiSetVisible", "url": "Plugin.WidgetAnim.html#method__uiSetVisible", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ANIMATIONS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ANIMATIONS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ATTRS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NAME", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NAME", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NS", "type": "property"}];
 </script>
 </body>
 </html>

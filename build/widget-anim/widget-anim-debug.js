@@ -141,7 +141,7 @@ WidgetAnim.ATTRS = {
     /**
      * Default animation instance used for hiding the widget (opacity fade-out)
      *
-     * @attribute animShow
+     * @attribute animHide
      * @type Anim
      * @default WidgetAnim.ANIMATIONS.fadeOut
      */
