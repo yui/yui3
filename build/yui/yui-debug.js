@@ -51,14 +51,12 @@ if (typeof YUI === 'undefined') {
 (function() {
 
     var p, i,
-
         VERSION       = '@VERSION@', 
         DOC_LABEL     = 'yui3-js-enabled',
         NOOP          = function() {},
-        // the functions applyTo can call. this should be done at build time
-        APPLY_TO_AUTH = { 'io.xdrReady':      1,
-                          'io.xdrResponse':   1,
-                          'SWF.eventHandler': 1 },
+        APPLY_TO_AUTH = { 'io.xdrReady':      1,   // the functions applyTo 
+                          'io.xdrResponse':   1,   // can call. this should
+                          'SWF.eventHandler': 1 }, // be done at build time
         SLICE         = Array.prototype.slice,
         hasWin        = (typeof window != 'undefined'),
         win           = (hasWin) ? window : null,
@@ -135,12 +133,13 @@ YUI.prototype = {
     _init: function() {
         var filter,
             Y = this, 
-            G_ENV = YUI.Env;
+            G_ENV = YUI.Env,
+            Env = Y.Env;
 
         Y.version = VERSION;
         Y.gallery = 'gallery-2010.02.10-01'; // @TODO build time
 
-        if (!Y.Env) {
+        if (!Env) {
             Y.Env = {
                 // @todo expand the new module metadata
                 mods: {},
@@ -156,11 +155,14 @@ YUI.prototype = {
 
             };
 
-            Y.Env._loaded[VERSION] = {};
+            Env = Y.Env;
+
+            Env._loaded[VERSION] = {};
 
             if (G_ENV && Y !== YUI) {
-                Y.Env._yidx  = ++G_ENV._yidx;
-                Y.Env._guidp = ('yui_' + VERSION + '_' + Y.Env._yidx + '_' + time) .replace(/\./g, '_');
+                Env._yidx  = ++G_ENV._yidx;
+                Env._guidp = ('yui_' + VERSION + '_' + 
+                             Env._yidx + '_' + time).replace(/\./g, '_');
             }
 
             Y.id = Y.stamp(Y);
@@ -173,41 +175,34 @@ YUI.prototype = {
         // configuration defaults
         Y.config = Y.config || {
 
-            win: win,
-            doc: doc,
-            debug: true,
+            win:               win,
+            doc:               doc,
+            debug:             true,
             useBrowserConsole: true,
-            throwFail: true,
-            bootstrap: true,
-            fetchCSS: true,
+            throwFail:         true,
+            bootstrap:         true,
+            fetchCSS:          true,
         
-            // base: (Y === YUI) ? Y.Env.cdn : function() {
+            // base: (Y === YUI) ? Env.cdn : function() {
             base: (YUI.config && YUI.config.base) || function() {
                 var b, nodes, i, src, match;
-
                 // get from querystring
                 nodes = (doc && doc.getElementsByTagName('script')) || [];
-
                 for (i=0; i<nodes.length; i=i+1) {
                     src = nodes[i].src;
-
                     if (src) {
-// DEBUG
-//src = "http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js";
-//console.log('src) ' + src);
-// DEBUG
+                        //src = "http://yui.yahooapis.com/combo?2.8.0r4/b
+                        //uild/yuiloader-dom-event/yuiloader-dom-event.js
+                        //&3.0.0/build/yui/yui-min.js"; // debug url
+                        //Y.log('src) ' + src);
                         match = src.match(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/);
                         b = match && match[1];
-
                         if (b) {
-
-                            // this is to set up the path to the loader.  The file filter for loader should match
-                            // the yui include.
+                            // this is to set up the path to the loader.  The file 
+                            // filter for loader should match the yui include.
                             filter = match[2];
-
-// extract correct path for mixed combo urls
-// http://yuilibrary.com/projects/yui3/ticket/2528423
-// http://yui.yahooapis.com/combo?2.8.0r4/build/yuiloader-dom-event/yuiloader-dom-event.js&3.0.0/build/yui/yui-min.js
+                            // extract correct path for mixed combo urls
+                            // http://yuilibrary.com/projects/yui3/ticket/2528423
                             match = src.match(/^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
                             if (match && match[3]) {
                                 b = match[1] + match[3];
@@ -219,11 +214,12 @@ YUI.prototype = {
                 }
 
                 // use CDN default
-                return b || Y.Env.cdn;
+                return b || Env.cdn;
 
             }(),
 
-            loaderPath: (YUI.config && YUI.config.loaderPath) || 'loader/loader' + (filter || '-min.') + 'js'
+            loaderPath: (YUI.config && YUI.config.loaderPath) || 
+                        'loader/loader' + (filter || '-min.') + 'js'
         };
 
     },
@@ -251,7 +247,7 @@ YUI.prototype = {
         Y.use('yui-base');
         Y.use.apply(Y, core);
 
-        console.log(Y.id + ' initialized', 'info', 'yui');
+        // Y.log(Y.id + ' initialized', 'info', 'yui');
     },
 
     /**
@@ -388,7 +384,8 @@ YUI.prototype = {
             G_ENV    = YUI.Env,
             args     = SLICE.call(arguments, 0), 
             mods     = G_ENV.mods, 
-            used     = Y.Env._used,
+            Env      = Y.Env,
+            used     = Env._used,
             queue    = G_ENV._loaderQueue,
             firstArg = args[0], 
             callback = args[args.length - 1],
@@ -419,12 +416,11 @@ YUI.prototype = {
                     }
                 }
 
-                // make sure requirements are attached
-                if (req) {
+                if (req) { // make sure requirements are attached
                     YArray.each(YArray(req), process);
                 }
 
-                if (use) {
+                if (use) { // make sure we grab the submodule dependencies too
                     YArray.each(YArray(use), process);
                 }
 
@@ -438,12 +434,12 @@ YUI.prototype = {
                         success: true,
                         msg: 'not dynamic'
                     }, 
-                    newData, redo, missingFlat, origMissing,
+                    newData, redo, origMissing,
                     data = response.data;
 
                 Y._loading = false;
 
-                // console.log('Use complete: ' + data);
+                // Y.log('Use complete: ' + data);
 
                 if (callback) {
                     if (data) {
@@ -452,30 +448,25 @@ YUI.prototype = {
                         Y.Array.each(data, process);
                         redo = missing.length;
                         if (redo) {
-                            missingFlat = missing.sort().join();
-                            if (missingFlat == origMissing.sort().join()) {
+                            if (missing.sort().join() == origMissing.sort().join()) {
                                 redo = false;
                             }
                         }
                     }
 
-                    // if (redo && data && !Y.Env._retry) {
                     if (redo && data) {
                         // Y.log('redo: ' + r);
                         // Y.log('redo: ' + missing);
                         // Y.log('redo: ' + args);
-                        Y.Env._retry = true;
                         newData = data.concat();
                         newData.push(function() {
-                            Y.log('Nested USE callback: ' + data);
+                            Y.log('Nested USE callback: ' + data, 'info', 'yui');
                             Y._attach(data);
                             callback(Y, response);
                         });
                         Y._loading  = false;
                         Y.use.apply(Y, newData);
-                        // Y.Env._retry = false;
                     } else {
-                        //Y.log('No data handleLoader: ');
                         if (data) {
                             Y._attach(data);
                         }
@@ -544,7 +535,7 @@ YUI.prototype = {
             loader.data = args;
             loader.require((fetchCSS) ? missing : args);
             loader.insert(null, (fetchCSS) ? null : 'js');
-        } else if (boot && len && Y.Get && !Y.Env.bootstrapped) {
+        } else if (boot && len && Y.Get && !Env.bootstrapped) {
 
             Y._loading = true;
             args = YArray(arguments, 0, true);
@@ -552,7 +543,7 @@ YUI.prototype = {
             handleBoot = function() {
                 Y._loading = false;
                 queue.running = false;
-                Y.Env.bootstrapped = true;
+                Env.bootstrapped = true;
                 Y._attach(['loader']);
                 Y.use.apply(Y, args);
             };
@@ -820,7 +811,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
 /**
  * The default date format
- *
  * @property dateFormat
  * @type string
  * @deprecated use configuration in DataType.Date.format() instead
@@ -828,7 +818,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
 /**
  * The default locale
- *
  * @property locale
  * @type string
  * @deprecated use config.lang instead
@@ -836,7 +825,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
 /**
  * The default interval when polling in milliseconds.
- *
  * @property pollInterval
  * @type int
  * @default 20
@@ -848,7 +836,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * because remove the node will not make the evaluated script
  * unavailable.  Dynamic CSS is not auto purged, because removing
  * a linked style sheet will also remove the style definitions.
- *
  * @property purgethreshold
  * @type int
  * @default 20
@@ -856,7 +843,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
 /**
  * The default interval when polling in milliseconds.
- *
  * @property windowResizeDelay
  * @type int
  * @default 40
@@ -864,34 +850,27 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
 /**
  * Base directory for dynamic loading
- *
  * @property base
  * @type string
  */
 
 /**
  * The secure base dir (not implemented)
- *
  * For dynamic loading.
- *
  * @property secureBase
  * @type string
  */
 
 /**
  * The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?
- *
  * For dynamic loading.
- *
  * @property comboBase
  * @type string
  */
 
 /**
- * The root path to prepend to module names for the combo service. Ex: 3.0.0b1/build/
- *
+ * The root path to prepend to module path for the combo service. Ex: 3.0.0b1/build/
  * For dynamic loading.
- *
  * @property root
  * @type string
  */
@@ -936,7 +915,9 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
 /**
  * Use the YUI combo service to reduce the number of http connections 
- * required to load your dependencies.
+ * required to load your dependencies.  Turning this off will
+ * disable combo handling for YUI and all module groups configured
+ * with a combo service.
  *
  * For dynamic loading.
  *
@@ -970,7 +951,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
 /**
  * charset for dynamic nodes
- *
  * @property charset
  * @type string
  * @deprecated use jsAttributes cssAttributes
@@ -978,14 +958,12 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 
 /**
  * Object literal containing attributes to add to dynamically loaded script nodes.
- *
  * @property jsAttributes
  * @type string
  */
 
 /**
  * Object literal containing attributes to add to dynamically loaded link nodes.
- *
  * @property cssAttributes
  * @type string
  */
@@ -993,7 +971,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
 /**
  * Number of milliseconds before a timeout occurs when dynamically 
  * loading nodes. If not set, there is no timeout.
- *
  * @property timeout
  * @type int
  */
@@ -1010,12 +987,13 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  */
 
 /**
- * A list of module definitions to add to the list of YUI components.  
+ * A hash of module definitions to add to the list of YUI components.  
  * These components can then be dynamically loaded side by side with
  * YUI via the use() method. This is a hash, the key is the module
  * name, and the value is an object literal specifying the metdata
  * for the module.  * See Loader.addModule for the supported module
- * metadata fields.
+ * metadata fields.  Also @see groups, which provides a way to
+ * configure the base and combo spec for a 
  * <code>
  * modules: {
  * &nbsp; mymod1: {
@@ -1029,6 +1007,45 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * }
  * </code>
  *
+ * @property modules
+ * @type object
+ */
+
+/**
+ * A hash of module group definitions.  It for each group you
+ * can specify a list of modules and the base path and
+ * combo spec to use when dynamically loading the modules.  @see
+ * @see modules for the details about the modules part of the
+ * group definition.
+ * <code>
+ * &nbsp; groups: {
+ * &nbsp;     yui2: {
+ * &nbsp;         // specify whether or not this group has a combo service
+ * &nbsp;         combine: true,
+ * &nbsp;
+ * &nbsp;         // the base path for non-combo paths
+ * &nbsp;         base: 'http://yui.yahooapis.com/2.8.0r4/build/',
+ * &nbsp;
+ * &nbsp;         // the path to the combo service
+ * &nbsp;         comboBase: 'http://yui.yahooapis.com/combo?',
+ * &nbsp;
+ * &nbsp;         // a fragment to prepend to the path attribute when
+ * &nbsp;         // when building combo urls
+ * &nbsp;         root: '2.8.0r4/build/',
+ * &nbsp;
+ * &nbsp;         // the module definitions
+ * &nbsp;         modules:  {
+ * &nbsp;             yui2_yde: {
+ * &nbsp;                 path: "yahoo-dom-event/yahoo-dom-event.js"
+ * &nbsp;             },
+ * &nbsp;             yui2_anim: {
+ * &nbsp;                 path: "animation/animation.js",
+ * &nbsp;                 requires: ['yui2_yde']
+ * &nbsp;             }
+ * &nbsp;         }
+ * &nbsp;     }
+ * &nbsp; }
+ * </code>
  * @property modules
  * @type object
  */
@@ -1951,9 +1968,11 @@ O.getValue = function (o, path) {
         return UNDEFINED;
     }
 
-    var p=Y.Array(path), l=p.length, i;
+    var i,
+        p = Y.Array(path), 
+        l = p.length;
 
-    for (i=0; o !== UNDEFINED && i < l; i=i+1) {
+    for (i=0; o !== UNDEFINED && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -1974,11 +1993,13 @@ O.getValue = function (o, path) {
  *                      undefined, if the path was invalid.
  */
 O.setValue = function(o, path, val) {
-
-    var p=Y.Array(path), leafIdx=p.length-1, i, ref=o;
+    var i, 
+        p       = Y.Array(path), 
+        leafIdx = p.length-1, 
+        ref     = o;
 
     if (leafIdx >= 0) {
-        for (i=0; ref !== UNDEFINED && i < leafIdx; i=i+1) {
+        for (i=0; ref !== UNDEFINED && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
@@ -1991,7 +2012,6 @@ O.setValue = function(o, path, val) {
 
     return o;
 };
-
 
 })();
 
@@ -2017,7 +2037,7 @@ O.setValue = function(o, path, val) {
  */
 Y.UA = function() {
 
-    var numberfy = function(s) {
+    var numberify = function(s) {
             var c = 0;
             return parseFloat(s.replace(/\./g, function() {
                 return (c++ == 1) ? '' : '.';
@@ -2170,7 +2190,7 @@ Y.UA = function() {
         // Modern WebKit browsers are at least X-Grade
         m=ua.match(/AppleWebKit\/([^\s]*)/);
         if (m&&m[1]) {
-            o.webkit=numberfy(m[1]);
+            o.webkit=numberify(m[1]);
 
             // Mobile browser check
             if (/ Mobile\//.test(ua)) {
@@ -2184,7 +2204,7 @@ Y.UA = function() {
 
             m=ua.match(/Chrome\/([^\s]*)/);
             if (m && m[1]) {
-                o.chrome = numberfy(m[1]); // Chrome
+                o.chrome = numberify(m[1]); // Chrome
             } else {
                 m=ua.match(/AdobeAIR\/([^\s]*)/);
                 if (m) {
@@ -2197,7 +2217,7 @@ Y.UA = function() {
             // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
             m=ua.match(/Opera[\s\/]([^\s]*)/);
             if (m&&m[1]) {
-                o.opera=numberfy(m[1]);
+                o.opera=numberify(m[1]);
                 m=ua.match(/Opera Mini[^;]*/);
                 if (m) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
@@ -2205,14 +2225,14 @@ Y.UA = function() {
             } else { // not opera or webkit
                 m=ua.match(/MSIE\s([^;]*)/);
                 if (m&&m[1]) {
-                    o.ie=numberfy(m[1]);
+                    o.ie=numberify(m[1]);
                 } else { // not opera, webkit, or ie
                     m=ua.match(/Gecko\/([^\s]*)/);
                     if (m) {
                         o.gecko=1; // Gecko detected, look for revision
                         m=ua.match(/rv:([^\s\)]*)/);
                         if (m&&m[1]) {
-                            o.gecko=numberfy(m[1]);
+                            o.gecko=numberify(m[1]);
                         }
                     }
                 }
@@ -3071,11 +3091,14 @@ YUI.add('yui-log', function(Y) {
  */
 (function() {
 
-var INSTANCE = Y,
-    LOGEVENT = 'yui:log',
+var _published,
+    INSTANCE  = Y,
+    LOGEVENT  = 'yui:log',
     UNDEFINED = 'undefined',
-    LEVELS = { debug: 1, info: 1, warn: 1, error: 1 },
-    _published;
+    LEVELS    = { debug: 1, 
+                  info:  1, 
+                  warn:  1, 
+                  error: 1 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -3097,7 +3120,9 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var Y = INSTANCE, c = Y.config, bail = false, excl, incl, m, f;
+    var bail, excl, incl, m, f,
+        Y = INSTANCE, 
+        c = Y.config;
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
@@ -3105,16 +3130,13 @@ INSTANCE.log = function(msg, cat, src, silent) {
         if (src) {
             excl = c.logExclude; 
             incl = c.logInclude;
-
             if (incl && !(src in incl)) {
                 bail = 1;
             } else if (excl && (src in excl)) {
                 bail = 1;
             }
         }
-
         if (!bail) {
-
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
@@ -3126,7 +3148,6 @@ INSTANCE.log = function(msg, cat, src, silent) {
                     opera.postError(m);
                 }
             }
-
             if (Y.fire && !silent) {
                 if (!_published) {
                     Y.publish(LOGEVENT, {
@@ -3281,7 +3302,7 @@ var throttle = function(fn, ms) {
 
 Y.throttle = throttle;
 
-// Added the redundant definition to later for backwards compatibility.
+// We added the redundant definition to later for backwards compatibility.
 // I don't think we need to do the same thing here
 // Y.Lang.throttle = throttle;
 

@@ -1,5 +1,10 @@
 YUI.add('widget-anim', function(Y) {
 
+/**
+ * Provides a plugin which can be used to animate widget visibility changes.
+ *
+ * @module widget-anim
+ */
 var BOUNDING_BOX = "boundingBox",
     HOST = "host",
     NODE = "node",
@@ -23,22 +28,48 @@ var BOUNDING_BOX = "boundingBox",
     ANIM_SHOW_CHANGE = "animShowChange",
     ANIM_HIDE_CHANGE = "animHideChange";
 
+/**
+ * A plugin class which can be used to animate widget visibility changes.
+ *
+ * @class WidgetAnim
+ * @extends Plugin.Base
+ * @namespace Plugin
+ */
 function WidgetAnim(config) {
     WidgetAnim.superclass.constructor.apply(this, arguments);
 }
 
 /**
  * The namespace for the plugin. This will be the property on the widget, which will 
- * reference the plugin instance, when it's plugged in
+ * reference the plugin instance, when it's plugged in.
+ *
+ * @property WidgetAnim.NS
+ * @static
+ * @type String
+ * @default "anim"
  */
 WidgetAnim.NS = "anim";
 
 /**
  * The NAME of the WidgetAnim class. Used to prefix events generated
  * by the plugin class.
+ *
+ * @property WidgetAnim.NAME
+ * @static
+ * @type String
+ * @default "pluginWidgetAnim"
  */
 WidgetAnim.NAME = "pluginWidgetAnim";
 
+/**
+ * Pre-Packaged Animation implementations, which can be used for animShow and animHide attribute 
+ * values.
+ *
+ * @property WidgetAnim.ANIMATIONS
+ * @static
+ * @type Object
+ * @default "pluginWidgetAnim"
+ */
 WidgetAnim.ANIMATIONS = {
 
     fadeIn : function() {
@@ -76,12 +107,21 @@ WidgetAnim.ANIMATIONS = {
 };
 
 /**
- * The default set of attributes for the WidgetAnim class.
+ * Static property used to define the default attribute 
+ * configuration for the plugin.
+ *
+ * @property WidgetAnim.ATTRS
+ * @type Object
+ * @static
  */
 WidgetAnim.ATTRS = {
 
     /**
-     * Default duration. Used by the default animation implementations
+     * Default duration in seconds. Used as the default duration for the default animation implementations
+     *
+     * @attribute duration
+     * @type Number
+     * @default 0.2 (seconds 
      */
     duration : {
         value: 0.2
@@ -89,6 +129,10 @@ WidgetAnim.ATTRS = {
 
     /**
      * Default animation instance used for showing the widget (opacity fade-in)
+     * 
+     * @attribute animShow
+     * @type Anim
+     * @default WidgetAnim.ANIMATIONS.fadeIn
      */
     animShow : {
         valueFn: WidgetAnim.ANIMATIONS.fadeIn
@@ -96,21 +140,24 @@ WidgetAnim.ATTRS = {
 
     /**
      * Default animation instance used for hiding the widget (opacity fade-out)
+     *
+     * @attribute animHide
+     * @type Anim
+     * @default WidgetAnim.ANIMATIONS.fadeOut
      */
     animHide : {
         valueFn: WidgetAnim.ANIMATIONS.fadeOut
     }
 };
 
-/**
- * Extend the base plugin class
- */
 Y.extend(WidgetAnim, Y.Plugin.Base, {
 
     /**
-     * Initialization code. Called when the 
-     * plugin is instantiated (whenever it's 
-     * plugged into the host)
+     * The initializer lifecycle implementation. Modifies the host widget's 
+     * visibililty implementation to add animation.
+     *
+     * @method initializer
+     * @param {Object} config The user configuration for the plugin  
      */
     initializer : function(config) {
         this._bindAnimShow();
@@ -124,8 +171,10 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
     },
 
     /**
-     * Destruction code. Invokes destroy in the individual animation instances,
-     * and lets them take care of cleaning up any state.
+     * The initializer destructor implementation. Responsible for destroying the configured
+     * animation instances.
+     * 
+     * @method destructor
      */
     destructor : function() {
         this.get(ANIM_SHOW).destroy();
@@ -133,12 +182,16 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
     },
 
     /**
-     * The custom animation method, added by the plugin.
+     * The injected method used to override the host widget's _uiSetVisible implementation with
+     * an animated version of the same.
      *
-     * This method replaces the default _uiSetVisible handler
+     * <p>This method replaces the default _uiSetVisible handler
      * Widget provides, by injecting itself before _uiSetVisible,
-     * (using Plugins before method) and preventing the default
-     * behavior.
+     * and preventing the default behavior. </p>
+     *
+     * @method _uiAnimSetVisible
+     * @protected
+     * @param {boolean} val true, if making the widget visible. false, if hiding it.
      */
     _uiAnimSetVisible : function(val) {
         if (this.get(HOST).get(RENDERED)) {
@@ -154,7 +207,13 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
     },
 
     /**
-     * The original Widget _uiSetVisible implementation
+     * The original Widget _uiSetVisible implementation. This currently needs to be replicated,
+     * so it can be invoked before or after the animation starts or stops, since the original
+     * methods is not available to the AOP implementation.
+     *
+     * @method _uiSetVisible
+     * @param {boolean} val true, if making the widget visible. false, if hiding it.
+     * @private
      */
     _uiSetVisible : function(val) {
         var host = this.get(HOST),
@@ -164,7 +223,10 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
     },
 
     /**
-     * Sets up call to invoke original visibility handling when the animShow animation is started
+     * Binds a listener to invoke the original visibility handling when the animShow animation is started
+     *
+     * @method _bindAnimShow
+     * @private
      */
     _bindAnimShow : function() {
         // Setup original visibility handling (for show) before starting to animate
@@ -175,8 +237,11 @@ Y.extend(WidgetAnim, Y.Plugin.Base, {
     },
 
     /**
-     * Sets up call to invoke original visibility handling when the animHide animation is complete
-     */ 
+     * Binds a listener to invoke the original visibility handling when the animHide animation is complete
+     *
+     * @method _bindAnimHide
+     * @private
+     */
     _bindAnimHide : function() {
         // Setup original visibility handling (for hide) after completing animation
         this.get(ANIM_HIDE).after(END, 

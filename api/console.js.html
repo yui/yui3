@@ -438,7 +438,7 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">).</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;button.&#39;</span><span class="o">+</span><span class="nx">C_CLEAR</span><span class="p">).</span>
             <span class="nx">on</span><span class="p">(</span><span class="nx">CLICK</span><span class="p">,</span><span class="k">this</span><span class="p">.</span><span class="nx">_onClearClick</span><span class="p">,</span><span class="k">this</span><span class="p">);</span>
-        
+
         <span class="c1">// Attribute changes</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_evtCat</span> <span class="o">+</span> <span class="s1">&#39;stringsChange&#39;</span><span class="p">,</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_afterStringsChange</span><span class="p">);</span>
@@ -1305,13 +1305,7 @@
 <span class="cm">         * @type Object</span>
 <span class="cm">         */</span>
         <span class="nx">strings</span> <span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span> <span class="o">:</span> <span class="p">{</span>
-                <span class="nx">title</span> <span class="o">:</span> <span class="s2">&quot;Log Console&quot;</span><span class="p">,</span>
-                <span class="nx">pause</span> <span class="o">:</span> <span class="s2">&quot;Pause&quot;</span><span class="p">,</span>
-                <span class="nx">clear</span> <span class="o">:</span> <span class="s2">&quot;Clear&quot;</span><span class="p">,</span>
-                <span class="nx">collapse</span> <span class="o">:</span> <span class="s2">&quot;Collapse&quot;</span><span class="p">,</span>
-                <span class="nx">expand</span>   <span class="o">:</span> <span class="s2">&quot;Expand&quot;</span>
-            <span class="p">}</span>
+            <span class="nx">valueFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;console&quot;</span><span class="p">);</span> <span class="p">}</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
@@ -1587,6 +1581,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -1598,17 +1593,22 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>

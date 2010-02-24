@@ -14,7 +14,7 @@
 
 (function() {
     var dateUS, dateFR, dateKR;
-    
+
     YUI({
         lang: "en-US",
     }).use("datatype-date", function(Y) {
@@ -22,12 +22,14 @@
     });
 
     YUI({
+        filter:"raw",
         lang: "fr-FR"
     }).use("datatype-date", function(Y) {
         dateFR = Y.DataType.Date;
     });
     
     YUI({
+        filter:"debug",
         lang: "ko-KR"
     }).use("datatype-date", function(Y) {
         dateKR = Y.DataType.Date;

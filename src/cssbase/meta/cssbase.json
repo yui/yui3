@@ -1,5 +1,6 @@
 {
     "cssbase": {
+        "path": "cssbase/base-min.css", 
         "after": [
             "cssreset", 
             "cssfonts", 

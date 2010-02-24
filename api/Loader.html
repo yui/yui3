@@ -259,8 +259,8 @@ If not supplied, the sorted list of dependencies are applied.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            If configured, YUI JS resources will use the combo
-handler
+                                            If configured, the loader will attempt to use the combo
+service for YUI resources and configured external resources.
                                         </div>
                                     </div>
      
@@ -731,7 +731,7 @@ is called
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Timeout value in milliseconds.  If set, this value will be used by
+                                            Timeout value in milliseconds.  If set, self value will be used by
 the get utility.  the timeout event will fire if
 a timeout occurs.
                                         </div>
@@ -1122,11 +1122,12 @@ method _url
                                         <div class="description" property="yui:description">
                                             Add a new module group
 <dl>
-<dt>name:</dt>       <dd>required, the group name</dd>
-<dt>base:</dt>       <dd>The base dir for this module group</dd>
-<dt>combine:</dt>    <dd>combo handle</dd>
-<dt>comboBase:</dt>  <dd>combo service base path</dd>
-<dt>modules:</dt>    <dd>the group of modules</dd>
+<dt>name:</dt>      <dd>required, the group name</dd>
+<dt>base:</dt>      <dd>The base dir for this module group</dd>
+<dt>root:</dt>      <dd>The root path to add to each combo resource path</dd>
+<dt>combine:</dt>   <dd>combo handle</dd>
+<dt>comboBase:</dt> <dd>combo service base path</dd>
+<dt>modules:</dt>   <dd>the group of modules</dd>
 </dl>
                                         </div>
 
@@ -1860,6 +1861,7 @@ with an insert
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class="selected"><a href="module_loader.html" title="loader">loader</a></li>
@@ -1871,17 +1873,22 @@ with an insert
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>

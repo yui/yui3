@@ -17,8 +17,10 @@
             }
             // bootstrap: false
             // gallerybase: '../../gallerybuild/'
-        }).use('node', 'gallery-port', 'gallery-treeview', function(Y) {
+        // }).use('dump', 'gallery-port', 'gallery-treeview', function(Y) {
+        }).use('dump', 'gallery-port', 'gallery-treeview', function(Y) {
             console.log('BASE: ' + Y.Base);
+            console.log('tv: ' + Y.apm.TreeView);
         });                                                                                                                                 
         // console.log(A.Widget);                                                                                                                                  
     </script>     

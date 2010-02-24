@@ -197,9 +197,11 @@ O.getValue = function (o, path) {
         return UNDEFINED;
     }
 
-    var p=Y.Array(path), l=p.length, i;
+    var i,
+        p = Y.Array(path), 
+        l = p.length;
 
-    for (i=0; o !== UNDEFINED && i < l; i=i+1) {
+    for (i=0; o !== UNDEFINED && i < l; i++) {
         o = o[p[i]];
     }
 
@@ -220,11 +222,13 @@ O.getValue = function (o, path) {
  *                      undefined, if the path was invalid.
  */
 O.setValue = function(o, path, val) {
-
-    var p=Y.Array(path), leafIdx=p.length-1, i, ref=o;
+    var i, 
+        p       = Y.Array(path), 
+        leafIdx = p.length-1, 
+        ref     = o;
 
     if (leafIdx >= 0) {
-        for (i=0; ref !== UNDEFINED && i < leafIdx; i=i+1) {
+        for (i=0; ref !== UNDEFINED && i < leafIdx; i++) {
             ref = ref[p[i]];
         }
 
@@ -237,6 +241,5 @@ O.setValue = function(o, path, val) {
 
     return o;
 };
-
 
 })();

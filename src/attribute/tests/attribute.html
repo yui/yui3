@@ -156,7 +156,7 @@
                     value: null
                 }
             };
-        
+
             Y.extend(Test, Y.Base, {
                 foo: function() {}
             });
@@ -212,7 +212,11 @@
                             A: 3
                         }
                     }
-                }
+                },
+
+                initOnly : {
+                    writeOnce:"initOnly"
+                }    
             };
 
             Y.extend(AttrHost, Y.Base);
@@ -643,6 +647,36 @@
                     Y.Assert.areEqual("EVal", h.get("E"));   // Write Once
 
                     Y.Assert.areEqual("MyNewDEVal", h.get("DE"));
+                },
+
+                testWriteOncePostInit : function() {
+
+                    var h = this.createHost();
+                    h.set("E", "MyNewEVal");
+                    h.set("C", "MyNewCVal");
+
+                    Y.Assert.areEqual("MyNewCVal", h.get("C"));   // Write Once, default value
+                    Y.Assert.areEqual("EVal", h.get("E"));   // Write Once, default value
+                },
+
+                testWriteOnce : function() {
+                    var h = this.createHost({E:"MyEVal"});
+                    h.set("E", "MyNewEVal");
+
+                    Y.Assert.areEqual("MyEVal", h.get("E"));   // Write Once, on init
+                },
+
+                testWriteOnceInitOnly : function() {
+                    var h = this.createHost({ initOnly: "initOnlyVal"});
+                    h.set("initOnly", "NewInitOnlyVal");
+
+                    Y.Assert.areEqual("initOnlyVal", h.get("initOnly"));
+                },
+
+                testWriteOnceInitOnlyNotProvided : function() {
+                    var h1 = this.createHost();
+                    h1.set("initOnly", "InitOnlyVal");
+                    Y.Assert.areEqual(undefined, h1.get("initOnly"));
                 },
 
                 testAdHocGetSet : function() {

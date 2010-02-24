@@ -40,7 +40,7 @@ var throttle = function(fn, ms) {
 
 Y.throttle = throttle;
 
-// Added the redundant definition to later for backwards compatibility.
+// We added the redundant definition to later for backwards compatibility.
 // I don't think we need to do the same thing here
 // Y.Lang.throttle = throttle;
 

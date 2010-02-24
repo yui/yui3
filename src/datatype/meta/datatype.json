@@ -2,13 +2,10 @@
     "datatype": {
         "submodules": {
             "datatype-date": {
-                "requires": [
-                    "yui-base"
-                ],
-                "lang": [
-		    "en", "en-US", "fr-FR", "ko-KR" 	
-                ]
-            }, 
+                "requires": [ "yui-base" ],
+                "lang": [ "en", "en-US", "fr-FR", "ko-KR" 	],
+                "supersedes": ["datatype-date-format"]
+            },
             "datatype-number": {
                 "requires": [
                     "yui-base"
@@ -20,5 +17,9 @@
                 ]
             }
         }
+    }
+    ,
+    "datatype-date-format": {
+        "path": "datatype/datatype-date-format-min.js"
     }
 }

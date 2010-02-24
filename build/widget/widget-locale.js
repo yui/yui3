@@ -1,10 +1,10 @@
 YUI.add('widget-locale', function(Y) {
 
 /**
- * Provides string support for widget with BCP 47 language tag lookup.
+ * Provides string support for widget with BCP 47 language tag lookup. This module has been deprecated. It's replaced by the "intl" module which provides generic internationalization and BCP 47 language tag support with externalization.
  *
  * @module widget-locale
- * @deprecated This module has been deprecated. It's replaced by the "intl" module which provides generic internationalization and BCP language tag support with externalization.
+ * @deprecated This module has been deprecated. It's replaced by the "intl" module which provides generic internationalization and BCP 47 language tag support with externalization.
  */
 var TRUE = true,
     LOCALE = "locale",

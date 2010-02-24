@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>YUI3 Custom Event Tests</title>
-<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
@@ -20,26 +20,10 @@
     //YUI.add("selector-native", function(){});
     YUI({
         filter: "debug",
-        // combine: false,
-        useConsole: true,
         onCSS: function(Y) {
             Y.log('CSS is done loading', 'info', 'testcase');
         },
-        // logInclude: ['event', 'test']
-        logExclude: {
-            'deprecated': 1,
-            get: true,
-            Dom: true, 
-            Selector: true, 
-            Node: true, 
-            // yui: true,
-            attribute: true, 
-            event: true, 
-            // deprecated: true, 
-            base: true, 
-            // loader: true, 
-            widget: true
-        },
+        logExclude: { get: true, Dom: true, Selector: true, Node: true, attribute: true, event: true, base: true, widget: true },
 
         filters: {
             base: 'raw',
@@ -47,7 +31,6 @@
             attribute: 'min'
         }
     }).use("dump", "test", "console", function(Y) {
-
 
         // Y.Global.on('yui:log', function(e) {
         //     console.log('GLOBAL LOG: ' + e.msg);
@@ -60,7 +43,6 @@
         Y.on("click", function() {
             Y.Test.Runner.run();
         }, button);
-
 
         var myConsole = new Y.Console().render();
         Y.log('{}');

@@ -116,6 +116,10 @@
         ]
     }, 
     "console": {
+        "lang": [
+            "en", 
+            "es"
+        ], 
         "plugins": {
             "console-filters": {
                 "requires": [
@@ -148,6 +152,7 @@
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "path": "cssbase/base-min.css", 
         "type": "css"
     }, 
     "cssbase-context": {
@@ -163,6 +168,7 @@
         "type": "css"
     }, 
     "cssfonts": {
+        "path": "cssfonts/fonts-min.css", 
         "type": "css"
     }, 
     "cssfonts-context": {
@@ -173,6 +179,7 @@
         "optional": [
             "cssreset"
         ], 
+        "path": "cssgrids/grids-min.css", 
         "requires": [
             "cssfonts"
         ], 
@@ -189,6 +196,7 @@
         "type": "css"
     }, 
     "cssreset": {
+        "path": "cssreset/reset-min.css", 
         "type": "css"
     }, 
     "cssreset-context": {
@@ -301,6 +309,9 @@
                 ], 
                 "requires": [
                     "yui-base"
+                ], 
+                "supersedes": [
+                    "datatype-date-format"
                 ]
             }, 
             "datatype-number": {
@@ -314,6 +325,9 @@
                 ]
             }
         }
+    }, 
+    "datatype-date-format": {
+        "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
         "submodules": {
@@ -841,6 +855,7 @@
         ]
     }, 
     "widget-locale": {
+        "path": "widget/widget-locale-min.js", 
         "requires": [
             "widget-base"
         ]

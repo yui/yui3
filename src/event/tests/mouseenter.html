@@ -62,13 +62,10 @@
 	
 	</style>
 
-	<script type="text/javascript" src="../../../build/yui/yui-debug.js"></script>
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
 	<script type="text/javascript">
-		YUI({
-		    base: "../../../build/",
-		    filter: 'debug'
-		}).use('event-custom', 'event', 'node-style', function (Y) {
+		YUI({ }).use('event-custom', 'event', 'node-style', function (Y) {
 			
 			var onContainerMouseEnter = function (event) {
 
