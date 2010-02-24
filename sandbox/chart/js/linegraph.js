@@ -1,5 +1,4 @@
-/**
- * The LineGraph is used in the chart visualization package
+/* The LineGraph is used in the chart visualization package
  * @module axis
  *
  * Note: LineGraph is a temporary class that has been created for the purposes of observing and testing the current state of the underlying flash chart rendering engine. This file
@@ -23,22 +22,44 @@
 	 * @param ykey {String} point to ther array of values container in the yaxis
 	 * @param {Object} config (optional) Configuration parameters for the Axis.
 	 */
-	function LineGraph (xaxis, yaxis, xkey, ykey, config) {
-		this._id = Y.guid("yuilinegraph");
-		this.xaxis = xaxis;
-		this.yaxis = yaxis;
-		this.xkey = xkey;
-		this.ykey = ykey;
-		this._parseConfigs(config);
-		this.swfowner = null;
+	function LineGraph (p_oElement, config) 
+	{
+		this._attributeConfig = Y.merge(this._attributeConfig, LineGraph.superclass._attributeConfig);
+		LineGraph.superclass.constructor.apply(this, arguments);
 	}
 
-	LineGraph.prototype = 
+
+	Y.extend(LineGraph, Y.SWFWidget, 
 	{
+		_attributeConfig:
+		{
+			xaxis:
+			{
+				value:null
+			},
+
+			yaxis:
+			{
+				value:null
+			},
+			
+			xkey:
+			{
+				value:null
+			},
+
+			ykey:
+			{
+				value:null
+			}
+		},
+
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		className:  "LineGraph",
+		CLASSNAME:  "LineGraph",
+
+		GUID: "yuilinechart",
 
 		/**
 		 * @private
@@ -52,79 +73,10 @@
 		{
 			this.swfowner = swfowner;
 			this.appswf = this.swfowner.appswf;
-			this.appswf.createInstance(this._id, "LineGraph", ["$" + this.xaxis._id + "data", "$" + this.yaxis._id + "data", this.xkey, this.ykey]);
-			if(this._defaultStyles) 
-			{
-				this.appswf.applyMethod(this._id, "setStyles", [this._defaultStyles]);
-				this._defaultStyles = null;
-			}
+			this.appswf.createInstance(this._id, "LineGraph", ["$" + this.get("xaxis")._id + "data", "$" + this.get("yaxis")._id + "data", this.get("xkey"), this.get("ykey")]);
+			this._updateStyles();
 		},
 
-		/**
-		 * Sets properties based on a configuration hash.
-		 * @private
-		 */
-		_parseConfigs: function(config)
-		{
-			if(config && config.hasOwnProperty("styles"))
-			{
-				this.setStyles(config.styles);
-			}
-		},
-		
-		_defaultStyles: null,
-
-		/**
-		 * Sets a style property for the instance.
-		 *
-		 * @method setStyle
-		 * @param {String} style name of the style to be set
-		 * @param {Object} value value to be set for the style
-		 */
-		setStyle: function(style, value)
-		{
-			if(this.appswf) 
-			{
-				this.appswf.applyMethod(this._id, "setStyle", [style, value]);
-			}
-			else
-			{
-				if(!this._defaultStyles)
-				{
-					this._defaultStyles = {};
-				}
-				this._defaultStyles[style] = value;
-			}
-	  	},
-
-		/**
-		 * Sets multiple style properties on the instance.
-		 *
-		 * @method setStyles
-		 * @param {Object} styles Hash of styles to be applied.
-		 */
-		setStyles: function(styles)
-		{
-			if(this.appswf)
-			{
-				this.appswf.applyMethod(this._id, "setStyles", [styles]);
-				this._defaultStyles = null;
-			}
-			else
-			{
-				for(var i in styles) 
-				{
-					if(styles.hasOwnProperty(i))
-					{
-						if(!this._defaultStyles)
-						{
-							this._defaultStyles = {};
-						}
-						this._defaultStyles[i] = styles[i];
-					}
-				}
-			}
-		},
 		
 		/**
 		 * Public accessor to the unique name of the LineGraph instance.
@@ -137,9 +89,6 @@
 			return "LineGraph " + this._id;
 		}
 
-	};
-
-
-	Y.augment(LineGraph, Y.EventTarget);
+	});
 
 	Y.LineGraph = LineGraph;
