@@ -11,7 +11,6 @@ YUI.add('get', function(Y) {
 
 var ua         = Y.UA, 
     L          = Y.Lang,
-    // PREFIX     = Y.guid(),
     TYPE_JS    = "text/javascript",
     TYPE_CSS   = "text/css",
     STYLESHEET = "stylesheet";
@@ -28,10 +27,9 @@ Y.Get = function() {
      * @property queues
      * @private
      */
-    var queues={}, 
-        _get,
-        _purge,
-        _track,
+    var _get, _purge, _track,
+
+    queues = {}, 
         
     /**
      * queue index used to generate transaction ids
@@ -39,7 +37,7 @@ Y.Get = function() {
      * @type int
      * @private
      */
-        qidx=0, 
+    qidx = 0, 
         
     /**
      * interal property used to prevent multiple simultaneous purge 
@@ -48,7 +46,7 @@ Y.Get = function() {
      * @type boolean
      * @private
      */
-        purging=false,
+    purging,
 
     
     /** 
@@ -161,7 +159,6 @@ Y.Get = function() {
      * @private
      */
     _fail = function(id, msg) {
-
         Y.log("get failure: " + msg, "warn", "get");
 
         var q = queues[id], sc;
@@ -235,9 +232,7 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
-
         // Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
-
         var q = queues[id], msg, w, d, h, n, url, s;
 
         if (q.timer) {
@@ -332,11 +327,9 @@ Y.Get = function() {
      * @private
      */
     _autoPurge = function() {
-
         if (purging) {
             return;
         }
-
         purging = true;
 
         var i, q;
@@ -364,7 +357,6 @@ Y.Get = function() {
      * @private
      */
     _queue = function(type, url, opts) {
-
         opts = opts || {};
 
         var id = "q" + (qidx++), q,
@@ -388,11 +380,9 @@ Y.Get = function() {
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
 
-
         q.attributes = q.attributes || {};
         q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
 
-        // L.later(0, q, _next, id);
         setTimeout(function() {
             _next(id);
         }, 0);
@@ -438,7 +428,6 @@ Y.Get = function() {
 
         // webkit prior to 3.x is no longer supported
         } else if (ua.webkit) {
-
             if (type === "script") {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener("load", function() {
@@ -451,7 +440,6 @@ Y.Get = function() {
         // script nodes.  Opera, but not FF, supports the onload event for link
         // nodes.
         } else { 
-
             n.onload = function() {
                 // Y.log(id + " onload " + url, "info", "get");
                 f(id, url);
@@ -462,7 +450,6 @@ Y.Get = function() {
             };
         }
     };
-
 
     _get = function(nId, tId) {
         var q = queues[tId],
@@ -480,7 +467,8 @@ Y.Get = function() {
      * @private
      */
     _purge = function(tId) {
-        var q=queues[tId], n, l, d, h, s, i, node, attr;
+        var n, l, d, h, s, i, node, attr,
+            q = queues[tId];
         if (q) {
             n = q.nodes; 
             l = n.length;
@@ -499,11 +487,6 @@ Y.Get = function() {
                 if (node.clearAttributes) {
                     node.clearAttributes();
                 } else {
-                    // This is a hostile delete
-                    // operation attempting to improve
-                    // memory performance.  As such, the
-                    // hasOwnProperty check is intentionally
-                    // ommitted.
                     for (attr in node) {
                         if (node.hasOwnProperty(attr)) {
                             delete node[attr];
@@ -539,7 +522,6 @@ Y.Get = function() {
          */
         _finalize: function(id) {
             Y.log(id + " finalized ", "info", "get");
-            // L.later(0, null, _finish, id);
             setTimeout(function() {
                 _finish(id);
             }, 0);

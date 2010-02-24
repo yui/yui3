@@ -58,7 +58,6 @@
 
 <span class="kd">var</span> <span class="nx">ua</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">,</span> 
     <span class="nx">L</span>          <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
-    <span class="c1">// PREFIX     = Y.guid(),</span>
     <span class="nx">TYPE_JS</span>    <span class="o">=</span> <span class="s2">&quot;text/javascript&quot;</span><span class="p">,</span>
     <span class="nx">TYPE_CSS</span>   <span class="o">=</span> <span class="s2">&quot;text/css&quot;</span><span class="p">,</span>
     <span class="nx">STYLESHEET</span> <span class="o">=</span> <span class="s2">&quot;stylesheet&quot;</span><span class="p">;</span>
@@ -75,10 +74,9 @@
 <span class="cm">     * @property queues</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
-    <span class="kd">var</span> <span class="nx">queues</span><span class="o">=</span><span class="p">{},</span> 
-        <span class="nx">_get</span><span class="p">,</span>
-        <span class="nx">_purge</span><span class="p">,</span>
-        <span class="nx">_track</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">_get</span><span class="p">,</span> <span class="nx">_purge</span><span class="p">,</span> <span class="nx">_track</span><span class="p">,</span>
+
+    <span class="nx">queues</span> <span class="o">=</span> <span class="p">{},</span> 
         
     <span class="cm">/**</span>
 <span class="cm">     * queue index used to generate transaction ids</span>
@@ -86,7 +84,7 @@
 <span class="cm">     * @type int</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
-        <span class="nx">qidx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="nx">qidx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
         
     <span class="cm">/**</span>
 <span class="cm">     * interal property used to prevent multiple simultaneous purge </span>
@@ -95,7 +93,7 @@
 <span class="cm">     * @type boolean</span>
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
-        <span class="nx">purging</span><span class="o">=</span><span class="kc">false</span><span class="p">,</span>
+    <span class="nx">purging</span><span class="p">,</span>
 
     
     <span class="cm">/** </span>
@@ -208,7 +206,6 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_fail</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span> <span class="p">{</span>
-
         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;get failure: &quot;</span> <span class="o">+</span> <span class="nx">msg</span><span class="p">,</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
 
         <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">sc</span><span class="p">;</span>
@@ -282,9 +279,7 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_next</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">loaded</span><span class="p">)</span> <span class="p">{</span>
-
         <span class="c1">// Y.log(&quot;_next: &quot; + id + &quot;, loaded: &quot; + (loaded || &quot;nothing&quot;), &quot;info&quot;, &quot;get&quot;);</span>
-
         <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">id</span><span class="p">],</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">.</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
@@ -379,11 +374,9 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_autoPurge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-
         <span class="k">if</span> <span class="p">(</span><span class="nx">purging</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
-
         <span class="nx">purging</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
         <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">q</span><span class="p">;</span>
@@ -411,7 +404,6 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_queue</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
-
         <span class="nx">opts</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="s2">&quot;q&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">qidx</span><span class="o">++</span><span class="p">),</span> <span class="nx">q</span><span class="p">,</span>
@@ -435,11 +427,9 @@
         <span class="nx">q</span><span class="p">.</span><span class="nx">autopurge</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;autopurge&quot;</span> <span class="k">in</span> <span class="nx">q</span><span class="p">)</span> <span class="o">?</span> <span class="nx">q</span><span class="p">.</span><span class="nx">autopurge</span> <span class="o">:</span> 
                       <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
 
-
         <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">charset</span> <span class="o">||</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">charset</span> <span class="o">||</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">;</span>
 
-        <span class="c1">// L.later(0, q, _next, id);</span>
         <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
         <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
@@ -485,7 +475,6 @@
 
         <span class="c1">// webkit prior to 3.x is no longer supported</span>
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">ua</span><span class="p">.</span><span class="nx">webkit</span><span class="p">)</span> <span class="p">{</span>
-
             <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="c1">// Safari 3.x supports the load event for script nodes (DOM2)</span>
                 <span class="nx">n</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -498,7 +487,6 @@
         <span class="c1">// script nodes.  Opera, but not FF, supports the onload event for link</span>
         <span class="c1">// nodes.</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> 
-
             <span class="nx">n</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="c1">// Y.log(id + &quot; onload &quot; + url, &quot;info&quot;, &quot;get&quot;);</span>
                 <span class="nx">f</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
@@ -509,7 +497,6 @@
             <span class="p">};</span>
         <span class="p">}</span>
     <span class="p">};</span>
-
 
     <span class="nx">_get</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nId</span><span class="p">,</span> <span class="nx">tId</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">tId</span><span class="p">],</span>
@@ -527,7 +514,8 @@
 <span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_purge</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tId</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">q</span><span class="o">=</span><span class="nx">queues</span><span class="p">[</span><span class="nx">tId</span><span class="p">],</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">h</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">attr</span><span class="p">,</span>
+            <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="p">[</span><span class="nx">tId</span><span class="p">];</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">q</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">n</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">nodes</span><span class="p">;</span> 
             <span class="nx">l</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
@@ -546,11 +534,6 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">clearAttributes</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">node</span><span class="p">.</span><span class="nx">clearAttributes</span><span class="p">();</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="c1">// This is a hostile delete</span>
-                    <span class="c1">// operation attempting to improve</span>
-                    <span class="c1">// memory performance.  As such, the</span>
-                    <span class="c1">// hasOwnProperty check is intentionally</span>
-                    <span class="c1">// ommitted.</span>
                     <span class="k">for</span> <span class="p">(</span><span class="nx">attr</span> <span class="k">in</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">attr</span><span class="p">))</span> <span class="p">{</span>
                             <span class="k">delete</span> <span class="nx">node</span><span class="p">[</span><span class="nx">attr</span><span class="p">];</span>
@@ -586,7 +569,6 @@
 <span class="cm">         */</span>
         <span class="nx">_finalize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; finalized &quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">);</span>
-            <span class="c1">// L.later(0, null, _finish, id);</span>
             <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="nx">_finish</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
             <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
