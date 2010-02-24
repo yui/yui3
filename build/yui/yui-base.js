@@ -595,7 +595,6 @@ YUI.prototype = {
     // this is replaced if the log module is included
     log: NOOP,
     message: NOOP,
-    
 
     /**
      * Report an error.  The reporting mechanism is controled by

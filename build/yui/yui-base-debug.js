@@ -526,7 +526,8 @@ YUI.prototype = {
 
         // dynamic load
         if (boot && len && Y.Loader) {
-            Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
+            // Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
+            Y.log('Using Loader', 'info', 'yui');
             Y._loading = true;
             loader = new Y.Loader(config);
             loader.onEnd = handleLoader;
@@ -610,7 +611,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
     // this is replaced if the log module is included
     log: NOOP,
     message: NOOP,
-    
 
     /**
      * Report an error.  The reporting mechanism is controled by
