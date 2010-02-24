@@ -176,6 +176,7 @@ META = {
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "path": "cssbase/base-min.css", 
         "type": "css"
     }, 
     "cssbase-context": {
@@ -191,6 +192,7 @@ META = {
         "type": "css"
     }, 
     "cssfonts": {
+        "path": "cssfonts/fonts-min.css", 
         "type": "css"
     }, 
     "cssfonts-context": {
@@ -201,6 +203,7 @@ META = {
         "optional": [
             "cssreset"
         ], 
+        "path": "cssgrids/grids-min.css", 
         "requires": [
             "cssfonts"
         ], 
@@ -217,6 +220,7 @@ META = {
         "type": "css"
     }, 
     "cssreset": {
+        "path": "cssreset/reset-min.css", 
         "type": "css"
     }, 
     "cssreset-context": {
