@@ -879,6 +879,7 @@ META = {
         ]
     }, 
     "widget-locale": {
+        "path": "widget/widget-locale-min.js", 
         "requires": [
             "widget-base"
         ]
