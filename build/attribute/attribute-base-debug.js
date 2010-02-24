@@ -147,6 +147,7 @@ YUI.add('attribute-base', function(Y) {
         SETTER = "setter",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
+        INIT_ONLY = "initOnly",
         VALIDATOR = "validator",
         VALUE = "value",
         VALUE_FN = "valueFn",
@@ -649,7 +650,9 @@ YUI.add('attribute-base', function(Y) {
                 initialSet,
                 strPath,
                 path,
-                currVal;
+                currVal,
+                writeOnce,
+                initializing;
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
@@ -672,9 +675,12 @@ YUI.add('attribute-base', function(Y) {
                 Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
             } else {
 
+                writeOnce = state.get(name, WRITE_ONCE);
+                initializing = state.get(name, INITIALIZING);
+
                 if (!initialSet && !force) {
 
-                    if (state.get(name, WRITE_ONCE)) {
+                    if (writeOnce) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
                         allowSet = false;
                     }
@@ -683,6 +689,11 @@ YUI.add('attribute-base', function(Y) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
                         allowSet = false;
                     }
+                }
+
+                if (!initializing && !force && writeOnce === INIT_ONLY) {
+                    Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce: "initOnly"', 'warn', 'attribute');
+                    allowSet = false;
                 }
 
                 if (allowSet) {
@@ -701,7 +712,7 @@ YUI.add('attribute-base', function(Y) {
                     }
 
                     if (allowSet) {
-                        if (state.get(name, INITIALIZING)) {
+                        if (initializing) {
                             this._setAttrVal(name, strPath, currVal, val);
                         } else {
                             this._fireAttrChange(name, strPath, currVal, val, opts);

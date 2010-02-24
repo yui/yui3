@@ -1,3 +1,9 @@
+/**
+ * Define new DOM events that can be subscribed from any Node.
+ *
+ * @module event
+ * @submodule event-synthetic
+ */
 var Evt         = Y.Env.evt,
     DOMWrappers = Evt.dom_wrappers,
     DOMMap      = Evt.dom_map,
@@ -5,25 +11,34 @@ var Evt         = Y.Env.evt,
     DOMEvents   = Y.Node.DOM_EVENTS,
     isFunction  = Y.Lang.isFunction;
 
+/**
+ * Adds the following method to CustomEvent's prototype.
+ *
+ * @class CustomEvent~extras
+ */
+
+/**
+ * Returns the first subscriber that matches the provided function and/or
+ * context.  Both function and context parameters are optional.  Omitting
+ * either will return the first match on the other parameter, and omitting both
+ * will return the first subscriber.
+ *
+ * @method getSubscriber
+ * @param fn {Function} Optional. The subscribed callback function
+ * @param ctx {Object} Optional.  The context override for the callback
+ * @return {Subscriber} or null
+ */
 Y.CustomEvent.prototype.getSubscriber = function (fn, ctx) {
-    var subs   = this.subscribers,
-        afters = this.afters,
-        id, sub;
+    var subs = this.getSubs(), // on, after subs and their *:type siblings
+        i, len, id, sub;
 
-    for (id in subs) {
-        if (subs.hasOwnProperty(id)) {
-            sub = subs[id];
-            if ((!fn || sub.fn === fn) && (!ctx || sub.context === ctx)) {
-                return sub;
-            }
-        }
-    }
-
-    for (id in afters) {
-        if (afters.hasOwnProperty(id)) {
-            sub = afters[id];
-            if ((!fn || sub.fn === fn) && (!ctx || sub.context === ctx)) {
-                return sub;
+    for ( i = 0, len = subs.length; i < len; ++i ) {
+        for (id in subs[i]) {
+            if (subs[i].hasOwnProperty(id)) {
+                sub = subs[i][id];
+                if ((!fn || sub.fn === fn) && (!ctx || sub.context === ctx)) {
+                    return sub;
+                }
             }
         }
     }
@@ -31,17 +46,87 @@ Y.CustomEvent.prototype.getSubscriber = function (fn, ctx) {
     return null;
 };
 
+/**
+ * <p>Wrapper class for the integration of new events into the YUI event
+ * infrastructure.  Don't instantiate this object directly, use
+ * <code>Y.Event.define( config )</code>.</p>
+ *
+ * <p>The configuration object must include the event <code>type</code>, and should include implementation methods for <code>on</code> and <code>detach</code>.  This is the full list of configuration properties:</p>
+ * <dl>
+ *   <dt><code>type</code></dt>
+ *       <dd>REQUIRED.  The name of the synthetic event.  What goes
+ *       <code>node.on(<strong>HERE</strong>, callback )</code>.</dd>
+ *
+ *   <dt><code>on</code></dt>
+ *       <dd><code>function ( node, subscription, fireEvent )</code> The
+ *       implementation logic for subscription.  Any special setup you need to
+ *       do to create the environment for the event being fired.  E.g. native
+ *       DOM event subscriptions.  Store subscription related objects and
+ *       information on the <code>subscription</code> object.  When the
+ *       criteria have been met to fire the synthetic event, call
+ *       <code>fireEvent.fire()</code>.</dd>
+ *
+ *   <dt><code>detach</code></dt>
+ *       <dd><code>function ( node, subscription, fireEvent )</code> The
+ *       implementation logic for cleaning up a detached subscription. E.g.
+ *       detach any DOM subscriptions done in <code>on</code>.</dd>
+ *
+ *   <dt><code>publishConfig</code></dt>
+ *       <dd>(Object) The configuration object that will be used to instantiate
+ *       the underlying CustomEvent.  By default, the event is defined with
+ *       <code>emitFacade: true</code> so subscribers will receive a DOM-like
+ *       event object.</dd>
+ *
+ *   <dt><code>processArgs</code></dt>
+ *       <dd><code>function ( argArray )</code>  Optional method to extract any
+ *       additional arguments from the subscription signature.  Using this
+ *       allows <code>on</code> signatures like <code>node.on(
+ *       &quot;hover&quot;, overCallback, outCallback )</code>.  Be sure that
+ *       the args passed in is pruned of any additional arguments using, for
+ *       example, <code>argArray.splice(2,1);</code>.  Data returned from the
+ *       function will be stored on the <code>subscription</code> object passed
+ *       to <code>on</code> and <code>detach</code> under
+ *       <code>subscription._extra</code>.</dd>
+ *   <dt>
+ *
+ * @class SyntheticEvent
+ * @constructor
+ * @param cfg {Object} Implementation pieces and configuration
+ */
 function SyntheticEvent(cfg) {
     this._init(cfg);
 }
 
 SyntheticEvent.prototype = {
+    /**
+     * Initializes the synthetic event.
+     *
+     * @method _init
+     * @param cfg {Object} The configuration object passed to the constructor
+     * @protected
+     */
     _init: function (cfg) {
         this.type = cfg.type;
         this.impl = cfg;
         this._publishConfig = cfg.publishConfig || { emitFacade: true };
     },
 
+    /**
+     * Initial receiver of the event subscription.  Passes off control to the
+     * implementation <code>on</code> specified in the constructor
+     * configuration after setting up the boiler plate code necessary for clean
+     * detaching and destruction in the Event infrastructure.  Note that the
+     * implementation function specified in the configuration will be called
+     * once for each node passed in <code>el</code>, and each will be a Node
+     * instance.
+     *
+     * @method on
+     * @param type {String} the synthetic event name
+     * @param fn {Function} the callback function
+     * @param el {HTMLElement | Node | HTMLElement[] | NodeList} 
+     *                          subscription target(s)
+     * @protected
+     */
     on: function (type, fn, el) {
         var args = Y.Array(arguments,0,true),
             self = DOMEvents[type], // event system calls on.apply(Y, ...)
@@ -144,6 +229,21 @@ SyntheticEvent.prototype = {
         return handle;
     },
 
+    /**
+     * Initial receiver of the event detach.  Passes off control to the
+     * implementation <code>detach</code> specified in the constructor
+     * configuration after doing the necessary infrastructure cleanup.
+     * Note that the implementation function specified in the configuration
+     * will be called once for each node passed in <code>el</code>, and each
+     * will be a Node instance.
+     *
+     * @method detach
+     * @param type { String } the synthetic event name
+     * @param fn {Function} the callback function
+     * @param el {HTMLElement | Node | HTMLElement[] | NodeList}
+     *                      subscription target(s)
+     * @protected
+     */
     detach: function (type, fn, el) {
         var args = Y.Array(arguments, 0, true),
             self = DOMEvents[type],
@@ -214,6 +314,15 @@ SyntheticEvent.prototype = {
         return ret;
     },
 
+    /**
+     * Stub implementation.  Specify this in the configuration object passed to 
+     * the constructor (rather, passed to <code>Y.Event.define</code>).
+     *
+     * @method _processArgs
+     * @param args {Array} Array of arguments passed to <code>on</code>
+     * @return {MIXED} null by default, but override to return useful data
+     * @protected
+     */
     _processArgs: function (args) {
         return null;
     }
@@ -221,6 +330,27 @@ SyntheticEvent.prototype = {
 
 Y.SyntheticEvent = SyntheticEvent;
 
+/**
+ * Static method added to <code>Y.Event</code>
+ *
+ * @class Y~Event
+ */
+
+/**
+ * <p>Static method to register a synthetic event definition and implementation
+ * in the DOM Event subsystem. See <code>Y.SyntheticEvent</code> for the
+ * configuration object signature required.</p>
+ *
+ * <p>Pass either a string <code>type</code> and configuration object as
+ * separate parameters or a configuration object that includes a
+ * <code>type</code> property as a single parameter.</p>
+ *
+ * @method Event.define
+ * @param type {String} Name given to the synthetic event
+ * @param cfg {Object} configuration object.  Pass this as the first
+ *                  parameter if it includes the <code>type</code> property.
+ * @static
+ */
 Y.Event.define = function (type, cfg) {
     var e = Y.Lang.isObject(type) ?
                 type :

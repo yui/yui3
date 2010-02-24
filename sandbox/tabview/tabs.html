@@ -8,7 +8,10 @@
 <script type="text/javascript" src="../../build/tabview/tabview.js"></script>
 <script type="text/javascript" src="../../build/tabview/tab.js"></script>
 
-<link rel="stylesheet" type="text/css" href="../../src/tabview/css/tabview.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssreset/reset.css">
+<link rel="stylesheet" type="text/css" href="../../build/cssfonts/fonts.css">
+<link rel="stylesheet" type="text/css" href="../../src/tabview/css/tabview-core.css">
+<link rel="stylesheet" type="text/css" href="../../src/tabview/css/tabview-skin.css">
 <style>
 ul, li {
     margin: 0;
@@ -16,7 +19,7 @@ ul, li {
 }
 </style>
 </head>
-<body>
+<body class="yui3-skin-sam">
 <h1>Tabs</h1>
 
 <div id="demo">
@@ -28,70 +31,49 @@ ul, li {
         <li><a>bar</a></li>
         <li><a>baz</a></li>
     </ul>
+
     <div>
-        <div>
-            <p>foo content</p>
-        </div>
-        <div>
-            <p>bar content</p>
-        </div>
-        <div>
-            <p>baz content</p>
-        </div>
+        <div>foo content</div>
+        <div>bar content</div>
+        <div>baz content</div>
     </div>
 </div>
 </body>
 <script type="text/javascript">
 YUI({filter: 'raw'}).use('tabview', function(Y) {
-/*
-    var tablist = new Y.TabView({
-        contentBox:'#demo2'
-    });
-    tablist.render();
-    tablist.add({
-        boundingBox:Y.one('#demo2 li'),
-        panelNode: Y.one('#demo2 div div')
-    });
-    //tablist.add({boundingBox:Y.Node.create('<li><a>foo</a></li>')});
-    console.log(tablist.item(0).get('contentBox'));
-*/
-    var tablist = new Y.TabView({
+    var tabview = new Y.TabView({
         boundingBox: '#demo',
         children: [{
             label: 'tab 1',
             content: 'tab 1 content'
-        },{
+        }, {
             label: 'tab 2',
-            content: 'tab 2 content'
+            content: 'tab 2 content',
+            selection: 1
 
-        },{
+        }, {
             label: 'tab 3',
             content: 'tab 3 content'
         }]
     });
-    tablist.render();
-    tablist.selectChild(0);
-    tablist.remove(0);
+    tabview.render();
+    //tabview.selectChild(0);
+    //tabview.remove(0);
     //tablist.get('selection').next().set('selected', 1);
 
-/*
-    var tablist2 = new Y.TabView({
+
+    var tabview2 = new Y.TabView({
         contentBox: '#demo2'
     });
-    tablist2.render();
 
-    var tablist2 = new Y.TabView({
-        children: [{
-            label: 'tab 1',
-            content: 'tab 1 content'
-        },{
-            label: 'tab 2',
-            content: 'tab 2 content'
-        }]
+    tabview2.render();
+    tabview2.add({
+        label: 'foobar',
+        content: 'foobar content'
     });
-    tablist2.render('#demo2');
-    console.log(tablist2.get('contentBox'));
-*/
+    console.log(tabview2.get('contentBox').focusManager.get('descendants'));
+    tabview2.selectChild(2);
+    //tabview2.add(tabview.item(1));
 });
 
 </script>

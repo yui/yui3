@@ -76,6 +76,7 @@
         <span class="nx">SETTER</span> <span class="o">=</span> <span class="s2">&quot;setter&quot;</span><span class="p">,</span>
         <span class="nx">READ_ONLY</span> <span class="o">=</span> <span class="s2">&quot;readOnly&quot;</span><span class="p">,</span>
         <span class="nx">WRITE_ONCE</span> <span class="o">=</span> <span class="s2">&quot;writeOnce&quot;</span><span class="p">,</span>
+        <span class="nx">INIT_ONLY</span> <span class="o">=</span> <span class="s2">&quot;initOnly&quot;</span><span class="p">,</span>
         <span class="nx">VALIDATOR</span> <span class="o">=</span> <span class="s2">&quot;validator&quot;</span><span class="p">,</span>
         <span class="nx">VALUE</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span>
         <span class="nx">VALUE_FN</span> <span class="o">=</span> <span class="s2">&quot;valueFn&quot;</span><span class="p">,</span>
@@ -578,7 +579,9 @@
                 <span class="nx">initialSet</span><span class="p">,</span>
                 <span class="nx">strPath</span><span class="p">,</span>
                 <span class="nx">path</span><span class="p">,</span>
-                <span class="nx">currVal</span><span class="p">;</span>
+                <span class="nx">currVal</span><span class="p">,</span>
+                <span class="nx">writeOnce</span><span class="p">,</span>
+                <span class="nx">initializing</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">DOT</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">strPath</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
@@ -601,9 +604,12 @@
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Set attribute:&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, aborted; Attribute is not configured&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;attribute&#39;</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
 
+                <span class="nx">writeOnce</span> <span class="o">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">WRITE_ONCE</span><span class="p">);</span>
+                <span class="nx">initializing</span> <span class="o">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">INITIALIZING</span><span class="p">);</span>
+
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">initialSet</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span><span class="p">)</span> <span class="p">{</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">WRITE_ONCE</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">writeOnce</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Set attribute:&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, aborted; Attribute is writeOnce&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;attribute&#39;</span><span class="p">);</span>
                         <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                     <span class="p">}</span>
@@ -612,6 +618,11 @@
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Set attribute:&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, aborted; Attribute is readOnly&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;attribute&#39;</span><span class="p">);</span>
                         <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                     <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">initializing</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">force</span> <span class="o">&amp;&amp;</span> <span class="nx">writeOnce</span> <span class="o">===</span> <span class="nx">INIT_ONLY</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Set attribute:&#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, aborted; Attribute is writeOnce: &quot;initOnly&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;attribute&#39;</span><span class="p">);</span>
+                    <span class="nx">allowSet</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="p">}</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">allowSet</span><span class="p">)</span> <span class="p">{</span>
@@ -630,7 +641,7 @@
                     <span class="p">}</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="nx">allowSet</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">state</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">INITIALIZING</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">initializing</span><span class="p">)</span> <span class="p">{</span>
                             <span class="k">this</span><span class="p">.</span><span class="nx">_setAttrVal</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">strPath</span><span class="p">,</span> <span class="nx">currVal</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
                         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                             <span class="k">this</span><span class="p">.</span><span class="nx">_fireAttrChange</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">strPath</span><span class="p">,</span> <span class="nx">currVal</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">opts</span><span class="p">);</span>
@@ -1090,17 +1101,21 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>

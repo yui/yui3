@@ -186,7 +186,7 @@ Y.Get = function() {
      * @private
      */
     _finish = function(id) {
-        Y.log("Finishing transaction " + id, "info", "get");
+        // Y.log("Finishing transaction " + id, "info", "get");
         var q = queues[id], msg, sc;
         if (q.timer) {
             // q.timer.cancel();
@@ -236,7 +236,7 @@ Y.Get = function() {
      */
     _next = function(id, loaded) {
 
-        Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
+        // Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
 
         var q = queues[id], msg, w, d, h, n, url, s;
 
@@ -315,7 +315,7 @@ Y.Get = function() {
             h.appendChild(n);
         }
         
-        Y.log("Appending node: " + url, "info", "get");
+        // Y.log("Appending node: " + url, "info", "get");
 
         // FireFox does not support the onload event for link nodes, so there is
         // no way to make the css requests synchronous. This means that the css 
@@ -430,7 +430,7 @@ Y.Get = function() {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
-                    Y.log(id + " onreadstatechange " + url, "info", "get");
+                    // Y.log(id + " onreadstatechange " + url, "info", "get");
                     n.onreadystatechange = null;
                     f(id, url);
                 }
@@ -442,7 +442,7 @@ Y.Get = function() {
             if (type === "script") {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener("load", function() {
-                    Y.log(id + " DOM2 onload " + url, "info", "get");
+                    // Y.log(id + " DOM2 onload " + url, "info", "get");
                     f(id, url);
                 });
             } 
@@ -453,7 +453,7 @@ Y.Get = function() {
         } else { 
 
             n.onload = function() {
-                Y.log(id + " onload " + url, "info", "get");
+                // Y.log(id + " onload " + url, "info", "get");
                 f(id, url);
             };
 

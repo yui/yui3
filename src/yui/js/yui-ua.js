@@ -21,7 +21,7 @@
  */
 Y.UA = function() {
 
-    var numberfy = function(s) {
+    var numberify = function(s) {
             var c = 0;
             return parseFloat(s.replace(/\./g, function() {
                 return (c++ == 1) ? '' : '.';
@@ -174,7 +174,7 @@ Y.UA = function() {
         // Modern WebKit browsers are at least X-Grade
         m=ua.match(/AppleWebKit\/([^\s]*)/);
         if (m&&m[1]) {
-            o.webkit=numberfy(m[1]);
+            o.webkit=numberify(m[1]);
 
             // Mobile browser check
             if (/ Mobile\//.test(ua)) {
@@ -188,7 +188,7 @@ Y.UA = function() {
 
             m=ua.match(/Chrome\/([^\s]*)/);
             if (m && m[1]) {
-                o.chrome = numberfy(m[1]); // Chrome
+                o.chrome = numberify(m[1]); // Chrome
             } else {
                 m=ua.match(/AdobeAIR\/([^\s]*)/);
                 if (m) {
@@ -201,7 +201,7 @@ Y.UA = function() {
             // @todo check Opera/8.01 (J2ME/MIDP; Opera Mini/2.0.4509/1316; fi; U; ssr)
             m=ua.match(/Opera[\s\/]([^\s]*)/);
             if (m&&m[1]) {
-                o.opera=numberfy(m[1]);
+                o.opera=numberify(m[1]);
                 m=ua.match(/Opera Mini[^;]*/);
                 if (m) {
                     o.mobile = m[0]; // ex: Opera Mini/2.0.4509/1316
@@ -209,14 +209,14 @@ Y.UA = function() {
             } else { // not opera or webkit
                 m=ua.match(/MSIE\s([^;]*)/);
                 if (m&&m[1]) {
-                    o.ie=numberfy(m[1]);
+                    o.ie=numberify(m[1]);
                 } else { // not opera, webkit, or ie
                     m=ua.match(/Gecko\/([^\s]*)/);
                     if (m) {
                         o.gecko=1; // Gecko detected, look for revision
                         m=ua.match(/rv:([^\s\)]*)/);
                         if (m&&m[1]) {
-                            o.gecko=numberfy(m[1]);
+                            o.gecko=numberify(m[1]);
                         }
                     }
                 }

@@ -1,6 +1,5 @@
 /*global YUI */
 
-
 /**
  * The Browser History Utility provides the ability to use the back/forward
  * navigation buttons in a DHTML application. It also allows a DHTML
@@ -348,7 +347,7 @@
     }
 
 
-    H = {
+    H = Y.mix(new Y.EventTarget(), {
 
         /**
          * Registers a new module.
@@ -611,13 +610,7 @@
 
             return null;
         }
-    };
-
-
-    // Make Y.History an event target
-    Y.mix(H, Y.Event.Target.prototype);
-    Y.Event.Target.call(H);
-
+    });
 
     /**
      * This class represents a browser history module.
@@ -627,8 +620,6 @@
      * @param initialState {String} the module's initial state
      */
     H.Module = function (id, initialState) {
-
-        Y.Event.Target.call(this);
 
         /**
          * The module identifier
@@ -663,6 +654,6 @@
         this.upcomingState = initialState;
     };
 
-    Y.mix(H.Module, Y.Event.Target, false, null, 1);
+    Y.augment(H.Module, Y.EventTarget);
 
     Y.History = H;

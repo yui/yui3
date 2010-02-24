@@ -49,7 +49,6 @@
                         </style>
                         <div class="highlight"><pre><span class="cm">/*global YUI */</span>
 
-
 <span class="cm">/**</span>
 <span class="cm"> * The Browser History Utility provides the ability to use the back/forward</span>
 <span class="cm"> * navigation buttons in a DHTML application. It also allows a DHTML</span>
@@ -397,7 +396,7 @@
     <span class="p">}</span>
 
 
-    <span class="nx">H</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">H</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">(),</span> <span class="p">{</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Registers a new module.</span>
@@ -660,13 +659,7 @@
 
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
-    <span class="p">};</span>
-
-
-    <span class="c1">// Make Y.History an event target</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">H</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">H</span><span class="p">);</span>
-
+    <span class="p">});</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * This class represents a browser history module.</span>
@@ -676,8 +669,6 @@
 <span class="cm">     * @param initialState {String} the module&#39;s initial state</span>
 <span class="cm">     */</span>
     <span class="nx">H</span><span class="p">.</span><span class="nx">Module</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">initialState</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * The module identifier</span>
@@ -712,7 +703,7 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">upcomingState</span> <span class="o">=</span> <span class="nx">initialState</span><span class="p">;</span>
     <span class="p">};</span>
 
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">H</span><span class="p">.</span><span class="nx">Module</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">augment</span><span class="p">(</span><span class="nx">H</span><span class="p">.</span><span class="nx">Module</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">);</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">=</span> <span class="nx">H</span><span class="p">;</span>
 </pre></div>
@@ -760,17 +751,21 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>

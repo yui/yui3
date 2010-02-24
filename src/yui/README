@@ -9,6 +9,7 @@ The YUI Global
         yui-log (out of the box console log support)
         yui-later (timer abstraction)
         throttle (performance utilitity)
+        intl-base (for dynamically loading language packs)
 
     yui-base contains
         Module registration system
@@ -18,6 +19,7 @@ The YUI Global
         Core
 
 3.1.0
+* YUI will attempt to fetch newly discovered dependencies after a module is dynamically loaded.
 * The document element (HTML) is now stamped with a class name (yui-js-enabled) indicating that JS is enabled allowing for the creation of JS-aware CSS style rules for Progressive Enhancement.
 * Added the ability to define a global configuration object (YUI_config).
 * Added Object.some()/Y.some()

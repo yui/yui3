@@ -8,11 +8,14 @@ YUI.add('yui-log', function(Y) {
  */
 (function() {
 
-var INSTANCE = Y,
-    LOGEVENT = 'yui:log',
+var _published,
+    INSTANCE  = Y,
+    LOGEVENT  = 'yui:log',
     UNDEFINED = 'undefined',
-    LEVELS = { debug: 1, info: 1, warn: 1, error: 1 },
-    _published;
+    LEVELS    = { debug: 1, 
+                  info:  1, 
+                  warn:  1, 
+                  error: 1 };
 
 /**
  * If the 'debug' config is true, a 'yui:log' event will be
@@ -34,7 +37,9 @@ var INSTANCE = Y,
  * @return {YUI}      YUI instance
  */
 INSTANCE.log = function(msg, cat, src, silent) {
-    var Y = INSTANCE, c = Y.config, bail = false, excl, incl, m, f;
+    var bail, excl, incl, m, f,
+        Y = INSTANCE, 
+        c = Y.config;
     // suppress log message if the config is off or the event stack
     // or the event call stack contains a consumer of the yui:log event
     if (c.debug) {
@@ -42,16 +47,13 @@ INSTANCE.log = function(msg, cat, src, silent) {
         if (src) {
             excl = c.logExclude; 
             incl = c.logInclude;
-
             if (incl && !(src in incl)) {
                 bail = 1;
             } else if (excl && (src in excl)) {
                 bail = 1;
             }
         }
-
         if (!bail) {
-
             if (c.useBrowserConsole) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
@@ -63,7 +65,6 @@ INSTANCE.log = function(msg, cat, src, silent) {
                     opera.postError(m);
                 }
             }
-
             if (Y.fire && !silent) {
                 if (!_published) {
                     Y.publish(LOGEVENT, {

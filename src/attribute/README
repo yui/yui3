@@ -1,4 +1,17 @@
-Development Master
+The Attribute utility allows you to add attributes to any class 
+through an augmentable Attribute interface. The interface adds 
+get and set methods to your class for attribute access, in 
+addition to supporting change events allowing you to listen 
+for changes in attribute values.
+
+3.1.0
+
+* writeOnce can be set to "initOnly", which can be used 
+  to prevent the user from setting the value outside of the initial
+  configuration when using the addAttrs. 
+
+  When used with Base, this means that the user can only define a 
+  value for the Attribute during construction.
 
 * Attribute change events are now publish with the defaultTargetOnly property set to true.
 
@@ -108,11 +121,3 @@ Development Master
 
 3.0.0PR1 - Initial release
 
-Module Name: "attribute"
-Documentation: http://developer.yahoo.com/yui/3/attribute
-
-The Attribute utility allows you to add attributes to any class 
-through an augmentable Attribute interface. The interface adds 
-get and set methods to your class for attribute access, in 
-addition to supporting change events allowing you to listen 
-for changes in attribute values.

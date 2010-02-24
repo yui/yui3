@@ -107,14 +107,11 @@
 <div id="audio-light"  class="yui3-skin-audio-light"></div>
 
 <script src="../../../../build/yui/yui.js"></script>
-<script src="../../../../build/slider/slider-base.js"></script>
-<script src="../../../../build/slider/int-value-range.js"></script>
-<script src="../../../../build/slider/clickable-rail.js"></script>
-<script src="../../../../build/slider/slider.js"></script>
+<!--script src="../../../../build/slider/slider.js"></script-->
 <script>
 YUI( {
     filter: 'raw'
-} ).use( 'slider', 'substitute', function ( Y ) {
+} ).use( 'slider', function ( Y ) {
 
 var base = Y.config.base + 'slider/assets/skins',
     alts = {
@@ -133,14 +130,14 @@ function report( e ) {
     Y.one( '#val' ).set( 'value', e.newVal );
 }
 
-new Y.Slider({ axis: 'y' }).render( '#sam' );
-new Y.Slider({ axis: 'y' }).render( '#sam-dark' );
-new Y.Slider({ axis: 'y'/*, thumbUrl: alts.roundy*/ }).render( '#round' );
-new Y.Slider({ axis: 'y'/*, thumbUrl: alts.rounddy*/ }).render( '#round-dark' );
-new Y.Slider({ axis: 'y'/*, thumbUrl: alts.capy*/ }).render( '#capsule' );
-new Y.Slider({ axis: 'y'/*, thumbUrl: alts.capdy*/ }).render( '#capsule-dark' );
-new Y.Slider({ axis: 'y' }).render( '#audio' );
-new Y.Slider({ axis: 'y' }).render( '#audio-light' );
+new Y.Slider({ axis: 'x' }).render( '#sam' );
+new Y.Slider({ axis: 'x' }).render( '#sam-dark' );
+new Y.Slider({ axis: 'x'/*, thumbUrl: alts.roundy*/ }).render( '#round' );
+new Y.Slider({ axis: 'x'/*, thumbUrl: alts.rounddy*/ }).render( '#round-dark' );
+new Y.Slider({ axis: 'x'/*, thumbUrl: alts.capy*/ }).render( '#capsule' );
+new Y.Slider({ axis: 'x'/*, thumbUrl: alts.capdy*/ }).render( '#capsule-dark' );
+new Y.Slider({ axis: 'x' }).render( '#audio' );
+new Y.Slider({ axis: 'x' }).render( '#audio-light' );
 
 Y.one( '#controls' ).delegate( 'click', function ( e ) {
     Y.one( 'body' ).set( 'className', this.get( 'value' ) );

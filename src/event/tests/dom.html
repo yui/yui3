@@ -3,11 +3,11 @@
 <head>
     <title>YUI DOM Event Tests</title>
 </head>
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
     <div id="doc">
 
         <div id="clickcontainer">
-            <p id="clicker1" class="clickers"><a id='clicka'>click1</click></p>
+            <p id="clicker1" class="clickers"><a id='clicka'>click1</a></p>
             <p id="clicker2" class="clickers">click2</p>
         </div>
 
@@ -17,13 +17,9 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
-            base: "../../../build/",
-            filter: 'debug',
-            combine: false,
-            useConsole: true,
             logExclude: {
                 yui:true, get: true, 'selector-native': true, loader: true, 
-                deprecated:1, Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+                Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
         }).use('console', 'test', 'node', 'event-simulate', function (Y) {
             
             // creating the console...
