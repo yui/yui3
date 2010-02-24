@@ -47,15 +47,17 @@
 
 <div id="out"></div>
 
-<h1>Editor Testing</h1>
+<h1 tabindex="1">Editor Testing</h1>
 
 <div id="test1" role="widget">
     <div role="toolbar">
-        <button>Bold</button>
-        <button>Italic</button>
-        <button>Underline</button>
-        <button>Foo</button>
-        <button>InsertImage</button>
+        <button value="b">Bold</button>
+        <button value="i">Italic</button>
+        <button value="u">Underline</button>
+        <button value="foo">Foo</button>
+        <button value="img">InsertImage</button>
+        <button value="wrap">Wrap</button>
+        <button value="inserthtml">InsertHTML</button>
     </div>
     <div id="test"></div>
 </div>
@@ -68,6 +70,7 @@
 
 <script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/exec-command.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/selection.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -89,7 +92,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-command', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-command', 'selection', function(Y) {
     //console.log(Y, Y.id);
 
     var out = function(str) {
@@ -99,11 +102,40 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
     var iframe = new Y.Frame({
         designMode: true,
         content: Y.one('#stub').get('innerHTML'),
-        use: ['node','selector-css3']
+        use: ['node','selector-css3', 'selection']
     }).plug(Y.Plugin.ExecCommand);
 
     Y.Plugin.ExecCommand.COMMANDS.foo = function() {
         alert('You clicked on Foo');
+    };
+    Y.Plugin.ExecCommand.COMMANDS.wrap = function() {
+        var inst = this.getInstance();
+        var sel = new inst.Selection();
+        var tmp = inst.Node.create('<tmp></tmp>');
+        console.log(tmp);
+        console.log(sel);
+        //console.log(sel.cloneContents());
+        tmp.append(sel.cloneContents().childNodes);
+        var chi = tmp.get('childNodes');
+        console.log(chi);
+        chi.each(function(n) {
+            n.set('innerHTML', '<span style="color: red; background-color: blue; font-weight: bold;">' + n.get('innerHTML') + '</span>');
+        });
+        var html = tmp.get('innerHTML');
+        console.log(html);
+        sel.setContent(html);
+        //sel.setContent
+        //iframe.focus();
+        //sel.setCursor();
+        
+        
+    };
+    Y.Plugin.ExecCommand.COMMANDS.inserthtml = function() {
+        //alert('You clicked on insertimage');
+        var inst = this.getInstance();
+        var sel = new inst.Selection();
+        var html = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
+        sel.setContent(html);
     };
     Y.Plugin.ExecCommand.COMMANDS.insertimage = function() {
         //alert('You clicked on insertimage');
@@ -114,30 +146,49 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
 
     iframe.render('#test');
 
+
+    var updateButtons = function(tar) {
+        var buttons = Y.all('#test1 button').removeClass('selected');
+        buttons.each(function(v) {
+            var val = v.get('value');
+            if (tar.test(val + ', ' + val + ' *')) {
+                v.addClass('selected');
+            }
+        });
+    };
+
     iframe.after('ready', function() {
-        this._iframe.set('role', 'textbox').set('aria-multiline', true);
-        this._iframe.set('tabindex', -1);
-        Y.one('#test').set('tabindex', -1);
         var inst = this.getInstance();
 
         out('frame1: ' + Y.all('p'));
 
         this.on('mousedown', function(e) {
-            var buttons = Y.all('#test1 button').removeClass('selected');
             var tar = e.frameTarget;
-            buttons.each(function(v) {
-                var val = v.get('innerHTML').toLowerCase().substring(0, 1);
-                if (tar.test(val + ', ' + val + ' *')) {
-                    v.addClass('selected');
-                }
+            updateButtons(tar);
+        });
+
+        this.on('keyup', function(e) {
+            //console.log(e);
+            var sel = new inst.Selection();
+            updateButtons(sel.anchorNode);
+
+            /* Cursor Position Test.. Opera fails this..
+            var sel = new inst.Selection();
+            //console.log(sel);
+            Y.one('h1').focus();
+            Y.later(2000, null, function() {
+                //console.log('setting cursor position..');
+                iframe.focus();
+                sel.setCursor();
             });
+            */
         });
     });
 
     Y.delegate('click', function(e) {
         e.target.toggleClass('selected');
         var val = e.target.get('innerHTML').toLowerCase();
-        iframe._iframe.focus();
+        iframe.focus();
         iframe.execCommand(val);
     }, '#test1 > div', 'button');
     

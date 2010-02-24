@@ -26,6 +26,9 @@ YUI.add('exec-command', function(Y) {
                     console.log(e.message);
                 }
             },
+            getInstance: function() {
+                return this.get('host').getInstance();
+            },
             command: function(action, value) {
                 this.fire('command', { action: action, value: value });
             },
