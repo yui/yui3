@@ -2187,7 +2187,9 @@ Y.Loader.prototype = {
     },
 
     _finish: function(msg, success) {
+
         _queue.running = false;
+
         var onEnd = this.onEnd;
         if (onEnd) {
             onEnd.call(this.context, {
@@ -2444,25 +2446,24 @@ Y.Loader.prototype = {
             return;
         }
 
-        var s, len, i, m, url, fn, msg, attr, group, groupName,
-            j, comboSource, comboSources, mods,
-            combining, urls, comboBase, frag, 
-            type     = this.loadType, 
-            self     = this,
-            callback = function(o) {
-                self._combineComplete[type] = true;
-                var len=combining.length, i;
-
-                for (i=0; i<len; i++) {
-                    self.loaded[combining[i]]   = true;
-                    self.inserted[combining[i]] = true;
-                }
-
-                self.loadNext(o.data);
-            },
+        var s, len, i, m, url, fn, msg, attr, group, groupName, j, frag, 
+            comboSource, comboSources, mods, combining, urls, comboBase,
+            type          = this.loadType, 
+            self          = this,
             handleSuccess = function(o) {
-                self.loadNext(o.data);
-            };
+                                self.loadNext(o.data);
+                            },
+            handleCombo   = function(o) {
+                                self._combineComplete[type] = true;
+                                var i, len = combining.length;
+
+                                for (i=0; i<len; i++) {
+                                    self.loaded[combining[i]]   = true;
+                                    self.inserted[combining[i]] = true;
+                                }
+
+                                handleSuccess(o);
+                            };
 
         if (this.combine && (!this._combineComplete[type])) {
 
@@ -2557,7 +2558,7 @@ Y.Loader.prototype = {
 
                 fn(urls, {
                     data:         this._loading,
-                    onSuccess:    callback,
+                    onSuccess:    handleCombo,
                     onFailure:    this._onFailure,
                     onTimeout:    this._onTimeout,
                     insertBefore: this.insertBefore,
@@ -2587,6 +2588,7 @@ Y.Loader.prototype = {
             // The global handler that is called when each module is loaded
             // will pass that module name to this function.  Storing this
             // data to avoid loading the same module multiple times
+            // centralize this in the callback
             this.inserted[mname] = true;
             this.loaded[mname] = true;
 
@@ -2622,7 +2624,7 @@ Y.Loader.prototype = {
             if (!m) {
                 msg = "Undefined module " + s[i] + " skipped";
                 this.inserted[s[i]] = true;
-                this.skipped[s[i]] = true;
+                this.skipped[s[i]]  = true;
                 continue;
 
             }
@@ -2645,16 +2647,16 @@ Y.Loader.prototype = {
                 url = (m.fullpath) ? this._filter(m.fullpath, s[i]) : this._url(m.path, s[i], group.base || m.base);
 
                 fn(url, {
-                    data: s[i],
-                    onSuccess: handleSuccess,
+                    data:         s[i],
+                    onSuccess:    handleSuccess,
                     insertBefore: this.insertBefore,
-                    charset: this.charset,
-                    attributes: attr,
-                    onFailure: this._onFailure,
-                    onTimeout: this._onTimeout,
-                    timeout: this.timeout,
-                    autopurge: false,
-                    context: self 
+                    charset:      this.charset,
+                    attributes:   attr,
+                    onFailure:    this._onFailure,
+                    onTimeout:    this._onTimeout,
+                    timeout:      this.timeout,
+                    autopurge:    false,
+                    context:      self 
                 });
 
                 return;
