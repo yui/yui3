@@ -48,7 +48,7 @@
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		className:  "BorderContainer",
+		CLASSNAME:"BorderContainer",
 		
 		/**
 		 * Reference to the layout strategy used for displaying child items.
@@ -160,7 +160,7 @@
 					item.setStyle("position", location);
 				}
 			}
-			else 
+			else
 			{
 				if(!this.itemsQueue || !this.itemsQueue.hasOwnProperty(location))
 				{

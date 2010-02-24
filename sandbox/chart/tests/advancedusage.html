@@ -81,7 +81,7 @@
 			<div id="output"></div>
 		<script>
 
-			YUI().use('node', 'event-custom', 'swfdetect', 'swf', 'chart', function (Y)
+			YUI().use('node', 'event-custom', 'swfdetect', 'swf', 'attribute', 'chart', function (Y)
 				{
 					// Create application level styles
 					var chartstyles = {
@@ -181,9 +181,9 @@
 					mychart.set("dataProvider", mydata);
 					
 					// Create axes
-					var mybottomaxis = new Y.Axis("Time", {styles:bottomaxisstyles});
-					var myleftaxis = new Y.Axis("Numeric", {styles:leftaxisstyles});
-					var myrightaxis = new Y.Axis("Numeric", {styles:rightaxisstyles});
+					var mybottomaxis = new Y.Axis(mychart, {axisType:"Time", styles:bottomaxisstyles});
+					var myleftaxis = new Y.Axis(mychart, {axisType:"Numeric", styles:leftaxisstyles});
+					var myrightaxis = new Y.Axis(mychart, {axisType:"Numeric", styles:rightaxisstyles});
 
 					// Add axes keys
 					mybottomaxis.addKey("date");
@@ -191,8 +191,8 @@
 					myrightaxis.addKey("revenue");
 
 					// Create graph
-					var myexpensegraph = new Y.LineGraph(mybottomaxis, myleftaxis, "date", "expenses", {styles:expensegraphstyles});
-					var myrevenuegraph = new Y.LineGraph(mybottomaxis, myrightaxis, "date", "revenue", {styles:revenuegraphstyles});
+					var myexpensegraph = new Y.LineGraph(mychart, {xaxis:mybottomaxis, yaxis:myleftaxis, xkey:"date", ykey:"expenses", styles:expensegraphstyles});
+					var myrevenuegraph = new Y.LineGraph(mychart, {xaxis:mybottomaxis, yaxis:myrightaxis, xkey:"date", ykey:"revenue", styles:revenuegraphstyles});
 					
 					// Add items
 					mychart.addBottomItem(mybottomaxis);
@@ -326,9 +326,9 @@
 <p>Now, we'll create two vertical (y) axes and a horizontal axis (x), and add the key names corresponding to the data that should be associated with each axis (more than one key can be added to each axis, but we are only using one per axis in this example):</p>
 
 <pre>
-	var mybottomaxis = new Y.Axis("Time", {styles:bottomaxisstyles});
-	var myleftaxis = new Y.Axis("Numeric", {styles:leftaxisstyles});
-	var myrightaxis = new Y.Axis("Numeric", {styles:rightaxisstyles});
+	var mybottomaxis = new Y.Axis(mychart, {axisType:"Time", styles:bottomaxisstyles});
+	var myleftaxis = new Y.Axis(mychart, {axisType:"Numeric", styles:leftaxisstyles});
+	var myrightaxis = new Y.Axis(mychart, {axisType:"Numeric", styles:rightaxisstyles});
 
 	mybottomaxis.addKey("date");
 	myleftaxis.addKey("expenses");
@@ -339,8 +339,8 @@
 <p>Now, we will create two graph instances, assigning the appropriate axes, keys and style objects to each one:</p>
 
 <pre>
-	var myexpensegraph = new Y.LineGraph(mybottomaxis, myleftaxis, "date", "expenses", {styles:expensegraphstyles});
-	var myrevenuegraph = new Y.LineGraph(mybottomaxis, myrightaxis, "date", "revenue", {styles:revenuegraphstyles});
+	var myexpensegraph = new Y.LineGraph(mychart, {xaxis:mybottomaxis, yaxis:myleftaxis, xkey:"date", ykey:"expenses", styles:expensegraphstyles});
+	var myrevenuegraph = new Y.LineGraph(mychart, {xaxis:mybottomaxis, yaxis:myrightaxis, xkey:"date", ykey:"revenue", styles:revenuegraphstyles});
 </pre>
 
 <h3>Putting It All Together</h3>

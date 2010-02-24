@@ -32,8 +32,8 @@
 		}
 		this._parseConfig(config);
 		this.chart = new Y.Chart(p_oElement, this._chartConfig);
-		this.xaxis = new Y.Axis(this._xAxisProps.type, {styles:this._xaxisstyles});
-		this.yaxis = new Y.Axis(this._yAxisProps.type, {styles:this._yaxisstyles});
+		this.xaxis = new Y.Axis(this.chart, {axisType:this._xAxisProps.type, styles:this._xaxisstyles});
+		this.yaxis = new Y.Axis(this.chart, {axisType:this._yAxisProps.type, styles:this._yaxisstyles});
 		this.data = {};
 		this.graph = null;
 		
@@ -72,7 +72,7 @@
 			
 			if (this._type == "line") 
 			{
-				this.graph = new Y.LineGraph(this.xaxis, this.yaxis, xkey, ykey, {styles:this._graphstyles});
+				this.graph = new Y.LineGraph(this.chart, {xaxis:this.xaxis, yaxis:this.yaxis, xkey:xkey, ykey:ykey, styles:this._graphstyles});
 			}
 			this.chart.addBottomItem(this.xaxis);
 			this.chart.addLeftItem(this.yaxis);

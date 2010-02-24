@@ -1,6 +1,267 @@
 YUI.add('chart', function(Y) {
 
 /**
+ * SWFWidget is the base class for all JS classes that manage styles
+ * and communicates with a SWF Application.
+ */
+
+
+
+/**
+ * Creates the SWFWidget instance and contains initialization data
+ *
+ * @param {Object} p_oElement Parent class. If the this class instance is the top level
+ * of a flash application, the value is the id of its containing dom element. Otherwise, the
+ * value is a reference to it container.
+ * @param {Object} config (optional) Configuration parameters for the Chart.
+ * @class SWFWidget
+ * @constructor
+ */
+function SWFWidget (p_oElement, config)
+{
+	this._id = Y.guid(this.GUID);
+	this._setParent(p_oElement);
+	this.addAttrs(this._attributeConfig, config);
+}
+
+SWFWidget.prototype =
+{
+	_setParent: function(p_oElement)
+	{
+		this.oElement = p_oElement;
+	},
+
+	/**
+	 * Reference to corresponding Actionscript class.
+	 */
+	CLASSNAME: "SWFWidget",
+
+	/**
+	 * Indicates whether or not the swf has initialized.
+	 * @type Boolean
+	 */
+	swfReadyFlag: false,
+
+	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuiswfwidget",
+	
+	/**
+	 * @private
+	 *
+	 * Hash of default styles for the instance.
+	 */
+	_defaultStyles: {},
+
+	/**
+	 * @private
+	 *
+	 * Hash of child references with style objects.
+	 */
+	_styleObjHash: null,
+
+	/**
+	 * Sets a style property for the instance.
+	 *
+	 * @method setStyle
+	 * @param {String} style name of the style to be set
+	 * @param {Object} value value to be set for the style
+	 */
+	setStyle: function(style, value)
+	{
+		var i, styles;
+		if(this._styleObjHash && this._styleObjHash.hasOwnProperty(style))
+		{
+			if(this._defaultStyles[style]) 
+			{
+				styles = this._defaultStyles[style];
+				for(i in value)
+				{
+					if(value.hasOwnProperty(i))
+					{
+						styles[i] = value[i];
+					}
+				}
+			}
+			else
+			{
+				styles = value;
+			}
+			this._defaultStyles[style] = styles;
+		}
+		else
+		{
+			if(!this._defaultStyles.hasOwnProperty(this._id))
+			{
+				this._defaultStyles[this._id] = {};
+			}
+			this._defaultStyles[this._id][style] = value;
+		}
+		if(this.swfReadyFlag)
+		{
+			this._updateStyles();
+		}
+	},
+
+	/**
+	 * Sets multiple style properties on the instance.
+	 *
+	 * @method _setStyles
+	 * @param {Object} styles Hash of styles to be applied.
+	 */
+	_setStyles: function(styles)
+	{
+		var i, j, defaults = this._defaultStyles;
+		if(!defaults.hasOwnProperty(this._id))
+		{
+			defaults[this._id] = {};
+		}
+		for(i in styles)
+		{
+			if(styles.hasOwnProperty(i))
+			{
+				if(this._styleObjHash && this._styleObjHash.hasOwnProperty(i))
+				{
+					j = this._styleObjHash[i];
+					if(defaults && defaults.hasOwnProperty(j) && Y.Lang.isObject(defaults[j])) 
+					{
+						defaults[j] = this._mergeStyles(styles[i], defaults[j]);
+					}
+					else
+					{
+						defaults[j] = styles[i];
+					}
+				}
+				else
+				{
+					j = this._id;
+					if(defaults && defaults.hasOwnProperty(j) && defaults[j].hasOwnProperty(i) && Y.Lang.isObject(defaults[j][i]))
+					{
+						defaults[j][i] = this._mergeStyles(styles[i], defaults[j][i]);
+					}
+					else
+					{
+						defaults[j][i] = styles[i];
+					}
+				}
+			}
+		}
+		this._defaultStyles = defaults;
+		if(this.swfReadyFlag)
+		{
+			this._updateStyles();
+		}
+	},
+
+	/**
+	 * Merges to object literals only overriding properties explicitly.
+	 * 
+	 * @private
+	 * @param {Object} newHash hash of properties to set
+	 * @param {Object} default hash of properties to be overwritten
+	 * @return {Object}
+	 */
+	_mergeStyles: function(a, b)
+	{
+		var i;
+		for(i in a)
+		{
+			if(a.hasOwnProperty(i))
+			{
+				if(b.hasOwnProperty(i) && Y.Lang.isObject(a[i]))
+				{
+					b[i] = this._mergeStyles(a[i], b[i]);
+				}
+				else
+				{
+					b[i] = a[i];
+				}
+
+			}
+		}
+		return b;
+	},
+	
+	/**
+	 * Updates and applies styles to the appropriate object in the flash application.
+	 *
+	 * @method _updateStyles
+	 * @private
+	 */
+	_updateStyles: function()
+	{
+		for(var id in this._defaultStyles)
+		{
+			if(this._defaultStyles.hasOwnProperty(id))
+			{
+				if(this._id === id || (this._styleObjHash && this._styleObjHash.hasOwnProperty(id))) 
+				{
+					this.appswf.applyMethod(id, "setStyles", [this._defaultStyles[id]]);
+				}
+			}
+		}
+		this._defaultStyles = null;
+		this._defaultStyles = {};
+	},
+
+	/**
+	 * Attribute config
+	 * @private
+	 */
+	_attributeConfig:
+	{
+		/**
+		 * Reference to corresponding Actionscript class.
+		 */
+		className:  
+		{
+			value:this.CLASSNAME,
+
+			readOnly:true,
+
+			getter: function()
+			{
+				return this.CLASSNAME;
+			}
+		},
+		/**
+		 * Hash of style properties for class
+		 */
+		styles:
+		{
+			value: null,
+
+			setter: function(val)
+			{
+				this._setStyles(val);
+			},
+
+			validator: function(val)
+			{
+				return Y.Lang.isObject(val);
+			}
+
+		}
+	},	
+
+	/**
+	 * Public accessor to the unique name of the Container instance.
+	 *
+	 * @method toString
+	 * @return {String} Unique name of the Container instance.
+	 */
+	toString: function()
+	{
+		return "SWFWidget " + this._id;
+	}
+
+
+};
+
+Y.augment(SWFWidget, Y.Attribute);
+Y.SWFWidget = SWFWidget;
+/**
  * Manages flash child objects.
  * @module chart
  *
@@ -20,33 +281,18 @@ YUI.add('chart', function(Y) {
 	 */
 	function Container (p_oElement, config) 
 	{
-		this._id = Y.guid(this.GUID);
-		this._setParent(p_oElement);
-		this.addAttrs(this._attributeConfig, config);
+		this._attributeConfig = Y.merge(this._attributeConfig, Container.superclass._attributeConfig);
+		Container.superclass.constructor.apply(this, arguments);
 	}
 
-	Container.prototype = 
+	Y.extend(Container, Y.SWFWidget, 
 	{
 		_items:[],
-		/**
-		 * Sets the parent.
-		 * @private
-		 */
-		_setParent: function(p_oElement)
-		{
-			this.oElement = p_oElement;
-		},
 
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
 		CLASSNAME: "Container",
-		
-		/**
-		 * Indicates whether or not the swf has initialized.
-		 * @type Boolean
-		 */
-		swfReadyFlag: false,
 		
 		/**
 		 * Id for a background skin
@@ -114,7 +360,7 @@ YUI.add('chart', function(Y) {
 			if(this.swfReadyFlag)
 			{
 				var args = item.swfarguments && typeof item.swfarguments == "array" ? item.args : [];
-				this.appswf.createInstance(item._id, item.className, args); 
+				this.appswf.createInstance(item._id, item.get("className"), args); 
 				args =  ["$" + item._id]; 
 				if(props)
 				{
@@ -131,157 +377,9 @@ YUI.add('chart', function(Y) {
 		/**
 		 * @private
 		 *
-		 * Hash of default styles for the instance.
-		 */
-		_defaultStyles: {},
-
-		/**
-		 * @private
-		 *
 		 * Hash of child references with style objects.
 		 */
 		_styleObjHash: {background:"background"},
-
-		/**
-		 * Sets a style property for the instance.
-		 *
-		 * @method setStyle
-		 * @param {String} style name of the style to be set
-		 * @param {Object} value value to be set for the style
-		 */
-		setStyle: function(style, value)
-		{
-			var i, styles;
-			if(this._styleObjHash.hasOwnProperty(style))
-			{
-				if(this._defaultStyles[style]) 
-				{
-					styles = this._defaultStyles[style];
-					for(i in value)
-					{
-						if(value.hasOwnProperty(i))
-						{
-							styles[i] = value[i];
-						}
-					}
-				}
-				else
-				{
-					styles = value;
-				}
-				this._defaultStyles[style] = styles;
-			}
-			else
-			{
-				if(!this._defaultStyles.hasOwnProperty(this._id))
-				{
-					this._defaultStyles[this._id] = {};
-				}
-				this._defaultStyles[this._id][style] = value;
-			}
-			if(this.swfReadyFlag)
-			{
-				this._updateStyles();
-			}
-		},
-
-		/**
-		 * Sets multiple style properties on the instance.
-		 *
-		 * @method _setStyles
-		 * @param {Object} styles Hash of styles to be applied.
-		 */
-		_setStyles: function(styles)
-		{
-			var i, j, defaults = this._defaultStyles;
-			if(!defaults.hasOwnProperty(this._id))
-			{
-				defaults[this._id] = {};
-			}
-			for(i in styles)
-			{
-				if(styles.hasOwnProperty(i))
-				{
-					if(this._styleObjHash.hasOwnProperty(i))
-					{
-						j = this._styleObjHash[i];
-						if(defaults && defaults.hasOwnProperty(j) && Y.Lang.isObject(defaults[j])) 
-						{
-							defaults[j] = this._mergeStyles(styles[i], defaults[j]);
-						}
-						else
-						{
-							defaults[j] = styles[i];
-						}
-					}
-					else
-					{
-						j = this._id;
-						if(defaults && defaults.hasOwnProperty(j) && defaults[j].hasOwnProperty(i) && Y.Lang.isObject(defaults[j][i]))
-						{
-							defaults[j][i] = this._mergeStyles(styles[i], defaults[j][i]);
-						}
-						else
-						{
-							defaults[j][i] = styles[i];
-						}
-					}
-				}
-			}
-			this._defaultStyles = defaults;
-			if(this.swfReadyFlag)
-			{
-				this._updateStyles();
-			}
-		},
-
-		/**
-		 * Merges to object literals only overriding properties explicitly.
-		 * 
-		 * @private
-		 * @param {Object} newHash hash of properties to set
-		 * @param {Object} default hash of properties to be overwritten
-		 * @return {Object}
-		 */
-		_mergeStyles: function(a, b)
-		{
-			var i;
-			for(i in a)
-			{
-				if(a.hasOwnProperty(i))
-				{
-					if(b.hasOwnProperty(i) && Y.Lang.isObject(a[i]))
-					{
-						b[i] = this._mergeStyles(a[i], b[i]);
-					}
-					else
-					{
-						b[i] = a[i];
-					}
-
-				}
-			}
-			return b;
-		},
-		
-		/**
-		 * Updates and applies styles to the appropriate object in the flash application.
-		 *
-		 * @method _updateStyles
-		 * @private
-		 */
-		_updateStyles: function()
-		{
-			for(var id in this._defaultStyles)
-			{
-				if(this._defaultStyles.hasOwnProperty(id))
-				{
-					this.appswf.applyMethod(id, "setStyles", [this._defaultStyles[id]]);
-				}
-			}
-			this._defaultStyles = null;
-			this._defaultStyles = {};
-		},
 
 		/**
 		 * Attribute config
@@ -320,15 +418,6 @@ YUI.add('chart', function(Y) {
 				}
 			},
 			/**
-			 * Reference to corresponding Actionscript class.
-			 */
-			className:  
-			{
-				value:this.CLASSNAME,
-
-				readOnly:true
-			},
-			/**
 			 * Reference to the layout strategy used for displaying child items.
 			 */
 			layout:  
@@ -342,7 +431,6 @@ YUI.add('chart', function(Y) {
 					return this.LAYOUTS.hasOwnProperty(val);
 				}
 			},
-			
 			/**
 			 * Array of layoutChildren added to the Container instance.
 			 *
@@ -366,28 +454,7 @@ YUI.add('chart', function(Y) {
 				{
 					return Y.Lang.isArray(val);
 				}
-			},
-
-			/**
-			 * Hash of style properties for container
-			 */
-
-			styles:
-			{
-				value: null,
-
-				setter: function(val)
-				{
-					this._setStyles(val);
-				},
-
-				validator: function(val)
-				{
-					return Y.Lang.isObject(val);
-				}
-
 			}
-
 		},	
 		/**
 		 * Public accessor to the unique name of the Container instance.
@@ -399,9 +466,8 @@ YUI.add('chart', function(Y) {
 		{
 			return "Container " + this._id;
 		}
-	};
+	});
 
-	Y.augment(Container, Y.Attribute);
 	Y.Container = Container;
 /**
  * Creates a BorderContainer for use in a chart application.
@@ -453,7 +519,7 @@ YUI.add('chart', function(Y) {
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		className:  "BorderContainer",
+		CLASSNAME:"BorderContainer",
 		
 		/**
 		 * Reference to the layout strategy used for displaying child items.
@@ -565,7 +631,7 @@ YUI.add('chart', function(Y) {
 					item.setStyle("position", location);
 				}
 			}
-			else 
+			else
 			{
 				if(!this.itemsQueue || !this.itemsQueue.hasOwnProperty(location))
 				{
@@ -1003,8 +1069,7 @@ YUI.add('chart', function(Y) {
 
 Y.augment(Chart, Y.EventTarget);
 Y.Chart = Chart;
-/**
- * The LineGraph is used in the chart visualization package
+/* The LineGraph is used in the chart visualization package
  * @module axis
  *
  * Note: LineGraph is a temporary class that has been created for the purposes of observing and testing the current state of the underlying flash chart rendering engine. This file
@@ -1028,22 +1093,44 @@ Y.Chart = Chart;
 	 * @param ykey {String} point to ther array of values container in the yaxis
 	 * @param {Object} config (optional) Configuration parameters for the Axis.
 	 */
-	function LineGraph (xaxis, yaxis, xkey, ykey, config) {
-		this._id = Y.guid("yuilinegraph");
-		this.xaxis = xaxis;
-		this.yaxis = yaxis;
-		this.xkey = xkey;
-		this.ykey = ykey;
-		this._parseConfigs(config);
-		this.swfowner = null;
+	function LineGraph (p_oElement, config) 
+	{
+		this._attributeConfig = Y.merge(this._attributeConfig, LineGraph.superclass._attributeConfig);
+		LineGraph.superclass.constructor.apply(this, arguments);
 	}
 
-	LineGraph.prototype = 
+
+	Y.extend(LineGraph, Y.SWFWidget, 
 	{
+		_attributeConfig:
+		{
+			xaxis:
+			{
+				value:null
+			},
+
+			yaxis:
+			{
+				value:null
+			},
+			
+			xkey:
+			{
+				value:null
+			},
+
+			ykey:
+			{
+				value:null
+			}
+		},
+
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		className:  "LineGraph",
+		CLASSNAME:  "LineGraph",
+
+		GUID: "yuilinechart",
 
 		/**
 		 * @private
@@ -1057,79 +1144,10 @@ Y.Chart = Chart;
 		{
 			this.swfowner = swfowner;
 			this.appswf = this.swfowner.appswf;
-			this.appswf.createInstance(this._id, "LineGraph", ["$" + this.xaxis._id + "data", "$" + this.yaxis._id + "data", this.xkey, this.ykey]);
-			if(this._defaultStyles) 
-			{
-				this.appswf.applyMethod(this._id, "setStyles", [this._defaultStyles]);
-				this._defaultStyles = null;
-			}
+			this.appswf.createInstance(this._id, "LineGraph", ["$" + this.get("xaxis")._id + "data", "$" + this.get("yaxis")._id + "data", this.get("xkey"), this.get("ykey")]);
+			this._updateStyles();
 		},
 
-		/**
-		 * Sets properties based on a configuration hash.
-		 * @private
-		 */
-		_parseConfigs: function(config)
-		{
-			if(config && config.hasOwnProperty("styles"))
-			{
-				this.setStyles(config.styles);
-			}
-		},
-		
-		_defaultStyles: null,
-
-		/**
-		 * Sets a style property for the instance.
-		 *
-		 * @method setStyle
-		 * @param {String} style name of the style to be set
-		 * @param {Object} value value to be set for the style
-		 */
-		setStyle: function(style, value)
-		{
-			if(this.appswf) 
-			{
-				this.appswf.applyMethod(this._id, "setStyle", [style, value]);
-			}
-			else
-			{
-				if(!this._defaultStyles)
-				{
-					this._defaultStyles = {};
-				}
-				this._defaultStyles[style] = value;
-			}
-	  	},
-
-		/**
-		 * Sets multiple style properties on the instance.
-		 *
-		 * @method setStyles
-		 * @param {Object} styles Hash of styles to be applied.
-		 */
-		setStyles: function(styles)
-		{
-			if(this.appswf)
-			{
-				this.appswf.applyMethod(this._id, "setStyles", [styles]);
-				this._defaultStyles = null;
-			}
-			else
-			{
-				for(var i in styles) 
-				{
-					if(styles.hasOwnProperty(i))
-					{
-						if(!this._defaultStyles)
-						{
-							this._defaultStyles = {};
-						}
-						this._defaultStyles[i] = styles[i];
-					}
-				}
-			}
-		},
 		
 		/**
 		 * Public accessor to the unique name of the LineGraph instance.
@@ -1142,10 +1160,7 @@ Y.Chart = Chart;
 			return "LineGraph " + this._id;
 		}
 
-	};
-
-
-	Y.augment(LineGraph, Y.EventTarget);
+	});
 
 	Y.LineGraph = LineGraph;
 /**
@@ -1164,164 +1179,130 @@ Y.Chart = Chart;
 		 * @namespace YAHOO.widget
 		 */
 
+/**
+ * Creates the Axis instance and contains initialization data
+ *
+ * @class Axis
+ * @augments Y.Event.Target
+ * @constructor
+ * @param {String} axisType type of axis: numeric, category or time.
+ * @param {Object} config (optional) Configuration parameters for the Axis.
+ */
+function Axis (p_oElement, config) 
+{
+	this._attributeConfig = Y.merge(this._attributeConfig, Axis.superclass._attributeConfig);
+	Axis.superclass.constructor.apply(this, arguments);
+	this._dataId = this._id + "data";
+
+}
+
+/**
+ * Need to refactor to augment Attribute
+ */
+Y.extend(Axis, Y.SWFWidget, 
+{
+	GUID:"yuiaxis",
+
+	_axisType: "Numeric",
+
+	_keys: [],
+
+	swfReadyFlag:false,
+
 	/**
-	 * Creates the Axis instance and contains initialization data
 	 *
-	 * @class Axis
-	 * @augments Y.Event.Target
-	 * @constructor
-	 * @param {String} axisType type of axis: numeric, category or time.
-	 * @param {Object} config (optional) Configuration parameters for the Axis.
 	 */
-	function Axis (axisType, config) 
+	_attributeConfig:
 	{
-		this._id = Y.guid("yuiaxis");
-		this._dataId = this._id + "data";
-		this.axisType = axisType || "Numeric";
-		this.keys = [];
-		this.swfowner = null;
-		this._parseConfigs(config);
-	}
+		keys:
+		{
+			value:[],
+			
+			setter: function(val)
+			{
+				this._keys = val;
+			},
+
+			getter: function()
+			{
+				return this._keys;
+			}
+		},
+		axisType:
+		{
+			value: "Numeric",
+
+			setter: function(val)
+			{
+				this._axisType = val;
+			},
+
+			getter: function()
+			{
+				return this._axisType;
+			}
+		}
+	},
 
 	/**
-	 * Need to refactor to augment Attribute
+	 * Reference to corresponding Actionscript class.
 	 */
-	Axis.prototype = 
-	{
+	CLASSNAME:  "Axis",
 	
-		/**
-		 * Reference to corresponding Actionscript class.
-		 */
-		className:  "Axis",
-		
-		/**
-		 * @private
-		 * Called when the Axis is initialized
-		 * @method _axisInit
-		 * @param swfowner {Object} The class with a direct reference to the application swf. 
-		 */
-		_init: function(swfowner)
+	/**
+	 * @private
+	 * Called when the Axis is initialized
+	 * @method _axisInit
+	 * @param swfowner {Object} The class with a direct reference to the application swf. 
+	 */
+	_init: function(swfowner)
+	{
+		this.swfowner = swfowner;
+		this.appswf = this.swfowner.appswf;
+		this.appswf.createInstance(this._dataId, this.get("axisType") + "Data", ["$" + this.swfowner._dataId]);
+		var i, keys = this.get("keys");
+		for (i in keys) 
 		{
-			this.swfowner = swfowner;
-			this.appswf = this.swfowner.appswf;
-			this.appswf.createInstance(this._dataId, this.axisType + "Data", ["$" + this.swfowner._dataId]);
-			for (var i in this.keys) 
+			if(keys.hasOwnProperty(i))
 			{
-				if(this.keys.hasOwnProperty(i))
-				{
-					this.appswf.applyMethod(this._dataId, "addKey", [this.keys[i]]);
-				}
+				this.appswf.applyMethod(this._dataId, "addKey", [keys[i]]);
 			}
-			this.appswf.createInstance(this._id, "Axis", ["$" + this._dataId]);
-			if(this._defaultStyles !== null) 
-			{
-				this.appswf.applyMethod(this._id, "setStyles", [this._defaultStyles]);
-				this._defaultStyles = null;
-			}
-		},
-		
-		/**
-		 * Sets properties based on a configuration hash.
-		 * @private
-		 */
-		_parseConfigs: function(config)
-		{
-			if(config && config.hasOwnProperty("styles"))
-			{
-				this.setStyles(config.styles);
-			}
-		},
-		
-		/**
-		 * Uses key to lookup and extract specified data from a data source.
-		 *
-		 * @method addKey
-		 * @param {String} key identifier used to specify data set.
-		 */
-		addKey: function(key) 
-		{
-			this.keys.push(key);
-			if(this.appswf)
-			{
-				this.appswf.applyMethod("$" + this._dataId, "addKey", [key]);
-			}
-		},
-
-		/**
-		 * @private
-		 *
-		 * Hash of default styles for the instance.
-		 */
-		_defaultStyles: null,
-		
-		/**
-		 * Sets a style property for the instance.
-		 *
-		 * @method setStyle
-		 * @param {String} style name of the style to be set
-		 * @param {Object} value value to be set for the style
-		 */
-		setStyle: function(style, value)
-		{
-			if(this.appswf) 
-			{
-				this.appswf.applyMethod(this._id, "setStyle", [style, value]);
-			}
-			else
-			{
-				if(!this._defaultStyles)
-				{
-					this._defaultStyles = {};
-				}
-				this._defaultStyles[style] = value;
-			}
-	  	},
-
-		/**
-		 * Sets multiple style properties on the instance.
-		 *
-		 * @method setStyles
-		 * @param {Object} styles Hash of styles to be applied.
-		 */
-		setStyles: function(styles)
-		{
-			var i;
-			if(this.appswf)
-			{
-				this.appswf.applyMethod(this._id, "setStyles", [styles]);
-				this._defaultStyles = null;
-			}
-			else
-			{
-				for(i in styles) 
-				{
-					if(styles.hasOwnProperty(i))
-					{
-						if(!this._defaultStyles)
-						{
-							this._defaultStyles = {};
-						}
-						this._defaultStyles[i] = styles[i];
-					}
-				}
-			}
-		},
-
-		/**
-		 * Public accessor to the unique name of the Axis instance.
-		 *
-		 * @method toString
-		 * @return {String} Unique name of the Axis instance.
-		 */
-		toString: function()
-		{
-			return "Axis " + this._id;
 		}
-	};
+		this.appswf.createInstance(this._id, "Axis", ["$" + this._dataId]);
+		this.swfReadyFlag = true;
+	},
+	
+	/**
+	 * Uses key to lookup and extract specified data from a data source.
+	 *
+	 * @method addKey
+	 * @param {String} key identifier used to specify data set.
+	 */
+	addKey: function(key) 
+	{
+		this.get("keys").push(key);
+		if(this.appswf)
+		{
+			document.getElementById("output").innerHTML += "<br/>addKey.this._dataId: " + this._dataId;
+			this.appswf.applyMethod("$" + this._dataId, "addKey", [key]);
+		}
+	},
+
+	/**
+	 * Public accessor to the unique name of the Axis instance.
+	 *
+	 * @method toString
+	 * @return {String} Unique name of the Axis instance.
+	 */
+	toString: function()
+	{
+		return "Axis " + this._id;
+	}
+});
 
 
-	Y.augment(Axis, Y.EventTarget);
-	Y.Axis = Axis;
+Y.augment(Axis, Y.SWFWidget);
+Y.Axis = Axis;
 /**
  * Create data visualizations with line graphs, histograms, and other methods.
  * @module chart
@@ -1356,8 +1337,8 @@ Y.Chart = Chart;
 		}
 		this._parseConfig(config);
 		this.chart = new Y.Chart(p_oElement, this._chartConfig);
-		this.xaxis = new Y.Axis(this._xAxisProps.type, {styles:this._xaxisstyles});
-		this.yaxis = new Y.Axis(this._yAxisProps.type, {styles:this._yaxisstyles});
+		this.xaxis = new Y.Axis(this.chart, {axisType:this._xAxisProps.type, styles:this._xaxisstyles});
+		this.yaxis = new Y.Axis(this.chart, {axisType:this._yAxisProps.type, styles:this._yaxisstyles});
 		this.data = {};
 		this.graph = null;
 		
@@ -1396,7 +1377,7 @@ Y.Chart = Chart;
 			
 			if (this._type == "line") 
 			{
-				this.graph = new Y.LineGraph(this.xaxis, this.yaxis, xkey, ykey, {styles:this._graphstyles});
+				this.graph = new Y.LineGraph(this.chart, {xaxis:this.xaxis, yaxis:this.yaxis, xkey:xkey, ykey:ykey, styles:this._graphstyles});
 			}
 			this.chart.addBottomItem(this.xaxis);
 			this.chart.addLeftItem(this.yaxis);
