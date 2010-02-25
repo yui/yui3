@@ -134,7 +134,6 @@ YUI.add('frame', function(Y) {
             });
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
-            inst.log = Y.log; //Dump the instance logs to the parent instance.
 
             this._iframe.setStyle('visibility', 'visible');
         },
@@ -295,6 +294,7 @@ YUI.add('frame', function(Y) {
                     Y.log('New Modules Loaded into main instance', 'info', 'frame');
                     config = this._resolveWinDoc(config);
                     inst = YUI(config);
+                    inst.log = Y.log; //Dump the instance logs to the parent instance.
                     Y.log('Creating new internal instance with node only', 'info', 'frame');
                     inst.use('node-base', cb);
                 }, this);

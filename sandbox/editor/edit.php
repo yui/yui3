@@ -71,13 +71,13 @@ del {
 }
 </style>
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
-<p>This <strong>is</strong> another test.</p>
+<p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
 <ul>
-    <li>Item #1</li>
+    <li style="font-family: courier">Item #1</li>
     <li>Item #1</li>
     <li>Item #1</li>
 </ul>
-<p>This is another test.</p>
+<p>This is <span style="font-family: courier">another</span> test.</p>
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -106,7 +106,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-command', 'selection', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-command', function(Y) {
     //console.log(Y, Y.id);
 
     var out = function(str) {
@@ -116,8 +116,13 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
     var iframe = new Y.Frame({
         designMode: true,
         content: Y.one('#stub').get('innerHTML'),
-        use: ['node','selector-css3', 'selection']
+        use: ['node','selector-css3', 'selection', 'stylesheet']
     }).plug(Y.Plugin.ExecCommand);
+
+    iframe.on('ready', function() {
+        var inst = this.getInstance();
+        inst.Selection.filter();
+    });
 
     Y.Plugin.ExecCommand.COMMANDS.foo = function() {
         alert('You clicked on Foo');
