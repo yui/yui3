@@ -32,6 +32,8 @@ YUI.add('selection', function(Y) {
         ol: 'li'
     };
 
+    Y.Selection.PARENTS = 'p,div,blockquote,body';
+
     Y.Selection.prototype = {
         anchorNode: null,
         focusNode: null,
@@ -94,7 +96,7 @@ YUI.add('selection', function(Y) {
                 childs.each(function(n, k) {
                     if (n.contains(sNode)) {
                         parse = true;
-                        sPar = n;
+                        sPar = childs.item(k);
                     }
                     if (parse) {
                         //start + between + end elements
@@ -103,7 +105,7 @@ YUI.add('selection', function(Y) {
                         }
                     }
                     if (n.contains(eNode)) {
-                        ePar = n;
+                        ePar = childs.item(k);
                         parse = false;
                     }
                 });
@@ -121,9 +123,64 @@ YUI.add('selection', function(Y) {
                         }
                     }
                 }, this);
+                
+                var firstNode, lastNode;
 
-                var sChilds = sPar.get('childNodes'), parse = false;
+                if (sNode.get('nodeType') === 3) {
+                    //Text Node
+                    var txt = sNode.get('textContent');
+                    var first = Y.one(Y.config.doc.createTextNode(txt.substring(0, r.startOffset)));
+                    var html = '<' + tag + '>' + txt.substring(r.startOffset) + '</' + tag + '>';
+                    var tmp = Y.Node.create(html);
+                    sNode.replace(first, sNode);
+                    first.insert(tmp, 'after');
+                    firstNode = tmp;
+                    changed.push(tmp);
+                }
+
+                if (eNode.get('nodeType') === 3) {
+                    //Text Node
+                    var txt = eNode.get('textContent');
+                    var html = '<' + tag + '>' + txt.substring(0, r.endOffset) + '</' + tag + '>';
+                    var last = Y.one(Y.config.doc.createTextNode(txt.substring(r.endOffset)));
+                    var tmp = Y.Node.create(html);
+                    eNode.replace(tmp, eNode);
+                    tmp.insert(last, 'after');
+                    lastNode = tmp;
+                    changed.push(tmp);
+                }
+
+                console.log(firstNode, lastNode);
+                if (firstNode.get('parentNode') !== lastNode.get('parentNode')) {
+                    //Different parents, fill to end and fill from start
+                    var fParChilds = firstNode.ancestor(Y.Selection.PARENTS).get('childNodes'), parse = false;
+                    console.info(fParChilds);
+                    fParChilds.each(function(n) {
+                        if (parse) {
+                            this._wrap(n, tag);
+                        }
+                        if (n === firstNode) {
+                            parse = true;
+                        }
+                    }, this);
+                    
+                    /*
+                    var lParChilds = lastNode.get('childNodes'), parse = true;
+                    lParChilds.each(function(n) {
+                        if (n === lastNode) {
+                            parse = false;
+                        }
+                        if (parse) {
+                            this._wrap(n, tag);
+                        }
+                    }, this);
+                    */
+
+                }
+                /*
+                var sChilds = sNode.get('parentNode.childNodes'), parse = false;
                 console.log('sChilds: ', sChilds);
+
                 Y.each(sChilds, function(s) {
                     if (parse) {
                         console.log('sChilds(s): ', s);
@@ -131,18 +188,11 @@ YUI.add('selection', function(Y) {
                     }
                     if (s === sNode) {
                         parse = true;
-                        var html = '<span>', txt = sNode.get('textContent');
-                        html += txt.substring(0, r.startOffset);
-                        html += '<' + tag + '>' + txt.substring(r.startOffset) + '</' + tag + '>';
-                        html += '</span>';
-                        console.log(html);
-                        var tmp = Y.Node.create(html);
-                        changed.push(tmp);
-                        sNode.replace(tmp, sNode);
                     }
                     
                 }, this);
 
+                /*
                 var eChilds = ePar.get('childNodes'), parse = false;
                 console.log('eChilds: ', eChilds);
                 Y.each(eChilds, function(s) {
@@ -163,11 +213,12 @@ YUI.add('selection', function(Y) {
                     }
                     
                 }, this);
+                */
 
                 console.log('items: ', items);
                 console.log('changed: ', changed);
-                console.log(sPar, sNode);
-                console.log(ePar, eNode);
+                console.log('start: ', sPar, sNode);
+                console.log('end: ', ePar, eNode);
 
             } else {
                 Y.log('Can not wrap a collapsed selection', 'error', 'selection');
