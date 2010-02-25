@@ -670,11 +670,12 @@
                 <span class="nx">pkg</span> <span class="o">=</span> <span class="nx">mdef</span><span class="p">.</span><span class="nx">pkg</span> <span class="o">||</span> <span class="nx">mod</span><span class="p">;</span>
                 <span class="c1">// Y.log(&#39;adding skin &#39; + name);</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">({</span>
-                    <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span>
-                    <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="s1">&#39;css&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;after&#39;</span><span class="o">:</span> <span class="nx">sinf</span><span class="p">.</span><span class="nx">after</span><span class="p">,</span>
-                    <span class="s1">&#39;path&#39;</span><span class="o">:</span> <span class="p">(</span><span class="nx">parent</span> <span class="o">||</span> <span class="nx">pkg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">sinf</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">skin</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">mod</span> <span class="o">+</span> <span class="s1">&#39;.css&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;ext&#39;</span><span class="o">:</span> <span class="nx">ext</span>
+                    <span class="nx">name</span><span class="o">:</span>  <span class="nx">name</span><span class="p">,</span>
+                    <span class="nx">group</span><span class="o">:</span> <span class="nx">mdef</span><span class="p">.</span><span class="nx">group</span><span class="p">,</span>
+                    <span class="nx">type</span><span class="o">:</span>  <span class="s1">&#39;css&#39;</span><span class="p">,</span>
+                    <span class="nx">after</span><span class="o">:</span> <span class="nx">sinf</span><span class="p">.</span><span class="nx">after</span><span class="p">,</span>
+                    <span class="nx">path</span><span class="o">:</span>  <span class="p">(</span><span class="nx">parent</span> <span class="o">||</span> <span class="nx">pkg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">sinf</span><span class="p">.</span><span class="nx">base</span> <span class="o">+</span> <span class="nx">skin</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">mod</span> <span class="o">+</span> <span class="s1">&#39;.css&#39;</span><span class="p">,</span>
+                    <span class="nx">ext</span><span class="o">:</span>   <span class="nx">ext</span>
                 <span class="p">});</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -700,7 +701,6 @@
     <span class="nx">addGroup</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">mods</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">modules</span><span class="p">,</span> 
             <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-
         <span class="nx">name</span>   <span class="o">=</span> <span class="nx">name</span> <span class="o">||</span> <span class="nx">o</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
         <span class="nx">o</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
         <span class="nx">self</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
@@ -765,12 +765,14 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">s</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
 
-                    <span class="nx">s</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+                    <span class="nx">s</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">path</span> <span class="o">||</span> <span class="nx">_path</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
                     <span class="nx">s</span><span class="p">.</span><span class="nx">pkg</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+                    <span class="nx">s</span><span class="p">.</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">group</span><span class="p">;</span>
 
                     <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">supersedes</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">sup</span> <span class="o">=</span> <span class="nx">sup</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">supersedes</span><span class="p">);</span>
                     <span class="p">}</span>
+
 
                     <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
                     <span class="nx">sup</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
@@ -826,8 +828,9 @@
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">plugins</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">plug</span> <span class="o">=</span> <span class="nx">plugins</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                    <span class="nx">plug</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
+                    <span class="nx">plug</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">plug</span><span class="p">.</span><span class="nx">path</span> <span class="o">||</span> <span class="nx">_path</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
                     <span class="nx">plug</span><span class="p">.</span><span class="nx">requires</span> <span class="o">=</span> <span class="nx">plug</span><span class="p">.</span><span class="nx">requires</span> <span class="o">||</span> <span class="p">[];</span>
+                    <span class="nx">plug</span><span class="p">.</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">group</span><span class="p">;</span>
                     <span class="c1">// plug.requires.push(name);</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">plug</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">skinnable</span><span class="p">)</span> <span class="p">{</span>
@@ -976,6 +979,7 @@
             <span class="nx">after</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;intl&#39;</span><span class="p">],</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;intl&#39;</span><span class="p">],</span>
             <span class="nx">ext</span><span class="o">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">ext</span><span class="p">,</span>
+            <span class="nx">group</span><span class="o">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">group</span><span class="p">,</span>
             <span class="nx">supersedes</span><span class="o">:</span> <span class="p">[]</span>
         <span class="p">},</span> <span class="nx">packName</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 
@@ -1155,7 +1159,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">found</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
                     <span class="c1">// Y.log(&#39;executing pattern action: &#39; + i);</span>
-                    <span class="c1">// p.action.call(this, name, i);</span>
+                    <span class="nx">p</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Undefined module: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, matched a pattern: &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;loader&#39;</span><span class="p">);</span>
                     <span class="c1">// ext true or false?</span>

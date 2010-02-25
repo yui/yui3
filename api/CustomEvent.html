@@ -879,6 +879,70 @@ true otherwise</dd>
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_getSubscriber">
+                                    <h4>
+                                        <a name="method_getSubscriber">getSubscriber</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Subscriber
+                                            <strong property="yui:name">getSubscriber</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         ctx
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the first subscriber that matches the provided function and/or
+context.  Both function and context parameters are optional.  Omitting
+either will return the first match on the other parameter, and omitting both
+will return the first subscriber.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">fn</span>
+                                                        &lt;<span property="yui:type">Function</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Optional. The subscribed callback function</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">ctx</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Optional.  The context override for the callback</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Subscriber
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">or null</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_halt">
                                     <h4>
                                         <a name="method_halt">halt</a></h4>
@@ -987,7 +1051,7 @@ on the current target will not be executed</span>
                                         
                                         
                                         
-                                        void
+                                        EventHandle
                                             <strong property="yui:name">monitor</strong>
                                            (
                                                 
@@ -1010,13 +1074,19 @@ subscribing to an event.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">what</span>
-                                                        &lt;<span property="yui:type">string} what to monitor ('detach', 'attach', 'publish')
-return {EventHandle</span>&gt;
+                                                        &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  return value from the monitor event subscription</span>
+                                                        <span property="yui:description">  what to monitor ('detach', 'attach', 'publish')</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            EventHandle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">return value from the monitor event subscription</dd>
+                                                </dl>
 
 
              
@@ -1066,7 +1136,7 @@ return {EventHandle</span>&gt;
                                                     <code property="yui:return">
                                                             EventHandle
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">handle Unsubscribe handle</dd>
+                                                    <dd property="yui:returnInfo">An object with a detach method to detch the handler(s)</dd>
                                                 </dl>
 
 
@@ -1208,7 +1278,7 @@ subscribers on the current target from executing.
                                                     <code property="yui:return">
                                                             EventHandle
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">handle Unsubscribe handle</dd>
+                                                    <dd property="yui:returnInfo">Unsubscribe handle</dd>
                                                 </dl>
 
 
@@ -1474,6 +1544,7 @@ all will be removed</span>
                                 <li class=""><a href="#method_detachAll" title="detachAll">detachAll</a></li>
                                 <li class=""><a href="#method_fire" title="fire">fire</a></li>
                                 <li class=""><a href="#method_getSubs" title="getSubs">getSubs</a></li>
+                                <li class=""><a href="#method_getSubscriber" title="getSubscriber">getSubscriber</a></li>
                                 <li class=""><a href="#method_halt" title="halt">halt</a></li>
                                 <li class=""><a href="#method_log" title="log">log</a></li>
                                 <li class=""><a href="#method_monitor" title="monitor">monitor</a></li>
@@ -1499,7 +1570,7 @@ all will be removed</span>
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "CustomEvent", "name": "after", "url": "CustomEvent.html#method_after", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "afters", "url": "CustomEvent.html#property_afters", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "applyConfig", "url": "CustomEvent.html#method_applyConfig", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "broadcast", "url": "CustomEvent.html#property_broadcast", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "bubbles", "url": "CustomEvent.html#property_bubbles", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "context", "url": "CustomEvent.html#property_context", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "defaultFn", "url": "CustomEvent.html#property_defaultFn", "type": "property"}, {"access": "private", "host": "CustomEvent", "name": "_delete", "url": "CustomEvent.html#method__delete", "type": "method"}, {"access": "", "host": "EventHandle", "name": "detach", "url": "EventHandle.html#method_detach", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "detach", "url": "CustomEvent.html#method_detach", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "detachAll", "url": "CustomEvent.html#method_detachAll", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "emitFacade", "url": "CustomEvent.html#property_emitFacade", "type": "property"}, {"access": "", "host": "EventHandle", "name": "evt", "url": "EventHandle.html#property_evt", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "fire", "url": "CustomEvent.html#method_fire", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "fired", "url": "CustomEvent.html#property_fired", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "firedWith", "url": "CustomEvent.html#property_firedWith", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "fireOnce", "url": "CustomEvent.html#property_fireOnce", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "getSubs", "url": "CustomEvent.html#method_getSubs", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "halt", "url": "CustomEvent.html#method_halt", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "host", "url": "CustomEvent.html#property_host", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "log", "url": "CustomEvent.html#method_log", "type": "method"}, {"access": "", "host": "EventHandle", "name": "monitor", "url": "EventHandle.html#method_monitor", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "monitor", "url": "CustomEvent.html#method_monitor", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "monitored", "url": "CustomEvent.html#property_monitored", "type": "property"}, {"access": "private", "host": "CustomEvent", "name": "_notify", "url": "CustomEvent.html#method__notify", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "on", "url": "CustomEvent.html#method_on", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "preventable", "url": "CustomEvent.html#property_preventable", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "preventDefault", "url": "CustomEvent.html#method_preventDefault", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "prevented", "url": "CustomEvent.html#property_prevented", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "preventedFn", "url": "CustomEvent.html#property_preventedFn", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "queuable", "url": "CustomEvent.html#property_queuable", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "signature", "url": "CustomEvent.html#property_signature", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "silent", "url": "CustomEvent.html#property_silent", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stopImmediatePropagation", "url": "CustomEvent.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "stopped", "url": "CustomEvent.html#property_stopped", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stoppedFn", "url": "CustomEvent.html#property_stoppedFn", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stopPropagation", "url": "CustomEvent.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventHandle", "name": "sub", "url": "EventHandle.html#property_sub", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "subscribe", "url": "CustomEvent.html#method_subscribe", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "subscribers", "url": "CustomEvent.html#property_subscribers", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "type", "url": "CustomEvent.html#property_type", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "unsubscribe", "url": "CustomEvent.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "unsubscribeAll", "url": "CustomEvent.html#method_unsubscribeAll", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "CustomEvent", "name": "after", "url": "CustomEvent.html#method_after", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "afters", "url": "CustomEvent.html#property_afters", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "applyConfig", "url": "CustomEvent.html#method_applyConfig", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "broadcast", "url": "CustomEvent.html#property_broadcast", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "bubbles", "url": "CustomEvent.html#property_bubbles", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "context", "url": "CustomEvent.html#property_context", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "defaultFn", "url": "CustomEvent.html#property_defaultFn", "type": "property"}, {"access": "private", "host": "CustomEvent", "name": "_delete", "url": "CustomEvent.html#method__delete", "type": "method"}, {"access": "", "host": "EventHandle", "name": "detach", "url": "EventHandle.html#method_detach", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "detach", "url": "CustomEvent.html#method_detach", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "detachAll", "url": "CustomEvent.html#method_detachAll", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "emitFacade", "url": "CustomEvent.html#property_emitFacade", "type": "property"}, {"access": "", "host": "EventHandle", "name": "evt", "url": "EventHandle.html#property_evt", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "fire", "url": "CustomEvent.html#method_fire", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "fired", "url": "CustomEvent.html#property_fired", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "firedWith", "url": "CustomEvent.html#property_firedWith", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "fireOnce", "url": "CustomEvent.html#property_fireOnce", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "getSubs", "url": "CustomEvent.html#method_getSubs", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "getSubscriber", "url": "CustomEvent.html#method_getSubscriber", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "halt", "url": "CustomEvent.html#method_halt", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "host", "url": "CustomEvent.html#property_host", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "log", "url": "CustomEvent.html#method_log", "type": "method"}, {"access": "", "host": "EventHandle", "name": "monitor", "url": "EventHandle.html#method_monitor", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "monitor", "url": "CustomEvent.html#method_monitor", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "monitored", "url": "CustomEvent.html#property_monitored", "type": "property"}, {"access": "private", "host": "CustomEvent", "name": "_notify", "url": "CustomEvent.html#method__notify", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "on", "url": "CustomEvent.html#method_on", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "preventable", "url": "CustomEvent.html#property_preventable", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "preventDefault", "url": "CustomEvent.html#method_preventDefault", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "prevented", "url": "CustomEvent.html#property_prevented", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "preventedFn", "url": "CustomEvent.html#property_preventedFn", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "queuable", "url": "CustomEvent.html#property_queuable", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "signature", "url": "CustomEvent.html#property_signature", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "silent", "url": "CustomEvent.html#property_silent", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stopImmediatePropagation", "url": "CustomEvent.html#method_stopImmediatePropagation", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "stopped", "url": "CustomEvent.html#property_stopped", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stoppedFn", "url": "CustomEvent.html#property_stoppedFn", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "stopPropagation", "url": "CustomEvent.html#method_stopPropagation", "type": "method"}, {"access": "", "host": "EventHandle", "name": "sub", "url": "EventHandle.html#property_sub", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "subscribe", "url": "CustomEvent.html#method_subscribe", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "subscribers", "url": "CustomEvent.html#property_subscribers", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "type", "url": "CustomEvent.html#property_type", "type": "property"}, {"access": "", "host": "CustomEvent", "name": "unsubscribe", "url": "CustomEvent.html#method_unsubscribe", "type": "method"}, {"access": "", "host": "CustomEvent", "name": "unsubscribeAll", "url": "CustomEvent.html#method_unsubscribeAll", "type": "method"}];
 </script>
 </body>
 </html>

@@ -182,7 +182,7 @@
                                         
                                         
                                         
-                                        void
+                                        EventHandle
                                             <strong property="yui:name">monitor</strong>
                                            (
                                                 
@@ -205,13 +205,19 @@ subscribing to an event.
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">what</span>
-                                                        &lt;<span property="yui:type">string} what to monitor ('attach', 'detach', 'publish')
-return {EventHandle</span>&gt;
+                                                        &lt;<span property="yui:type">string</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  return value from the monitor event subscription</span>
+                                                        <span property="yui:description">  what to monitor ('attach', 'detach', 'publish')</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            EventHandle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">return value from the monitor event subscription</dd>
+                                                </dl>
 
 
              
