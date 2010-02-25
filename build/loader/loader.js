@@ -1488,7 +1488,7 @@ Y.Loader.prototype = {
     SKIN_PREFIX: "skin-",
 
     _config: function(o) {
-        var i, j, k, val, f, mods, group, groupName, self = this;
+        var i, j, val, f, group, groupName, self = this;
         // apply config values
         if (o) {
             for (i in o) {
@@ -1502,15 +1502,6 @@ Y.Loader.prototype = {
                                 groupName = j;
                                 group = val[j];
                                 self.addGroup(group, groupName);
-                                mods = group.modules;
-                                if (mods) {
-                                    for (k in mods) {
-                                        if (val.hasOwnProperty(k)) {
-                                            val[k].group = groupName;
-                                            self.addModule(val[k], k);
-                                        }
-                                    }
-                                }
                             }
                         }
 
