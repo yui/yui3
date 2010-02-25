@@ -1702,6 +1702,11 @@ Y.Loader.prototype = {
                     // for the parent module language packs from what is
                     // specified in the child modules.
                     if (s.lang && s.lang.length) {
+
+                        // if (YArray.indexOf(o.requires, 'intl') > -1) {
+                        //     o.requires.push('intl');
+                        // }
+
                         langs = YArray(s.lang);
                         for (j=0; j < langs.length; j++) {
                             lang = langs[j];
@@ -1792,15 +1797,20 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
 
-        var i, d=[], r=mod.requires, o=mod.optional, 
-            info=this.moduleInfo, m, j, add;
+        var i, m, j, add,
+            d    = [], 
+            r    = mod.requires, 
+            o    = mod.optional, 
+            intl = mod.lang || mod.intl,
+            info = this.moduleInfo;
 
-        for (i=0; i<r.length; i=i+1) {
+        for (i=0; i<r.length; i++) {
             // Y.log(mod.name + ' requiring ' + r[i]);
             d.push(r[i]);
             m = this.getModule(r[i]);
             add = this.getRequires(m);
-            for (j=0;j<add.length;j=j+1) {
+            intl = intl || YArray.indexOf(add, 'intl') > -1;
+            for (j=0; j<add.length; j++) {
                 d.push(add[j]);
             }
         }
@@ -1808,27 +1818,33 @@ Y.Loader.prototype = {
         // get the requirements from superseded modules, if any
         r=mod.supersedes;
         if (r) {
-            for (i=0; i<r.length; i=i+1) {
+            for (i=0; i<r.length; i++) {
                 d.push(r[i]);
                 m = this.getModule(r[i]);
                 add = this.getRequires(m);
-                for (j=0;j<add.length;j=j+1) {
+                intl = intl || YArray.indexOf(add, 'intl') > -1;
+                for (j=0; j<add.length; j++) {
                     d.push(add[j]);
                 }
             }
         }
 
         if (o && this.loadOptional) {
-            for (i=0; i<o.length; i=i+1) {
+            for (i=0; i<o.length; i++) {
                 d.push(o[i]);
                 add = this.getRequires(info[o[i]]);
-                for (j=0;j<add.length;j=j+1) {
+                intl = intl || YArray.indexOf(add, 'intl') > -1;
+                for (j=0; j<add.length; j++) {
                     d.push(add[j]);
                 }
             }
         }
 
         mod._parsed = false;
+
+        if (intl) {
+            d.unshift('intl');
+        }
 
         mod.expanded = YObject.keys(YArray.hash(d));
         return mod.expanded;
@@ -1892,8 +1908,9 @@ Y.Loader.prototype = {
         var packPath = _path((m.pkg || m.name), packName, JS, true);
         this.addModule({
             path: packPath,
-            after: ['intl'],
-            requires: ['intl'],
+            // after: ['intl'],
+            // requires: ['intl'],
+            intl: true,
             ext: m.ext,
             group: m.group,
             supersedes: []
@@ -2216,6 +2233,7 @@ Y.log('Undefined module: ' + name + ', matched a pattern: ' + i, 'info', 'loader
             onEnd.call(this.context, {
                 msg: msg,
                 data: this.data,
+                // data: this.sorted,
                 success: success
             });
         }
