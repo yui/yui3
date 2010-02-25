@@ -8,9 +8,9 @@
     <script src="../../../../build/yui/yui-debug.js"></script>
     <script>
         // WORKS OK
-        YUI({filter:"raw"}).use("datatype-date", function(Y) {
-            Y.log("use datatype-date directly (works fine):" + Y.DataType.Date.format(new Date(), {format:"%e %b"}));
-        });
+        // YUI({filter:"raw"}).use("datatype-date", function(Y) {
+        //     Y.log("use datatype-date directly (works fine):" + Y.DataType.Date.format(new Date(), {format:"%e %b"}));
+        // });
 
         // DOESN'T WORK. Seems like "intl" is coming in too late, after the lang pack 
         YUI({
