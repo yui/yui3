@@ -867,8 +867,8 @@ Y.Loader.prototype = {
 
         if (intl && !mod.langPack) {
 
-            if (Y.Intl) {
-                lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, intl);
+            if (mod.lang && Y.Intl) {
+                lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
                 packName = this.getLangPackName(lang, mod.name);
                 if (packName) {
                     d.unshift(packName);
