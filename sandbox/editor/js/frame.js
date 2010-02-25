@@ -134,6 +134,7 @@ YUI.add('frame', function(Y) {
             });
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
+            inst.log = Y.log; //Dump the instance logs to the parent instance.
 
             this._iframe.setStyle('visibility', 'visible');
         },
@@ -350,7 +351,8 @@ YUI.add('frame', function(Y) {
             return html;
         },
         focus: function() {
-            this._iframe.focus();
+            this.getInstance().config.win.focus();
+            return this;
         }
     }, {
         /**
