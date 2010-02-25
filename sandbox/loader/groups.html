@@ -59,13 +59,33 @@
                     base: 'http://yui.yahooapis.com/2.8.0r4/build/',
                     comboBase: 'http://yui.yahooapis.com/combo?',
                     root: '2.8.0r4/build/',
-                    modules:  { // one or more external modules that can be loaded along side of YUI
-                        yui2_yde: {
-                            path: "yahoo-dom-event/yahoo-dom-event.js"
+                    modules:  {
+                        // yui2_yde: {
+                        //     path: "yahoo-dom-event/yahoo-dom-event.js"
+                        // },
+                        yui2_ydel: {
+                            path: "yuiloader-dom-event/yahooloader-dom-event.js",
+                            submodules: {
+                                yui2_yahoo: {
+                                    path: "yahoo/yahoo-min.js"
+                                },
+                                yui2_dom: {
+                                    path: "dom/dom-min.js"
+                                },
+                                yui2_event: {
+                                    path: "event/event-min.js"
+                                },
+                                yui2_get: {
+                                    path: "get/get-min.js"
+                                },
+                                yui2_yuiloader: {
+                                    path: "yuiloader/yuiloader-min.js"
+                                }
+                            }
                         },
                         yui2_anim: {
                             path: "animation/animation.js",
-                            requires: ['yui2_yde']
+                            requires: ['yui2_yahoo', 'yui2_dom', 'yui2_event']
                         }
                     }
                 }

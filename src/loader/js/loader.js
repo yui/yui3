@@ -621,11 +621,12 @@ Y.Loader.prototype = {
                 pkg = mdef.pkg || mod;
                 // Y.log('adding skin ' + name);
                 this.addModule({
-                    'name': name,
-                    'type': 'css',
-                    'after': sinf.after,
-                    'path': (parent || pkg) + '/' + sinf.base + skin + '/' + mod + '.css',
-                    'ext': ext
+                    name:  name,
+                    group: mdef.group,
+                    type:  'css',
+                    after: sinf.after,
+                    path:  (parent || pkg) + '/' + sinf.base + skin + '/' + mod + '.css',
+                    ext:   ext
                 });
             }
         }
@@ -651,7 +652,6 @@ Y.Loader.prototype = {
     addGroup: function(o, name) {
         var mods = o.modules, 
             self = this;
-
         name   = name || o.name;
         o.name = name;
         self.groups[name] = o;
@@ -716,12 +716,14 @@ Y.Loader.prototype = {
                 if (subs.hasOwnProperty(i)) {
                     s = subs[i];
 
-                    s.path = _path(name, i, o.type);
+                    s.path = s.path || _path(name, i, o.type);
                     s.pkg = name;
+                    s.group = o.group;
 
                     if (s.supersedes) {
                         sup = sup.concat(s.supersedes);
                     }
+
 
                     this.addModule(s, i);
                     sup.push(i);
@@ -777,8 +779,9 @@ Y.Loader.prototype = {
             for (i in plugins) {
                 if (plugins.hasOwnProperty(i)) {
                     plug = plugins[i];
-                    plug.path = _path(name, i, o.type);
+                    plug.path = plug.path || _path(name, i, o.type);
                     plug.requires = plug.requires || [];
+                    plug.group = o.group;
                     // plug.requires.push(name);
                     this.addModule(plug, i);
                     if (o.skinnable) {
@@ -927,6 +930,7 @@ Y.Loader.prototype = {
             after: ['intl'],
             requires: ['intl'],
             ext: m.ext,
+            group: m.group,
             supersedes: []
         }, packName, true);
 
@@ -1106,7 +1110,7 @@ Y.Loader.prototype = {
             if (found) {
                 if (p.action) {
                     // Y.log('executing pattern action: ' + i);
-                    // p.action.call(this, name, i);
+                    p.action.call(this, name, i);
                 } else {
 Y.log('Undefined module: ' + name + ', matched a pattern: ' + i, 'info', 'loader');
                     // ext true or false?

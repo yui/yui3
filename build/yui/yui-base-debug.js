@@ -132,7 +132,7 @@ YUI.prototype = {
             Env   = Y.Env;
 
         Y.version = VERSION;
-        Y.gallery = 'gallery-2010.02.10-01'; // @TODO build time
+        Y.gallery = 'gallery-2010.02.22-22'; // @TODO build time
 
         if (!Env) {
             Y.Env = {
