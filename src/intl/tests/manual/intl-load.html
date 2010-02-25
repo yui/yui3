@@ -7,16 +7,24 @@
 <body>
     <script src="../../../../build/yui/yui.js"></script>
     <script>
-        YUI.add("mymod", function(Y) {
-            Y.MyMod = {
-                formatDate : function() {
-                    return Y.DataType.Date.format(new Date(), {format:"%e %b"});
-                }
-            };
-        }, "3.0" ,{requires:["datatype-date"]});
+        // WORKS OK
+        YUI({filter:"raw"}).use("datatype-date", function(Y) {
+            Y.log("use datatype-date directly (works fine):" + Y.DataType.Date.format(new Date(), {format:"%e %b"}));
+        });
 
-        YUI({filter:"raw"}).use(/* FIXES THE ISSUE: "datatype-date",*/ "mymod", function(Y) {
-            Y.log(Y.MyMod.formatDate());
+        // DOESN'T WORK. Seems like "intl" is coming in too late, after the lang pack 
+        YUI({
+            filter:"raw",
+            modules : {
+                mymod: {
+                    type : "js",
+                    fullpath : "mymod.js",
+                    requires: ["datatype-date"]
+                }
+            }
+
+        }).use(/* FIXES THE ISSUE: "datatype-date",*/ "mymod", function(Y) {
+            Y.log("module which requires datatype-date:" + Y.MyMod.formatDate());
         });
     </script>
 </body>
