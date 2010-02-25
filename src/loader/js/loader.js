@@ -737,11 +737,6 @@ Y.Loader.prototype = {
                     // for the parent module language packs from what is
                     // specified in the child modules.
                     if (s.lang && s.lang.length) {
-
-                        if (YArray.indexOf(o.requires, 'intl')) {
-                            o.requires.push('intl');
-                        }
-
                         langs = YArray(s.lang);
                         for (j=0; j < langs.length; j++) {
                             lang = langs[j];
@@ -832,20 +827,15 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
 
-        var i, m, j, add,
-            d    = [], 
-            r    = mod.requires, 
-            o    = mod.optional, 
-            intl = mod.lang || mod.intl,
-            info = this.moduleInfo;
+        var i, d=[], r=mod.requires, o=mod.optional, 
+            info=this.moduleInfo, m, j, add;
 
-        for (i=0; i<r.length; i++) {
+        for (i=0; i<r.length; i=i+1) {
             // Y.log(mod.name + ' requiring ' + r[i]);
             d.push(r[i]);
             m = this.getModule(r[i]);
             add = this.getRequires(m);
-            intl = intl || YArray.indexOf(add, 'intl');
-            for (j=0; j<add.length; j++) {
+            for (j=0;j<add.length;j=j+1) {
                 d.push(add[j]);
             }
         }
@@ -853,33 +843,27 @@ Y.Loader.prototype = {
         // get the requirements from superseded modules, if any
         r=mod.supersedes;
         if (r) {
-            for (i=0; i<r.length; i++) {
+            for (i=0; i<r.length; i=i+1) {
                 d.push(r[i]);
                 m = this.getModule(r[i]);
                 add = this.getRequires(m);
-                intl = intl || YArray.indexOf(add, 'intl');
-                for (j=0; j<add.length; j++) {
+                for (j=0;j<add.length;j=j+1) {
                     d.push(add[j]);
                 }
             }
         }
 
         if (o && this.loadOptional) {
-            for (i=0; i<o.length; i++) {
+            for (i=0; i<o.length; i=i+1) {
                 d.push(o[i]);
                 add = this.getRequires(info[o[i]]);
-                intl = intl || YArray.indexOf(add, 'intl');
-                for (j=0; j<add.length; j++) {
+                for (j=0;j<add.length;j=j+1) {
                     d.push(add[j]);
                 }
             }
         }
 
         mod._parsed = false;
-
-        if (intl) {
-            d.push('intl');
-        }
 
         mod.expanded = YObject.keys(YArray.hash(d));
         return mod.expanded;
@@ -943,9 +927,8 @@ Y.Loader.prototype = {
         var packPath = _path((m.pkg || m.name), packName, JS, true);
         this.addModule({
             path: packPath,
-            // after: ['intl'],
-            // requires: ['intl'],
-            intl: true,
+            after: ['intl'],
+            requires: ['intl'],
             ext: m.ext,
             group: m.group,
             supersedes: []
