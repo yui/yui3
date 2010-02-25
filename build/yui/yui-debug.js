@@ -49,15 +49,14 @@ if (typeof YUI === 'undefined') {
 }
 
 (function() {
-
     var p, i,
         VERSION       = '@VERSION@', 
         DOC_LABEL     = 'yui3-js-enabled',
         NOOP          = function() {},
+        SLICE         = Array.prototype.slice,
         APPLY_TO_AUTH = { 'io.xdrReady':      1,   // the functions applyTo 
                           'io.xdrResponse':   1,   // can call. this should
                           'SWF.eventHandler': 1 }, // be done at build time
-        SLICE         = Array.prototype.slice,
         hasWin        = (typeof window != 'undefined'),
         win           = (hasWin) ? window : null,
         doc           = (hasWin) ? win.document : null,
@@ -87,7 +86,6 @@ if (typeof YUI === 'undefined') {
                             }
                         };
 
-
 //  Stamp the documentElement (HTML) with a class of "yui-loaded" to 
 //  enable styles that need to key off of JS being enabled.
 if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
@@ -102,10 +100,7 @@ if (VERSION.indexOf('@') > -1) {
     VERSION = '3.0.0';
 }
         
-// The prototype contains the functions that are required to allow the external
-// modules to be registered and for the instance to be initialized.
 YUI.prototype = {
-
     _config: function(o) {
         o = o || {};
         var config = this.config, i, j, m, mods = config.modules;
@@ -132,27 +127,57 @@ YUI.prototype = {
      */
     _init: function() {
         var filter,
-            Y = this, 
+            Y     = this, 
             G_ENV = YUI.Env,
-            Env = Y.Env;
+            Env   = Y.Env;
 
         Y.version = VERSION;
-        Y.gallery = 'gallery-2010.02.10-01'; // @TODO build time
+        Y.gallery = 'gallery-2010.02.22-22'; // @TODO build time
 
         if (!Env) {
             Y.Env = {
-                // @todo expand the new module metadata
-                mods: {},
-                cdn: 'http://yui.yahooapis.com/' + VERSION + '/build/',
+                mods:         {},
+                cdn:          'http://yui.yahooapis.com/' + VERSION + '/build/',
                 bootstrapped: false,
-                _idx: 0,
-                _used: {},
-                _attached: {},
-                _yidx: 0,
-                _uidx: 0,
-                _guidp: 'y',
-                _loaded: {}
+                _idx:         0,
+                _used:        {},
+                _attached:    {},
+                _yidx:        0,
+                _uidx:        0,
+                _guidp:       'y',
+                _loaded:      {},
+                getBase: function(srcPattern, comboPattern) {
+                    var b, nodes, i, src, match;
+                    // get from querystring
+                    nodes = (doc && doc.getElementsByTagName('script')) || [];
+                    for (i=0; i<nodes.length; i=i+1) {
+                        src = nodes[i].src;
+                        if (src) {
+                            //src = "http://yui.yahooapis.com/combo?2.8.0r4/b
+                            //uild/yuiloader-dom-event/yuiloader-dom-event.js
+                            //&3.0.0/build/yui/yui-min.js"; // debug url
+                            //Y.log('src) ' + src);
+                            match = src.match(srcPattern);
+                            b = match && match[1];
+                            if (b) {
+                                // this is to set up the path to the loader.  The file 
+                                // filter for loader should match the yui include.
+                                filter = match[2];
+                                // extract correct path for mixed combo urls
+                                // http://yuilibrary.com/projects/yui3/ticket/2528423
+                                match = src.match(comboPattern);
+                                if (match && match[3]) {
+                                    b = match[1] + match[3];
+                                }
 
+                                break;
+                            }
+                        }
+                    }
+
+                    // use CDN default
+                    return b || Env.cdn;
+                }
             };
 
             Env = Y.Env;
@@ -174,53 +199,21 @@ YUI.prototype = {
 
         // configuration defaults
         Y.config = Y.config || {
-
             win:               win,
             doc:               doc,
             debug:             true,
             useBrowserConsole: true,
             throwFail:         true,
             bootstrap:         true,
-            fetchCSS:          true,
-        
-            // base: (Y === YUI) ? Env.cdn : function() {
-            base: (YUI.config && YUI.config.base) || function() {
-                var b, nodes, i, src, match;
-                // get from querystring
-                nodes = (doc && doc.getElementsByTagName('script')) || [];
-                for (i=0; i<nodes.length; i=i+1) {
-                    src = nodes[i].src;
-                    if (src) {
-                        //src = "http://yui.yahooapis.com/combo?2.8.0r4/b
-                        //uild/yuiloader-dom-event/yuiloader-dom-event.js
-                        //&3.0.0/build/yui/yui-min.js"; // debug url
-                        //Y.log('src) ' + src);
-                        match = src.match(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/);
-                        b = match && match[1];
-                        if (b) {
-                            // this is to set up the path to the loader.  The file 
-                            // filter for loader should match the yui include.
-                            filter = match[2];
-                            // extract correct path for mixed combo urls
-                            // http://yuilibrary.com/projects/yui3/ticket/2528423
-                            match = src.match(/^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
-                            if (match && match[3]) {
-                                b = match[1] + match[3];
-                            }
-
-                            break;
-                        }
-                    }
-                }
-
-                // use CDN default
-                return b || Env.cdn;
-
-            }(),
-
-            loaderPath: (YUI.config && YUI.config.loaderPath) || 
-                        'loader/loader' + (filter || '-min.') + 'js'
+            fetchCSS:          true
         };
+
+        Y.config.base = YUI.config.base || 
+            Y.Env.getBase(/^(.*)yui\/yui([\.\-].*)js(\?.*)?$/, 
+                          /^(.*\?)(.*\&)(.*)yui\/yui[\.\-].*js(\?.*)?$/);
+
+        Y.config.loaderPath = YUI.config.loaderPath || 
+            'loader/loader' + (filter || '-min.') + 'js';
 
     },
     
@@ -526,7 +519,8 @@ YUI.prototype = {
 
         // dynamic load
         if (boot && len && Y.Loader) {
-            Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
+            // Y.log('Using loader to fetch missing dependencies: ' + missing, 'info', 'yui');
+            Y.log('Using Loader', 'info', 'yui');
             Y._loading = true;
             loader = new Y.Loader(config);
             loader.onEnd = handleLoader;
@@ -610,7 +604,6 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
     // this is replaced if the log module is included
     log: NOOP,
     message: NOOP,
-    
 
     /**
      * Report an error.  The reporting mechanism is controled by
@@ -2258,7 +2251,6 @@ YUI.add('get', function(Y) {
 
 var ua         = Y.UA, 
     L          = Y.Lang,
-    // PREFIX     = Y.guid(),
     TYPE_JS    = "text/javascript",
     TYPE_CSS   = "text/css",
     STYLESHEET = "stylesheet";
@@ -2275,10 +2267,9 @@ Y.Get = function() {
      * @property queues
      * @private
      */
-    var queues={}, 
-        _get,
-        _purge,
-        _track,
+    var _get, _purge, _track,
+
+    queues = {}, 
         
     /**
      * queue index used to generate transaction ids
@@ -2286,7 +2277,7 @@ Y.Get = function() {
      * @type int
      * @private
      */
-        qidx=0, 
+    qidx = 0, 
         
     /**
      * interal property used to prevent multiple simultaneous purge 
@@ -2295,7 +2286,7 @@ Y.Get = function() {
      * @type boolean
      * @private
      */
-        purging=false,
+    purging,
 
     
     /** 
@@ -2408,7 +2399,6 @@ Y.Get = function() {
      * @private
      */
     _fail = function(id, msg) {
-
         Y.log("get failure: " + msg, "warn", "get");
 
         var q = queues[id], sc;
@@ -2482,9 +2472,7 @@ Y.Get = function() {
      * @private
      */
     _next = function(id, loaded) {
-
         // Y.log("_next: " + id + ", loaded: " + (loaded || "nothing"), "info", "get");
-
         var q = queues[id], msg, w, d, h, n, url, s;
 
         if (q.timer) {
@@ -2579,11 +2567,9 @@ Y.Get = function() {
      * @private
      */
     _autoPurge = function() {
-
         if (purging) {
             return;
         }
-
         purging = true;
 
         var i, q;
@@ -2611,7 +2597,6 @@ Y.Get = function() {
      * @private
      */
     _queue = function(type, url, opts) {
-
         opts = opts || {};
 
         var id = "q" + (qidx++), q,
@@ -2635,11 +2620,9 @@ Y.Get = function() {
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
 
-
         q.attributes = q.attributes || {};
         q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
 
-        // L.later(0, q, _next, id);
         setTimeout(function() {
             _next(id);
         }, 0);
@@ -2685,7 +2668,6 @@ Y.Get = function() {
 
         // webkit prior to 3.x is no longer supported
         } else if (ua.webkit) {
-
             if (type === "script") {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener("load", function() {
@@ -2698,7 +2680,6 @@ Y.Get = function() {
         // script nodes.  Opera, but not FF, supports the onload event for link
         // nodes.
         } else { 
-
             n.onload = function() {
                 // Y.log(id + " onload " + url, "info", "get");
                 f(id, url);
@@ -2709,7 +2690,6 @@ Y.Get = function() {
             };
         }
     };
-
 
     _get = function(nId, tId) {
         var q = queues[tId],
@@ -2727,7 +2707,8 @@ Y.Get = function() {
      * @private
      */
     _purge = function(tId) {
-        var q=queues[tId], n, l, d, h, s, i, node, attr;
+        var n, l, d, h, s, i, node, attr,
+            q = queues[tId];
         if (q) {
             n = q.nodes; 
             l = n.length;
@@ -2746,11 +2727,6 @@ Y.Get = function() {
                 if (node.clearAttributes) {
                     node.clearAttributes();
                 } else {
-                    // This is a hostile delete
-                    // operation attempting to improve
-                    // memory performance.  As such, the
-                    // hasOwnProperty check is intentionally
-                    // ommitted.
                     for (attr in node) {
                         if (node.hasOwnProperty(attr)) {
                             delete node[attr];
@@ -2786,7 +2762,6 @@ Y.Get = function() {
          */
         _finalize: function(id) {
             Y.log(id + " finalized ", "info", "get");
-            // L.later(0, null, _finish, id);
             setTimeout(function() {
                 _finish(id);
             }, 0);

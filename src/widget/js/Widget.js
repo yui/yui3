@@ -1,9 +1,15 @@
 /**
- * Provides the base Widget class
+ * Provides the base Widget class, with HTML Parser support
  *
  * @module widget
  */
 
+/**
+ * Provides the base Widget class
+ *
+ * @module widget
+ * @submodule widget-base
+ */
 var L = Y.Lang,
     Node = Y.Node,
 

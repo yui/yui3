@@ -46,20 +46,9 @@
 		itemsQueue: {},
 		
 		/**
-		 * @private (override)
-		 */
-		_parseConfigs: function(config)
-		{
-			if(config && config.props)
-			{
-				this.props.push(config.props);
-			}
-		},
-
-		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		className:  "BorderContainer",
+		CLASSNAME:"BorderContainer",
 		
 		/**
 		 * Reference to the layout strategy used for displaying child items.
@@ -79,7 +68,7 @@
 			this.swfowner = swfowner;
 			this.appswf = this.swfowner.appswf;
 			this.swfReadyFlag = true;
-			this._setStyles();
+			this._updateStyles();
 			for(i in this.itemsQueue)
 			{
 				if(this.itemsQueue.hasOwnProperty(i))
@@ -171,7 +160,7 @@
 					item.setStyle("position", location);
 				}
 			}
-			else 
+			else
 			{
 				if(!this.itemsQueue || !this.itemsQueue.hasOwnProperty(location))
 				{
