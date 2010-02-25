@@ -730,10 +730,6 @@ Y.Loader.prototype = {
                     // specified in the child modules.
                     if (s.lang && s.lang.length) {
 
-                        // if (YArray.indexOf(o.requires, 'intl') > -1) {
-                        //     o.requires.push('intl');
-                        // }
-
                         langs = YArray(s.lang);
                         for (j=0; j < langs.length; j++) {
                             lang = langs[j];
@@ -824,7 +820,7 @@ Y.Loader.prototype = {
 
         mod._parsed = true;
 
-        var i, m, j, add,
+        var i, m, j, add, packName, lang,
             d    = [], 
             r    = mod.requires, 
             o    = mod.optional, 
@@ -869,7 +865,16 @@ Y.Loader.prototype = {
 
         mod._parsed = false;
 
-        if (intl) {
+        if (intl && !mod.langPack) {
+
+            if (Y.Intl) {
+                lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, intl);
+                packName = this.getLangPackName(lang, mod.name);
+                if (packName) {
+                    d.unshift(packName);
+                }
+            }
+
             d.unshift('intl');
         }
 
@@ -931,13 +936,17 @@ Y.Loader.prototype = {
     },
 
     _addLangPack: function(lang, m, packName) {
-        // var packName = this.getLangPackName(lang, m.name);
-        var packPath = _path((m.pkg || m.name), packName, JS, true);
+        var name = m.name, packPath = _path((m.pkg || name), packName, JS, true);
+
+        // if (name.indexOf('lang/') === 0) {
+        //     return null;
+        // }
+
         this.addModule({
             path: packPath,
-            // after: ['intl'],
-            // requires: ['intl'],
+            requires: ['intl'],
             intl: true,
+            langPack: true,
             ext: m.ext,
             group: m.group,
             supersedes: []
@@ -946,7 +955,7 @@ Y.Loader.prototype = {
         if (lang) {
             Y.Env.lang = Y.Env.lang || {};
             Y.Env.lang[lang] = Y.Env.lang[lang] || {};
-            Y.Env.lang[lang][m.name] = true;
+            Y.Env.lang[lang][name] = true;
         }
 
         return this.moduleInfo[packName];
@@ -1047,7 +1056,7 @@ Y.Loader.prototype = {
      * @private
      */
     _explode: function() {
-        var r = this.required, m, reqs, lang, packName;
+        var r = this.required, m, reqs;
         // the setup phase is over, all modules have been created
         this.dirty = false;
 
@@ -1055,15 +1064,6 @@ Y.Loader.prototype = {
             m = this.getModule(name);
             if (m) {
                 var expound = m.expound;
-                if (Y.Intl && m.lang) {
-                    lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, m.lang);
-                    packName = this.getLangPackName(lang, m.name);
-                    // this._addLangPack(lang, m, packName); // add on demand?
-                    r.intl = true;
-                    r[packName] = true;
-                    delete r[m.name];
-                    r[m.name] = true;
-                }
 
                 if (expound) {
                     r[expound] = this.getModule(expound);
@@ -1075,6 +1075,8 @@ Y.Loader.prototype = {
                 Y.mix(r, YArray.hash(reqs));
             }
         }, this);
+
+        // Y.log('After explode: ' + YObject.keys(r));
     },
 
     getModule: function(name) {
