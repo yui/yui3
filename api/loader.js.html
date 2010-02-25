@@ -574,7 +574,7 @@
     <span class="nx">SKIN_PREFIX</span><span class="o">:</span> <span class="s2">&quot;skin-&quot;</span><span class="p">,</span>
 
     <span class="nx">_config</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">mods</span><span class="p">,</span> <span class="nx">group</span><span class="p">,</span> <span class="nx">groupName</span><span class="p">,</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">group</span><span class="p">,</span> <span class="nx">groupName</span><span class="p">,</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="c1">// apply config values</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
@@ -589,15 +589,6 @@
                                 <span class="nx">groupName</span> <span class="o">=</span> <span class="nx">j</span><span class="p">;</span>
                                 <span class="nx">group</span> <span class="o">=</span> <span class="nx">val</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
                                 <span class="nx">self</span><span class="p">.</span><span class="nx">addGroup</span><span class="p">(</span><span class="nx">group</span><span class="p">,</span> <span class="nx">groupName</span><span class="p">);</span>
-                                <span class="nx">mods</span> <span class="o">=</span> <span class="nx">group</span><span class="p">.</span><span class="nx">modules</span><span class="p">;</span>
-                                <span class="k">if</span> <span class="p">(</span><span class="nx">mods</span><span class="p">)</span> <span class="p">{</span>
-                                    <span class="k">for</span> <span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">mods</span><span class="p">)</span> <span class="p">{</span>
-                                        <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">k</span><span class="p">))</span> <span class="p">{</span>
-                                            <span class="nx">val</span><span class="p">[</span><span class="nx">k</span><span class="p">].</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">groupName</span><span class="p">;</span>
-                                            <span class="nx">self</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">val</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">k</span><span class="p">);</span>
-                                        <span class="p">}</span>
-                                    <span class="p">}</span>
-                                <span class="p">}</span>
                             <span class="p">}</span>
                         <span class="p">}</span>
 
@@ -707,6 +698,7 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">mods</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">mods</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding Module: &#39;</span> <span class="o">+</span> <span class="nx">k</span><span class="p">);</span>
                 <span class="nx">v</span><span class="p">.</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
                 <span class="nx">self</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
             <span class="p">},</span> <span class="nx">self</span><span class="p">);</span>
