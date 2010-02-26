@@ -13,7 +13,7 @@ for changes in attribute values.
   When used with Base, this means that the user can only define a 
   value for the Attribute during construction.
 
-* Attribute change events are now publish with the defaultTargetOnly property set to true.
+* Attribute change events are now published with the defaultTargetOnly property set to true.
 
 * newVal property of event object passed to change event listeners will now be the value returned from the Attribute's getter (if defined)
 

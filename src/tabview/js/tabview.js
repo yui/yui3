@@ -2,7 +2,7 @@ var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
     DOT = '.',
     _isGeckoIEWin = ((Y.UA.gecko || Y.UA.ie) && navigator.userAgent.indexOf("Windows") > -1),
-    getClassName = Y.ClassNameManager.getClassName;
+    getClassName = Y.ClassNameManager.getClassName,
 
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
     _afterChildRemoved: function(e) { // update the selected tab when removed
@@ -131,8 +131,8 @@ var _queries = Y.TabviewBase._queries,
         //  tab index.  The focusable pieces of a TabView's UI will be 
         //  each tab's anchor element.
         tabIndex: {
-            value: null,
-            validator: '_validTabIndex'
+            value: null
+            //validator: '_validTabIndex'
         }
     }
 });

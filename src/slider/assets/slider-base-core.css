@@ -5,6 +5,7 @@
     display: inline-block;
     *display: inline; /* IE 7- (with zoom) */
     zoom: 1;
+    vertical-align: middle;
 }
 
 .yui3-slider-content {
