@@ -1,6 +1,8 @@
 ImageLoader - Release Notes
 
 Development Master
+
+3.1.0
   - fix #2528448 - PNG image fix for IE6
 	- Convert deprecated Y.get calls to Y.one
 

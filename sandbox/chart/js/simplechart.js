@@ -32,8 +32,8 @@
 		}
 		this._parseConfig(config);
 		this.chart = new Y.Chart(p_oElement, this._chartConfig);
-		this.xaxis = new Y.Axis(this._xAxisProps.type, {styles:this._xaxisstyles});
-		this.yaxis = new Y.Axis(this._yAxisProps.type, {styles:this._yaxisstyles});
+		this.xaxis = new Y.Axis(this.chart, {axisType:this._xAxisProps.type, styles:this._xaxisstyles});
+		this.yaxis = new Y.Axis(this.chart, {axisType:this._yAxisProps.type, styles:this._yaxisstyles});
 		this.data = {};
 		this.graph = null;
 		
@@ -66,13 +66,13 @@
 		{
 			this.data = data;
 			
-			this.chart.setDataProvider(this.data);
+			this.chart.set("dataProvider", this.data);
 			this.xaxis.addKey(this._xAxisProps.key);
 			this.yaxis.addKey(this._yAxisProps.key);
 			
 			if (this._type == "line") 
 			{
-				this.graph = new Y.LineGraph(this.xaxis, this.yaxis, xkey, ykey, {styles:this._graphstyles});
+				this.graph = new Y.LineGraph(this.chart, {xaxis:this.xaxis, yaxis:this.yaxis, xkey:xkey, ykey:ykey, styles:this._graphstyles});
 			}
 			this.chart.addBottomItem(this.xaxis);
 			this.chart.addLeftItem(this.yaxis);
@@ -116,14 +116,6 @@
 			color:0x000000,
 			alpha:1,
 			weight:"2"
-		},
-
-		_complexStyleKeys:{
-			label:"label",
-			line:"line",
-			margin:"margin",
-			padding:"padding",
-			majorTicks:"majorTicks"
 		},
 
 		_parseConfig: function(config)
@@ -236,7 +228,7 @@
 			{
 				if(configStyles.hasOwnProperty(i))
 				{
-					if(this._complexStyleKeys.hasOwnProperty(i))
+					if(defaultStyles.hasOwnProperty(i) && Y.Lang.isObject(defaultStyles[i]))
 					{
 						defaultStyles[i] = this._parseStyles(defaultStyles[i], configStyles[i]);
 					}

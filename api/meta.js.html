@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
@@ -48,28 +48,25 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-<span class="kd">var</span> <span class="nx">VERSION</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span>
-<span class="nx">ROOT</span> <span class="o">=</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
-<span class="nx">GALLERY_VERSION</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">gallery</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">gallery</span><span class="p">,</span>
-<span class="nx">GALLERY_ROOT</span> <span class="o">=</span> <span class="nx">GALLERY_VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
-<span class="nx">COMBO_BASE</span> <span class="o">=</span> <span class="s1">&#39;http://yui.yahooapis.com/combo?&#39;</span><span class="p">,</span>
-<span class="nx">GALLERY_BASE</span> <span class="o">=</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span> <span class="o">+</span> <span class="nx">GALLERY_ROOT</span><span class="p">,</span>
-<span class="nx">META</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">version</span><span class="o">:</span> <span class="nx">VERSION</span><span class="p">,</span>
-    <span class="nx">root</span><span class="o">:</span> <span class="nx">ROOT</span><span class="p">,</span>
-    <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span> <span class="o">+</span> <span class="nx">ROOT</span><span class="p">,</span>
-    <span class="nx">comboBase</span><span class="o">:</span> <span class="nx">COMBO_BASE</span><span class="p">,</span>
-    <span class="nx">skin</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">defaultSkin</span><span class="o">:</span> <span class="s1">&#39;sam&#39;</span><span class="p">,</span>
-        <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;assets/skins/&#39;</span><span class="p">,</span>
-        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;skin.css&#39;</span><span class="p">,</span>
-        <span class="nx">after</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;cssreset&#39;</span><span class="p">,</span> <span class="s1">&#39;cssfonts&#39;</span><span class="p">,</span> <span class="s1">&#39;cssreset-context&#39;</span><span class="p">,</span> <span class="s1">&#39;cssfonts-context&#39;</span><span class="p">]</span>
-        <span class="c1">//rollup: 3</span>
-    <span class="p">},</span>
-
-    <span class="nx">groups</span><span class="o">:</span> <span class="p">{},</span>
-
-    <span class="nx">modules</span><span class="o">:</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">VERSION</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span>
+    <span class="nx">ROOT</span>            <span class="o">=</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
+    <span class="nx">GALLERY_VERSION</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">gallery</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">gallery</span><span class="p">,</span>
+    <span class="nx">GALLERY_ROOT</span>    <span class="o">=</span> <span class="nx">GALLERY_VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
+    <span class="nx">COMBO_BASE</span>      <span class="o">=</span> <span class="s1">&#39;http://yui.yahooapis.com/combo?&#39;</span><span class="p">,</span>
+    <span class="nx">GALLERY_BASE</span>    <span class="o">=</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span> <span class="o">+</span> <span class="nx">GALLERY_ROOT</span><span class="p">,</span>
+    <span class="nx">META</span> <span class="o">=</span>          <span class="p">{</span> <span class="nx">version</span><span class="o">:</span>   <span class="nx">VERSION</span><span class="p">,</span>
+                      <span class="nx">root</span><span class="o">:</span>      <span class="nx">ROOT</span><span class="p">,</span>
+                      <span class="nx">base</span><span class="o">:</span>      <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span> <span class="o">+</span> <span class="nx">ROOT</span><span class="p">,</span>
+                      <span class="nx">comboBase</span><span class="o">:</span> <span class="nx">COMBO_BASE</span><span class="p">,</span>
+                      <span class="nx">skin</span><span class="o">:</span>      <span class="p">{</span> <span class="nx">defaultSkin</span><span class="o">:</span> <span class="s1">&#39;sam&#39;</span><span class="p">,</span>
+                                   <span class="nx">base</span><span class="o">:</span>        <span class="s1">&#39;assets/skins/&#39;</span><span class="p">,</span>
+                                   <span class="nx">path</span><span class="o">:</span>        <span class="s1">&#39;skin.css&#39;</span><span class="p">,</span>
+                                   <span class="nx">after</span><span class="o">:</span>       <span class="p">[</span> <span class="s1">&#39;cssreset&#39;</span><span class="p">,</span> 
+                                                  <span class="s1">&#39;cssfonts&#39;</span><span class="p">,</span> 
+                                                  <span class="s1">&#39;cssreset-context&#39;</span><span class="p">,</span> 
+                                                  <span class="s1">&#39;cssfonts-context&#39;</span> <span class="p">]</span> <span class="p">},</span>
+                      <span class="nx">groups</span><span class="o">:</span>    <span class="p">{},</span>
+                      <span class="nx">modules</span><span class="o">:</span>   <span class="p">{</span>
     <span class="s2">&quot;anim&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;anim-base&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -223,6 +220,7 @@
             <span class="s2">&quot;cssfonts-context&quot;</span><span class="p">,</span> 
             <span class="s2">&quot;cssgrids-context&quot;</span>
         <span class="p">],</span> 
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssbase/base-min.css&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
     <span class="p">},</span> 
     <span class="s2">&quot;cssbase-context&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -238,6 +236,7 @@
         <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
     <span class="p">},</span> 
     <span class="s2">&quot;cssfonts&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssfonts/fonts-min.css&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
     <span class="p">},</span> 
     <span class="s2">&quot;cssfonts-context&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -248,6 +247,7 @@
         <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;cssreset&quot;</span>
         <span class="p">],</span> 
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssgrids/grids-min.css&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;cssfonts&quot;</span>
         <span class="p">],</span> 
@@ -264,6 +264,7 @@
         <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
     <span class="p">},</span> 
     <span class="s2">&quot;cssreset&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;cssreset/reset-min.css&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="s2">&quot;css&quot;</span>
     <span class="p">},</span> 
     <span class="s2">&quot;cssreset-context&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -518,6 +519,13 @@
     <span class="p">},</span> 
     <span class="s2">&quot;event&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;expound&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;event-synthetic&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">},</span> 
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;event-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;expound&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
@@ -575,11 +583,6 @@
     <span class="s2">&quot;event-simulate&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;event-base&quot;</span>
-        <span class="p">]</span>
-    <span class="p">},</span> 
-    <span class="s2">&quot;event-synthetic&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;node-base&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;history&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -922,6 +925,7 @@
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;widget-locale&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;widget/widget-locale-min.js&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;widget-base&quot;</span>
         <span class="p">]</span>
@@ -937,69 +941,17 @@
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">},</span>
-
-    <span class="c1">// Patterns are module definitions which will be added with </span>
-    <span class="c1">// the default options if a definition is not found. The</span>
-    <span class="c1">// assumption is that the module itself will be in the default</span>
-    <span class="c1">// location, and if there are any additional dependencies, they</span>
-    <span class="c1">// will have to be fetched with a second request.  This could</span>
-    <span class="c1">// happen multiple times, each segment resulting in a new</span>
-    <span class="c1">// dependency list.</span>
-    <span class="c1">//</span>
-    <span class="c1">// types: regex, prefix, function</span>
-    <span class="nx">patterns</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s1">&#39;gallery-&#39;</span><span class="o">:</span> <span class="p">{</span> 
-            <span class="c1">// http://yui.yahooapis.com/3.0.0/build/</span>
-            <span class="c1">// http://yui.yahooapis.com/gallery-/build/</span>
-            <span class="nx">group</span><span class="o">:</span> <span class="s1">&#39;gallery&#39;</span><span class="p">,</span>
-            <span class="nx">ext</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
-            <span class="nx">filter</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s1">&#39;searchExp&#39;</span><span class="o">:</span> <span class="nx">VERSION</span><span class="p">,</span>
-                <span class="s1">&#39;replaceStr&#39;</span><span class="o">:</span> <span class="nx">GALLERY_VERSION</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="cm">/*</span>
-<span class="cm">        // expand &#39;lang|module|lang&#39;</span>
-<span class="cm">        &#39;lang|&#39;: {</span>
-<span class="cm">            ext: false,</span>
-<span class="cm">            action: function(data) {</span>
-<span class="cm">                // Y.log(&#39;testing data: &#39; + data);</span>
-
-<span class="cm">                var parts = data.split(&#39;|&#39;),</span>
-<span class="cm">                    name = parts[1],</span>
-<span class="cm">                    lang = parts[2],</span>
-<span class="cm">                    packName, mod;</span>
-
-<span class="cm">                if (lang) {</span>
-
-<span class="cm">                    packName = this.getLangPackName(lang, name);</span>
-
-<span class="cm">                    if (&#39;create&#39; == parts[3]) {</span>
-<span class="cm">                        mod = this.getModule(packName);</span>
-<span class="cm">                        if (!mod) {</span>
-<span class="cm">                            mod = this.getModule(name);</span>
-<span class="cm">                            // Y.log(&#39;action creating &#39; + packName);</span>
-<span class="cm">                            this._addLangPack(lang, mod, packName);</span>
-<span class="cm">                        }</span>
-<span class="cm">                    }</span>
-
-<span class="cm">                    this.require(packName);</span>
-<span class="cm">                }</span>
-<span class="cm">                delete this.required[data];</span>
-<span class="cm">            }</span>
-<span class="cm">        }</span>
-<span class="cm">        */</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+                      <span class="nx">patterns</span><span class="o">:</span>  <span class="p">{}</span>                                     <span class="p">};</span>
 
 <span class="nx">META</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="nx">VERSION</span><span class="p">]</span> <span class="o">=</span> <span class="p">{};</span>
 
 <span class="nx">META</span><span class="p">.</span><span class="nx">groups</span><span class="p">.</span><span class="nx">gallery</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">base</span><span class="o">:</span>      <span class="nx">GALLERY_BASE</span><span class="p">,</span>
+    <span class="nx">ext</span><span class="o">:</span>       <span class="kc">false</span><span class="p">,</span>
     <span class="nx">combine</span><span class="o">:</span>   <span class="kc">true</span><span class="p">,</span>
     <span class="nx">root</span><span class="o">:</span>      <span class="nx">GALLERY_ROOT</span><span class="p">,</span>
-    <span class="nx">comboBase</span><span class="o">:</span> <span class="nx">COMBO_BASE</span>
+    <span class="nx">comboBase</span><span class="o">:</span> <span class="nx">COMBO_BASE</span><span class="p">,</span>
+    <span class="nx">patterns</span><span class="o">:</span>  <span class="p">{</span> <span class="s1">&#39;gallery-&#39;</span><span class="o">:</span> <span class="p">{}</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">VERSION</span><span class="p">]</span> <span class="o">=</span> <span class="nx">META</span><span class="p">;</span>
@@ -1061,6 +1013,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>

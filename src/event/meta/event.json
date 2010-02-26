@@ -38,6 +38,13 @@
                     "node-base"
                 ]
             }
+        },
+        "plugins": {
+            "event-synthetic": {
+                "requires": [
+                    "node-base"
+                ]
+            }
         }
     }
 }

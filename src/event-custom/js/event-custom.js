@@ -38,7 +38,6 @@ var AFTER = 'after',
         'type'
     ],
 
-
     YUI3_SIGNATURE = 9,
     YUI_LOG = 'yui:log';
 
@@ -87,7 +86,7 @@ Y.EventHandle.prototype = {
      * subscribing to an event.
      * @method monitor
      * @param what {string} what to monitor ('attach', 'detach', 'publish')
-     * return {EventHandle} return value from the monitor event subscription
+     * @return {EventHandle} return value from the monitor event subscription
      */
     monitor: function(what) {
         return this.evt.monitor.apply(this.evt, arguments);
@@ -335,7 +334,7 @@ Y.CustomEvent.prototype = {
      * subscribing to an event.
      * @method monitor
      * @param what {string} what to monitor ('detach', 'attach', 'publish')
-     * return {EventHandle} return value from the monitor event subscription
+     * @return {EventHandle} return value from the monitor event subscription
      */
     monitor: function(what) {
         this.monitored = true;
@@ -402,7 +401,7 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method subscribe
      * @param {Function} fn The function to execute
-     * @return {EventHandle} handle Unsubscribe handle
+     * @return {EventHandle} Unsubscribe handle
      * @deprecated use on
      */
     subscribe: function(fn, context) {
@@ -415,7 +414,7 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method on
      * @param {Function} fn The function to execute
-     * @return {EventHandle} handle Unsubscribe handle
+     * @return {EventHandle} An object with a detach method to detch the handler(s)
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
@@ -479,7 +478,6 @@ Y.CustomEvent.prototype = {
     unsubscribe: function() {
         return this.detach.apply(this, arguments);
     },
-
 
     /**
      * Notify a single subscriber
