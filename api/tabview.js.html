@@ -51,7 +51,7 @@
     <span class="nx">_classNames</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">TabviewBase</span><span class="p">.</span><span class="nx">_classNames</span><span class="p">,</span>
     <span class="nx">DOT</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
     <span class="nx">_isGeckoIEWin</span> <span class="o">=</span> <span class="p">((</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">userAgent</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;Windows&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
-    <span class="nx">getClassName</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">;</span>
+    <span class="nx">getClassName</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">,</span>
 
     <span class="nx">TabView</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;tabView&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span> <span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetParent</span><span class="p">],</span> <span class="p">{</span>
     <span class="nx">_afterChildRemoved</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// update the selected tab when removed</span>
@@ -180,8 +180,8 @@
         <span class="c1">//  tab index.  The focusable pieces of a TabView&#39;s UI will be </span>
         <span class="c1">//  each tab&#39;s anchor element.</span>
         <span class="nx">tabIndex</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-            <span class="nx">validator</span><span class="o">:</span> <span class="s1">&#39;_validTabIndex&#39;</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
+            <span class="c1">//validator: &#39;_validTabIndex&#39;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">});</span>
