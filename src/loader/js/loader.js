@@ -865,9 +865,9 @@ Y.Loader.prototype = {
 
         mod._parsed = false;
 
-        if (intl && !mod.langPack) {
+        if (intl) {
 
-            if (mod.lang && Y.Intl) {
+            if (mod.lang && !mod.langPack && Y.Intl) {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
                 packName = this.getLangPackName(lang, mod.name);
                 if (packName) {
@@ -944,7 +944,7 @@ Y.Loader.prototype = {
 
         this.addModule({
             path: packPath,
-            requires: ['intl'],
+            // requires: ['intl'], // happens in getRequires
             intl: true,
             langPack: true,
             ext: m.ext,
