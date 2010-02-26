@@ -914,10 +914,10 @@
 
         <span class="nx">mod</span><span class="p">.</span><span class="nx">_parsed</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">intl</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">mod</span><span class="p">.</span><span class="nx">langPack</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">intl</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">lookupBestLang</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">intl</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">mod</span><span class="p">.</span><span class="nx">lang</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">mod</span><span class="p">.</span><span class="nx">langPack</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Intl</span><span class="p">.</span><span class="nx">lookupBestLang</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">lang</span> <span class="o">||</span> <span class="nx">ROOT_LANG</span><span class="p">,</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">lang</span><span class="p">);</span>
                 <span class="nx">packName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getLangPackName</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">packName</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">d</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">packName</span><span class="p">);</span>
@@ -993,7 +993,7 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">({</span>
             <span class="nx">path</span><span class="o">:</span> <span class="nx">packPath</span><span class="p">,</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;intl&#39;</span><span class="p">],</span>
+            <span class="c1">// requires: [&#39;intl&#39;], // happens in getRequires</span>
             <span class="nx">intl</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">langPack</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">ext</span><span class="o">:</span> <span class="nx">m</span><span class="p">.</span><span class="nx">ext</span><span class="p">,</span>
