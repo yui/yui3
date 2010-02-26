@@ -809,6 +809,33 @@ META = {
         ]
     }, 
     "swfdetect": {}, 
+    "tabview": {
+        "plugins": {
+            "tabview-plugin": {
+                "requires": [
+                    "tabview-base", 
+                    "node-focusmanager"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "submodules": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate",
+                    "classnamemanager"
+                ]
+            } 
+        },
+        "requires": [
+            "widget", 
+            "skin-sam-tabview",
+            "widget-parent",
+            "widget-child",
+            "tabview-base"
+        ], 
+        "skinnable": true
+    }, 
     "test": {
         "requires": [
             "substitute", 
