@@ -39,7 +39,7 @@
                 ]
             }
         },
-        plugins: {
+        "plugins": {
             "event-synthetic": {
                 "requires": [
                     "node-base"

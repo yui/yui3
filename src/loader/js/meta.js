@@ -473,6 +473,13 @@ META = {
     }, 
     "event": {
         "expound": "node-base", 
+        "plugins": {
+            "event-synthetic": {
+                "requires": [
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "event-base": {
                 "expound": "node-base", 
@@ -530,11 +537,6 @@ META = {
     "event-simulate": {
         "requires": [
             "event-base"
-        ]
-    }, 
-    "event-synthetic": {
-        "requires": [
-            "node-base"
         ]
     }, 
     "history": {
