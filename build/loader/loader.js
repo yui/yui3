@@ -1,28 +1,25 @@
 YUI.add('loader', function(Y) {
 
 (function() {
-var VERSION = Y.version,
-ROOT = VERSION + '/build/',
-GALLERY_VERSION = Y.config.gallery || Y.gallery,
-GALLERY_ROOT = GALLERY_VERSION + '/build/',
-COMBO_BASE = 'http://yui.yahooapis.com/combo?',
-GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
-META = {
-    version: VERSION,
-    root: ROOT,
-    base: 'http://yui.yahooapis.com/' + ROOT,
-    comboBase: COMBO_BASE,
-    skin: {
-        defaultSkin: 'sam',
-        base: 'assets/skins/',
-        path: 'skin.css',
-        after: ['cssreset', 'cssfonts', 'cssreset-context', 'cssfonts-context']
-        //rollup: 3
-    },
-
-    groups: {},
-
-    modules: {
+var VERSION         = Y.version,
+    ROOT            = VERSION + '/build/',
+    GALLERY_VERSION = Y.config.gallery || Y.gallery,
+    GALLERY_ROOT    = GALLERY_VERSION + '/build/',
+    COMBO_BASE      = 'http://yui.yahooapis.com/combo?',
+    GALLERY_BASE    = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
+    META =          { version:   VERSION,
+                      root:      ROOT,
+                      base:      'http://yui.yahooapis.com/' + ROOT,
+                      comboBase: COMBO_BASE,
+                      skin:      { defaultSkin: 'sam',
+                                   base:        'assets/skins/',
+                                   path:        'skin.css',
+                                   after:       [ 'cssreset', 
+                                                  'cssfonts', 
+                                                  'cssreset-context', 
+                                                  'cssfonts-context' ] },
+                      groups:    {},
+                      modules:   {
     "anim": {
         "submodules": {
             "anim-base": {
@@ -475,6 +472,13 @@ META = {
     }, 
     "event": {
         "expound": "node-base", 
+        "plugins": {
+            "event-synthetic": {
+                "requires": [
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "event-base": {
                 "expound": "node-base", 
@@ -532,11 +536,6 @@ META = {
     "event-simulate": {
         "requires": [
             "event-base"
-        ]
-    }, 
-    "event-synthetic": {
-        "requires": [
-            "node-base"
         ]
     }, 
     "history": {
@@ -895,67 +894,17 @@ META = {
         }
     }
 },
-
-    // Patterns are module definitions which will be added with 
-    // the default options if a definition is not found. The
-    // assumption is that the module itself will be in the default
-    // location, and if there are any additional dependencies, they
-    // will have to be fetched with a second request.  This could
-    // happen multiple times, each segment resulting in a new
-    // dependency list.
-    //
-    // types: regex, prefix, function
-    patterns: {
-        'gallery-': { 
-            // http://yui.yahooapis.com/3.0.0/build/
-            // http://yui.yahooapis.com/gallery-/build/
-            group: 'gallery',
-            ext: false,
-            filter: {
-                'searchExp': VERSION,
-                'replaceStr': GALLERY_VERSION
-            }
-        }
-
-        /*
-        // expand 'lang|module|lang'
-        'lang|': {
-            ext: false,
-            action: function(data) {
-
-                var parts = data.split('|'),
-                    name = parts[1],
-                    lang = parts[2],
-                    packName, mod;
-
-                if (lang) {
-
-                    packName = this.getLangPackName(lang, name);
-
-                    if ('create' == parts[3]) {
-                        mod = this.getModule(packName);
-                        if (!mod) {
-                            mod = this.getModule(name);
-                            this._addLangPack(lang, mod, packName);
-                        }
-                    }
-
-                    this.require(packName);
-                }
-                delete this.required[data];
-            }
-        }
-        */
-    }
-};
+                      patterns:  {}                                     };
 
 META.groups[VERSION] = {};
 
 META.groups.gallery = {
     base:      GALLERY_BASE,
+    ext:       false,
     combine:   true,
     root:      GALLERY_ROOT,
-    comboBase: COMBO_BASE
+    comboBase: COMBO_BASE,
+    patterns:  { 'gallery-': {} }
 };
 
 YUI.Env[VERSION] = META;
@@ -1330,7 +1279,8 @@ Y.Loader = function(o) {
      * @property patterns
      * @type Object
      */
-    self.patterns = Y.merge(Y.Env.meta.patterns);
+    // self.patterns = Y.merge(Y.Env.meta.patterns);
+    self.patterns = {};
 
     /**
      * The library metadata
@@ -1608,6 +1558,13 @@ Y.Loader.prototype = {
         o.name = name;
         self.groups[name] = o;
 
+        if (o.patterns) {
+            YObject.each(o.patterns, function(v, k) {
+                v.group = name;
+                self.patterns[k] = v;
+            });
+        }
+
         if (mods) {
             YObject.each(mods, function(v, k) {
                 v.group = name;
@@ -1821,10 +1778,10 @@ Y.Loader.prototype = {
 
         mod._parsed = false;
 
-        if (intl && !mod.langPack) {
+        if (intl) {
 
-            if (Y.Intl) {
-                lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, intl);
+            if (mod.lang && !mod.langPack && Y.Intl) {
+                lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
                 packName = this.getLangPackName(lang, mod.name);
                 if (packName) {
                     d.unshift(packName);
@@ -1900,7 +1857,7 @@ Y.Loader.prototype = {
 
         this.addModule({
             path: packPath,
-            requires: ['intl'],
+            // requires: ['intl'], // happens in getRequires
             intl: true,
             langPack: true,
             ext: m.ext,

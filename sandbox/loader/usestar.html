@@ -2,7 +2,7 @@
 <html debug="true">
 <head>
 <title>use('*')</title>
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.0.0/build/yui/yui-min.js&3.0.0/build/oop/oop-min.js&3.0.0/build/dom/dom-min.js&3.0.0/build/event-custom/event-custom-base-min.js&3.0.0/build/event/event-base-min.js&3.0.0/build/pluginhost/pluginhost-min.js&3.0.0/build/node/node-min.js&3.0.0/build/event/event-delegate-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.0.0/build/yui/yui-debug.js&3.0.0/build/oop/oop-min.js&3.0.0/build/dom/dom-min.js&3.0.0/build/event-custom/event-custom-base-min.js&3.0.0/build/event/event-base-min.js&3.0.0/build/pluginhost/pluginhost-min.js&3.0.0/build/node/node-min.js&3.0.0/build/event/event-delegate-min.js"></script>
 <!--
 <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
 <script src="../../build/event-custom/event-custom.js" type="text/javascript" charset="utf-8"></script>                                                 
@@ -32,11 +32,20 @@
 <script type="text/javascript" charset="utf-8">                                                                                                                 
     var A = YUI({
     }).use('*', function(Y) {
-        console.log('callback: ' + Y.EventTarget);                                                                                                                                  
+        Y.log('use callback: ' + Y.EventTarget);                                                                                                                                  
     });                                                                                                                                 
     // }).use('widget', 'queue-promot');                                                                                                                                 
-    console.log('inline: ' + A.EventTarget);                                                                                                                                  
+    console.log('synchronous reference: ' + A.EventTarget);                                                                                                                                  
     A.all('script');
+
+    // A.ready(function(Y) {
+    //     Y.log('ready 1' + Y.CustomEvent);
+    // });
+
+    // A.ready(function(Y) {
+    //     Y.log('ready 2' + Y.CustomEvent);
+    // });
+
 </script>     
 <body>
 </body>
