@@ -32,16 +32,16 @@ META = {
     //
     // types: regex, prefix, function
     patterns: {
-        'gallery-': { 
+        // 'gallery-': { 
             // http://yui.yahooapis.com/3.0.0/build/
             // http://yui.yahooapis.com/gallery-/build/
-            group: 'gallery',
-            ext: false,
-            filter: {
-                'searchExp': VERSION,
-                'replaceStr': GALLERY_VERSION
-            }
-        }
+            // group: 'gallery'
+            // ext: false
+            // filter: {
+            //     'searchExp': VERSION,
+            //     'replaceStr': GALLERY_VERSION
+            // }
+        // }
 
         /*
         // expand 'lang|module|lang'
@@ -81,6 +81,10 @@ META.groups[VERSION] = {};
 
 META.groups.gallery = {
     base:      GALLERY_BASE,
+    patterns:  { 
+        'gallery-': {}
+    },
+    ext:       false,
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE

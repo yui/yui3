@@ -908,16 +908,16 @@ META = {
     //
     // types: regex, prefix, function
     patterns: {
-        'gallery-': { 
+        // 'gallery-': { 
             // http://yui.yahooapis.com/3.0.0/build/
             // http://yui.yahooapis.com/gallery-/build/
-            group: 'gallery',
-            ext: false,
-            filter: {
-                'searchExp': VERSION,
-                'replaceStr': GALLERY_VERSION
-            }
-        }
+            // group: 'gallery'
+            // ext: false
+            // filter: {
+            //     'searchExp': VERSION,
+            //     'replaceStr': GALLERY_VERSION
+            // }
+        // }
 
         /*
         // expand 'lang|module|lang'
@@ -957,6 +957,10 @@ META.groups[VERSION] = {};
 
 META.groups.gallery = {
     base:      GALLERY_BASE,
+    patterns:  { 
+        'gallery-': {}
+    },
+    ext:       false,
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE
@@ -1334,7 +1338,8 @@ Y.Loader = function(o) {
      * @property patterns
      * @type Object
      */
-    self.patterns = Y.merge(Y.Env.meta.patterns);
+    // self.patterns = Y.merge(Y.Env.meta.patterns);
+    self.patterns = {};
 
     /**
      * The library metadata
@@ -1614,9 +1619,15 @@ Y.Loader.prototype = {
         o.name = name;
         self.groups[name] = o;
 
+        if (o.patterns) {
+            YObject.each(o.patterns, function(v, k) {
+                v.group = name;
+                self.patterns[k] = v;
+            });
+        }
+
         if (mods) {
             YObject.each(mods, function(v, k) {
-                Y.log('Adding Module: ' + k);
                 v.group = name;
                 self.addModule(v, k);
             }, self);

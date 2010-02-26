@@ -367,7 +367,8 @@ Y.Loader = function(o) {
      * @property patterns
      * @type Object
      */
-    self.patterns = Y.merge(Y.Env.meta.patterns);
+    // self.patterns = Y.merge(Y.Env.meta.patterns);
+    self.patterns = {};
 
     /**
      * The library metadata
@@ -647,9 +648,15 @@ Y.Loader.prototype = {
         o.name = name;
         self.groups[name] = o;
 
+        if (o.patterns) {
+            YObject.each(o.patterns, function(v, k) {
+                v.group = name;
+                self.patterns[k] = v;
+            });
+        }
+
         if (mods) {
             YObject.each(mods, function(v, k) {
-                Y.log('Adding Module: ' + k);
                 v.group = name;
                 self.addModule(v, k);
             }, self);
