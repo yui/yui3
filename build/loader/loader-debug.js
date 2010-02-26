@@ -904,9 +904,7 @@ META.groups.gallery = {
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE,
-    patterns:  { 
-        'gallery-': {}
-    }
+    patterns:  { 'gallery-': {} }
 };
 
 YUI.Env[VERSION] = META;
