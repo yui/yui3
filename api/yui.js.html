@@ -483,35 +483,37 @@
 
                 <span class="c1">// Y.log(&#39;Use complete: &#39; + data);</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">origMissing</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
-                        <span class="nx">missing</span> <span class="o">=</span> <span class="p">[];</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">process</span><span class="p">);</span>
-                        <span class="nx">redo</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="nx">missing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">()</span> <span class="o">==</span> <span class="nx">origMissing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">())</span> <span class="p">{</span>
-                                <span class="nx">redo</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                            <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">origMissing</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
+                    <span class="nx">missing</span> <span class="o">=</span> <span class="p">[];</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">process</span><span class="p">);</span>
+                    <span class="nx">redo</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">missing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">()</span> <span class="o">==</span> <span class="nx">origMissing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">())</span> <span class="p">{</span>
+                            <span class="nx">redo</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
+                <span class="p">}</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="c1">// Y.log(&#39;redo: &#39; + r);</span>
-                        <span class="c1">// Y.log(&#39;redo: &#39; + missing);</span>
-                        <span class="c1">// Y.log(&#39;redo: &#39; + args);</span>
-                        <span class="nx">newData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
-                        <span class="nx">newData</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Nested USE callback: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
-                            <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// Y.log(&#39;redo: &#39; + r);</span>
+                    <span class="c1">// Y.log(&#39;redo: &#39; + missing);</span>
+                    <span class="c1">// Y.log(&#39;redo: &#39; + args);</span>
+                    <span class="nx">newData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
+                    <span class="nx">newData</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Nested USE callback: &#39;</span> <span class="o">+</span> <span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;yui&#39;</span><span class="p">);</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">callback</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">response</span><span class="p">);</span>
-                        <span class="p">});</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span>  <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                        <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">newData</span><span class="p">);</span>
-                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
                         <span class="p">}</span>
+                    <span class="p">});</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">_loading</span>  <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">use</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">newData</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">callback</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">response</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>

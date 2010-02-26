@@ -59,33 +59,29 @@
 <span class="c1">// introduced into the page -- and it should only be executed one time</span>
 <span class="c1">// regardless of the number of instances that use it.</span>
 
-<span class="kd">var</span> <span class="nx">GLOBAL_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span> 
-    <span class="nx">config</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> 
-    <span class="nx">doc</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span> 
-    <span class="nx">docElement</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span> 
-    <span class="nx">doScrollCap</span> <span class="o">=</span> <span class="nx">docElement</span><span class="p">.</span><span class="nx">doScroll</span><span class="p">,</span>
-    <span class="nx">add</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">add</span><span class="p">,</span>
-    <span class="nx">remove</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">remove</span><span class="p">,</span>
-    <span class="nx">targetEvent</span> <span class="o">=</span> <span class="p">(</span><span class="nx">doScrollCap</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;onreadystatechange&#39;</span> <span class="o">:</span> <span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span>
+<span class="kd">var</span> <span class="nx">stateChangeListener</span><span class="p">,</span>
+    <span class="nx">GLOBAL_ENV</span>   <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span> 
+    <span class="nx">config</span>       <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> 
+    <span class="nx">doc</span>          <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span> 
+    <span class="nx">docElement</span>   <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span> 
+    <span class="nx">doScrollCap</span>  <span class="o">=</span> <span class="nx">docElement</span><span class="p">.</span><span class="nx">doScroll</span><span class="p">,</span>
+    <span class="nx">add</span>          <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">add</span><span class="p">,</span>
+    <span class="nx">remove</span>       <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">remove</span><span class="p">,</span>
+    <span class="nx">targetEvent</span>  <span class="o">=</span> <span class="p">(</span><span class="nx">doScrollCap</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;onreadystatechange&#39;</span> <span class="o">:</span> <span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span>
     <span class="nx">pollInterval</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">pollInterval</span> <span class="o">||</span> <span class="mi">40</span><span class="p">,</span>
-    <span class="nx">stateChangeListener</span><span class="p">,</span>
-
-    <span class="nx">_ready</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ready</span><span class="p">();</span>
-    <span class="p">};</span>
+    <span class="nx">_ready</span>       <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                     <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ready</span><span class="p">();</span>
+                 <span class="p">};</span>
 
 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ready</span><span class="p">)</span> <span class="p">{</span>
-
     <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_ready</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">DOMReady</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">DOMReady</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="c1">// remove DOMContentLoaded listener</span>
-            <span class="nx">remove</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">targetEvent</span><span class="p">,</span> <span class="nx">_ready</span><span class="p">);</span>
+            <span class="nx">remove</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">targetEvent</span><span class="p">,</span> <span class="nx">_ready</span><span class="p">);</span> <span class="c1">// remove DOMContentLoaded listener</span>
         <span class="p">}</span>
     <span class="p">};</span>
 
 <span class="cm">/*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */</span>
-
 <span class="c1">// Internet Explorer: use the doScroll() method on the root element.  This isolates what </span>
 <span class="c1">// appears to be a safe moment to manipulate the DOM prior to when the document&#39;s readyState </span>
 <span class="c1">// suggests it is safe to do so.</span>
@@ -93,15 +89,11 @@
         <span class="k">if</span> <span class="p">(</span><span class="nx">self</span> <span class="o">!==</span> <span class="nx">self</span><span class="p">.</span><span class="nx">top</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">stateChangeListener</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">==</span> <span class="s1">&#39;complete&#39;</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="c1">// remove onreadystatechange listener</span>
-                    <span class="nx">remove</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">targetEvent</span><span class="p">,</span> <span class="nx">stateChangeListener</span><span class="p">);</span>
+                    <span class="nx">remove</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">targetEvent</span><span class="p">,</span> <span class="nx">stateChangeListener</span><span class="p">);</span> <span class="c1">// remove onreadystatechange listener</span>
                     <span class="nx">_ready</span><span class="p">();</span>
                 <span class="p">}</span>
             <span class="p">};</span>
-
-            <span class="c1">// add onreadystatechange listener</span>
-            <span class="nx">add</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">targetEvent</span><span class="p">,</span> <span class="nx">stateChangeListener</span><span class="p">);</span>
-
+            <span class="nx">add</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">targetEvent</span><span class="p">,</span> <span class="nx">stateChangeListener</span><span class="p">);</span> <span class="c1">// add onreadystatechange listener</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">GLOBAL_ENV</span><span class="p">.</span><span class="nx">_dri</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="k">try</span> <span class="p">{</span>
@@ -112,10 +104,8 @@
                 <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">domNotReady</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
             <span class="p">},</span> <span class="nx">pollInterval</span><span class="p">);</span> 
         <span class="p">}</span>
-<span class="c1">// FireFox, Opera, Safari 3+ provide an event for this moment.</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="c1">// add DOMContentLoaded listener</span>
-        <span class="nx">add</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">targetEvent</span><span class="p">,</span> <span class="nx">_ready</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// FireFox, Opera, Safari 3+ provide an event for this moment.</span>
+        <span class="nx">add</span><span class="p">(</span><span class="nx">doc</span><span class="p">,</span> <span class="nx">targetEvent</span><span class="p">,</span> <span class="nx">_ready</span><span class="p">);</span> <span class="c1">// add DOMContentLoaded listener</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
