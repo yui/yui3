@@ -5,7 +5,7 @@ YUI Collection Utilities
 3.1.0
   * Array extras is the base submodule for the package
   * Added ArrayList for generic iterable objects.
-  * Array.forEach is an alias for Array.each.ZZ
+  * Array.forEach is an alias for Array.each.
 
 3.0.0
   * unique with sort works.
