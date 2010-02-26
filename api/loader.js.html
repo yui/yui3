@@ -416,7 +416,8 @@
 <span class="cm">     * @property patterns</span>
 <span class="cm">     * @type Object</span>
 <span class="cm">     */</span>
-    <span class="nx">self</span><span class="p">.</span><span class="nx">patterns</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">patterns</span><span class="p">);</span>
+    <span class="c1">// self.patterns = Y.merge(Y.Env.meta.patterns);</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">patterns</span> <span class="o">=</span> <span class="p">{};</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * The library metadata</span>
@@ -696,9 +697,15 @@
         <span class="nx">o</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
         <span class="nx">self</span><span class="p">.</span><span class="nx">groups</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">patterns</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">patterns</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">v</span><span class="p">.</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+                <span class="nx">self</span><span class="p">.</span><span class="nx">patterns</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">v</span><span class="p">;</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">mods</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">YObject</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">mods</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Adding Module: &#39;</span> <span class="o">+</span> <span class="nx">k</span><span class="p">);</span>
                 <span class="nx">v</span><span class="p">.</span><span class="nx">group</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
                 <span class="nx">self</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">);</span>
             <span class="p">},</span> <span class="nx">self</span><span class="p">);</span>
