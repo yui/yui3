@@ -63,7 +63,7 @@ It provides the following pieces of core functionality:
   The "widget" module, is a roll up of the widget-base and widget-locale 
   submodules. 
 
-  The widget-locale is a standalone module, which conains the deprecated
+  The widget-locale is a standalone module, which contains the deprecated
   Internationalization support and has been replaced by the Y.Intl language
   pack support, to allow strings to be defined separately from code.
 
@@ -98,7 +98,7 @@ It provides the following pieces of core functionality:
         is the desire to provide the default implementation/handler for a given 
         event.  For example: a developer might want to publish a click event 
         for a Menu Widget with the goal of providing the default click 
-        implementation/function (what gets cancelled if a listener calls 
+        implementation/function (what gets canceled if a listener calls 
         the preventDefault() method.)
 
   3)    The set of user-generated events published by widget is defined by the 
@@ -152,9 +152,9 @@ It provides the following pieces of core functionality:
 
 NOTE: All HTML_PARSER related changes are backward compatible. 
 
-Existing Widget impls should still work. However HTML_PARSER 
+Existing Widget implementations should still work. However HTML_PARSER 
 implementations based on contentBox being the root node should be
-modified to work off of srcNode before the 3.1 release.
+modified to work off of srcNode before the 3.1.0 release.
 
 3.0.0
 
