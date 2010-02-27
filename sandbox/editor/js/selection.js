@@ -5,7 +5,7 @@ YUI.add('selection', function(Y) {
             n = n.parentNode;
         }
         return Y.one(n);
-    }, txtContent = 'textContent';
+    }, textContent = 'textContent';
 
 
     Y.Selection = function() {

@@ -87,6 +87,7 @@ del {
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
+<script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/exec-command.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/selection.js?bust=<?php echo(mktime()); ?>"></script>
@@ -111,8 +112,81 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-command', function(Y) {
-    //console.log(Y, Y.id);
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', function(Y) {
+    console.log(Y, Y.id);
+
+    Y.delegate('click', function(e) {
+        e.target.toggleClass('selected');
+        var cmd = e.target.get('innerHTML').toLowerCase(),
+            val = '';
+        switch (cmd) {
+            case 'wrap':
+                val = 'del';
+                break;
+            case 'addclass':
+            case 'removeclass':
+                val = 'foo';
+                break;
+            case 'insertimage':
+                val = 'http://farm3.static.flickr.com/2723/4014885243_58772b8ff8_s_d.jpg';
+                break;
+            case 'inserthtml':
+                val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
+                break;
+        }
+        editor.frame.focus();
+        var ex_return = editor.execCommand(cmd, val);
+        //console.info('Return: ', cmd, ' :: ', ex_return);
+    }, '#test1 > div', 'button');
+
+
+    var smilies = [
+        null,
+        ':)',
+        ':(',
+        ';)',
+        ':D',
+        ';;)',
+        '>:D<',
+        ':-/',
+        ':x',
+        ':">',
+        ':P' 
+    ];
+    
+    var updateButtons = function(tar) {
+        var buttons = Y.all('#test1 button').removeClass('selected');
+        buttons.each(function(v) {
+            var val = v.get('value');
+            if (tar.test(val + ', ' + val + ' *')) {
+                v.addClass('selected');
+            }
+        });
+    };
+
+    var editor = new Y.EditorBase({
+        content: Y.one('#stub').get('innerHTML')
+    });
+    editor.on('nodeChange', function(e) {
+        updateButtons(e.node);
+    });
+    editor.on('frame:keyup', function(e) {
+        var inst = this.getInstance(),
+            sel = new inst.Selection();
+        
+        if (sel.anchorNode) {
+            var txt = sel.anchorNode.get('text');
+            Y.each(smilies, function(v, k) {
+                //Hackey, doesn't work on new line.
+                if (txt.indexOf(' ' + v) !== -1) {
+                    sel.replace(v, '<img src="smilies/' + k + '.gif">', sel.anchorTextNode);
+                }
+            });
+        }
+    });
+    editor.render('#test');
+
+/* {{{ OLD
 
     var out = function(str) {
         Y.one('#out').prepend('<p>' + str + '</p>');
@@ -208,7 +282,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
         var ex_return = iframe.execCommand(cmd, val);
         //console.info('Return: ', cmd, ' :: ', ex_return);
     }, '#test1 > div', 'button');
-    
+  }}} */  
 });
 </script>
 </body>

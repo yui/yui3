@@ -386,10 +386,10 @@ YUI.add('frame', function(Y) {
         /**
         * @static
         * @property NAME
-        * @description The name of the class
+        * @description The name of the class (frame)
         * @type String
         */
-        NAME: 'iframe',
+        NAME: 'frame',
         ATTRS: {
             /**
             * @config dir
@@ -486,4 +486,4 @@ YUI.add('frame', function(Y) {
 
     Y.Frame = Frame;
 
-}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3'], skinnable:false });
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false });
