@@ -434,35 +434,37 @@ YUI.prototype = {
 
                 // Y.log('Use complete: ' + data);
 
-                if (callback) {
-                    if (data) {
-                        origMissing = missing.concat();
-                        missing = [];
-                        Y.Array.each(data, process);
-                        redo = missing.length;
-                        if (redo) {
-                            if (missing.sort().join() == origMissing.sort().join()) {
-                                redo = false;
-                            }
+                if (data) {
+                    origMissing = missing.concat();
+                    missing = [];
+                    Y.Array.each(data, process);
+                    redo = missing.length;
+                    if (redo) {
+                        if (missing.sort().join() == origMissing.sort().join()) {
+                            redo = false;
                         }
                     }
+                }
 
-                    if (redo && data) {
-                        // Y.log('redo: ' + r);
-                        // Y.log('redo: ' + missing);
-                        // Y.log('redo: ' + args);
-                        newData = data.concat();
-                        newData.push(function() {
-                            Y.log('Nested USE callback: ' + data, 'info', 'yui');
-                            Y._attach(data);
+                if (redo && data) {
+                    // Y.log('redo: ' + r);
+                    // Y.log('redo: ' + missing);
+                    // Y.log('redo: ' + args);
+                    newData = data.concat();
+                    newData.push(function() {
+                        Y.log('Nested USE callback: ' + data, 'info', 'yui');
+                        Y._attach(data);
+                        if (callback) {
                             callback(Y, response);
-                        });
-                        Y._loading  = false;
-                        Y.use.apply(Y, newData);
-                    } else {
-                        if (data) {
-                            Y._attach(data);
                         }
+                    });
+                    Y._loading  = false;
+                    Y.use.apply(Y, newData);
+                } else {
+                    if (data) {
+                        Y._attach(data);
+                    }
+                    if (callback) {
                         callback(Y, response);
                     }
                 }

@@ -26,7 +26,7 @@ The YUI Global
 * UA refinements for Chrome, Android and other browsers/platforms
 * Inserted script nodes get charset="utf-8" by default.
 * Added last() to Queue for LIFO support.
-* Added thottle utility to buffer expensive functions that are called frequently.
+* Added throttle utility to buffer expensive functions that are called frequently.
 * The callback to YUI.add gets the module name as the second parameter for
   generic processing of similar modules.
 * Added intl-base submodule to process the decision tree for selecting language

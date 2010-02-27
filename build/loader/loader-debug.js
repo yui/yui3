@@ -814,6 +814,33 @@ var VERSION         = Y.version,
         ]
     }, 
     "swfdetect": {}, 
+    "tabview": {
+        "plugins": {
+            "tabview-plugin": {
+                "requires": [
+                    "tabview-base", 
+                    "node-focusmanager"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "submodules": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate",
+                    "classnamemanager"
+                ]
+            } 
+        },
+        "requires": [
+            "widget", 
+            "skin-sam-tabview",
+            "widget-parent",
+            "widget-child",
+            "tabview-base"
+        ], 
+        "skinnable": true
+    }, 
     "test": {
         "requires": [
             "substitute", 
@@ -904,9 +931,7 @@ META.groups.gallery = {
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE,
-    patterns:  { 
-        'gallery-': {}
-    }
+    patterns:  { 'gallery-': {} }
 };
 
 YUI.Env[VERSION] = META;
