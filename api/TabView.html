@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: slider  Slider   (YUI Library)</title>
+	<title>API: tabview  TabView   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,10 +16,10 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>slider&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>tabview&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_slider.html" title="slider">slider</a>
-                 &gt; Slider 
+            &gt; <a href="./module_tabview.html" title="tabview">tabview</a>
+                 &gt; TabView 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,24 +48,11 @@
 
                         
                         
-                            Class <b property="yui:name">Slider</b>
+                            Class <b property="yui:name">TabView</b>
                         <span class="extends">
-                           - extends <a href="SliderBase.html" title="SliderBase">SliderBase</a>
+                           - extends <a href="Widget.html" title="Widget">Widget</a>
                         </span>
 
-                            <span class="extends" rel="yui:extends">
-                          - uses 
-                            
-                                <span rel="extend" resource="SliderValueRange.html">
-                                <a href="SliderValueRange.html" property="yui:name" title="SliderValueRange">SliderValueRange</a>
-                                </span>
-                            , 
-                                <span rel="extend" resource="ClickableRail.html">
-                                <a href="ClickableRail.html" property="yui:name" title="ClickableRail">ClickableRail</a>
-                                </span>
-                            
-                            
-                        </span>
                     </h2>
                     <!-- class tree goes here -->
                     
@@ -73,16 +60,14 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Create a slider to represent an integer value between a given minimum and
-maximum.  Sliders may be aligned vertically or horizontally, based on the
-<code>axis</code> configuration.
+                        Provides a tabbed widget interface
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong property="yui:name">Slider</strong>
+                                <strong property="yui:name">TabView</strong>
                                 <code>
                                     (
   
@@ -98,7 +83,7 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                                     <code><span property="yui:name">config</span>
                                                     &lt;<span property="yui:type">Object</span>&gt;
                                                     </code>
-                                                    <span property="yui:description">  Configuration object</span>
+                                                    <span property="yui:description">  Object literal specifying tabview configuration properties.</span>
                                                 </dd>
                                         </dl>
                                     
@@ -115,62 +100,6 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                             <h4>Properties inherited from <a href="Attribute.html" property="yui:name" title="Attribute">Attribute</a>:</h4>
                             <div class="content" rel="yui:properties">
                                 <code>
-                                    
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="SliderBase.html">
-                            <h4>Properties inherited from <a href="SliderBase.html" property="yui:name" title="SliderBase">SliderBase</a>:</h4>
-                            <div class="content" rel="yui:properties">
-                                <code>
-                                    
-                                        <span rel="yui:property" resource="SliderBase.html#property__dd">
-                                        <a class="protected" href="SliderBase.html#property__dd" property="yui:name" title="_dd">_dd</a><span class="protected">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderBase.html#property__key">
-                                        <a class="protected" href="SliderBase.html#property__key" property="yui:name" title="_key">_key</a><span class="protected">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderBase.html#property_axis">
-                                        <a class="protected" href="SliderBase.html#property_axis" property="yui:name" title="axis">axis</a><span class="protected">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderBase.html#property_BOUNDING_TEMPLATE">
-                                        <a class="" href="SliderBase.html#property_BOUNDING_TEMPLATE" property="yui:name" title="BOUNDING_TEMPLATE">BOUNDING_TEMPLATE</a><span class="">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderBase.html#property_CONTENT_TEMPLATE">
-                                        <a class="" href="SliderBase.html#property_CONTENT_TEMPLATE" property="yui:name" title="CONTENT_TEMPLATE">CONTENT_TEMPLATE</a><span class="">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderBase.html#property_rail">
-                                        <a class="" href="SliderBase.html#property_rail" property="yui:name" title="rail">rail</a><span class="">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderBase.html#property_RAIL_TEMPLATE">
-                                        <a class="" href="SliderBase.html#property_RAIL_TEMPLATE" property="yui:name" title="RAIL_TEMPLATE">RAIL_TEMPLATE</a><span class="">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderBase.html#property_thumb">
-                                        <a class="" href="SliderBase.html#property_thumb" property="yui:name" title="thumb">thumb</a><span class="">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderBase.html#property_THUMB_TEMPLATE">
-                                        <a class="" href="SliderBase.html#property_THUMB_TEMPLATE" property="yui:name" title="THUMB_TEMPLATE">THUMB_TEMPLATE</a>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
-                            <h4>Properties inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
-                            <div class="content" rel="yui:properties">
-                                <code>
-                                    
-                                        <span rel="yui:property" resource="Base.html#property_name">
-                                        <a class=" deprecated" href="Base.html#property_name" property="yui:name" title="name">name</a>
-                                        </span>
                                     
                                 </code>
                             </div>
@@ -211,17 +140,13 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="SliderValueRange.html">
-                            <h4>Properties inherited from <a href="SliderValueRange.html" property="yui:name" title="SliderValueRange">SliderValueRange</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Properties inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
                             <div class="content" rel="yui:properties">
                                 <code>
                                     
-                                        <span rel="yui:property" resource="SliderValueRange.html#property__factor">
-                                        <a class="protected" href="SliderValueRange.html#property__factor" property="yui:name" title="_factor">_factor</a><span class="protected">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderValueRange.html#property__offsetXY">
-                                        <a class="protected" href="SliderValueRange.html#property__offsetXY" property="yui:name" title="_offsetXY">_offsetXY</a>
+                                        <span rel="yui:property" resource="Base.html#property_name">
+                                        <a class=" deprecated" href="Base.html#property_name" property="yui:name" title="name">name</a>
                                         </span>
                                     
                                 </code>
@@ -233,91 +158,66 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                     <div rel="yui:methods" resource="#methods">
 
                         <div rel="yui:inheritance">                    
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
-                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
+                                <h4>Methods inherited from <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
-                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__getType">                                        
+                                            <a class="private" href="EventTarget.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
-                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__monitor">                                        
+                                            <a class="private" href="EventTarget.html#method__monitor" property="yui:name" title="_monitor">_monitor</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__plug">                                        
-                                            <a class="private" href="Plugin.Host.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__parseType">                                        
+                                            <a class="private" href="EventTarget.html#method__parseType" property="yui:name" title="_parseType">_parseType</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method__unplug">                                        
-                                            <a class="private" href="Plugin.Host.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_addTarget">                                        
+                                            <a class="" href="EventTarget.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
-                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_after">                                        
+                                            <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
-                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_before">                                        
+                                            <a class="" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
-                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
+                                            <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
+                                            <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
                                             </span>
-                                    </code>
-                                </div>
-                            </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="SliderBase.html">
-                                <h4>Methods inherited from <a href="SliderBase.html" property="yui:name" title="SliderBase">SliderBase</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="SliderBase.html#method__afterAlign">                                        
-                                            <a class="protected" href="SliderBase.html#method__afterAlign" property="yui:name" title="_afterAlign">_afterAlign</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detach">                                        
+                                            <a class="" href="EventTarget.html#method_detach" property="yui:name" title="detach">detach</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__afterDisabledChange">                                        
-                                            <a class="protected" href="SliderBase.html#method__afterDisabledChange" property="yui:name" title="_afterDisabledChange">_afterDisabledChange</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_detachAll">                                        
+                                            <a class="" href="EventTarget.html#method_detachAll" property="yui:name" title="detachAll">detachAll</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__afterLengthChange">                                        
-                                            <a class="protected" href="SliderBase.html#method__afterLengthChange" property="yui:name" title="_afterLengthChange">_afterLengthChange</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_fire">                                        
+                                            <a class="" href="EventTarget.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__bindThumbDD">                                        
-                                            <a class="protected" href="SliderBase.html#method__bindThumbDD" property="yui:name" title="_bindThumbDD">_bindThumbDD</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
+                                            <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__bindValueLogic">                                        
-                                            <a class="protected" href="SliderBase.html#method__bindValueLogic" property="yui:name" title="_bindValueLogic">_bindValueLogic</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getTargets">                                        
+                                            <a class="" href="EventTarget.html#method_getTargets" property="yui:name" title="getTargets">getTargets</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__initThumbUrl">                                        
-                                            <a class="protected" href="SliderBase.html#method__initThumbUrl" property="yui:name" title="_initThumbUrl">_initThumbUrl</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_on">                                        
+                                            <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__onDragEnd">                                        
-                                            <a class="protected" href="SliderBase.html#method__onDragEnd" property="yui:name" title="_onDragEnd">_onDragEnd</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_once">                                        
+                                            <a class="" href="EventTarget.html#method_once" property="yui:name" title="once">once</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__onDragStart">                                        
-                                            <a class="protected" href="SliderBase.html#method__onDragStart" property="yui:name" title="_onDragStart">_onDragStart</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
+                                            <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__renderRail">                                        
-                                            <a class="protected" href="SliderBase.html#method__renderRail" property="yui:name" title="_renderRail">_renderRail</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_removeTarget">                                        
+                                            <a class="" href="EventTarget.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__renderThumb">                                        
-                                            <a class="protected" href="SliderBase.html#method__renderThumb" property="yui:name" title="_renderThumb">_renderThumb</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_subscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class=" deprecated">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__setAxis">                                        
-                                            <a class="protected" href="SliderBase.html#method__setAxis" property="yui:name" title="_setAxis">_setAxis</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribe">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class=" deprecated">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__setLength">                                        
-                                            <a class="protected" href="SliderBase.html#method__setLength" property="yui:name" title="_setLength">_setLength</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__syncThumbPosition">                                        
-                                            <a class="protected" href="SliderBase.html#method__syncThumbPosition" property="yui:name" title="_syncThumbPosition">_syncThumbPosition</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__uiSetRailLength">                                        
-                                            <a class="protected" href="SliderBase.html#method__uiSetRailLength" property="yui:name" title="_uiSetRailLength">_uiSetRailLength</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method_bindUI">                                        
-                                            <a class="protected" href="SliderBase.html#method_bindUI" property="yui:name" title="bindUI">bindUI</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method_initializer">                                        
-                                            <a class="protected" href="SliderBase.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method_renderUI">                                        
-                                            <a class="protected" href="SliderBase.html#method_renderUI" property="yui:name" title="renderUI">renderUI</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method_syncUI">                                        
-                                            <a class="" href="SliderBase.html#method_syncUI" property="yui:name" title="syncUI">syncUI</a>
+                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribeAll">                                        
+                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
                                             </span>
                                     </code>
                                 </div>
@@ -588,70 +488,6 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                     </code>
                                 </div>
                             </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
-                                <h4>Methods inherited from <a href="EventTarget.html" property="yui:name" title="EventTarget">EventTarget</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="EventTarget.html#method__getType">                                        
-                                            <a class="private" href="EventTarget.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method__monitor">                                        
-                                            <a class="private" href="EventTarget.html#method__monitor" property="yui:name" title="_monitor">_monitor</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method__parseType">                                        
-                                            <a class="private" href="EventTarget.html#method__parseType" property="yui:name" title="_parseType">_parseType</a><span class="private">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_addTarget">                                        
-                                            <a class="" href="EventTarget.html#method_addTarget" property="yui:name" title="addTarget">addTarget</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_after">                                        
-                                            <a class="" href="EventTarget.html#method_after" property="yui:name" title="after">after</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_before">                                        
-                                            <a class="" href="EventTarget.html#method_before" property="yui:name" title="before">before</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_bubble">                                        
-                                            <a class="" href="EventTarget.html#method_bubble" property="yui:name" title="bubble">bubble</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_detach">                                        
-                                            <a class="" href="EventTarget.html#method_detach" property="yui:name" title="detach">detach</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_detachAll">                                        
-                                            <a class="" href="EventTarget.html#method_detachAll" property="yui:name" title="detachAll">detachAll</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_fire">                                        
-                                            <a class="" href="EventTarget.html#method_fire" property="yui:name" title="fire">fire</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
-                                            <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_getTargets">                                        
-                                            <a class="" href="EventTarget.html#method_getTargets" property="yui:name" title="getTargets">getTargets</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_on">                                        
-                                            <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_once">                                        
-                                            <a class="" href="EventTarget.html#method_once" property="yui:name" title="once">once</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
-                                            <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_removeTarget">                                        
-                                            <a class="" href="EventTarget.html#method_removeTarget" property="yui:name" title="removeTarget">removeTarget</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_subscribe">                                        
-                                            <a class=" deprecated" href="EventTarget.html#method_subscribe" property="yui:name" title="subscribe">subscribe</a><span class=" deprecated">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribe">                                        
-                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribe" property="yui:name" title="unsubscribe">unsubscribe</a><span class=" deprecated">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="EventTarget.html#method_unsubscribeAll">                                        
-                                            <a class=" deprecated" href="EventTarget.html#method_unsubscribeAll" property="yui:name" title="unsubscribeAll">unsubscribeAll</a>
-                                            </span>
-                                    </code>
-                                </div>
-                            </div>
                             <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
                                 <h4>Methods inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
                                 <div class="content" rel="yui:methods">
@@ -698,88 +534,30 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                     </code>
                                 </div>
                             </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="ClickableRail.html">
-                                <h4>Methods inherited from <a href="ClickableRail.html" property="yui:name" title="ClickableRail">ClickableRail</a>:</h4>
+                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Host.html">
+                                <h4>Methods inherited from <a href="Plugin.Host.html" property="yui:name" title="Plugin.Host">Plugin.Host</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="ClickableRail.html#method__bindClickableRail">                                        
-                                            <a class="protected" href="ClickableRail.html#method__bindClickableRail" property="yui:name" title="_bindClickableRail">_bindClickableRail</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__destroyPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__destroyPlugins" property="yui:name" title="_destroyPlugins">_destroyPlugins</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="ClickableRail.html#method__defRailMouseDownFn">                                        
-                                            <a class="protected" href="ClickableRail.html#method__defRailMouseDownFn" property="yui:name" title="_defRailMouseDownFn">_defRailMouseDownFn</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__initPlugins">                                        
+                                            <a class="private" href="Plugin.Host.html#method__initPlugins" property="yui:name" title="_initPlugins">_initPlugins</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="ClickableRail.html#method__getThumbDestination">                                        
-                                            <a class="" href="ClickableRail.html#method__getThumbDestination" property="yui:name" title="_getThumbDestination">_getThumbDestination</a><span class="">,</span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__plug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__plug" property="yui:name" title="_plug">_plug</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="ClickableRail.html#method__initClickableRail">                                        
-                                            <a class="protected" href="ClickableRail.html#method__initClickableRail" property="yui:name" title="_initClickableRail">_initClickableRail</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method__unplug">                                        
+                                            <a class="private" href="Plugin.Host.html#method__unplug" property="yui:name" title="_unplug">_unplug</a><span class="private">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="ClickableRail.html#method__onRailMouseDown">                                        
-                                            <a class="protected" href="ClickableRail.html#method__onRailMouseDown" property="yui:name" title="_onRailMouseDown">_onRailMouseDown</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_hasPlugin">                                        
+                                            <a class="" href="Plugin.Host.html#method_hasPlugin" property="yui:name" title="hasPlugin">hasPlugin</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="ClickableRail.html#method__resolveThumb">                                        
-                                            <a class="protected" href="ClickableRail.html#method__resolveThumb" property="yui:name" title="_resolveThumb">_resolveThumb</a><span class="protected">,</span>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_plug">                                        
+                                            <a class="" href="Plugin.Host.html#method_plug" property="yui:name" title="plug">plug</a><span class="">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="ClickableRail.html#method__unbindClickableRail">                                        
-                                            <a class="protected" href="ClickableRail.html#method__unbindClickableRail" property="yui:name" title="_unbindClickableRail">_unbindClickableRail</a>
-                                            </span>
-                                    </code>
-                                </div>
-                            </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="SliderValueRange.html">
-                                <h4>Methods inherited from <a href="SliderValueRange.html" property="yui:name" title="SliderValueRange">SliderValueRange</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__afterMaxChange">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__afterMaxChange" property="yui:name" title="_afterMaxChange">_afterMaxChange</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__afterMinChange">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__afterMinChange" property="yui:name" title="_afterMinChange">_afterMinChange</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__afterValueChange">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__afterValueChange" property="yui:name" title="_afterValueChange">_afterValueChange</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__bindValueLogic">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__bindValueLogic" property="yui:name" title="_bindValueLogic">_bindValueLogic</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__cacheRailOffset">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__cacheRailOffset" property="yui:name" title="_cacheRailOffset">_cacheRailOffset</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__calculateFactor">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__calculateFactor" property="yui:name" title="_calculateFactor">_calculateFactor</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__defThumbMoveFn">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__defThumbMoveFn" property="yui:name" title="_defThumbMoveFn">_defThumbMoveFn</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__initSliderValueRange">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__initSliderValueRange" property="yui:name" title="_initSliderValueRange">_initSliderValueRange</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__nearestValue">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__nearestValue" property="yui:name" title="_nearestValue">_nearestValue</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__offsetToValue">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__offsetToValue" property="yui:name" title="_offsetToValue">_offsetToValue</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__setPosition">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__setPosition" property="yui:name" title="_setPosition">_setPosition</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__syncThumbPosition">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__syncThumbPosition" property="yui:name" title="_syncThumbPosition">_syncThumbPosition</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__validateNewMax">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__validateNewMax" property="yui:name" title="_validateNewMax">_validateNewMax</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__validateNewMin">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__validateNewMin" property="yui:name" title="_validateNewMin">_validateNewMin</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__validateNewValue">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__validateNewValue" property="yui:name" title="_validateNewValue">_validateNewValue</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__valueToOffset">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__valueToOffset" property="yui:name" title="_valueToOffset">_valueToOffset</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__verifyValue">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__verifyValue" property="yui:name" title="_verifyValue">_verifyValue</a>
+                                            <span rel="yui:method" resource="Plugin.Host.html#method_unplug">                                        
+                                            <a class="" href="Plugin.Host.html#method_unplug" property="yui:name" title="unplug">unplug</a>
                                             </span>
                                     </code>
                                 </div>
@@ -791,63 +569,6 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
 
 
                         <div rel="yui:inheritance">                    
-                        <div class="section field inheritance" rel="yui:superclass"  resource="SliderBase.html">
-                            <h4>Events inherited from <a href="SliderBase.html" property="yui:name" title="SliderBase">SliderBase</a>:</h4>
-                            <div class="content" rel="yui:events">
-                                <code>
-                                        <span rel="yui:event" resource="SliderBase.html#event_axisChange">
-                                        <a class="" href="SliderBase.html#event_axisChange" property="yui:name" title="axisChange">axisChange</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="SliderBase.html#event_lengthChange">
-                                        <a class="" href="SliderBase.html#event_lengthChange" property="yui:name" title="lengthChange">lengthChange</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="SliderBase.html#event_slideStart">
-                                        <a class="" href="SliderBase.html#event_slideStart" property="yui:name" title="slideStart">slideStart</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="SliderBase.html#event_thumbMove">
-                                        <a class="" href="SliderBase.html#event_thumbMove" property="yui:name" title="thumbMove">thumbMove</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="SliderBase.html#event_thumbUrlChange">
-                                        <a class="" href="SliderBase.html#event_thumbUrlChange" property="yui:name" title="thumbUrlChange">thumbUrlChange</a><span class="">,</span>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
-                            <h4>Events inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
-                            <div class="content" rel="yui:events">
-                                <code>
-                                        <span rel="yui:event" resource="Base.html#event_destroy">
-                                        <a class="" href="Base.html#event_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="Base.html#event_destroyedChange">
-                                        <a class="" href="Base.html#event_destroyedChange" property="yui:name" title="destroyedChange">destroyedChange</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="Base.html#event_init">
-                                        <a class="" href="Base.html#event_init" property="yui:name" title="init">init</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="Base.html#event_initializedChange">
-                                        <a class="" href="Base.html#event_initializedChange" property="yui:name" title="initializedChange">initializedChange</a><span class="">,</span>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="ClickableRail.html">
-                            <h4>Events inherited from <a href="ClickableRail.html" property="yui:name" title="ClickableRail">ClickableRail</a>:</h4>
-                            <div class="content" rel="yui:events">
-                                <code>
-                                        <span rel="yui:event" resource="ClickableRail.html#event_clickableRailChange">
-                                        <a class="" href="ClickableRail.html#event_clickableRailChange" property="yui:name" title="clickableRailChange">clickableRailChange</a><span class="">,</span>
-                                        </span>
-                                                                            <span rel="yui:event" resource="ClickableRail.html#event_railMouseDown">
-                                        <a class="" href="ClickableRail.html#event_railMouseDown" property="yui:name" title="railMouseDown">railMouseDown</a><span class="">,</span>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
                         <div class="section field inheritance" rel="yui:superclass"  resource="Widget.html">
                             <h4>Events inherited from <a href="Widget.html" property="yui:name" title="Widget">Widget</a>:</h4>
                             <div class="content" rel="yui:events">
@@ -904,18 +625,21 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="SliderValueRange.html">
-                            <h4>Events inherited from <a href="SliderValueRange.html" property="yui:name" title="SliderValueRange">SliderValueRange</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Events inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
                             <div class="content" rel="yui:events">
                                 <code>
-                                        <span rel="yui:event" resource="SliderValueRange.html#event_maxChange">
-                                        <a class="" href="SliderValueRange.html#event_maxChange" property="yui:name" title="maxChange">maxChange</a><span class="">,</span>
+                                        <span rel="yui:event" resource="Base.html#event_destroy">
+                                        <a class="" href="Base.html#event_destroy" property="yui:name" title="destroy">destroy</a><span class="">,</span>
                                         </span>
-                                                                            <span rel="yui:event" resource="SliderValueRange.html#event_minChange">
-                                        <a class="" href="SliderValueRange.html#event_minChange" property="yui:name" title="minChange">minChange</a><span class="">,</span>
+                                                                            <span rel="yui:event" resource="Base.html#event_destroyedChange">
+                                        <a class="" href="Base.html#event_destroyedChange" property="yui:name" title="destroyedChange">destroyedChange</a><span class="">,</span>
                                         </span>
-                                                                            <span rel="yui:event" resource="SliderValueRange.html#event_valueChange">
-                                        <a class="" href="SliderValueRange.html#event_valueChange" property="yui:name" title="valueChange">valueChange</a><span class="">,</span>
+                                                                            <span rel="yui:event" resource="Base.html#event_init">
+                                        <a class="" href="Base.html#event_init" property="yui:name" title="init">init</a><span class="">,</span>
+                                        </span>
+                                                                            <span rel="yui:event" resource="Base.html#event_initializedChange">
+                                        <a class="" href="Base.html#event_initializedChange" property="yui:name" title="initializedChange">initializedChange</a><span class="">,</span>
                                         </span>
                                     
                                 </code>
@@ -927,48 +651,6 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                     <div rel="yui:attributes" resource="#configattributes">
 
                         <div rel="yui:inheritance">                    
-                        <div class="section field inheritance" rel="yui:superclass"  resource="SliderBase.html">
-                            <h4>Configuration attributes inherited from <a href="SliderBase.html" property="yui:name" title="SliderBase">SliderBase</a>:</h4>
-                            <div class="content" rel="yui:attributes">
-                                <code>
-                                        <span rel="yui:attribute" resource="SliderBase.html#config_axis">                                        
-                                        <a class="" href="SliderBase.html#config_axis" property="yui:name" title="axis">axis</a><span class="">,</span>
-                                        </span>
-                                                                                <span rel="yui:attribute" resource="SliderBase.html#config_length">                                        
-                                        <a class="" href="SliderBase.html#config_length" property="yui:name" title="length">length</a>
-                                        </span>
-                                                                                <span rel="yui:attribute" resource="SliderBase.html#config_thumbUrl">                                        
-                                        <a class="" href="SliderBase.html#config_thumbUrl" property="yui:name" title="thumbUrl">thumbUrl</a>
-                                        </span>
-                                        
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
-                            <h4>Configuration attributes inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
-                            <div class="content" rel="yui:attributes">
-                                <code>
-                                        <span rel="yui:attribute" resource="Base.html#config_destroyed">                                        
-                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a>
-                                        </span>
-                                                                                <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
-                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a>
-                                        </span>
-                                        
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="ClickableRail.html">
-                            <h4>Configuration attributes inherited from <a href="ClickableRail.html" property="yui:name" title="ClickableRail">ClickableRail</a>:</h4>
-                            <div class="content" rel="yui:attributes">
-                                <code>
-                                        <span rel="yui:attribute" resource="ClickableRail.html#config_clickableRail">                                        
-                                        <a class="" href="ClickableRail.html#config_clickableRail" property="yui:name" title="clickableRail">clickableRail</a>
-                                        </span>
-                                        
-                                </code>
-                            </div>
-                        </div>
                         <div class="section field inheritance" rel="yui:superclass"  resource="Widget.html">
                             <h4>Configuration attributes inherited from <a href="Widget.html" property="yui:name" title="Widget">Widget</a>:</h4>
                             <div class="content" rel="yui:attributes">
@@ -1019,18 +701,15 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="SliderValueRange.html">
-                            <h4>Configuration attributes inherited from <a href="SliderValueRange.html" property="yui:name" title="SliderValueRange">SliderValueRange</a>:</h4>
+                        <div class="section field inheritance" rel="yui:superclass"  resource="Base.html">
+                            <h4>Configuration attributes inherited from <a href="Base.html" property="yui:name" title="Base">Base</a>:</h4>
                             <div class="content" rel="yui:attributes">
                                 <code>
-                                        <span rel="yui:attribute" resource="SliderValueRange.html#config_max">                                        
-                                        <a class="" href="SliderValueRange.html#config_max" property="yui:name" title="max">max</a><span class="">,</span>
+                                        <span rel="yui:attribute" resource="Base.html#config_destroyed">                                        
+                                        <a class="" href="Base.html#config_destroyed" property="yui:name" title="destroyed">destroyed</a>
                                         </span>
-                                                                                <span rel="yui:attribute" resource="SliderValueRange.html#config_min">                                        
-                                        <a class="" href="SliderValueRange.html#config_min" property="yui:name" title="min">min</a>
-                                        </span>
-                                                                                <span rel="yui:attribute" resource="SliderValueRange.html#config_value">                                        
-                                        <a class="" href="SliderValueRange.html#config_value" property="yui:name" title="value">value</a>
+                                                                                <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
+                                        <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a>
                                         </span>
                                         
                                 </code>
@@ -1084,13 +763,13 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                 <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
-                                <li class="selected"><a href="module_slider.html" title="slider">slider</a></li>
+                                <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_swf.html" title="swf">swf</a></li>
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
-                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
+                                <li class="selected"><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
@@ -1109,20 +788,16 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="ClickableRail.html" title="ClickableRail">ClickableRail</a></li>
-                                <li class="selected"><a href="Slider.html" title="Slider">Slider</a></li>
-                                <li class=""><a href="SliderBase.html" title="SliderBase">SliderBase</a></li>
-                                <li class=""><a href="SliderValueRange.html" title="SliderValueRange">SliderValueRange</a></li>
+                                <li class="selected"><a href="TabView.html" title="TabView">TabView</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="clickable-rail.js.html" title="clickable-rail.js">clickable-rail.js</a></li>
-                                <li class=""><a href="range-slider.js.html" title="range-slider.js">range-slider.js</a></li>
-                                <li class=""><a href="slider-base.js.html" title="slider-base.js">slider-base.js</a></li>
-                                <li class=""><a href="value-range.js.html" title="value-range.js">value-range.js</a></li>
+                                <li class=""><a href="tabview-base.js.html" title="tabview-base.js">tabview-base.js</a></li>
+                                <li class=""><a href="tabview-plugin.js.html" title="tabview-plugin.js">tabview-plugin.js</a></li>
+                                <li class=""><a href="tabview.js.html" title="tabview.js">tabview.js</a></li>
                         </ul>
                     </div>
 
@@ -1140,7 +815,7 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "ClickableRail", "name": "_bindClickableRail", "url": "ClickableRail.html#method__bindClickableRail", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "clickableRail", "url": "ClickableRail.html#config_clickableRail", "type": "config"}, {"access": "", "host": "ClickableRail", "name": "clickableRailChange", "url": "ClickableRail.html#event_clickableRailChange", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_defRailMouseDownFn", "url": "ClickableRail.html#method__defRailMouseDownFn", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "_getThumbDestination", "url": "ClickableRail.html#method__getThumbDestination", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_initClickableRail", "url": "ClickableRail.html#method__initClickableRail", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_onRailMouseDown", "url": "ClickableRail.html#method__onRailMouseDown", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "railMouseDown", "url": "ClickableRail.html#event_railMouseDown", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_resolveThumb", "url": "ClickableRail.html#method__resolveThumb", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_unbindClickableRail", "url": "ClickableRail.html#method__unbindClickableRail", "type": "method"}];
+    var ALL_YUI_PROPS = [];
 </script>
 </body>
 </html>
