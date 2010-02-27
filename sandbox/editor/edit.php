@@ -8,7 +8,7 @@
         }
         #test1 {
             height: 300px;
-            width: 500px;
+            width: 550px;
             border: 3px solid red;
             margin: 1em;
             position: absolute;
@@ -17,7 +17,7 @@
         }
         #test {
             height: 260px;
-            width: 500px;
+            width: 550px;
             border-top: 3px solid red;
         }
         #test1 button {
@@ -58,6 +58,8 @@
         <button value="img">InsertImage</button>
         <button value="wrap">Wrap</button>
         <button value="inserthtml">InsertHTML</button>
+        <button value="addclass">AddClass</button>
+        <button value="removeclass">RemoveClass</button>
     </div>
     <div id="test"></div>
 </div>
@@ -68,6 +70,9 @@ del {
     background-color: yellow;
     font-weight: bold;
     color: black;
+}
+.foo {
+    text-decoration: underline overline;
 }
 </style>
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
@@ -127,26 +132,22 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
     Y.Plugin.ExecCommand.COMMANDS.foo = function() {
         alert('You clicked on Foo');
     };
-    Y.Plugin.ExecCommand.COMMANDS.wrap = function() {
-        var inst = this.getInstance();
-        var sel = new inst.Selection();
-        sel.wrapContent('del');
-    };
-    Y.Plugin.ExecCommand.COMMANDS.inserthtml = function() {
-        //alert('You clicked on insertimage');
-        var inst = this.getInstance();
-        var sel = new inst.Selection();
-        var html = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
-        sel.insertContent(html);
-    };
-    Y.Plugin.ExecCommand.COMMANDS.insertimage = function() {
-        //alert('You clicked on insertimage');
-        var host = this.get('host');
-        //Using the private methods because we are an override..
-        host._execCommand('insertimage', 'http://farm3.static.flickr.com/2723/4014885243_58772b8ff8_s_d.jpg');
-    };
 
     iframe.render('#test');
+
+    var smilies = [
+        null,
+        ':)',
+        ':(',
+        ';)',
+        ':D',
+        ';;)',
+        '>:D<',
+        ':-/',
+        ':x',
+        ':">',
+        ':P' 
+    ];
 
 
     var updateButtons = function(tar) {
@@ -174,26 +175,38 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', 'exec-c
             var sel = new inst.Selection();
             if (sel.anchorNode) {
                 updateButtons(sel.anchorNode);
+                var txt = sel.anchorNode.get('text');
+                Y.each(smilies, function(v, k) {
+                    if (txt.indexOf(' ' + v) !== -1) {
+                        sel.replace(v, '<img src="smilies/' + k + '.gif">', sel.anchorTextNode);
+                    }
+                });
             }
-
-            /* Cursor Position Test.. Opera fails this..
-            var sel = new inst.Selection();
-            //console.log(sel);
-            Y.one('h1').focus();
-            Y.later(2000, null, function() {
-                //console.log('setting cursor position..');
-                iframe.focus();
-                sel.setCursor();
-            });
-            */
         });
     });
 
     Y.delegate('click', function(e) {
         e.target.toggleClass('selected');
-        var val = e.target.get('innerHTML').toLowerCase();
+        var cmd = e.target.get('innerHTML').toLowerCase(),
+            val = '';
+        switch (cmd) {
+            case 'wrap':
+                val = 'del';
+                break;
+            case 'addclass':
+            case 'removeclass':
+                val = 'foo';
+                break;
+            case 'insertimage':
+                val = 'http://farm3.static.flickr.com/2723/4014885243_58772b8ff8_s_d.jpg';
+                break;
+            case 'inserthtml':
+                val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
+                break;
+        }
         iframe.focus();
-        iframe.execCommand(val);
+        var ex_return = iframe.execCommand(cmd, val);
+        //console.info('Return: ', cmd, ' :: ', ex_return);
     }, '#test1 > div', 'button');
     
 });

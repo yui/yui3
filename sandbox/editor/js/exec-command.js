@@ -5,51 +5,41 @@ YUI.add('exec-command', function(Y) {
         };
 
         Y.extend(ExecCommand, Y.Base, {
-            _defExecFn: function(e) {
-                var action = e.action,
-                    value = e.value,
-                    host = this.get('host'),
+            _inst: null,
+            command: function(action, value) {
+                var host = this.get('host'),
                     fn = ExecCommand.COMMANDS[action];
 
-                //console.log('execCommand: ', action, value);
+                Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
-                    fn.call(this, action, value);  
+                    return fn.call(this, action, value);
                 } else {
-                    this._execCommand(action, value);
+                    return this._command(action, value);
                 }
             },
-            _execCommand: function(action, value) {
+            _command: function(action, value) {
                 var inst = this.get('host').getInstance();
                 try {
                     inst.config.doc.execCommand(action, false, value);
                 } catch (e) {
-                    console.log(e.message);
+                    Y.log(e.message, 'error', 'exec-command');
                 }
             },
             getInstance: function() {
-                return this.get('host').getInstance();
-            },
-            command: function(action, value) {
-                this.fire('command', { action: action, value: value });
+                if (!this._inst) {
+                    this._inst = this.get('host').getInstance();
+                }
+                return this._inst;
             },
             initializer: function() {
                 Y.mix(this.get('host'), {
                     execCommand: function(action, value) {
-                        this.exec.fire('command', { value: value, action: action });
+                        return this.exec.command(action, value);
                     },
                     _execCommand: function(action, value) {
-                        this.exec._execCommand(action, value);
+                        return this.exec._command(action, value);
                     }
                 });
-
-                this.publish('command', {
-                    defaultFn: this._defExecFn,
-                    queuable: false,
-                    emitFacade: true,
-                    bubbles: true,
-                    prefix: 'exec'
-                });
-                
             }
         }, {
             NAME: 'exec-command',
@@ -59,7 +49,27 @@ YUI.add('exec-command', function(Y) {
                     value: false
                 }
             },
-            COMMANDS: {}
+            COMMANDS: {
+                wrap: function(cmd, tag) {
+                    var inst = this.getInstance();
+                    return (new inst.Selection()).wrapContent(tag);
+                },
+                inserthtml: function(cmd, html) {
+                    var inst = this.getInstance();
+                    return (new inst.Selection()).insertContent(html);
+                },
+                insertimage: function(cmd, img) {
+                    return this.command('inserthtml', '<img src="' + img + '">');
+                },
+                addclass: function(cmd, cls) {
+                    var inst = this.getInstance();
+                    return (new inst.Selection).getSelected().addClass(cls);
+                },
+                removeclass: function(cmd, cls) {
+                    var inst = this.getInstance();
+                    return (new inst.Selection).getSelected().removeClass(cls);
+                }
+            }
         });
         Y.namespace('Plugin');
         Y.Plugin.ExecCommand = ExecCommand;
