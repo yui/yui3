@@ -1,9 +1,23 @@
+/**
+ * The TabView module 
+ *
+ * @module tabview
+ */
+
 var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
     DOT = '.',
     _isGeckoIEWin = ((Y.UA.gecko || Y.UA.ie) && navigator.userAgent.indexOf("Windows") > -1),
     getClassName = Y.ClassNameManager.getClassName,
 
+    /**
+     * Provides a tabbed widget interface 
+     * @param config {Object} Object literal specifying tabview configuration properties.
+     *
+     * @class TabView
+     * @constructor
+     * @extends Widget
+     */
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
     _afterChildRemoved: function(e) { // update the selected tab when removed
         var i = e.index,
@@ -126,10 +140,6 @@ var _queries = Y.TabviewBase._queries,
             value: 'Tab'
         },
 
-        //  Override of Widget's default tabIndex attribute since we don't 
-        //  want the bounding box of each TabView instance in the default
-        //  tab index.  The focusable pieces of a TabView's UI will be 
-        //  each tab's anchor element.
         tabIndex: {
             value: null
             //validator: '_validTabIndex'
