@@ -7,6 +7,11 @@ The JSON Utility
         json-parse     - Parse valid JSON strings into JavaScript objects
         json-stringify - Serialize JavaScipt objects into valid JSON strings
 
+3.1.0
+    * useNative___ disabled for browsers with *very* broken native APIs (FF3.1
+      beta1-3)
+    * Assumption of window removed to support browserless environment
+
 3.0.0
     * Leverages native JSON.stringify if available
     * Added Y.JSON.useNativeParse and useNativeStringify properties that can be
