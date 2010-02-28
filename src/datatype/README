@@ -1,14 +1,9 @@
-**** version 3.1.0 ****
+3.1.0
+    * Changed to use YUI language modules rather than proprietary
+      infrastructure.
 
-* Changed to use YUI language modules rather than proprietary infrastructure.
+3.0.0
+    * No changes.
 
-
-**** version 3.0.0 ****
-
-* No changes.
-
-
-
-**** version 3.0.0 beta 1 ****
-
-* Initial release.
+3.0.0 beta 1
+    * Initial release.

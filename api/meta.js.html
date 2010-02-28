@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
@@ -861,6 +861,33 @@
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;swfdetect&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+    <span class="s2">&quot;tabview&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;tabview-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;tabview-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-focusmanager&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="p">}</span>
+        <span class="p">},</span> 
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;tabview-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-event-delegate&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;classnamemanager&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span> 
+        <span class="p">},</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;widget&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;skin-sam-tabview&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;widget-parent&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;widget-child&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tabview-base&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;test&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;substitute&quot;</span><span class="p">,</span> 
@@ -951,9 +978,7 @@
     <span class="nx">combine</span><span class="o">:</span>   <span class="kc">true</span><span class="p">,</span>
     <span class="nx">root</span><span class="o">:</span>      <span class="nx">GALLERY_ROOT</span><span class="p">,</span>
     <span class="nx">comboBase</span><span class="o">:</span> <span class="nx">COMBO_BASE</span><span class="p">,</span>
-    <span class="nx">patterns</span><span class="o">:</span>  <span class="p">{</span> 
-        <span class="s1">&#39;gallery-&#39;</span><span class="o">:</span> <span class="p">{}</span>
-    <span class="p">}</span>
+    <span class="nx">patterns</span><span class="o">:</span>  <span class="p">{</span> <span class="s1">&#39;gallery-&#39;</span><span class="o">:</span> <span class="p">{}</span> <span class="p">}</span>
 <span class="p">};</span>
 
 <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">[</span><span class="nx">VERSION</span><span class="p">]</span> <span class="o">=</span> <span class="nx">META</span><span class="p">;</span>
@@ -1013,6 +1038,7 @@
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_swf.html" title="swf">swf</a></li>
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
