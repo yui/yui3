@@ -113,7 +113,7 @@ var yConfig = {
 };
 
 YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', function(Y) {
-    console.log(Y, Y.id);
+    //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {
         e.target.toggleClass('selected');
@@ -165,10 +165,14 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     };
 
     var editor = new Y.EditorBase({
-        content: Y.one('#stub').get('innerHTML')
+        //content: Y.one('#stub').get('innerHTML')
     });
     editor.on('nodeChange', function(e) {
         updateButtons(e.node);
+    });
+    editor.on('frame:ready', function() {
+        Y.log('frame:ready, set content', 'info', 'editor');
+        this.set('content', Y.one('#stub').get('innerHTML'));
     });
     editor.on('frame:keyup', function(e) {
         var inst = this.getInstance(),
