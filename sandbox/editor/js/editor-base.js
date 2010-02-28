@@ -24,10 +24,10 @@ YUI.add('editor-base', function(Y) {
         initializer: function() {
             var frame = new Y.Frame({
                 designMode: true,
+                title: 'Rich Text Editor',
                 use: EditorBase.USE
             }).plug(Y.Plugin.ExecCommand);
 
-            frame.on('ready', Y.bind(this._onFrameReady, this));
             frame.after('ready', Y.bind(this._afterFrameReady, this));
             frame.addTarget(this);
             this.frame = frame;
@@ -39,8 +39,10 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _afterFrameReady: function() {
+            var inst = this.frame.getInstance();
             this.frame.on('mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('keyup', Y.bind(this._onFrameKeyUp, this));
+            inst.Selection.filter();
         },
         /**
         * Fires nodeChange event
@@ -61,15 +63,6 @@ YUI.add('editor-base', function(Y) {
             if (sel.anchorNode) {
                 this.fire('nodeChange', { node: sel.anchorNode });
             }
-        },
-        /**
-        * Performs Selection.filter to filter out fontname's
-        * @method _onFrameReady
-        * @private
-        */
-        _onFrameReady: function() {
-            var inst = this.frame.getInstance();
-            inst.Selection.filter();
         },
         /**
         * Pass through to the frame.execCommand method

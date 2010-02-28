@@ -207,7 +207,7 @@ YUI.add('frame', function(Y) {
                 html = Y.substitute(Frame.PAGE_HTML, {
                     DIR: this.get('dir'),
                     LANG: this.get('lang'),
-                    TITLE: this.get('windowTitle'),
+                    TITLE: this.get('title'),
                     META: Frame.META,
                     CONTENT: this.get('content'),
                     BASE_HREF: this.get('basehref')
@@ -392,7 +392,15 @@ YUI.add('frame', function(Y) {
         NAME: 'frame',
         ATTRS: {
             /**
-            * @config dir
+            * @attribute title
+            * @description The title to give the blank page.
+            * @type String
+            */
+            title: {
+                value: 'Blank Page'
+            },
+            /**
+            * @attribute dir
             * @description The default text direction for this new frame. Default: ltr
             * @type String
             */
@@ -400,7 +408,7 @@ YUI.add('frame', function(Y) {
                 value: 'ltr'
             },
             /**
-            * @config lang
+            * @attribute lang
             * @description The default language. Default: en-US
             * @type String
             */
@@ -408,7 +416,7 @@ YUI.add('frame', function(Y) {
                 value: 'en-US'
             },
             /**
-            * @config src
+            * @attribute src
             * @description The src of the iframe/window. Defaults to javascript:;
             * @type String
             */
@@ -417,7 +425,7 @@ YUI.add('frame', function(Y) {
                 value: 'javascript' + ((Y.UA.ie) ? ':false' : ':') + ';'
             },
             /**
-            * @config designMode
+            * @attribute designMode
             * @description Should designMode be turned on after creation.
             * @writeonce
             * @type Boolean
@@ -427,7 +435,7 @@ YUI.add('frame', function(Y) {
                 value: false
             },
             /**
-            * @config content
+            * @attribute content
             * @description The string to inject into the body of the new frame/window.
             * @type String
             */
@@ -437,7 +445,7 @@ YUI.add('frame', function(Y) {
                 getter: '_getHTML'
             },
             /**
-            * @config basehref
+            * @attribute basehref
             * @description The base href to use in the iframe.
             * @type String
             */
@@ -446,7 +454,7 @@ YUI.add('frame', function(Y) {
                 getter: '_resolveBaseHref'
             },
             /**
-            * @config use
+            * @attribute use
             * @description Array of modules to include in the scoped YUI instance at render time. Default: ['none', 'selector-css2']
             * @writeonce
             * @type Array
@@ -456,7 +464,7 @@ YUI.add('frame', function(Y) {
                 value: ['node', 'selector-css3']
             },
             /**
-            * @config container
+            * @attribute container
             * @description The container to append the iFrame to on render.
             * @type String/HTMLElement/Node
             */
@@ -467,7 +475,7 @@ YUI.add('frame', function(Y) {
                 }
             },
             /**
-            * @config id
+            * @attribute id
             * @description Set the id of the new Node. (optional)
             * @type String
             * @writeonce

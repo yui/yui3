@@ -100,6 +100,17 @@ YUI.add('selection', function(Y) {
                 }
             }
         });
+        
+        //Not sure about this one?
+        var baseNodes = Y.all('strong,em');
+        baseNodes.each(function(n, k) {
+            var t = n.get('tagName').toLowerCase(),
+                newTag = 'i';
+            if (t === 'strong') {
+                newTag = 'b';
+            }
+            Y.Selection.prototype._swap(baseNodes.item(k), newTag);
+        });
     };
     /**
     * The selector to use when looking for Nodes to cache the value of: [style],font[face]
