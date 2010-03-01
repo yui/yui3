@@ -60,7 +60,7 @@
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		CLASSNAME: "CartesianCanvas",
+		AS_CLASS: "CartesianCanvas",
 
 		/**
 		 * Constant used to generate unique id.
@@ -222,7 +222,7 @@
 				this.chartContainer = containerHash.classInstance;
 				if(containerHash.hasOwnProperty("added") && !containerHash.added)
 				{
-					this._styleObjHash.chart = this.chartContainer._id;
+					this._styleObjHash.chart = this.chartContainer;
 					return;
 				}
 			}
@@ -230,7 +230,7 @@
 			{
 				this.chartContainer = new BorderContainer(this);
 			}
-			this._styleObjHash.chart = this.chartContainer._id;
+			this._styleObjHash.chart = this.chartContainer;
 			this.chartContainer.oElement.addItem(this.chartContainer);
 		},
 
@@ -399,17 +399,6 @@
 			{
 				this.appswf.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
 			}
-		},
-
-		/**
-		 * Public accessor to the unique name of the Chart instance.
-		 *
-		 * @method toString
-		 * @return {String} Unique name of the Chart instance.
-		 */
-		toString: function()
-		{
-			return "Chart " + this._id;
 		}
 	});
 

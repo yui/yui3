@@ -57,7 +57,7 @@
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		CLASSNAME:  "LineGraph",
+		AS_CLASS:  "LineGraph",
 
 		GUID: "yuilinechart",
 
@@ -75,18 +75,6 @@
 			this.appswf = this.swfowner.appswf;
 			this.appswf.createInstance(this._id, "LineGraph", ["$" + this.get("xaxis")._id + "data", "$" + this.get("yaxis")._id + "data", this.get("xkey"), this.get("ykey")]);
 			this._updateStyles();
-		},
-
-		
-		/**
-		 * Public accessor to the unique name of the LineGraph instance.
-		 *
-		 * @method toString
-		 * @return {String} Unique name of the LineGraph instance.
-		 */
-		toString: function()
-		{
-			return "LineGraph " + this._id;
 		}
 
 	});

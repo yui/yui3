@@ -65,18 +65,19 @@
 		setData: function(data /*:Object*/, xkey /*:String*/, ykey /*:String*/)
 		{
 			this.data = data;
-			
-			this.chart.set("dataProvider", this.data);
-			this.xaxis.addKey(this._xAxisProps.key);
-			this.yaxis.addKey(this._yAxisProps.key);
+			var chart = this.chart, xaxis = this.xaxis, yaxis = this.yaxis, graph = this.graph, styles = this._graphstyles;
+
+			chart.set("dataProvider", data);
+			xaxis.addKey(this._xAxisProps.key);
+			yaxis.addKey(this._yAxisProps.key);
 			
 			if (this._type == "line") 
 			{
-				this.graph = new Y.LineGraph(this.chart, {xaxis:this.xaxis, yaxis:this.yaxis, xkey:xkey, ykey:ykey, styles:this._graphstyles});
+				graph = new Y.LineGraph(chart, {xaxis:xaxis, yaxis:yaxis, xkey:xkey, ykey:ykey, styles:styles});
 			}
-			this.chart.addBottomItem(this.xaxis);
-			this.chart.addLeftItem(this.yaxis);
-			this.chart.addCenterItem(this.graph);
+			chart.addBottomItem(xaxis);
+			chart.addLeftItem(yaxis);
+			chart.addCenterItem(graph);
 		},
 
 		_chartstyles:{

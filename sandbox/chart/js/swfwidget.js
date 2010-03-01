@@ -1,4 +1,5 @@
 /**
+ *
  * SWFWidget is the base class for all JS classes that manage styles
  * and communicates with a SWF Application.
  */
@@ -17,13 +18,24 @@
  */
 function SWFWidget (p_oElement, config)
 {
-	this._id = Y.guid(this.GUID);
-	this._setParent(p_oElement);
-	this.addAttrs(this._attributeConfig, config);
+	this._initConfig(p_oElement, config);
 }
 
 SWFWidget.prototype =
 {
+	/**
+	 * Initializes class
+	 *
+	 * @private
+	 */
+	_initConfig: function(p_oElement, config)
+	{
+		this._styles = this._mergeStyles(this._styles, this._getDefaultStyles());
+		this._id = Y.guid(this.GUID);
+		this._setParent(p_oElement);
+		this.addAttrs(this._attributeConfig, config);
+	},
+
 	_setParent: function(p_oElement)
 	{
 		this.oElement = p_oElement;
@@ -32,7 +44,7 @@ SWFWidget.prototype =
 	/**
 	 * Reference to corresponding Actionscript class.
 	 */
-	CLASSNAME: "SWFWidget",
+	AS_CLASS: "SWFWidget",
 
 	/**
 	 * Indicates whether or not the swf has initialized.
@@ -48,9 +60,12 @@ SWFWidget.prototype =
 	/**
 	 * @private
 	 *
-	 * Hash of default styles for the instance.
+	 * Returns a hash of default styles for the class.
 	 */
-	_defaultStyles: {},
+	_getDefaultStyles:function()
+	 {
+		return {};
+	 },
 
 	/**
 	 * @private
@@ -60,96 +75,49 @@ SWFWidget.prototype =
 	_styleObjHash: null,
 
 	/**
-	 * Sets a style property for the instance.
-	 *
-	 * @method setStyle
-	 * @param {String} style name of the style to be set
-	 * @param {Object} value value to be set for the style
-	 */
-	setStyle: function(style, value)
-	{
-		var i, styles;
-		if(this._styleObjHash && this._styleObjHash.hasOwnProperty(style))
-		{
-			if(this._defaultStyles[style]) 
-			{
-				styles = this._defaultStyles[style];
-				for(i in value)
-				{
-					if(value.hasOwnProperty(i))
-					{
-						styles[i] = value[i];
-					}
-				}
-			}
-			else
-			{
-				styles = value;
-			}
-			this._defaultStyles[style] = styles;
-		}
-		else
-		{
-			if(!this._defaultStyles.hasOwnProperty(this._id))
-			{
-				this._defaultStyles[this._id] = {};
-			}
-			this._defaultStyles[this._id][style] = value;
-		}
-		if(this.swfReadyFlag)
-		{
-			this._updateStyles();
-		}
-	},
-
-	/**
 	 * Sets multiple style properties on the instance.
 	 *
 	 * @method _setStyles
 	 * @param {Object} styles Hash of styles to be applied.
 	 */
-	_setStyles: function(styles)
+	_setStyles: function(newstyles)
 	{
-		var i, j, defaults = this._defaultStyles;
-		if(!defaults.hasOwnProperty(this._id))
+		var j, styles = this._styles,
+		styleHash = this._styleObjHash;
+		styles[this._id] = styles[this._id] || {};
+		Y.Object.each(newstyles, function(value, key, newstyles)
 		{
-			defaults[this._id] = {};
-		}
-		for(i in styles)
-		{
-			if(styles.hasOwnProperty(i))
+			if(styleHash && styleHash.hasOwnProperty(key))
 			{
-				if(this._styleObjHash && this._styleObjHash.hasOwnProperty(i))
+				j = styleHash[key];
+				if(j instanceof SWFWidget)
 				{
-					j = this._styleObjHash[i];
-					if(defaults && defaults.hasOwnProperty(j) && Y.Lang.isObject(defaults[j])) 
-					{
-						defaults[j] = this._mergeStyles(styles[i], defaults[j]);
-					}
-					else
-					{
-						defaults[j] = styles[i];
-					}
+					j.set("styles", value);
+					styles[key] = j.get("styles");
+				}
+				else if(Y.Lang.isObject(styles[j])) 
+				{
+					styles[j] = this._mergeStyles(value, styles[j]);
 				}
 				else
 				{
-					j = this._id;
-					if(defaults && defaults.hasOwnProperty(j) && defaults[j].hasOwnProperty(i) && Y.Lang.isObject(defaults[j][i]))
-					{
-						defaults[j][i] = this._mergeStyles(styles[i], defaults[j][i]);
-					}
-					else
-					{
-						defaults[j][i] = styles[i];
-					}
+					styles[j] = newstyles[j];
 				}
 			}
-		}
-		this._defaultStyles = defaults;
-		if(this.swfReadyFlag)
-		{
-			this._updateStyles();
-		}
+			else
+			{
+				j = this._id;
+				if(Y.Lang.isObject(styles[j]) && Y.Lang.isObject(styles[j][key]))
+				{
+					styles[j][key] = this._mergeStyles(value, styles[j][key]);
+				}
+				else
+				{
+					styles[j][key] = value;
+				}
+			}
+		}, this);
+		this._styles = styles;
 	},
 
 	/**
@@ -162,22 +130,17 @@ SWFWidget.prototype =
 	 */
 	_mergeStyles: function(a, b)
 	{
-		var i;
-		for(i in a)
+		Y.Object.each(a, function(value, key, a)
 		{
-			if(a.hasOwnProperty(i))
+			if(b.hasOwnProperty(key) && Y.Lang.isObject(value))
 			{
-				if(b.hasOwnProperty(i) && Y.Lang.isObject(a[i]))
-				{
-					b[i] = this._mergeStyles(a[i], b[i]);
-				}
-				else
-				{
-					b[i] = a[i];
-				}
-
+				b[key] = this._mergeStyles(value, b[key]);
 			}
-		}
+			else
+			{
+				b[key] = value;
+			}
+		}, this);
 		return b;
 	},
 	
@@ -189,18 +152,15 @@ SWFWidget.prototype =
 	 */
 	_updateStyles: function()
 	{
-		for(var id in this._defaultStyles)
+		var styleHash = this._styleObjHash,
+		styles = this._styles;
+		Y.Object.each(styles, function(value, key, styles)
 		{
-			if(this._defaultStyles.hasOwnProperty(id))
+			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
 			{
-				if(this._id === id || (this._styleObjHash && this._styleObjHash.hasOwnProperty(id))) 
-				{
-					this.appswf.applyMethod(id, "setStyles", [this._defaultStyles[id]]);
-				}
+				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
 			}
-		}
-		this._defaultStyles = null;
-		this._defaultStyles = {};
+		}, this);
 	},
 
 	/**
@@ -214,13 +174,11 @@ SWFWidget.prototype =
 		 */
 		className:  
 		{
-			value:this.CLASSNAME,
-
 			readOnly:true,
 
 			getter: function()
 			{
-				return this.CLASSNAME;
+				return this.AS_CLASS;
 			}
 		},
 		/**
@@ -233,28 +191,24 @@ SWFWidget.prototype =
 			setter: function(val)
 			{
 				this._setStyles(val);
+				if(this.swfReadyFlag)
+				{
+					this._updateStyles();
+				}
+				return this._styles;
 			},
-
+			
+			getter: function()
+			{
+				return this._styles;
+			},
+		
 			validator: function(val)
 			{
 				return Y.Lang.isObject(val);
 			}
-
 		}
-	},	
-
-	/**
-	 * Public accessor to the unique name of the Container instance.
-	 *
-	 * @method toString
-	 * @return {String} Unique name of the Container instance.
-	 */
-	toString: function()
-	{
-		return "SWFWidget " + this._id;
-	}
-
-
+	}	
 };
 
 Y.augment(SWFWidget, Y.Attribute);
