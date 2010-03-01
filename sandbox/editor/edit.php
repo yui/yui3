@@ -175,6 +175,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         });
     };
 
+    Y.Plugin.ExecCommand.COMMANDS.foo = function() {
+        alert('You clicked on Foo');
+    }
+
     var editor = new Y.EditorBase({
         //content: Y.one('#stub').get('innerHTML')
     });

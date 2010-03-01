@@ -59,8 +59,9 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyUp: function(e) {
-            var inst = this.frame.getInstance();
-            var sel = new inst.Selection();
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection();
+
             if (sel.anchorNode) {
                 this.fire('nodeChange', { node: sel.anchorNode });
             }

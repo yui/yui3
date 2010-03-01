@@ -37,13 +37,15 @@ YUI.add('selection', function(Y) {
                     }
                 }, true);
 
-                this.anchorNode = Y.Selection.resolve(Y.Node.getDOMNode(el));
-                this.focusNode = Y.Selection.resolve(Y.Node.getDOMNode(el));
-                
-                this.anchorOffset = this.focusOffset = el.get('nodeValue.length');
-                
-                this.anchorTextNode = this.focusTextNode = el;
-                Y.one('#' + Y.Selection.CURID).remove();
+                if (el) {
+                    this.anchorNode = Y.Selection.resolve(Y.Node.getDOMNode(el));
+                    this.focusNode = Y.Selection.resolve(Y.Node.getDOMNode(el));
+                    
+                    this.anchorOffset = this.focusOffset = el.get('nodeValue.length');
+                    
+                    this.anchorTextNode = this.focusTextNode = el;
+                    Y.all('#' + Y.Selection.CURID).remove();
+                }
             }
             
             //var self = this;
