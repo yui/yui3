@@ -29,7 +29,7 @@
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		CLASSNAME: "Container",
+		AS_CLASS: "Container",
 		
 		/**
 		 * Id for a background skin
@@ -165,7 +165,7 @@
 
 				validator: function(val)
 				{
-					return this.LAYOUTS.hasOwnProperty(val);
+					return Y.Array.indexOf(this.LAYOUTS, val) > -1;
 				}
 			},
 			/**
@@ -192,16 +192,6 @@
 					return Y.Lang.isArray(val);
 				}
 			}
-		},	
-		/**
-		 * Public accessor to the unique name of the Container instance.
-		 *
-		 * @method toString
-		 * @return {String} Unique name of the Container instance.
-		 */
-		toString: function()
-		{
-			return "Container " + this._id;
 		}
 	});
 
