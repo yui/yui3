@@ -489,7 +489,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */
         detach: function(type, fn, el, obj) {
 
-            var args=Y.Array(arguments, 0, true), compat, l, ok,
+            var args=Y.Array(arguments, 0, true), compat, l, ok, i,
                 id, ce;
 
             if (args[args.length-1] === COMPAT_ARG) {
@@ -529,10 +529,11 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             // The el argument can be an array of elements or element ids.
             } else if (shouldIterate(el)) {
                 ok = true;
-                Y.each(el, function(k, v) {
-                    args[2] = v;
-                    ok = (Event.detach.apply(Event, args) && ok);
-                });
+                for (i=0, l=el.length; i<l; ++i) {
+                    args[2] = el[i];
+                    ok = ( Y.Event.detach.apply(Y.Event, args) && ok );
+                }
+
                 return ok;
             }
 

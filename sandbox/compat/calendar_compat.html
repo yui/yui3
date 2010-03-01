@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>YUI 3 sandbox</title>
+    <link rel="stylesheet" type="text/css" href="../../../yui2/build/calendar/assets/skins/sam/calendar.css" />
+
+
+</head>
+<body class="yui-skin-sam">
+
+    <script type="text/javascript" src="../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../build/oop/oop.js"></script>
+    <script type="text/javascript" src="../../build/event/event.js"></script>
+    <script type="text/javascript" src="../../build/event-custom/event-custom.js"></script>
+    <script type="text/javascript" src="../../build/attribute/attribute.js"></script>
+    <script type="text/javascript" src="../../build/base/base.js"></script>
+    <script type="text/javascript" src="../../build/dom/dom.js"></script>
+    <script type="text/javascript" src="../../build/node/node.js"></script>
+    <script type="text/javascript" src="../../build/loader/loader.js"></script>
+    <script type="text/javascript" src="../../build/pluginhost/pluginhost.js"></script>
+    <script type="text/javascript" src="../../build/dump/dump.js"></script>
+    <script type="text/javascript" src="../../build/substitute/substitute.js"></script>
+    <script type="text/javascript" src="../../build/compat/compat.js"></script>
+
+    <script type="text/javascript">
+        YUI().use('*', function(Y) {
+        });
+    </script>
+
+    <script src="../../../yui2/build/calendar/calendar.js"></script>
+
+    <div id="cal1Container">
+    </div>
+
+    <script type="text/javascript">
+        var cal1 = new YAHOO.widget.Calendar("cal1Container");
+        cal1.render();
+    </script>
+
+</body>
+</html>

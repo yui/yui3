@@ -82,7 +82,7 @@ Y.extend(Axis, Y.SWFWidget,
 	/**
 	 * Reference to corresponding Actionscript class.
 	 */
-	CLASSNAME:  "Axis",
+	AS_CLASS:  "Axis",
 	
 	/**
 	 * @private
@@ -118,20 +118,8 @@ Y.extend(Axis, Y.SWFWidget,
 		this.get("keys").push(key);
 		if(this.appswf)
 		{
-			document.getElementById("output").innerHTML += "<br/>addKey.this._dataId: " + this._dataId;
 			this.appswf.applyMethod("$" + this._dataId, "addKey", [key]);
 		}
-	},
-
-	/**
-	 * Public accessor to the unique name of the Axis instance.
-	 *
-	 * @method toString
-	 * @return {String} Unique name of the Axis instance.
-	 */
-	toString: function()
-	{
-		return "Axis " + this._id;
 	}
 });
 
