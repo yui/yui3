@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: widget-child   WidgetAnim.js  (YUI Library)</title>
+	<title>API: widget-anim   WidgetAnim.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget-child&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>widget-anim&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_widget-child.html" title="widget-child">widget-child</a>
+            &gt; <a href="./module_widget-anim.html" title="widget-anim">widget-anim</a>
                 
                  &gt; WidgetAnim.js (source view) 
         <form onsubmit="return false">
@@ -47,7 +47,12 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides a plugin which can be used to animate widget visibility changes.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module widget-anim</span>
+<span class="cm"> */</span>
+<span class="kd">var</span> <span class="nx">BOUNDING_BOX</span> <span class="o">=</span> <span class="s2">&quot;boundingBox&quot;</span><span class="p">,</span>
     <span class="nx">HOST</span> <span class="o">=</span> <span class="s2">&quot;host&quot;</span><span class="p">,</span>
     <span class="nx">NODE</span> <span class="o">=</span> <span class="s2">&quot;node&quot;</span><span class="p">,</span>
     <span class="nx">OPACITY</span> <span class="o">=</span> <span class="s2">&quot;opacity&quot;</span><span class="p">,</span>
@@ -70,22 +75,48 @@
     <span class="nx">ANIM_SHOW_CHANGE</span> <span class="o">=</span> <span class="s2">&quot;animShowChange&quot;</span><span class="p">,</span>
     <span class="nx">ANIM_HIDE_CHANGE</span> <span class="o">=</span> <span class="s2">&quot;animHideChange&quot;</span><span class="p">;</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * A plugin class which can be used to animate widget visibility changes.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @class WidgetAnim</span>
+<span class="cm"> * @extends Plugin.Base</span>
+<span class="cm"> * @namespace Plugin</span>
+<span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">WidgetAnim</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">WidgetAnim</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * The namespace for the plugin. This will be the property on the widget, which will </span>
-<span class="cm"> * reference the plugin instance, when it&#39;s plugged in</span>
+<span class="cm"> * reference the plugin instance, when it&#39;s plugged in.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property WidgetAnim.NS</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @type String</span>
+<span class="cm"> * @default &quot;anim&quot;</span>
 <span class="cm"> */</span>
 <span class="nx">WidgetAnim</span><span class="p">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s2">&quot;anim&quot;</span><span class="p">;</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * The NAME of the WidgetAnim class. Used to prefix events generated</span>
 <span class="cm"> * by the plugin class.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property WidgetAnim.NAME</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @type String</span>
+<span class="cm"> * @default &quot;pluginWidgetAnim&quot;</span>
 <span class="cm"> */</span>
 <span class="nx">WidgetAnim</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s2">&quot;pluginWidgetAnim&quot;</span><span class="p">;</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * Pre-Packaged Animation implementations, which can be used for animShow and animHide attribute </span>
+<span class="cm"> * values.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property WidgetAnim.ANIMATIONS</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @type Object</span>
+<span class="cm"> * @default &quot;pluginWidgetAnim&quot;</span>
+<span class="cm"> */</span>
 <span class="nx">WidgetAnim</span><span class="p">.</span><span class="nx">ANIMATIONS</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="nx">fadeIn</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -123,12 +154,21 @@
 <span class="p">};</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * The default set of attributes for the WidgetAnim class.</span>
+<span class="cm"> * Static property used to define the default attribute </span>
+<span class="cm"> * configuration for the plugin.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property WidgetAnim.ATTRS</span>
+<span class="cm"> * @type Object</span>
+<span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">WidgetAnim</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Default duration. Used by the default animation implementations</span>
+<span class="cm">     * Default duration in seconds. Used as the default duration for the default animation implementations</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute duration</span>
+<span class="cm">     * @type Number</span>
+<span class="cm">     * @default 0.2 (seconds </span>
 <span class="cm">     */</span>
     <span class="nx">duration</span> <span class="o">:</span> <span class="p">{</span>
         <span class="nx">value</span><span class="o">:</span> <span class="mf">0.2</span>
@@ -136,6 +176,10 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Default animation instance used for showing the widget (opacity fade-in)</span>
+<span class="cm">     * </span>
+<span class="cm">     * @attribute animShow</span>
+<span class="cm">     * @type Anim</span>
+<span class="cm">     * @default WidgetAnim.ANIMATIONS.fadeIn</span>
 <span class="cm">     */</span>
     <span class="nx">animShow</span> <span class="o">:</span> <span class="p">{</span>
         <span class="nx">valueFn</span><span class="o">:</span> <span class="nx">WidgetAnim</span><span class="p">.</span><span class="nx">ANIMATIONS</span><span class="p">.</span><span class="nx">fadeIn</span>
@@ -143,21 +187,24 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Default animation instance used for hiding the widget (opacity fade-out)</span>
+<span class="cm">     *</span>
+<span class="cm">     * @attribute animHide</span>
+<span class="cm">     * @type Anim</span>
+<span class="cm">     * @default WidgetAnim.ANIMATIONS.fadeOut</span>
 <span class="cm">     */</span>
     <span class="nx">animHide</span> <span class="o">:</span> <span class="p">{</span>
         <span class="nx">valueFn</span><span class="o">:</span> <span class="nx">WidgetAnim</span><span class="p">.</span><span class="nx">ANIMATIONS</span><span class="p">.</span><span class="nx">fadeOut</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Extend the base plugin class</span>
-<span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">WidgetAnim</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Initialization code. Called when the </span>
-<span class="cm">     * plugin is instantiated (whenever it&#39;s </span>
-<span class="cm">     * plugged into the host)</span>
+<span class="cm">     * The initializer lifecycle implementation. Modifies the host widget&#39;s </span>
+<span class="cm">     * visibililty implementation to add animation.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method initializer</span>
+<span class="cm">     * @param {Object} config The user configuration for the plugin  </span>
 <span class="cm">     */</span>
     <span class="nx">initializer</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_bindAnimShow</span><span class="p">();</span>
@@ -171,8 +218,10 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Destruction code. Invokes destroy in the individual animation instances,</span>
-<span class="cm">     * and lets them take care of cleaning up any state.</span>
+<span class="cm">     * The initializer destructor implementation. Responsible for destroying the configured</span>
+<span class="cm">     * animation instances.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @method destructor</span>
 <span class="cm">     */</span>
     <span class="nx">destructor</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ANIM_SHOW</span><span class="p">).</span><span class="nx">destroy</span><span class="p">();</span>
@@ -180,12 +229,16 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * The custom animation method, added by the plugin.</span>
+<span class="cm">     * The injected method used to override the host widget&#39;s _uiSetVisible implementation with</span>
+<span class="cm">     * an animated version of the same.</span>
 <span class="cm">     *</span>
-<span class="cm">     * This method replaces the default _uiSetVisible handler</span>
+<span class="cm">     * &lt;p&gt;This method replaces the default _uiSetVisible handler</span>
 <span class="cm">     * Widget provides, by injecting itself before _uiSetVisible,</span>
-<span class="cm">     * (using Plugins before method) and preventing the default</span>
-<span class="cm">     * behavior.</span>
+<span class="cm">     * and preventing the default behavior. &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _uiAnimSetVisible</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @param {boolean} val true, if making the widget visible. false, if hiding it.</span>
 <span class="cm">     */</span>
     <span class="nx">_uiAnimSetVisible</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="nx">RENDERED</span><span class="p">))</span> <span class="p">{</span>
@@ -201,7 +254,13 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * The original Widget _uiSetVisible implementation</span>
+<span class="cm">     * The original Widget _uiSetVisible implementation. This currently needs to be replicated,</span>
+<span class="cm">     * so it can be invoked before or after the animation starts or stops, since the original</span>
+<span class="cm">     * methods is not available to the AOP implementation.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _uiSetVisible</span>
+<span class="cm">     * @param {boolean} val true, if making the widget visible. false, if hiding it.</span>
+<span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_uiSetVisible</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">host</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">),</span>
@@ -211,7 +270,10 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Sets up call to invoke original visibility handling when the animShow animation is started</span>
+<span class="cm">     * Binds a listener to invoke the original visibility handling when the animShow animation is started</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _bindAnimShow</span>
+<span class="cm">     * @private</span>
 <span class="cm">     */</span>
     <span class="nx">_bindAnimShow</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="c1">// Setup original visibility handling (for show) before starting to animate</span>
@@ -222,8 +284,11 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Sets up call to invoke original visibility handling when the animHide animation is complete</span>
-<span class="cm">     */</span> 
+<span class="cm">     * Binds a listener to invoke the original visibility handling when the animHide animation is complete</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _bindAnimHide</span>
+<span class="cm">     * @private</span>
+<span class="cm">     */</span>
     <span class="nx">_bindAnimHide</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="c1">// Setup original visibility handling (for hide) after completing animation</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ANIM_HIDE</span><span class="p">).</span><span class="nx">after</span><span class="p">(</span><span class="nx">END</span><span class="p">,</span> 
@@ -288,9 +353,11 @@
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_swf.html" title="swf">swf</a></li>
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
-                                <li class="selected"><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class="selected"><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
+                                <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
                                 <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
                                 <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
@@ -305,14 +372,13 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="WidgetChild.html" title="WidgetChild">WidgetChild</a></li>
+                                <li class=""><a href="Plugin.WidgetAnim.html" title="Plugin.WidgetAnim">Plugin.WidgetAnim</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="Widget-Child.js.html" title="Widget-Child.js">Widget-Child.js</a></li>
                                 <li class="selected"><a href="WidgetAnim.js.html" title="WidgetAnim.js">WidgetAnim.js</a></li>
                         </ul>
                     </div>
@@ -331,7 +397,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetChild", "name": "_afterChildSelectedChange", "url": "WidgetChild.html#method__afterChildSelectedChange", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "ancestor", "url": "WidgetChild.html#method_ancestor", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_bindUIChild", "url": "WidgetChild.html#method__bindUIChild", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "depth", "url": "WidgetChild.html#config_depth", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "depthChange", "url": "WidgetChild.html#event_depthChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "index", "url": "WidgetChild.html#config_index", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "indexChange", "url": "WidgetChild.html#event_indexChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "isRoot", "url": "WidgetChild.html#method_isRoot", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "next", "url": "WidgetChild.html#method_next", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "parent", "url": "WidgetChild.html#config_parent", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "parentChange", "url": "WidgetChild.html#event_parentChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "previous", "url": "WidgetChild.html#method_previous", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "root", "url": "WidgetChild.html#config_root", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "rootChange", "url": "WidgetChild.html#event_rootChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "ROOT_TYPE", "url": "WidgetChild.html#property_ROOT_TYPE", "type": "property"}, {"access": "", "host": "WidgetChild", "name": "selected", "url": "WidgetChild.html#config_selected", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "selectedChange", "url": "WidgetChild.html#event_selectedChange", "type": "event"}, {"access": "protected", "host": "WidgetChild", "name": "_syncUIChild", "url": "WidgetChild.html#method__syncUIChild", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_uiSetChildSelected", "url": "WidgetChild.html#method__uiSetChildSelected", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Plugin.WidgetAnim", "name": "animHide", "url": "Plugin.WidgetAnim.html#config_animHide", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "animHideChange", "url": "Plugin.WidgetAnim.html#event_animHideChange", "type": "event"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "animShow", "url": "Plugin.WidgetAnim.html#config_animShow", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "animShowChange", "url": "Plugin.WidgetAnim.html#event_animShowChange", "type": "event"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimHide", "url": "Plugin.WidgetAnim.html#method__bindAnimHide", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_bindAnimShow", "url": "Plugin.WidgetAnim.html#method__bindAnimShow", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "destructor", "url": "Plugin.WidgetAnim.html#method_destructor", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "duration", "url": "Plugin.WidgetAnim.html#config_duration", "type": "config"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "durationChange", "url": "Plugin.WidgetAnim.html#event_durationChange", "type": "event"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "initializer", "url": "Plugin.WidgetAnim.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Plugin.WidgetAnim", "name": "_uiAnimSetVisible", "url": "Plugin.WidgetAnim.html#method__uiAnimSetVisible", "type": "method"}, {"access": "private", "host": "Plugin.WidgetAnim", "name": "_uiSetVisible", "url": "Plugin.WidgetAnim.html#method__uiSetVisible", "type": "method"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ANIMATIONS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ANIMATIONS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.ATTRS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.ATTRS", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NAME", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NAME", "type": "property"}, {"access": "", "host": "Plugin.WidgetAnim", "name": "WidgetAnim.NS", "url": "Plugin.WidgetAnim.html#property_WidgetAnim.NS", "type": "property"}];
 </script>
 </body>
 </html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Loader Intl Order Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+    <script src="../../../../build/yui/yui-debug.js"></script>
+    <script>
+        YUI({
+            filter:"raw",
+            modules : {
+                mymod: {
+                    type : "js",
+                    fullpath : "mymod.js",
+                    requires: ["datatype-date"]
+                }
+            }
+            
+        }).use("oop" /* just some random module */, function(Y) {
+            
+            // lazy load module with datatype-date dependency
+            Y.use("mymod", function(Y) {
+                Y.log("NESTED USE RESULT: module which requires datatype-date: " + Y.MyMod.formatDate());
+            });
+
+        });
+
+        YUI({
+            filter:"raw",
+            lang:"fr-FR",
+            modules : {
+                mymod: {
+                    type : "js",
+                    fullpath : "mymod.js",
+                    requires: ["datatype-date"]
+                }
+            }
+        }).use("mymod", function(Y) {
+            Y.log("SIMPLE USE RESULT: module which requires datatype-date: " + Y.MyMod.formatDate());
+        })
+    </script>
+</body>
+</html>

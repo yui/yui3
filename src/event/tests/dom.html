@@ -17,9 +17,10 @@
     <!-- Initialization process //-->
     <script type="text/javascript">
         YUI({
+            //filter: 'debug',
             logExclude: {
                 yui:true, get: true, 'selector-native': true, loader: true, 
-                Dom: true, Selector: true, Node: true, attribute: true, base: true, event: true, widget: true}
+                Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true}
         }).use('console', 'test', 'node', 'event-simulate', function (Y) {
             
             // creating the console...
@@ -195,6 +196,73 @@
                     Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
                     Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
                 },
+
+                test_y_detach_with_nodelist: function() {
+                    
+                    var clicked = 0, 
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        nodelist = Y.all('.clickers'),
+                        fn = function(e, extra1, extra2) {
+                            clicked++;
+                            context = this;
+                            ex1 = extra1;
+                            ex2 = extra2;
+                        } ;
+
+                    Y.on('click', fn, nodelist, obj, 2, 3);
+                    
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+
+                    Y.detach('click', fn, nodelist);
+                    
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler wasn't removed");
+                },
+
+                test_y_detach_with_array: function() {
+                    
+                    var clicked = 0, 
+                        context,
+                        ex1,
+                        ex2,
+                        obj = {
+                            a: 1
+                        },
+                        arrayofselectors = ['#clicker1', '#clicker2'];
+                        fn = function(e, extra1, extra2) {
+                            clicked++;
+                            context = this;
+                            ex1 = extra1;
+                            ex2 = extra2;
+                        } ;
+
+                    Y.on('click', fn, arrayofselectors, obj, 2, 3);
+                    
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler didn't work");
+                    Y.Assert.areEqual(1, context.a, "context didn't work");
+                    Y.Assert.areEqual(2, ex1, "extra arg1 didn't work");
+                    Y.Assert.areEqual(3, ex2, "extra arg2 didn't work");
+
+                    Y.detach('click', fn, arrayofselectors);
+                    
+                    Y.Event.simulate(document.getElementById('clicker2'), 'click');
+
+                    Y.Assert.areEqual(1, clicked, "click handler wasn't removed");
+                },
+
 
                 test_y_on_with_selector_multiple_match: function() {
                     

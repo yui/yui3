@@ -4,6 +4,7 @@ var patterns = {
     ROOT_TAG: /^body|html$/i, // body for quirks mode, html for standards,
     OP_SCROLL:/^(?:inline|table-row)$/i
 };
+var slice = [].slice;
 
 var hyphenToCamel = function(property) {
     if ( !patterns.HYPHEN.test(property) ) {
@@ -151,7 +152,6 @@ var Dom = {
     getDocumentHeight: YUI.DOM.docHeight,
     getDocumentScrollTop: YUI.DOM.docScrollY,
     getDocumentScrollLeft: YUI.DOM.docScrollX,
-    getDocumentHeight: YUI.DOM.docHeight,
 
     _guid: function(el, prefix) {
         prefix = prefix || 'yui-gen';
@@ -194,7 +194,6 @@ var Dom = {
     }
 };
 
-var slice = [].slice;
 
 var wrap = function(fn, name) {
     Dom[name] = function() {

@@ -1,17 +1,17 @@
-**** version 3.1.0 ****
+3.1.0
+    * DataSource's sendRequest() argument signature has changed in a
+      non-backward-compatible way. It now accepts a single object containing
+      the properties "request", "callback", and "cfg".
+    * DataSource.Get bug fixed where it was trying to delete the proxy callback
+      in the wrong location during cleanup.
+    * Changed from array of proxy callbacks to object with guid keys to support
+      services that don't properly handle array indexes in the callback
+      parameter (Twitter)
+    * Code reorganized (API and functionality unaffected)
 
-* DataSource's sendRequest() argument signature has changed in a
-non-backward-compatible way. It now accepts a single object containing the
-properties "request", "callback", and "cfg".
+3.0.0
+    * DataSource.IO now passes request value to IO.
+    * DataSource.Function now catches exception and fires error event.
 
-
-**** version 3.0.0 ****
-
-* DataSource.IO now passes request value to IO.
-* DataSource.Function now catches exception and fires error event.
-
-
-
-**** version 3.0.0 beta 1 ****
-
-* Initial release.
+3.0.0 beta 1
+    * Initial release.

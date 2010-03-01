@@ -163,10 +163,8 @@ Event = function() {
          * @private
          */
         startInterval: function() {
-            var E = Y.Event;
-
-            if (!E._interval) {
-E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
+            if (!Event._interval) {
+Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
             }
         },
 
@@ -215,7 +213,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             _retryCount = this.POLL_RETRYS;
 
             // We want the first test to be immediate, but async
-            setTimeout(Y.bind(Y.Event._poll, Y.Event), 0);
+            setTimeout(Y.bind(Event._poll, Event), 0);
 
             availHandle = new Y.EventHandle({
 
@@ -287,15 +285,14 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          */
 
         attach: function(type, fn, el, context) {
-            return Y.Event._attach(Y.Array(arguments, 0, true));
+            return Event._attach(Y.Array(arguments, 0, true));
         },
 
 		_createWrapper: function (el, type, capture, compat, facade) {
 
-            var ek = Y.stamp(el),
-	            key = 'event:' + ek + type,
-	            cewrapper;
-
+            var cewrapper,
+                ek  = Y.stamp(el),
+	            key = 'event:' + ek + type;
 
             if (false === facade) {
                 key += 'native';
@@ -329,7 +326,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 cewrapper.domkey = ek;
                 cewrapper.type = type;
                 cewrapper.fn = function(e) {
-                    cewrapper.fire(Y.Event.getEvent(e, el, (compat || (false === facade))));
+                    cewrapper.fire(Event.getEvent(e, el, (compat || (false === facade))));
                 };
 				cewrapper.capture = capture;
             
@@ -352,7 +349,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
         _attach: function(args, config) {
 
-            var compat, E=Y.Event,
+            var compat, 
                 handles, oEl, cewrapper, context, 
                 fireNow = false, ret,
                 type = args[0],
@@ -379,7 +376,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 
                 Y.each(el, function(v, k) {
                     args[2] = v;
-                    handles.push(E._attach(args, config));
+                    handles.push(Event._attach(args, config));
                 });
 
                 // return (handles.length === 1) ? handles[0] : handles;
@@ -409,7 +406,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                             break;
                         default:
                             args[2] = oEl;
-                            return E._attach(args, config);
+                            return Event._attach(args, config);
                     }
                 }
 
@@ -424,9 +421,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     ret = this.onAvailable(el, function() {
                         // Y.log('lazy attach: ' + args);
                         
-                        ret.handle = E._attach(args, config);
+                        ret.handle = Event._attach(args, config);
 
-                    }, E, true, false, compat);
+                    }, Event, true, false, compat);
 
                     return ret;
 
@@ -492,7 +489,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          */
         detach: function(type, fn, el, obj) {
 
-            var args=Y.Array(arguments, 0, true), compat, i, l, ok,
+            var args=Y.Array(arguments, 0, true), compat, l, ok, i,
                 id, ce;
 
             if (args[args.length-1] === COMPAT_ARG) {
@@ -519,17 +516,18 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                         el = el[0];
                     }
                 }
-                // return Y.Event.detach.apply(Y.Event, args);
-
-            // The el argument can be an array of elements or element ids.
+                // return Event.detach.apply(Event, args);
             } 
             
             if (!el) {
                 return false;
             }
-            
-            if (shouldIterate(el)) {
 
+            if (el.detach) {
+                args.splice(2, 1);
+                return el.detach.apply(el, args);
+            // The el argument can be an array of elements or element ids.
+            } else if (shouldIterate(el)) {
                 ok = true;
                 for (i=0, l=el.length; i<l; ++i) {
                     args[2] = el[i];
@@ -537,7 +535,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 }
 
                 return ok;
-
             }
 
             if (!type || !fn || !fn.call) {
@@ -615,11 +612,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @private
          */
         _load: function(e) {
-
             if (!_loadComplete) {
-
                 // Y.log('Load Complete', 'info', 'event');
-
                 _loadComplete = true;
 
                 // Just in case DOMReady did not go off for some reason
@@ -632,8 +626,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // window load event fires. Try to find them now so that the
                 // the user is more likely to get the onAvailable notifications
                 // before the window load notification
-                Y.Event._poll();
-
+                Event._poll();
             }
         },
 
@@ -646,7 +639,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @private
          */
         _poll: function() {
-
             if (this.locked) {
                 return;
             }
@@ -662,13 +654,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             this.locked = true;
 
             // Y.log.debug("poll");
-
             // keep trying until after the page is loaded.  We need to 
             // check the page load state prior to trying to bind the 
             // elements so that we can be certain all elements have been 
             // tested appropriately
-            var tryAgain = !_loadComplete, notAvail, executeItem,
-                i, len, item, el;
+            var i, len, item, el, notAvail, executeItem,
+                tryAgain = !_loadComplete;
 
             if (!tryAgain) {
                 tryAgain = (_retryCount > 0);
@@ -678,11 +669,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             notAvail = [];
 
             executeItem = function (el, item) {
-
                 var context, ov = item.override;
-
                 if (item.compat) {
-
                     if (item.override) {
                         if (ov === true) {
                             context = item.obj;
@@ -692,16 +680,12 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     } else {
                         context = el;
                     }
-
                     item.fn.call(context, item.obj);
-
                 } else {
                     context = item.obj || Y.one(el);
                     item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
                 }
-
             };
-
 
             // onAvailable
             for (i=0,len=_avail.length; i<len; ++i) {
@@ -771,29 +755,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * left out, all listeners will be removed
          * @static
          */
-        // purgeElement: function(el, recurse, type) {
-        //     // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
-        //     var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-        //         lis = this.getListeners(oEl, type), i, len, props;
-        //     if (lis) {
-        //         for (i=0,len=lis.length; i<len ; ++i) {
-        //             props = lis[i];
-        //             props.detachAll();
-        //             remove(props.el, props.type, props.fn, props.capture);
-        //             delete _wrappers[props.key];
-        //             delete _el_events[props.domkey][props.key];
-        //         }
-
-        //     }
-
-        //     if (recurse && oEl && oEl.childNodes) {
-        //         for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
-        //             this.purgeElement(oEl.childNodes[i], recurse, type);
-        //         }
-        //     }
-
-        // },
-
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
@@ -912,7 +873,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 }();
 
 Y.Event = Event;
-
 
 if (Y.config.injected || YUI.Env.windowLoaded) {
     onLoad();

@@ -1,9 +1,9 @@
 *** 3.1.0 ***
 
 * Implemented enhancement 2528181.  YUI io now supports synchronous transactions
-for same-domain requests.  To enable sychronous transactions, set the
+for same-domain requests.  To enable synchronous transactions, set the
 configuration property "sync" to true; the default behavior is false.  During a
-sychronous request, all io events will fire, and response data are accessible
+synchronous request, all io events will fire, and response data are accessible
 through the events.  Response data are also returned by io, as an alternative.
 For example:
 

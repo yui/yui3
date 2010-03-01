@@ -1,26 +1,23 @@
 (function() {
-var VERSION = Y.version,
-ROOT = VERSION + '/build/',
-GALLERY_VERSION = Y.config.gallery || Y.gallery,
-GALLERY_ROOT = GALLERY_VERSION + '/build/',
-COMBO_BASE = 'http://yui.yahooapis.com/combo?',
-GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
-META = {
-    version: VERSION,
-    root: ROOT,
-    base: 'http://yui.yahooapis.com/' + ROOT,
-    comboBase: COMBO_BASE,
-    skin: {
-        defaultSkin: 'sam',
-        base: 'assets/skins/',
-        path: 'skin.css',
-        after: ['cssreset', 'cssfonts', 'cssreset-context', 'cssfonts-context']
-        //rollup: 3
-    },
-
-    groups: {},
-
-    modules: {
+var VERSION         = Y.version,
+    ROOT            = VERSION + '/build/',
+    GALLERY_VERSION = Y.config.gallery || Y.gallery,
+    GALLERY_ROOT    = GALLERY_VERSION + '/build/',
+    COMBO_BASE      = 'http://yui.yahooapis.com/combo?',
+    GALLERY_BASE    = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
+    META =          { version:   VERSION,
+                      root:      ROOT,
+                      base:      'http://yui.yahooapis.com/' + ROOT,
+                      comboBase: COMBO_BASE,
+                      skin:      { defaultSkin: 'sam',
+                                   base:        'assets/skins/',
+                                   path:        'skin.css',
+                                   after:       [ 'cssreset', 
+                                                  'cssfonts', 
+                                                  'cssreset-context', 
+                                                  'cssfonts-context' ] },
+                      groups:    {},
+                      modules:   {
     "anim": {
         "submodules": {
             "anim-base": {
@@ -174,6 +171,7 @@ META = {
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "path": "cssbase/base-min.css", 
         "type": "css"
     }, 
     "cssbase-context": {
@@ -189,6 +187,7 @@ META = {
         "type": "css"
     }, 
     "cssfonts": {
+        "path": "cssfonts/fonts-min.css", 
         "type": "css"
     }, 
     "cssfonts-context": {
@@ -199,6 +198,7 @@ META = {
         "optional": [
             "cssreset"
         ], 
+        "path": "cssgrids/grids-min.css", 
         "requires": [
             "cssfonts"
         ], 
@@ -215,6 +215,7 @@ META = {
         "type": "css"
     }, 
     "cssreset": {
+        "path": "cssreset/reset-min.css", 
         "type": "css"
     }, 
     "cssreset-context": {
@@ -469,6 +470,13 @@ META = {
     }, 
     "event": {
         "expound": "node-base", 
+        "plugins": {
+            "event-synthetic": {
+                "requires": [
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "event-base": {
                 "expound": "node-base", 
@@ -526,11 +534,6 @@ META = {
     "event-simulate": {
         "requires": [
             "event-base"
-        ]
-    }, 
-    "event-synthetic": {
-        "requires": [
-            "node-base"
         ]
     }, 
     "history": {
@@ -809,6 +812,33 @@ META = {
         ]
     }, 
     "swfdetect": {}, 
+    "tabview": {
+        "plugins": {
+            "tabview-plugin": {
+                "requires": [
+                    "tabview-base", 
+                    "node-focusmanager"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "submodules": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate",
+                    "classnamemanager"
+                ]
+            } 
+        },
+        "requires": [
+            "widget", 
+            "skin-sam-tabview",
+            "widget-parent",
+            "widget-child",
+            "tabview-base"
+        ], 
+        "skinnable": true
+    }, 
     "test": {
         "requires": [
             "substitute", 
@@ -873,6 +903,7 @@ META = {
         ]
     }, 
     "widget-locale": {
+        "path": "widget/widget-locale-min.js", 
         "requires": [
             "widget-base"
         ]
@@ -888,69 +919,17 @@ META = {
         }
     }
 },
-
-    // Patterns are module definitions which will be added with 
-    // the default options if a definition is not found. The
-    // assumption is that the module itself will be in the default
-    // location, and if there are any additional dependencies, they
-    // will have to be fetched with a second request.  This could
-    // happen multiple times, each segment resulting in a new
-    // dependency list.
-    //
-    // types: regex, prefix, function
-    patterns: {
-        'gallery-': { 
-            // http://yui.yahooapis.com/3.0.0/build/
-            // http://yui.yahooapis.com/gallery-/build/
-            group: 'gallery',
-            ext: false,
-            filter: {
-                'searchExp': VERSION,
-                'replaceStr': GALLERY_VERSION
-            }
-        }
-
-        /*
-        // expand 'lang|module|lang'
-        'lang|': {
-            ext: false,
-            action: function(data) {
-                // Y.log('testing data: ' + data);
-
-                var parts = data.split('|'),
-                    name = parts[1],
-                    lang = parts[2],
-                    packName, mod;
-
-                if (lang) {
-
-                    packName = this.getLangPackName(lang, name);
-
-                    if ('create' == parts[3]) {
-                        mod = this.getModule(packName);
-                        if (!mod) {
-                            mod = this.getModule(name);
-                            // Y.log('action creating ' + packName);
-                            this._addLangPack(lang, mod, packName);
-                        }
-                    }
-
-                    this.require(packName);
-                }
-                delete this.required[data];
-            }
-        }
-        */
-    }
-};
+                      patterns:  {}                                     };
 
 META.groups[VERSION] = {};
 
 META.groups.gallery = {
     base:      GALLERY_BASE,
+    ext:       false,
     combine:   true,
     root:      GALLERY_ROOT,
-    comboBase: COMBO_BASE
+    comboBase: COMBO_BASE,
+    patterns:  { 'gallery-': {} }
 };
 
 YUI.Env[VERSION] = META;
