@@ -25,7 +25,7 @@ YUI.add('editor-base', function(Y) {
         initializer: function() {
             var frame = new Y.Frame({
                 designMode: true,
-                title: 'Rich Text Editor',
+                title: EditorBase.STRINGS.title,
                 use: EditorBase.USE
             }).plug(Y.Plugin.ExecCommand);
 
@@ -106,11 +106,24 @@ YUI.add('editor-base', function(Y) {
         */
         USE: ['node','selector-css3', 'selection', 'stylesheet'],
         /**
-        * The Class Name: editor-base
+        * The Class Name: editorBase
         * @static
         * @property NAME
         */
         NAME: 'editorBase',
+        /**
+        * Editor Strings
+        * @static
+        * @property STRINGS
+        */
+        STRINGS: {
+            /**
+            * Title of frame document: Rich Text Editor
+            * @static
+            * @property STRINGS.title
+            */
+            title: 'Rich Text Editor'
+        },
         ATTRS: {
             /**
             * The content to load into the Editor Frame
@@ -122,6 +135,7 @@ YUI.add('editor-base', function(Y) {
                     return this.frame.set('content', str);
                 },
                 getter: function() {
+                    //TODO - Filter Content HERE..
                     return this.frame.get('content');
                 }
             }

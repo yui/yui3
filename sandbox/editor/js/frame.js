@@ -177,6 +177,7 @@ YUI.add('frame', function(Y) {
                 if (e) {
                     inst.config.doc = Y.Node.getDOMNode(e.target);
                 }
+                //TODO Circle around and deal with CSS loading...
                 args.push(Y.bind(function() {
                     Y.log('Callback from final internal use call', 'info', 'frame');
                     this.fire('ready');

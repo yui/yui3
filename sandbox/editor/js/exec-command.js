@@ -31,8 +31,7 @@ YUI.add('exec-command', function(Y) {
             * @return {Node/NodeList} Should return the Node/Nodelist affected
             */
             command: function(action, value) {
-                var host = this.get('host'),
-                    fn = ExecCommand.COMMANDS[action];
+                var fn = ExecCommand.COMMANDS[action];
 
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
@@ -146,7 +145,7 @@ YUI.add('exec-command', function(Y) {
                 */
                 addclass: function(cmd, cls) {
                     var inst = this.getInstance();
-                    return (new inst.Selection).getSelected().addClass(cls);
+                    return (new inst.Selection()).getSelected().addClass(cls);
                 },
                 /**
                 * Remove a class from all of the elements in the selection
@@ -158,7 +157,7 @@ YUI.add('exec-command', function(Y) {
                 */
                 removeclass: function(cmd, cls) {
                     var inst = this.getInstance();
-                    return (new inst.Selection).getSelected().removeClass(cls);
+                    return (new inst.Selection()).getSelected().removeClass(cls);
                 }
             }
         });
