@@ -1,11 +1,12 @@
 YUI.add('frame', function(Y) {
     /**
-     * Creates a wrapper around an iframe or a new window. It loads the content either from a local
+     * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
-     * @module frame
+     * @module editor
+     * @submodule frame
      */     
     /**
-     * Creates a wrapper around an iframe or a new window. It loads the content either from a local
+     * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
      * @class Frame
      * @extends Base
@@ -72,7 +73,7 @@ YUI.add('frame', function(Y) {
         * @private
         * @method _resolveWinDoc
         * @description Resolves the document and window from an iframe or window instance
-        * @param Object c The YUI Config to add the window and document to
+        * @param {Object} c The YUI Config to add the window and document to
         * @return Returns an Object hash of window and document references, if a YUI config was passed, it is returned.
         * @type Object
         */
@@ -89,7 +90,7 @@ YUI.add('frame', function(Y) {
         * takes the current EventFacade and augments it to fire on the Frame host. It adds two new properties
         * to the EventFacade called frameX and frameY which adds the scroll and xy position of the iframe
         * to the original pageX and pageY of the event so external nodes can be positioned over the frame.
-        * @param EventFacade e
+        * @param {EventFacade} e
         */
         _onDomEvent: function(e) {
             var xy = this._iframe.getXY(),
@@ -193,7 +194,7 @@ YUI.add('frame', function(Y) {
         * @method _instanceLoaded
         * @description Called from the first YUI instance that sets up the internal instance.
         * This loads the content into the window/frame and attaches the contentready event.
-        * @param YUI inst The internal YUI instance bound to the frame/window
+        * @param {YUI} inst The internal YUI instance bound to the frame/window
         */
         _instanceLoaded: function(inst) {
             this._instance = inst;
@@ -235,10 +236,10 @@ YUI.add('frame', function(Y) {
         /**
         * @method delegate
         * @description A delegate method passed to the instance's delegate method
-        * @param String type The type of event to listen for
-        * @param Function fn The method to attach
-        * @param String cont The container to act as a delegate, if no "sel" passed, the body is assumed as the container.
-        * @param String sel The selector to match in the event (optional)
+        * @param {String} type The type of event to listen for
+        * @param {Function} fn The method to attach
+        * @param {String} cont The container to act as a delegate, if no "sel" passed, the body is assumed as the container.
+        * @param {String} sel The selector to match in the event (optional)
         * @return EventHandle
         */
         delegate: function(type, fn, cont, sel) {
@@ -264,7 +265,7 @@ YUI.add('frame', function(Y) {
         /**
         * @method render
         * @description Render the iframe into the container config option or open the window.
-        * @param String/HTMLElement/Node node The node to render to
+        * @param {String/HTMLElement/Node} node The node to render to
         * @return self
         * @chainable
         */
@@ -309,7 +310,7 @@ YUI.add('frame', function(Y) {
         * @private
         * @method _resolveBaseHref
         * @description Resolves the basehref of the page the frame is created on. Only applies to dynamic content.
-        * @param String href The new value to use, if empty it will be resolved from the current url.
+        * @param {String} href The new value to use, if empty it will be resolved from the current url.
         * @return String
         */
         _resolveBaseHref: function(href) {
@@ -326,7 +327,7 @@ YUI.add('frame', function(Y) {
         * @private
         * @method _getHTML
         * @description Get the content from the iframe
-        * @param String html The raw HTML from the body of the iframe.
+        * @param {String} html The raw HTML from the body of the iframe.
         * @return String
         */
         _getHTML: function(html) {
@@ -340,7 +341,7 @@ YUI.add('frame', function(Y) {
         * @private
         * @method _setHTML
         * @description Set the content of the iframe
-        * @param String html The raw HTML to set the body of the iframe to.
+        * @param {String} html The raw HTML to set the body of the iframe to.
         * @return String
         */
         _setHTML: function(html) {

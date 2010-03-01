@@ -1,11 +1,12 @@
 YUI.add('editor-base', function(Y) {
 
     /**
-     * Base class for Editor. Handles the MVC portion of Editor, no GUI involved.
-     * @module editor-base
+     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
+     * @module editor
+     * @submodule editor-base
      */     
     /**
-     * Base class for Editor. Handles the MVC portion of Editor, no GUI involved.
+     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
      * @extends Base
      * @constructor
@@ -67,9 +68,9 @@ YUI.add('editor-base', function(Y) {
         /**
         * Pass through to the frame.execCommand method
         * @method execCommand
-        * @param String cmd The command to pass: inserthtml, insertimage, bold
-        * @param String val The optional value of the command: Helvetica
-        * @return Node/NodeList
+        * @param {String} cmd The command to pass: inserthtml, insertimage, bold
+        * @param {String} val The optional value of the command: Helvetica
+        * @return {Node/NodeList} The Node or Nodelist affected by the command. Only returns on override commands, not browser defined commands.
         */
         execCommand: function(cmd, val) {
             return this.frame.execCommand(cmd, val);
@@ -77,7 +78,7 @@ YUI.add('editor-base', function(Y) {
         /**
         * Get the YUI instance of the frame
         * @method getInstance
-        * @return YUI
+        * @return {YUI} The YUI instance bound to the frame.
         */
         getInstance: function() {
             return this.frame.getInstance();
@@ -87,8 +88,8 @@ YUI.add('editor-base', function(Y) {
         /**
         * Renders the Y.Frame to the passed node.
         * @method render
-        * @param Selector/HTMLElement/Node node The node to append the Editor to
-        * @return self
+        * @param {Selector/HTMLElement/Node} node The node to append the Editor to
+        * @return {Y.Frame}
         * @chainable
         */
         render: function(node) {
@@ -128,5 +129,15 @@ YUI.add('editor-base', function(Y) {
     });
 
     Y.EditorBase = EditorBase;
+
+    /**
+    * @event nodeChange
+    * @description Fired from mouseup & keyup.
+    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * <dl><dt>node</dt><dd>The node currently being interacted with</dd></dl>
+    * @type {Event.Custom}
+    */
+
+
 
 }, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false });

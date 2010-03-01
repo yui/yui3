@@ -1,7 +1,8 @@
 YUI.add('selection', function(Y) {
     /**
      * Wraps some common Selection/Range functionality into a simple object
-     * @module selection
+     * @module editor
+     * @submodule selection
      */     
     /**
      * Wraps some common Selection/Range functionality into a simple object
@@ -13,7 +14,7 @@ YUI.add('selection', function(Y) {
     * Resolve a node from the selection object and return a Node instance
     * @private
     * @method resolve
-    * @param HTMLElement n The HTMLElement to resolve. Might be a TextNode.
+    * @param {HTMLElement} n The HTMLElement to resolve. Might be a TextNode.
     * @return Node
     * @type Node
     */
@@ -194,8 +195,8 @@ YUI.add('selection', function(Y) {
         * Wrap an element, with another element 
         * @private
         * @method _wrap
-        * @param HTMLElement n The node to wrap 
-        * @param String tag The tag to use when creating the new element.
+        * @param {HTMLElement} n The node to wrap 
+        * @param {String} tag The tag to use when creating the new element.
         */
         _wrap: function(n, tag) {
             var tmp = Y.Node.create('<' + tag + '></' + tag + '>');
@@ -208,8 +209,8 @@ YUI.add('selection', function(Y) {
         * Swap an element, with another element 
         * @private
         * @method _swap
-        * @param HTMLElement n The node to swap 
-        * @param String tag The tag to use when creating the new element.
+        * @param {HTMLElement} n The node to swap 
+        * @param {String} tag The tag to use when creating the new element.
         */
         _swap: function(n, tag) {
             var tmp = Y.Node.create('<' + tag + '></' + tag + '>');
@@ -245,7 +246,7 @@ YUI.add('selection', function(Y) {
         /**
         * Insert HTML at the current cursor position and return a Node instance of the newly inserted element.
         * @method insertContent
-        * @param String html The HTML to insert.
+        * @param {String} html The HTML to insert.
         * @return Node
         */
         insertContent: function(html) {
@@ -260,9 +261,9 @@ YUI.add('selection', function(Y) {
         /**
         * Insert HTML at the current cursor position, this method gives you control over the text node to insert into and the offset where to put it.
         * @method insertAtCursor
-        * @param String html The HTML to insert.
-        * @param Node node The text node to break when inserting.
-        * @param Number offset The left offset of the text node to break and insert the new content.
+        * @param {String} html The HTML to insert.
+        * @param {Node} node The text node to break when inserting.
+        * @param {Number} offset The left offset of the text node to break and insert the new content.
         * @return Node
         */
         insertAtCursor: function(html, node, offset) {
@@ -283,7 +284,7 @@ YUI.add('selection', function(Y) {
         /**
         * Get all elements inside a selection and wrap them with a new element and return a NodeList of all elements touched.
         * @method wrapContent
-        * @param String tag The tag to wrap all selected items with.
+        * @param {String} tag The tag to wrap all selected items with.
         * @return NodeList
         */
         wrapContent: function(tag) {
@@ -334,9 +335,9 @@ YUI.add('selection', function(Y) {
         * Find and replace a string inside a text node and replace it with HTML focusing the node after 
         * to allow you to continue to type.
         * @method replace
-        * @param String se The string to search for.
-        * @param String re The string of HTML to replace it with.
-        * @param Node node A Node instance of the text node to interact with.
+        * @param {String} se The string to search for.
+        * @param {String} re The string of HTML to replace it with.
+        * @param {Node} node A Node instance of the text node to interact with.
         * @return Node
         */
         replace: function(se,re,node) {
@@ -372,7 +373,7 @@ YUI.add('selection', function(Y) {
         /**
         * Select a Node (hilighting it).
         * @method selectNode
-        * @param Node node The node to select
+        * @param {Node} node The node to select
         */
         selectNode: function(node) {
 		    var range = this.createRange();
