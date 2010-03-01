@@ -148,41 +148,49 @@ YUI.add('selection', function(Y) {
         /**
         * Range text value
         * @property text
+        * @type String
         */
         text: null,
         /**
         * Flag to show if the range is collapsed or not
         * @property isCollapsed
+        * @type Boolean
         */
         isCollapsed: null,
         /**
         * A Node instance of the parentNode of the anchorNode of the range
         * @property anchorNode
+        * @type Node
         */
         anchorNode: null,
         /**
         * The offset from the range object
         * @property anchorOffset
+        * @type Number
         */
         anchorOffset: null,
         /**
         * A Node instance of the actual textNode of the range.
         * @property anchorTextNode
+        * @type Node
         */
         anchorTextNode: null,
         /**
         * A Node instance of the parentNode of the focusNode of the range
         * @property focusNode
+        * @type Node
         */
         focusNode: null,
         /**
         * The offset from the range object
         * @property focusOffset
+        * @type Number
         */
         focusOffset: null,
         /**
         * A Node instance of the actual textNode of the range.
         * @property focusTextNode
+        * @type Node
         */
         focusTextNode: null,
         /**
@@ -197,6 +205,7 @@ YUI.add('selection', function(Y) {
         * @method _wrap
         * @param {HTMLElement} n The node to wrap 
         * @param {String} tag The tag to use when creating the new element.
+        * @return {HTMLElement} The wrapped node
         */
         _wrap: function(n, tag) {
             var tmp = Y.Node.create('<' + tag + '></' + tag + '>');
@@ -211,6 +220,7 @@ YUI.add('selection', function(Y) {
         * @method _swap
         * @param {HTMLElement} n The node to swap 
         * @param {String} tag The tag to use when creating the new element.
+        * @return {HTMLElement} The new node
         */
         _swap: function(n, tag) {
             var tmp = Y.Node.create('<' + tag + '></' + tag + '>');
@@ -223,7 +233,7 @@ YUI.add('selection', function(Y) {
         * Then it calls doc.execCommand('fontname', null, 'yui-tmp') to touch all nodes in the selection.
         * The it compiles a list of all nodes affected by the execCommand and builds a NodeList to return.
         * @method getSelected
-        * @return NodeList
+        * @return {NodeList} A NodeList of all items in the selection.
         */
         getSelected: function() {
             Y.Selection.filter();
@@ -247,7 +257,7 @@ YUI.add('selection', function(Y) {
         * Insert HTML at the current cursor position and return a Node instance of the newly inserted element.
         * @method insertContent
         * @param {String} html The HTML to insert.
-        * @return Node
+        * @return {Node} The inserted Node.
         */
         insertContent: function(html) {
             if (this.isCollapsed) {
@@ -264,7 +274,7 @@ YUI.add('selection', function(Y) {
         * @param {String} html The HTML to insert.
         * @param {Node} node The text node to break when inserting.
         * @param {Number} offset The left offset of the text node to break and insert the new content.
-        * @return Node
+        * @return {Node} The inserted Node.
         */
         insertAtCursor: function(html, node, offset) {
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
@@ -285,7 +295,7 @@ YUI.add('selection', function(Y) {
         * Get all elements inside a selection and wrap them with a new element and return a NodeList of all elements touched.
         * @method wrapContent
         * @param {String} tag The tag to wrap all selected items with.
-        * @return NodeList
+        * @return {NodeList} A NodeList of all items in the selection.
         */
         wrapContent: function(tag) {
             tag = (tag) ? tag : Y.Selection.DEFAULT_TAG;
@@ -338,7 +348,7 @@ YUI.add('selection', function(Y) {
         * @param {String} se The string to search for.
         * @param {String} re The string of HTML to replace it with.
         * @param {Node} node A Node instance of the text node to interact with.
-        * @return Node
+        * @return {Node} The node inserted.
         */
         replace: function(se,re,node) {
             Y.log('replacing (' + se + ') with (' + re + ')');
@@ -354,6 +364,8 @@ YUI.add('selection', function(Y) {
         /**
         * Destroy the range.
         * @method remove
+        * @chainable
+        * @return {Y.Selection}
         */
         remove: function() {
             this._selection.removeAllRanges();
@@ -362,6 +374,7 @@ YUI.add('selection', function(Y) {
         /**
         * Wrapper for the different range creation methods.
         * @method createRange
+        * @return {RangeObject}
         */
         createRange: function() {
             if (Y.config.doc.selection) {
@@ -374,6 +387,8 @@ YUI.add('selection', function(Y) {
         * Select a Node (hilighting it).
         * @method selectNode
         * @param {Node} node The node to select
+        * @chainable
+        * @return {Y.Selection}
         */
         selectNode: function(node) {
 		    var range = this.createRange();
@@ -384,11 +399,12 @@ YUI.add('selection', function(Y) {
             } else {
                 range.select(Y.Node.getDOMNode(node));
             }
+            return this;
         },
         /**
         * Put a placeholder in the DOM at the current cursor position: NOT FINISHED
         * @method setCursor
-        * @return Node
+        * @return {Node}
         */
         setCursor: function() {
             return this.insertContent(Y.Selection.CURSOR);
@@ -396,7 +412,7 @@ YUI.add('selection', function(Y) {
         /**
         * Get the placeholder in the DOM at the current cursor position: NOT FINISHED
         * @method getCursor
-        * @return Node
+        * @return {Node}
         */
         getCursor: function() {
             return Y.one('#' + Y.Selection.CURID);

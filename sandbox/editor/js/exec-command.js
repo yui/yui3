@@ -28,7 +28,7 @@ YUI.add('exec-command', function(Y) {
             * @method command
             * @param {String} action The action to perform (bold, italic, fontname)
             * @param {String} value The optional value (helvetica)
-            * @return Node Should return the node/nodelist affected
+            * @return {Node/NodeList} Should return the Node/Nodelist affected
             */
             command: function(action, value) {
                 var host = this.get('host'),
@@ -59,7 +59,7 @@ YUI.add('exec-command', function(Y) {
             /**
             * Get's the instance of YUI bound to the parent frame
             * @method getInstance
-            * @return YUI
+            * @return {YUI} The YUI instance bound to the parent frame
             */
             getInstance: function() {
                 if (!this._inst) {
@@ -107,7 +107,7 @@ YUI.add('exec-command', function(Y) {
                 * @static
                 * @param {String} cmd The command executed: wrap
                 * @param {String} tag The tag to wrap the selection with
-                * @return NodeList
+                * @return {NodeList} NodeList of the items touched by this command.
                 */
                 wrap: function(cmd, tag) {
                     var inst = this.getInstance();
@@ -119,7 +119,7 @@ YUI.add('exec-command', function(Y) {
                 * @static
                 * @param {String} cmd The command executed: inserthtml
                 * @param {String} html The html to insert
-                * @return Node
+                * @return {Node} Node instance of the item touched by this command.
                 */
                 inserthtml: function(cmd, html) {
                     var inst = this.getInstance();
@@ -131,7 +131,7 @@ YUI.add('exec-command', function(Y) {
                 * @static
                 * @param {String} cmd The command executed: insertimage
                 * @param {String} img The url of the image to be inserted
-                * @return Node
+                * @return {Node} Node instance of the item touched by this command.
                 */
                 insertimage: function(cmd, img) {
                     return this.command('inserthtml', '<img src="' + img + '">');
@@ -142,7 +142,7 @@ YUI.add('exec-command', function(Y) {
                 * @static
                 * @param {String} cmd The command executed: addclass
                 * @param {String} cls The className to add
-                * @return NodeList
+                * @return {NodeList} NodeList of the items touched by this command.
                 */
                 addclass: function(cmd, cls) {
                     var inst = this.getInstance();
@@ -154,7 +154,7 @@ YUI.add('exec-command', function(Y) {
                 * @static
                 * @param {String} cmd The command executed: removeclass
                 * @param {String} cls The className to remove
-                * @return NodeList
+                * @return {NodeList} NodeList of the items touched by this command.
                 */
                 removeclass: function(cmd, cls) {
                     var inst = this.getInstance();

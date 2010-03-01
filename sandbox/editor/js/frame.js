@@ -50,8 +50,7 @@ YUI.add('frame', function(Y) {
         * @private
         * @method _create
         * @description Create the iframe or Window and get references to the Document & Window
-        * @return Hash table containing references to the new Document & Window
-        * @type Object
+        * @return {Object} Hash table containing references to the new Document & Window
         */
         _create: function() {
             var win, doc, res;
@@ -74,8 +73,7 @@ YUI.add('frame', function(Y) {
         * @method _resolveWinDoc
         * @description Resolves the document and window from an iframe or window instance
         * @param {Object} c The YUI Config to add the window and document to
-        * @return Returns an Object hash of window and document references, if a YUI config was passed, it is returned.
-        * @type Object
+        * @return {Object} Object hash of window and document references, if a YUI config was passed, it is returned.
         */
         _resolveWinDoc: function(c) {
             var config = (c) ? c : {};
@@ -90,7 +88,7 @@ YUI.add('frame', function(Y) {
         * takes the current EventFacade and augments it to fire on the Frame host. It adds two new properties
         * to the EventFacade called frameX and frameY which adds the scroll and xy position of the iframe
         * to the original pageX and pageY of the event so external nodes can be positioned over the frame.
-        * @param {EventFacade} e
+        * @param {Event.Facade} e
         */
         _onDomEvent: function(e) {
             var xy = this._iframe.getXY(),
@@ -240,7 +238,7 @@ YUI.add('frame', function(Y) {
         * @param {Function} fn The method to attach
         * @param {String} cont The container to act as a delegate, if no "sel" passed, the body is assumed as the container.
         * @param {String} sel The selector to match in the event (optional)
-        * @return EventHandle
+        * @return {EventHandle} The Event handle returned from Y.delegate
         */
         delegate: function(type, fn, cont, sel) {
             var inst = this.getInstance();
@@ -257,7 +255,7 @@ YUI.add('frame', function(Y) {
         /**
         * @method getInstance
         * @description Get a reference to the internal YUI instance.
-        * @return YUI The internal YUI instance
+        * @return {YUI} The internal YUI instance
         */
         getInstance: function() {
             return this._instance;
@@ -266,7 +264,7 @@ YUI.add('frame', function(Y) {
         * @method render
         * @description Render the iframe into the container config option or open the window.
         * @param {String/HTMLElement/Node} node The node to render to
-        * @return self
+        * @return {Y.Frame}
         * @chainable
         */
         render: function(node) {
@@ -311,7 +309,7 @@ YUI.add('frame', function(Y) {
         * @method _resolveBaseHref
         * @description Resolves the basehref of the page the frame is created on. Only applies to dynamic content.
         * @param {String} href The new value to use, if empty it will be resolved from the current url.
-        * @return String
+        * @return {String}
         */
         _resolveBaseHref: function(href) {
             if (!href || href === '') {
@@ -328,7 +326,7 @@ YUI.add('frame', function(Y) {
         * @method _getHTML
         * @description Get the content from the iframe
         * @param {String} html The raw HTML from the body of the iframe.
-        * @return String
+        * @return {String}
         */
         _getHTML: function(html) {
             if (this._ready) {
@@ -342,7 +340,7 @@ YUI.add('frame', function(Y) {
         * @method _setHTML
         * @description Set the content of the iframe
         * @param {String} html The raw HTML to set the body of the iframe to.
-        * @return String
+        * @return {String}
         */
         _setHTML: function(html) {
             if (this._ready) {
@@ -351,6 +349,10 @@ YUI.add('frame', function(Y) {
             }
             return html;
         },
+        /**
+        * @method focus
+        * @description Set the focus to the iframe
+        */
         focus: function() {
             this.getInstance().config.win.focus();
             return this;

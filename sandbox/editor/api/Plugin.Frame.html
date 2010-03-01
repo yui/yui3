@@ -237,7 +237,7 @@ file or from script and creates a local YUI instance bound to that new window an
                                          private 
                                         
                                         
-                                        
+                                        Object
                                             <strong property="yui:name">_create</strong>
                                            (
                                             )
@@ -253,6 +253,7 @@ file or from script and creates a local YUI instance bound to that new window an
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            Object
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">Hash table containing references to the new Document & Window</dd>
                                                 </dl>
@@ -303,7 +304,7 @@ file or from script and creates a local YUI instance bound to that new window an
                                          private 
                                         
                                         
-                                        
+                                        String
                                             <strong property="yui:name">_getHTML</strong>
                                            (
                                                 
@@ -330,12 +331,6 @@ file or from script and creates a local YUI instance bound to that new window an
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">String</dd>
-                                                </dl>
 
 
              
@@ -453,7 +448,7 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">e</span>
-                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        &lt;<span property="yui:type">Event.Facade</span>&gt;
                                                         </code>
                                                         <span property="yui:description"></span>
                                                         </dd>
@@ -476,7 +471,7 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                          private 
                                         
                                         
-                                        
+                                        String
                                             <strong property="yui:name">_resolveBaseHref</strong>
                                            (
                                                 
@@ -503,12 +498,6 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">String</dd>
-                                                </dl>
 
 
              
@@ -526,7 +515,7 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                          private 
                                         
                                         
-                                        
+                                        Object
                                             <strong property="yui:name">_resolveWinDoc</strong>
                                            (
                                                 
@@ -556,8 +545,9 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Returns an Object hash of window and document references, if a YUI config was passed, it is returned.</dd>
+                                                    <dd property="yui:returnInfo">Object hash of window and document references, if a YUI config was passed, it is returned.</dd>
                                                 </dl>
 
 
@@ -576,7 +566,7 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                          private 
                                         
                                         
-                                        
+                                        String
                                             <strong property="yui:name">_setHTML</strong>
                                            (
                                                 
@@ -603,12 +593,6 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">String</dd>
-                                                </dl>
 
 
              
@@ -626,7 +610,7 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                         
                                         
                                         
-                                        
+                                        EventHandle
                                             <strong property="yui:name">delegate</strong>
                                            (
                                                 
@@ -686,9 +670,40 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            EventHandle
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">EventHandle</dd>
+                                                    <dd property="yui:returnInfo">The Event handle returned from Y.delegate</dd>
                                                 </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_focus">
+                                    <h4>
+                                        <a name="method_focus">focus</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">focus</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Set the focus to the iframe
+                                        </div>
+
+                                        <div class="description">
+
+
 
 
              
@@ -706,7 +721,7 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                         
                                         
                                         
-                                        
+                                        YUI
                                             <strong property="yui:name">getInstance</strong>
                                            (
                                             )
@@ -722,8 +737,9 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            YUI
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">YUI The internal YUI instance</dd>
+                                                    <dd property="yui:returnInfo">The internal YUI instance</dd>
                                                 </dl>
 
 
@@ -742,7 +758,7 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                         
                                         
                                         
-                                        
+                                        Y.Frame
                                             <strong property="yui:name">render</strong>
                                            (
                                                 
@@ -769,12 +785,6 @@ to the original pageX and pageY of the event so external nodes can be positioned
                                                         </dd>
                                                 </dl>
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">self</dd>
-                                                </dl>
 
                                             <div class="chainable">
                                                 <strong>Chainable:</strong> This method is chainable.
@@ -1483,6 +1493,7 @@ At setup, the inst.use method is mapped to this method.
                                 <li class="private"><a href="#method__resolveWinDoc" title="_resolveWinDoc">_resolveWinDoc</a></li>
                                 <li class="private"><a href="#method__setHTML" title="_setHTML">_setHTML</a></li>
                                 <li class=""><a href="#method_delegate" title="delegate">delegate</a></li>
+                                <li class=""><a href="#method_focus" title="focus">focus</a></li>
                                 <li class=""><a href="#method_getInstance" title="getInstance">getInstance</a></li>
                                 <li class=""><a href="#method_render" title="render">render</a></li>
                                 <li class=""><a href="#method_use" title="use">use</a></li>
@@ -1531,7 +1542,7 @@ At setup, the inst.use method is mapped to this method.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"url": "EditorBase.html#method__afterFrameReady", "access": "private", "host": "EditorBase", "type": "method", "name": "_afterFrameReady"}, {"url": "Plugin.Frame.html#config_basehref", "access": "", "host": "Plugin.Frame", "type": "config", "name": "basehref"}, {"url": "Plugin.Frame.html#event_basehrefChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "basehrefChange"}, {"url": "Plugin.ExecCommand.html#method__command", "access": "private", "host": "Plugin.ExecCommand", "type": "method", "name": "_command"}, {"url": "Plugin.ExecCommand.html#method_command", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "command"}, {"url": "Plugin.ExecCommand.html#property_COMMANDS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "COMMANDS"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.addclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.addclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.inserthtml", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.inserthtml"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.insertimage", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.insertimage"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.removeclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.removeclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.wrap", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.wrap"}, {"url": "Plugin.Frame.html#config_container", "access": "", "host": "Plugin.Frame", "type": "config", "name": "container"}, {"url": "Plugin.Frame.html#event_containerChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "containerChange"}, {"url": "EditorBase.html#config_content", "access": "", "host": "EditorBase", "type": "config", "name": "content"}, {"url": "Plugin.Frame.html#config_content", "access": "", "host": "Plugin.Frame", "type": "config", "name": "content"}, {"url": "EditorBase.html#event_contentChange", "access": "", "host": "EditorBase", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#event_contentChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#method__create", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_create"}, {"url": "Plugin.Frame.html#method__defReadyFn", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_defReadyFn"}, {"url": "Plugin.Frame.html#method_delegate", "access": "", "host": "Plugin.Frame", "type": "method", "name": "delegate"}, {"url": "Plugin.Frame.html#config_designMode", "access": "", "host": "Plugin.Frame", "type": "config", "name": "designMode"}, {"url": "Plugin.Frame.html#event_designModeChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "designModeChange"}, {"url": "Plugin.Frame.html#config_dir", "access": "", "host": "Plugin.Frame", "type": "config", "name": "dir"}, {"url": "Plugin.Frame.html#event_dirChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "dirChange"}, {"url": "Plugin.Frame.html#property_DOC_TYPE", "access": "", "host": "Plugin.Frame", "type": "property", "name": "DOC_TYPE"}, {"url": "EditorBase.html#method_execCommand", "access": "", "host": "EditorBase", "type": "method", "name": "execCommand"}, {"url": "EditorBase.html#property_frame", "access": "", "host": "EditorBase", "type": "property", "name": "frame"}, {"url": "Plugin.Frame.html#property__frame", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_frame"}, {"url": "Plugin.Frame.html#method__getHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_getHTML"}, {"url": "EditorBase.html#method_getInstance", "access": "", "host": "EditorBase", "type": "method", "name": "getInstance"}, {"url": "Plugin.ExecCommand.html#method_getInstance", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "getInstance"}, {"url": "Plugin.Frame.html#method_getInstance", "access": "", "host": "Plugin.Frame", "type": "method", "name": "getInstance"}, {"url": "Plugin.Frame.html#property_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "HTML"}, {"url": "Plugin.Frame.html#config_id", "access": "", "host": "Plugin.Frame", "type": "config", "name": "id"}, {"url": "Plugin.Frame.html#event_idChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "idChange"}, {"url": "Plugin.ExecCommand.html#property__inst", "access": "private", "host": "Plugin.ExecCommand", "type": "property", "name": "_inst"}, {"url": "Plugin.Frame.html#property__instance", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_instance"}, {"url": "Plugin.Frame.html#method__instanceLoaded", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_instanceLoaded"}, {"url": "Plugin.Frame.html#config_lang", "access": "", "host": "Plugin.Frame", "type": "config", "name": "lang"}, {"url": "Plugin.Frame.html#event_langChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "langChange"}, {"url": "Plugin.Frame.html#property_META", "access": "", "host": "Plugin.Frame", "type": "property", "name": "META"}, {"url": "EditorBase.html#property_NAME", "access": "", "host": "EditorBase", "type": "property", "name": "NAME"}, {"url": "Plugin.ExecCommand.html#property_NAME", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NAME"}, {"url": "Plugin.Frame.html#property_NAME", "access": "", "host": "Plugin.Frame", "type": "property", "name": "NAME"}, {"url": "EditorBase.html#event_nodeChange", "access": "", "host": "EditorBase", "type": "event", "name": "nodeChange"}, {"url": "Plugin.ExecCommand.html#property_NS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NS"}, {"url": "Plugin.Frame.html#method__onContentReady", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onContentReady"}, {"url": "Plugin.Frame.html#method__onDomEvent", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onDomEvent"}, {"url": "EditorBase.html#method__onFrameKeyUp", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameKeyUp"}, {"url": "EditorBase.html#method__onFrameMouseDown", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameMouseDown"}, {"url": "Plugin.Frame.html#property_PAGE_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "PAGE_HTML"}, {"url": "Plugin.Frame.html#property__ready", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_ready"}, {"url": "EditorBase.html#method_render", "access": "", "host": "EditorBase", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#method_render", "access": "", "host": "Plugin.Frame", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#property__rendered", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_rendered"}, {"url": "Plugin.Frame.html#method__resolveBaseHref", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveBaseHref"}, {"url": "Plugin.Frame.html#method__resolveWinDoc", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveWinDoc"}, {"url": "Plugin.Frame.html#method__setHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_setHTML"}, {"url": "Plugin.Frame.html#config_src", "access": "", "host": "Plugin.Frame", "type": "config", "name": "src"}, {"url": "Plugin.Frame.html#event_srcChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "srcChange"}, {"url": "Plugin.Frame.html#config_title", "access": "", "host": "Plugin.Frame", "type": "config", "name": "title"}, {"url": "Plugin.Frame.html#event_titleChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "titleChange"}, {"url": "EditorBase.html#property_USE", "access": "", "host": "EditorBase", "type": "property", "name": "USE"}, {"url": "Plugin.Frame.html#method_use", "access": "", "host": "Plugin.Frame", "type": "method", "name": "use"}, {"url": "Plugin.Frame.html#config_use", "access": "", "host": "Plugin.Frame", "type": "config", "name": "use"}, {"url": "Plugin.Frame.html#event_useChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "useChange"}];
+    var ALL_YUI_PROPS = [{"url": "EditorBase.html#method__afterFrameReady", "access": "private", "host": "EditorBase", "type": "method", "name": "_afterFrameReady"}, {"url": "Plugin.Frame.html#config_basehref", "access": "", "host": "Plugin.Frame", "type": "config", "name": "basehref"}, {"url": "Plugin.Frame.html#event_basehrefChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "basehrefChange"}, {"url": "Plugin.ExecCommand.html#method__command", "access": "private", "host": "Plugin.ExecCommand", "type": "method", "name": "_command"}, {"url": "Plugin.ExecCommand.html#method_command", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "command"}, {"url": "Plugin.ExecCommand.html#property_COMMANDS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "COMMANDS"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.addclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.addclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.inserthtml", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.inserthtml"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.insertimage", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.insertimage"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.removeclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.removeclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.wrap", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.wrap"}, {"url": "Plugin.Frame.html#config_container", "access": "", "host": "Plugin.Frame", "type": "config", "name": "container"}, {"url": "Plugin.Frame.html#event_containerChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "containerChange"}, {"url": "EditorBase.html#config_content", "access": "", "host": "EditorBase", "type": "config", "name": "content"}, {"url": "Plugin.Frame.html#config_content", "access": "", "host": "Plugin.Frame", "type": "config", "name": "content"}, {"url": "EditorBase.html#event_contentChange", "access": "", "host": "EditorBase", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#event_contentChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#method__create", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_create"}, {"url": "Plugin.Frame.html#method__defReadyFn", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_defReadyFn"}, {"url": "Plugin.Frame.html#method_delegate", "access": "", "host": "Plugin.Frame", "type": "method", "name": "delegate"}, {"url": "Plugin.Frame.html#config_designMode", "access": "", "host": "Plugin.Frame", "type": "config", "name": "designMode"}, {"url": "Plugin.Frame.html#event_designModeChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "designModeChange"}, {"url": "Plugin.Frame.html#config_dir", "access": "", "host": "Plugin.Frame", "type": "config", "name": "dir"}, {"url": "Plugin.Frame.html#event_dirChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "dirChange"}, {"url": "Plugin.Frame.html#property_DOC_TYPE", "access": "", "host": "Plugin.Frame", "type": "property", "name": "DOC_TYPE"}, {"url": "EditorBase.html#method_execCommand", "access": "", "host": "EditorBase", "type": "method", "name": "execCommand"}, {"url": "Plugin.Frame.html#method_focus", "access": "", "host": "Plugin.Frame", "type": "method", "name": "focus"}, {"url": "EditorBase.html#property_frame", "access": "", "host": "EditorBase", "type": "property", "name": "frame"}, {"url": "Plugin.Frame.html#property__frame", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_frame"}, {"url": "Plugin.Frame.html#method__getHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_getHTML"}, {"url": "EditorBase.html#method_getInstance", "access": "", "host": "EditorBase", "type": "method", "name": "getInstance"}, {"url": "Plugin.ExecCommand.html#method_getInstance", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "getInstance"}, {"url": "Plugin.Frame.html#method_getInstance", "access": "", "host": "Plugin.Frame", "type": "method", "name": "getInstance"}, {"url": "Plugin.Frame.html#property_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "HTML"}, {"url": "Plugin.Frame.html#config_id", "access": "", "host": "Plugin.Frame", "type": "config", "name": "id"}, {"url": "Plugin.Frame.html#event_idChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "idChange"}, {"url": "Plugin.ExecCommand.html#property__inst", "access": "private", "host": "Plugin.ExecCommand", "type": "property", "name": "_inst"}, {"url": "Plugin.Frame.html#property__instance", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_instance"}, {"url": "Plugin.Frame.html#method__instanceLoaded", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_instanceLoaded"}, {"url": "Plugin.Frame.html#config_lang", "access": "", "host": "Plugin.Frame", "type": "config", "name": "lang"}, {"url": "Plugin.Frame.html#event_langChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "langChange"}, {"url": "Plugin.Frame.html#property_META", "access": "", "host": "Plugin.Frame", "type": "property", "name": "META"}, {"url": "EditorBase.html#property_NAME", "access": "", "host": "EditorBase", "type": "property", "name": "NAME"}, {"url": "Plugin.ExecCommand.html#property_NAME", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NAME"}, {"url": "Plugin.Frame.html#property_NAME", "access": "", "host": "Plugin.Frame", "type": "property", "name": "NAME"}, {"url": "EditorBase.html#event_nodeChange", "access": "", "host": "EditorBase", "type": "event", "name": "nodeChange"}, {"url": "Plugin.ExecCommand.html#property_NS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NS"}, {"url": "Plugin.Frame.html#method__onContentReady", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onContentReady"}, {"url": "Plugin.Frame.html#method__onDomEvent", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onDomEvent"}, {"url": "EditorBase.html#method__onFrameKeyUp", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameKeyUp"}, {"url": "EditorBase.html#method__onFrameMouseDown", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameMouseDown"}, {"url": "Plugin.Frame.html#property_PAGE_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "PAGE_HTML"}, {"url": "Plugin.Frame.html#property__ready", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_ready"}, {"url": "EditorBase.html#method_render", "access": "", "host": "EditorBase", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#method_render", "access": "", "host": "Plugin.Frame", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#property__rendered", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_rendered"}, {"url": "Plugin.Frame.html#method__resolveBaseHref", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveBaseHref"}, {"url": "Plugin.Frame.html#method__resolveWinDoc", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveWinDoc"}, {"url": "Plugin.Frame.html#method__setHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_setHTML"}, {"url": "Plugin.Frame.html#config_src", "access": "", "host": "Plugin.Frame", "type": "config", "name": "src"}, {"url": "Plugin.Frame.html#event_srcChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "srcChange"}, {"url": "Plugin.Frame.html#config_title", "access": "", "host": "Plugin.Frame", "type": "config", "name": "title"}, {"url": "Plugin.Frame.html#event_titleChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "titleChange"}, {"url": "EditorBase.html#property_USE", "access": "", "host": "EditorBase", "type": "property", "name": "USE"}, {"url": "Plugin.Frame.html#method_use", "access": "", "host": "Plugin.Frame", "type": "method", "name": "use"}, {"url": "Plugin.Frame.html#config_use", "access": "", "host": "Plugin.Frame", "type": "config", "name": "use"}, {"url": "Plugin.Frame.html#event_useChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "useChange"}];
 </script>
 </body>
 </html>
