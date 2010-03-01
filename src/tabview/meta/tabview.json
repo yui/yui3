@@ -1,0 +1,25 @@
+{
+    "tabview": {
+        "plugins": {
+            "tabview-plugin": { 
+                "requires": [
+                    "tabview-base"
+                ]
+            } 
+        },
+        "submodules": {
+
+            "tabview-base": {
+                "requires": [
+                    "node"
+                ], 
+                "skinnable": true
+            }
+        },
+        "requires": [
+            "widget",
+            "widget-parent",
+            "node-focusmanager",
+        ]
+    }
+}
