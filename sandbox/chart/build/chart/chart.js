@@ -1,6 +1,7 @@
 YUI.add('chart', function(Y) {
 
 /**
+ *
  * SWFWidget is the base class for all JS classes that manage styles
  * and communicates with a SWF Application.
  */
@@ -19,13 +20,24 @@ YUI.add('chart', function(Y) {
  */
 function SWFWidget (p_oElement, config)
 {
-	this._id = Y.guid(this.GUID);
-	this._setParent(p_oElement);
-	this.addAttrs(this._attributeConfig, config);
+	this._initConfig(p_oElement, config);
 }
 
 SWFWidget.prototype =
 {
+	/**
+	 * Initializes class
+	 *
+	 * @private
+	 */
+	_initConfig: function(p_oElement, config)
+	{
+		this._styles = this._mergeStyles(this._styles, this._getDefaultStyles());
+		this._id = Y.guid(this.GUID);
+		this._setParent(p_oElement);
+		this.addAttrs(this._attributeConfig, config);
+	},
+
 	_setParent: function(p_oElement)
 	{
 		this.oElement = p_oElement;
@@ -34,7 +46,7 @@ SWFWidget.prototype =
 	/**
 	 * Reference to corresponding Actionscript class.
 	 */
-	CLASSNAME: "SWFWidget",
+	AS_CLASS: "SWFWidget",
 
 	/**
 	 * Indicates whether or not the swf has initialized.
@@ -50,9 +62,12 @@ SWFWidget.prototype =
 	/**
 	 * @private
 	 *
-	 * Hash of default styles for the instance.
+	 * Returns a hash of default styles for the class.
 	 */
-	_defaultStyles: {},
+	_getDefaultStyles:function()
+	 {
+		return {};
+	 },
 
 	/**
 	 * @private
@@ -62,96 +77,49 @@ SWFWidget.prototype =
 	_styleObjHash: null,
 
 	/**
-	 * Sets a style property for the instance.
-	 *
-	 * @method setStyle
-	 * @param {String} style name of the style to be set
-	 * @param {Object} value value to be set for the style
-	 */
-	setStyle: function(style, value)
-	{
-		var i, styles;
-		if(this._styleObjHash && this._styleObjHash.hasOwnProperty(style))
-		{
-			if(this._defaultStyles[style]) 
-			{
-				styles = this._defaultStyles[style];
-				for(i in value)
-				{
-					if(value.hasOwnProperty(i))
-					{
-						styles[i] = value[i];
-					}
-				}
-			}
-			else
-			{
-				styles = value;
-			}
-			this._defaultStyles[style] = styles;
-		}
-		else
-		{
-			if(!this._defaultStyles.hasOwnProperty(this._id))
-			{
-				this._defaultStyles[this._id] = {};
-			}
-			this._defaultStyles[this._id][style] = value;
-		}
-		if(this.swfReadyFlag)
-		{
-			this._updateStyles();
-		}
-	},
-
-	/**
 	 * Sets multiple style properties on the instance.
 	 *
 	 * @method _setStyles
 	 * @param {Object} styles Hash of styles to be applied.
 	 */
-	_setStyles: function(styles)
+	_setStyles: function(newstyles)
 	{
-		var i, j, defaults = this._defaultStyles;
-		if(!defaults.hasOwnProperty(this._id))
+		var j, styles = this._styles,
+		styleHash = this._styleObjHash;
+		styles[this._id] = styles[this._id] || {};
+		Y.Object.each(newstyles, function(value, key, newstyles)
 		{
-			defaults[this._id] = {};
-		}
-		for(i in styles)
-		{
-			if(styles.hasOwnProperty(i))
+			if(styleHash && styleHash.hasOwnProperty(key))
 			{
-				if(this._styleObjHash && this._styleObjHash.hasOwnProperty(i))
+				j = styleHash[key];
+				if(j instanceof SWFWidget)
 				{
-					j = this._styleObjHash[i];
-					if(defaults && defaults.hasOwnProperty(j) && Y.Lang.isObject(defaults[j])) 
-					{
-						defaults[j] = this._mergeStyles(styles[i], defaults[j]);
-					}
-					else
-					{
-						defaults[j] = styles[i];
-					}
+					j.set("styles", value);
+					styles[key] = j.get("styles");
+				}
+				else if(Y.Lang.isObject(styles[j])) 
+				{
+					styles[j] = this._mergeStyles(value, styles[j]);
 				}
 				else
 				{
-					j = this._id;
-					if(defaults && defaults.hasOwnProperty(j) && defaults[j].hasOwnProperty(i) && Y.Lang.isObject(defaults[j][i]))
-					{
-						defaults[j][i] = this._mergeStyles(styles[i], defaults[j][i]);
-					}
-					else
-					{
-						defaults[j][i] = styles[i];
-					}
+					styles[j] = newstyles[j];
 				}
 			}
-		}
-		this._defaultStyles = defaults;
-		if(this.swfReadyFlag)
-		{
-			this._updateStyles();
-		}
+			else
+			{
+				j = this._id;
+				if(Y.Lang.isObject(styles[j]) && Y.Lang.isObject(styles[j][key]))
+				{
+					styles[j][key] = this._mergeStyles(value, styles[j][key]);
+				}
+				else
+				{
+					styles[j][key] = value;
+				}
+			}
+		}, this);
+		this._styles = styles;
 	},
 
 	/**
@@ -164,22 +132,17 @@ SWFWidget.prototype =
 	 */
 	_mergeStyles: function(a, b)
 	{
-		var i;
-		for(i in a)
+		Y.Object.each(a, function(value, key, a)
 		{
-			if(a.hasOwnProperty(i))
+			if(b.hasOwnProperty(key) && Y.Lang.isObject(value))
 			{
-				if(b.hasOwnProperty(i) && Y.Lang.isObject(a[i]))
-				{
-					b[i] = this._mergeStyles(a[i], b[i]);
-				}
-				else
-				{
-					b[i] = a[i];
-				}
-
+				b[key] = this._mergeStyles(value, b[key]);
 			}
-		}
+			else
+			{
+				b[key] = value;
+			}
+		}, this);
 		return b;
 	},
 	
@@ -191,18 +154,15 @@ SWFWidget.prototype =
 	 */
 	_updateStyles: function()
 	{
-		for(var id in this._defaultStyles)
+		var styleHash = this._styleObjHash,
+		styles = this._styles;
+		Y.Object.each(styles, function(value, key, styles)
 		{
-			if(this._defaultStyles.hasOwnProperty(id))
+			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
 			{
-				if(this._id === id || (this._styleObjHash && this._styleObjHash.hasOwnProperty(id))) 
-				{
-					this.appswf.applyMethod(id, "setStyles", [this._defaultStyles[id]]);
-				}
+				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
 			}
-		}
-		this._defaultStyles = null;
-		this._defaultStyles = {};
+		}, this);
 	},
 
 	/**
@@ -216,13 +176,11 @@ SWFWidget.prototype =
 		 */
 		className:  
 		{
-			value:this.CLASSNAME,
-
 			readOnly:true,
 
 			getter: function()
 			{
-				return this.CLASSNAME;
+				return this.AS_CLASS;
 			}
 		},
 		/**
@@ -235,28 +193,24 @@ SWFWidget.prototype =
 			setter: function(val)
 			{
 				this._setStyles(val);
+				if(this.swfReadyFlag)
+				{
+					this._updateStyles();
+				}
+				return this._styles;
 			},
-
+			
+			getter: function()
+			{
+				return this._styles;
+			},
+		
 			validator: function(val)
 			{
 				return Y.Lang.isObject(val);
 			}
-
 		}
-	},	
-
-	/**
-	 * Public accessor to the unique name of the Container instance.
-	 *
-	 * @method toString
-	 * @return {String} Unique name of the Container instance.
-	 */
-	toString: function()
-	{
-		return "SWFWidget " + this._id;
-	}
-
-
+	}	
 };
 
 Y.augment(SWFWidget, Y.Attribute);
@@ -292,7 +246,7 @@ Y.SWFWidget = SWFWidget;
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		CLASSNAME: "Container",
+		AS_CLASS: "Container",
 		
 		/**
 		 * Id for a background skin
@@ -428,7 +382,7 @@ Y.SWFWidget = SWFWidget;
 
 				validator: function(val)
 				{
-					return this.LAYOUTS.hasOwnProperty(val);
+					return Y.Array.indexOf(this.LAYOUTS, val) > -1;
 				}
 			},
 			/**
@@ -455,16 +409,6 @@ Y.SWFWidget = SWFWidget;
 					return Y.Lang.isArray(val);
 				}
 			}
-		},	
-		/**
-		 * Public accessor to the unique name of the Container instance.
-		 *
-		 * @method toString
-		 * @return {String} Unique name of the Container instance.
-		 */
-		toString: function()
-		{
-			return "Container " + this._id;
 		}
 	});
 
@@ -519,7 +463,7 @@ Y.SWFWidget = SWFWidget;
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		CLASSNAME:"BorderContainer",
+		AS_CLASS:"BorderContainer",
 		
 		/**
 		 * Reference to the layout strategy used for displaying child items.
@@ -628,7 +572,7 @@ Y.SWFWidget = SWFWidget;
 				this.appswf.applyMethod(this._id, "add" + locationToUpperCase + "Item", ["$" + item._id]);
 				if (location != "center")
 				{
-					item.setStyle("position", location);
+					item.set("styles", {position: location});
 				}
 			}
 			else
@@ -639,17 +583,6 @@ Y.SWFWidget = SWFWidget;
 				}
 				this.itemsQueue[location].push(item);
 			}
-		},
-		
-		/**
-		 * Public accessor to the unique name of the BorderContainer instance.
-		 *
-		 * @method toString
-		 * @return {String} Unique name of the BorderContainer instance.
-		 */
-		toString: function()
-		{
-			return "BorderContainer " + this._id;
 		}
 	});
 /**
@@ -714,7 +647,7 @@ Y.SWFWidget = SWFWidget;
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		CLASSNAME: "CartesianCanvas",
+		AS_CLASS: "CartesianCanvas",
 
 		/**
 		 * Constant used to generate unique id.
@@ -876,7 +809,7 @@ Y.SWFWidget = SWFWidget;
 				this.chartContainer = containerHash.classInstance;
 				if(containerHash.hasOwnProperty("added") && !containerHash.added)
 				{
-					this._styleObjHash.chart = this.chartContainer._id;
+					this._styleObjHash.chart = this.chartContainer;
 					return;
 				}
 			}
@@ -884,7 +817,7 @@ Y.SWFWidget = SWFWidget;
 			{
 				this.chartContainer = new BorderContainer(this);
 			}
-			this._styleObjHash.chart = this.chartContainer._id;
+			this._styleObjHash.chart = this.chartContainer;
 			this.chartContainer.oElement.addItem(this.chartContainer);
 		},
 
@@ -1053,17 +986,6 @@ Y.SWFWidget = SWFWidget;
 			{
 				this.appswf.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
 			}
-		},
-
-		/**
-		 * Public accessor to the unique name of the Chart instance.
-		 *
-		 * @method toString
-		 * @return {String} Unique name of the Chart instance.
-		 */
-		toString: function()
-		{
-			return "Chart " + this._id;
 		}
 	});
 
@@ -1128,7 +1050,7 @@ Y.Chart = Chart;
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		CLASSNAME:  "LineGraph",
+		AS_CLASS:  "LineGraph",
 
 		GUID: "yuilinechart",
 
@@ -1146,18 +1068,6 @@ Y.Chart = Chart;
 			this.appswf = this.swfowner.appswf;
 			this.appswf.createInstance(this._id, "LineGraph", ["$" + this.get("xaxis")._id + "data", "$" + this.get("yaxis")._id + "data", this.get("xkey"), this.get("ykey")]);
 			this._updateStyles();
-		},
-
-		
-		/**
-		 * Public accessor to the unique name of the LineGraph instance.
-		 *
-		 * @method toString
-		 * @return {String} Unique name of the LineGraph instance.
-		 */
-		toString: function()
-		{
-			return "LineGraph " + this._id;
 		}
 
 	});
@@ -1247,7 +1157,7 @@ Y.extend(Axis, Y.SWFWidget,
 	/**
 	 * Reference to corresponding Actionscript class.
 	 */
-	CLASSNAME:  "Axis",
+	AS_CLASS:  "Axis",
 	
 	/**
 	 * @private
@@ -1283,20 +1193,8 @@ Y.extend(Axis, Y.SWFWidget,
 		this.get("keys").push(key);
 		if(this.appswf)
 		{
-			document.getElementById("output").innerHTML += "<br/>addKey.this._dataId: " + this._dataId;
 			this.appswf.applyMethod("$" + this._dataId, "addKey", [key]);
 		}
-	},
-
-	/**
-	 * Public accessor to the unique name of the Axis instance.
-	 *
-	 * @method toString
-	 * @return {String} Unique name of the Axis instance.
-	 */
-	toString: function()
-	{
-		return "Axis " + this._id;
 	}
 });
 
@@ -1370,18 +1268,19 @@ Y.Axis = Axis;
 		setData: function(data /*:Object*/, xkey /*:String*/, ykey /*:String*/)
 		{
 			this.data = data;
-			
-			this.chart.set("dataProvider", this.data);
-			this.xaxis.addKey(this._xAxisProps.key);
-			this.yaxis.addKey(this._yAxisProps.key);
+			var chart = this.chart, xaxis = this.xaxis, yaxis = this.yaxis, graph = this.graph, styles = this._graphstyles;
+
+			chart.set("dataProvider", data);
+			xaxis.addKey(this._xAxisProps.key);
+			yaxis.addKey(this._yAxisProps.key);
 			
 			if (this._type == "line") 
 			{
-				this.graph = new Y.LineGraph(this.chart, {xaxis:this.xaxis, yaxis:this.yaxis, xkey:xkey, ykey:ykey, styles:this._graphstyles});
+				graph = new Y.LineGraph(chart, {xaxis:xaxis, yaxis:yaxis, xkey:xkey, ykey:ykey, styles:styles});
 			}
-			this.chart.addBottomItem(this.xaxis);
-			this.chart.addLeftItem(this.yaxis);
-			this.chart.addCenterItem(this.graph);
+			chart.addBottomItem(xaxis);
+			chart.addLeftItem(yaxis);
+			chart.addCenterItem(graph);
 		},
 
 		_chartstyles:{

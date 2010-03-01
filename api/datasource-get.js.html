@@ -91,7 +91,8 @@
     <span class="nx">_defRequestFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">uri</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">),</span>
             <span class="nx">get</span>  <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">),</span>
-            <span class="nx">guid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\-/g</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">);</span> 
+            <span class="nx">guid</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\-/g</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">),</span>
+            <span class="nx">generateRequest</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span> <span class="s2">&quot;generateRequestCallback&quot;</span> <span class="p">);</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Stores the most recent request id for validation against stale</span>
@@ -111,7 +112,7 @@
                           <span class="k">this</span><span class="p">.</span><span class="nx">_last</span> <span class="o">===</span> <span class="nx">guid</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">self</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span> <span class="nx">data</span><span class="o">:</span> <span class="nx">response</span> <span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({</span> <span class="nx">data</span><span class="o">:</span> <span class="nx">response</span> <span class="p">},</span> <span class="nx">e</span><span class="p">));</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;DataSource ignored stale response for id &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">tId</span> <span class="o">+</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">request</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-get&quot;</span><span class="p">);</span>
             <span class="p">}</span>
@@ -119,7 +120,7 @@
         <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
 
         <span class="c1">// Add the callback param to the request url</span>
-        <span class="nx">uri</span> <span class="o">+=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">request</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;generateRequestCallback&quot;</span><span class="p">)(</span><span class="nx">guid</span><span class="p">);</span>
+        <span class="nx">uri</span> <span class="o">+=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">request</span> <span class="o">+</span> <span class="nx">generateRequest</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span> <span class="k">this</span><span class="p">,</span> <span class="nx">guid</span> <span class="p">);</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;DataSource is querying URL &quot;</span> <span class="o">+</span> <span class="nx">uri</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;datasource-get&quot;</span><span class="p">);</span>
 
@@ -141,11 +142,10 @@
 <span class="cm">     * generateRequestCallback attribute.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _generateRequest</span>
-<span class="cm">     * @param self {DataSource.Get} the current instance</span>
 <span class="cm">     * @param guid {String} unique identifier for callback function wrapper</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-     <span class="nx">_getRequest</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">guid</span><span class="p">)</span> <span class="p">{</span>
+     <span class="nx">_generateRequest</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">guid</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;scriptCallbackParam&quot;</span><span class="p">)</span> <span class="o">+</span>
                 <span class="s2">&quot;=YUI.Env.DataSource.callbacks.&quot;</span> <span class="o">+</span> <span class="nx">guid</span><span class="p">;</span>
     <span class="p">}</span>
@@ -292,6 +292,7 @@
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_swf.html" title="swf">swf</a></li>
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

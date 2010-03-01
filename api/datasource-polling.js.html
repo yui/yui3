@@ -59,11 +59,9 @@
 <span class="cm"> * @class Pollable</span>
 <span class="cm"> * @extends DataSource.Local</span>
 <span class="cm"> */</span>    
-<span class="kd">var</span> <span class="nx">LANG</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
-
-    <span class="nx">Pollable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_intervals</span> <span class="o">=</span> <span class="p">{};</span>
-    <span class="p">};</span>
+<span class="kd">function</span> <span class="nx">Pollable</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_intervals</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="p">}</span>
 
 <span class="nx">Pollable</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
 
@@ -76,25 +74,33 @@
     <span class="nx">_intervals</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Sets up a polling mechanism to send requests at set intervals and forward</span>
-<span class="cm">     * responses to given callback.</span>
+<span class="cm">     * Sets up a polling mechanism to send requests at set intervals and</span>
+<span class="cm">     * forward responses to given callback.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method setInterval</span>
 <span class="cm">     * @param msec {Number} Length of interval in milliseconds.</span>
-<span class="cm">     * @param request {Object} Request object.</span>
-<span class="cm">     * @param callback {Object} An object literal with the following properties:</span>
+<span class="cm">     * @param request {Object} An object literal with the following properties:</span>
 <span class="cm">     *     &lt;dl&gt;</span>
-<span class="cm">     *     &lt;dt&gt;&lt;code&gt;success&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm">     *     &lt;dd&gt;The function to call when the data is ready.&lt;/dd&gt;</span>
-<span class="cm">     *     &lt;dt&gt;&lt;code&gt;failure&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm">     *     &lt;dd&gt;The function to call upon a response failure condition.&lt;/dd&gt;</span>
-<span class="cm">     *     &lt;dt&gt;&lt;code&gt;argument&lt;/code&gt;&lt;/dt&gt;</span>
-<span class="cm">     *     &lt;dd&gt;Arbitrary data that will be passed back to the success and failure handlers.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;&lt;code&gt;request&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;The request to send to the live data source, if any.&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;&lt;code&gt;callback&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;An object literal with the following properties:</span>
+<span class="cm">     *         &lt;dl&gt;</span>
+<span class="cm">     *         &lt;dt&gt;&lt;code&gt;success&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *         &lt;dd&gt;The function to call when the data is ready.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;&lt;code&gt;failure&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *         &lt;dd&gt;The function to call upon a response failure condition.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;dt&gt;&lt;code&gt;argument&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *         &lt;dd&gt;Arbitrary data payload that will be passed back to the success and failure handlers.&lt;/dd&gt;</span>
+<span class="cm">     *         &lt;/dl&gt;</span>
+<span class="cm">     *     &lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;&lt;code&gt;cfg&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;Configuration object, if any.&lt;/dd&gt;</span>
 <span class="cm">     *     &lt;/dl&gt;</span>
 <span class="cm">     * @return {Number} Interval ID.</span>
 <span class="cm">     */</span>
-    <span class="nx">setInterval</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msec</span><span class="p">,</span> <span class="nx">request</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">msec</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sendRequest</span><span class="p">,</span> <span class="p">[</span><span class="nx">request</span><span class="p">,</span> <span class="nx">callback</span><span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="nx">setInterval</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msec</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="nx">msec</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sendRequest</span><span class="p">,</span> <span class="p">[</span> <span class="nx">callback</span> <span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_intervals</span><span class="p">[</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
         <span class="k">return</span> <span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
     <span class="p">},</span>
@@ -181,6 +187,7 @@
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_swf.html" title="swf">swf</a></li>
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>

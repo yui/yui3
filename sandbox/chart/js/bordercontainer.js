@@ -48,7 +48,7 @@
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		CLASSNAME:"BorderContainer",
+		AS_CLASS:"BorderContainer",
 		
 		/**
 		 * Reference to the layout strategy used for displaying child items.
@@ -157,7 +157,7 @@
 				this.appswf.applyMethod(this._id, "add" + locationToUpperCase + "Item", ["$" + item._id]);
 				if (location != "center")
 				{
-					item.setStyle("position", location);
+					item.set("styles", {position: location});
 				}
 			}
 			else
@@ -168,16 +168,5 @@
 				}
 				this.itemsQueue[location].push(item);
 			}
-		},
-		
-		/**
-		 * Public accessor to the unique name of the BorderContainer instance.
-		 *
-		 * @method toString
-		 * @return {String} Unique name of the BorderContainer instance.
-		 */
-		toString: function()
-		{
-			return "BorderContainer " + this._id;
 		}
 	});
