@@ -152,15 +152,28 @@
 <span class="nx">YUI</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">_config</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">mods</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">modules</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> 
+            <span class="c1">// j, m, g,</span>
+            <span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> 
+            <span class="nx">mods</span>   <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">modules</span><span class="p">,</span>
+            <span class="nx">groups</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">groups</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">mods</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;modules&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">m</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="k">in</span> <span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">j</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="nx">mods</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">=</span> <span class="nx">m</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
+                <span class="c1">// m = o[i];</span>
+                <span class="c1">// for (j in m) {</span>
+                <span class="c1">//     if (m.hasOwnProperty(j)) {</span>
+                <span class="c1">//         mods[j] = m[j];</span>
+                <span class="c1">//     }</span>
+                <span class="c1">// }</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">mods</span><span class="p">,</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">groups</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;groups&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// g = o[i];</span>
+                <span class="c1">// for (j in g) {</span>
+                <span class="c1">//     if (g.hasOwnProperty(j)) {</span>
+                <span class="c1">//         groups[j] = g[j];</span>
+                <span class="c1">//     }</span>
+                <span class="c1">// }</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">groups</span><span class="p">,</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;win&#39;</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">config</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">contentWindow</span> <span class="o">||</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                 <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span> <span class="o">=</span> <span class="nx">config</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nb">document</span><span class="p">;</span>
