@@ -81,7 +81,7 @@
 			<div id="output"></div>
 		<script>
 
-			YUI().use('node', 'event-custom', 'swfdetect', 'swf', 'attribute', 'chart', function (Y)
+			YUI().use('node', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
 				{
 					// Create application level styles
 					var chartstyles = {
@@ -99,10 +99,8 @@
 					var mydata = getData();
 
 					// Create bottom axis styles
-					var bottomaxisstyles = 
-					{
-						label:
-						{
+					var bottomaxisstyles = {
+						label:{
 							fontName:"Georgia",
 							fontSize:11,
 							color:0xBDD7EB,
@@ -121,8 +119,7 @@
 					};	
 
 					// Create left axis styles
-					var leftaxisstyles = 
-					{
+					var leftaxisstyles = {
 						label:{
 							fontName:"Georgia",
 							fontSize:11,
@@ -142,8 +139,7 @@
 					};
 
 					// Create right axis styles
-					var rightaxisstyles = 
-					{
+					var rightaxisstyles = {
 						label:{
 							fontName:"Georgia",
 							fontSize:11,
@@ -163,15 +159,13 @@
 					};
 					
 					// Add expense graph styles
-					var expensegraphstyles = 
-					{
+					var expensegraphstyles = {
 						color:0x5577AF,
 						weight:"2"
 					};
 
 					// Add revenue graph styles
-					var revenuegraphstyles = 
-					{
+					var revenuegraphstyles = {
 						color:0xFF0000,
 						weight:"2"
 					}
@@ -236,10 +230,8 @@
 	var mydata = getData();
 
 	// Create bottom axis styles
-	var bottomaxisstyles = 
-	{
-		label:
-		{
+	var bottomaxisstyles = {
+		label:{
 			fontName:"Georgia",
 			fontSize:11,
 			color:0xBDD7EB,
@@ -258,8 +250,7 @@
 	};	
 
 	// Create left axis styles
-	var leftaxisstyles = 
-	{
+	var leftaxisstyles = {
 		label:{
 			fontName:"Georgia",
 			fontSize:11,

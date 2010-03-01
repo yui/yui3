@@ -19,9 +19,67 @@
 function SWFWidget (p_oElement, config)
 {
 	this._initConfig(p_oElement, config);
+	SWFWidget.superclass.constructor.apply(this, [config]);
 }
 
-SWFWidget.prototype =
+SWFWidget.NAME = "swfWidget";
+
+/**
+ * Attribute config
+ * @private
+ */
+SWFWidget.ATTRS = {
+	/**
+	 * Indicates whether item has been added to its parent.
+	 */
+	added:
+	{
+		value:false
+	},
+	/**
+	 * Reference to corresponding Actionscript class.
+	 */
+	className:  
+	{
+		readOnly:true,
+
+		getter: function()
+		{
+			return this.AS_CLASS;
+		}
+	},
+	/**
+	 * Hash of style properties for class
+	 */
+	styles:
+	{
+		value: null,
+
+		lazyAdd: false,
+
+		setter: function(val)
+		{
+			this._setStyles(val);
+			if(this.swfReadyFlag)
+			{
+				this._updateStyles();
+			}
+			return this._styles;
+		},
+		
+		getter: function()
+		{
+			return this._styles;
+		},
+	
+		validator: function(val)
+		{
+			return Y.Lang.isObject(val);
+		}
+	}
+};
+
+Y.extend(SWFWidget, Y.Base,
 {
 	/**
 	 * Initializes class
@@ -30,10 +88,9 @@ SWFWidget.prototype =
 	 */
 	_initConfig: function(p_oElement, config)
 	{
-		this._styles = this._mergeStyles(this._styles, this._getDefaultStyles());
 		this._id = Y.guid(this.GUID);
 		this._setParent(p_oElement);
-		this.addAttrs(this._attributeConfig, config);
+		this._styles = this._mergeStyles(this._styles, this._getDefaultStyles());
 	},
 
 	_setParent: function(p_oElement)
@@ -161,55 +218,7 @@ SWFWidget.prototype =
 				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
-	},
+	}
+});
 
-	/**
-	 * Attribute config
-	 * @private
-	 */
-	_attributeConfig:
-	{
-		/**
-		 * Reference to corresponding Actionscript class.
-		 */
-		className:  
-		{
-			readOnly:true,
-
-			getter: function()
-			{
-				return this.AS_CLASS;
-			}
-		},
-		/**
-		 * Hash of style properties for class
-		 */
-		styles:
-		{
-			value: null,
-
-			setter: function(val)
-			{
-				this._setStyles(val);
-				if(this.swfReadyFlag)
-				{
-					this._updateStyles();
-				}
-				return this._styles;
-			},
-			
-			getter: function()
-			{
-				return this._styles;
-			},
-		
-			validator: function(val)
-			{
-				return Y.Lang.isObject(val);
-			}
-		}
-	}	
-};
-
-Y.augment(SWFWidget, Y.Attribute);
 Y.SWFWidget = SWFWidget;

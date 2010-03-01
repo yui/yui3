@@ -28,6 +28,8 @@
 		BorderContainer.superclass.constructor.apply(this, arguments);
 	}
 
+	BorderContainer.NAME = "borderContainer";
+
 	/**
 	 * Need to refactor to augment Attribute
 	 */
