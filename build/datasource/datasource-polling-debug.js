@@ -12,11 +12,9 @@ YUI.add('datasource-polling', function(Y) {
  * @class Pollable
  * @extends DataSource.Local
  */    
-var LANG = Y.Lang,
-
-    Pollable = function() {
-        this._intervals = {};
-    };
+function Pollable() {
+    this._intervals = {};
+}
 
 Pollable.prototype = {
 
@@ -29,25 +27,33 @@ Pollable.prototype = {
     _intervals: null,
 
     /**
-     * Sets up a polling mechanism to send requests at set intervals and forward
-     * responses to given callback.
+     * Sets up a polling mechanism to send requests at set intervals and
+     * forward responses to given callback.
      *
      * @method setInterval
      * @param msec {Number} Length of interval in milliseconds.
-     * @param request {Object} Request object.
-     * @param callback {Object} An object literal with the following properties:
+     * @param request {Object} An object literal with the following properties:
      *     <dl>
-     *     <dt><code>success</code></dt>
-     *     <dd>The function to call when the data is ready.</dd>
-     *     <dt><code>failure</code></dt>
-     *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>argument</code></dt>
-     *     <dd>Arbitrary data that will be passed back to the success and failure handlers.</dd>
+     *     <dt><code>request</code></dt>
+     *     <dd>The request to send to the live data source, if any.</dd>
+     *     <dt><code>callback</code></dt>
+     *     <dd>An object literal with the following properties:
+     *         <dl>
+     *         <dt><code>success</code></dt>
+     *         <dd>The function to call when the data is ready.</dd>
+     *         <dt><code>failure</code></dt>
+     *         <dd>The function to call upon a response failure condition.</dd>
+     *         <dt><code>argument</code></dt>
+     *         <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
+     *         </dl>
+     *     </dd>
+     *     <dt><code>cfg</code></dt>
+     *     <dd>Configuration object, if any.</dd>
      *     </dl>
      * @return {Number} Interval ID.
      */
-    setInterval: function(msec, request, callback) {
-        var x = Y.later(msec, this, this.sendRequest, [request, callback], true);
+    setInterval: function(msec, callback) {
+        var x = Y.later(msec, this, this.sendRequest, [ callback ], true);
         this._intervals[x.id] = x;
         return x.id;
     },

@@ -217,16 +217,12 @@ stored here to be able to clear all intervals.
                                                          request
                                                     
                                                 
-                                                        , 
-                                                         callback
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Sets up a polling mechanism to send requests at set intervals and forward
-responses to given callback.
+                                            Sets up a polling mechanism to send requests at set intervals and
+forward responses to given callback.
                                         </div>
 
                                         <div class="description">
@@ -243,20 +239,23 @@ responses to given callback.
                                                         <code><span property="yui:name">request</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  Request object.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">callback</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
                                                         <span property="yui:description">  An object literal with the following properties:
+<dl>
+<dt><code>request</code></dt>
+<dd>The request to send to the live data source, if any.</dd>
+<dt><code>callback</code></dt>
+<dd>An object literal with the following properties:
 <dl>
 <dt><code>success</code></dt>
 <dd>The function to call when the data is ready.</dd>
 <dt><code>failure</code></dt>
 <dd>The function to call upon a response failure condition.</dd>
 <dt><code>argument</code></dt>
-<dd>Arbitrary data that will be passed back to the success and failure handlers.</dd>
+<dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
+</dl>
+</dd>
+<dt><code>cfg</code></dt>
+<dd>Configuration object, if any.</dd>
 </dl></span>
                                                         </dd>
                                                 </dl>
