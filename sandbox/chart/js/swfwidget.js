@@ -9,36 +9,87 @@
 /**
  * Creates the SWFWidget instance and contains initialization data
  *
- * @param {Object} p_oElement Parent class. If the this class instance is the top level
- * of a flash application, the value is the id of its containing dom element. Otherwise, the
- * value is a reference to it container.
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class SWFWidget
  * @constructor
  */
-function SWFWidget (p_oElement, config)
+function SWFWidget (config)
 {
-	this._initConfig(p_oElement, config);
+	this._createId();
+	SWFWidget.superclass.constructor.apply(this, arguments);
 }
 
-SWFWidget.prototype =
+SWFWidget.NAME = "swfWidget";
+
+/**
+ * Attribute config
+ * @private
+ */
+SWFWidget.ATTRS = {
+	/**
+	 * Parent element for the SWFWidget instance.
+	 */
+	parent:{
+		lazyAdd:false,
+		
+		value:null
+	},
+
+	/**
+	 * Indicates whether item has been added to its parent.
+	 */
+	added:
+	{
+		value:false
+	},
+	/**
+	 * Reference to corresponding Actionscript class.
+	 */
+	className:  
+	{
+		readOnly:true,
+
+		getter: function()
+		{
+			return this.AS_CLASS;
+		}
+	},
+	/**
+	 * Hash of style properties for class
+	 */
+	styles:
+	{
+		value: {},
+
+		lazyAdd: false,
+
+		setter: function(val)
+		{
+			val = this._setStyles(val);
+			if(this.swfReadyFlag)
+			{
+				this._updateStyles();
+			}
+			return val;
+		},
+		
+		validator: function(val)
+		{
+			return Y.Lang.isObject(val);
+		}
+	}
+};
+
+Y.extend(SWFWidget, Y.Base,
 {
 	/**
-	 * Initializes class
+	 * Creates unique id for class instance.
 	 *
 	 * @private
 	 */
-	_initConfig: function(p_oElement, config)
+	_createId: function()
 	{
-		this._styles = this._mergeStyles(this._styles, this._getDefaultStyles());
 		this._id = Y.guid(this.GUID);
-		this._setParent(p_oElement);
-		this.addAttrs(this._attributeConfig, config);
-	},
-
-	_setParent: function(p_oElement)
-	{
-		this.oElement = p_oElement;
 	},
 
 	/**
@@ -82,7 +133,7 @@ SWFWidget.prototype =
 	 */
 	_setStyles: function(newstyles)
 	{
-		var j, styles = this._styles,
+		var j, styles = this.get("styles") || {},
 		styleHash = this._styleObjHash;
 		styles[this._id] = styles[this._id] || {};
 		Y.Object.each(newstyles, function(value, key, newstyles)
@@ -117,7 +168,7 @@ SWFWidget.prototype =
 				}
 			}
 		}, this);
-		this._styles = styles;
+		return styles;
 	},
 
 	/**
@@ -153,7 +204,7 @@ SWFWidget.prototype =
 	_updateStyles: function()
 	{
 		var styleHash = this._styleObjHash,
-		styles = this._styles;
+		styles = this.get("styles");
 		Y.Object.each(styles, function(value, key, styles)
 		{
 			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
@@ -161,55 +212,7 @@ SWFWidget.prototype =
 				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
-	},
+	}
+});
 
-	/**
-	 * Attribute config
-	 * @private
-	 */
-	_attributeConfig:
-	{
-		/**
-		 * Reference to corresponding Actionscript class.
-		 */
-		className:  
-		{
-			readOnly:true,
-
-			getter: function()
-			{
-				return this.AS_CLASS;
-			}
-		},
-		/**
-		 * Hash of style properties for class
-		 */
-		styles:
-		{
-			value: null,
-
-			setter: function(val)
-			{
-				this._setStyles(val);
-				if(this.swfReadyFlag)
-				{
-					this._updateStyles();
-				}
-				return this._styles;
-			},
-			
-			getter: function()
-			{
-				return this._styles;
-			},
-		
-			validator: function(val)
-			{
-				return Y.Lang.isObject(val);
-			}
-		}
-	}	
-};
-
-Y.augment(SWFWidget, Y.Attribute);
 Y.SWFWidget = SWFWidget;
