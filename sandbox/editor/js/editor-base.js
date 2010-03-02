@@ -32,7 +32,6 @@ YUI.add('editor-base', function(Y) {
             frame.after('ready', Y.bind(this._afterFrameReady, this));
             frame.addTarget(this);
             this.frame = frame;
-            
         },
         /**
         * After frame ready, bind mousedown & keyup listeners
@@ -90,13 +89,32 @@ YUI.add('editor-base', function(Y) {
         * Renders the Y.Frame to the passed node.
         * @method render
         * @param {Selector/HTMLElement/Node} node The node to append the Editor to
-        * @return {Y.Frame}
+        * @return {EditorBase}
         * @chainable
         */
         render: function(node) {
             this.frame.set('content', this.get('content'));
             this.frame.render(node);
             return this;
+        },
+        /**
+        * Focus the contentWindow of the iframe
+        * @method focus
+        * @return {EditorBase}
+        * @chainable
+        */
+        focus: function() {
+            this.frame.getInstance().one('win').focus();
+            return this;
+        },
+        /**
+        * (Un)Filters the content of the Editor, cleaning YUI related code. //TODO better filtering
+        * @method getContent
+        * @return {String} The filtered content of the Editor
+        */
+        getContent: function() {
+            var html = this.getInstance().Selection.unfilter();
+            return html;
         }
     }, {
         /**
@@ -133,10 +151,13 @@ YUI.add('editor-base', function(Y) {
             content: {
                 value: '<br>',
                 setter: function(str) {
+                    if (str.substr(0, 1) === "\n") {
+                        Y.log('Stripping first carriage return from content before injecting', 'warn', 'editor');
+                        str = str.substr(1);
+                    }
                     return this.frame.set('content', str);
                 },
                 getter: function() {
-                    //TODO - Filter Content HERE..
                     return this.frame.get('content');
                 }
             }

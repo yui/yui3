@@ -100,8 +100,11 @@ YUI.add('frame', function(Y) {
 
             e.frameTarget = e.target;
             e.frameCurrentTarget = e.currentTarget;
-
+            e.frameEvent = e;
+            
+            //TODO: Not sure why this stopped working!!!
             this.publish(e.type, {
+                emitFacade: true,
                 stoppedFn: Y.bind(function(ev, domev) {
                     ev.halt();
                 }, this, e),
@@ -210,7 +213,8 @@ YUI.add('frame', function(Y) {
                     TITLE: this.get('title'),
                     META: Frame.META,
                     CONTENT: this.get('content'),
-                    BASE_HREF: this.get('basehref')
+                    BASE_HREF: this.get('basehref'),
+                    DEFAULT_CSS: Frame.DEFAULT_CSS
                 });
                 if (Y.config.doc.compatMode != 'BackCompat') {
                     Y.log('Adding Doctype to frame', 'info', 'frame');
@@ -222,7 +226,6 @@ YUI.add('frame', function(Y) {
                 Y.log('Injecting content into iframe', 'info', 'frame');
                 doc.open();
                 doc.write(html);
-                doc.close();
                 if (this.get('designMode')) {
                     doc.designMode = 'on';
                     if (!Y.UA.ie) {
@@ -230,6 +233,7 @@ YUI.add('frame', function(Y) {
                         doc.execCommand('styleWithCSS', false, false);
                     }
                 }
+                doc.close();
             }
         },
         /**
@@ -359,6 +363,7 @@ YUI.add('frame', function(Y) {
             return this;
         }
     }, {
+        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
         /**
         * @static
         * @property HTML
@@ -372,7 +377,7 @@ YUI.add('frame', function(Y) {
         * @description The template used to create the page when created dynamically.
         * @type String
         */
-        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/></head><body>{CONTENT}</body></html>',
+        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/><style id="editor_css">{DEFAULT_CSS}</style></head><body>{CONTENT}</body></html>',
         /**
         * @static
         * @property DOC_TYPE

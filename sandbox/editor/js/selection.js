@@ -104,7 +104,47 @@ YUI.add('selection', function(Y) {
             Y.Selection.prototype._swap(baseNodes.item(k), newTag);
         });
     };
+    /**
+    * Undoes what filter does enough to return the HTML from the Editor, then re-applies the filter.
+    * @static
+    * @method unfilter
+    * @return {String} The filtered HTML
+    */
+    Y.Selection.unfilter = function() {
+        var nodes = Y.all('body [class]'),
+            html = '';
+        
+        Y.log('UnFiltering nodes', 'info', 'selection');
+        
+        nodes.each(function(n) {
+            if (n.hasClass(n._yuid)) {
+                //One of ours
+                n.setStyle(FONT_FAMILY, n.getStyle(FONT_FAMILY));
+                n.removeClass(n._yuid);
+                if (n.getAttribute('class') === '') {
+                    n.removeAttribute('class');
+                }
+            }
+        });
+        var nons = Y.all('.yui-non');
+        nons.each(function(n) {
+            if (n.get('innerHTML') === '') {
+                n.remove();
+            }
+        });
 
+        html = Y.one('body').get('innerHTML');
+        
+        nodes.each(function(n) {
+            n.addClass(n._yuid);
+            n.setStyle(FONT_FAMILY, '');
+            if (n.getAttribute('style') === '') {
+                n.removeAttribute('style');
+            }
+        });
+        
+        return html;
+    };
     /**
     * Resolve a node from the selection object and return a Node instance
     * @static
