@@ -9,14 +9,11 @@
 	/**
 	 * Creates the Container instance and contains initialization data
 	 *
-	 * @param {Object} p_oElement Parent class. If the this class instance is the top level
-	 * of a flash application, the value is the id of its containing dom element. Otherwise, the
-	 * value is a reference to it container.
-	 * @param {Object} config (optional) Configuration parameters for the Chart.
+	 * @param {Object} config Configuration parameters for the Container instance.
 	 * @class Container
 	 * @constructor
 	 */
-	function Container (p_oElement, config) 
+	function Container (config) 
 	{
 		Container.superclass.constructor.apply(this, arguments);
 	}

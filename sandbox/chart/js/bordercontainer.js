@@ -18,12 +18,9 @@
 	 *
 	 * @extends Container
 	 * @class BorderContainer
-	 * @param {Object} p_oElement Parent class. If the this class instance is the top level
-	 * of a flash application, the value is the id of its containing dom element. Otherwise, the
-	 * value is a reference to it container.
-	 * @param {Object} config (optional) Configuration parameters for the Chart.
+	 * @param {Object} config Configuration parameters for the Chart.
 	 */
-	function BorderContainer (p_oElement, config) 
+	function BorderContainer (config) 
 	{
 		BorderContainer.superclass.constructor.apply(this, arguments);
 	}

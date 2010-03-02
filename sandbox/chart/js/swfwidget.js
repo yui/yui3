@@ -9,17 +9,14 @@
 /**
  * Creates the SWFWidget instance and contains initialization data
  *
- * @param {Object} p_oElement Parent class. If the this class instance is the top level
- * of a flash application, the value is the id of its containing dom element. Otherwise, the
- * value is a reference to it container.
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class SWFWidget
  * @constructor
  */
-function SWFWidget (p_oElement, config)
+function SWFWidget (config)
 {
-	this._initConfig(p_oElement, config);
-	SWFWidget.superclass.constructor.apply(this, [config]);
+	this._createId();
+	SWFWidget.superclass.constructor.apply(this, arguments);
 }
 
 SWFWidget.NAME = "swfWidget";
@@ -29,6 +26,15 @@ SWFWidget.NAME = "swfWidget";
  * @private
  */
 SWFWidget.ATTRS = {
+	/**
+	 * Parent element for the SWFWidget instance.
+	 */
+	parent:{
+		lazyAdd:false,
+		
+		value:null
+	},
+
 	/**
 	 * Indicates whether item has been added to its parent.
 	 */
@@ -53,25 +59,20 @@ SWFWidget.ATTRS = {
 	 */
 	styles:
 	{
-		value: null,
+		value: {},
 
 		lazyAdd: false,
 
 		setter: function(val)
 		{
-			this._setStyles(val);
+			val = this._setStyles(val);
 			if(this.swfReadyFlag)
 			{
 				this._updateStyles();
 			}
-			return this._styles;
+			return val;
 		},
 		
-		getter: function()
-		{
-			return this._styles;
-		},
-	
 		validator: function(val)
 		{
 			return Y.Lang.isObject(val);
@@ -82,20 +83,13 @@ SWFWidget.ATTRS = {
 Y.extend(SWFWidget, Y.Base,
 {
 	/**
-	 * Initializes class
+	 * Creates unique id for class instance.
 	 *
 	 * @private
 	 */
-	_initConfig: function(p_oElement, config)
+	_createId: function()
 	{
 		this._id = Y.guid(this.GUID);
-		this._setParent(p_oElement);
-		this._styles = this._mergeStyles(this._styles, this._getDefaultStyles());
-	},
-
-	_setParent: function(p_oElement)
-	{
-		this.oElement = p_oElement;
 	},
 
 	/**
@@ -139,7 +133,7 @@ Y.extend(SWFWidget, Y.Base,
 	 */
 	_setStyles: function(newstyles)
 	{
-		var j, styles = this._styles,
+		var j, styles = this.get("styles") || {},
 		styleHash = this._styleObjHash;
 		styles[this._id] = styles[this._id] || {};
 		Y.Object.each(newstyles, function(value, key, newstyles)
@@ -174,7 +168,7 @@ Y.extend(SWFWidget, Y.Base,
 				}
 			}
 		}, this);
-		this._styles = styles;
+		return styles;
 	},
 
 	/**
@@ -210,7 +204,7 @@ Y.extend(SWFWidget, Y.Base,
 	_updateStyles: function()
 	{
 		var styleHash = this._styleObjHash,
-		styles = this._styles;
+		styles = this.get("styles");
 		Y.Object.each(styles, function(value, key, styles)
 		{
 			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))

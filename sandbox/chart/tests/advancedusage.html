@@ -171,13 +171,13 @@
 					}
 					
 					// Create chart and set dataProvider
-					var mychart = new Y.Chart("#testdiv", {swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
+					var mychart = new Y.Chart({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
 					mychart.set("dataProvider", mydata);
 					
 					// Create axes
-					var mybottomaxis = new Y.Axis(mychart, {axisType:"Time", styles:bottomaxisstyles});
-					var myleftaxis = new Y.Axis(mychart, {axisType:"Numeric", styles:leftaxisstyles});
-					var myrightaxis = new Y.Axis(mychart, {axisType:"Numeric", styles:rightaxisstyles});
+					var mybottomaxis = new Y.Axis({parent:mychart, axisType:"Time", styles:bottomaxisstyles});
+					var myleftaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:leftaxisstyles});
+					var myrightaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:rightaxisstyles});
 
 					// Add axes keys
 					mybottomaxis.addKey("date");
@@ -185,8 +185,8 @@
 					myrightaxis.addKey("revenue");
 
 					// Create graph
-					var myexpensegraph = new Y.LineGraph(mychart, {xaxis:mybottomaxis, yaxis:myleftaxis, xkey:"date", ykey:"expenses", styles:expensegraphstyles});
-					var myrevenuegraph = new Y.LineGraph(mychart, {xaxis:mybottomaxis, yaxis:myrightaxis, xkey:"date", ykey:"revenue", styles:revenuegraphstyles});
+					var myexpensegraph = new Y.LineGraph({parent:mychart, xaxis:mybottomaxis, yaxis:myleftaxis, xkey:"date", ykey:"expenses", styles:expensegraphstyles});
+					var myrevenuegraph = new Y.LineGraph({parent:mychart, xaxis:mybottomaxis, yaxis:myrightaxis, xkey:"date", ykey:"revenue", styles:revenuegraphstyles});
 					
 					// Add items
 					mychart.addBottomItem(mybottomaxis);

@@ -16,13 +16,9 @@
 	 *
 	 * @class LineGraph
 	 * @constructor
-	 * @param xaxis {Axis} reference to the xaxis 
-	 * @param yaxis {Axis} reference to the yaxis 
-	 * @param xkey {String} pointer to the array of values contained in the xaxis
-	 * @param ykey {String} point to ther array of values container in the yaxis
-	 * @param {Object} config (optional) Configuration parameters for the Axis.
+	 * @param {Object} config Configuration parameters for the Axis.
 	 */
-	function LineGraph (p_oElement, config) 
+	function LineGraph (config) 
 	{
 		LineGraph.superclass.constructor.apply(this, arguments);
 	}
