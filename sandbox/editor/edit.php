@@ -59,6 +59,7 @@
         <button value="inserthtml">InsertHTML</button>
         <button value="addclass">AddClass</button>
         <button value="removeclass">RemoveClass</button>
+        <button value="bidi">BiDi</button>
     </div>
     <div id="test"></div>
     <div id="smilies"></div>
@@ -175,9 +176,32 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         });
     };
 
-    Y.Plugin.ExecCommand.COMMANDS.foo = function() {
-        alert('You clicked on Foo');
-    }
+    //Mixin the new commands
+    Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
+        foo: function() {
+            alert('You clicked on Foo');
+        },
+        bidi: function() {
+            var inst = this.getInstance();
+            var sel = new inst.Selection();
+            var blocks = 'p,div,li,body';
+            if (sel.anchorNode) {
+                var block = sel.anchorNode;
+                if (!sel.anchorNode.test(blocks)) {
+                    block = sel.anchorNode.ancestor(blocks);
+                }
+                var dir = block.getAttribute('dir');
+                if (dir === 'rtl') {
+                    dir = 'ltr';
+                } else {
+                    dir = 'rtl';
+                }
+                block.setAttribute('dir', dir);
+            }
+        }
+    });
+
+
 
     var editor = new Y.EditorBase({
         //content: Y.one('#stub').get('innerHTML')
