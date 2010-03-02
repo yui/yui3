@@ -158,6 +158,30 @@ YUI.add('exec-command', function(Y) {
                 removeclass: function(cmd, cls) {
                     var inst = this.getInstance();
                     return (new inst.Selection()).getSelected().removeClass(cls);
+                },
+                bidi: function() {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(),
+                        blockItem, dir,
+                        blocks = 'p,div,li,body'; //More??
+
+                    if (sel.anchorNode) {
+                        blockItem = sel.anchorNode;
+                        if (!sel.anchorNode.test(blocks)) {
+                            blockItem = sel.anchorNode.ancestor(blocks);
+                        }
+                        dir = blockItem.getAttribute('dir');
+                        if (dir === '') {
+                            dir = inst.one('html').getAttribute('dir');
+                        }
+                        if (dir === 'rtl') {
+                            dir = 'ltr';
+                        } else {
+                            dir = 'rtl';
+                        }
+                        blockItem.setAttribute('dir', dir);
+                    }
+                    return blockItem;
                 }
             }
         });

@@ -7,7 +7,7 @@
             margin: 1em;
         }
         #test1 {
-            height: 285px;
+            height: 307px;
             border: 3px solid red;
             width: 740px;
             margin: 1em;
@@ -65,7 +65,19 @@
     <div id="smilies"></div>
 </div>
 
+<button id="getHTML">Get HTML</button>
+<button id="setHTML">Set HTML</button>
+
 <div id="stub">
+<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+<p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
+<ul>
+    <li style="font-family: courier">Item #1</li>
+    <li>Item #1</li>
+    <li>Item #1</li>
+</ul>
+<p>This is <span style="font-family: courier">another</span> test.</p>
+<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 <style>
 del {
     background-color: yellow;
@@ -76,15 +88,6 @@ del {
     text-decoration: underline overline;
 }
 </style>
-<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
-<p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
-<ul>
-    <li style="font-family: courier">Item #1</li>
-    <li>Item #1</li>
-    <li>Item #1</li>
-</ul>
-<p>This is <span style="font-family: courier">another</span> test.</p>
-<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
@@ -163,6 +166,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     });
     s_cont.delegate('click', function(e) {
         var img = e.currentTarget;
+        editor.focus();
         editor.execCommand('inserthtml', '<span>&nbsp;<img src="' + img.get('src') + '">&nbsp;</span>');
     }, 'img');
     
@@ -180,38 +184,20 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
         foo: function() {
             alert('You clicked on Foo');
-        },
-        bidi: function() {
-            var inst = this.getInstance();
-            var sel = new inst.Selection();
-            var blocks = 'p,div,li,body';
-            if (sel.anchorNode) {
-                var block = sel.anchorNode;
-                if (!sel.anchorNode.test(blocks)) {
-                    block = sel.anchorNode.ancestor(blocks);
-                }
-                var dir = block.getAttribute('dir');
-                if (dir === 'rtl') {
-                    dir = 'ltr';
-                } else {
-                    dir = 'rtl';
-                }
-                block.setAttribute('dir', dir);
-            }
         }
     });
 
 
 
     var editor = new Y.EditorBase({
-        //content: Y.one('#stub').get('innerHTML')
+        content: Y.one('#stub').get('innerHTML')
     });
     editor.on('nodeChange', function(e) {
         updateButtons(e.node);
     });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
-        this.set('content', Y.one('#stub').get('innerHTML'));
+        //this.set('content', Y.one('#stub').get('innerHTML'));
     });
     editor.on('frame:keyup', function(e) {
         var inst = this.getInstance(),
@@ -228,6 +214,15 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         }
     });
     editor.render('#test');
+
+    Y.on('click', function(e) {
+        var html = editor.getContent();
+        console.log(html);
+    }, '#getHTML');
+
+    Y.on('click', function(e) {
+        editor.set('content', '<p>This is a test: ' + (new Date()) + '</p>');
+    }, '#setHTML');
 
 });
 </script>
