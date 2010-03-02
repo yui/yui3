@@ -40,18 +40,17 @@ Y.mix(Y.namespace("Intl"), {
      * Returns false on failure, which would happen if the language had not been registered through the <a href="#method_add">add()</a> method.
      *
      * @method setLang
-     * @private
      *
      * @param {String} module The module name.
      * @param {String} lang The BCP 47 language tag.
      * @return boolean true if successful, false if not. 
      */
-    _setLang : function(module, lang) {
+    setLang : function(module, lang) {
         var langs = this._mod(module),
             currLang = langs[ACTIVE_LANG],
             exists = !!langs[lang];
 
-        if (exists) {
+        if (exists && lang !== currLang) {
             langs[ACTIVE_LANG] = lang;
             this.fire("intl:langChange", {module: module, prevVal: currLang, newVal: (lang === ROOT_LANG) ? "" : lang});
         }
@@ -84,7 +83,7 @@ Y.mix(Y.namespace("Intl"), {
     add : function(module, lang, strings) {
         lang = lang || ROOT_LANG;
         this._mod(module)[lang] = strings;
-        this._setLang(module, lang);
+        this.setLang(module, lang);
     },
 
     /**

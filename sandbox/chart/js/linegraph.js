@@ -16,44 +16,39 @@
 	 *
 	 * @class LineGraph
 	 * @constructor
-	 * @param xaxis {Axis} reference to the xaxis 
-	 * @param yaxis {Axis} reference to the yaxis 
-	 * @param xkey {String} pointer to the array of values contained in the xaxis
-	 * @param ykey {String} point to ther array of values container in the yaxis
-	 * @param {Object} config (optional) Configuration parameters for the Axis.
+	 * @param {Object} config Configuration parameters for the Axis.
 	 */
-	function LineGraph (p_oElement, config) 
+	function LineGraph (config) 
 	{
-		this._attributeConfig = Y.merge(this._attributeConfig, LineGraph.superclass._attributeConfig);
 		LineGraph.superclass.constructor.apply(this, arguments);
 	}
 
+	LineGraph.NAME = "lineGraph";
+
+	LineGraph.ATTRS = {
+		xaxis:
+		{
+			value:null
+		},
+
+		yaxis:
+		{
+			value:null
+		},
+		
+		xkey:
+		{
+			value:null
+		},
+
+		ykey:
+		{
+			value:null
+		}
+	};
 
 	Y.extend(LineGraph, Y.SWFWidget, 
 	{
-		_attributeConfig:
-		{
-			xaxis:
-			{
-				value:null
-			},
-
-			yaxis:
-			{
-				value:null
-			},
-			
-			xkey:
-			{
-				value:null
-			},
-
-			ykey:
-			{
-				value:null
-			}
-		},
-
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */

@@ -81,7 +81,7 @@
 			<div id="output"></div>
 		<script>
 
-			YUI().use('node', 'event-custom', 'swfdetect', 'swf', 'attribute', 'chart', function (Y)
+			YUI().use('node', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
 				{
 					// Create application level styles
 					var chartstyles = {
@@ -99,10 +99,8 @@
 					var mydata = getData();
 
 					// Create bottom axis styles
-					var bottomaxisstyles = 
-					{
-						label:
-						{
+					var bottomaxisstyles = {
+						label:{
 							fontName:"Georgia",
 							fontSize:11,
 							color:0xBDD7EB,
@@ -121,8 +119,7 @@
 					};	
 
 					// Create left axis styles
-					var leftaxisstyles = 
-					{
+					var leftaxisstyles = {
 						label:{
 							fontName:"Georgia",
 							fontSize:11,
@@ -142,8 +139,7 @@
 					};
 
 					// Create right axis styles
-					var rightaxisstyles = 
-					{
+					var rightaxisstyles = {
 						label:{
 							fontName:"Georgia",
 							fontSize:11,
@@ -163,27 +159,25 @@
 					};
 					
 					// Add expense graph styles
-					var expensegraphstyles = 
-					{
+					var expensegraphstyles = {
 						color:0x5577AF,
 						weight:"2"
 					};
 
 					// Add revenue graph styles
-					var revenuegraphstyles = 
-					{
+					var revenuegraphstyles = {
 						color:0xFF0000,
 						weight:"2"
 					}
 					
 					// Create chart and set dataProvider
-					var mychart = new Y.Chart("#testdiv", {swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
+					var mychart = new Y.Chart({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
 					mychart.set("dataProvider", mydata);
 					
 					// Create axes
-					var mybottomaxis = new Y.Axis(mychart, {axisType:"Time", styles:bottomaxisstyles});
-					var myleftaxis = new Y.Axis(mychart, {axisType:"Numeric", styles:leftaxisstyles});
-					var myrightaxis = new Y.Axis(mychart, {axisType:"Numeric", styles:rightaxisstyles});
+					var mybottomaxis = new Y.Axis({parent:mychart, axisType:"Time", styles:bottomaxisstyles});
+					var myleftaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:leftaxisstyles});
+					var myrightaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:rightaxisstyles});
 
 					// Add axes keys
 					mybottomaxis.addKey("date");
@@ -191,8 +185,8 @@
 					myrightaxis.addKey("revenue");
 
 					// Create graph
-					var myexpensegraph = new Y.LineGraph(mychart, {xaxis:mybottomaxis, yaxis:myleftaxis, xkey:"date", ykey:"expenses", styles:expensegraphstyles});
-					var myrevenuegraph = new Y.LineGraph(mychart, {xaxis:mybottomaxis, yaxis:myrightaxis, xkey:"date", ykey:"revenue", styles:revenuegraphstyles});
+					var myexpensegraph = new Y.LineGraph({parent:mychart, xaxis:mybottomaxis, yaxis:myleftaxis, xkey:"date", ykey:"expenses", styles:expensegraphstyles});
+					var myrevenuegraph = new Y.LineGraph({parent:mychart, xaxis:mybottomaxis, yaxis:myrightaxis, xkey:"date", ykey:"revenue", styles:revenuegraphstyles});
 					
 					// Add items
 					mychart.addBottomItem(mybottomaxis);
@@ -236,10 +230,8 @@
 	var mydata = getData();
 
 	// Create bottom axis styles
-	var bottomaxisstyles = 
-	{
-		label:
-		{
+	var bottomaxisstyles = {
+		label:{
 			fontName:"Georgia",
 			fontSize:11,
 			color:0xBDD7EB,
@@ -258,8 +250,7 @@
 	};	
 
 	// Create left axis styles
-	var leftaxisstyles = 
-	{
+	var leftaxisstyles = {
 		label:{
 			fontName:"Georgia",
 			fontSize:11,
