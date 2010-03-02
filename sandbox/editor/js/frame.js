@@ -100,9 +100,11 @@ YUI.add('frame', function(Y) {
 
             e.frameTarget = e.target;
             e.frameCurrentTarget = e.currentTarget;
-
+            e.frameEvent = e;
+            
+            //TODO: Not sure why this stopped working!!!
             this.publish(e.type, {
-                bubbles: true,
+                emitFacade: true,
                 stoppedFn: Y.bind(function(ev, domev) {
                     ev.halt();
                 }, this, e),

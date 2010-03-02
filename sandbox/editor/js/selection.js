@@ -126,6 +126,13 @@ YUI.add('selection', function(Y) {
                 }
             }
         });
+        var nons = Y.all('.yui-non');
+        nons.each(function(n) {
+            if (n.get('innerHTML') === '') {
+                n.remove();
+            }
+        });
+
         html = Y.one('body').get('innerHTML');
         
         nodes.each(function(n) {
