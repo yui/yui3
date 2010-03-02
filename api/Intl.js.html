@@ -89,18 +89,17 @@
 <span class="cm">     * Returns false on failure, which would happen if the language had not been registered through the &lt;a href=&quot;#method_add&quot;&gt;add()&lt;/a&gt; method.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method setLang</span>
-<span class="cm">     * @private</span>
 <span class="cm">     *</span>
 <span class="cm">     * @param {String} module The module name.</span>
 <span class="cm">     * @param {String} lang The BCP 47 language tag.</span>
 <span class="cm">     * @return boolean true if successful, false if not. </span>
 <span class="cm">     */</span>
-    <span class="nx">_setLang</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">setLang</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">lang</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">langs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_mod</span><span class="p">(</span><span class="nx">module</span><span class="p">),</span>
             <span class="nx">currLang</span> <span class="o">=</span> <span class="nx">langs</span><span class="p">[</span><span class="nx">ACTIVE_LANG</span><span class="p">],</span>
             <span class="nx">exists</span> <span class="o">=</span> <span class="o">!!</span><span class="nx">langs</span><span class="p">[</span><span class="nx">lang</span><span class="p">];</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">exists</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">exists</span> <span class="o">&amp;&amp;</span> <span class="nx">lang</span> <span class="o">!==</span> <span class="nx">currLang</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">langs</span><span class="p">[</span><span class="nx">ACTIVE_LANG</span><span class="p">]</span> <span class="o">=</span> <span class="nx">lang</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s2">&quot;intl:langChange&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">module</span><span class="o">:</span> <span class="nx">module</span><span class="p">,</span> <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">currLang</span><span class="p">,</span> <span class="nx">newVal</span><span class="o">:</span> <span class="p">(</span><span class="nx">lang</span> <span class="o">===</span> <span class="nx">ROOT_LANG</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;&quot;</span> <span class="o">:</span> <span class="nx">lang</span><span class="p">});</span>
         <span class="p">}</span>
@@ -133,7 +132,7 @@
     <span class="nx">add</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span> <span class="nx">strings</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">lang</span> <span class="o">=</span> <span class="nx">lang</span> <span class="o">||</span> <span class="nx">ROOT_LANG</span><span class="p">;</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_mod</span><span class="p">(</span><span class="nx">module</span><span class="p">)[</span><span class="nx">lang</span><span class="p">]</span> <span class="o">=</span> <span class="nx">strings</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_setLang</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">lang</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">setLang</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">lang</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -302,7 +301,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Intl", "name": "add", "url": "Intl.html#method_add", "type": "method"}, {"access": "", "host": "Intl", "name": "get", "url": "Intl.html#method_get", "type": "method"}, {"access": "", "host": "Intl", "name": "getAvailableLangs", "url": "Intl.html#method_getAvailableLangs", "type": "method"}, {"access": "", "host": "Intl", "name": "getLang", "url": "Intl.html#method_getLang", "type": "method"}, {"access": "", "host": "Intl", "name": "intl:langChange", "url": "Intl.html#event_intl:langChange", "type": "event"}, {"access": "", "host": "Intl", "name": "lookupBestLang", "url": "Intl.html#method_lookupBestLang", "type": "method"}, {"access": "private", "host": "Intl", "name": "_mod", "url": "Intl.html#method__mod", "type": "method"}, {"access": "private", "host": "Intl", "name": "setLang", "url": "Intl.html#method_setLang", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Intl", "name": "add", "url": "Intl.html#method_add", "type": "method"}, {"access": "", "host": "Intl", "name": "get", "url": "Intl.html#method_get", "type": "method"}, {"access": "", "host": "Intl", "name": "getAvailableLangs", "url": "Intl.html#method_getAvailableLangs", "type": "method"}, {"access": "", "host": "Intl", "name": "getLang", "url": "Intl.html#method_getLang", "type": "method"}, {"access": "", "host": "Intl", "name": "intl:langChange", "url": "Intl.html#event_intl:langChange", "type": "event"}, {"access": "", "host": "Intl", "name": "lookupBestLang", "url": "Intl.html#method_lookupBestLang", "type": "method"}, {"access": "private", "host": "Intl", "name": "_mod", "url": "Intl.html#method__mod", "type": "method"}, {"access": "", "host": "Intl", "name": "setLang", "url": "Intl.html#method_setLang", "type": "method"}];
 </script>
 </body>
 </html>

@@ -131,7 +131,7 @@ YUI({
 
             ASSERT.areSame(Y.Intl.get("modA").hello, "こんにちは");
 
-            Y.Intl._setLang("modA", "fr");
+            Y.Intl.setLang("modA", "fr");
             ASSERT.areSame(Y.Intl.get("modA").hello, "Bonjour");
 
             ARRAYASSERT.itemsAreEquivalent(expectedEventStack, eventStack, function(a, b) {
@@ -160,7 +160,7 @@ YUI({
             ASSERT.areSame(Y.Intl.getLang("modB"), "");
             ASSERT.areSame(Y.Intl.get("modB").hello, "HELLO");
 
-            Y.Intl._setLang("modB", "fr");
+            Y.Intl.setLang("modB", "fr");
 
             ASSERT.areSame(Y.Intl.get("modB").hello, "Bonjour");
             ASSERT.areSame(Y.Intl.getLang("modB"), "fr");

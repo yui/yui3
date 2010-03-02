@@ -103,15 +103,28 @@ if (VERSION.indexOf('@') > -1) {
 YUI.prototype = {
     _config: function(o) {
         o = o || {};
-        var config = this.config, i, j, m, mods = config.modules;
+        var i, 
+            // j, m, g,
+            config = this.config, 
+            mods   = config.modules,
+            groups = config.groups;
         for (i in o) {
             if (mods && i == 'modules') {
-                m = o[i];
-                for (j in m) {
-                    if (m.hasOwnProperty(j)) {
-                        mods[j] = m[j];
-                    }
-                }
+                // m = o[i];
+                // for (j in m) {
+                //     if (m.hasOwnProperty(j)) {
+                //         mods[j] = m[j];
+                //     }
+                // }
+                this.mix(mods, o[i], true);
+            } else if (groups && i == 'groups') {
+                // g = o[i];
+                // for (j in g) {
+                //     if (g.hasOwnProperty(j)) {
+                //         groups[j] = g[j];
+                //     }
+                // }
+                this.mix(groups, o[i], true);
             } else if (i == 'win') {
                 config[i] = o[i].contentWindow || o[i];
                 config.doc = config[i].document;
