@@ -1083,6 +1083,7 @@ Y.ClickableRail = Y.mix( ClickableRail, {
          * @param e {DOMEvent} The mousedown event object
          * @param node {Node} The node to position
          * @return {Array} the [top, left] pixel position of the destination
+         * @protected
          */
         _getThumbDestination: function ( e, node ) {
             var offsetWidth  = node.get( 'offsetWidth' ),
