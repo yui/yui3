@@ -20,16 +20,45 @@
  * @class Axis
  * @augments Y.Event.Target
  * @constructor
- * @param {String} axisType type of axis: numeric, category or time.
- * @param {Object} config (optional) Configuration parameters for the Axis.
+ * @param {Object} config Configuration parameters for the Axis.
  */
-function Axis (p_oElement, config) 
+function Axis (config) 
 {
-	this._attributeConfig = Y.merge(this._attributeConfig, Axis.superclass._attributeConfig);
 	Axis.superclass.constructor.apply(this, arguments);
 	this._dataId = this._id + "data";
 
 }
+
+Axis.NAME = "axis";
+
+Axis.ATTRS = {
+	keys:{
+		value:[],
+		
+		setter: function(val)
+		{
+			this._keys = val;
+		},
+
+		getter: function()
+		{
+			return this._keys;
+		}
+	},
+	axisType:{
+		value: "Numeric",
+
+		setter: function(val)
+		{
+			this._axisType = val;
+		},
+
+		getter: function()
+		{
+			return this._axisType;
+		}
+	}
+};
 
 /**
  * Need to refactor to augment Attribute
@@ -44,40 +73,6 @@ Y.extend(Axis, Y.SWFWidget,
 
 	swfReadyFlag:false,
 
-	/**
-	 *
-	 */
-	_attributeConfig:
-	{
-		keys:
-		{
-			value:[],
-			
-			setter: function(val)
-			{
-				this._keys = val;
-			},
-
-			getter: function()
-			{
-				return this._keys;
-			}
-		},
-		axisType:
-		{
-			value: "Numeric",
-
-			setter: function(val)
-			{
-				this._axisType = val;
-			},
-
-			getter: function()
-			{
-				return this._axisType;
-			}
-		}
-	},
 
 	/**
 	 * Reference to corresponding Actionscript class.

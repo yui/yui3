@@ -11,36 +11,87 @@ YUI.add('chart', function(Y) {
 /**
  * Creates the SWFWidget instance and contains initialization data
  *
- * @param {Object} p_oElement Parent class. If the this class instance is the top level
- * of a flash application, the value is the id of its containing dom element. Otherwise, the
- * value is a reference to it container.
  * @param {Object} config (optional) Configuration parameters for the Chart.
  * @class SWFWidget
  * @constructor
  */
-function SWFWidget (p_oElement, config)
+function SWFWidget (config)
 {
-	this._initConfig(p_oElement, config);
+	this._createId();
+	SWFWidget.superclass.constructor.apply(this, arguments);
 }
 
-SWFWidget.prototype =
+SWFWidget.NAME = "swfWidget";
+
+/**
+ * Attribute config
+ * @private
+ */
+SWFWidget.ATTRS = {
+	/**
+	 * Parent element for the SWFWidget instance.
+	 */
+	parent:{
+		lazyAdd:false,
+		
+		value:null
+	},
+
+	/**
+	 * Indicates whether item has been added to its parent.
+	 */
+	added:
+	{
+		value:false
+	},
+	/**
+	 * Reference to corresponding Actionscript class.
+	 */
+	className:  
+	{
+		readOnly:true,
+
+		getter: function()
+		{
+			return this.AS_CLASS;
+		}
+	},
+	/**
+	 * Hash of style properties for class
+	 */
+	styles:
+	{
+		value: {},
+
+		lazyAdd: false,
+
+		setter: function(val)
+		{
+			val = this._setStyles(val);
+			if(this.swfReadyFlag)
+			{
+				this._updateStyles();
+			}
+			return val;
+		},
+		
+		validator: function(val)
+		{
+			return Y.Lang.isObject(val);
+		}
+	}
+};
+
+Y.extend(SWFWidget, Y.Base,
 {
 	/**
-	 * Initializes class
+	 * Creates unique id for class instance.
 	 *
 	 * @private
 	 */
-	_initConfig: function(p_oElement, config)
+	_createId: function()
 	{
-		this._styles = this._mergeStyles(this._styles, this._getDefaultStyles());
 		this._id = Y.guid(this.GUID);
-		this._setParent(p_oElement);
-		this.addAttrs(this._attributeConfig, config);
-	},
-
-	_setParent: function(p_oElement)
-	{
-		this.oElement = p_oElement;
 	},
 
 	/**
@@ -84,7 +135,7 @@ SWFWidget.prototype =
 	 */
 	_setStyles: function(newstyles)
 	{
-		var j, styles = this._styles,
+		var j, styles = this.get("styles") || {},
 		styleHash = this._styleObjHash;
 		styles[this._id] = styles[this._id] || {};
 		Y.Object.each(newstyles, function(value, key, newstyles)
@@ -119,7 +170,7 @@ SWFWidget.prototype =
 				}
 			}
 		}, this);
-		this._styles = styles;
+		return styles;
 	},
 
 	/**
@@ -155,7 +206,7 @@ SWFWidget.prototype =
 	_updateStyles: function()
 	{
 		var styleHash = this._styleObjHash,
-		styles = this._styles;
+		styles = this.get("styles");
 		Y.Object.each(styles, function(value, key, styles)
 		{
 			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
@@ -163,57 +214,9 @@ SWFWidget.prototype =
 				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
-	},
+	}
+});
 
-	/**
-	 * Attribute config
-	 * @private
-	 */
-	_attributeConfig:
-	{
-		/**
-		 * Reference to corresponding Actionscript class.
-		 */
-		className:  
-		{
-			readOnly:true,
-
-			getter: function()
-			{
-				return this.AS_CLASS;
-			}
-		},
-		/**
-		 * Hash of style properties for class
-		 */
-		styles:
-		{
-			value: null,
-
-			setter: function(val)
-			{
-				this._setStyles(val);
-				if(this.swfReadyFlag)
-				{
-					this._updateStyles();
-				}
-				return this._styles;
-			},
-			
-			getter: function()
-			{
-				return this._styles;
-			},
-		
-			validator: function(val)
-			{
-				return Y.Lang.isObject(val);
-			}
-		}
-	}	
-};
-
-Y.augment(SWFWidget, Y.Attribute);
 Y.SWFWidget = SWFWidget;
 /**
  * Manages flash child objects.
@@ -226,18 +229,91 @@ Y.SWFWidget = SWFWidget;
 	/**
 	 * Creates the Container instance and contains initialization data
 	 *
-	 * @param {Object} p_oElement Parent class. If the this class instance is the top level
-	 * of a flash application, the value is the id of its containing dom element. Otherwise, the
-	 * value is a reference to it container.
-	 * @param {Object} config (optional) Configuration parameters for the Chart.
+	 * @param {Object} config Configuration parameters for the Container instance.
 	 * @class Container
 	 * @constructor
 	 */
-	function Container (p_oElement, config) 
+	function Container (config) 
 	{
-		this._attributeConfig = Y.merge(this._attributeConfig, Container.superclass._attributeConfig);
 		Container.superclass.constructor.apply(this, arguments);
 	}
+
+	Container.NAME = "container";
+
+	/**
+	 * Attribute config
+	 * @private
+	 */
+	Container.ATTRS = {
+		/**
+		 * Hash of optional layout parameters to be used by a parent container.
+		 * @type Object
+		 */
+		props:{
+			value: null,
+			
+			setter: function(val)
+			{
+				return val;
+			},
+
+			validator: function(val)
+			{
+				return Y.Lang.isObject(val);
+			}
+		},
+		/**
+		 * An array of constructor arguments used when creating an actionscript instance
+		 * of the Container.
+		 */
+		swfargs: 
+		{
+			value: [],
+
+			validator: function(val)
+			{
+				return Y.Lang.isArray(val);
+			}
+		},
+		/**
+		 * Reference to the layout strategy used for displaying child items.
+		 */
+		layout:  
+		{
+			value:"LayoutStrategy",
+
+			//needs a setter
+
+			validator: function(val)
+			{
+				return Y.Array.indexOf(this.LAYOUTS, val) > -1;
+			}
+		},
+		/**
+		 * Array of layoutChildren added to the Container instance.
+		 *
+		 * @private
+		 */
+		items:
+		{
+			value:[],
+
+			setter: function(val)
+			{
+				this._items = val;
+			},
+
+			getter: function()
+			{
+				return this._items;
+			},
+
+			validator: function(val)
+			{
+				return Y.Lang.isArray(val);
+			}
+		}
+	};
 
 	Y.extend(Container, Y.SWFWidget, 
 	{
@@ -326,6 +402,10 @@ Y.SWFWidget = SWFWidget;
 			{
 				this._items.push({item:item, props:props});
 			}
+			if(item instanceof SWFWidget)
+			{
+				item.set("added", true);
+			}
 		},
 
 		/**
@@ -333,83 +413,8 @@ Y.SWFWidget = SWFWidget;
 		 *
 		 * Hash of child references with style objects.
 		 */
-		_styleObjHash: {background:"background"},
+		_styleObjHash: {background:"background"}
 
-		/**
-		 * Attribute config
-		 * @private
-		 */
-		_attributeConfig:
-		{
-			/**
-			 * Hash of optional layout parameters to be used by a parent container.
-			 * @type Object
-			 */
-			props:{
-				value: null,
-				
-				setter: function(val)
-				{
-					return val;
-				},
-
-				validator: function(val)
-				{
-					return Y.Lang.isObject(val);
-				}
-			},
-			/**
-			 * An array of constructor arguments used when creating an actionscript instance
-			 * of the Container.
-			 */
-			swfargs: 
-			{
-				value: [],
-
-				validator: function(val)
-				{
-					return Y.Lang.isArray(val);
-				}
-			},
-			/**
-			 * Reference to the layout strategy used for displaying child items.
-			 */
-			layout:  
-			{
-				value:"LayoutStrategy",
-
-				//needs a setter
-
-				validator: function(val)
-				{
-					return Y.Array.indexOf(this.LAYOUTS, val) > -1;
-				}
-			},
-			/**
-			 * Array of layoutChildren added to the Container instance.
-			 *
-			 * @private
-			 */
-			items:
-			{
-				value:[],
-
-				setter: function(val)
-				{
-					this._items = val;
-				},
-
-				getter: function()
-				{
-					return this._items;
-				},
-
-				validator: function(val)
-				{
-					return Y.Lang.isArray(val);
-				}
-			}
-		}
 	});
 
 	Y.Container = Container;
@@ -433,15 +438,14 @@ Y.SWFWidget = SWFWidget;
 	 *
 	 * @extends Container
 	 * @class BorderContainer
-	 * @param {Object} p_oElement Parent class. If the this class instance is the top level
-	 * of a flash application, the value is the id of its containing dom element. Otherwise, the
-	 * value is a reference to it container.
-	 * @param {Object} config (optional) Configuration parameters for the Chart.
+	 * @param {Object} config Configuration parameters for the Chart.
 	 */
-	function BorderContainer (p_oElement, config) 
+	function BorderContainer (config) 
 	{
 		BorderContainer.superclass.constructor.apply(this, arguments);
 	}
+
+	BorderContainer.NAME = "borderContainer";
 
 	/**
 	 * Need to refactor to augment Attribute
@@ -604,44 +608,166 @@ Y.SWFWidget = SWFWidget;
 	 * Creates the Chart instance and contains initialization data
 	 *
 	 * @class Chart
-	 * @augments Y.Event.Target
+	 * @extends Y.Container
 	 * @constructor
-	 * @param {String|HTMLElement} id The id of the element, or the element itself that the Chart will be placed into.  
-	 *        The width and height of the Chart will be set to the width and height of this Container element.
-	 * @param {Object} config (optional) Configuration parameters for the Chart.
+	 * @param {Object} config Configuration parameters for the Chart.
 	 * 	<ul>
-	 * 		<li><code>chartContainer</code>: Hash of values that allows for changing the default chart Container
-	 * 			<ul>
-	 * 				<li><code>classInstance</code>: class instance to be used</li>
-	 * 				<li><code>added</code>: indicates whether Container has already been added to its parent</li>
-	 * 				<li><code>parentContainer</code>: allows to specify a Container other than the chart application for placing the chartContainer</li>
-	 *			</ul>
-	 * 		</li>
-	 * 		<li><code>childContainers</code>:Array of containers to be added to chart.
-	 *			<ul>
-	 *				<li><code>classInstance</code>: Container class instance to add to the application.</li>
-	 *				<li><code>props</code>: Optional has of properties </li>
-	 *			</ul>
-	 * 		</li>
+	 * 		<li><code>parent</code>: {String} id of dom element to be used as a container for the chart swf</li>
 	 * 		<li><code>flashvar</code>:hash of key value pairs that can be passed to the swf.</li>
 	 * 		<li><code>autoLoad</code>:indicates whether the loadswf method will be automatically called on instantiation.</li>
 	 * 		<li><code>styles/code>:hash of style properties to be applied to the Chart application.</li>
 	 * 	</ul>	
 	 */
-	function Chart (p_oElement /*:String*/, config /*:Object*/ ) 
+	function Chart ( config ) 
 	{
-		this._attributeConfig = Y.merge(this._attributeConfig, Chart.superclass._attributeConfig);
 		Chart.superclass.constructor.apply(this, arguments);
 		this._dataId = this._id + "data";
-		if(this.get("autoLoad"))
-		{
-			this.loadswf();
-		}
 	}
 
-	/**
-	 * Need to refactor to augment Attribute
-	 */
+	Chart.NAME = "chart";
+
+	Chart.ATTRS = {
+		/**
+		 * URL used for swf
+		 */
+		swfurl:
+		{
+			value: Y.config.base + "chart/assets/cartesiancanvas.swf"
+		},
+
+		/**
+		 * Reference to the BorderContainer instance that contains graphs and axes of a cartesian chart.
+		 */
+		chartContainer: 
+		{
+			value: null
+		},
+
+		chartContainerParent:
+		{
+			value:this,
+			
+			validator: function(val)
+			{
+				return (val instanceof SWFWidget);
+			}
+		},
+
+		/**
+		 * Collection of attributes to be used for the swf embed.
+		 */
+		params: 
+		{
+			value:
+			{
+				version: "10.0.0",
+				useExpressInstall: true,
+				fixedAttributes: {allowScriptAccess:"always", allowNetworking:"all", bgcolor:"#ffffff"}
+			},
+
+			lazyAdd: false,
+
+			setOnce: true,
+
+			setter: function(val)
+			{
+				return this._mergeStyles(val,{version: "10.0.0",
+				useExpressInstall: true,
+				fixedAttributes: {allowScriptAccess:"always", allowNetworking:"all", bgcolor:"#ffffff"}});
+			},
+
+			validator: function(val)
+			{
+				return Y.Lang.isObject(val);
+			}
+		},
+
+		/**
+		 * Key value pairs passed to application swf at load time.
+		 */
+		flashvars:
+		{
+			value: {appname:this._id},
+
+			lazyAdd:false,
+
+			setOnce: true,
+
+			setter: function(val)
+			{
+				if(!val)
+				{
+					return;
+				}
+				
+				if(!val.hasOwnProperty("appname") || !val.appname)
+				{
+					val.appname = this._id;
+				}
+
+				if(this.get("params").flashVars && Y.Lang.isObject(this.get("params").flashVars))
+				{
+					this.get("params").flashVars = this._mergeStyles(val, this.get("params").flashVars);
+				}
+				else
+				{
+					this.get("params").flashVars  = val;
+				}
+			},
+			
+			validator: function(val)
+			{
+				return Y.Lang.isObject(val);
+			}
+		},
+		/**
+		 * Indicates whether or not to call the loadswf method upon instantiation.
+		 */
+		autoLoad: 
+		{
+			value: true
+		},
+		/**
+		 * Indicates whether the swf draws automatically.
+		 *
+		 * @private
+		 */
+		_autoRender: 
+		{
+			lazyAdd: false,
+
+			value: true,
+
+			setter: function(val)
+			{
+				return this.setAutoRender(val);
+			}
+		},
+		/**
+		 * Id used to insantiate a ChartDataProvider in the flash application.
+		 *
+		 * @private
+		 */
+		_dataId: 
+		{
+			value: null
+		},
+		/**
+		 * Reference to the dataProvider for the chart.
+		 * @private
+		 */
+		dataProvider: 
+		{
+			value: null,
+
+			setter: function(val)
+			{
+				this._dataProvider = val;
+				this._initDataProvider();
+			}
+		}
+	};
+	
 	Y.extend(Chart, Y.Container, 
 	{
 		/**
@@ -653,212 +779,34 @@ Y.SWFWidget = SWFWidget;
 		 * Constant used to generate unique id.
 		 */
 		GUID: "yuichart",
-	
-		_attributeConfig:
-		{
-			/**
-			 * URL used for swf
-			 */
-			swfurl:
-			{
-				value: Y.config.base + "chart/assets/cartesiancanvas.swf"
-			},
-
-			/**
-			 * Reference to the BorderContainer instance that contains graphs and axes of a cartesian chart.
-			 */
-			chartContainer: 
-			{
-				value: null,
-
-				setter: function(val)
-				{
-					return this.setChartContainer(val);
-				},
-
-				validator: function(val)
-				{	
-					return Y.Lang.isObject(val);
-				}
-			},
-			/**
-			 * Collection of attributes to be used for the swf embed.
-			 */
-			params: 
-			{
-				value:
-				{
-					version: "10.0.0",
-					useExpressInstall: true,
-					fixedAttributes: {allowScriptAccess:"always", allowNetworking:"all", bgcolor:"#ffffff"}
-				},
-
-				setOnce: true,
-
-				setter: function(val)
-				{
-					return this._mergeStyles(val,{version: "10.0.0",
-					useExpressInstall: true,
-					fixedAttributes: {allowScriptAccess:"always", allowNetworking:"all", bgcolor:"#ffffff"}});
-				},
-
-				validator: function(val)
-				{
-					return Y.Lang.isObject(val);
-				}
-			},
-
-			/**
-			 * Key value pairs passed to application swf at load time.
-			 */
-			flashvars:
-			{
-				value: {appname:this._id},
-
-				setOnce: true,
-
-				setter: function(val)
-				{
-					if(!val)
-					{
-						return;
-					}
-					
-					if(!val.hasOwnProperty("appname") || !val.appname)
-					{
-						val.appname = this._id;
-					}
-
-					if(this.get("params").flashVars && Y.Lang.isObject(this.get("params").flashVars))
-					{
-						this.get("params").flashVars = this._mergeStyles(val, this.get("params").flashVars);
-					}
-					else
-					{
-						this.get("params").flashVars  = val;
-					}
-				},
-				
-				validator: function(val)
-				{
-					return Y.Lang.isObject(val);
-				}
-			},
-			/**
-			 * Indicates whether or not to call the loadswf method upon instantiation.
-			 */
-			autoLoad: 
-			{
-				value: true
-			},
-			/**
-			 * Indicates whether the swf draws automatically.
-			 *
-			 * @private
-			 */
-			_autoRender: 
-			{
-				value: true,
-
-				setter: function(val)
-				{
-					return this.setAutoRender(val);
-				}
-			},
-			/**
-			 * Id used to insantiate a ChartDataProvider in the flash application.
-			 *
-			 * @private
-			 */
-			_dataId: 
-			{
-				value: null
-
-			},
-			/**
-			 * Reference to the dataProvider for the chart.
-			 * @private
-			 */
-			dataProvider: 
-			{
-				value: null,
-
-				setter: function(val)
-				{
-					this._dataProvider = val;
-					this._initDataProvider();
-				}
-			}
-		},
-
-		/**
-		 * Specifies different properties of the chartContainer
-		 *
-		 * @method setChartContainer
-		 * @param {Object} containerHash Hash of chartContainer values:
-		 *	<ul>
-		 *		<li><code>classInstance</code>:User specifed BorderContainer instance to be used as a chart container.</li>
-		 *		<li><code>added</code>:Indicates whether or not a user-specified chart container has been added to its parent</li>
-		 *		<li><code>parentContainer</code>:Specifies object to be used as a container for the chart container</li>
-		 *	</ul>
-		 */
-		setChartContainer: function(containerHash)
-		{
-			if(containerHash && containerHash.hasOwnProperty("classInstance"))
-			{
-				this.chartContainer = containerHash.classInstance;
-				if(containerHash.hasOwnProperty("added") && !containerHash.added)
-				{
-					this._styleObjHash.chart = this.chartContainer;
-					return;
-				}
-			}
-			else
-			{
-				this.chartContainer = new BorderContainer(this);
-			}
-			this._styleObjHash.chart = this.chartContainer;
-			this.chartContainer.oElement.addItem(this.chartContainer);
-		},
-
-		/**
-		 * Adds child containers to application.
-		 *
-		 * @param {Array} childContainers Collection of hashes that container necessary data to add a container to 
-		 * the flash instance. The properties are below:
-		 *	<ul>
-		 *		<li><code>classInstance</code>: Container class instance to add to the application.</li>
-		 *		<li><code>props</code>: Optional has of properties </li>
-		 *	</ul>
-		 */
-		addChildContainers: function (childContainers)
-		{
-			var i, len, container, child, props;
-			for(i = 0; i < len; i++)
-			{
-				container = childContainers[i];
-				if(container.hasOwnProperty("classInstance"))
-				{
-					child = container.classInstance;
-					if(container.hasOwnProperty("props"))
-					{
-						props = container.props;
-					}
-					this.addItem(child, props);
-				}
-			}
-		},
-
 
 		/**
 		 * Creates swf instance and event listeners for the chart application.
 		 */
 		loadswf: function()
 		{
-			this.appswf = new Y.SWF(this.oElement, this.get("swfurl"), this.get("params"));
+			this.appswf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"));
 			this.appswf.on ("swfReady", this._init, this);
 		},
 
+		initializer: function(cfg)
+		{
+			var parent, chartContainer = this.get("chartContainer");
+			if(!chartContainer) 
+			{
+				this.set("chartContainer", new BorderContainer({parent:this, styles:this.get("styles")[this._styleObjHash.chart]}));
+				this._styleObjHash.chart = chartContainer = this.get("chartContainer");
+			}
+			if(!chartContainer.added)
+			{
+				parent = chartContainer.get("parent");
+				parent.addItem(chartContainer);
+			}
+			if(this.get("autoLoad"))
+			{
+				this.loadswf();
+			}
+		},
 
 		/**
 		 * Event handler for the swfReady event.
@@ -907,7 +855,7 @@ Y.SWFWidget = SWFWidget;
 		 */
 		addTopItem: function (item)
 		{
-			this.chartContainer.addTopItem(item);
+			this.get("chartContainer").addTopItem(item);
 		},
 		
 		/**
@@ -917,7 +865,7 @@ Y.SWFWidget = SWFWidget;
 		 */
 		addRightItem: function (item) 
 		{
-			this.chartContainer.addRightItem(item);
+			this.get("chartContainer").addRightItem(item);
 		},
 
 		/**
@@ -927,7 +875,7 @@ Y.SWFWidget = SWFWidget;
 		 */
 		addBottomItem: function (item)
 		{
-			this.chartContainer.addBottomItem(item);
+			this.get("chartContainer").addBottomItem(item);
 		},
 		
 		/**
@@ -937,7 +885,7 @@ Y.SWFWidget = SWFWidget;
 		 */
 		addLeftItem: function (item) 
 		{
-			this.chartContainer.addLeftItem(item);
+			this.get("chartContainer").addLeftItem(item);
 		},
 		
 		/**
@@ -947,7 +895,7 @@ Y.SWFWidget = SWFWidget;
 		 */
 		addCenterItem: function (item)
 		{
-			this.chartContainer.addCenterItem(item);
+			this.get("chartContainer").addCenterItem(item);
 		},		
 		
 		/**
@@ -986,7 +934,9 @@ Y.SWFWidget = SWFWidget;
 			{
 				this.appswf.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
 			}
-		}
+		},
+
+		_styleObjHash:{background:"background", chart:"chart"}
 	});
 
 Y.augment(Chart, Y.EventTarget);
@@ -1009,44 +959,39 @@ Y.Chart = Chart;
 	 *
 	 * @class LineGraph
 	 * @constructor
-	 * @param xaxis {Axis} reference to the xaxis 
-	 * @param yaxis {Axis} reference to the yaxis 
-	 * @param xkey {String} pointer to the array of values contained in the xaxis
-	 * @param ykey {String} point to ther array of values container in the yaxis
-	 * @param {Object} config (optional) Configuration parameters for the Axis.
+	 * @param {Object} config Configuration parameters for the Axis.
 	 */
-	function LineGraph (p_oElement, config) 
+	function LineGraph (config) 
 	{
-		this._attributeConfig = Y.merge(this._attributeConfig, LineGraph.superclass._attributeConfig);
 		LineGraph.superclass.constructor.apply(this, arguments);
 	}
 
+	LineGraph.NAME = "lineGraph";
+
+	LineGraph.ATTRS = {
+		xaxis:
+		{
+			value:null
+		},
+
+		yaxis:
+		{
+			value:null
+		},
+		
+		xkey:
+		{
+			value:null
+		},
+
+		ykey:
+		{
+			value:null
+		}
+	};
 
 	Y.extend(LineGraph, Y.SWFWidget, 
 	{
-		_attributeConfig:
-		{
-			xaxis:
-			{
-				value:null
-			},
-
-			yaxis:
-			{
-				value:null
-			},
-			
-			xkey:
-			{
-				value:null
-			},
-
-			ykey:
-			{
-				value:null
-			}
-		},
-
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
@@ -1095,16 +1040,45 @@ Y.Chart = Chart;
  * @class Axis
  * @augments Y.Event.Target
  * @constructor
- * @param {String} axisType type of axis: numeric, category or time.
- * @param {Object} config (optional) Configuration parameters for the Axis.
+ * @param {Object} config Configuration parameters for the Axis.
  */
-function Axis (p_oElement, config) 
+function Axis (config) 
 {
-	this._attributeConfig = Y.merge(this._attributeConfig, Axis.superclass._attributeConfig);
 	Axis.superclass.constructor.apply(this, arguments);
 	this._dataId = this._id + "data";
 
 }
+
+Axis.NAME = "axis";
+
+Axis.ATTRS = {
+	keys:{
+		value:[],
+		
+		setter: function(val)
+		{
+			this._keys = val;
+		},
+
+		getter: function()
+		{
+			return this._keys;
+		}
+	},
+	axisType:{
+		value: "Numeric",
+
+		setter: function(val)
+		{
+			this._axisType = val;
+		},
+
+		getter: function()
+		{
+			return this._axisType;
+		}
+	}
+};
 
 /**
  * Need to refactor to augment Attribute
@@ -1119,40 +1093,6 @@ Y.extend(Axis, Y.SWFWidget,
 
 	swfReadyFlag:false,
 
-	/**
-	 *
-	 */
-	_attributeConfig:
-	{
-		keys:
-		{
-			value:[],
-			
-			setter: function(val)
-			{
-				this._keys = val;
-			},
-
-			getter: function()
-			{
-				return this._keys;
-			}
-		},
-		axisType:
-		{
-			value: "Numeric",
-
-			setter: function(val)
-			{
-				this._axisType = val;
-			},
-
-			getter: function()
-			{
-				return this._axisType;
-			}
-		}
-	},
 
 	/**
 	 * Reference to corresponding Actionscript class.
@@ -1234,9 +1174,10 @@ Y.Axis = Axis;
 			this._type = charttype;
 		}
 		this._parseConfig(config);
-		this.chart = new Y.Chart(p_oElement, this._chartConfig);
-		this.xaxis = new Y.Axis(this.chart, {axisType:this._xAxisProps.type, styles:this._xaxisstyles});
-		this.yaxis = new Y.Axis(this.chart, {axisType:this._yAxisProps.type, styles:this._yaxisstyles});
+		this._chartConfig.parent = p_oElement;
+		this.chart = new Y.Chart(this._chartConfig);
+		this.xaxis = new Y.Axis({parent:this.chart, axisType:this._xAxisProps.type, styles:this._xaxisstyles});
+		this.yaxis = new Y.Axis({parent:this.chart, axisType:this._yAxisProps.type, styles:this._yaxisstyles});
 		this.data = {};
 		this.graph = null;
 		
@@ -1276,7 +1217,7 @@ Y.Axis = Axis;
 			
 			if (this._type == "line") 
 			{
-				graph = new Y.LineGraph(chart, {xaxis:xaxis, yaxis:yaxis, xkey:xkey, ykey:ykey, styles:styles});
+				graph = new Y.LineGraph({parent:chart, xaxis:xaxis, yaxis:yaxis, xkey:xkey, ykey:ykey, styles:styles});
 			}
 			chart.addBottomItem(xaxis);
 			chart.addLeftItem(yaxis);

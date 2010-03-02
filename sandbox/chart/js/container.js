@@ -9,18 +9,91 @@
 	/**
 	 * Creates the Container instance and contains initialization data
 	 *
-	 * @param {Object} p_oElement Parent class. If the this class instance is the top level
-	 * of a flash application, the value is the id of its containing dom element. Otherwise, the
-	 * value is a reference to it container.
-	 * @param {Object} config (optional) Configuration parameters for the Chart.
+	 * @param {Object} config Configuration parameters for the Container instance.
 	 * @class Container
 	 * @constructor
 	 */
-	function Container (p_oElement, config) 
+	function Container (config) 
 	{
-		this._attributeConfig = Y.merge(this._attributeConfig, Container.superclass._attributeConfig);
 		Container.superclass.constructor.apply(this, arguments);
 	}
+
+	Container.NAME = "container";
+
+	/**
+	 * Attribute config
+	 * @private
+	 */
+	Container.ATTRS = {
+		/**
+		 * Hash of optional layout parameters to be used by a parent container.
+		 * @type Object
+		 */
+		props:{
+			value: null,
+			
+			setter: function(val)
+			{
+				return val;
+			},
+
+			validator: function(val)
+			{
+				return Y.Lang.isObject(val);
+			}
+		},
+		/**
+		 * An array of constructor arguments used when creating an actionscript instance
+		 * of the Container.
+		 */
+		swfargs: 
+		{
+			value: [],
+
+			validator: function(val)
+			{
+				return Y.Lang.isArray(val);
+			}
+		},
+		/**
+		 * Reference to the layout strategy used for displaying child items.
+		 */
+		layout:  
+		{
+			value:"LayoutStrategy",
+
+			//needs a setter
+
+			validator: function(val)
+			{
+				return Y.Array.indexOf(this.LAYOUTS, val) > -1;
+			}
+		},
+		/**
+		 * Array of layoutChildren added to the Container instance.
+		 *
+		 * @private
+		 */
+		items:
+		{
+			value:[],
+
+			setter: function(val)
+			{
+				this._items = val;
+			},
+
+			getter: function()
+			{
+				return this._items;
+			},
+
+			validator: function(val)
+			{
+				return Y.Lang.isArray(val);
+			}
+		}
+	};
 
 	Y.extend(Container, Y.SWFWidget, 
 	{
@@ -109,6 +182,10 @@
 			{
 				this._items.push({item:item, props:props});
 			}
+			if(item instanceof SWFWidget)
+			{
+				item.set("added", true);
+			}
 		},
 
 		/**
@@ -116,83 +193,8 @@
 		 *
 		 * Hash of child references with style objects.
 		 */
-		_styleObjHash: {background:"background"},
+		_styleObjHash: {background:"background"}
 
-		/**
-		 * Attribute config
-		 * @private
-		 */
-		_attributeConfig:
-		{
-			/**
-			 * Hash of optional layout parameters to be used by a parent container.
-			 * @type Object
-			 */
-			props:{
-				value: null,
-				
-				setter: function(val)
-				{
-					return val;
-				},
-
-				validator: function(val)
-				{
-					return Y.Lang.isObject(val);
-				}
-			},
-			/**
-			 * An array of constructor arguments used when creating an actionscript instance
-			 * of the Container.
-			 */
-			swfargs: 
-			{
-				value: [],
-
-				validator: function(val)
-				{
-					return Y.Lang.isArray(val);
-				}
-			},
-			/**
-			 * Reference to the layout strategy used for displaying child items.
-			 */
-			layout:  
-			{
-				value:"LayoutStrategy",
-
-				//needs a setter
-
-				validator: function(val)
-				{
-					return Y.Array.indexOf(this.LAYOUTS, val) > -1;
-				}
-			},
-			/**
-			 * Array of layoutChildren added to the Container instance.
-			 *
-			 * @private
-			 */
-			items:
-			{
-				value:[],
-
-				setter: function(val)
-				{
-					this._items = val;
-				},
-
-				getter: function()
-				{
-					return this._items;
-				},
-
-				validator: function(val)
-				{
-					return Y.Lang.isArray(val);
-				}
-			}
-		}
 	});
 
 	Y.Container = Container;

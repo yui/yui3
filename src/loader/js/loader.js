@@ -233,6 +233,7 @@ Y.Loader = function(o) {
      * Base path for language packs.
      */
     // self.langBase = Y.Env.meta.langBase;
+    // self.lang = "";
 
     /**
      * If configured, the loader will attempt to use the combo
@@ -818,7 +819,7 @@ Y.Loader.prototype = {
             return NO_REQUIREMENTS;
         }
 
-        if (!this.dirty && mod.expanded) {
+        if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
             // Y.log('already expanded ' + mod.name);
             return mod.expanded;
         }
@@ -876,6 +877,8 @@ Y.Loader.prototype = {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
+// Y.log('Best lang: ' + lang + ', this.lang: ' + this.lang + ', mod.lang: ' + mod.lang);
+                mod.langCache = this.lang;
                 packName = this.getLangPackName(lang, mod.name);
                 if (packName) {
                     d.unshift(packName);
