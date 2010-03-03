@@ -13,7 +13,21 @@ YUI.add('selection', function(Y) {
     //TODO This shouldn't be there, Y.Node doesn't normalize getting textnode content.
     var textContent = 'textContent',
     INNER_HTML = 'innerHTML',
-    FONT_FAMILY = 'fontFamily';
+    FONT_FAMILY = 'fontFamily',
+    ieNode;
+
+    if (Y.UA.ie) {
+        /*
+        Y.on('selectionchange', function(e) {
+            ieNode = e;
+            debugger;
+        }, Y.config.doc);
+        */
+        Y.config.doc.body.attachEvent('onkeydown', function(e) {
+            ieNode = e.srcElement;
+            //debugger;
+        });
+    }
 
 
     Y.Selection = function() {
@@ -53,6 +67,7 @@ YUI.add('selection', function(Y) {
 
             
             var self = this;
+            self.ieNode = ieNode;
             debugger;
         } else {
             this.isCollapsed = sel.isCollapsed;
