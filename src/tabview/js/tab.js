@@ -13,8 +13,8 @@ var Lang = Y.Lang,
  * @extends Widget
  */
 Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
-    BOUNDING_TEMPLATE : '<li class="' + _classNames.tab + '"></li>',
-    CONTENT_TEMPLATE : '<a class="' + _classNames.tabLabel + '"></a>',
+    BOUNDING_TEMPLATE: '<li class="' + _classNames.tab + '"></li>',
+    CONTENT_TEMPLATE: '<a class="' + _classNames.tabLabel + '"></a>',
     PANEL_TEMPLATE: '<div class="' + _classNames.tabPanel + '"></div>',
 
     _uiSetSelectedPanel: function(selected) {
