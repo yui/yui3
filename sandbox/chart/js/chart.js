@@ -17,31 +17,17 @@
 	 * Creates the Chart instance and contains initialization data
 	 *
 	 * @class Chart
-	 * @augments Y.Event.Target
+	 * @extends Y.Container
 	 * @constructor
-	 * @param {String|HTMLElement} id The id of the element, or the element itself that the Chart will be placed into.  
-	 *        The width and height of the Chart will be set to the width and height of this Container element.
-	 * @param {Object} config (optional) Configuration parameters for the Chart.
+	 * @param {Object} config Configuration parameters for the Chart.
 	 * 	<ul>
-	 * 		<li><code>chartContainer</code>: Hash of values that allows for changing the default chart Container
-	 * 			<ul>
-	 * 				<li><code>classInstance</code>: class instance to be used</li>
-	 * 				<li><code>added</code>: indicates whether Container has already been added to its parent</li>
-	 * 				<li><code>parentContainer</code>: allows to specify a Container other than the chart application for placing the chartContainer</li>
-	 *			</ul>
-	 * 		</li>
-	 * 		<li><code>childContainers</code>:Array of containers to be added to chart.
-	 *			<ul>
-	 *				<li><code>classInstance</code>: Container class instance to add to the application.</li>
-	 *				<li><code>props</code>: Optional has of properties </li>
-	 *			</ul>
-	 * 		</li>
+	 * 		<li><code>parent</code>: {String} id of dom element to be used as a container for the chart swf</li>
 	 * 		<li><code>flashvar</code>:hash of key value pairs that can be passed to the swf.</li>
 	 * 		<li><code>autoLoad</code>:indicates whether the loadswf method will be automatically called on instantiation.</li>
 	 * 		<li><code>styles/code>:hash of style properties to be applied to the Chart application.</li>
 	 * 	</ul>	
 	 */
-	function Chart (p_oElement /*:String*/, config /*:Object*/ ) 
+	function Chart ( config ) 
 	{
 		Chart.superclass.constructor.apply(this, arguments);
 		this._dataId = this._id + "data";
@@ -208,20 +194,22 @@
 		 */
 		loadswf: function()
 		{
-			this.appswf = new Y.SWF(this.oElement, this.get("swfurl"), this.get("params"));
+			this.appswf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"));
 			this.appswf.on ("swfReady", this._init, this);
 		},
 
 		initializer: function(cfg)
 		{
-			if(!this.get("chartContainer")) 
+			var parent, chartContainer = this.get("chartContainer");
+			if(!chartContainer) 
 			{
-				this.set("chartContainer", new BorderContainer(this, {styles:this.get("styles")[this._styleObjHash.chart]}));
-				this._styleObjHash.chart = this.get("chartContainer");
+				this.set("chartContainer", new BorderContainer({parent:this, styles:this.get("styles")[this._styleObjHash.chart]}));
+				this._styleObjHash.chart = chartContainer = this.get("chartContainer");
 			}
-			if(!this.get("chartContainer").added)
+			if(!chartContainer.added)
 			{
-				this.get("chartContainer").oElement.addItem(this.get("chartContainer"));
+				parent = chartContainer.get("parent");
+				parent.addItem(chartContainer);
 			}
 			if(this.get("autoLoad"))
 			{

@@ -20,10 +20,9 @@
  * @class Axis
  * @augments Y.Event.Target
  * @constructor
- * @param {String} axisType type of axis: numeric, category or time.
- * @param {Object} config (optional) Configuration parameters for the Axis.
+ * @param {Object} config Configuration parameters for the Axis.
  */
-function Axis (p_oElement, config) 
+function Axis (config) 
 {
 	Axis.superclass.constructor.apply(this, arguments);
 	this._dataId = this._id + "data";
