@@ -29,6 +29,9 @@ var UA = Y.UA,
 
 	    var a = Y.Array(args, 0, true),
             el = args[2];
+
+        config.overrides = config.overrides || {};
+        config.overrides.type = args[0];
         
         if (el) {
             if (Y.DOM.isWindow(el)) {

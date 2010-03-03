@@ -34,7 +34,7 @@ YUI.add('frame', function(Y) {
         _rendered: null,
         /**
         * @private
-        * @property _frame
+        * @property _iframe
         * @description Internal Node reference to the iFrame or the window
         * @type Node
         */
@@ -50,16 +50,15 @@ YUI.add('frame', function(Y) {
         * @private
         * @method _create
         * @description Create the iframe or Window and get references to the Document & Window
-        * @return Hash table containing references to the new Document & Window
-        * @type Object
+        * @return {Object} Hash table containing references to the new Document & Window
         */
         _create: function() {
             var win, doc, res;
 
             this._iframe = Y.Node.create(Frame.HTML);
             this._iframe.setStyle('visibility', 'hidden');
-            this.get('container').append(this._iframe);
             this._iframe.set('src', this.get('src'));
+            this.get('container').append(this._iframe);
             res = this._resolveWinDoc();
             win = res.win;
             doc = res.doc;
@@ -74,8 +73,7 @@ YUI.add('frame', function(Y) {
         * @method _resolveWinDoc
         * @description Resolves the document and window from an iframe or window instance
         * @param {Object} c The YUI Config to add the window and document to
-        * @return Returns an Object hash of window and document references, if a YUI config was passed, it is returned.
-        * @type Object
+        * @return {Object} Object hash of window and document references, if a YUI config was passed, it is returned.
         */
         _resolveWinDoc: function(c) {
             var config = (c) ? c : {};
@@ -90,7 +88,7 @@ YUI.add('frame', function(Y) {
         * takes the current EventFacade and augments it to fire on the Frame host. It adds two new properties
         * to the EventFacade called frameX and frameY which adds the scroll and xy position of the iframe
         * to the original pageX and pageY of the event so external nodes can be positioned over the frame.
-        * @param {EventFacade} e
+        * @param {Event.Facade} e
         */
         _onDomEvent: function(e) {
             var xy = this._iframe.getXY(),
@@ -102,8 +100,11 @@ YUI.add('frame', function(Y) {
 
             e.frameTarget = e.target;
             e.frameCurrentTarget = e.currentTarget;
-
+            e.frameEvent = e;
+            
+            //TODO: Not sure why this stopped working!!!
             this.publish(e.type, {
+                emitFacade: true,
                 stoppedFn: Y.bind(function(ev, domev) {
                     ev.halt();
                 }, this, e),
@@ -179,6 +180,7 @@ YUI.add('frame', function(Y) {
                 if (e) {
                     inst.config.doc = Y.Node.getDOMNode(e.target);
                 }
+                //TODO Circle around and deal with CSS loading...
                 args.push(Y.bind(function() {
                     Y.log('Callback from final internal use call', 'info', 'frame');
                     this.fire('ready');
@@ -203,33 +205,32 @@ YUI.add('frame', function(Y) {
             var html = '',
                 doc = this._instance.config.doc;
 
-            if (this.get('src').indexOf('javascript') === 0) {
-                Y.log('Creating the document from a javascript URL', 'info', 'frame');
-                html = Y.substitute(Frame.PAGE_HTML, {
-                    DIR: this.get('dir'),
-                    LANG: this.get('lang'),
-                    TITLE: this.get('title'),
-                    META: Frame.META,
-                    CONTENT: this.get('content'),
-                    BASE_HREF: this.get('basehref')
-                });
-                if (Y.config.doc.compatMode != 'BackCompat') {
-                    Y.log('Adding Doctype to frame', 'info', 'frame');
-                    html = Frame.DOC_TYPE + "\n" + html;
-                } else {
-                    Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
-                }
+            Y.log('Creating the document from javascript', 'info', 'frame');
+            html = Y.substitute(Frame.PAGE_HTML, {
+                DIR: this.get('dir'),
+                LANG: this.get('lang'),
+                TITLE: this.get('title'),
+                META: Frame.META,
+                CONTENT: this.get('content'),
+                BASE_HREF: this.get('basehref'),
+                DEFAULT_CSS: Frame.DEFAULT_CSS
+            });
+            if (Y.config.doc.compatMode != 'BackCompat') {
+                Y.log('Adding Doctype to frame', 'info', 'frame');
+                html = Frame.DOC_TYPE + "\n" + html;
+            } else {
+                Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
+            }
 
-                Y.log('Injecting content into iframe', 'info', 'frame');
-                doc.open();
-                doc.write(html);
-                doc.close();
-                if (this.get('designMode')) {
-                    doc.designMode = 'on';
-                    if (!Y.UA.ie) {
-                        //Force other browsers into non CSS styling
-                        doc.execCommand('styleWithCSS', false, false);
-                    }
+            Y.log('Injecting content into iframe', 'info', 'frame');
+            doc.open();
+            doc.write(html);
+            doc.close();
+            if (this.get('designMode')) {
+                doc.designMode = 'on';
+                if (!Y.UA.ie) {
+                    //Force other browsers into non CSS styling
+                    doc.execCommand('styleWithCSS', false, false);
                 }
             }
         },
@@ -240,7 +241,7 @@ YUI.add('frame', function(Y) {
         * @param {Function} fn The method to attach
         * @param {String} cont The container to act as a delegate, if no "sel" passed, the body is assumed as the container.
         * @param {String} sel The selector to match in the event (optional)
-        * @return EventHandle
+        * @return {EventHandle} The Event handle returned from Y.delegate
         */
         delegate: function(type, fn, cont, sel) {
             var inst = this.getInstance();
@@ -257,7 +258,7 @@ YUI.add('frame', function(Y) {
         /**
         * @method getInstance
         * @description Get a reference to the internal YUI instance.
-        * @return YUI The internal YUI instance
+        * @return {YUI} The internal YUI instance
         */
         getInstance: function() {
             return this._instance;
@@ -266,7 +267,7 @@ YUI.add('frame', function(Y) {
         * @method render
         * @description Render the iframe into the container config option or open the window.
         * @param {String/HTMLElement/Node} node The node to render to
-        * @return self
+        * @return {Y.Frame}
         * @chainable
         */
         render: function(node) {
@@ -311,7 +312,7 @@ YUI.add('frame', function(Y) {
         * @method _resolveBaseHref
         * @description Resolves the basehref of the page the frame is created on. Only applies to dynamic content.
         * @param {String} href The new value to use, if empty it will be resolved from the current url.
-        * @return String
+        * @return {String}
         */
         _resolveBaseHref: function(href) {
             if (!href || href === '') {
@@ -328,7 +329,7 @@ YUI.add('frame', function(Y) {
         * @method _getHTML
         * @description Get the content from the iframe
         * @param {String} html The raw HTML from the body of the iframe.
-        * @return String
+        * @return {String}
         */
         _getHTML: function(html) {
             if (this._ready) {
@@ -342,7 +343,7 @@ YUI.add('frame', function(Y) {
         * @method _setHTML
         * @description Set the content of the iframe
         * @param {String} html The raw HTML to set the body of the iframe to.
-        * @return String
+        * @return {String}
         */
         _setHTML: function(html) {
             if (this._ready) {
@@ -351,11 +352,17 @@ YUI.add('frame', function(Y) {
             }
             return html;
         },
+        /**
+        * @method focus
+        * @description Set the focus to the iframe
+        */
         focus: function() {
             this.getInstance().config.win.focus();
             return this;
         }
     }, {
+
+        DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
         /**
         * @static
         * @property HTML
@@ -369,7 +376,7 @@ YUI.add('frame', function(Y) {
         * @description The template used to create the page when created dynamically.
         * @type String
         */
-        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/></head><body>{CONTENT}</body></html>',
+        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/><style id="editor_css">{DEFAULT_CSS}</style></head><body>{CONTENT}</body></html>',
         /**
         * @static
         * @property DOC_TYPE
@@ -462,7 +469,7 @@ YUI.add('frame', function(Y) {
             */
             use: {
                 writeOnce: true,
-                value: ['node', 'selector-css3']
+                value: ['substitute', 'node', 'selector-css3']
             },
             /**
             * @attribute container
@@ -492,6 +499,7 @@ YUI.add('frame', function(Y) {
             }
         }
     });
+
 
     Y.Frame = Frame;
 

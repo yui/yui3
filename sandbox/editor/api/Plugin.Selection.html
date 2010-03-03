@@ -115,7 +115,7 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_anchorNode">
                                     <h4><a name="property_anchorNode" property="yui:name">anchorNode</a>
-                                        - <code><span property="yui:type">object</span></code>
+                                        - <code><span property="yui:type">Node</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -130,7 +130,7 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_anchorOffset">
                                     <h4><a name="property_anchorOffset" property="yui:name">anchorOffset</a>
-                                        - <code><span property="yui:type">object</span></code>
+                                        - <code><span property="yui:type">Number</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -145,41 +145,11 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_anchorTextNode">
                                     <h4><a name="property_anchorTextNode" property="yui:name">anchorTextNode</a>
-                                        - <code><span property="yui:type">object</span></code>
+                                        - <code><span property="yui:type">Node</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             A Node instance of the actual textNode of the range.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_CURID">
-                                    <h4><a name="property_CURID" property="yui:name">CURID</a>
-                                        - <code>static <span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The DOM id of the tmp node inserted into the doc to track the cursor: __CUR__
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_CURSOR">
-                                    <h4><a name="property_CURSOR" property="yui:name">CURSOR</a>
-                                        - <code>static <span property="yui:type">object</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The HTML used to create the temporary cursor.
                                         </div>
                                     </div>
      
@@ -205,7 +175,7 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_focusNode">
                                     <h4><a name="property_focusNode" property="yui:name">focusNode</a>
-                                        - <code><span property="yui:type">object</span></code>
+                                        - <code><span property="yui:type">Node</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -220,7 +190,7 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_focusOffset">
                                     <h4><a name="property_focusOffset" property="yui:name">focusOffset</a>
-                                        - <code><span property="yui:type">object</span></code>
+                                        - <code><span property="yui:type">Number</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -235,7 +205,7 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_focusTextNode">
                                     <h4><a name="property_focusTextNode" property="yui:name">focusTextNode</a>
-                                        - <code><span property="yui:type">object</span></code>
+                                        - <code><span property="yui:type">Node</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -250,7 +220,7 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_isCollapsed">
                                     <h4><a name="property_isCollapsed" property="yui:name">isCollapsed</a>
-                                        - <code><span property="yui:type">object</span></code>
+                                        - <code><span property="yui:type">Boolean</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -265,7 +235,7 @@
                                     </div>
                                     <div class="" rel="yui:property" resource="#property_text">
                                     <h4><a name="property_text" property="yui:name">text</a>
-                                        - <code><span property="yui:type">object</span></code>
+                                        - <code><span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -310,7 +280,7 @@
                                          private 
                                         
                                         
-                                        void
+                                        HTMLElement
                                             <strong property="yui:name">_swap</strong>
                                            (
                                                 
@@ -347,6 +317,13 @@
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            HTMLElement
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The new node</dd>
+                                                </dl>
 
 
              
@@ -364,7 +341,7 @@
                                          private 
                                         
                                         
-                                        void
+                                        HTMLElement
                                             <strong property="yui:name">_wrap</strong>
                                            (
                                                 
@@ -401,6 +378,13 @@
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            HTMLElement
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">The wrapped node</dd>
+                                                </dl>
 
 
              
@@ -418,7 +402,7 @@
                                         
                                         
                                         
-                                        void
+                                        RangeObject
                                             <strong property="yui:name">createRange</strong>
                                            (
                                             )
@@ -480,7 +464,7 @@ the fontFamily when selecting nodes.
                                         
                                         
                                         
-                                        
+                                        Node
                                             <strong property="yui:name">getCursor</strong>
                                            (
                                             )
@@ -493,12 +477,6 @@ the fontFamily when selecting nodes.
                                         <div class="description">
 
 
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Node</dd>
-                                                </dl>
 
 
              
@@ -516,7 +494,7 @@ the fontFamily when selecting nodes.
                                         
                                         
                                         
-                                        
+                                        NodeList
                                             <strong property="yui:name">getSelected</strong>
                                            (
                                             )
@@ -534,8 +512,9 @@ The it compiles a list of all nodes affected by the execCommand and builds a Nod
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            NodeList
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">NodeList</dd>
+                                                    <dd property="yui:returnInfo">A NodeList of all items in the selection.</dd>
                                                 </dl>
 
 
@@ -554,7 +533,7 @@ The it compiles a list of all nodes affected by the execCommand and builds a Nod
                                         
                                         
                                         
-                                        
+                                        Node
                                             <strong property="yui:name">insertAtCursor</strong>
                                            (
                                                 
@@ -568,6 +547,10 @@ The it compiles a list of all nodes affected by the execCommand and builds a Nod
                                                 
                                                         , 
                                                          offset
+                                                    
+                                                
+                                                        , 
+                                                         collapse
                                                     
                                                 
                                             )
@@ -599,13 +582,20 @@ The it compiles a list of all nodes affected by the execCommand and builds a Nod
                                                         </code>
                                                         <span property="yui:description"> The left offset of the text node to break and insert the new content.</span>
                                                         </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">collapse</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Should the range be collapsed after insertion. default: false</span>
+                                                        </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            Node
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Node</dd>
+                                                    <dd property="yui:returnInfo">The inserted Node.</dd>
                                                 </dl>
 
 
@@ -624,7 +614,7 @@ The it compiles a list of all nodes affected by the execCommand and builds a Nod
                                         
                                         
                                         
-                                        
+                                        Node
                                             <strong property="yui:name">insertContent</strong>
                                            (
                                                 
@@ -654,8 +644,9 @@ The it compiles a list of all nodes affected by the execCommand and builds a Nod
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            Node
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Node</dd>
+                                                    <dd property="yui:returnInfo">The inserted Node.</dd>
                                                 </dl>
 
 
@@ -674,7 +665,7 @@ The it compiles a list of all nodes affected by the execCommand and builds a Nod
                                         
                                         
                                         
-                                        void
+                                        Y.Selection
                                             <strong property="yui:name">remove</strong>
                                            (
                                             )
@@ -688,6 +679,9 @@ The it compiles a list of all nodes affected by the execCommand and builds a Nod
 
 
 
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
 
              
 
@@ -704,7 +698,7 @@ The it compiles a list of all nodes affected by the execCommand and builds a Nod
                                         
                                         
                                         
-                                        
+                                        Node
                                             <strong property="yui:name">replace</strong>
                                            (
                                                 
@@ -755,8 +749,9 @@ to allow you to continue to type.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            Node
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Node</dd>
+                                                    <dd property="yui:returnInfo">The node inserted.</dd>
                                                 </dl>
 
 
@@ -767,15 +762,15 @@ to allow you to continue to type.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method_resolve">
+                                    <div class="" rel="yui:method" resource="#method_resolve">
                                     <h4>
                                         <a name="method_resolve">resolve</a></h4>
                                     <div class="detail" >
                                         <code>
-                                         private 
                                         
+                                         static 
                                         
-                                        
+                                        Node
                                             <strong property="yui:name">resolve</strong>
                                            (
                                                 
@@ -798,15 +793,16 @@ to allow you to continue to type.
                                                         <code><span property="yui:name">n</span>
                                                         &lt;<span property="yui:type">HTMLElement</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> The HTMLElement to resolve. Might be a TextNode.</span>
+                                                        <span property="yui:description"> The HTMLElement to resolve. Might be a TextNode, gives parentNode.</span>
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            Node
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Node</dd>
+                                                    <dd property="yui:returnInfo">The Resolved node</dd>
                                                 </dl>
 
 
@@ -825,12 +821,16 @@ to allow you to continue to type.
                                         
                                         
                                         
-                                        void
+                                        Y.Selection
                                             <strong property="yui:name">selectNode</strong>
                                            (
                                                 
                                                         
                                                          node
+                                                    
+                                                
+                                                        , 
+                                                         collapse
                                                     
                                                 
                                             )
@@ -850,9 +850,18 @@ to allow you to continue to type.
                                                         </code>
                                                         <span property="yui:description"> The node to select</span>
                                                         </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">collapse</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Should the range be collapsed after insertion. default: false</span>
+                                                        </dd>
                                                 </dl>
 
 
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
 
              
 
@@ -869,7 +878,7 @@ to allow you to continue to type.
                                         
                                         
                                         
-                                        
+                                        Node
                                             <strong property="yui:name">setCursor</strong>
                                            (
                                             )
@@ -882,11 +891,72 @@ to allow you to continue to type.
                                         <div class="description">
 
 
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_toString">
+                                    <h4>
+                                        <a name="method_toString">toString</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong property="yui:name">toString</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Generic toString for logging.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_unfilter">
+                                    <h4>
+                                        <a name="method_unfilter">unfilter</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        String
+                                            <strong property="yui:name">unfilter</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Undoes what filter does enough to return the HTML from the Editor, then re-applies the filter.
+                                        </div>
+
+                                        <div class="description">
+
+
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            String
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Node</dd>
+                                                    <dd property="yui:returnInfo">The filtered HTML</dd>
                                                 </dl>
 
 
@@ -905,7 +975,7 @@ to allow you to continue to type.
                                         
                                         
                                         
-                                        
+                                        NodeList
                                             <strong property="yui:name">wrapContent</strong>
                                            (
                                                 
@@ -935,8 +1005,9 @@ to allow you to continue to type.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
+                                                            NodeList
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">NodeList</dd>
+                                                    <dd property="yui:returnInfo">A NodeList of all items in the selection.</dd>
                                                 </dl>
 
 
@@ -1001,8 +1072,6 @@ to allow you to continue to type.
                                 <li class=""><a href="#property_anchorNode" title="anchorNode">anchorNode</a></li>
                                 <li class=""><a href="#property_anchorOffset" title="anchorOffset">anchorOffset</a></li>
                                 <li class=""><a href="#property_anchorTextNode" title="anchorTextNode">anchorTextNode</a></li>
-                                <li class=""><a href="#property_CURID" title="CURID">CURID</a></li>
-                                <li class=""><a href="#property_CURSOR" title="CURSOR">CURSOR</a></li>
                                 <li class=""><a href="#property_DEFAULT_TAG" title="DEFAULT_TAG">DEFAULT_TAG</a></li>
                                 <li class=""><a href="#property_focusNode" title="focusNode">focusNode</a></li>
                                 <li class=""><a href="#property_focusOffset" title="focusOffset">focusOffset</a></li>
@@ -1026,9 +1095,11 @@ to allow you to continue to type.
                                 <li class=""><a href="#method_insertContent" title="insertContent">insertContent</a></li>
                                 <li class=""><a href="#method_remove" title="remove">remove</a></li>
                                 <li class=""><a href="#method_replace" title="replace">replace</a></li>
-                                <li class="private"><a href="#method_resolve" title="resolve">resolve</a></li>
+                                <li class=""><a href="#method_resolve" title="resolve">resolve</a></li>
                                 <li class=""><a href="#method_selectNode" title="selectNode">selectNode</a></li>
                                 <li class=""><a href="#method_setCursor" title="setCursor">setCursor</a></li>
+                                <li class=""><a href="#method_toString" title="toString">toString</a></li>
+                                <li class=""><a href="#method_unfilter" title="unfilter">unfilter</a></li>
                                 <li class=""><a href="#method_wrapContent" title="wrapContent">wrapContent</a></li>
                         </ul>
                     </div>
@@ -1045,7 +1116,7 @@ to allow you to continue to type.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"url": "EditorBase.html#method__afterFrameReady", "access": "private", "host": "EditorBase", "type": "method", "name": "_afterFrameReady"}, {"url": "Plugin.Selection.html#property_ALL", "access": "", "host": "Plugin.Selection", "type": "property", "name": "ALL"}, {"url": "Plugin.Selection.html#property_anchorNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "anchorNode"}, {"url": "Plugin.Selection.html#property_anchorOffset", "access": "", "host": "Plugin.Selection", "type": "property", "name": "anchorOffset"}, {"url": "Plugin.Selection.html#property_anchorTextNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "anchorTextNode"}, {"url": "Plugin.Frame.html#config_basehref", "access": "", "host": "Plugin.Frame", "type": "config", "name": "basehref"}, {"url": "Plugin.Frame.html#event_basehrefChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "basehrefChange"}, {"url": "Plugin.ExecCommand.html#method__command", "access": "private", "host": "Plugin.ExecCommand", "type": "method", "name": "_command"}, {"url": "Plugin.ExecCommand.html#method_command", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "command"}, {"url": "Plugin.ExecCommand.html#property_COMMANDS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "COMMANDS"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.addclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.addclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.inserthtml", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.inserthtml"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.insertimage", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.insertimage"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.removeclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.removeclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.wrap", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.wrap"}, {"url": "Plugin.Frame.html#config_container", "access": "", "host": "Plugin.Frame", "type": "config", "name": "container"}, {"url": "Plugin.Frame.html#event_containerChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "containerChange"}, {"url": "EditorBase.html#config_content", "access": "", "host": "EditorBase", "type": "config", "name": "content"}, {"url": "Plugin.Frame.html#config_content", "access": "", "host": "Plugin.Frame", "type": "config", "name": "content"}, {"url": "EditorBase.html#event_contentChange", "access": "", "host": "EditorBase", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#event_contentChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#method__create", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_create"}, {"url": "Plugin.Selection.html#method_createRange", "access": "", "host": "Plugin.Selection", "type": "method", "name": "createRange"}, {"url": "Plugin.Selection.html#property_CURID", "access": "", "host": "Plugin.Selection", "type": "property", "name": "CURID"}, {"url": "Plugin.Selection.html#property_CURSOR", "access": "", "host": "Plugin.Selection", "type": "property", "name": "CURSOR"}, {"url": "Plugin.Selection.html#property_DEFAULT_TAG", "access": "", "host": "Plugin.Selection", "type": "property", "name": "DEFAULT_TAG"}, {"url": "Plugin.Frame.html#method__defReadyFn", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_defReadyFn"}, {"url": "Plugin.Frame.html#method_delegate", "access": "", "host": "Plugin.Frame", "type": "method", "name": "delegate"}, {"url": "Plugin.Frame.html#config_designMode", "access": "", "host": "Plugin.Frame", "type": "config", "name": "designMode"}, {"url": "Plugin.Frame.html#event_designModeChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "designModeChange"}, {"url": "Plugin.Frame.html#config_dir", "access": "", "host": "Plugin.Frame", "type": "config", "name": "dir"}, {"url": "Plugin.Frame.html#event_dirChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "dirChange"}, {"url": "Plugin.Frame.html#property_DOC_TYPE", "access": "", "host": "Plugin.Frame", "type": "property", "name": "DOC_TYPE"}, {"url": "EditorBase.html#method_execCommand", "access": "", "host": "EditorBase", "type": "method", "name": "execCommand"}, {"url": "Plugin.Selection.html#method_filter", "access": "", "host": "Plugin.Selection", "type": "method", "name": "filter"}, {"url": "Plugin.Selection.html#property_focusNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "focusNode"}, {"url": "Plugin.Selection.html#property_focusOffset", "access": "", "host": "Plugin.Selection", "type": "property", "name": "focusOffset"}, {"url": "Plugin.Selection.html#property_focusTextNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "focusTextNode"}, {"url": "EditorBase.html#property_frame", "access": "", "host": "EditorBase", "type": "property", "name": "frame"}, {"url": "Plugin.Frame.html#property__frame", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_frame"}, {"url": "Plugin.Selection.html#method_getCursor", "access": "", "host": "Plugin.Selection", "type": "method", "name": "getCursor"}, {"url": "Plugin.Frame.html#method__getHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_getHTML"}, {"url": "EditorBase.html#method_getInstance", "access": "", "host": "EditorBase", "type": "method", "name": "getInstance"}, {"url": "Plugin.ExecCommand.html#method_getInstance", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "getInstance"}, {"url": "Plugin.Frame.html#method_getInstance", "access": "", "host": "Plugin.Frame", "type": "method", "name": "getInstance"}, {"url": "Plugin.Selection.html#method_getSelected", "access": "", "host": "Plugin.Selection", "type": "method", "name": "getSelected"}, {"url": "Plugin.Frame.html#property_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "HTML"}, {"url": "Plugin.Frame.html#config_id", "access": "", "host": "Plugin.Frame", "type": "config", "name": "id"}, {"url": "Plugin.Frame.html#event_idChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "idChange"}, {"url": "Plugin.Selection.html#method_insertAtCursor", "access": "", "host": "Plugin.Selection", "type": "method", "name": "insertAtCursor"}, {"url": "Plugin.Selection.html#method_insertContent", "access": "", "host": "Plugin.Selection", "type": "method", "name": "insertContent"}, {"url": "Plugin.ExecCommand.html#property__inst", "access": "private", "host": "Plugin.ExecCommand", "type": "property", "name": "_inst"}, {"url": "Plugin.Frame.html#property__instance", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_instance"}, {"url": "Plugin.Frame.html#method__instanceLoaded", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_instanceLoaded"}, {"url": "Plugin.Selection.html#property_isCollapsed", "access": "", "host": "Plugin.Selection", "type": "property", "name": "isCollapsed"}, {"url": "Plugin.Frame.html#config_lang", "access": "", "host": "Plugin.Frame", "type": "config", "name": "lang"}, {"url": "Plugin.Frame.html#event_langChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "langChange"}, {"url": "Plugin.Frame.html#property_META", "access": "", "host": "Plugin.Frame", "type": "property", "name": "META"}, {"url": "EditorBase.html#property_NAME", "access": "", "host": "EditorBase", "type": "property", "name": "NAME"}, {"url": "Plugin.ExecCommand.html#property_NAME", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NAME"}, {"url": "Plugin.Frame.html#property_NAME", "access": "", "host": "Plugin.Frame", "type": "property", "name": "NAME"}, {"url": "EditorBase.html#event_nodeChange", "access": "", "host": "EditorBase", "type": "event", "name": "nodeChange"}, {"url": "Plugin.ExecCommand.html#property_NS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NS"}, {"url": "Plugin.Frame.html#method__onContentReady", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onContentReady"}, {"url": "Plugin.Frame.html#method__onDomEvent", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onDomEvent"}, {"url": "EditorBase.html#method__onFrameKeyUp", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameKeyUp"}, {"url": "EditorBase.html#method__onFrameMouseDown", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameMouseDown"}, {"url": "Plugin.Frame.html#property_PAGE_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "PAGE_HTML"}, {"url": "Plugin.Frame.html#property__ready", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_ready"}, {"url": "Plugin.Selection.html#method_remove", "access": "", "host": "Plugin.Selection", "type": "method", "name": "remove"}, {"url": "EditorBase.html#method_render", "access": "", "host": "EditorBase", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#method_render", "access": "", "host": "Plugin.Frame", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#property__rendered", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_rendered"}, {"url": "Plugin.Selection.html#method_replace", "access": "", "host": "Plugin.Selection", "type": "method", "name": "replace"}, {"url": "Plugin.Selection.html#method_resolve", "access": "private", "host": "Plugin.Selection", "type": "method", "name": "resolve"}, {"url": "Plugin.Frame.html#method__resolveBaseHref", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveBaseHref"}, {"url": "Plugin.Frame.html#method__resolveWinDoc", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveWinDoc"}, {"url": "Plugin.Selection.html#property__selection", "access": "private", "host": "Plugin.Selection", "type": "property", "name": "_selection"}, {"url": "Plugin.Selection.html#method_selectNode", "access": "", "host": "Plugin.Selection", "type": "method", "name": "selectNode"}, {"url": "Plugin.Selection.html#method_setCursor", "access": "", "host": "Plugin.Selection", "type": "method", "name": "setCursor"}, {"url": "Plugin.Frame.html#method__setHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_setHTML"}, {"url": "Plugin.Frame.html#config_src", "access": "", "host": "Plugin.Frame", "type": "config", "name": "src"}, {"url": "Plugin.Frame.html#event_srcChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "srcChange"}, {"url": "Plugin.Selection.html#method__swap", "access": "private", "host": "Plugin.Selection", "type": "method", "name": "_swap"}, {"url": "Plugin.Selection.html#property_text", "access": "", "host": "Plugin.Selection", "type": "property", "name": "text"}, {"url": "Plugin.Frame.html#config_title", "access": "", "host": "Plugin.Frame", "type": "config", "name": "title"}, {"url": "Plugin.Frame.html#event_titleChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "titleChange"}, {"url": "Plugin.Selection.html#property_TMP", "access": "", "host": "Plugin.Selection", "type": "property", "name": "TMP"}, {"url": "EditorBase.html#property_USE", "access": "", "host": "EditorBase", "type": "property", "name": "USE"}, {"url": "Plugin.Frame.html#method_use", "access": "", "host": "Plugin.Frame", "type": "method", "name": "use"}, {"url": "Plugin.Frame.html#config_use", "access": "", "host": "Plugin.Frame", "type": "config", "name": "use"}, {"url": "Plugin.Frame.html#event_useChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "useChange"}, {"url": "Plugin.Selection.html#method__wrap", "access": "private", "host": "Plugin.Selection", "type": "method", "name": "_wrap"}, {"url": "Plugin.Selection.html#method_wrapContent", "access": "", "host": "Plugin.Selection", "type": "method", "name": "wrapContent"}];
+    var ALL_YUI_PROPS = [{"url": "EditorBase.html#method__afterFrameReady", "access": "private", "host": "EditorBase", "type": "method", "name": "_afterFrameReady"}, {"url": "Plugin.Selection.html#property_ALL", "access": "", "host": "Plugin.Selection", "type": "property", "name": "ALL"}, {"url": "Plugin.Selection.html#property_anchorNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "anchorNode"}, {"url": "Plugin.Selection.html#property_anchorOffset", "access": "", "host": "Plugin.Selection", "type": "property", "name": "anchorOffset"}, {"url": "Plugin.Selection.html#property_anchorTextNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "anchorTextNode"}, {"url": "Plugin.Frame.html#config_basehref", "access": "", "host": "Plugin.Frame", "type": "config", "name": "basehref"}, {"url": "Plugin.Frame.html#event_basehrefChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "basehrefChange"}, {"url": "Plugin.ExecCommand.html#method__command", "access": "private", "host": "Plugin.ExecCommand", "type": "method", "name": "_command"}, {"url": "Plugin.ExecCommand.html#method_command", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "command"}, {"url": "Plugin.ExecCommand.html#property_COMMANDS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "COMMANDS"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.addclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.addclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.inserthtml", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.inserthtml"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.insertimage", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.insertimage"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.removeclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.removeclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.wrap", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.wrap"}, {"url": "Plugin.Frame.html#config_container", "access": "", "host": "Plugin.Frame", "type": "config", "name": "container"}, {"url": "Plugin.Frame.html#event_containerChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "containerChange"}, {"url": "EditorBase.html#config_content", "access": "", "host": "EditorBase", "type": "config", "name": "content"}, {"url": "Plugin.Frame.html#config_content", "access": "", "host": "Plugin.Frame", "type": "config", "name": "content"}, {"url": "EditorBase.html#event_contentChange", "access": "", "host": "EditorBase", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#event_contentChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#method__create", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_create"}, {"url": "Plugin.Selection.html#method_createRange", "access": "", "host": "Plugin.Selection", "type": "method", "name": "createRange"}, {"url": "Plugin.Selection.html#property_DEFAULT_TAG", "access": "", "host": "Plugin.Selection", "type": "property", "name": "DEFAULT_TAG"}, {"url": "Plugin.Frame.html#method__defReadyFn", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_defReadyFn"}, {"url": "Plugin.Frame.html#method_delegate", "access": "", "host": "Plugin.Frame", "type": "method", "name": "delegate"}, {"url": "Plugin.Frame.html#config_designMode", "access": "", "host": "Plugin.Frame", "type": "config", "name": "designMode"}, {"url": "Plugin.Frame.html#event_designModeChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "designModeChange"}, {"url": "EditorBase.html#config_dir", "access": "", "host": "EditorBase", "type": "config", "name": "dir"}, {"url": "Plugin.Frame.html#config_dir", "access": "", "host": "Plugin.Frame", "type": "config", "name": "dir"}, {"url": "EditorBase.html#event_dirChange", "access": "", "host": "EditorBase", "type": "event", "name": "dirChange"}, {"url": "Plugin.Frame.html#event_dirChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "dirChange"}, {"url": "Plugin.Frame.html#property_DOC_TYPE", "access": "", "host": "Plugin.Frame", "type": "property", "name": "DOC_TYPE"}, {"url": "EditorBase.html#method_execCommand", "access": "", "host": "EditorBase", "type": "method", "name": "execCommand"}, {"url": "Plugin.Selection.html#method_filter", "access": "", "host": "Plugin.Selection", "type": "method", "name": "filter"}, {"url": "EditorBase.html#method_focus", "access": "", "host": "EditorBase", "type": "method", "name": "focus"}, {"url": "Plugin.Frame.html#method_focus", "access": "", "host": "Plugin.Frame", "type": "method", "name": "focus"}, {"url": "Plugin.Selection.html#property_focusNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "focusNode"}, {"url": "Plugin.Selection.html#property_focusOffset", "access": "", "host": "Plugin.Selection", "type": "property", "name": "focusOffset"}, {"url": "Plugin.Selection.html#property_focusTextNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "focusTextNode"}, {"url": "EditorBase.html#property_frame", "access": "", "host": "EditorBase", "type": "property", "name": "frame"}, {"url": "EditorBase.html#method_getContent", "access": "", "host": "EditorBase", "type": "method", "name": "getContent"}, {"url": "Plugin.Selection.html#method_getCursor", "access": "", "host": "Plugin.Selection", "type": "method", "name": "getCursor"}, {"url": "Plugin.Frame.html#method__getHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_getHTML"}, {"url": "EditorBase.html#method_getInstance", "access": "", "host": "EditorBase", "type": "method", "name": "getInstance"}, {"url": "Plugin.ExecCommand.html#method_getInstance", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "getInstance"}, {"url": "Plugin.Frame.html#method_getInstance", "access": "", "host": "Plugin.Frame", "type": "method", "name": "getInstance"}, {"url": "Plugin.Selection.html#method_getSelected", "access": "", "host": "Plugin.Selection", "type": "method", "name": "getSelected"}, {"url": "Plugin.Frame.html#property_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "HTML"}, {"url": "Plugin.Frame.html#config_id", "access": "", "host": "Plugin.Frame", "type": "config", "name": "id"}, {"url": "Plugin.Frame.html#event_idChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "idChange"}, {"url": "Plugin.Frame.html#property__iframe", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_iframe"}, {"url": "Plugin.Selection.html#method_insertAtCursor", "access": "", "host": "Plugin.Selection", "type": "method", "name": "insertAtCursor"}, {"url": "Plugin.Selection.html#method_insertContent", "access": "", "host": "Plugin.Selection", "type": "method", "name": "insertContent"}, {"url": "Plugin.ExecCommand.html#property__inst", "access": "private", "host": "Plugin.ExecCommand", "type": "property", "name": "_inst"}, {"url": "Plugin.Frame.html#property__instance", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_instance"}, {"url": "Plugin.Frame.html#method__instanceLoaded", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_instanceLoaded"}, {"url": "Plugin.Selection.html#property_isCollapsed", "access": "", "host": "Plugin.Selection", "type": "property", "name": "isCollapsed"}, {"url": "EditorBase.html#property__keyUpTimer", "access": "private", "host": "EditorBase", "type": "property", "name": "_keyUpTimer"}, {"url": "Plugin.Frame.html#config_lang", "access": "", "host": "Plugin.Frame", "type": "config", "name": "lang"}, {"url": "Plugin.Frame.html#event_langChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "langChange"}, {"url": "Plugin.Frame.html#property_META", "access": "", "host": "Plugin.Frame", "type": "property", "name": "META"}, {"url": "EditorBase.html#property_NAME", "access": "", "host": "EditorBase", "type": "property", "name": "NAME"}, {"url": "Plugin.ExecCommand.html#property_NAME", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NAME"}, {"url": "Plugin.Frame.html#property_NAME", "access": "", "host": "Plugin.Frame", "type": "property", "name": "NAME"}, {"url": "EditorBase.html#event_nodeChange", "access": "", "host": "EditorBase", "type": "event", "name": "nodeChange"}, {"url": "Plugin.ExecCommand.html#property_NS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NS"}, {"url": "Plugin.Frame.html#method__onContentReady", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onContentReady"}, {"url": "Plugin.Frame.html#method__onDomEvent", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onDomEvent"}, {"url": "EditorBase.html#method__onFrameKeyUp", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameKeyUp"}, {"url": "EditorBase.html#method__onFrameMouseDown", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameMouseDown"}, {"url": "EditorBase.html#method__onKeyUpTimer", "access": "private", "host": "EditorBase", "type": "method", "name": "_onKeyUpTimer"}, {"url": "Plugin.Frame.html#property_PAGE_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "PAGE_HTML"}, {"url": "Plugin.Frame.html#property__ready", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_ready"}, {"url": "Plugin.Selection.html#method_remove", "access": "", "host": "Plugin.Selection", "type": "method", "name": "remove"}, {"url": "EditorBase.html#method_render", "access": "", "host": "EditorBase", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#method_render", "access": "", "host": "Plugin.Frame", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#property__rendered", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_rendered"}, {"url": "Plugin.Selection.html#method_replace", "access": "", "host": "Plugin.Selection", "type": "method", "name": "replace"}, {"url": "Plugin.Selection.html#method_resolve", "access": "", "host": "Plugin.Selection", "type": "method", "name": "resolve"}, {"url": "Plugin.Frame.html#method__resolveBaseHref", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveBaseHref"}, {"url": "Plugin.Frame.html#method__resolveWinDoc", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveWinDoc"}, {"url": "Plugin.Selection.html#property__selection", "access": "private", "host": "Plugin.Selection", "type": "property", "name": "_selection"}, {"url": "Plugin.Selection.html#method_selectNode", "access": "", "host": "Plugin.Selection", "type": "method", "name": "selectNode"}, {"url": "Plugin.Selection.html#method_setCursor", "access": "", "host": "Plugin.Selection", "type": "method", "name": "setCursor"}, {"url": "Plugin.Frame.html#method__setHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_setHTML"}, {"url": "Plugin.Frame.html#config_src", "access": "", "host": "Plugin.Frame", "type": "config", "name": "src"}, {"url": "Plugin.Frame.html#event_srcChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "srcChange"}, {"url": "EditorBase.html#property_STRINGS", "access": "", "host": "EditorBase", "type": "property", "name": "STRINGS"}, {"url": "EditorBase.html#property_STRINGS.title", "access": "", "host": "EditorBase", "type": "property", "name": "STRINGS.title"}, {"url": "Plugin.Selection.html#method__swap", "access": "private", "host": "Plugin.Selection", "type": "method", "name": "_swap"}, {"url": "Plugin.Selection.html#property_text", "access": "", "host": "Plugin.Selection", "type": "property", "name": "text"}, {"url": "Plugin.Frame.html#config_title", "access": "", "host": "Plugin.Frame", "type": "config", "name": "title"}, {"url": "Plugin.Frame.html#event_titleChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "titleChange"}, {"url": "Plugin.Selection.html#property_TMP", "access": "", "host": "Plugin.Selection", "type": "property", "name": "TMP"}, {"url": "Plugin.Selection.html#method_toString", "access": "", "host": "Plugin.Selection", "type": "method", "name": "toString"}, {"url": "Plugin.Selection.html#method_unfilter", "access": "", "host": "Plugin.Selection", "type": "method", "name": "unfilter"}, {"url": "EditorBase.html#property_USE", "access": "", "host": "EditorBase", "type": "property", "name": "USE"}, {"url": "Plugin.Frame.html#method_use", "access": "", "host": "Plugin.Frame", "type": "method", "name": "use"}, {"url": "Plugin.Frame.html#config_use", "access": "", "host": "Plugin.Frame", "type": "config", "name": "use"}, {"url": "Plugin.Frame.html#event_useChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "useChange"}, {"url": "Plugin.Selection.html#method__wrap", "access": "private", "host": "Plugin.Selection", "type": "method", "name": "_wrap"}, {"url": "Plugin.Selection.html#method_wrapContent", "access": "", "host": "Plugin.Selection", "type": "method", "name": "wrapContent"}];
 </script>
 </body>
 </html>
