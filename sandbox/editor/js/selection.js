@@ -17,7 +17,7 @@ YUI.add('selection', function(Y) {
 
 
     Y.Selection = function() {
-        var sel, el;
+        var sel, el, cur, curStr, curID;
         if (Y.config.win.getSelection) {
 	        sel = Y.config.win.getSelection();
         } else if (Y.config.doc.selection) {
@@ -30,8 +30,11 @@ YUI.add('selection', function(Y) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
 
             if (this.isCollapsed) {
-                sel.pasteHTML(Y.Selection.CURSOR);
-                el = Y.one('#' + Y.Selection.CURID).previous(function(n) {
+                curID = 'cur-' + Y.guid();
+                curStr = '<span id="' + curID + '" style="height: 0; line-height: 0; font-size: 0;"> </span>';
+                sel.pasteHTML(curStr);
+                var cur = Y.config.doc.getElementById(curID);
+                el = Y.one(cur).previous(function(n) {
                     if (n.get('nodeType') === 3) {
                         return true;
                     }
@@ -44,12 +47,13 @@ YUI.add('selection', function(Y) {
                     this.anchorOffset = this.focusOffset = el.get('nodeValue.length');
                     
                     this.anchorTextNode = this.focusTextNode = el;
-                    Y.all('#' + Y.Selection.CURID).remove();
+                    cur.parentNode.removeChild(cur);
                 }
             }
+
             
-            //var self = this;
-            //debugger;
+            var self = this;
+            debugger;
         } else {
             this.isCollapsed = sel.isCollapsed;
             this.anchorNode = Y.Selection.resolve(sel.anchorNode);
@@ -133,6 +137,14 @@ YUI.add('selection', function(Y) {
             }
         });
 
+        var ids = Y.all('body [id]');
+        ids.each(function(n) {
+            if (n.get('id').indexOf('yui_3_') === 0) {
+                n.removeAttribute('id');
+                n.removeAttribute('_yuid');
+            }
+        });
+
         html = Y.one('body').get('innerHTML');
         
         nodes.each(function(n) {
@@ -177,18 +189,6 @@ YUI.add('selection', function(Y) {
     * @property DEFAULT_TAG
     */
     Y.Selection.DEFAULT_TAG = 'span';
-    /**
-    * The DOM id of the tmp node inserted into the doc to track the cursor: __CUR__
-    * @static
-    * @property CURID
-    */
-    Y.Selection.CURID = '__CUR__';
-    /**
-    * The HTML used to create the temporary cursor.
-    * @static
-    * @property CURSOR
-    */
-    Y.Selection.CURSOR = '<' + Y.Selection.DEFAULT_TAG + ' id="' + Y.Selection.CURID + '" style="height: 0; line-height: 0; font-size: 0;"> </' + Y.Selection.DEFAULT_TAG + '>';
 
     Y.Selection.prototype = {
         /**

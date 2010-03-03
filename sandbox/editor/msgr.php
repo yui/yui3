@@ -136,7 +136,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             Y.log('Stopping Return', 'info', 'editor');
             e.frameEvent.halt();
             var inst = editor.getInstance();
-            inst.one('br').remove(); //Remove the BR
+            inst.all('br').remove(); //Remove the BR
             var html = editor.getContent();
             editor.set('content', '');
             alert('Send: ' + html);

@@ -34,7 +34,7 @@ YUI.add('frame', function(Y) {
         _rendered: null,
         /**
         * @private
-        * @property _frame
+        * @property _iframe
         * @description Internal Node reference to the iFrame or the window
         * @type Node
         */
@@ -57,8 +57,8 @@ YUI.add('frame', function(Y) {
 
             this._iframe = Y.Node.create(Frame.HTML);
             this._iframe.setStyle('visibility', 'hidden');
-            this.get('container').append(this._iframe);
             this._iframe.set('src', this.get('src'));
+            this.get('container').append(this._iframe);
             res = this._resolveWinDoc();
             win = res.win;
             doc = res.doc;
@@ -205,35 +205,33 @@ YUI.add('frame', function(Y) {
             var html = '',
                 doc = this._instance.config.doc;
 
-            if (this.get('src').indexOf('javascript') === 0) {
-                Y.log('Creating the document from a javascript URL', 'info', 'frame');
-                html = Y.substitute(Frame.PAGE_HTML, {
-                    DIR: this.get('dir'),
-                    LANG: this.get('lang'),
-                    TITLE: this.get('title'),
-                    META: Frame.META,
-                    CONTENT: this.get('content'),
-                    BASE_HREF: this.get('basehref'),
-                    DEFAULT_CSS: Frame.DEFAULT_CSS
-                });
-                if (Y.config.doc.compatMode != 'BackCompat') {
-                    Y.log('Adding Doctype to frame', 'info', 'frame');
-                    html = Frame.DOC_TYPE + "\n" + html;
-                } else {
-                    Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
-                }
+            Y.log('Creating the document from javascript', 'info', 'frame');
+            html = Y.substitute(Frame.PAGE_HTML, {
+                DIR: this.get('dir'),
+                LANG: this.get('lang'),
+                TITLE: this.get('title'),
+                META: Frame.META,
+                CONTENT: this.get('content'),
+                BASE_HREF: this.get('basehref'),
+                DEFAULT_CSS: Frame.DEFAULT_CSS
+            });
+            if (Y.config.doc.compatMode != 'BackCompat') {
+                Y.log('Adding Doctype to frame', 'info', 'frame');
+                html = Frame.DOC_TYPE + "\n" + html;
+            } else {
+                Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
+            }
 
-                Y.log('Injecting content into iframe', 'info', 'frame');
-                doc.open();
-                doc.write(html);
-                if (this.get('designMode')) {
-                    doc.designMode = 'on';
-                    if (!Y.UA.ie) {
-                        //Force other browsers into non CSS styling
-                        doc.execCommand('styleWithCSS', false, false);
-                    }
+            Y.log('Injecting content into iframe', 'info', 'frame');
+            doc.open();
+            doc.write(html);
+            doc.close();
+            if (this.get('designMode')) {
+                doc.designMode = 'on';
+                if (!Y.UA.ie) {
+                    //Force other browsers into non CSS styling
+                    doc.execCommand('styleWithCSS', false, false);
                 }
-                doc.close();
             }
         },
         /**
