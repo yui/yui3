@@ -26,7 +26,8 @@ YUI.add('editor-base', function(Y) {
             var frame = new Y.Frame({
                 designMode: true,
                 title: EditorBase.STRINGS.title,
-                use: EditorBase.USE
+                use: EditorBase.USE,
+                dir: this.get('dir'),
             }).plug(Y.Plugin.ExecCommand);
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
@@ -50,19 +51,40 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameMouseDown: function(e) {
-            this.fire('nodeChange', { node: e.frameTarget });
+            this.fire('nodeChange', { node: e.frameTarget, type: 'mousedown' });
         },
         /**
-        * Fires nodeChange event
-        * @method _onFrameKeyUp
+        * The Y.later handle to determine if there is an active timer running.
+        * @property _keyUpTimer
         * @private
         */
-        _onFrameKeyUp: function(e) {
+        _keyupTimer: null,
+        /**
+        * Fires nodeChange event from _onKeyUpTimer on a timer for performance
+        * @method _onKeyUpTimer
+        * @param {Boolean} fromTimer If it's from the timer, kill the _keyUpTimer property
+        * @private
+        */
+        _onKeyUpTimer: function(fromTimer) {
             var inst = this.frame.getInstance(),
                 sel = new inst.Selection();
 
             if (sel.anchorNode) {
-                this.fire('nodeChange', { node: sel.anchorNode });
+                this.fire('nodeChange', { node: sel.anchorNode, type: 'keyup', selection: sel });
+            }
+            if (fromTimer) {
+                this._keyUpTimer = null;
+            }
+        },
+        /**
+        * Fires nodeChange event via _onKeyUpTimer on a timer for performance
+        * @method _onFrameKeyUp
+        * @private
+        */
+        _onFrameKeyUp: function(e) {
+            if (!this._keyUpTimer) {
+                this._keyUpTimer = Y.later(350, this, Y.bind(this._onKeyUpTimer, this, true));
+                this._onKeyUpTimer(false);
             }
         },
         /**
@@ -123,7 +145,7 @@ YUI.add('editor-base', function(Y) {
         * @property USE
         * @type Array
         */
-        USE: ['node','selector-css3', 'selection', 'stylesheet'],
+        USE: ['substitute', 'node','selector-css3', 'selection', 'stylesheet'],
         /**
         * The Class Name: editorBase
         * @static
@@ -160,6 +182,14 @@ YUI.add('editor-base', function(Y) {
                 getter: function() {
                     return this.frame.get('content');
                 }
+            },
+            /**
+            * The value of the dir attribute on the HTML element of the frame. Default: ltr
+            * @attribute dir
+            */
+            dir: {
+                writeOnce: true,
+                value: 'ltr'
             }
         }
     });

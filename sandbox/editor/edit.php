@@ -89,7 +89,9 @@ del {
 }
 </style>
 </div>
-<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
+<script type="text/javascript" src="http://yui.yahooapis.com/3.1.0pr1/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
@@ -194,11 +196,23 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     });
     editor.on('nodeChange', function(e) {
         updateButtons(e.node);
+        if (e.type === 'keyup') {
+            if (e.node) {
+                var txt = e.node.get('text');
+                Y.each(smilies, function(v, k) {
+                    //Hackey, doesn't work on new line.
+                    if (txt.indexOf(' ' + v) !== -1) {
+                        e.selection.replace(v, '<span>&nbsp;<img src="smilies/' + k + '.gif">&nbsp;</span>', e.selection.anchorTextNode);
+                    }
+                });
+            }
+        }
     });
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
         //this.set('content', Y.one('#stub').get('innerHTML'));
     });
+    /*
     editor.on('frame:keyup', function(e) {
         var inst = this.getInstance(),
             sel = new inst.Selection();
@@ -213,6 +227,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             });
         }
     });
+    */
     editor.render('#test');
 
     Y.on('click', function(e) {

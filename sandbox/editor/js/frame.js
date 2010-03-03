@@ -361,6 +361,7 @@ YUI.add('frame', function(Y) {
             return this;
         }
     }, {
+
         DEFAULT_CSS: 'html { height: 95%; } body { padding: 7px; background-color: #fff; font: 13px/1.22 arial,helvetica,clean,sans-serif;*font-size:small;*font:x-small; } a, a:visited, a:hover { color: blue !important; text-decoration: underline !important; cursor: text !important; } img { cursor: pointer !important; border: none; }',
         /**
         * @static
@@ -468,7 +469,7 @@ YUI.add('frame', function(Y) {
             */
             use: {
                 writeOnce: true,
-                value: ['node', 'selector-css3']
+                value: ['substitute', 'node', 'selector-css3']
             },
             /**
             * @attribute container
@@ -498,6 +499,7 @@ YUI.add('frame', function(Y) {
             }
         }
     });
+
 
     Y.Frame = Frame;
 

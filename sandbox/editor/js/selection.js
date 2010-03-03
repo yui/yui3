@@ -13,22 +13,7 @@ YUI.add('selection', function(Y) {
     //TODO This shouldn't be there, Y.Node doesn't normalize getting textnode content.
     var textContent = 'textContent',
     INNER_HTML = 'innerHTML',
-    FONT_FAMILY = 'fontFamily',
-    ieNode;
-
-    if (Y.UA.ie) {
-        /*
-        Y.on('selectionchange', function(e) {
-            ieNode = e;
-            debugger;
-        }, Y.config.doc);
-        */
-        Y.config.doc.body.attachEvent('onkeydown', function(e) {
-            ieNode = e.srcElement;
-            //debugger;
-        });
-    }
-
+    FONT_FAMILY = 'fontFamily';
 
     Y.Selection = function() {
         var sel, el, cur, curStr, curID;
@@ -44,31 +29,35 @@ YUI.add('selection', function(Y) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
 
             if (this.isCollapsed) {
-                curID = 'cur-' + Y.guid();
-                curStr = '<span id="' + curID + '" style="height: 0; line-height: 0; font-size: 0;"> </span>';
-                sel.pasteHTML(curStr);
-                var cur = Y.config.doc.getElementById(curID);
-                el = Y.one(cur).previous(function(n) {
-                    if (n.get('nodeType') === 3) {
-                        return true;
-                    }
-                }, true);
+                var par = sel.parentElement(),
+                    nodes = par.childNodes, ieNode,
+                    rng = sel.duplicate();
 
-                if (el) {
-                    this.anchorNode = Y.Selection.resolve(Y.Node.getDOMNode(el));
-                    this.focusNode = Y.Selection.resolve(Y.Node.getDOMNode(el));
+                Y.each(nodes, function(v) {
+                    rng.select(v);
+                    if (rng.inRange(sel)) {
+                       ieNode = v; 
+                    }
+                });
+
+                this.ieNode = ieNode;
+                
+                if (ieNode) {
+                    if (ieNode.nodeType !== 3) {
+                        ieNode = ieNode.firstChild;
+                    }
+                    this.anchorNode = Y.Selection.resolve(ieNode);
+                    this.focusNode = Y.Selection.resolve(ieNode);
                     
-                    this.anchorOffset = this.focusOffset = el.get('nodeValue.length');
+                    this.anchorOffset = this.focusOffset = ieNode.nodeValue.length;
                     
-                    this.anchorTextNode = this.focusTextNode = el;
-                    cur.parentNode.removeChild(cur);
+                    this.anchorTextNode = this.focusTextNode = Y.one(ieNode);
                 }
+                
             }
 
-            
-            var self = this;
-            self.ieNode = ieNode;
-            debugger;
+            //var self = this;
+            //debugger;
         } else {
             this.isCollapsed = sel.isCollapsed;
             this.anchorNode = Y.Selection.resolve(sel.anchorNode);

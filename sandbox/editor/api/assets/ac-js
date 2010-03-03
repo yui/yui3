@@ -1,4 +1,5 @@
 (function() {
+
     var Event=YAHOO.util.Event,
         Dom=YAHOO.util.Dom,
         oACDS, oAutoComp,
@@ -6,9 +7,27 @@
             'private': false,
             'protected': false,
             'deprecated': false
-        };
+        },
+        
+        ITEM_TEMPLATE = '<em>{host}</em> <span>{name}</span>',
+        // ITEM_TEMPLATE = '<em>{host}</em> <span>{params}</span> <span>{name}</span>',
+        // ITEM_TEMPLATE = '<em>{host}</em> <span>{params}</span> <span>{name}</span><div>{description}</div>',
+        yuidoc = YAHOO.namespace('yuidoc'),
+        propdata,
+        initialized = false;
 
-Event.onAvailable('yui-classopts-form', function() {
+yuidoc.init = function(altdata) {
+   yuidoc.initUI(altdata);
+};
+
+yuidoc.initUI = function(altdata) {
+
+    if (initialized) {
+        return;
+    }
+
+    propdata = ALL_YUI_PROPS || altdata;
+
     //Checkboxes are available..
     var handleClick = function(e) {
         var id, checked = false;
@@ -37,14 +56,6 @@ Event.onAvailable('yui-classopts-form', function() {
         var value = YAHOO.util.Cookie.getSub('yuidoc', id),
             el = Dom.get(id), checked = (value === 'checked');;
 
-        /*
-        if (value === 'checked') {
-            el.checked = true;
-        } else {
-            el.checked = false;
-        }
-        */
-
         el.checked = checked;
         return checked;
     };
@@ -68,19 +79,15 @@ Event.onAvailable('yui-classopts-form', function() {
         }
     }
     
-});
+};
 
 //Starting the AutoComplete code
     var getResults = function(query) {
         var results = [];
-        if(query && query.length > 0) {
-
+        if (query && query.length > 0) {
             var q = query.toLowerCase();
-
-            for (var i=0, len=ALL_YUI_PROPS.length; i<len; ++i) {
-
-                var prop = ALL_YUI_PROPS[i];
-
+            for (var i=0, len=propdata.length; i<len; ++i) {
+                var prop = propdata[i];
                 if (!show['protected'] && prop.access == "protected") {
                     // skip
                 } else if (!show['private'] && prop.access == "private") {
@@ -132,8 +139,10 @@ Event.onAvailable('yui-classopts-form', function() {
         oAutoComp.maxResultsDisplayed = 200;
         oAutoComp.minQueryLength = 0;
         oAutoComp.formatResult = function(oResultItem, query) {
-            var sMarkup = "<em>" + oResultItem[1].host + '</em> <span>' + oResultItem[1].name + '</span>';
-            return sMarkup;
+            // var sMarkup = "<em>" + oResultItem[1].host + '</em> <span>' + oResultItem[1].name + '</span>';
+            // return sMarkup;
+            // return  "<em>" + oResultItem[1].host + '</em> <span>' + oResultItem[1].name + '</span>';
+            return  YAHOO.lang.substitute(ITEM_TEMPLATE, oResultItem[1]);
         };
 
         // Subscribe to Custom Events
@@ -152,11 +161,18 @@ Event.onAvailable('yui-classopts-form', function() {
     YAHOO.util.Event.onAvailable('classTab', function() {
         var tabs = new YAHOO.widget.TabView('classTab');
     });
+
     /*
     YAHOO.util.Event.onAvailable('codeTree', function() {
         var tree1 = new YAHOO.widget.TreeView('codeTree');
         tree1.render();    
     });
     */
+
+    YAHOO.util.Event.onDOMReady(function() {
+        if (typeof ALL_YUI_PROPS != "undefined") {
+            YAHOO.yuidoc.initUI();
+        }
+    });
 
 })();
