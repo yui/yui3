@@ -756,7 +756,7 @@
 
         <span class="c1">// Handle submodule logic</span>
         <span class="kd">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">submodules</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">sup</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">smod</span><span class="p">,</span> <span class="nx">plugins</span><span class="p">,</span> <span class="nx">plug</span><span class="p">,</span>
-            <span class="nx">j</span><span class="p">,</span> <span class="nx">langs</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">supName</span><span class="p">,</span> <span class="nx">flatSup</span><span class="p">,</span> <span class="nx">flatLang</span><span class="p">,</span> <span class="nx">lang</span><span class="p">;</span>
+            <span class="nx">j</span><span class="p">,</span> <span class="nx">langs</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">supName</span><span class="p">,</span> <span class="nx">flatSup</span><span class="p">,</span> <span class="nx">flatLang</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span> <span class="nx">ret</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">sup</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">||</span> <span class="p">[];</span> 
             <span class="nx">l</span>   <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -842,6 +842,14 @@
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">configFn</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">configFn</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+                <span class="nx">o</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
     <span class="p">},</span>

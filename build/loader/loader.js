@@ -2,11 +2,14 @@ YUI.add('loader', function(Y) {
 
 (function() {
 var VERSION         = Y.version,
-    ROOT            = VERSION + '/build/',
-    GALLERY_VERSION = Y.config.gallery || Y.gallery,
-    GALLERY_ROOT    = GALLERY_VERSION + '/build/',
+    BUILD           = '/build/',
+    ROOT            = VERSION + BUILD,
+
+    GALLERY_VERSION = Y.config.gallery || 'gallery-2010.03.02-18',
+    GALLERY_ROOT    = GALLERY_VERSION + BUILD,
+    YUI2_VERSION    = Y.config.yui2 || '2.8.0_test4',
+    YUI2_ROOT       = '2in3/' + YUI2_VERSION + BUILD,
     COMBO_BASE      = 'http://yui.yahooapis.com/combo?',
-    GALLERY_BASE    = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
     META =          { version:   VERSION,
                       root:      ROOT,
                       base:      'http://yui.yahooapis.com/' + ROOT,
@@ -824,22 +827,22 @@ var VERSION         = Y.version,
                 "skinnable": true
             }
         }, 
+        "requires": [
+            "widget", 
+            "skin-sam-tabview", 
+            "widget-parent", 
+            "widget-child", 
+            "tabview-base"
+        ], 
+        "skinnable": true, 
         "submodules": {
             "tabview-base": {
                 "requires": [
-                    "node-event-delegate",
+                    "node-event-delegate", 
                     "classnamemanager"
                 ]
-            } 
-        },
-        "requires": [
-            "widget", 
-            "skin-sam-tabview",
-            "widget-parent",
-            "widget-child",
-            "tabview-base"
-        ], 
-        "skinnable": true
+            }
+        }
     }, 
     "test": {
         "requires": [
@@ -926,12 +929,42 @@ var VERSION         = Y.version,
 META.groups[VERSION] = {};
 
 META.groups.gallery = {
-    base:      GALLERY_BASE,
+    base:      'http://yui.yahooapis.com/' + GALLERY_ROOT,
     ext:       false,
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE,
     patterns:  { 'gallery-': {} }
+};
+
+META.groups.yui2 = {
+    base:      'http://yui.yahooapis.com/' + YUI2_ROOT,
+    combine:   true,
+    // base:      '/2in3/',
+    ext:       false,
+    root:      YUI2_ROOT,
+    comboBase: COMBO_BASE,
+    patterns:  { 
+        'yui2-': {
+            configFn: function(me) {
+                // var path = me.path;
+                // path = path.replace(/yui2-/g, '');
+                // path = path.replace(/core\//, '/');
+                // path = path.replace(/core-min/, '_core-min');
+                // path = path.replace(/^simple/, '');
+                // me.path = path;
+                if(/-skin|reset|fonts|grids|base/.test(me.name)) {
+                    me.type = 'css';
+                    me.path = me.path.replace(/\.js/, '.css');
+                    // var path = me.path;
+                    // path = path.replace(/\.js/, '.css');
+                    // path = path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
+                    // me.path = path;
+                    // return false;
+                }
+            }
+        } 
+    }
 };
 
 YUI.Env[VERSION] = META;
@@ -1644,7 +1677,7 @@ Y.Loader.prototype = {
 
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
-            j, langs, packName, supName, flatSup, flatLang, lang;
+            j, langs, packName, supName, flatSup, flatLang, lang, ret;
         if (subs) {
             sup = o.supersedes || []; 
             l   = 0;
@@ -1729,6 +1762,14 @@ Y.Loader.prototype = {
         }
 
         this.dirty = true;
+
+        if (o.configFn) {
+            ret = o.configFn(o);
+            if (ret === false) {
+                delete this.moduleInfo[name];
+                o = null;
+            }
+        }
 
         return o;
     },

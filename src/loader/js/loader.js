@@ -707,7 +707,7 @@ Y.Loader.prototype = {
 
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
-            j, langs, packName, supName, flatSup, flatLang, lang;
+            j, langs, packName, supName, flatSup, flatLang, lang, ret;
         if (subs) {
             sup = o.supersedes || []; 
             l   = 0;
@@ -793,6 +793,14 @@ Y.Loader.prototype = {
         }
 
         this.dirty = true;
+
+        if (o.configFn) {
+            ret = o.configFn(o);
+            if (ret === false) {
+                delete this.moduleInfo[name];
+                o = null;
+            }
+        }
 
         return o;
     },
