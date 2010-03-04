@@ -410,8 +410,8 @@
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">||</span> <span class="p">{}),</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span> <span class="p">});</span>
 
     <span class="c1">// no redefinition allowed</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
-        <span class="nx">EvtPlugins</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">EvtPlugins</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">};</span>
 </pre></div>
