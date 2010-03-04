@@ -813,6 +813,18 @@ Y.Console = Y.extend(Console, Y.Widget,
     },
 
     /**
+     * Over-ride default content box sizing to do nothing, since we're sizing
+     * the body section to fill out height ourselves.
+     * 
+     * @method _uiSizeCB
+     * @protected
+     */
+    _uiSizeCB : function() {
+        // Do Nothing. Ideally want to move to Widget-StdMod, which accounts for
+        // _uiSizeCB        
+    },
+
+    /**
      * Updates the UI if changes are made to any of the strings in the strings
      * attribute.
      *
