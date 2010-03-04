@@ -7,7 +7,7 @@ body {
 	padding:0;
 }
 </style> 
-<style type="text/css"> 
+<style type="text/css" id="overrides"> 
     #container {
         margin: 0 auto;
     }
@@ -37,6 +37,7 @@ body {
 <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
 <script type="text/javascript" charset="utf-8">                                                                                                                 
 YUI({
+    insertBefore: 'overrides',
     combine: true // running locally, so I need to force combo handling
     // gallery: 'gallery-2010.02.22-22'
 }).use('yui2-carousel', function (Y) {
