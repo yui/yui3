@@ -361,7 +361,7 @@ Y.Event.define = function (type, cfg) {
                 Y.mix(Y.Object(cfg || {}), { type: type });
 
     // no redefinition allowed
-    if (!DOMEvents[type]) {
-        EvtPlugins[type] = DOMEvents[type] = new Y.SyntheticEvent(e);
+    if (!DOMEvents[e.type]) {
+        EvtPlugins[e.type] = DOMEvents[e.type] = new Y.SyntheticEvent(e);
     }
 };

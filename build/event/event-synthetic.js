@@ -13,10 +13,8 @@ var Evt         = Y.Env.evt,
     DOMEvents   = Y.Node.DOM_EVENTS,
     isFunction  = Y.Lang.isFunction;
 
-/**
+/*
  * Adds the following method to CustomEvent's prototype.
- *
- * @class CustomEvent~extras
  */
 
 /**
@@ -29,6 +27,9 @@ var Evt         = Y.Env.evt,
  * @param fn {Function} Optional. The subscribed callback function
  * @param ctx {Object} Optional.  The context override for the callback
  * @return {Subscriber} or null
+ * @for CustomEvent
+ * @since 3.1.0
+ * @in event-synthetic
  */
 Y.CustomEvent.prototype.getSubscriber = function (fn, ctx) {
     var subs = this.getSubs(), // on, after subs and their *:type siblings
@@ -94,6 +95,8 @@ Y.CustomEvent.prototype.getSubscriber = function (fn, ctx) {
  * @class SyntheticEvent
  * @constructor
  * @param cfg {Object} Implementation pieces and configuration
+ * @since 3.1.0
+ * @in event-synthetic
  */
 function SyntheticEvent(cfg) {
     this._init(cfg);
@@ -332,10 +335,8 @@ SyntheticEvent.prototype = {
 
 Y.SyntheticEvent = SyntheticEvent;
 
-/**
+/*
  * Static method added to <code>Y.Event</code>
- *
- * @class Y~Event
  */
 
 /**
@@ -352,6 +353,9 @@ Y.SyntheticEvent = SyntheticEvent;
  * @param cfg {Object} configuration object.  Pass this as the first
  *                  parameter if it includes the <code>type</code> property.
  * @static
+ * @for Event
+ * @since 3.1.0
+ * @in event-synthetic
  */
 Y.Event.define = function (type, cfg) {
     var e = Y.Lang.isObject(type) ?
@@ -359,8 +363,8 @@ Y.Event.define = function (type, cfg) {
                 Y.mix(Y.Object(cfg || {}), { type: type });
 
     // no redefinition allowed
-    if (!DOMEvents[type]) {
-        EvtPlugins[type] = DOMEvents[type] = new Y.SyntheticEvent(e);
+    if (!DOMEvents[e.type]) {
+        EvtPlugins[e.type] = DOMEvents[e.type] = new Y.SyntheticEvent(e);
     }
 };
 
