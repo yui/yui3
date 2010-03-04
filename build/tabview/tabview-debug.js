@@ -134,7 +134,7 @@ Y.mix(TabviewBase.prototype, {
     },
 
     destroy: function() {
-        this._node.detach('tabview|*');
+        this._node.detach(this.tabEventName);
     }
 });
 
