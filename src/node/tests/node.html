@@ -1069,7 +1069,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
                 "Y.one(Y.DOM.byId('_funky:id{$400}')).all(h2)");
 
             node = Y.one('body');
-            debugger;
             ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
                 "Y.all(Y.one('body'))");
 
