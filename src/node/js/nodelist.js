@@ -14,19 +14,28 @@
  */
 
 var NodeList = function(nodes) {
-    if (typeof nodes === 'string') {
+    var tmp = [];
+    if (typeof nodes === 'string') { // selector query
         this._query = nodes;
         nodes = Y.Selector.query(nodes);
-    } else if (nodes.nodeType) {
-        nodes = [nodes];
-    } else {
-        nodes = Y.Array(nodes, 0, true);
+    } else { // handle DOMNode and/or Y.Node
+        if (!nodes.item && !Y.Lang.isArray(nodes)) { // single Node
+            nodes = [nodes];
+        }
+
+        Y.Array.each(nodes, function(node) {
+            if (node.nodeType) {
+                tmp.push(node);
+            } else if (node instanceof Y.Node) {
+                tmp.push(node._node);
+            }
+        });
+        nodes = tmp;
     }
 
     NodeList._instances[Y.stamp(this)] = this;
     this._nodes = nodes;
 };
-// end "globals"
 
 NodeList.NAME = 'NodeList';
 

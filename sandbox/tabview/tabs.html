@@ -31,7 +31,7 @@ ul, li {
 </div>
 </body>
 <script type="text/javascript">
-YUI({filter: 'raw'}).use('tabview', function(Y) {
+YUI({filter: 'raw'}).use('tabview', 'tabview-plugin', function(Y) {
     var tabview = new Y.TabView({
         boundingBox: '#demo',
         children: [{
@@ -53,7 +53,12 @@ YUI({filter: 'raw'}).use('tabview', function(Y) {
     //tablist.get('selection').next().set('selected', 1);
 
 
-    var tabview2 = new Y.TabView({
+    var node = Y.one('#demo2');
+    node.plug(Y.Plugin.Tabview);
+    node.tabs.destroy();
+
+
+    tabview2 = new Y.TabView({
         contentBox: '#demo2'
     });
 
@@ -62,7 +67,6 @@ YUI({filter: 'raw'}).use('tabview', function(Y) {
         label: 'foobar',
         content: 'foobar content'
     });
-    console.log(tabview2.get('contentBox').focusManager.get('descendants'));
     tabview2.selectChild(2);
     //tabview2.add(tabview.item(1));
 });
