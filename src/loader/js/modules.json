@@ -793,6 +793,33 @@
         ]
     }, 
     "swfdetect": {}, 
+    "tabview": {
+        "plugins": {
+            "tabview-plugin": {
+                "requires": [
+                    "tabview-base", 
+                    "node-focusmanager"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "widget", 
+            "skin-sam-tabview", 
+            "widget-parent", 
+            "widget-child", 
+            "tabview-base"
+        ], 
+        "skinnable": true, 
+        "submodules": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate", 
+                    "classnamemanager"
+                ]
+            }
+        }
+    }, 
     "test": {
         "requires": [
             "substitute", 

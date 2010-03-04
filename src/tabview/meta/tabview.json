@@ -1,25 +1,29 @@
 {
     "tabview": {
         "plugins": {
-            "tabview-plugin": { 
+            "tabview-plugin": {
                 "requires": [
-                    "tabview-base"
-                ]
-            } 
-        },
-        "submodules": {
-
-            "tabview-base": {
-                "requires": [
-                    "node"
+                    "tabview-base", 
+                    "node-focusmanager"
                 ], 
                 "skinnable": true
             }
+        }, 
+        "submodules": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate",
+                    "classnamemanager"
+                ]
+            } 
         },
         "requires": [
-            "widget",
+            "widget", 
+            "skin-sam-tabview",
             "widget-parent",
-            "node-focusmanager",
-        ]
-    }
+            "widget-child",
+            "tabview-base"
+        ], 
+        "skinnable": true
+    } 
 }

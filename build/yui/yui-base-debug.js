@@ -145,7 +145,6 @@ YUI.prototype = {
             Env   = Y.Env;
 
         Y.version = VERSION;
-        Y.gallery = 'gallery-2010.02.22-22'; // @TODO build time
 
         if (!Env) {
             Y.Env = {
@@ -1080,8 +1079,14 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  */
 
 /**
- * The default gallery version to create gallery module urls
+ * The default gallery version to build gallery module urls
  * @property gallery
+ * @type string
+ */
+
+/**
+ * The default yui2 version to build yui2 module urls
+ * @property yui2 
  * @type string
  */
 
