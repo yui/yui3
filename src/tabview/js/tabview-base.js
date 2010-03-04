@@ -119,7 +119,7 @@ Y.mix(TabviewBase.prototype, {
     initEvents: function() {
         // TODO: detach prefix for delegate?
         // this._node.delegate('tabview|' + this.tabEventName),
-        this._node.delegate(this.tabEventName,
+        this._node.delegate('tabview|' + this.tabEventName,
             this.onTabEvent,
             _queries.tab,
             this
