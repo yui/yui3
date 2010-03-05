@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<style type="text/css"> 
+body {
+	margin:0;
+	padding:0;
+}
+</style> 
+<title>use('yui2-calendar') and then get dependencies</title>
+<script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+<script type="text/javascript" charset="utf-8">                                                                                                                 
+YUI({
+    yui2: '2.5.2',
+    combine: true // running locally, so I need to force combo handling
+    // gallery: 'gallery-2010.02.22-22'
+}).use('yui2-calendar', function (Y) {
+    var YAHOO = Y.YUI2;
+
+    YAHOO.namespace("example.calendar");
+ 
+	YAHOO.example.calendar.init = function() {
+		YAHOO.example.calendar.cal1 = new YAHOO.widget.CalendarGroup("cal1","cal1Container", {PAGES:3});
+		YAHOO.example.calendar.cal1.render();
+	}
+ 
+	YAHOO.util.Event.onDOMReady(YAHOO.example.calendar.init);
+    
+
+});
+</script>     
+<body class="yui-skin-sam">
+<div id="cal1Container"></div> 
+</body>
+</html>
