@@ -988,7 +988,6 @@
 <span class="nx">groups</span><span class="p">.</span><span class="nx">yui2</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">base</span><span class="o">:</span>      <span class="nx">CDN</span> <span class="o">+</span> <span class="nx">YUI2_ROOT</span><span class="p">,</span>
     <span class="nx">combine</span><span class="o">:</span>   <span class="kc">true</span><span class="p">,</span>
-    <span class="c1">// base:      &#39;/2in3/&#39;,</span>
     <span class="nx">ext</span><span class="o">:</span>       <span class="kc">false</span><span class="p">,</span>
     <span class="nx">root</span><span class="o">:</span>      <span class="nx">YUI2_ROOT</span><span class="p">,</span>
     <span class="nx">comboBase</span><span class="o">:</span> <span class="nx">COMBO_BASE</span><span class="p">,</span>
@@ -998,6 +997,8 @@
                 <span class="k">if</span><span class="p">(</span><span class="sr">/-skin|reset|fonts|grids|base/</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">me</span><span class="p">.</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">me</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;css&#39;</span><span class="p">;</span>
                     <span class="nx">me</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">me</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\.js/</span><span class="p">,</span> <span class="s1">&#39;.css&#39;</span><span class="p">);</span>
+                    <span class="c1">// this makes skins in builds earlier than 2.6.0 work as long as combine is false</span>
+                    <span class="nx">me</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">me</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\/yui2-skin/</span><span class="p">,</span> <span class="s1">&#39;/assets/skins/sam/yui2-skin&#39;</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span> 
