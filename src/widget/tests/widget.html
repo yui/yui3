@@ -76,6 +76,15 @@ suite.add(new Y.Test.Case({
         Y.Assert.areEqual( "foo", w.getSkinName() );
     },
 
+    testRenderedDestroy: function() {
+        var w = new Y.Widget().render();
+        try {
+            w.destroy();
+        } catch(e) {
+            Y.Assert.fail("w.destroy() on a rendered widget threw an exception" + e);
+        }
+    },
+
     testUnrenderedDestroy: function() {
         var w = new Y.Widget();
         try {
