@@ -935,8 +935,11 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>   
     <span class="nx">_unbindDOM</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">boundingBox</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_hDocFocus</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">WEBKIT</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_hDocFocus</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_hDocFocus</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">WEBKIT</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_hDocMouseDown</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_hDocMouseDown</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
         <span class="p">}</span>
     <span class="p">},</span>
@@ -1291,7 +1294,7 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Determines if the specified event is a UI event.</span>
-<span class="cm">     * </span>
+<span class="cm">     *</span>
 <span class="cm">     * @private</span>
 <span class="cm">     * @method _isUIEvent</span>
 <span class="cm">     * @param type {String} String representing the name of the event</span>
@@ -1308,7 +1311,7 @@
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="nx">returnVal</span><span class="p">;</span>
-        <span class="p">}</span>        
+        <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
