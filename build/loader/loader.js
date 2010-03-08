@@ -941,7 +941,6 @@ groups.gallery = {
 groups.yui2 = {
     base:      CDN + YUI2_ROOT,
     combine:   true,
-    // base:      '/2in3/',
     ext:       false,
     root:      YUI2_ROOT,
     comboBase: COMBO_BASE,
@@ -951,6 +950,8 @@ groups.yui2 = {
                 if(/-skin|reset|fonts|grids|base/.test(me.name)) {
                     me.type = 'css';
                     me.path = me.path.replace(/\.js/, '.css');
+                    // this makes skins in builds earlier than 2.6.0 work as long as combine is false
+                    me.path = me.path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
                 }
             }
         } 
