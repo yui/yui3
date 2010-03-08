@@ -345,7 +345,8 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">constrain</span><span class="p">();</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">CONSTRAIN_XYCHANGE</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_constrainOnXYChange</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>    
+            <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>    
         <span class="p">}</span>
     <span class="p">},</span>
 
