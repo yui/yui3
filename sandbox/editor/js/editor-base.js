@@ -33,6 +33,24 @@ YUI.add('editor-base', function(Y) {
             frame.after('ready', Y.bind(this._afterFrameReady, this));
             frame.addTarget(this);
             this.frame = frame;
+
+            this.publish('nodeChange', {
+                emitFacade: true,
+                bubbles: true,
+                defaultFn: this._defNodeChangeFn
+            });
+        },
+        _defNodeChangeFn: function(e) {
+            Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
+            switch (e.changedType) {
+                case 'tab':
+                    if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
+                        Y.log('Overriding TAB key to insert HTML', 'info', 'editor');
+                        this.execCommand('inserthtml', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+                        e.changedEvent.halt();
+                    }
+                    break;
+            }
         },
         /**
         * After frame ready, bind mousedown & keyup listeners
@@ -43,6 +61,7 @@ YUI.add('editor-base', function(Y) {
             var inst = this.frame.getInstance();
             this.frame.on('mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('keyup', Y.bind(this._onFrameKeyUp, this));
+            this.frame.on('keydown', Y.bind(this._onFrameKeyDown, this));
             inst.Selection.filter();
         },
         /**
@@ -51,7 +70,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameMouseDown: function(e) {
-            this.fire('nodeChange', { node: e.frameTarget, type: 'mousedown' });
+            this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mousedown', changedEvent: e  });
         },
         /**
         * The Y.later handle to determine if there is an active timer running.
@@ -65,16 +84,14 @@ YUI.add('editor-base', function(Y) {
         * @param {Boolean} fromTimer If it's from the timer, kill the _keyUpTimer property
         * @private
         */
-        _onKeyUpTimer: function(fromTimer) {
+        _onKeyUpTimer: function(e) {
             var inst = this.frame.getInstance(),
                 sel = new inst.Selection();
 
             if (sel.anchorNode) {
-                this.fire('nodeChange', { node: sel.anchorNode, type: 'keyup', selection: sel });
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
             }
-            if (fromTimer) {
-                this._keyUpTimer = null;
-            }
+            this._keyUpTimer = null;
         },
         /**
         * Fires nodeChange event via _onKeyUpTimer on a timer for performance
@@ -82,9 +99,18 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyUp: function(e) {
-            if (!this._keyUpTimer) {
-                this._keyUpTimer = Y.later(350, this, Y.bind(this._onKeyUpTimer, this, true));
-                this._onKeyUpTimer(false);
+            if (!EditorBase.NC_KEYS[e.keyCode]) {
+                if (!this._keyUpTimer) {
+                    this._keyUpTimer = Y.later(350, this, Y.bind(this._onKeyUpTimer, this, e));
+                }
+            }
+        },
+        _onFrameKeyDown: function(e) {
+            if (EditorBase.NC_KEYS[e.keyCode]) {
+                var inst = this.frame.getInstance(),
+                    sel = new inst.Selection();
+
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode], changedEvent: e });
             }
         },
         /**
@@ -139,6 +165,27 @@ YUI.add('editor-base', function(Y) {
             return html;
         }
     }, {
+        /**
+        * Hash table of keys to fire a nodeChange event for.
+        * @static
+        * @property NC_KEYS
+        * @type Object
+        */
+        NC_KEYS: {
+            8: 'backspace',
+            9: 'tab',
+            13: 'enter',
+            32: 'space',
+            33: 'pageup',
+            34: 'pagedown',
+            35: 'end',
+            36: 'home',
+            37: 'left',
+            38: 'up',
+            39: 'right',
+            40: 'down',
+            46: 'delete'
+        },
         /**
         * The default modules to use inside the Frame
         * @static
