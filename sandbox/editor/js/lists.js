@@ -24,13 +24,14 @@ YUI.add('editor-lists', function(Y) {
         * @param {Event} e The Event facade passed from the host.
         */
         _onNodeChange: function(e) {
-            var inst = this.get(HOST).getInstance(), sel;
+            var inst = this.get(HOST).getInstance(), sel, li, 
+            newLi, newList, sTab, par, moved = false, tag;
 
             if (Y.UA.ie && e.changedType === 'enter') {
                 e.changedEvent.halt();
                 e.preventDefault();
-                var li = e.changedNode,
-                    newLi = inst.Node.create('<' + LI + '>' + EditorLists.NON + '</' + LI + '>');
+                li = e.changedNode;
+                newLi = inst.Node.create('<' + LI + '>' + EditorLists.NON + '</' + LI + '>');
                     
                 if (!li.test(LI)) {
                     li = li.ancestor(LI);
@@ -45,9 +46,10 @@ YUI.add('editor-lists', function(Y) {
                     Y.log('Overriding TAB to move lists around', 'info', 'editorLists');
                     e.changedEvent.halt();
                     e.preventDefault();
-                    var li = e.changedNode, sTab = e.changedEvent.shiftKey,
-                        par = li.ancestor(OL + ',' + UL),
-                        moved = false, tag = UL;
+                    li = e.changedNode;
+                    sTab = e.changedEvent.shiftKey;
+                    par = li.ancestor(OL + ',' + UL);
+                    tag = UL;
 
 
                     if (par.get('tagName').toLowerCase() === OL) {
@@ -65,10 +67,10 @@ YUI.add('editor-lists', function(Y) {
                             moved = true;
                         }
                     } else {
-                        li.setStyle('border', '1px solid red');
+                        //li.setStyle('border', '1px solid red');
                         if (li.previous(LI)) {
                             Y.log('Shifting list down one level', 'info', 'editorLists');
-                            var newList = inst.Node.create('<' + tag + '></' + tag + '>');
+                            newList = inst.Node.create('<' + tag + '></' + tag + '>');
                             li.previous(LI).append(newList);
                             newList.append(li);
                             moved = true;

@@ -102,7 +102,7 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyUp: function(e) {
-            if (!EditorBase.NC_KEYS[e.keyCode]) {
+            if (EditorBase.NC_KEYS[e.keyCode]) {
                 if (!this._keyUpTimer) {
                     this._keyUpTimer = Y.later(350, this, Y.bind(this._onKeyUpTimer, this, e));
                 }

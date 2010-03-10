@@ -231,6 +231,7 @@ YUI.add('frame', function(Y) {
                 if (!Y.UA.ie) {
                     //Force other browsers into non CSS styling
                     doc.execCommand('styleWithCSS', false, false);
+                    doc.execCommand('insertbronreturn', false, false);
                 }
             }
         },

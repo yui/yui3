@@ -7,7 +7,7 @@
             margin: 1em;
         }
         #test1 {
-            height: 307px;
+            height: 333px;
             border: 3px solid red;
             width: 740px;
             margin: 1em;
@@ -54,6 +54,28 @@
 
 <div id="test1" role="widget">
     <div role="toolbar">
+        <select id="fontname">
+            <option selected> </option>
+            <option>Arial</option>
+            <option>Arial Black</option>
+            <option>Comic Sans MS</option>
+            <option>Courier New</option>
+            <option>Lucida Console</option>
+            <option>Tahoma</option>
+            <option>Times New Roman</option>
+            <option>Trebuchet MS</option>
+            <option>Verdana</option>
+        </select>
+        <select id="fontsize">
+            <option selected> </option>
+            <option value="1">10</option>
+            <option value="2">13</option>
+            <option value="3">16</option>
+            <option value="4">18</option>
+            <option value="5">24</option>
+            <option value="6">32</option>
+            <option value="7">48</option>
+        </select>
         <button value="b">Bold</button>
         <button value="i">Italic</button>
         <button value="u">Underline</button>
@@ -64,8 +86,14 @@
         <button value="addclass">AddClass</button>
         <button value="removeclass">RemoveClass</button>
         <button value="bidi">BiDi</button>
+        <button value="indent">Indent</button>
+        <button value="outdent">Outdent</button>
         <button value="insertorderedlist">InsertOrderedList</button>
         <button value="insertunorderedlist">InsertUnOrderedList</button>
+        <button value="createlink">createlink</button>
+        <button value="inserthorizontalrule">inserthorizontalrule</button>
+        <button value="backcolor">backcolor</button>
+        <button value="forecolor">forecolor</button>
     </div>
     <div id="test"></div>
     <div id="smilies"></div>
@@ -78,16 +106,16 @@
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
 <ul>
-    <li style="font-family: courier">Item #1</li>
+    <li style="font-family: courier new">Item #1</li>
     <li>Item #1</li>
     <li>Item #1</li>
 </ul>
 <ol>
-    <li style="font-family: courier">Item #1</li>
+    <li style="font-family: courier new">Item #1</li>
     <li>Item #1</li>
     <li>Item #1</li>
 </ol>
-<p>This is <span style="font-family: courier">another</span> test.</p>
+<p>This is <span style="font-family: Courier New">another</span> test.</p>
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 <style>
 del {
@@ -152,11 +180,25 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             case 'inserthtml':
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
                 break;
+            case 'backcolor':
+                val = 'yellow';
+                break;
+            case 'forecolor':
+                val = 'red';
+                break;
         }
         editor.frame.focus();
         var ex_return = editor.execCommand(cmd, val);
         //console.info('Return: ', cmd, ' :: ', ex_return);
     }, '#test1 > div', 'button');
+
+    Y.delegate('change', function(e) {
+        //console.log(e);
+        var cmd = e.currentTarget.get('id'),
+            val = e.currentTarget.get('value');
+        editor.frame.focus();
+        var ex_return = editor.execCommand(cmd, val);
+    }, '#test1 > div', 'select');
 
 
     var smilies = [
@@ -194,6 +236,32 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                     v.addClass('selected');
                 }
             });
+            var fname = tar.getStyle('fontFamily'),
+            size = tar.getStyle('fontSize');
+            if (fname.indexOf(',' !== -1)) {
+                fname = fname.split(',');
+                fname = fname[0];
+            }
+            fname = fname.toLowerCase();
+
+            var f_options = Y.all('#fontname option');
+            f_options.item(0).set('selected', true);
+            f_options.each(function(v) {
+                var val = v.get('value').toLowerCase();
+                if (val === fname) {
+                    v.set('selected', true);
+                }
+            });
+            var s_options = Y.all('#fontsize option');
+            s_options.item(0).set('selected', true);
+            size = size.replace('px', '');
+            s_options.each(function(v) {
+                var val = v.get('value').toLowerCase(),
+                    txt = v.get('text');
+                if (size === txt) {
+                    v.set('selected', true);
+                }
+            });
         }
     };
 
@@ -209,7 +277,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     var editor = new Y.EditorBase({
         content: Y.one('#stub').get('innerHTML')
     });
-    editor.on('nodeChange', function(e) {
+    editor.after('nodeChange', function(e) {
         updateButtons(e.changedNode);
         if (e.changedType === 'keyup') {
             if (e.changedNode) {
@@ -226,6 +294,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     editor.plug(Y.Plugin.EditorLists);
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
+
+        //This stops image resizes, but for all images!!
+        editor.execCommand('enableObjectResizing', false);
         //this.set('content', Y.one('#stub').get('innerHTML'));
     });
     /*

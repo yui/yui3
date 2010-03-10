@@ -16,7 +16,8 @@ YUI.add('selection', function(Y) {
     FONT_FAMILY = 'fontFamily';
 
     Y.Selection = function() {
-        var sel, el, cur, curStr, curID;
+        var sel, par, ieNode, nodes, rng;
+
         if (Y.config.win.getSelection) {
 	        sel = Y.config.win.getSelection();
         } else if (Y.config.doc.selection) {
@@ -29,9 +30,9 @@ YUI.add('selection', function(Y) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
 
             if (this.isCollapsed) {
-                var par = sel.parentElement(),
-                    nodes = par.childNodes, ieNode,
-                    rng = sel.duplicate();
+                par = sel.parentElement();
+                nodes = par.childNodes;
+                rng = sel.duplicate();
 
                 Y.each(nodes, function(v) {
                     rng.select(v);
@@ -84,7 +85,8 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.filter = function() {
         var nodes = Y.all(Y.Selection.ALL),
-            baseNodes = Y.all('strong,em');
+            baseNodes = Y.all('strong,em'),
+            ls;
 
         Y.log('Filtering nodes', 'info', 'selection');
         nodes.each(function(n) {
@@ -111,8 +113,9 @@ YUI.add('selection', function(Y) {
             }
             Y.Selection.prototype._swap(baseNodes.item(k), newTag);
         });
+
         //Filter out all the empty UL/OL's
-        var ls = Y.all('ol,ul');
+        ls = Y.all('ol,ul');
         ls.each(function(v, k) {
             var lis = v.all('li');
             if (!lis.size()) {
@@ -129,7 +132,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.unfilter = function() {
         var nodes = Y.all('body [class]'),
-            html = '';
+            html = '', nons, ids;
         
         Y.log('UnFiltering nodes', 'info', 'selection');
         
@@ -143,14 +146,15 @@ YUI.add('selection', function(Y) {
                 }
             }
         });
-        var nons = Y.all('.yui-non');
+
+        nons = Y.all('.yui-non');
         nons.each(function(n) {
             if (n.get('innerHTML') === '') {
                 n.remove();
             }
         });
 
-        var ids = Y.all('body [id]');
+        ids = Y.all('body [id]');
         ids.each(function(n) {
             if (n.get('id').indexOf('yui_3_') === 0) {
                 n.removeAttribute('id');
