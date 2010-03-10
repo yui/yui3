@@ -526,7 +526,8 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
     _defRequestFn: function(e) {
         var uri  = this.get("source"),
             get  = this.get("get"),
-            guid = Y.guid().replace(/\-/g, '_'); 
+            guid = Y.guid().replace(/\-/g, '_'),
+            generateRequest = this.get( "generateRequestCallback" );
 
         /**
          * Stores the most recent request id for validation against stale
@@ -546,14 +547,14 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
                           this._last === guid;
 
             if (process) {
-                self.fire("data", Y.mix({ data: response }, e));
+                this.fire("data", Y.mix({ data: response }, e));
             } else {
             }
 
         }, this);
 
         // Add the callback param to the request url
-        uri += e.request + this.get("generateRequestCallback")(guid);
+        uri += e.request + generateRequest.call( this, guid );
 
 
         get.script(uri, {
@@ -574,11 +575,10 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
      * generateRequestCallback attribute.
      *
      * @method _generateRequest
-     * @param self {DataSource.Get} the current instance
      * @param guid {String} unique identifier for callback function wrapper
      * @protected
      */
-     _getRequest: function (guid) {
+     _generateRequest: function (guid) {
         return "&" + this.get("scriptCallbackParam") +
                 "=YUI.Env.DataSource.callbacks." + guid;
     }
@@ -1343,11 +1343,9 @@ YUI.add('datasource-polling', function(Y) {
  * @class Pollable
  * @extends DataSource.Local
  */    
-var LANG = Y.Lang,
-
-    Pollable = function() {
-        this._intervals = {};
-    };
+function Pollable() {
+    this._intervals = {};
+}
 
 Pollable.prototype = {
 
@@ -1360,25 +1358,33 @@ Pollable.prototype = {
     _intervals: null,
 
     /**
-     * Sets up a polling mechanism to send requests at set intervals and forward
-     * responses to given callback.
+     * Sets up a polling mechanism to send requests at set intervals and
+     * forward responses to given callback.
      *
      * @method setInterval
      * @param msec {Number} Length of interval in milliseconds.
-     * @param request {Object} Request object.
-     * @param callback {Object} An object literal with the following properties:
+     * @param request {Object} An object literal with the following properties:
      *     <dl>
-     *     <dt><code>success</code></dt>
-     *     <dd>The function to call when the data is ready.</dd>
-     *     <dt><code>failure</code></dt>
-     *     <dd>The function to call upon a response failure condition.</dd>
-     *     <dt><code>argument</code></dt>
-     *     <dd>Arbitrary data that will be passed back to the success and failure handlers.</dd>
+     *     <dt><code>request</code></dt>
+     *     <dd>The request to send to the live data source, if any.</dd>
+     *     <dt><code>callback</code></dt>
+     *     <dd>An object literal with the following properties:
+     *         <dl>
+     *         <dt><code>success</code></dt>
+     *         <dd>The function to call when the data is ready.</dd>
+     *         <dt><code>failure</code></dt>
+     *         <dd>The function to call upon a response failure condition.</dd>
+     *         <dt><code>argument</code></dt>
+     *         <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
+     *         </dl>
+     *     </dd>
+     *     <dt><code>cfg</code></dt>
+     *     <dd>Configuration object, if any.</dd>
      *     </dl>
      * @return {Number} Interval ID.
      */
-    setInterval: function(msec, request, callback) {
-        var x = Y.later(msec, this, this.sendRequest, [request, callback], true);
+    setInterval: function(msec, callback) {
+        var x = Y.later(msec, this, this.sendRequest, [ callback ], true);
         this._intervals[x.id] = x;
         return x.id;
     },

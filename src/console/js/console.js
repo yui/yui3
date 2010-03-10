@@ -59,7 +59,7 @@ var getCN = Y.ClassNameManager.getClassName,
     C_PAUSE_LABEL      = getCN(CONSOLE,PAUSE,'label'),
 
     RE_INLINE_SOURCE = /^(\S+)\s/,
-    RE_AMP = /&/g,
+    RE_AMP = /&(?!#?[a-z0-9]+;)/g,
     RE_GT  = />/g,
     RE_LT  = /</g,
 
@@ -389,7 +389,7 @@ Y.Console = Y.extend(Console, Y.Widget,
 
         this.get(CONTENT_BOX).one('button.'+C_CLEAR).
             on(CLICK,this._onClearClick,this);
-        
+
         // Attribute changes
         this.after(this._evtCat + 'stringsChange',
             this._afterStringsChange);
@@ -808,6 +808,18 @@ Y.Console = Y.extend(Console, Y.Widget,
 
             this._body.setStyle(HEIGHT,h+'px');
         }
+    },
+
+    /**
+     * Over-ride default content box sizing to do nothing, since we're sizing
+     * the body section to fill out height ourselves.
+     * 
+     * @method _uiSizeCB
+     * @protected
+     */
+    _uiSizeCB : function() {
+        // Do Nothing. Ideally want to move to Widget-StdMod, which accounts for
+        // _uiSizeCB        
     },
 
     /**
@@ -1256,13 +1268,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * @type Object
          */
         strings : {
-            value : {
-                title : "Log Console",
-                pause : "Pause",
-                clear : "Clear",
-                collapse : "Collapse",
-                expand   : "Expand"
-            }
+            valueFn: function() { return Y.Intl.get("console"); }
         },
 
         /**

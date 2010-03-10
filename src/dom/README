@@ -1,3 +1,7 @@
+version 3.1.0
+- added support for hypenated attributes (#2528443)
+- fixed docScrollX/Y for iPhone (2528390)
+
 version 3.0.0
 - Selector now using native querySelector/All when available
 - Selector.test now accepts optional root argument

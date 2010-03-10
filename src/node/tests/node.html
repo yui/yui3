@@ -62,18 +62,18 @@ button {
     display:block;
 }
 
-.yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+.yui3-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
     background: #070;
     color: #fff;
 }
-.yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+.yui3-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
     background: #700;
     color: #fff;
 }
 </style>
 
 </head>
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
     <div id="test-append"></div>
     <div id="test-xy"></div>
     <div id="test-remove"></div>
@@ -1067,6 +1067,11 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             ArrayAssert.itemsAreEqual(node.getElementsByTagName('h2'),
                 Y.one(node).all('h2')._nodes,
                 "Y.one(Y.DOM.byId('_funky:id{$400}')).all(h2)");
+
+            node = Y.one('body');
+            ArrayAssert.itemsAreEqual([node._node], Y.all(node)._nodes, 
+                "Y.all(Y.one('body'))");
+
         },
 
         test_isEmpty: function() {

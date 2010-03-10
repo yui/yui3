@@ -4,62 +4,193 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Internationalization Tests</title>
 <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+
+<style type="text/css">
+    #console .yui3-console-entry {
+        padding:2px;
+        margin:0px;
+        min-height:0;
+    }
+    
+    #console .yui3-console-entry-fail .yui3-console-entry-cat {
+        background-color:red;
+    }
+
+    #console .yui3-console-entry-pass .yui3-console-entry-cat {
+        background-color:green;
+    }
+
+    #console .yui3-console-entry-perf .yui3-console-entry-cat {
+        background-color:blue;
+    }
+
+    #console {
+        position:static;
+    }
+
+    html, body {
+        height:100%;
+    }
+</style>
 </head>
 
 <body class="yui3-skin-sam">
-<h1>Loader Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
-
 <script type="text/javascript">
 
-(function() {
-    YUI({
-        logInclude:{"TestRunner":true},
-        useConsole: true
-    }).use("console", "test", "dump", "intl", function(Y) {
-        
-        // Set up the page
-        var LANG = Y.Lang,
-            ASSERT = Y.Assert,
-            ARRAYASSERT = Y.ArrayAssert,
-            btnRun = Y.get("#btnRun"),
-            myConsole = new Y.Console().render();
-            
-        btnRun.set("disabled", false);
-        Y.on("click", function(){
-            Y.Test.Runner.run();
-        }, btnRun);
+YUI({
+    useBrowserConsole:false
+}).use("console", "test", "intl", function(Y) {
 
+    // Set up the page
+    var LANG = Y.Lang,
+        ASSERT = Y.Assert,
+        ARRAYASSERT = Y.ArrayAssert,
+        btnRun = Y.get("#btnRun"),
 
-        var testLookupBestLanguage = new Y.Test.Case({
-            name: "Lookup Best Language Tests",
-        
-            testArray: function() {
-                var language = Y.Intl.lookupBestLang(["de-DE", "en-SG", "ja-JP"], ["fr-FR", "en", "en-SG"]);
-                ASSERT.areSame(language, "en-SG", "Expected en-SG.");
-            },
+        areObjectsReallyEqual = function (o1, o2) {
+            Y.ObjectAssert.areEqual(o1, o2);
+            Y.ObjectAssert.areEqual(o2, o1);
+        };
 
-            testString: function() {
-                var language = Y.Intl.lookupBestLang("de-DE,en-SG,ja-JP", ["fr-FR", "en", "en-SG"]);
-                ASSERT.areSame(language, "en-SG", "Expected en-SG.");
-            },
+    new Y.Console({
+        id:"console",
+        width:"100%",
+        height:"90%",
+        verbose : false,
+        printTimeout: 0,
+        newestOnTop : false,
+        entryTemplate: '<pre class="{entry_class} {cat_class} {src_class}">'+
+                '<span class="{entry_cat_class}">{label}</span>'+
+                '<span class="{entry_content_class}">{message}</span>'+
+        '</pre>'
+    }).render();
 
-            testStar: function() {
-                var language = Y.Intl.lookupBestLang("de-DE,*,en-SG,ja-JP", ["fr-FR", "en", "en-SG"]);
-                ASSERT.areSame(language, "en-SG", "Expected en-SG.");
-            },
-
-            testPrivate: function() {
-                var language = Y.Intl.lookupBestLang("de-DE,zh-Hant-CN-x-private1-private2", ["fr-FR", "zh-Hant-CN", "zh-Hant-CN-x"]);
-                ASSERT.areSame(language, "zh-Hant-CN", "Expected zh-Hant-CN.");
-            }
-        });
-        
-
-        Y.Test.Runner.add(testLookupBestLanguage);
+    btnRun.set("disabled", false);
+    Y.on("click", function() {
         Y.Test.Runner.run();
+    }, btnRun);
+
+    var testLookupBestLanguage = new Y.Test.Case({
+        name: "Lookup Best Language Tests",
+    
+        testArray: function() {
+            var language = Y.Intl.lookupBestLang(["de-DE", "en-SG", "ja-JP"], ["fr-FR", "en", "en-SG"]);
+            ASSERT.areSame(language, "en-SG", "Expected en-SG.");
+        },
+
+        testString: function() {
+            var language = Y.Intl.lookupBestLang("de-DE,en-SG,ja-JP", ["fr-FR", "en", "en-SG"]);
+            ASSERT.areSame(language, "en-SG", "Expected en-SG.");
+        },
+
+        testStar: function() {
+            var language = Y.Intl.lookupBestLang("de-DE,*,en-SG,ja-JP", ["fr-FR", "en", "en-SG"]);
+            ASSERT.areSame(language, "en-SG", "Expected en-SG.");
+        },
+
+        testPrivate: function() {
+            var language = Y.Intl.lookupBestLang("de-DE,zh-Hant-CN-x-private1-private2", ["fr-FR", "zh-Hant-CN", "zh-Hant-CN-x"]);
+            ASSERT.areSame(language, "zh-Hant-CN", "Expected zh-Hant-CN.");
+        }
     });
-})();
+    
+    var testStore = new Y.Test.Case({
+        name: "Basic Intl Language Store Tests",
+
+        testAdd: function() {
+
+            var eventStack = [],
+
+                expectedEventStack = [
+                    {module:"modA", newVal:"en-US", prevVal:undefined},
+                    {module:"modA", newVal:"fr", prevVal:"en-US"},
+                    {module:"modA", newVal:"ja-JP", prevVal:"fr"},
+                    {module:"modA", newVal:"fr", prevVal:"ja-JP"}
+                ];
+
+            Y.Intl.after("intl:langChange", function(e) {
+                eventStack.push({module:e.module, newVal:e.newVal, prevVal:e.prevVal});
+            });
+
+            Y.Intl.add("modA", "en-US", {
+                hello:"Hello"
+            });
+
+            ASSERT.areSame(Y.Intl.get("modA").hello, "Hello");
+
+            Y.Intl.add("modA", "fr", {
+                hello:"Bonjour"
+            });
+
+            ASSERT.areSame(Y.Intl.get("modA").hello, "Bonjour");
+
+            Y.Intl.add("modA", "ja-JP", {
+                hello: "こんにちは"
+            });
+
+            ASSERT.areSame(Y.Intl.get("modA").hello, "こんにちは");
+
+            Y.Intl.setLang("modA", "fr");
+            ASSERT.areSame(Y.Intl.get("modA").hello, "Bonjour");
+
+            ARRAYASSERT.itemsAreEquivalent(expectedEventStack, eventStack, function(a, b) {
+                var equal = true;
+                try {
+                    areObjectsReallyEqual(a, b);
+                } catch(e) {
+                    equal = false;
+                }
+                return equal;
+            });
+        },
+
+        testRoot : function() {
+
+            Y.Intl.add("modB", "fr", {
+                hello:"Bonjour"
+            });
+
+            ASSERT.areSame(Y.Intl.getLang("modB"), "fr");
+
+            Y.Intl.add("modB", "", {
+               hello:"HELLO"
+            });
+
+            ASSERT.areSame(Y.Intl.getLang("modB"), "");
+            ASSERT.areSame(Y.Intl.get("modB").hello, "HELLO");
+
+            Y.Intl.setLang("modB", "fr");
+
+            ASSERT.areSame(Y.Intl.get("modB").hello, "Bonjour");
+            ASSERT.areSame(Y.Intl.getLang("modB"), "fr");
+        },
+
+        testGet : function() {
+
+            var origSet = {
+                hello : "Hello",
+                world : "World"
+            };
+
+            Y.Intl.add("modC", "en", {
+                hello : "Hello",
+                world : "World"
+            });
+
+            var strs = Y.Intl.get("modC");
+            areObjectsReallyEqual(strs, origSet);
+
+            ASSERT.areSame(Y.Intl.get("modC", "hello"), origSet.hello);
+            ASSERT.areSame(Y.Intl.get("modC", "world"), origSet.world);
+        }
+    });
+
+    Y.Test.Runner.add(testLookupBestLanguage);
+    Y.Test.Runner.add(testStore);
+
+    Y.Test.Runner.run();
+});
 </script>
 </body>
 </html>

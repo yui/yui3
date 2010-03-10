@@ -116,6 +116,10 @@
         ]
     }, 
     "console": {
+        "lang": [
+            "en", 
+            "es"
+        ], 
         "plugins": {
             "console-filters": {
                 "requires": [
@@ -148,6 +152,7 @@
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "path": "cssbase/base-min.css", 
         "type": "css"
     }, 
     "cssbase-context": {
@@ -163,6 +168,7 @@
         "type": "css"
     }, 
     "cssfonts": {
+        "path": "cssfonts/fonts-min.css", 
         "type": "css"
     }, 
     "cssfonts-context": {
@@ -173,6 +179,7 @@
         "optional": [
             "cssreset"
         ], 
+        "path": "cssgrids/grids-min.css", 
         "requires": [
             "cssfonts"
         ], 
@@ -189,6 +196,7 @@
         "type": "css"
     }, 
     "cssreset": {
+        "path": "cssreset/reset-min.css", 
         "type": "css"
     }, 
     "cssreset-context": {
@@ -293,8 +301,17 @@
     "datatype": {
         "submodules": {
             "datatype-date": {
+                "lang": [
+                    "en", 
+                    "en-US", 
+                    "fr-FR", 
+                    "ko-KR"
+                ], 
                 "requires": [
                     "yui-base"
+                ], 
+                "supersedes": [
+                    "datatype-date-format"
                 ]
             }, 
             "datatype-number": {
@@ -308,6 +325,9 @@
                 ]
             }
         }
+    }, 
+    "datatype-date-format": {
+        "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
         "submodules": {
@@ -379,11 +399,6 @@
             }
         }
     }, 
-    "dd-value": {
-        "requires": [
-            "dd-constrain"
-        ]
-    }, 
     "dom": {
         "plugins": {
             "selector-css3": {
@@ -436,6 +451,13 @@
     }, 
     "event": {
         "expound": "node-base", 
+        "plugins": {
+            "event-synthetic": {
+                "requires": [
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "event-base": {
                 "expound": "node-base", 
@@ -508,14 +530,10 @@
         ]
     }, 
     "intl": {
-        "submodules": {
-            "intl-lang": {
-                "requires": [
-                    "event-custom"
-                ]
-            }, 
-            "intl-load": {}
-        }
+        "requires": [
+            "intl-base", 
+            "event-custom"
+        ]
     }, 
     "io": {
         "submodules": {
@@ -721,12 +739,34 @@
         ]
     }, 
     "slider": {
-        "requires": [
-            "widget", 
-            "dd-value", 
-            "skin-sam-slider"
-        ], 
-        "skinnable": true
+        "submodules": {
+            "clickable-rail": {
+                "requires": [
+                    "slider-base"
+                ]
+            }, 
+            "range-slider": {
+                "requires": [
+                    "slider-base", 
+                    "slider-value-range", 
+                    "clickable-rail"
+                ]
+            }, 
+            "slider-base": {
+                "requires": [
+                    "widget", 
+                    "dd-constrain", 
+                    "substitute", 
+                    "skin-sam-slider-base"
+                ], 
+                "skinnable": true
+            }, 
+            "slider-value-range": {
+                "requires": [
+                    "slider-base"
+                ]
+            }
+        }
     }, 
     "sortable": {
         "requires": [
@@ -745,13 +785,47 @@
             "dump"
         ]
     }, 
+    "swf": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "swfdetect"
+        ]
+    }, 
+    "swfdetect": {}, 
+    "tabview": {
+        "plugins": {
+            "tabview-plugin": {
+                "requires": [
+                    "tabview-base", 
+                    "node-focusmanager"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "widget", 
+            "skin-sam-tabview", 
+            "widget-parent", 
+            "widget-child", 
+            "tabview-base"
+        ], 
+        "skinnable": true, 
+        "submodules": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate", 
+                    "classnamemanager"
+                ]
+            }
+        }
+    }, 
     "test": {
         "requires": [
             "substitute", 
             "node", 
             "json", 
-            "event-simulate", 
-            "skin-sam-test"
+            "event-simulate"
         ], 
         "skinnable": true
     }, 
@@ -800,11 +874,6 @@
                 "requires": [
                     "widget-base"
                 ]
-            }, 
-            "widget-i18n": {
-                "requires": [
-                    "widget-base"
-                ]
             }
         }
     }, 
@@ -814,9 +883,16 @@
             "anim-base"
         ]
     }, 
+    "widget-locale": {
+        "path": "widget/widget-locale-min.js", 
+        "requires": [
+            "widget-base"
+        ]
+    }, 
     "yui": {
         "submodules": {
             "get": {}, 
+            "intl-base": {}, 
             "yui-base": {}, 
             "yui-later": {}, 
             "yui-log": {}, 

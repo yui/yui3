@@ -35,7 +35,7 @@
 
     </style>
 </head>
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
 <h1>Query String Tests</h1>
 
 <p>Tests running...</p>
@@ -59,7 +59,6 @@ function verify (expected) {
 
 
 YUI({
-    base : '../../../build/',
     filter : 'raw'
 }).use( 'io', function (Y) {
     Y.io("./test.php?simple_qs", {
@@ -72,7 +71,6 @@ YUI({
 });
 
 YUI({
-    base : '../../../build/',
     filter : 'raw'
 }).use( 'querystring', 'io', function (Y) {
     

@@ -44,7 +44,8 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
     _defRequestFn: function(e) {
         var uri  = this.get("source"),
             get  = this.get("get"),
-            guid = Y.guid().replace(/\-/g, '_'); 
+            guid = Y.guid().replace(/\-/g, '_'),
+            generateRequest = this.get( "generateRequestCallback" );
 
         /**
          * Stores the most recent request id for validation against stale
@@ -64,7 +65,7 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
                           this._last === guid;
 
             if (process) {
-                self.fire("data", Y.mix({ data: response }, e));
+                this.fire("data", Y.mix({ data: response }, e));
             } else {
                 Y.log("DataSource ignored stale response for id " + e.tId + "(" + e.request + ")", "info", "datasource-get");
             }
@@ -72,7 +73,7 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
         }, this);
 
         // Add the callback param to the request url
-        uri += e.request + this.get("generateRequestCallback")(guid);
+        uri += e.request + generateRequest.call( this, guid );
 
         Y.log("DataSource is querying URL " + uri, "info", "datasource-get");
 
@@ -94,11 +95,10 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
      * generateRequestCallback attribute.
      *
      * @method _generateRequest
-     * @param self {DataSource.Get} the current instance
      * @param guid {String} unique identifier for callback function wrapper
      * @protected
      */
-     _getRequest: function (guid) {
+     _generateRequest: function (guid) {
         return "&" + this.get("scriptCallbackParam") +
                 "=YUI.Env.DataSource.callbacks." + guid;
     }

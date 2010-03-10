@@ -2,6 +2,12 @@ YUI Collection Utilities
     Provides functionality beyond what is is the YUI core
     for collection management.
 
+3.1.0
+  * Array extras is the base submodule for the package
+  * Added ArrayList for generic iterable objects.
+  * Array.forEach is an alias for Array.each.
+  * Added Array.invoke to execute a named method on an array of objects
+
 3.0.0
   * unique with sort works.
 

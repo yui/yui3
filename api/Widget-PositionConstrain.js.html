@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget-position-constrain&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>widget-position-constrain&nbsp; <span class="subtitle">3.1.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a>
                 
@@ -48,7 +48,7 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * Provides constrained XY positioning support for Widgets, through an extension.</span>
+<span class="cm"> * Provides constrained xy positioning support for Widgets, through an extension.</span>
 <span class="cm"> *</span>
 <span class="cm"> * It builds on top of the widget-position module, to provide constrained positioning support.</span>
 <span class="cm"> *</span>
@@ -77,7 +77,7 @@
     <span class="nx">PREVENT_OVERLAP_MAP</span><span class="p">;</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * Widget extension, which can be used to add extended XY positioning support to the base Widget class,</span>
+<span class="cm"> * A widget extension, which can be used to add constrained xy positioning support to the base Widget class,</span>
 <span class="cm"> * through the &lt;a href=&quot;Base.html#method_build&quot;&gt;Base.build&lt;/a&gt; method. This extension requires that </span>
 <span class="cm"> * the WidgetPosition extension be added to the Widget (before WidgetPositionConstrain, if part of the same </span>
 <span class="cm"> * extension list passed to Base.build).</span>
@@ -101,17 +101,41 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">PositionConstrain</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * @attribute constrain</span>
+<span class="cm">     * @type boolean | Node</span>
+<span class="cm">     * @default null</span>
+<span class="cm">     * @description The node to constrain the widget&#39;s bounding box to, when setting xy. Can also be</span>
+<span class="cm">     * set to true, to constrain to the viewport.</span>
+<span class="cm">     */</span>
     <span class="nx">constrain</span> <span class="o">:</span> <span class="p">{</span>
         <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
         <span class="nx">setter</span><span class="o">:</span> <span class="s2">&quot;_setConstrain&quot;</span>
     <span class="p">},</span>
 
+    <span class="cm">/**</span>
+<span class="cm">     * @attribute preventOverlap</span>
+<span class="cm">     * @type boolean</span>
+<span class="cm">     * @description If set to true, and WidgetPositionAlign is also added to the Widget, </span>
+<span class="cm">     * constrained positioning will attempt to prevent the widget&#39;s bounding box from overlapping </span>
+<span class="cm">     * the element to which it has been aligned, by flipping the orientation of the alignment</span>
+<span class="cm">     * for corner based alignments  </span>
+<span class="cm">     */</span>
     <span class="nx">preventOverlap</span> <span class="o">:</span> <span class="p">{</span>
         <span class="nx">value</span><span class="o">:</span><span class="kc">false</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="nx">PREVENT_OVERLAP_MAP</span> <span class="o">=</span> <span class="nx">PositionConstrain</span><span class="p">.</span><span class="nx">PREVENT_OVERLAP</span> <span class="o">=</span> <span class="p">{</span>
+<span class="cm">/**</span>
+<span class="cm"> * @property WidgetPositionConstrain._PREVENT_OVERLAP</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @protected</span>
+<span class="cm"> * @type Object</span>
+<span class="cm"> * @description The set of positions for which to prevent</span>
+<span class="cm"> * overlap.</span>
+<span class="cm"> */</span>
+<span class="nx">PREVENT_OVERLAP_MAP</span> <span class="o">=</span> <span class="nx">PositionConstrain</span><span class="p">.</span><span class="nx">_PREVENT_OVERLAP</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">x</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;tltr&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;blbr&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -129,10 +153,14 @@
 <span class="nx">PositionConstrain</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * Calculates the constrained positions for the XY positions provided, using</span>
+<span class="cm">     * the provided node argument is passed in. If no node value is passed in, the value of </span>
+<span class="cm">     * the &quot;constrain&quot; attribute is used.</span>
+<span class="cm">     * </span>
 <span class="cm">     * @method getConstrainedXY</span>
-<span class="cm">     * @param {Array} xy</span>
-<span class="cm">     * @param {Node | boolean} node</span>
-<span class="cm">     * @return {Array} The constrained XY values</span>
+<span class="cm">     * @param {Array} xy The xy values to constrain</span>
+<span class="cm">     * @param {Node | boolean} node Optional. The node to constrain to, or true for the viewport</span>
+<span class="cm">     * @return {Array} The constrained xy values</span>
 <span class="cm">     */</span>
     <span class="nx">getConstrainedXY</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">xy</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">node</span> <span class="o">=</span> <span class="nx">node</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONSTRAIN</span><span class="p">);</span>
@@ -147,9 +175,13 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * @method constrain</span>
-<span class="cm">     * @param {Object} xy</span>
-<span class="cm">     * @param {Object} node</span>
+<span class="cm">     * Constrains the widget&#39;s bounding box to a node (or the viewport). If xy or node are not </span>
+<span class="cm">     * passed in, the current position and the value of &quot;constrain&quot; will be used respectively.</span>
+<span class="cm">     * </span>
+<span class="cm">     * The widget&#39;s position will be changed to the constrained position.</span>
+<span class="cm">     * </span>
+<span class="cm">     * @param {Array} xy Optional. The xy values to constrain</span>
+<span class="cm">     * @param {Node | boolean} node Optional. The node to constrain to, or true for the viewport</span>
 <span class="cm">     */</span>
     <span class="nx">constrain</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">xy</span><span class="p">,</span> <span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">currentXY</span><span class="p">,</span> 
@@ -167,19 +199,29 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * The setter implementation for the &quot;constrain&quot; attribute.</span>
+<span class="cm">     *</span>
 <span class="cm">     * @method _setConstrain</span>
-<span class="cm">     * @param {Object} val</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @param {Node | boolean} val The attribute value </span>
 <span class="cm">     */</span>
     <span class="nx">_setConstrain</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="o">?</span> <span class="nx">val</span> <span class="o">:</span> <span class="nx">Node</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * The method which performs the actual constrain calculations for a given axis (&quot;x&quot; or &quot;y&quot;) based</span>
+<span class="cm">     * on the regions provided.</span>
+<span class="cm">     * </span>
 <span class="cm">     * @method _constrain</span>
-<span class="cm">     * @param {Number} val</span>
-<span class="cm">     * @param {String} axis</span>
-<span class="cm">     * @param {Region} nodeRegion</span>
-<span class="cm">     * @param {Region} constrainingRegion</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * </span>
+<span class="cm">     * @param {Number} val The value to constrain</span>
+<span class="cm">     * @param {String} axis The axis to use for constrainment</span>
+<span class="cm">     * @param {Region} nodeRegion The region of the node to constrain</span>
+<span class="cm">     * @param {Region} constrainingRegion The region of the node (or viewport) to constrain to</span>
+<span class="cm">     * </span>
+<span class="cm">     * @return {Number} The constrained value</span>
 <span class="cm">     */</span>
     <span class="nx">_constrain</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">axis</span><span class="p">,</span> <span class="nx">nodeRegion</span><span class="p">,</span> <span class="nx">constrainingRegion</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">constrainingRegion</span><span class="p">)</span> <span class="p">{</span>
@@ -212,11 +254,18 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * The method which performs the preventOverlap calculations for a given axis (&quot;x&quot; or &quot;y&quot;) based</span>
+<span class="cm">     * on the value and regions provided.</span>
+<span class="cm">     * </span>
 <span class="cm">     * @method _preventOverlap</span>
-<span class="cm">     * @param {Number} val</span>
-<span class="cm">     * @param {String} axis</span>
-<span class="cm">     * @param {Region} nodeRegion</span>
-<span class="cm">     * @param {Region} constrainingRegion</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param {Number} val The value being constrain</span>
+<span class="cm">     * @param {String} axis The axis to being constrained</span>
+<span class="cm">     * @param {Region} nodeRegion The region of the node being constrained</span>
+<span class="cm">     * @param {Region} constrainingRegion The region of the node (or viewport) we need to constrain to</span>
+<span class="cm">     * </span>
+<span class="cm">     * @return {Number} The constrained value</span>
 <span class="cm">     */</span>
     <span class="nx">_preventOverlap</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">,</span> <span class="nx">axis</span><span class="p">,</span> <span class="nx">nodeRegion</span><span class="p">,</span> <span class="nx">constrainingRegion</span><span class="p">)</span> <span class="p">{</span>
 
@@ -257,11 +306,12 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Binds event listeners responsible for updating the UI state in response to </span>
-<span class="cm">     * Widget extended positioning related state changes.</span>
+<span class="cm">     * Widget constrained positioning related state changes.</span>
 <span class="cm">     * &lt;p&gt;</span>
 <span class="cm">     * This method is invoked after bindUI is invoked for the Widget class</span>
 <span class="cm">     * using YUI&#39;s aop infrastructure.</span>
 <span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
 <span class="cm">     * @method _bindUIPosConstrained</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
@@ -271,31 +321,40 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * After change listener for the &quot;constrain&quot; attribute, responsible</span>
+<span class="cm">     * for updating the UI, in response to attribute changes.</span>
+<span class="cm">     *</span>
 <span class="cm">     * @method _afterConstrainChange</span>
-<span class="cm">     * @param {EventFacade} e</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @param {EventFacade} e The event facade</span>
 <span class="cm">     */</span>
     <span class="nx">_afterConstrainChange</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_enableConstraints</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * Updates the UI if enabling constraints, and sets up the xyChange event listeners</span>
+<span class="cm">     * to constrain whenever the widget is moved. Disabling constraints removes the listeners.</span>
+<span class="cm">     * </span>
 <span class="cm">     * @method enable or disable constraints listeners</span>
-<span class="cm">     * @param {Object} enable</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {boolean} enable Enable or disable constraints </span>
 <span class="cm">     */</span>
     <span class="nx">_enableConstraints</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">enable</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">constrain</span><span class="p">();</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">CONSTRAIN_XYCHANGE</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_constrainOnXYChange</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>    
+            <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_cxyHandle</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>    
         <span class="p">}</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Default attribute change listener for the align attribute, responsible</span>
-<span class="cm">     * for updating the UI, in response to attribute changes.</span>
+<span class="cm">     * The on change listener for the &quot;xy&quot; attribute. Modifies the event facade&#39;s</span>
+<span class="cm">     * newVal property with the constrained XY value.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _afterAlignChange</span>
+<span class="cm">     * @method _constrainOnXYChange</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     * @param {EventFacade} e The event facade for the attribute change</span>
 <span class="cm">     */</span>
@@ -306,8 +365,12 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * Utility method to normalize region retrieval from a node instance, </span>
+<span class="cm">     * or the viewport, if no node is provided. </span>
+<span class="cm">     * </span>
 <span class="cm">     * @method _getRegion</span>
-<span class="cm">     * @param {Node} (Optional) node</span>
+<span class="cm">     * @private</span>
+<span class="cm">     * @param {Node} node Optional.</span>
 <span class="cm">     */</span>
     <span class="nx">_getRegion</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">region</span><span class="p">;</span>
@@ -357,6 +420,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -368,16 +432,23 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class="selected"><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
@@ -414,7 +485,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPositionConstrain", "name": "_afterAlignChange", "url": "WidgetPositionConstrain.html#method__afterAlignChange", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_afterConstrainChange", "url": "WidgetPositionConstrain.html#method__afterConstrainChange", "type": "method"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_bindUIPosConstrained", "url": "WidgetPositionConstrain.html#method__bindUIPosConstrained", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_constrain", "url": "WidgetPositionConstrain.html#method__constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "constrain", "url": "WidgetPositionConstrain.html#method_constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "enable or disable constraints listeners", "url": "WidgetPositionConstrain.html#method_enable or disable constraints listeners", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "getConstrainedXY", "url": "WidgetPositionConstrain.html#method_getConstrainedXY", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_getRegion", "url": "WidgetPositionConstrain.html#method__getRegion", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_preventOverlap", "url": "WidgetPositionConstrain.html#method__preventOverlap", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "_setConstrain", "url": "WidgetPositionConstrain.html#method__setConstrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "WidgetPositionConstrain.ATTRS", "url": "WidgetPositionConstrain.html#property_WidgetPositionConstrain.ATTRS", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetPositionConstrain", "name": "_afterConstrainChange", "url": "WidgetPositionConstrain.html#method__afterConstrainChange", "type": "method"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_bindUIPosConstrained", "url": "WidgetPositionConstrain.html#method__bindUIPosConstrained", "type": "method"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_constrain", "url": "WidgetPositionConstrain.html#method__constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "constrain", "url": "WidgetPositionConstrain.html#method_constrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "constrain", "url": "WidgetPositionConstrain.html#config_constrain", "type": "config"}, {"access": "", "host": "WidgetPositionConstrain", "name": "constrainChange", "url": "WidgetPositionConstrain.html#event_constrainChange", "type": "event"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_constrainOnXYChange", "url": "WidgetPositionConstrain.html#method__constrainOnXYChange", "type": "method"}, {"access": "private", "host": "WidgetPositionConstrain", "name": "enable or disable constraints listeners", "url": "WidgetPositionConstrain.html#method_enable or disable constraints listeners", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "getConstrainedXY", "url": "WidgetPositionConstrain.html#method_getConstrainedXY", "type": "method"}, {"access": "private", "host": "WidgetPositionConstrain", "name": "_getRegion", "url": "WidgetPositionConstrain.html#method__getRegion", "type": "method"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_preventOverlap", "url": "WidgetPositionConstrain.html#method__preventOverlap", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "preventOverlap", "url": "WidgetPositionConstrain.html#config_preventOverlap", "type": "config"}, {"access": "", "host": "WidgetPositionConstrain", "name": "preventOverlapChange", "url": "WidgetPositionConstrain.html#event_preventOverlapChange", "type": "event"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "_setConstrain", "url": "WidgetPositionConstrain.html#method__setConstrain", "type": "method"}, {"access": "", "host": "WidgetPositionConstrain", "name": "WidgetPositionConstrain.ATTRS", "url": "WidgetPositionConstrain.html#property_WidgetPositionConstrain.ATTRS", "type": "property"}, {"access": "protected", "host": "WidgetPositionConstrain", "name": "WidgetPositionConstrain._PREVENT_OVERLAP", "url": "WidgetPositionConstrain.html#property_WidgetPositionConstrain._PREVENT_OVERLAP", "type": "property"}];
 </script>
 </body>
 </html>

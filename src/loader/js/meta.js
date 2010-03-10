@@ -1,24 +1,26 @@
 (function() {
-
-var VERSION = Y.version,
-ROOT = VERSION + '/build/',
-GALLERY_VERSION = 'gallery-2009-10-19', // @TODO build time
-GALLERY_ROOT = GALLERY_VERSION + '/build/',
-GALLERY_BASE = 'http://yui.yahooapis.com/' + GALLERY_ROOT,
-META = {
-    version: VERSION,
-    root: ROOT,
-    base: 'http://yui.yahooapis.com/' + ROOT,
-    comboBase: 'http://yui.yahooapis.com/combo?',
-    skin: {
-        defaultSkin: 'sam',
-        base: 'assets/skins/',
-        path: 'skin.css',
-        after: ['cssreset', 'cssfonts', 'cssreset-context', 'cssfonts-context']
-        //rollup: 3
-    },
-
-    modules: {
+var VERSION         = Y.version,
+    BUILD           = '/build/',
+    ROOT            = VERSION + BUILD,
+    CDN             = 'http://yui.yahooapis.com/',
+    GALLERY_VERSION = Y.config.gallery || 'gallery-2010.03.02-18',
+    GALLERY_ROOT    = GALLERY_VERSION + BUILD,
+    YUI2_VERSION    = Y.config.yui2 || '2.8.0',
+    YUI2_ROOT       = '2in3_test3/' + YUI2_VERSION + BUILD,
+    COMBO_BASE      = CDN + 'combo?',
+    META =          { version:   VERSION,
+                      root:      ROOT,
+                      base:      CDN + ROOT,
+                      comboBase: COMBO_BASE,
+                      skin:      { defaultSkin: 'sam',
+                                   base:        'assets/skins/',
+                                   path:        'skin.css',
+                                   after:       [ 'cssreset', 
+                                                  'cssfonts', 
+                                                  'cssreset-context', 
+                                                  'cssfonts-context' ] },
+                      groups:    {},
+                      modules:   {
     "anim": {
         "submodules": {
             "anim-base": {
@@ -136,6 +138,10 @@ META = {
         ]
     }, 
     "console": {
+        "lang": [
+            "en", 
+            "es"
+        ], 
         "plugins": {
             "console-filters": {
                 "requires": [
@@ -168,6 +174,7 @@ META = {
             "cssfonts-context", 
             "cssgrids-context"
         ], 
+        "path": "cssbase/base-min.css", 
         "type": "css"
     }, 
     "cssbase-context": {
@@ -183,6 +190,7 @@ META = {
         "type": "css"
     }, 
     "cssfonts": {
+        "path": "cssfonts/fonts-min.css", 
         "type": "css"
     }, 
     "cssfonts-context": {
@@ -193,6 +201,7 @@ META = {
         "optional": [
             "cssreset"
         ], 
+        "path": "cssgrids/grids-min.css", 
         "requires": [
             "cssfonts"
         ], 
@@ -209,6 +218,7 @@ META = {
         "type": "css"
     }, 
     "cssreset": {
+        "path": "cssreset/reset-min.css", 
         "type": "css"
     }, 
     "cssreset-context": {
@@ -313,8 +323,17 @@ META = {
     "datatype": {
         "submodules": {
             "datatype-date": {
+                "lang": [
+                    "en", 
+                    "en-US", 
+                    "fr-FR", 
+                    "ko-KR"
+                ], 
                 "requires": [
                     "yui-base"
+                ], 
+                "supersedes": [
+                    "datatype-date-format"
                 ]
             }, 
             "datatype-number": {
@@ -328,6 +347,9 @@ META = {
                 ]
             }
         }
+    }, 
+    "datatype-date-format": {
+        "path": "datatype/datatype-date-format-min.js"
     }, 
     "dd": {
         "submodules": {
@@ -399,11 +421,6 @@ META = {
             }
         }
     }, 
-    "dd-value": {
-        "requires": [
-            "dd-constrain"
-        ]
-    }, 
     "dom": {
         "plugins": {
             "selector-css3": {
@@ -456,6 +473,13 @@ META = {
     }, 
     "event": {
         "expound": "node-base", 
+        "plugins": {
+            "event-synthetic": {
+                "requires": [
+                    "node-base"
+                ]
+            }
+        }, 
         "submodules": {
             "event-base": {
                 "expound": "node-base", 
@@ -528,14 +552,10 @@ META = {
         ]
     }, 
     "intl": {
-        "submodules": {
-            "intl-lang": {
-                "requires": [
-                    "event-custom"
-                ]
-            }, 
-            "intl-load": {}
-        }
+        "requires": [
+            "intl-base", 
+            "event-custom"
+        ]
     }, 
     "io": {
         "submodules": {
@@ -741,12 +761,34 @@ META = {
         ]
     }, 
     "slider": {
-        "requires": [
-            "widget", 
-            "dd-value", 
-            "skin-sam-slider"
-        ], 
-        "skinnable": true
+        "submodules": {
+            "clickable-rail": {
+                "requires": [
+                    "slider-base"
+                ]
+            }, 
+            "range-slider": {
+                "requires": [
+                    "slider-base", 
+                    "slider-value-range", 
+                    "clickable-rail"
+                ]
+            }, 
+            "slider-base": {
+                "requires": [
+                    "widget", 
+                    "dd-constrain", 
+                    "substitute", 
+                    "skin-sam-slider-base"
+                ], 
+                "skinnable": true
+            }, 
+            "slider-value-range": {
+                "requires": [
+                    "slider-base"
+                ]
+            }
+        }
     }, 
     "sortable": {
         "requires": [
@@ -765,13 +807,47 @@ META = {
             "dump"
         ]
     }, 
+    "swf": {
+        "requires": [
+            "event-custom", 
+            "node", 
+            "swfdetect"
+        ]
+    }, 
+    "swfdetect": {}, 
+    "tabview": {
+        "plugins": {
+            "tabview-plugin": {
+                "requires": [
+                    "tabview-base", 
+                    "node-focusmanager"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "widget", 
+            "skin-sam-tabview", 
+            "widget-parent", 
+            "widget-child", 
+            "tabview-base"
+        ], 
+        "skinnable": true, 
+        "submodules": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate", 
+                    "classnamemanager"
+                ]
+            }
+        }
+    }, 
     "test": {
         "requires": [
             "substitute", 
             "node", 
             "json", 
-            "event-simulate", 
-            "skin-sam-test"
+            "event-simulate"
         ], 
         "skinnable": true
     }, 
@@ -820,11 +896,6 @@ META = {
                 "requires": [
                     "widget-base"
                 ]
-            }, 
-            "widget-i18n": {
-                "requires": [
-                    "widget-base"
-                ]
             }
         }
     }, 
@@ -834,9 +905,16 @@ META = {
             "anim-base"
         ]
     }, 
+    "widget-locale": {
+        "path": "widget/widget-locale-min.js", 
+        "requires": [
+            "widget-base"
+        ]
+    }, 
     "yui": {
         "submodules": {
             "get": {}, 
+            "intl-base": {}, 
             "yui-base": {}, 
             "yui-later": {}, 
             "yui-log": {}, 
@@ -844,26 +922,37 @@ META = {
         }
     }
 },
+                      patterns:  {}                                     },
+    groups =          META.groups;
 
-    // Patterns are module definitions which will be added with 
-    // the default options if a definition is not found. The
-    // assumption is that the module itself will be in the default
-    // location, and if there are any additional dependencies, they
-    // will have to be fetched with a second request.  This could
-    // happen multiple times, each segment resulting in a new
-    // dependency list.
-    //
-    // types: regex, prefix, function
-    patterns: {
-        'gallery-': { 
-            // http://yui.yahooapis.com/3.0.0/build/
-            // http://yui.yahooapis.com/gallery-/build/
-            base: GALLERY_BASE,  // explicit declaration of the base attribute
-            filter: {
-                'searchExp': VERSION,
-                'replaceStr': GALLERY_VERSION
+groups[VERSION] = {};
+
+groups.gallery = {
+    base:      CDN + GALLERY_ROOT,
+    ext:       false,
+    combine:   true,
+    root:      GALLERY_ROOT,
+    comboBase: COMBO_BASE,
+    patterns:  { 'gallery-': {} }
+};
+
+groups.yui2 = {
+    base:      CDN + YUI2_ROOT,
+    combine:   true,
+    ext:       false,
+    root:      YUI2_ROOT,
+    comboBase: COMBO_BASE,
+    patterns:  { 
+        'yui2-': {
+            configFn: function(me) {
+                if(/-skin|reset|fonts|grids|base/.test(me.name)) {
+                    me.type = 'css';
+                    me.path = me.path.replace(/\.js/, '.css');
+                    // this makes skins in builds earlier than 2.6.0 work as long as combine is false
+                    me.path = me.path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
+                }
             }
-        }
+        } 
     }
 };
 

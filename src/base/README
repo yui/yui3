@@ -1,6 +1,16 @@
-Development Master
+Base is designed to be a low level class from which other attribute 
+and event target based classes in the YUI library can be derived. 
+It provides a standard template for creating attribute based objects 
+across the library and provides a consistent init() and destroy() 
+sequence, by chaining initialization (initializer) and destruction 
+(destructor) methods for the class hierarcy.
 
-* "init" and "destroy" events are now publish with the defaultTargetOnly property set to true
+3.1.0
+
+* As the final step in the destroy phase, Base now does a detachAll() to avoid invoking listeners 
+  which may be waiting to be in an async. step which occurs after destruction.
+
+* "init" and "destroy" events are now published with the defaultTargetOnly property set to true
 
 * Added support for MyClass.EVENT_PREFIX to allow developers
   to define their own event prefix
@@ -132,12 +142,3 @@ Development Master
 
 3.0.0PR1 - Initial release
 
-Module Name: "base"
-Documentation: http://developer.yahoo.com/yui/3/base
-
-Base is designed to be a low level class from which other attribute 
-and event target based classes in the YUI library can be derived. 
-It provides a standard template for creating attribute based objects 
-across the library and provides a consistent init() and destroy() 
-sequence, by chaining initialization (initializer) and destruction 
-(destructor) methods for the class hierarcy.

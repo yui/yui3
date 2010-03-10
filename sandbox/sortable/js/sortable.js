@@ -1,11 +1,11 @@
 YUI.add('sortable', function(Y) {
 
     /**
-     * Sortable List.
+     * The class allows you to create a Drag & Drop reordered list.
      * @module sortable
      */     
     /**
-     * Sortable Lists.
+     * The class allows you to create a Drag & Drop reordered list.
      * @class Sortable
      * @extends Base
      * @constructor
@@ -35,7 +35,7 @@ YUI.add('sortable', function(Y) {
         delegate: null,
         initializer: function() {
             var id = 'sortable-' + Y.guid(), c,
-                del = new Y.DD.Delegate({
+                delConfig = {
                     container: this.get(CONT),
                     nodes: this.get(NODES),
                     target: true,
@@ -43,7 +43,12 @@ YUI.add('sortable', function(Y) {
                     dragConfig: {
                         groups: [ id ]
                     }
-                });
+                }, del;
+
+            if (this.get('handles')) {
+                delConfig.handles = this.get('handles');
+            }
+            del = new Y.DD.Delegate(delConfig);
 
             this.set(ID, id);
 
@@ -61,11 +66,23 @@ YUI.add('sortable', function(Y) {
             del.on({
                 'drag:start': Y.bind(this._onDragStart, this),
                 'drag:end': Y.bind(this._onDragEnd, this),
-                'drag:over': Y.bind(this._onDragOver, this)
+                'drag:over': Y.bind(this._onDragOver, this),
+                'drag:drag': Y.bind(this._onDrag, this)
             });
 
             this.delegate = del;
             Sortable.reg(this);
+        },
+        _up: null,
+        _y: null,
+        _onDrag: function(e) {
+            if (e.pageY < this._y) {
+                this._up = true; 
+            } else if (e.pageY > this._y) { 
+                this._up = false; 
+            } 
+
+            this._y = e.pageY;
         },
         /**
         * @private
@@ -96,6 +113,10 @@ YUI.add('sortable', function(Y) {
             }
 
             switch (this.get('moveType').toLowerCase()) {
+                case 'insert':
+                    var dir = ((this._up) ? 'before' : 'after');
+                    e.drop.get(NODE).insert(e.drag.get(NODE), dir);
+                    break;
                 case 'swap':
                     Y.DD.DDM.swapNode(e.drag, e.drop);
                     break;
@@ -254,6 +275,14 @@ YUI.add('sortable', function(Y) {
         NAME: 'sortable',
         ATTRS: {
             /**
+            * @attribute handles
+            * @description Drag handles to pass on to the internal DD.Delegate instance.
+            * @type Array
+            */    
+            handles: {
+                value: false
+            },
+            /**
             * @attribute container
             * @description A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
             * @type String
@@ -295,11 +324,11 @@ YUI.add('sortable', function(Y) {
             },
             /**
             * @attribute moveType
-            * @description How should an item move to another list: swap, move, copy. Default: swap
+            * @description How should an item move to another list: insert, swap, move, copy. Default: insert
             * @type String
             */        
             moveType: {
-                value: 'swap'
+                value: 'insert'
             },
             /**
             * @attribute invalid

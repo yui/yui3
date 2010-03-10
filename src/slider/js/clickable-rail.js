@@ -1,3 +1,17 @@
+/**
+ * Adds support for mouse interaction with the Slider rail triggering thumb
+ * movement.
+ *
+ * @module slider
+ * @submodule clickable-rail
+ */
+
+/**
+ * Slider extension that allows clicking on the Slider's rail element,
+ * triggering the thumb to align with the location of the click.
+ *
+ * @class ClickableRail
+ */
 function ClickableRail() {
     this._initClickableRail();
 }
@@ -7,10 +21,26 @@ Y.ClickableRail = Y.mix( ClickableRail, {
     // Prototype methods added to host class
     prototype: {
 
+        /**
+         * Initializes the internal state and sets up events.
+         *
+         * @method _initClickableRail
+         * @protected
+         */
         _initClickableRail: function () {
             this._evtGuid = this._evtGuid || ( Y.guid() + '|' );
 
-            this.publish( 'railMouseDown', { 
+            /**
+             * Broadcasts when the rail has received a mousedown event and
+             * triggers the thumb positioning.  Use
+             * <code>e.preventDefault()</code> or
+             * <code>set(&quot;clickableRail&quot;, false)</code> to prevent
+             * the thumb positioning.
+             *
+             * @event railMouseDown
+             * @preventable _defRailMouseDownFn
+             */
+            this.publish( 'railMouseDown', {
                 defaultFn: this._defRailMouseDownFn
             } );
 
@@ -18,6 +48,12 @@ Y.ClickableRail = Y.mix( ClickableRail, {
             this.on( 'destroy', this._unbindClickableRail );
         },
 
+        /** 
+         * Attaches DOM event subscribers to support rail interaction.
+         *
+         * @method _bindClickableRail
+         * @protected
+         */
         _bindClickableRail: function () {
             this._dd.addHandle( this.rail );
 
@@ -25,6 +61,12 @@ Y.ClickableRail = Y.mix( ClickableRail, {
                 this._onRailMouseDown, this );
         },
 
+        /**
+         * Detaches DOM event subscribers for cleanup/destruction cycle.
+         *
+         * @method _unbindClickableRail
+         * @protected
+         */
         _unbindClickableRail: function () {
             if ( this.get( 'rendered' ) ) {
                 var contentBox = this.get( 'contentBox' ),
@@ -34,12 +76,28 @@ Y.ClickableRail = Y.mix( ClickableRail, {
             }
         },
 
+        /**
+         * Dispatches the railMouseDown event.
+         *
+         * @method _onRailMouseDown
+         * @param e {DOMEvent} the mousedown event object
+         * @protected
+         */
         _onRailMouseDown: function ( e ) {
             if ( this.get( 'clickableRail' ) && !this.get( 'disabled' ) ) {
                 this.fire( 'railMouseDown', { ev: e } );
             }
         },
 
+        /**
+         * Default behavior for the railMouseDown event.  Centers the thumb at
+         * the click location and passes control to the DDM to behave as though
+         * the thumb itself were clicked in preparation for a drag operation.
+         *
+         * @method _defRailMouseDownFn
+         * @param e {Event} the EventFacade for the railMouseDown custom event
+         * @protected
+         */
         _defRailMouseDownFn: function ( e ) {
             e = e.ev;
 
@@ -63,6 +121,16 @@ Y.ClickableRail = Y.mix( ClickableRail, {
             }
         },
 
+        /**
+         * Resolves which thumb to actuate if any.  Override this if you want to
+         * support multiple thumbs.  By default, returns the Drag instance for
+         * the thumb stored by the Slider.
+         *
+         * @method _resolveThumb
+         * @param e {DOMEvent} the mousedown event object
+         * @return {Y.DD.Drag} the Drag instance that should be moved
+         * @protected
+         */
         _resolveThumb: function ( e ) {
             var primaryOnly = this._dd.get( 'primaryButtonOnly' ),
                 validClick  = !primaryOnly || e.button <= 1;
@@ -70,6 +138,16 @@ Y.ClickableRail = Y.mix( ClickableRail, {
             return ( validClick ) ? this._dd : null;
         },
 
+        /**
+         * Calculates the top left position the thumb should be moved to to
+         * align the click XY with the center of the specified node.
+         *
+         * @method _getThumbDestination
+         * @param e {DOMEvent} The mousedown event object
+         * @param node {Node} The node to position
+         * @return {Array} the [top, left] pixel position of the destination
+         * @protected
+         */
         _getThumbDestination: function ( e, node ) {
             var offsetWidth  = node.get( 'offsetWidth' ),
                 offsetHeight = node.get( 'offsetHeight' );
@@ -85,6 +163,13 @@ Y.ClickableRail = Y.mix( ClickableRail, {
 
     // Static properties added onto host class
     ATTRS: {
+        /**
+         * Enable or disable clickable rail support.
+         *
+         * @attribute clickableRail
+         * @type {Boolean}
+         * @default true
+         */
         clickableRail: {
             value: true,
             validator: Y.Lang.isBoolean

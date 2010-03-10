@@ -208,7 +208,7 @@
                     var TestRunner = this._frame.YAHOO.tool.TestRunner;
     
                     this._logger.setTestRunner(TestRunner);
-                    TestRunner.subscribe(TestRunner.COMPLETE_EVENT, this._handleTestRunnerComplete, this, true);
+                    TestRunner.on(TestRunner.COMPLETE_EVENT, this._handleTestRunnerComplete, this, true);
                     
                     //run it
                     TestRunner.run();

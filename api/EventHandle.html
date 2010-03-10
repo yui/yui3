@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event-custom&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>event-custom&nbsp; <span class="subtitle">3.1.0pr2</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event-custom.html" title="event-custom">event-custom</a>
                  &gt; EventHandle 
@@ -174,6 +174,59 @@
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:method" resource="#method_monitor">
+                                    <h4>
+                                        <a name="method_monitor">monitor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        EventHandle
+                                            <strong property="yui:name">monitor</strong>
+                                           (
+                                                
+                                                        
+                                                         what
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Monitor the event state for the subscribed event.  The first parameter
+is what should be monitored, the rest are the normal parameters when
+subscribing to an event.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">what</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  what to monitor ('attach', 'detach', 'publish')</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            EventHandle
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">return value from the monitor event subscription</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -218,6 +271,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -229,16 +283,23 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
                                 <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
@@ -288,6 +349,7 @@
                         <h4>Methods</h4>
                         <ul class="content">        
                                 <li class=""><a href="#method_detach" title="detach">detach</a></li>
+                                <li class=""><a href="#method_monitor" title="monitor">monitor</a></li>
                         </ul>
                     </div>
 
@@ -303,7 +365,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "EventHandle", "name": "detach", "url": "EventHandle.html#method_detach", "type": "method"}, {"access": "", "host": "EventHandle", "name": "evt", "url": "EventHandle.html#property_evt", "type": "property"}, {"access": "", "host": "EventHandle", "name": "sub", "url": "EventHandle.html#property_sub", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "EventHandle", "name": "detach", "url": "EventHandle.html#method_detach", "type": "method"}, {"access": "", "host": "EventHandle", "name": "evt", "url": "EventHandle.html#property_evt", "type": "property"}, {"access": "", "host": "EventHandle", "name": "monitor", "url": "EventHandle.html#method_monitor", "type": "method"}, {"access": "", "host": "EventHandle", "name": "sub", "url": "EventHandle.html#property_sub", "type": "property"}];
 </script>
 </body>
 </html>

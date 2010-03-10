@@ -114,6 +114,7 @@ var L = Y.Lang,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
+                monitored: o.monitored,
                 broadcast: o.broadcast,
                 defaultTargetOnly: o.defaulTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
@@ -152,6 +153,13 @@ ET.prototype = {
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n, domevent, isArr;
+
+        // full name, args, detachcategory, after
+        this._monitor('attach', parts[1], {
+            args: arguments, 
+            category: parts[0],
+            after: parts[2]
+        });
 
         if (L.isObject(type)) {
 
@@ -451,6 +459,11 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *    <li>
      *   'stoppedFn': a function that is executed when stopPropagation is called
      *    </li>
+     *
+     *    <li>
+     *   'monitored': specifies whether or not this event should send notifications about
+     *   when the event has been attached, detached, or published.
+     *    </li>
      *    <li>
      *   'type': the event type (valid option if not provided as the first parameter to publish)
      *    </li>
@@ -464,6 +477,9 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         type = (pre) ? _getType(type, pre) : type;
 
+        this._monitor('publish', type, {
+            args: arguments
+        });
 
         if (L.isObject(type)) {
             ret = {};
@@ -497,6 +513,27 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         return events[type];
     },
 
+    /**
+     * This is the entry point for the event monitoring system.
+     * You can monitor 'attach', 'detach', 'fire', and 'publish'.  
+     * When configured, these events generate an event.  click ->
+     * click_attach, click_detach, click_publish -- these can
+     * be subscribed to like other events to monitor the event
+     * system.  Inividual published events can have monitoring
+     * turned on or off (publish can't be turned off before it
+     * it published) by setting the events 'monitor' config.
+     *
+     * @private
+     */
+    _monitor: function(what, type, o) {
+        var monitorevt, ce = this.getEvent(type);
+        if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+            monitorevt = type + '_' + what;
+            // Y.log('monitoring: ' + monitorevt);
+            o.monitored = what;
+            this.fire.call(this, monitorevt, o);
+        }
+    },
 
    /**
      * Fire a custom event by name.  The callback functions will be executed
@@ -530,10 +567,15 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, ret, pre=this._yuievt.config.prefix, ce2,
+            ce, ret, pre = this._yuievt.config.prefix, ce2,
             args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
+
+        this._monitor('fire', t, { 
+            args: args 
+        });
+
         ce = this.getEvent(t, true);
         ce2 = this.getSibling(t, ce);
 
@@ -556,7 +598,6 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         return (this._yuievt.chain) ? this : ret;
     },
-
 
     getSibling: function(type, ce) {
         var ce2;

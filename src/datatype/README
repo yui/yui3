@@ -1,14 +1,11 @@
-**** version 3.1.0 ****
+3.1.0
+    * Changed to use YUI language modules rather than proprietary
+      infrastructure. Providing en, en-US, fr-FR and ko-KR language
+      packs for the preview release. The final 3.1.0 product will
+      contain over 50 language packs.
 
-* Changed to use YUI language modules rather than proprietary infrastructure.
+3.0.0
+    * No changes.
 
-
-**** version 3.0.0 ****
-
-* No changes.
-
-
-
-**** version 3.0.0 beta 1 ****
-
-* Initial release.
+3.0.0 beta 1
+    * Initial release.

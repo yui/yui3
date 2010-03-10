@@ -7,18 +7,18 @@
         h1 {
             font: normal 125%/1.4 Arial, sans-serif;
         }
-        .yui-skin-sam .yui-console .yui-console-content {
+        .yui3-skin-sam .yui3-console .yui3-console-content {
             font-size: 10px;
         }
-        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+        .yui3-skin-sam .yui3-console-entry-pass .yui3-console-entry-cat {
             background: #070;
             color: #fff;
         }
-        .yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+        .yui3-skin-sam .yui3-console-entry-fail .yui3-console-entry-cat {
             background: #700;
             color: #fff;
         }
-        .yui-skin-sam .yui-console-entry-time {
+        .yui3-skin-sam .yui3-console-entry-time {
             display: none;
         }
     </style>
@@ -29,10 +29,7 @@
 <script src="../../../build/yui/yui.js"></script>
 <script>
 YUI({
-    filter : 'raw',
-    filters: {
-        widget: 'debug'
-    }
+   filter : 'raw'
 }).use('test','console',function (Y) {
 
 var suite = new Y.Test.Suite("Widget Tests");
@@ -77,6 +74,24 @@ suite.add(new Y.Test.Case({
         body.addClass( "yui3-skin-sam" );
 
         Y.Assert.areEqual( "foo", w.getSkinName() );
+    },
+
+    testRenderedDestroy: function() {
+        var w = new Y.Widget().render();
+        try {
+            w.destroy();
+        } catch(e) {
+            Y.Assert.fail("w.destroy() on a rendered widget threw an exception" + e);
+        }
+    },
+
+    testUnrenderedDestroy: function() {
+        var w = new Y.Widget();
+        try {
+            w.destroy();
+        } catch(e) {
+            Y.Assert.fail("w.destroy() on an unrendered widget threw an exception" + e);
+        }
     }
 
 }));

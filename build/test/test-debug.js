@@ -123,7 +123,6 @@ YUI.add('test', function(Y) {
         this.delay = (Y.Lang.isNumber(delay) ? delay : 0);        
     };
 
-
         
     Y.namespace("Test");
     
@@ -200,7 +199,6 @@ YUI.add('test', function(Y) {
         }
         
     };
-
     
     /*
      * Runs test suites and test cases, providing events to allowing for the
@@ -391,7 +389,7 @@ YUI.add('test', function(Y) {
                 this.BEGIN_EVENT
             ];
             for (var i=0; i < events.length; i++){
-                this.subscribe(events[i], this._logEvent, this, true);
+                this.on(events[i], this._logEvent, this, true);
             }      
        
         }
@@ -1193,7 +1191,6 @@ YUI.add('test', function(Y) {
         return new TestRunner();
         
     })();
-
   
     /**
      * The Assert object provides functions to test JavaScript values against
@@ -1890,7 +1887,6 @@ YUI.add('test', function(Y) {
     //inherit methods
     Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     
-
    
     /**
      * The ArrayAssert object provides functions to test JavaScript array objects
@@ -2213,7 +2209,6 @@ YUI.add('test', function(Y) {
         
     };
 
-
     /**
      * The ObjectAssert object provides functions to test JavaScript objects
      * for a variety of cases.
@@ -2315,7 +2310,6 @@ YUI.add('test', function(Y) {
         }     
     };
 
-
     
     /**
      * The DateAssert object provides functions to test JavaScript Date objects
@@ -2400,7 +2394,6 @@ YUI.add('test', function(Y) {
         }
         
     };
-
     
     Y.namespace("Test.Format");
     
@@ -2629,7 +2622,6 @@ YUI.add('test', function(Y) {
         
 
 
-
     Y.namespace("Coverage.Format");
     
     /**
@@ -2664,7 +2656,6 @@ YUI.add('test', function(Y) {
 
 
   
-
 
     Y.namespace("Test");
     
@@ -2831,7 +2822,6 @@ YUI.add('test', function(Y) {
         }
     
     };
-
     /**
      * Creates a new mock object.
      * @class Mock
@@ -2995,7 +2985,6 @@ YUI.add('test', function(Y) {
     Y.Mock.Value.String     = Y.Mock.Value(Y.Assert.isString);
     Y.Mock.Value.Object     = Y.Mock.Value(Y.Assert.isObject);
     Y.Mock.Value.Function   = Y.Mock.Value(Y.Assert.isFunction);
-
 
 
 }, '@VERSION@' ,{requires:['substitute','event-base']});

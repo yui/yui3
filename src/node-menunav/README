@@ -1,4 +1,4 @@
-**** Development Master ***
+**** YUI 3.1.0 ***
 
 * Fixed issue where moving the mouse from a submenu label directly out of the document to the browser chrome would trigger a JS error in IE.
 

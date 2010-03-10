@@ -4,7 +4,7 @@
 <title>YUI Object Tests</title>
 </head>
 
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
 <h1>Object Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 
@@ -13,7 +13,6 @@
 
 (function() {
     YUI({
-        base: "../../../build/",
         logExclude: {
             attribute: true, 
             dom: true, 
@@ -23,11 +22,10 @@
             base: true, 
             widget: true, 
             selector: true
-        },
-        useConsole: true
+        }
     }).use("dump", "test", "console", "event-custom", function(Y) {
 
-        var button = Y.get('#btnRun');
+        var button = Y.one('#btnRun');
 
         // Set up the page
         button.set("disabled", false);

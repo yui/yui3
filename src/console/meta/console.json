@@ -16,6 +16,7 @@
             "substitute", 
             "skin-sam-console"
         ], 
-        "skinnable": true
+        "skinnable": true,
+	"lang" : ["en", "es"]
     }
 }

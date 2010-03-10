@@ -4,3 +4,4 @@ build_rollup_tmp*/
 .*.swp
 .svn
 CVS/
+*~
