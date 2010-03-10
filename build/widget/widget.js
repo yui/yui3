@@ -884,8 +884,11 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */   
     _unbindDOM : function(boundingBox) {
-        this._hDocFocus.detach();
-        if (WEBKIT) {
+        if (this._hDocFocus) {
+            this._hDocFocus.detach();
+        }
+
+        if (WEBKIT && this._hDocMouseDown) {
             this._hDocMouseDown.detach();
         }
     },
@@ -1239,7 +1242,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Determines if the specified event is a UI event.
-     * 
+     *
      * @private
      * @method _isUIEvent
      * @param type {String} String representing the name of the event
@@ -1256,7 +1259,7 @@ Y.extend(Widget, Y.Base, {
             }
 
             return returnVal;
-        }        
+        }
     },
 
     /**

@@ -5,8 +5,8 @@ var VERSION         = Y.version,
     CDN             = 'http://yui.yahooapis.com/',
     GALLERY_VERSION = Y.config.gallery || 'gallery-2010.03.02-18',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
-    YUI2_VERSION    = Y.config.yui2 || '2.8.0_test4',
-    YUI2_ROOT       = '2in3/' + YUI2_VERSION + BUILD,
+    YUI2_VERSION    = Y.config.yui2 || '2.8.0',
+    YUI2_ROOT       = '2in3_test3/' + YUI2_VERSION + BUILD,
     COMBO_BASE      = CDN + 'combo?',
     META =          { version:   VERSION,
                       root:      ROOT,
@@ -38,7 +38,6 @@ groups.gallery = {
 groups.yui2 = {
     base:      CDN + YUI2_ROOT,
     combine:   true,
-    // base:      '/2in3/',
     ext:       false,
     root:      YUI2_ROOT,
     comboBase: COMBO_BASE,
@@ -48,6 +47,8 @@ groups.yui2 = {
                 if(/-skin|reset|fonts|grids|base/.test(me.name)) {
                     me.type = 'css';
                     me.path = me.path.replace(/\.js/, '.css');
+                    // this makes skins in builds earlier than 2.6.0 work as long as combine is false
+                    me.path = me.path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
                 }
             }
         } 

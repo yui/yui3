@@ -12,7 +12,8 @@ body {
 <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
 <script type="text/javascript" charset="utf-8">                                                                                                                 
 YUI({
-    combine: true // running locally, so I need to force combo handling
+    yui2: '2.5.2',
+    combine: false // running locally, so I need to force combo handling
     // gallery: 'gallery-2010.02.22-22'
 // }).use('gallery-storage-lite', 'gallery-treeview', function (Y) {
 // }).use('yui2-animation', 'gallery-treeview', 'base', function (Y) {
@@ -68,6 +69,7 @@ YUI({
 
 });
 </script>     
+</head>
 <body class="yui-skin-sam">
 
 <div id="container">

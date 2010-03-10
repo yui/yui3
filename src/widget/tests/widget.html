@@ -74,6 +74,24 @@ suite.add(new Y.Test.Case({
         body.addClass( "yui3-skin-sam" );
 
         Y.Assert.areEqual( "foo", w.getSkinName() );
+    },
+
+    testRenderedDestroy: function() {
+        var w = new Y.Widget().render();
+        try {
+            w.destroy();
+        } catch(e) {
+            Y.Assert.fail("w.destroy() on a rendered widget threw an exception" + e);
+        }
+    },
+
+    testUnrenderedDestroy: function() {
+        var w = new Y.Widget();
+        try {
+            w.destroy();
+        } catch(e) {
+            Y.Assert.fail("w.destroy() on an unrendered widget threw an exception" + e);
+        }
     }
 
 }));
