@@ -40,6 +40,12 @@ YUI.add('editor-base', function(Y) {
                 defaultFn: this._defNodeChangeFn
             });
         },
+        /**
+        * The default handler for the nodeChange event.
+        * @method _defNodeChangeFn
+        * @param {Event} e The event
+        * @private
+        */
         _defNodeChangeFn: function(e) {
             Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
             switch (e.changedType) {
@@ -108,6 +114,11 @@ YUI.add('editor-base', function(Y) {
                 }
             }
         },
+        /**
+        * Fires nodeChange event
+        * @method _onFrameKeyDown
+        * @private
+        */
         _onFrameKeyDown: function(e) {
             if (EditorBase.NC_KEYS[e.keyCode]) {
                 var inst = this.frame.getInstance(),

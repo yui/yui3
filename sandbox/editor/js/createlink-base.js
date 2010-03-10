@@ -1,19 +1,34 @@
 YUI.add('createlink-base', function(Y) {
     /**
-     * Addes prompt style link creation.
+     * Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
      * @module editor
      * @submodule createlink-base
      */     
     /**
-     * Addes prompt style link creation.
+     * Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
      * @class CreateLinkBase
      * @static
-     * @constructor
+     * @namespace Plugin
      */
     
     var CreateLinkBase = {};
+    /**
+    * Strings used by the plugin
+    * @property STRINGS
+    * @static
+    */
     CreateLinkBase.STRINGS = {
+            /**
+            * String used for the Prompt
+            * @property PROMPT
+            * @static
+            */
             PROMPT: 'Please enter the URL for the link to point to:',
+            /**
+            * String used as the default value of the Prompt
+            * @property DEFAULT
+            * @static
+            */
             DEFAULT: 'http://'
     };
 
@@ -21,6 +36,14 @@ YUI.add('createlink-base', function(Y) {
     Y.Plugin.CreateLinkBase = CreateLinkBase;
 
     Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
+        /**
+        * Override for the createlink method from the <a href="Plugin.CreateLinkBase.html">CreateLinkBase</a> plugin.
+        * @for ExecCommand
+        * @method COMMANDS.createlink
+        * @static
+        * @param {String} cmd The command executed: createlink
+        * @return {Node} Node instance of the item touched by this command.
+        */
         createlink: function(cmd) {
             var inst = this.get('host').getInstance(), out, a,
                 url = prompt(CreateLinkBase.STRINGS.PROMPT, CreateLinkBase.STRINGS.DEFAULT);

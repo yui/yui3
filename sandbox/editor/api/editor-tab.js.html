@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: editor   (YUI Library)</title>
+	<title>API: editor   editor-tab.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_editor.html" title="editor">editor</a>
                 
-                
+                 &gt; editor-tab.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,62 +43,82 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: editor
-                    
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="nx">YUI</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;editor-tab&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Handles tab and shift-tab indent/outdent support.</span>
+<span class="cm">     * @module editor</span>
+<span class="cm">     * @submodule editor-tab</span>
+<span class="cm">     */</span>     
+    <span class="cm">/**</span>
+<span class="cm">     * Handles tab and shift-tab indent/outdent support.</span>
+<span class="cm">     * @class EditorTab</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     * @extends Base</span>
+<span class="cm">     * @namespace Plugin</span>
+<span class="cm">     */</span>
+    
+    <span class="kd">var</span> <span class="nx">EditorTab</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">EditorTab</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">},</span> <span class="nx">HOST</span> <span class="o">=</span> <span class="s1">&#39;host&#39;</span><span class="p">;</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">EditorTab</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Listener for host&#39;s nodeChange event and captures the tabkey interaction.</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @method _onNodeChange</span>
+<span class="cm">        * @param {Event} e The Event facade passed from the host.</span>
+<span class="cm">        */</span>
+        <span class="nx">_onNodeChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="s1">&#39;indent&#39;</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedType</span> <span class="o">===</span> <span class="s1">&#39;tab&#39;</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;li, li *&#39;</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">changedEvent</span><span class="p">.</span><span class="nx">halt</span><span class="p">();</span>
+                    <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedEvent</span><span class="p">.</span><span class="nx">shiftKey</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">action</span> <span class="o">=</span> <span class="s1">&#39;outdent&#39;</span><span class="p">;</span>
+                    <span class="p">}</span>
+
+                    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Overriding TAB to &#39;</span> <span class="o">+</span> <span class="nx">action</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;editorTab&#39;</span><span class="p">);</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">).</span><span class="nx">execCommand</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HOST</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onNodeChange</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+        <span class="p">}</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * editorTab</span>
+<span class="cm">        * @property NAME</span>
+<span class="cm">        * @static</span>
+<span class="cm">        */</span>
+        <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;editorTab&#39;</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">        * tab</span>
+<span class="cm">        * @property NS</span>
+<span class="cm">        * @static</span>
+<span class="cm">        */</span>
+        <span class="nx">NS</span><span class="o">:</span> <span class="s1">&#39;tab&#39;</span><span class="p">,</span>
+        <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">host</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
 
 
-                    </h3>
-                    <div class="description summary">
-                        Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Plugin&#39;</span><span class="p">);</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">EditorTab</span> <span class="o">=</span> <span class="nx">EditorTab</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+
                     </div>
-
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                            <p>This module contains the following classes:</p>
-                            <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Adds prompt style link creation. Adds an override for the <a href=\"Plugin.ExecCommand.html#method_COMMANDS.createlink\">createlink execCommand</a>.", "guessedname": "Plugin.CreateLinkBase", "name": "Plugin.CreateLinkBase"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.", "guessedname": "Plugin.EditorBase", "name": "Plugin.EditorBase"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href=\"Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist\">insertorderedlist</a> and <a href=\"Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist\">insertunorderedlist</a> execCommands.", "guessedname": "Plugin.EditorLists", "name": "Plugin.EditorLists"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Handles tab and shift-tab indent/outdent support.", "guessedname": "Plugin.EditorTab", "name": "Plugin.EditorTab"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Plugin for the frame module to handle execCommands for Editor", "guessedname": "Plugin.ExecCommand", "name": "Plugin.ExecCommand"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Creates a wrapper around an iframe. It loads the content either from a local\nfile or from script and creates a local YUI instance bound to that new window and document.", "guessedname": "Plugin.Frame", "name": "Plugin.Frame"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Wraps some common Selection/Range functionality into a simple object", "guessedname": "Plugin.Selection", "name": "Plugin.Selection"}];
-                            </script>
-                            <div id="splash_classList">
-                                <ul>
-                                    <li><a href="Plugin.CreateLinkBase.html" title="Plugin.CreateLinkBase" id="class_0">Plugin.CreateLinkBase</a></li>
-                                    <li><a href="Plugin.EditorBase.html" title="Plugin.EditorBase" id="class_1">Plugin.EditorBase</a></li>
-                                    <li><a href="Plugin.EditorLists.html" title="Plugin.EditorLists" id="class_2">Plugin.EditorLists</a></li>
-                                    <li><a href="Plugin.EditorTab.html" title="Plugin.EditorTab" id="class_3">Plugin.EditorTab</a></li>
-                                    <li><a href="Plugin.ExecCommand.html" title="Plugin.ExecCommand" id="class_4">Plugin.ExecCommand</a></li>
-                                    <li><a href="Plugin.Frame.html" title="Plugin.Frame" id="class_5">Plugin.Frame</a></li>
-                                    <li><a href="Plugin.Selection.html" title="Plugin.Selection" id="class_6">Plugin.Selection</a></li>
-                                </ul>
-                            </div>
-                    </div>
-                    <div class="yui-u">
-                                    <div class="submodules">
-                                        <h4>Submodules:</h4> 
-                                        <dl>
-                                            <dt><code>createlink-base</code></dt>
-                                            <dd>Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.</dd>
-                                            <dt><code>editor-base</code></dt>
-                                            <dd>Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.</dd>
-                                            <dt><code>editor-tab</code></dt>
-                                            <dd>Handles tab and shift-tab indent/outdent support.</dd>
-                                            <dt><code>exec-command</code></dt>
-                                            <dd>Plugin for the frame module to handle execCommands for Editor</dd>
-                                            <dt><code>frame</code></dt>
-                                            <dd>Creates a wrapper around an iframe. It loads the content either from a local
-file or from script and creates a local YUI instance bound to that new window and document.</dd>
-                                            <dt><code>editor-lists</code></dt>
-                                            <dd>Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.</dd>
-                                            <dt><code>selection</code></dt>
-                                            <dd>Wraps some common Selection/Range functionality into a simple object</dd>
-                                        </dl>
-                                    </div>
-
-                        </div>
-                </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -129,7 +149,7 @@ file or from script and creates a local YUI instance bound to that new window an
                         <ul class="content">        
                                 <li class=""><a href="createlink-base.js.html" title="createlink-base.js">createlink-base.js</a></li>
                                 <li class=""><a href="editor-base.js.html" title="editor-base.js">editor-base.js</a></li>
-                                <li class=""><a href="editor-tab.js.html" title="editor-tab.js">editor-tab.js</a></li>
+                                <li class="selected"><a href="editor-tab.js.html" title="editor-tab.js">editor-tab.js</a></li>
                                 <li class=""><a href="exec-command.js.html" title="exec-command.js">exec-command.js</a></li>
                                 <li class=""><a href="frame.js.html" title="frame.js">frame.js</a></li>
                                 <li class=""><a href="lists.js.html" title="lists.js">lists.js</a></li>

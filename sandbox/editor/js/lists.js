@@ -1,11 +1,11 @@
 YUI.add('editor-lists', function(Y) {
     /**
-     * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support.
+     * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
      * @module editor
      * @submodule editor-lists
      */     
     /**
-     * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support.
+     * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
      * @class EditorLists
      * @constructor
      * @extends Base
@@ -125,12 +125,28 @@ YUI.add('editor-lists', function(Y) {
     Y.Plugin.EditorLists = EditorLists;
 
     Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
+        /**
+        * Override for the insertunorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
+        * @for ExecCommand
+        * @method COMMANDS.insertunorderedlist
+        * @static
+        * @param {String} cmd The command executed: insertunorderedlist
+        * @return {Node} Node instance of the item touched by this command.
+        */
         insertunorderedlist: function(cmd) {
             var inst = this.get('host').getInstance(), out;
             this.get('host')._execCommand(cmd, '');
             out = (new inst.Selection()).getSelected();
             return out;
         },
+        /**
+        * Override for the insertorderedlist method from the <a href="Plugin.EditorLists.html">EditorLists</a> plugin.
+        * @for ExecCommand
+        * @method COMMANDS.insertorderedlist
+        * @static
+        * @param {String} cmd The command executed: insertorderedlist
+        * @return {Node} Node instance of the item touched by this command.
+        */
         insertorderedlist: function(cmd) {
             var inst = this.get('host').getInstance(), out;
             this.get('host')._execCommand(cmd, '');
@@ -138,5 +154,6 @@ YUI.add('editor-lists', function(Y) {
             return out;   
         }
     });
+
 
 });
