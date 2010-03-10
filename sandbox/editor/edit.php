@@ -64,6 +64,8 @@
         <button value="addclass">AddClass</button>
         <button value="removeclass">RemoveClass</button>
         <button value="bidi">BiDi</button>
+        <button value="insertorderedlist">InsertOrderedList</button>
+        <button value="insertunorderedlist">InsertUnOrderedList</button>
     </div>
     <div id="test"></div>
     <div id="smilies"></div>
@@ -80,6 +82,11 @@
     <li>Item #1</li>
     <li>Item #1</li>
 </ul>
+<ol>
+    <li style="font-family: courier">Item #1</li>
+    <li>Item #1</li>
+    <li>Item #1</li>
+</ol>
 <p>This is <span style="font-family: courier">another</span> test.</p>
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 <style>
@@ -94,8 +101,8 @@ del {
 </style>
 </div>
 
-<!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
-<script type="text/javascript" src="http://yui.yahooapis.com/3.1.0pr1/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.0pr1/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
@@ -125,7 +132,7 @@ var yConfig = {
 };
 
 YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', function(Y) {
-    console.log(Y, Y.id);
+    //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {
         e.target.toggleClass('selected');
@@ -179,13 +186,15 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     }, 'img');
     
     var updateButtons = function(tar) {
-        var buttons = Y.all('#test1 button').removeClass('selected');
-        buttons.each(function(v) {
-            var val = v.get('value');
-            if (tar.test(val + ', ' + val + ' *')) {
-                v.addClass('selected');
-            }
-        });
+        if (tar) {
+            var buttons = Y.all('#test1 button').removeClass('selected');
+            buttons.each(function(v) {
+                var val = v.get('value');
+                if (tar.test(val + ', ' + val + ' *')) {
+                    v.addClass('selected');
+                }
+            });
+        }
     };
 
     //Mixin the new commands

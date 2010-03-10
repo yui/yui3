@@ -49,7 +49,7 @@ YUI.add('selection', function(Y) {
                     this.anchorNode = Y.Selection.resolve(ieNode);
                     this.focusNode = Y.Selection.resolve(ieNode);
                     
-                    this.anchorOffset = this.focusOffset = ieNode.nodeValue.length;
+                    this.anchorOffset = this.focusOffset = (ieNode.nodeValue) ? ieNode.nodeValue.length : 0 ;
                     
                     this.anchorTextNode = this.focusTextNode = Y.one(ieNode);
                 }
@@ -111,6 +111,15 @@ YUI.add('selection', function(Y) {
             }
             Y.Selection.prototype._swap(baseNodes.item(k), newTag);
         });
+        //Filter out all the empty UL/OL's
+        var ls = Y.all('ol,ul');
+        ls.each(function(v, k) {
+            var lis = v.all('li');
+            if (!lis.size()) {
+                v.remove();
+            }
+        });
+
     };
     /**
     * Undoes what filter does enough to return the HTML from the Editor, then re-applies the filter.
@@ -298,7 +307,7 @@ YUI.add('selection', function(Y) {
                     if (n.getAttribute('style') === '') {
                         n.removeAttribute('style');
                     }
-                    items.push(nodes.item(k));
+                    items.push(Y.Node.getDOMNode(nodes.item(k)));
                 }
             });
             return Y.all(items);
@@ -438,14 +447,19 @@ YUI.add('selection', function(Y) {
         * @chainable
         * @return {Y.Selection}
         */
-        selectNode: function(node, collapse) {
+        selectNode: function(node, collapse, end) {
+            end = end || 0;
 		    var range = this.createRange();
             if (range.selectNode) {
                 range.selectNode(Y.Node.getDOMNode(node));
                 this._selection.removeAllRanges();
                 this._selection.addRange(range);
                 if (collapse) {
-                    this._selection.collapse(Y.Node.getDOMNode(node), 0);
+                    try {
+                        this._selection.collapse(Y.Node.getDOMNode(node), end);
+                    } catch (e) {
+                        this._selection.collapse(Y.Node.getDOMNode(node), 0);
+                    }
                 }
             } else {
                 range.select(Y.Node.getDOMNode(node));

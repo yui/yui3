@@ -27,7 +27,7 @@ YUI.add('editor-base', function(Y) {
                 designMode: true,
                 title: EditorBase.STRINGS.title,
                 use: EditorBase.USE,
-                dir: this.get('dir'),
+                dir: this.get('dir')
             }).plug(Y.Plugin.ExecCommand);
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
@@ -43,6 +43,9 @@ YUI.add('editor-base', function(Y) {
         _defNodeChangeFn: function(e) {
             Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
             switch (e.changedType) {
+                case 'enter':
+                    //Enter key goes here..
+                    break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
                         Y.log('Overriding TAB key to insert HTML', 'info', 'editor');

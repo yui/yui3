@@ -129,6 +129,21 @@
 
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:property" resource="#property_NC_KEYS">
+                                    <h4><a name="property_NC_KEYS" property="yui:name">NC_KEYS</a>
+                                        - <code>static <span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Hash table of keys to fire a nodeChange event for.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:property" resource="#property_STRINGS">
                                     <h4><a name="property_STRINGS" property="yui:name">STRINGS</a>
                                         - <code>static <span property="yui:type">object</span></code>
@@ -734,6 +749,7 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class="selected"><a href="EditorBase.html" title="EditorBase">EditorBase</a></li>
+                                <li class=""><a href="Plugin.EditorLists.html" title="Plugin.EditorLists">Plugin.EditorLists</a></li>
                                 <li class=""><a href="Plugin.ExecCommand.html" title="Plugin.ExecCommand">Plugin.ExecCommand</a></li>
                                 <li class=""><a href="Plugin.Frame.html" title="Plugin.Frame">Plugin.Frame</a></li>
                                 <li class=""><a href="Plugin.Selection.html" title="Plugin.Selection">Plugin.Selection</a></li>
@@ -746,6 +762,7 @@
                                 <li class=""><a href="editor-base.js.html" title="editor-base.js">editor-base.js</a></li>
                                 <li class=""><a href="exec-command.js.html" title="exec-command.js">exec-command.js</a></li>
                                 <li class=""><a href="frame.js.html" title="frame.js">frame.js</a></li>
+                                <li class=""><a href="lists.js.html" title="lists.js">lists.js</a></li>
                                 <li class=""><a href="selection.js.html" title="selection.js">selection.js</a></li>
                         </ul>
                     </div>
@@ -756,6 +773,7 @@
                                 <li class="private"><a href="#property__keyUpTimer" title="_keyUpTimer">_keyUpTimer</a></li>
                                 <li class=""><a href="#property_frame" title="frame">frame</a></li>
                                 <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
+                                <li class=""><a href="#property_NC_KEYS" title="NC_KEYS">NC_KEYS</a></li>
                                 <li class=""><a href="#property_STRINGS" title="STRINGS">STRINGS</a></li>
                                 <li class=""><a href="#property_STRINGS.title" title="STRINGS.title">STRINGS.title</a></li>
                                 <li class=""><a href="#property_USE" title="USE">USE</a></li>
@@ -803,8 +821,7 @@
 	</div>
 </div>
 <script type="text/javascript">
-
-    var ALL_YUI_PROPS = [{"url": "EditorBase.html#method__afterFrameReady", "access": "private", "host": "EditorBase", "type": "method", "name": "_afterFrameReady"}, {"url": "EditorBase.html#config_content", "access": "", "host": "EditorBase", "type": "config", "name": "content"}, {"url": "EditorBase.html#event_contentChange", "access": "", "host": "EditorBase", "type": "event", "name": "contentChange"}, {"url": "EditorBase.html#config_dir", "access": "", "host": "EditorBase", "type": "config", "name": "dir"}, {"url": "EditorBase.html#event_dirChange", "access": "", "host": "EditorBase", "type": "event", "name": "dirChange"}, {"url": "EditorBase.html#method_execCommand", "access": "", "host": "EditorBase", "type": "method", "name": "execCommand"}, {"url": "EditorBase.html#method_focus", "access": "", "host": "EditorBase", "type": "method", "name": "focus"}, {"url": "EditorBase.html#property_frame", "access": "", "host": "EditorBase", "type": "property", "name": "frame"}, {"url": "EditorBase.html#method_getContent", "access": "", "host": "EditorBase", "type": "method", "name": "getContent"}, {"url": "EditorBase.html#method_getInstance", "access": "", "host": "EditorBase", "type": "method", "name": "getInstance"}, {"url": "EditorBase.html#property__keyUpTimer", "access": "private", "host": "EditorBase", "type": "property", "name": "_keyUpTimer"}, {"url": "EditorBase.html#property_NAME", "access": "", "host": "EditorBase", "type": "property", "name": "NAME"}, {"url": "EditorBase.html#event_nodeChange", "access": "", "host": "EditorBase", "type": "event", "name": "nodeChange"}, {"url": "EditorBase.html#method__onFrameKeyUp", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameKeyUp"}, {"url": "EditorBase.html#method__onFrameMouseDown", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameMouseDown"}, {"url": "EditorBase.html#method__onKeyUpTimer", "access": "private", "host": "EditorBase", "type": "method", "name": "_onKeyUpTimer"}, {"url": "EditorBase.html#method_render", "access": "", "host": "EditorBase", "type": "method", "name": "render"}, {"url": "EditorBase.html#property_STRINGS", "access": "", "host": "EditorBase", "type": "property", "name": "STRINGS"}, {"url": "EditorBase.html#property_STRINGS.title", "access": "", "host": "EditorBase", "type": "property", "name": "STRINGS.title"}, {"url": "EditorBase.html#property_USE", "access": "", "host": "EditorBase", "type": "property", "name": "USE"}];
+    ALL_YUI_PROPS = [{"url": "EditorBase.html#method__afterFrameReady", "access": "private", "host": "EditorBase", "type": "method", "name": "_afterFrameReady"}, {"url": "EditorBase.html#config_content", "access": "", "host": "EditorBase", "type": "config", "name": "content"}, {"url": "EditorBase.html#event_contentChange", "access": "", "host": "EditorBase", "type": "event", "name": "contentChange"}, {"url": "EditorBase.html#config_dir", "access": "", "host": "EditorBase", "type": "config", "name": "dir"}, {"url": "EditorBase.html#event_dirChange", "access": "", "host": "EditorBase", "type": "event", "name": "dirChange"}, {"url": "EditorBase.html#method_execCommand", "access": "", "host": "EditorBase", "type": "method", "name": "execCommand"}, {"url": "EditorBase.html#method_focus", "access": "", "host": "EditorBase", "type": "method", "name": "focus"}, {"url": "EditorBase.html#property_frame", "access": "", "host": "EditorBase", "type": "property", "name": "frame"}, {"url": "EditorBase.html#method_getContent", "access": "", "host": "EditorBase", "type": "method", "name": "getContent"}, {"url": "EditorBase.html#method_getInstance", "access": "", "host": "EditorBase", "type": "method", "name": "getInstance"}, {"url": "EditorBase.html#property__keyUpTimer", "access": "private", "host": "EditorBase", "type": "property", "name": "_keyUpTimer"}, {"url": "EditorBase.html#property_NAME", "access": "", "host": "EditorBase", "type": "property", "name": "NAME"}, {"url": "EditorBase.html#property_NC_KEYS", "access": "", "host": "EditorBase", "type": "property", "name": "NC_KEYS"}, {"url": "EditorBase.html#event_nodeChange", "access": "", "host": "EditorBase", "type": "event", "name": "nodeChange"}, {"url": "EditorBase.html#method__onFrameKeyUp", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameKeyUp"}, {"url": "EditorBase.html#method__onFrameMouseDown", "access": "private", "host": "EditorBase", "type": "method", "name": "_onFrameMouseDown"}, {"url": "EditorBase.html#method__onKeyUpTimer", "access": "private", "host": "EditorBase", "type": "method", "name": "_onKeyUpTimer"}, {"url": "EditorBase.html#method_render", "access": "", "host": "EditorBase", "type": "method", "name": "render"}, {"url": "EditorBase.html#property_STRINGS", "access": "", "host": "EditorBase", "type": "property", "name": "STRINGS"}, {"url": "EditorBase.html#property_STRINGS.title", "access": "", "host": "EditorBase", "type": "property", "name": "STRINGS.title"}, {"url": "EditorBase.html#property_USE", "access": "", "host": "EditorBase", "type": "property", "name": "USE"}];
 </script>
 </body>
 </html>
