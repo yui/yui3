@@ -1,3 +1,72 @@
+YUI.add('loader-base', function(Y) {
+
+/**
+ * The YUI loader core
+ * @module loader
+ * @submodule loader-base
+ */
+(function() {
+var VERSION         = Y.version,
+    CONFIG          = Y.config,
+    BUILD           = '/build/',
+    ROOT            = VERSION + BUILD,
+    CDN_BASE        = Y.Env.base,
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.03.10-18',
+    GALLERY_ROOT    = GALLERY_VERSION + BUILD,
+    TNT             = '2in3',
+    TNT_VERSION     = CONFIG[TNT] || '1',
+    YUI2_VERSION    = CONFIG.yui2 || '2.8.0',
+    YUI2_ROOT       = TNT + '.' + TNT_VERSION + '/' + YUI2_VERSION + BUILD,
+    COMBO_BASE      = CDN_BASE + 'combo?',
+    META =          { version:   VERSION,
+                      root:      ROOT,
+                      base:      Y.Env,
+                      comboBase: COMBO_BASE,
+                      skin:      { defaultSkin: 'sam',
+                                   base:        'assets/skins/',
+                                   path:        'skin.css',
+                                   after:       [ 'cssreset', 
+                                                  'cssfonts', 
+                                                  'cssreset-context', 
+                                                  'cssfonts-context' ] },
+                      groups:    {},
+                      modules:   { /* METAGEN */ },
+                      patterns:  {}                                     },
+    groups =          META.groups;
+
+groups[VERSION] = {};
+
+groups.gallery = {
+    base:      CDN_BASE + GALLERY_ROOT,
+    ext:       false,
+    combine:   true,
+    root:      GALLERY_ROOT,
+    comboBase: COMBO_BASE,
+    patterns:  { 'gallery-': {} }
+};
+
+groups.yui2 = {
+    base:      CDN_BASE + YUI2_ROOT,
+    combine:   true,
+    ext:       false,
+    root:      YUI2_ROOT,
+    comboBase: COMBO_BASE,
+    patterns:  { 
+        'yui2-': {
+            configFn: function(me) {
+                if(/-skin|reset|fonts|grids|base/.test(me.name)) {
+                    me.type = 'css';
+                    me.path = me.path.replace(/\.js/, '.css');
+                    // this makes skins in builds earlier than 2.6.0 work as long as combine is false
+                    me.path = me.path.replace(/\/yui2-skin/, '/assets/skins/sam/yui2-skin');
+                }
+            }
+        } 
+    }
+};
+
+YUI.Env[VERSION] = META;
+}());
 (function() {
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
@@ -539,7 +608,6 @@ Y.Loader.prototype = {
                     } else if (i == 'groups') {
                         for (j in val) {
                             if (val.hasOwnProperty(j)) {
-                                // Y.log('group: ' + j);
                                 groupName = j;
                                 group = val[j];
                                 self.addGroup(group, groupName);
@@ -613,7 +681,6 @@ Y.Loader.prototype = {
             if (!info[name]) {
                 mdef = info[mod];
                 pkg = mdef.pkg || mod;
-                // Y.log('adding skin ' + name);
                 this.addModule({
                     name:  name,
                     group: mdef.group,
@@ -764,7 +831,6 @@ Y.Loader.prototype = {
                                 o.lang.push(lang);
                             }
 
-                            // Y.log('pack ' + packName + ' should supersede ' + supName);
                             // Add rollup file, need to add to supersedes list too 
                         }
                     }
@@ -829,11 +895,9 @@ Y.Loader.prototype = {
         }
 
         if (!this.dirty && mod.expanded && (!mod.langCache || mod.langCache == this.lang)) {
-            // Y.log('already expanded ' + mod.name);
             return mod.expanded;
         }
 
-        // Y.log("getRequires: " + mod.name + " (dirty:" + this.dirty + ", expanded:" + mod.expanded + ")");
 
         mod._parsed = true;
 
@@ -845,7 +909,6 @@ Y.Loader.prototype = {
             info = this.moduleInfo;
 
         for (i=0; i<r.length; i++) {
-            // Y.log(mod.name + ' requiring ' + r[i]);
             d.push(r[i]);
             m = this.getModule(r[i]);
             add = this.getRequires(m);
@@ -886,7 +949,6 @@ Y.Loader.prototype = {
 
             if (mod.lang && !mod.langPack && Y.Intl) {
                 lang = Y.Intl.lookupBestLang(this.lang || ROOT_LANG, mod.lang);
-// Y.log('Best lang: ' + lang + ', this.lang: ' + this.lang + ', mod.lang: ' + mod.lang);
                 mod.langCache = this.lang;
                 packName = this.getLangPackName(lang, mod.name);
                 if (packName) {
@@ -1095,7 +1157,6 @@ Y.Loader.prototype = {
             }
         }, this);
 
-        // Y.log('After explode: ' + YObject.keys(r));
     },
 
     getModule: function(mname) {
@@ -1111,10 +1172,8 @@ Y.Loader.prototype = {
         // check the patterns library to see if we should automatically add
         // the module with defaults
         if (!m) {
-           // Y.log('testing patterns ' + YObject.keys(patterns));
             for (pname in patterns) {
                 if (patterns.hasOwnProperty(pname)) {
-                    // Y.log('testing pattern ' + i);
                     p = patterns[pname];
                     type = p.type;
 
@@ -1129,10 +1188,8 @@ Y.Loader.prototype = {
 
             if (found) {
                 if (p.action) {
-                    // Y.log('executing pattern action: ' + pname);
                     p.action.call(this, mname, pname);
                 } else {
-Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'loader');
                     // ext true or false?
                     m = this.addModule(Y.merge(found), mname);
                 }
@@ -1172,11 +1229,9 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
                 }
             }
         }
-        // Y.log('required now: ' + YObject.keys(r));
     },
 
     _finish: function(msg, success) {
-        Y.log('loader finishing: ' + msg + ', ' + Y.id + ', ' + this.data, "info", "loader");
 
         _queue.running = false;
 
@@ -1193,7 +1248,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
     },
 
     _onSuccess: function() {
-        // Y.log('loader _onSuccess, skipping: ' + Y.Object.keys(this.skipped), "info", "loader");
         var skipped = Y.merge(this.skipped), fn;
         YObject.each(skipped, function(k) {
             delete this.inserted[k];
@@ -1213,7 +1267,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
     },
 
     _onFailure: function(o) {
-        Y.log('load error: ' + o.msg + ', ' + Y.id, "error", "loader");
         var f = this.onFailure, msg = 'failure: ' + o.msg;
         if (f) {
             f.call(this.context, {
@@ -1226,7 +1279,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
     },
 
     _onTimeout: function() {
-        Y.log('loader timeout: ' + Y.id, "error", "loader");
         var f = this.onTimeout;
         if (f) {
             f.call(this.context, {
@@ -1352,7 +1404,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
     _insert: function(source, o, type) {
 
-        // Y.log('private _insert() ' + (type || '') + ', ' + Y.id, "info", "loader");
 
         // restore the state at the time of the request
         if (source) {
@@ -1368,7 +1419,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
             var self = this;
 
-            // Y.log("trying to load css first");
             this._internalCallback = function() {
                 var f = self.onCSS;
                 if (f) {
@@ -1415,7 +1465,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
      * @param type {string} the type of dependency to insert
      */
     insert: function(o, type) {
-        // Y.log('public insert() ' + (type || '') + ', ' + Y.Object.keys(this.required), "info", "loader");
         var self = this, copy = Y.merge(this, true);
         delete copy.require;
         delete copy.dirty;
@@ -1543,7 +1592,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
             if (combining.length) {
 
-Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
                 // if (m.type === CSS) {
                 if (type === CSS) {
@@ -1582,7 +1630,6 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
                 return;
             }
 
-// Y.log("loadNext executing, just loaded " + mname + ", " + Y.id, "info", "loader");
 
             // The global handler that is called when each module is loaded
             // will pass that module name to this function.  Storing this
@@ -1614,7 +1661,6 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
             // the same module when loading a rollup.  We can safely
             // skip the subsequent requests
             if (s[i] === this._loading) {
-                Y.log("still loading " + s[i] + ", waiting", "info", "loader");
                 return;
             }
 
@@ -1623,7 +1669,6 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
             if (!m) {
                 msg = "Undefined module " + s[i] + " skipped";
-                Y.log(msg, 'warn', 'loader');
                 this.inserted[s[i]] = true;
                 this.skipped[s[i]]  = true;
                 continue;
@@ -1636,7 +1681,6 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
             // the css separately from the script.
             if (!type || type === m.type) {
                 this._loading = s[i];
-                Y.log("attempting to load " + s[i] + ", " + this.base, "info", "loader");
 
                 if (m.type === CSS) {
                     fn = Y.Get.css;
@@ -1672,11 +1716,9 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
         // internal callback for loading css first
         if (fn) {
-            // Y.log('loader internal');
             this._internalCallback = null;
             fn.call(this);
         } else {
-            // Y.log('loader complete');
             this._onSuccess();
         }
     },
@@ -1721,3 +1763,6 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
 })();
 
+
+
+}, '@VERSION@' ,{requires:['oop']});

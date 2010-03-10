@@ -18,8 +18,8 @@ class MetaJoin(object):
         TEMPLATE_TOKEN = '{ /* METAGEN */ }' 
 
         DEST_DIR       = 'js'
-        DEST_JSON      = 'modules.json'
-        DEST_JS        = 'meta.js'
+        DEST_JSON      = 'yui3.json'
+        DEST_JS        = 'yui3.js'
 
         src_path       = os.path.abspath(SRC_DIR)
 
