@@ -94,6 +94,10 @@
         <button value="inserthorizontalrule">inserthorizontalrule</button>
         <button value="backcolor">backcolor</button>
         <button value="forecolor">forecolor</button>
+        <button value="justifycenter">justifycenter</button>
+        <button value="justifyleft">justifyleft</button>
+        <button value="justifyright">justifyright</button>
+        <button value="justifyfull">justifyfull</button>
     </div>
     <div id="test"></div>
     <div id="smilies"></div>
