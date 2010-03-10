@@ -8,7 +8,9 @@ YUI Loader
     for a group of modules.  The combo support now allows for multiple combo domains.
   * Handles simultaneous bootstrapping and loading better.
   * Added support for dynamically loading language packs along with modules that have them.
-  * Intrinsic yui3-gallery support.
+  * Intrinsic support for loading yui3-gallery modules.
+  * Intrinsic support for loading yui2 modules via the 2in3 project.
+  * Submodule breakdown to allow use of loader without all of the YUI3 metadata.
   * Metadata is managed per component instead of centrally.
   * Extremely long combo urls are split into multiple requests.
   * Loader defends itself against metadata that creates circular dependencies.
