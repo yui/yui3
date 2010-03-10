@@ -4,6 +4,7 @@ package com.yahoo.util
 	import flash.display.DisplayObject;
 	import flash.external.ExternalInterface;
 	import flash.utils.getDefinitionByName;
+	import com.adobe.serialization.json.JSON;
 
 	public class YUIBridge extends Object
 	{
@@ -232,15 +233,25 @@ package com.yahoo.util
 		 */
 		private function parseInstances(args:Array):Array
 		{
+			var first:String;
 			for (var i:int = 0; i < args.length; i++) 
 			{
-				if (args[i] is String && args[i].substr(0,1) == "$") 
+				if (args[i] is String)
 				{
-					args[i] = getInstance(args[i].substr(1));
+					first = args[i].substr(0, 1);
+					if(first == "$") 
+					{
+						args[i] = getInstance(args[i].substr(1));
+					}
+					else if(first == "[" || first == "{")
+					{
+						args[i] = JSON.decode(args[i]); 
+					}
 				}
 			}
 			return args;
 		}
+
 		/**
 		 * @private
 		 */

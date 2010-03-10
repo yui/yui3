@@ -165,15 +165,6 @@ package com.yahoo.infographics.axes
 		{
 			this._maxLabelWidth = Math.max(width, this._maxLabelWidth);
 			this._maxLabelHeight = Math.max(height, this._maxLabelHeight);
-			this.dispatchEvent(new RendererEvent(RendererEvent.RESIZE));
-		}
-
-		/**
-		 * @copy com.yahoo.infographics.axes.IAxisLayout#handleLabelResize()
-		 */
-		public function handleLabelResize(event:RendererEvent):void
-		{
-			this.updateContentPosition(Number(event.target.width), Number(event.target.height));
 		}
 
 		/**

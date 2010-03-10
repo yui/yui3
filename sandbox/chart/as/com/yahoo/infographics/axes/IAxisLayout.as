@@ -101,11 +101,6 @@ package com.yahoo.infographics.axes
 		function updateContentPosition(width:Number, height:Number):void
 		
 		/**
-		 * Event listener for label resize
-		 */
-		function handleLabelResize(event:RendererEvent):void
-		
-		/**
 		 * Resets <code>maxLabelWidth</code> and <code>maxLabelHeight</code> to zero.
 		 */
 		function reset(ticks:Object, dimensions:Object):void

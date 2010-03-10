@@ -274,11 +274,11 @@ package com.yahoo.renderers.layout
 		 */
 		override protected function updateRenderStatus():void
 		{
-			
 			if(this.childRenderingComplete())
 			{
-				var oldAvailableWidth:Number = BorderLayout(this.layout).availableWidth;
-				var oldAvailableHeight:Number = BorderLayout(this.layout).availableHeight;
+				this.rendering = false;
+				var oldAvailableWidth:Number = BorderLayout(this.layout).availableWidth,
+					oldAvailableHeight:Number = BorderLayout(this.layout).availableHeight;
 				BorderLayout(this.layout).measureContent();
 				if(oldAvailableWidth == BorderLayout(this.layout).availableWidth && oldAvailableHeight == BorderLayout(this.layout).availableHeight)
 				{
@@ -289,6 +289,7 @@ package com.yahoo.renderers.layout
 						return;
 					}
 					BorderLayout(this.layout).resizeCenterStack();
+					this.setFlag("childResize");
 					if(this.noChildResizing()) 
 					{
 						this.visible = true;
@@ -309,12 +310,7 @@ package com.yahoo.renderers.layout
 		{
 			var container:Container = Container(event.currentTarget);
 			var layout:ILayoutStrategy = container.layout;
-			if(layout is HLayout && event.widthChange)
-			{
-				this.updateRenderStatus();
-			}
-
-			if(layout is VLayout && event.heightChange)
+			if((layout is HLayout && event.widthChange) || (layout is VLayout && event.heightChange))
 			{
 				this.updateRenderStatus();
 			}

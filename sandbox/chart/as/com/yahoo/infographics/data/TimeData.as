@@ -17,46 +17,29 @@ package com.yahoo.infographics.data
 		/**
 		 * @private (override)
 		 */
-		override public function getKeyValueAt(key:String, index:int):Number
+		override protected function getDataByKey(key:String):Array
 		{
-			var value:Number = NaN;
-			if(this.keys[key]) value = this.dateToNumber((this.keys[key] as Array)[index]);
-			return value;
-		}
-		
-		/**
-		 * @private
-		 */
-		override protected function updateMinAndMax():void
-		{
-			var data:Array = this.data;
-			var max:Number = 0;
-			var min:Number = 0;
-			if(data && data.length > 0)
+			var obj:Object, arr:Array = [], len:int, dv:Array = this._dataClone.concat(), i:int, val:Number;
+			len = dv.length;
+			for(i = 0; i < len; i = i + 1)
 			{
-				var len:int = data.length;
-				max = min = this.dateToNumber(data[0]);
-				if(len > 1)
+				obj = dv[i][key];
+				if(obj is Date)
 				{
-					for(var i:int = 0; i < len; i++)
-					{
-						max = Math.max(max, this.dateToNumber(data[i]));
-						min = Math.min(min, this.dateToNumber(data[i]));
-					}
+					val = (obj as Date).valueOf();
 				}
+				else if(!(obj is Number))
+				{
+					val = new Date(String(obj)).valueOf();
+				}
+				else
+				{
+					val = obj as Number;
+				}
+				arr[i] = val;
 			}
-			this._dataMaximum = max;
-			this._dataMinimum = min;
+			return arr;
 		}
 
-		/**
-		 * @private
-		 */
-		private function dateToNumber(value:Object):Number
-		{
-			if(value is Date) return (value as Date).valueOf();
-			if(!(value is Number)) return new Date(value.toString()).valueOf();
-			return value as Number;
-		}
 	}
 }

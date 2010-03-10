@@ -103,7 +103,6 @@ package com.yahoo.infographics.axes
 			if(!this.checkFlags(this._textFlags)) return;
 			this.createText();
 			this.rotate();
-			this.dispatchEvent(new RendererEvent(RendererEvent.RESIZE));
 		}
 
 		/**

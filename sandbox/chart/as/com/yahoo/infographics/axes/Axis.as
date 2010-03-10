@@ -181,7 +181,10 @@ package com.yahoo.infographics.axes
 				this.checkFlag("resize") ||
 				this.checkFlag("majorUnit") ||
 				this.checkFlag("label") ||
-				this.checkFlag("calculateSizeByTickLength")) this.drawAxis();
+				this.checkFlag("calculateSizeByTickLength")) 
+			{
+				this.drawAxis();
+			}
 		}
 		
 		/**
@@ -280,7 +283,6 @@ package com.yahoo.infographics.axes
 			{
 				label = new AxisLabel();
 				this._content.addChild(label);
-				label.addEventListener(RendererEvent.RENDER_COMPLETE, this._layout.handleLabelResize);
 			}
 			this._labels.push(label);
 			label.text = labelText;
@@ -288,7 +290,10 @@ package com.yahoo.infographics.axes
 			var labelPoint:Point = this._layout.getLabelPoint(tickPoint);
 			label.y = labelPoint.y;
 			label.x = labelPoint.x;
+			label.forceRender();
+			this._layout.updateContentPosition(Number(label.width), Number(label.height));
 		}
+
 
 		/**
 		 * @private
@@ -310,7 +315,6 @@ package com.yahoo.infographics.axes
 			for(var i:int = 0; i < len; i++)
 			{
 				var label:AxisLabel = this._labelCache[i] as AxisLabel;
-				label.removeEventListener(RendererEvent.RENDER_COMPLETE, this._layout.handleLabelResize);
 				this.removeChild(label);
 			}
 			this._labelCache = [];
