@@ -641,7 +641,20 @@
     <span class="s2">&quot;loader&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;get&quot;</span>
-        <span class="p">]</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;loader-base&quot;</span><span class="o">:</span> <span class="p">{},</span> 
+            <span class="s2">&quot;rollup&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;loader-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;yui3&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;loader-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">},</span> 
     <span class="s2">&quot;node&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
