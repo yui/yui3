@@ -138,6 +138,8 @@ del {
 <script type="text/javascript" src="js/exec-command.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/selection.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="js/lists.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -159,7 +161,7 @@ var yConfig = {
     throwFail: true
 };
 
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', function(Y) {
+YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-tab', function(Y) {
     //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {
@@ -292,11 +294,12 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         }
     });
     editor.plug(Y.Plugin.EditorLists);
+    editor.plug(Y.Plugin.EditorTab);
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
 
         //This stops image resizes, but for all images!!
-        editor.execCommand('enableObjectResizing', false);
+        //editor.execCommand('enableObjectResizing', false);
         //this.set('content', Y.one('#stub').get('innerHTML'));
     });
     /*
