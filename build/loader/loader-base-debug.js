@@ -1792,4 +1792,4 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['get']});

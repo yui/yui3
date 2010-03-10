@@ -1765,4 +1765,4 @@ Y.Loader.prototype = {
 
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['get']});

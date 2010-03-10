@@ -1792,7 +1792,7 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
 
 
-}, '@VERSION@' ,{requires:['oop']});
+}, '@VERSION@' ,{requires:['get']});
 YUI.add('loader-rollup', function(Y) {
 
 /**
@@ -2491,7 +2491,20 @@ YUI.Env[Y.version].modules = {
     "loader": {
         "requires": [
             "get"
-        ]
+        ], 
+        "submodules": {
+            "loader-base": {}, 
+            "rollup": {
+                "requires": [
+                    "loader-base"
+                ]
+            }, 
+            "yui3": {
+                "requires": [
+                    "loader-base"
+                ]
+            }
+        }
     }, 
     "node": {
         "plugins": {
