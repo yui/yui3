@@ -165,6 +165,8 @@ YUI.add('editor-base', function(Y) {
         */
         getContent: function() {
             var html = this.getInstance().Selection.unfilter();
+            //Removing the _yuid from the objects in IE
+            html = html.replace(/ _yuid="([^>]*)"/g, '');
             return html;
         }
     }, {

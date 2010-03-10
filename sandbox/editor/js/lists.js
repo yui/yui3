@@ -14,7 +14,7 @@ YUI.add('editor-lists', function(Y) {
     
     var EditorLists = function() {
         EditorLists.superclass.constructor.apply(this, arguments);
-    }, LI = 'li', OL = 'ol', HOST = 'host';
+    }, LI = 'li', OL = 'ol', UL = 'ul', HOST = 'host';
 
     Y.extend(EditorLists, Y.Base, {
         /**
@@ -30,20 +30,24 @@ YUI.add('editor-lists', function(Y) {
                 e.changedEvent.halt();
                 e.preventDefault();
                 var li = e.changedNode,
-                    newLi = Y.Node.create('<li><span>FOO</span></li>');
+                    newLi = inst.Node.create('<' + LI + '>' + EditorLists.NON + '</' + LI + '>');
+                    
+                if (!li.test(LI)) {
+                    li = li.ancestor(LI);
+                }
                 li.insert(newLi, 'after');
-                li = newLi.one('span');
+                
                 sel = new inst.Selection();
-                sel.selectNode(li);
+                sel.selectNode(newLi.get('firstChild'));
             }
             if (e.changedType === 'tab') {
-                if (e.changedNode.test('li, li *')) {
+                if (e.changedNode.test(LI + ', ' + LI + ' *')) {
                     Y.log('Overriding TAB to move lists around', 'info', 'editorLists');
                     e.changedEvent.halt();
                     e.preventDefault();
                     var li = e.changedNode, sTab = e.changedEvent.shiftKey,
-                        par = li.ancestor('ol,ul'),
-                        moved = false, tag = 'ul';
+                        par = li.ancestor(OL + ',' + UL),
+                        moved = false, tag = UL;
 
 
                     if (par.get('tagName').toLowerCase() === OL) {
@@ -61,9 +65,10 @@ YUI.add('editor-lists', function(Y) {
                             moved = true;
                         }
                     } else {
+                        li.setStyle('border', '1px solid red');
                         if (li.previous(LI)) {
                             Y.log('Shifting list down one level', 'info', 'editorLists');
-                            var newList = Y.Node.create('<' + tag + '></' + tag + '>');
+                            var newList = inst.Node.create('<' + tag + '></' + tag + '>');
                             li.previous(LI).append(newList);
                             newList.append(li);
                             moved = true;
@@ -72,9 +77,12 @@ YUI.add('editor-lists', function(Y) {
                 }
                 if (moved) {
                     li.all(EditorLists.REMOVE).remove();
+                    if (Y.UA.ie) {
+                        li = li.append(EditorLists.NON).one(EditorLists.NON_SEL);
+                    }
                     //Selection here..
-                    sel = new inst.Selection();
-                    sel.selectNode(li, true, true);
+                    Y.log('Selecting the new node', 'info', 'editorLists');
+                    (new inst.Selection()).selectNode(li, true, true);
                 }
             }
         },
@@ -82,6 +90,8 @@ YUI.add('editor-lists', function(Y) {
             this.get(HOST).on('nodeChange', Y.bind(this._onNodeChange, this));
         }
     }, {
+        NON: '<span class="yui-non">&nbsp;</span>',
+        NON_SEL: 'span.yui-non',
         /**
         * The items to removed from a list when a list item is moved, currently removes BR nodes
         * @property REMOVE

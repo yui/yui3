@@ -449,22 +449,24 @@ YUI.add('selection', function(Y) {
         */
         selectNode: function(node, collapse, end) {
             end = end || 0;
+            node = Y.Node.getDOMNode(node);
 		    var range = this.createRange();
             if (range.selectNode) {
-                range.selectNode(Y.Node.getDOMNode(node));
+                range.selectNode(node);
                 this._selection.removeAllRanges();
                 this._selection.addRange(range);
                 if (collapse) {
                     try {
-                        this._selection.collapse(Y.Node.getDOMNode(node), end);
+                        this._selection.collapse(node, end);
                     } catch (e) {
-                        this._selection.collapse(Y.Node.getDOMNode(node), 0);
+                        this._selection.collapse(node, 0);
                     }
                 }
             } else {
-                range.select(Y.Node.getDOMNode(node));
+                range.moveToElementText(node);
+                range.select();
                 if (collapse) {
-                    range.collapse();
+                    range.collapse(((end) ? false : true));
                 }
             }
             return this;
