@@ -735,22 +735,22 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             Assert.areEqual(200, byId('test-scroll').scrollLeft, 'test-scroll.set("scrollLeft", 200)');
             document.body.style.height = '5000px';
             document.body.style.width = '5000px';
+/*
             Y.one(window).set('scrollTop', 100);
             Y.one(window).set('scrollLeft', 200);
             Assert.areEqual(100, Y.DOM.docScrollY(window), 'window.set("scrollTop", 100)');
             Assert.areEqual(200, Y.DOM.docScrollX(window), 'window.set("scrollLeft", 200)');
+*/
 
             Y.one(document).set('scrollTop', 200);
             Y.one(document).set('scrollLeft', 100);
             Assert.areEqual(200, Y.DOM.docScrollY(document), 'document.set("scrollTop", 200)');
             Assert.areEqual(100, Y.DOM.docScrollX(document), 'document.set("scrollLeft", 100)');
 
-/*
             document.body.style.height = '';
             document.body.style.width = '';
 
             window.scrollTo(0, 0);
-*/
         },
 
         test_setContent: function() {

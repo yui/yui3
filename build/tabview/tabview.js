@@ -441,7 +441,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         },
 
         /**
-         * @attribute label
+         * @attribute content
          * @type String
          */
         content: {
