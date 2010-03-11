@@ -82,7 +82,6 @@ function Parent(config) {
 
     }
 
-
     //  Widget method overlap
     Y.after(this._renderChildren, this, "renderUI");
     Y.after(this._bindUIParent, this, "bindUI");
@@ -118,10 +117,8 @@ Parent.ATTRS = {
             }
             
             return returnVal;
-            
         }
     },
-
 
     /**
      * @attribute activeItem
@@ -133,7 +130,6 @@ Parent.ATTRS = {
     activeItem: {    
         readOnly: true
     },
-
 
     /**
      * @attribute multiple
@@ -714,7 +710,6 @@ Parent.prototype = {
         this.set("selected", 0);
     },    
 
-
     /**
      * Updates the UI in response to a child being added.
      *
@@ -732,13 +727,14 @@ Parent.prototype = {
 
         //  TO DO: Better way to handle inserts?  Perhaps Widget's 
         //  render() method should be able to accept an optional index.
-        
-        if (Lang.isNumber(index)) {
-            parentNode.insert(child.get("boundingBox"), index);
-        }
-        
-    },
 
+        // If index is valid, and actually inserting (as opposed to appending)
+        if (Lang.isNumber(index) && index < (this.size() - 1)) {
+            var before = this.item(index + 1),
+                beforeNode = (before) ? before.get("boundingBox") : null;
+            parentNode.insert(child.get("boundingBox"), beforeNode);
+        }
+    },
 
     /**
      * Updates the UI in response to a child being removed.
@@ -751,12 +747,11 @@ Parent.prototype = {
         child.get("boundingBox").remove();
     },
 
-
     _afterAddChild: function (event) {
         var child = event.child;
 
         if (child.get("parent") == this) {
-            this._uiAddChild(child, this.get("contentBox"), event.index);
+            this._uiAddChild(child, this._childrenContainer, event.index);
         }
     },
 
@@ -784,7 +779,6 @@ Parent.prototype = {
         this.after("removeChild", this._afterRemoveChild);
     },
 
-
     /**
      * Renders all child Widgets for the parent.
      * <p>
@@ -795,12 +789,28 @@ Parent.prototype = {
      * @protected
      */
     _renderChildren: function () {
-        var contentBox = this.get("contentBox");
+
+        /**
+         * <p>By default WidgetParent will render it's children to the parent's content box.</p>
+         *
+         * <p>If the children need to be rendered somewhere else, the _childrenContainer property
+         * can be set to the Node which the children should be rendered to. This property should be
+         * set before the _renderChildren method is invoked, ideally in your renderUI method, 
+         * as soon as you create the element to be rendered to.</p>
+         *
+         * @protected
+         * @property _childrenContainer
+         * @value The content box
+         * @type Node
+         */
+        var renderTo = this._childrenContainer || this.get("contentBox");
+
+        this._childrenContainer = renderTo;
+
         this.each(function (child) {
-            child.render(contentBox);
+            child.render(renderTo);
         });
     },
-
 
     /**
      * Destroys all child Widgets for the parent.
