@@ -1,4 +1,9 @@
-{
+/**
+ * YUI 3 module metadata
+ * @module loader
+ * @submodule yui3
+ */
+YUI.Env[Y.version].modules = {
     "anim": {
         "submodules": {
             "anim-base": {
@@ -587,7 +592,20 @@
     "loader": {
         "requires": [
             "get"
-        ]
+        ], 
+        "submodules": {
+            "loader-base": {}, 
+            "rollup": {
+                "requires": [
+                    "loader-base"
+                ]
+            }, 
+            "yui3": {
+                "requires": [
+                    "loader-base"
+                ]
+            }
+        }
     }, 
     "node": {
         "plugins": {
@@ -899,4 +917,4 @@
             "yui-throttle": {}
         }
     }
-}
+};

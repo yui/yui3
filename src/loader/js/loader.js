@@ -10,7 +10,9 @@
  * YUI files.
  *
  * @module loader
+ * @submodule loader-base
  */
+
 
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
@@ -420,7 +422,6 @@ Y.Loader = function(o) {
      */
     self.skin = Y.merge(Y.Env.meta.skin);
     
-
     self._internal = true;
 
     // YObject.each(defaults, function(k, v) {
@@ -1097,39 +1098,29 @@ Y.Loader.prototype = {
         // Y.log('After explode: ' + YObject.keys(r));
     },
 
-    getModule: function(name) {
+    getModule: function(mname) {
         //TODO: Remove name check - it's a quick hack to fix pattern WIP
-        if (!name) {
+        if (!mname) {
             return null;
         }
 
-        var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, found;
+        var p, type, found, pname, 
+            m = this.moduleInfo[mname], 
+            patterns = this.patterns;
 
         // check the patterns library to see if we should automatically add
         // the module with defaults
         if (!m) {
            // Y.log('testing patterns ' + YObject.keys(patterns));
-
-            for (i in patterns) {
-                if (patterns.hasOwnProperty(i)) {
+            for (pname in patterns) {
+                if (patterns.hasOwnProperty(pname)) {
                     // Y.log('testing pattern ' + i);
-                    p = patterns[i];
+                    p = patterns[pname];
                     type = p.type;
-
-                    // switch (type) {
-                        // case 'regex':
-                        //     break;
-                        // case 'function':
-                        //     break;
-                        // default: // prefix
-                        //     if (name.indexOf(i) > -1) {
-                        //         add = true;
-                        //     }
-                    // }
 
                     // use the metadata supplied for the pattern
                     // as the module definition.
-                    if (name.indexOf(i) > -1) {
+                    if (mname.indexOf(pname) > -1) {
                         found = p;
                         break;
                     }
@@ -1138,12 +1129,12 @@ Y.Loader.prototype = {
 
             if (found) {
                 if (p.action) {
-                    // Y.log('executing pattern action: ' + i);
-                    p.action.call(this, name, i);
+                    // Y.log('executing pattern action: ' + pname);
+                    p.action.call(this, mname, pname);
                 } else {
-Y.log('Undefined module: ' + name + ', matched a pattern: ' + i, 'info', 'loader');
+Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'loader');
                     // ext true or false?
-                    m = this.addModule(Y.merge(found), name);
+                    m = this.addModule(Y.merge(found), mname);
                 }
             }
         }
@@ -1151,94 +1142,8 @@ Y.log('Undefined module: ' + name + ', matched a pattern: ' + i, 'info', 'loader
         return m;
     },
 
-    /**
-     * Look for rollup packages to determine if all of the modules a
-     * rollup supersedes are required.  If so, include the rollup to
-     * help reduce the total number of connections required.  Called
-     * by calculate()
-     * @method _rollup
-     * @private
-     */
-    _rollup: function() {
-        var i, j, m, s, rollups={}, r=this.required, roll,
-            info = this.moduleInfo, rolled, c;
-
-        // find and cache rollup modules
-        if (this.dirty || !this.rollups) {
-            for (i in info) {
-                if (info.hasOwnProperty(i)) {
-                    m = this.getModule(i);
-                    // if (m && m.rollup && m.supersedes) {
-                    if (m && m.rollup) {
-                        rollups[i] = m;
-                    }
-                }
-            }
-
-            this.rollups = rollups;
-            this.forceMap = (this.force) ? YArray.hash(this.force) : {};
-        }
-
-        // make as many passes as needed to pick up rollup rollups
-        for (;;) {
-            rolled = false;
-
-            // go through the rollup candidates
-            for (i in rollups) { 
-                if (rollups.hasOwnProperty(i)) {
-                    // there can be only one, unless forced
-                    if (!r[i] && ((!this.loaded[i]) || this.forceMap[i])) {
-                        m = this.getModule(i); 
-                        s = m.supersedes || []; 
-                        roll = false;
-
-                        // @TODO remove continue
-                        if (!m.rollup) {
-                            continue;
-                        }
-
-                        c = 0;
-
-                        // check the threshold
-                        for (j=0;j<s.length;j=j+1) {
-
-                            // if the superseded module is loaded, we can't load the rollup
-                            // unless it has been forced
-                            if (this.loaded[s[j]] && !this.forceMap[s[j]]) {
-                                roll = false;
-                                break;
-                            // increment the counter if this module is required.  if we are
-                            // beyond the rollup threshold, we will use the rollup module
-                            } else if (r[s[j]]) {
-                                c++;
-                                // Y.log("adding to thresh: " + c + ", " + s[j]);
-                                roll = (c >= m.rollup);
-                                if (roll) {
-                                    // Y.log("over thresh " + c + ", " + s[j]);
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (roll) {
-                            // Y.log("adding rollup: " +  i);
-                            // add the rollup
-                            r[i] = true;
-                            rolled = true;
-
-                            // expand the rollup's dependencies
-                            this.getRequires(m);
-                        }
-                    }
-                }
-            }
-
-            // if we made it here w/o rolling up something, we are done
-            if (!rolled) {
-                break;
-            }
-        }
-    },
+    // impl in rollup submodule
+    _rollup: function() { },
 
     /**
      * Remove superceded modules and loaded modules.  Called by

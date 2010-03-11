@@ -33,6 +33,7 @@ YUI.add('exec-command', function(Y) {
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
 
+
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
                     return fn.call(this, action, value);
@@ -50,6 +51,7 @@ YUI.add('exec-command', function(Y) {
             _command: function(action, value) {
                 var inst = this.getInstance();
                 try {
+                    Y.log('Internal execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                     inst.config.doc.execCommand(action, false, value);
                 } catch (e) {
                     Y.log(e.message, 'error', 'exec-command');
@@ -182,6 +184,21 @@ YUI.add('exec-command', function(Y) {
                         blockItem.setAttribute('dir', dir);
                     }
                     return blockItem;
+                },
+                backcolor: function(cmd, val) {
+                    if (Y.UA.gecko || Y.UA.opera) {
+                        cmd = 'hilitecolor';
+                    }
+                    if (!Y.UA.ie) {
+                        this._command('styleWithCSS', 'true');
+                    }
+                    this._command(cmd, val);
+                    if (!Y.UA.ie) {
+                        this._command('styleWithCSS', false);
+                    }
+                },
+                hilitecolor: function() {
+                    ExecCommand.COMMANDS.backcolor.apply(this, arguments);
                 }
             }
         });
