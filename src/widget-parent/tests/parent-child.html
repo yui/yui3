@@ -544,8 +544,8 @@
                     widget.destroy();
                     
                 },
-                
-                testFocusedChild: function () {
+
+                testActiveDescendant: function () {
 
                     var tree = new Y.ParentWidget({
                     
@@ -567,14 +567,13 @@
                     });
 
                     tree.render();
-                    
+
                     tree.item(2).item(0).focus();
-                    
-                    Y.Assert.areEqual(tree.item(2).get("focusedChild"), tree.item(2).item(0), "The \"focusedChild\" attribute of \"subtree\" should return a reference to \"subtree-leaf-1\"");
-                    Y.Assert.areEqual(tree.get("focusedChild"), tree.item(2), "The \"focusedChild\" attribute of the root widget should return a reference to the \"subtree\"");
+
+                    Y.Assert.areEqual(tree.item(2).get("activeDescendant"), tree.item(2).item(0), "The \"activeDescendant\" attribute of \"subtree\" should return a reference to \"subtree-leaf-1\"");
+                    Y.Assert.areEqual(tree.get("activeDescendant"), tree.item(2).item(0), "The \"activeDescendant\" attribute of the root widget should return a reference to the \"subtree\"");
 
                     tree.destroy();
-                    
                 }
                 
             }));

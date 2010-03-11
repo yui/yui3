@@ -87,10 +87,10 @@ function Parent(config) {
 
     this.after("selectionChange", this._afterSelectionChange);
     this.after("selectedChange", this._afterParentSelectedChange);
-    this.after("focusedChildChange", this._afterFocusedChildChange);
+    this.after("activeDescendantChange", this._afterActiveDescendantChange);
 
     this._hDestroyChild = this.after("*:destroy", this._afterDestroyChild);
-    this.after("*:focusedChange", this._updateFocusedChild);
+    this.after("*:focusedChange", this._updateActiveDescendant);
 
 }
 
@@ -119,13 +119,13 @@ Parent.ATTRS = {
     },
 
     /**
-     * @attribute focusedChild
+     * @attribute activeDescendant
      * @type Widget
      * @readOnly
      *
      * @description Returns the Widget's currently focused descendant Widget.
      */
-    focusedChild: {    
+    activeDescendant: {    
         readOnly: true
     },
 
@@ -255,30 +255,21 @@ Parent.prototype = {
 
 
     /**
-     * Attribute change listener for the <code>focusedChild</code> 
+     * Attribute change listener for the <code>activeDescendant</code> 
      * attribute, responsible for setting the value of the 
-     * parent's <code>focusedChild</code> attribute.
+     * parent's <code>activeDescendant</code> attribute.
      *
-     * @method _afterSelectionChange
+     * @method _afterActiveDescendantChange
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
      */
-    _afterFocusedChildChange: function (event) {
+    _afterActiveDescendantChange: function (event) {
+        var parent = this.get("parent");
 
-        var parent;
-
-        if (event.target == this) {
-
-            parent = this.get("parent");
-
-            if (parent) {
-                parent._set("focusedChild", this);
-            }
-            
+        if (parent) {
+            parent._set("activeDescendant", event.newVal);
         }
-        
     },
-    
 
     /**
      * Attribute change listener for the <code>selected</code> 
@@ -397,33 +388,19 @@ Parent.prototype = {
 
     },
 
-
     /**
      * Attribute change listener for the <code>focused</code> 
      * attribute of child Widgets, responsible for setting the value of the 
-     * parent's <code>focusedChild</code> attribute.
+     * parent's <code>activeDescendant</code> attribute.
      *
-     * @method _updateFocusedChild
+     * @method _updateActiveDescendant
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
      */
-    _updateFocusedChild: function (event) {
-
-        var child = event.target,
-            val = null;
-        
-        if (child.get("parent") == this) {
-
-            if (event.newVal === true) {
-                val = event.target;
-            }
-
-            this._set("focusedChild", val);
-            
-        }
-
+    _updateActiveDescendant: function (event) {
+        var activeDescendant = (event.newVal === true) ? event.target : null;
+        this._set("activeDescendant", activeDescendant);
     },
-
 
     /**
      * Creates an instance of a child Widget using the specified configuration.
