@@ -17,8 +17,6 @@ var Lang = Y.Lang;
  */
 function Parent(config) {
 
-    //  TO DO:  look at DataType for event facade documentation
-
     /**
     * Fires when a Widget is add as a child.  The event object will have a 
     * 'child' property that returns a reference to the child Widget, as well 
@@ -91,10 +89,10 @@ function Parent(config) {
 
     this.after("selectionChange", this._afterSelectionChange);
     this.after("selectedChange", this._afterParentSelectedChange);
-    this.after("activeItemChange", this._afterActiveItemChange);
+    this.after("focusedChildChange", this._afterFocusedChildChange);
 
     this._hDestroyChild = this.after("*:destroy", this._afterDestroyChild);
-    this.after("*:focusedChange", this._updateActiveItem);
+    this.after("*:focusedChange", this._updateFocusedChild);
 
 }
 
@@ -123,13 +121,13 @@ Parent.ATTRS = {
     },
 
     /**
-     * @attribute activeItem
+     * @attribute focusedChild
      * @type Widget
      * @readOnly
      *
      * @description Returns the Widget's currently focused descendant Widget.
      */
-    activeItem: {    
+    focusedChild: {    
         readOnly: true
     },
 
@@ -255,20 +253,19 @@ Parent.prototype = {
             this.set("selected", selectedVal, { src: this });
         
         }
-        
     },
 
 
     /**
-     * Attribute change listener for the <code>activeItem</code> 
+     * Attribute change listener for the <code>focusedChild</code> 
      * attribute, responsible for setting the value of the 
-     * parent's <code>activeItem</code> attribute.
+     * parent's <code>focusedChild</code> attribute.
      *
      * @method _afterSelectionChange
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
-     */    
-    _afterActiveItemChange: function (event) {
+     */
+    _afterFocusedChildChange: function (event) {
 
         var parent;
 
@@ -277,7 +274,7 @@ Parent.prototype = {
             parent = this.get("parent");
 
             if (parent) {
-                parent._set("activeItem", this);
+                parent._set("focusedChild", this);
             }
             
         }
@@ -406,13 +403,13 @@ Parent.prototype = {
     /**
      * Attribute change listener for the <code>focused</code> 
      * attribute of child Widgets, responsible for setting the value of the 
-     * parent's <code>activeItem</code> attribute.
+     * parent's <code>focusedChild</code> attribute.
      *
-     * @method _updateActiveItem
+     * @method _updateFocusedChild
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
      */
-    _updateActiveItem: function (event) {
+    _updateFocusedChild: function (event) {
 
         var child = event.target,
             val = null;
@@ -423,7 +420,7 @@ Parent.prototype = {
                 val = event.target;
             }
 
-            this._set("activeItem", val);
+            this._set("focusedChild", val);
             
         }
 
@@ -509,8 +506,6 @@ Parent.prototype = {
 
         //  TO DO: Remove in favor of using event bubbling
         child.after("selectedChange", Y.bind(this._updateSelection, this));
-        //child.after("focusedChange", Y.bind(this._updateActiveItem, this));
-        
     },
 
 
@@ -764,7 +759,6 @@ Parent.prototype = {
             this._uiRemoveChild(child);
         }
     },
-
 
     /**
      * Sets up DOM and CustomEvent listeners for the parent widget.
