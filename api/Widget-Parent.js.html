@@ -64,8 +64,6 @@
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">Parent</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="c1">//  TO DO:  look at DataType for event facade documentation</span>
-
     <span class="cm">/**</span>
 <span class="cm">    * Fires when a Widget is add as a child.  The event object will have a </span>
 <span class="cm">    * &#39;child&#39; property that returns a reference to the child Widget, as well </span>
@@ -138,10 +136,10 @@
 
     <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectionChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterSelectionChange</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterParentSelectedChange</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;activeItemChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterActiveItemChange</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;focusedChildChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterFocusedChildChange</span><span class="p">);</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">_hDestroyChild</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;*:destroy&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterDestroyChild</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;*:focusedChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_updateActiveItem</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;*:focusedChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_updateFocusedChild</span><span class="p">);</span>
 
 <span class="p">}</span>
 
@@ -170,13 +168,13 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * @attribute activeItem</span>
+<span class="cm">     * @attribute focusedChild</span>
 <span class="cm">     * @type Widget</span>
 <span class="cm">     * @readOnly</span>
 <span class="cm">     *</span>
 <span class="cm">     * @description Returns the Widget&#39;s currently focused descendant Widget.</span>
 <span class="cm">     */</span>
-    <span class="nx">activeItem</span><span class="o">:</span> <span class="p">{</span>    
+    <span class="nx">focusedChild</span><span class="o">:</span> <span class="p">{</span>    
         <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span>
 
@@ -302,20 +300,19 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">,</span> <span class="nx">selectedVal</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="k">this</span> <span class="p">});</span>
         
         <span class="p">}</span>
-        
     <span class="p">},</span>
 
 
     <span class="cm">/**</span>
-<span class="cm">     * Attribute change listener for the &lt;code&gt;activeItem&lt;/code&gt; </span>
+<span class="cm">     * Attribute change listener for the &lt;code&gt;focusedChild&lt;/code&gt; </span>
 <span class="cm">     * attribute, responsible for setting the value of the </span>
-<span class="cm">     * parent&#39;s &lt;code&gt;activeItem&lt;/code&gt; attribute.</span>
+<span class="cm">     * parent&#39;s &lt;code&gt;focusedChild&lt;/code&gt; attribute.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _afterSelectionChange</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     * @param {EventFacade} event The event facade for the attribute change.</span>
-<span class="cm">     */</span>    
-    <span class="nx">_afterActiveItemChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+<span class="cm">     */</span>
+    <span class="nx">_afterFocusedChildChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">parent</span><span class="p">;</span>
 
@@ -324,7 +321,7 @@
             <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">parent</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;activeItem&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+                <span class="nx">parent</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;focusedChild&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
             <span class="p">}</span>
             
         <span class="p">}</span>
@@ -453,13 +450,13 @@
     <span class="cm">/**</span>
 <span class="cm">     * Attribute change listener for the &lt;code&gt;focused&lt;/code&gt; </span>
 <span class="cm">     * attribute of child Widgets, responsible for setting the value of the </span>
-<span class="cm">     * parent&#39;s &lt;code&gt;activeItem&lt;/code&gt; attribute.</span>
+<span class="cm">     * parent&#39;s &lt;code&gt;focusedChild&lt;/code&gt; attribute.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _updateActiveItem</span>
+<span class="cm">     * @method _updateFocusedChild</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     * @param {EventFacade} event The event facade for the attribute change.</span>
 <span class="cm">     */</span>
-    <span class="nx">_updateActiveItem</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_updateFocusedChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">child</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
@@ -470,7 +467,7 @@
                 <span class="nx">val</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
             <span class="p">}</span>
 
-            <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;activeItem&quot;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;focusedChild&quot;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
             
         <span class="p">}</span>
 
@@ -556,8 +553,6 @@
 
         <span class="c1">//  TO DO: Remove in favor of using event bubbling</span>
         <span class="nx">child</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_updateSelection</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
-        <span class="c1">//child.after(&quot;focusedChange&quot;, Y.bind(this._updateActiveItem, this));</span>
-        
     <span class="p">},</span>
 
 
@@ -812,7 +807,6 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
-
     <span class="cm">/**</span>
 <span class="cm">     * Sets up DOM and CustomEvent listeners for the parent widget.</span>
 <span class="cm">     * &lt;p&gt;</span>
@@ -990,7 +984,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeItem", "url": "WidgetParent.html#config_activeItem", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeItemChange", "url": "WidgetParent.html#event_activeItemChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_add", "url": "WidgetParent.html#method__add", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterDestroyChild", "url": "WidgetParent.html#method__afterDestroyChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_bindUIParent", "url": "WidgetParent.html#method__bindUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "childAdded", "url": "WidgetParent.html#event_childAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "childRemoved", "url": "WidgetParent.html#event_childRemoved", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_childrenContainer", "url": "WidgetParent.html#property__childrenContainer", "type": "property"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defAddChildFn", "url": "WidgetParent.html#method__defAddChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defRemoveChildFn", "url": "WidgetParent.html#method__defRemoveChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "deselectAll", "url": "WidgetParent.html#method_deselectAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_destroyChildren", "url": "WidgetParent.html#method__destroyChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderChildren", "url": "WidgetParent.html#method__renderChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectAll", "url": "WidgetParent.html#method_selectAll", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectChild", "url": "WidgetParent.html#method_selectChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiAddChild", "url": "WidgetParent.html#method__uiAddChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiRemoveChild", "url": "WidgetParent.html#method__uiRemoveChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveItem", "url": "WidgetParent.html#method__updateActiveItem", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetParent", "name": "_add", "url": "WidgetParent.html#method__add", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterDestroyChild", "url": "WidgetParent.html#method__afterDestroyChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_bindUIParent", "url": "WidgetParent.html#method__bindUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "childAdded", "url": "WidgetParent.html#event_childAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "childRemoved", "url": "WidgetParent.html#event_childRemoved", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_childrenContainer", "url": "WidgetParent.html#property__childrenContainer", "type": "property"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defAddChildFn", "url": "WidgetParent.html#method__defAddChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defRemoveChildFn", "url": "WidgetParent.html#method__defRemoveChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "deselectAll", "url": "WidgetParent.html#method_deselectAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_destroyChildren", "url": "WidgetParent.html#method__destroyChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "focusedChild", "url": "WidgetParent.html#config_focusedChild", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "focusedChildChange", "url": "WidgetParent.html#event_focusedChildChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderChildren", "url": "WidgetParent.html#method__renderChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectAll", "url": "WidgetParent.html#method_selectAll", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectChild", "url": "WidgetParent.html#method_selectChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiAddChild", "url": "WidgetParent.html#method__uiAddChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiRemoveChild", "url": "WidgetParent.html#method__uiRemoveChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateFocusedChild", "url": "WidgetParent.html#method__updateFocusedChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
 </script>
 </body>
 </html>
