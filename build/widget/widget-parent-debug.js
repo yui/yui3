@@ -719,8 +719,10 @@ Parent.prototype = {
             siblingBB.insert(childBB, "before");
         } else {
             prevSibling = child.previous(false);
-            siblingBB = prevSibling.get("boundingBox");
-            siblingBB.insert(childBB, "after");
+            if (prevSibling) {
+                siblingBB = prevSibling.get("boundingBox");
+                siblingBB.insert(childBB, "after");
+            }
         }
     },
 
