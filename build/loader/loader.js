@@ -490,6 +490,9 @@ Y.Loader = function(o) {
      *   @property skin
      */
     self.skin = Y.merge(Y.Env.meta.skin);
+
+    self.config = o;
+    self._config(o);
     
     self._internal = true;
 
@@ -577,8 +580,6 @@ Y.Loader = function(o) {
 
     // Y.on('yui:load', self.loadNext, self);
 
-    self.config = o;
-    self._config(o);
 };
 
 Y.Loader.prototype = {
@@ -810,10 +811,9 @@ Y.Loader.prototype = {
                                 skinname = this._addSkin(overrides[i][j], i, name);
                                 sup.push(skinname);
                             }
-                        } else {
-                            skinname = this._addSkin(this.skin.defaultSkin, i, name);
-                            sup.push(skinname);
                         }
+                        skinname = this._addSkin(this.skin.defaultSkin, i, name);
+                        sup.push(skinname);
                     }
 
                     // looks like we are expected to work out the metadata
@@ -1077,11 +1077,16 @@ Y.Loader.prototype = {
                     if (o && o[name]) {
                         for (i=0; i<o[name].length; i=i+1) {
                             smod = this._addSkin(o[name][i], name);
-                            m.requires.push(smod);
+                            if (YArray.indexOf(m.requires, smod) == -1) {
+                                m.requires.push(smod);
+                            }
                         }
                     } else {
+
                         smod = this._addSkin(this.skin.defaultSkin, name);
-                        m.requires.push(smod);
+                        if (YArray.indexOf(m.requires, smod) == -1) {
+                            m.requires.push(smod);
+                        }
                     }
 
                 }
@@ -2014,8 +2019,7 @@ YUI.Env[Y.version].modules = {
             "console-filters": {
                 "requires": [
                     "plugin", 
-                    "console", 
-                    "skin-sam-console-filters"
+                    "console"
                 ], 
                 "skinnable": true
             }
@@ -2023,8 +2027,7 @@ YUI.Env[Y.version].modules = {
         "requires": [
             "yui-log", 
             "widget", 
-            "substitute", 
-            "skin-sam-console"
+            "substitute"
         ], 
         "skinnable": true
     }, 
@@ -2566,8 +2569,7 @@ YUI.Env[Y.version].modules = {
             "node", 
             "classnamemanager", 
             "plugin", 
-            "node-focusmanager", 
-            "skin-sam-node-menunav"
+            "node-focusmanager"
         ], 
         "skinnable": true
     }, 
@@ -2583,8 +2585,7 @@ YUI.Env[Y.version].modules = {
             "widget-position", 
             "widget-position-align", 
             "widget-stack", 
-            "widget-position-constrain", 
-            "skin-sam-overlay"
+            "widget-position-constrain"
         ], 
         "skinnable": true
     }, 
@@ -2659,8 +2660,7 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "widget", 
                     "dd-constrain", 
-                    "substitute", 
-                    "skin-sam-slider-base"
+                    "substitute"
                 ], 
                 "skinnable": true
             }, 
@@ -2708,7 +2708,6 @@ YUI.Env[Y.version].modules = {
         }, 
         "requires": [
             "widget", 
-            "skin-sam-tabview", 
             "widget-parent", 
             "widget-child", 
             "tabview-base"
@@ -2752,16 +2751,10 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "widget-stack": {
-                "requires": [
-                    "skin-sam-widget-stack"
-                ], 
                 "skinnable": true
             }, 
             "widget-stdmod": {}
         }, 
-        "requires": [
-            "skin-sam-widget"
-        ], 
         "skinnable": true, 
         "submodules": {
             "widget-base": {

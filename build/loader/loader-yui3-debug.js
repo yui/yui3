@@ -131,8 +131,7 @@ YUI.Env[Y.version].modules = {
             "console-filters": {
                 "requires": [
                     "plugin", 
-                    "console", 
-                    "skin-sam-console-filters"
+                    "console"
                 ], 
                 "skinnable": true
             }
@@ -140,8 +139,7 @@ YUI.Env[Y.version].modules = {
         "requires": [
             "yui-log", 
             "widget", 
-            "substitute", 
-            "skin-sam-console"
+            "substitute"
         ], 
         "skinnable": true
     }, 
@@ -683,8 +681,7 @@ YUI.Env[Y.version].modules = {
             "node", 
             "classnamemanager", 
             "plugin", 
-            "node-focusmanager", 
-            "skin-sam-node-menunav"
+            "node-focusmanager"
         ], 
         "skinnable": true
     }, 
@@ -700,8 +697,7 @@ YUI.Env[Y.version].modules = {
             "widget-position", 
             "widget-position-align", 
             "widget-stack", 
-            "widget-position-constrain", 
-            "skin-sam-overlay"
+            "widget-position-constrain"
         ], 
         "skinnable": true
     }, 
@@ -776,8 +772,7 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "widget", 
                     "dd-constrain", 
-                    "substitute", 
-                    "skin-sam-slider-base"
+                    "substitute"
                 ], 
                 "skinnable": true
             }, 
@@ -825,7 +820,6 @@ YUI.Env[Y.version].modules = {
         }, 
         "requires": [
             "widget", 
-            "skin-sam-tabview", 
             "widget-parent", 
             "widget-child", 
             "tabview-base"
@@ -869,16 +863,10 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "widget-stack": {
-                "requires": [
-                    "skin-sam-widget-stack"
-                ], 
                 "skinnable": true
             }, 
             "widget-stdmod": {}
         }, 
-        "requires": [
-            "skin-sam-widget"
-        ], 
         "skinnable": true, 
         "submodules": {
             "widget-base": {

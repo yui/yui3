@@ -124,8 +124,7 @@
             "console-filters": {
                 "requires": [
                     "plugin", 
-                    "console", 
-                    "skin-sam-console-filters"
+                    "console"
                 ], 
                 "skinnable": true
             }
@@ -133,8 +132,7 @@
         "requires": [
             "yui-log", 
             "widget", 
-            "substitute", 
-            "skin-sam-console"
+            "substitute"
         ], 
         "skinnable": true
     }, 
@@ -676,8 +674,7 @@
             "node", 
             "classnamemanager", 
             "plugin", 
-            "node-focusmanager", 
-            "skin-sam-node-menunav"
+            "node-focusmanager"
         ], 
         "skinnable": true
     }, 
@@ -693,8 +690,7 @@
             "widget-position", 
             "widget-position-align", 
             "widget-stack", 
-            "widget-position-constrain", 
-            "skin-sam-overlay"
+            "widget-position-constrain"
         ], 
         "skinnable": true
     }, 
@@ -769,8 +765,7 @@
                 "requires": [
                     "widget", 
                     "dd-constrain", 
-                    "substitute", 
-                    "skin-sam-slider-base"
+                    "substitute"
                 ], 
                 "skinnable": true
             }, 
@@ -818,7 +813,6 @@
         }, 
         "requires": [
             "widget", 
-            "skin-sam-tabview", 
             "widget-parent", 
             "widget-child", 
             "tabview-base"
@@ -862,16 +856,10 @@
                 ]
             }, 
             "widget-stack": {
-                "requires": [
-                    "skin-sam-widget-stack"
-                ], 
                 "skinnable": true
             }, 
             "widget-stdmod": {}
         }, 
-        "requires": [
-            "skin-sam-widget"
-        ], 
         "skinnable": true, 
         "submodules": {
             "widget-base": {

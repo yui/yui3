@@ -6,8 +6,7 @@
                 "requires": [
                     "widget", 
                     "dd-constrain", 
-                    "substitute",
-                    "skin-sam-slider-base"
+                    "substitute"
                 ], 
                 "skinnable": true
             },
