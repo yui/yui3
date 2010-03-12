@@ -234,10 +234,12 @@ var _queries = Y.TabviewBase._queries,
     _renderListBox: function(contentBox) {
         var list = contentBox.one(_queries.tabviewList);
         if (!list) {
-            contentBox.append(TabView.LIST_TEMPLATE);
+            list = contentBox.appendChild(Y.Node.create(TabView.LIST_TEMPLATE));
         } else {
             list.addClass(_classNames.tabviewList);
         }
+
+        this._childrenContainer = list;
     },
 
     _renderPanelBox: function(contentBox) {
@@ -375,13 +377,24 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     _renderLabel: function(contentBox, parentContentBox) {
         var label = this.get('label');
         contentBox.setContent(label);
-        parentContentBox.one(_queries.tabviewList).appendChild(this.get('boundingBox'));
+        //parentContentBox.one(_queries.tabviewList).appendChild(this.get('boundingBox'));
     },
 
     _renderPanel: function(contentBox, parentContentBox) {
-        var panel = parentContentBox.all(_queries.tabPanel).item(this.get('index'));
+        var id,
+            href = contentBox.get('href') || '',
+            panel;
+
+        if (href.charAt(0) === '#') {
+            id = href.substr(1); 
+            panel = Y.one(href);
+        } else {
+            id = Y.guid();
+        }
+
         if (!panel) {
             panel = Y.Node.create(this.PANEL_TEMPLATE);
+            panel.set('id', id);
             panel.setContent(this.get('content'));
             parentContentBox.one(_queries.tabviewPanel).appendChild(panel);
         }

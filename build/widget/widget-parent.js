@@ -504,6 +504,7 @@ Parent.prototype = {
         }
 
         child._set("parent", this);
+        event.index = child.get('index');
         child.addTarget(this);
 
         //  TO DO: Remove in favor of using event bubbling
@@ -561,7 +562,7 @@ Parent.prototype = {
     * successfully added Widget instance(s). If no children where added, will 
     * will return undefined.
     */
-    _add: function (child, index) {   
+    _add: function (child, index) {
 
         var children,
             oChild,
@@ -723,17 +724,24 @@ Parent.prototype = {
      * which the child Widget will be inserted.
      */    
     _uiAddChild: function (child, parentNode, index) {
-
         child.render(parentNode);
 
         //  TO DO: Better way to handle inserts?  Perhaps Widget's 
         //  render() method should be able to accept an optional index.
 
         // If index is valid, and actually inserting (as opposed to appending)
-        if (Lang.isNumber(index) && index < (this.size() - 1)) {
-            var before = this.item(index + 1),
-                beforeNode = (before) ? before.get("boundingBox") : null;
-            parentNode.insert(child.get("boundingBox"), beforeNode);
+        if (Lang.isNumber(index)) {
+            if (index < (this.size() - 1)) {
+                var before = this.item(index + 1),
+                    beforeNode = (before) ? before.get("boundingBox") : null;
+                parentNode.insert(child.get("boundingBox"), beforeNode);
+            } else {
+                var before = child.previous(false),
+                    beforeNode = (before) ? before.get("boundingBox") : null;
+                if (beforeNode) {
+                    beforeNode.insert(child.get('boundingBox'), 'after');
+                }
+            }
         }
     },
 
