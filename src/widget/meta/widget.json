@@ -19,16 +19,10 @@
                 ]
             }, 
             "widget-stack": {
-                "requires": [
-                    "skin-sam-widget-stack"
-                ], 
                 "skinnable": true
             }, 
             "widget-stdmod": {}
         }, 
-        "requires": [
-            "skin-sam-widget"
-        ], 
         "skinnable": true, 
         "submodules": {
             "widget-base": {

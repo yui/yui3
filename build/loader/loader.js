@@ -490,6 +490,9 @@ Y.Loader = function(o) {
      *   @property skin
      */
     self.skin = Y.merge(Y.Env.meta.skin);
+
+    self.config = o;
+    self._config(o);
     
     self._internal = true;
 
@@ -577,8 +580,6 @@ Y.Loader = function(o) {
 
     // Y.on('yui:load', self.loadNext, self);
 
-    self.config = o;
-    self._config(o);
 };
 
 Y.Loader.prototype = {
@@ -605,6 +606,8 @@ Y.Loader.prototype = {
                     val = o[i];
                     if (i == 'require') {
                         self.require(val);
+                    } else if (i == 'skin') {
+                        Y.mix(self.skin, o[i], true);
                     } else if (i == 'groups') {
                         for (j in val) {
                             if (val.hasOwnProperty(j)) {
@@ -744,7 +747,10 @@ Y.Loader.prototype = {
      *     <dt>rollup:</dt>     <dd>the number of superseded modules required for automatic rollup</dd>
      *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
      *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
-     *     <dt>submodules:</dt> <dd>a has of submodules</dd>
+     *     <dt>submodules:</dt> <dd>a hash of submodules</dd>
+     *     <dt>lang:</dt>       <dd>array of BCP 47 language tags of
+     *                              languages for which this module has localized resource bundles,
+     *                              e.g., ["en-GB","zh-Hans-CN"]</dd>
      * </dl>
      * @method addModule
      * @param o An object containing the module data
@@ -775,7 +781,8 @@ Y.Loader.prototype = {
 
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
-            j, langs, packName, supName, flatSup, flatLang, lang, ret;
+            j, langs, packName, supName, flatSup, flatLang, lang, ret,
+            overrides, skinname;
         if (subs) {
             sup = o.supersedes || []; 
             l   = 0;
@@ -793,12 +800,20 @@ Y.Loader.prototype = {
                     }
 
 
-                    this.addModule(s, i);
+                    smod = this.addModule(s, i);
                     sup.push(i);
 
-                    if (o.skinnable) {
-                        smod = this._addSkin(this.skin.defaultSkin, i, name);
-                        sup.push(smod.name);
+                    if (smod.skinnable) {
+                        o.skinnable = true;
+                        overrides = this.skin.overrides;
+                        if (overrides && overrides[i]) {
+                            for (j=0; j<overrides[i].length; j++) {
+                                skinname = this._addSkin(overrides[i][j], i, name);
+                                sup.push(skinname);
+                            }
+                        }
+                        skinname = this._addSkin(this.skin.defaultSkin, i, name);
+                        sup.push(skinname);
                     }
 
                     // looks like we are expected to work out the metadata
@@ -1062,12 +1077,18 @@ Y.Loader.prototype = {
                     if (o && o[name]) {
                         for (i=0; i<o[name].length; i=i+1) {
                             smod = this._addSkin(o[name][i], name);
+                            if (YArray.indexOf(m.requires, smod) == -1) {
+                                m.requires.push(smod);
+                            }
                         }
                     } else {
+
                         smod = this._addSkin(this.skin.defaultSkin, name);
+                        if (YArray.indexOf(m.requires, smod) == -1) {
+                            m.requires.push(smod);
+                        }
                     }
 
-                    m.requires.push(smod);
                 }
 
                 // Create lang pack modules
@@ -1787,7 +1808,7 @@ YUI.add('loader-rollup', function(Y) {
  */
 Y.Loader.prototype._rollup = function() {
     var i, j, m, s, rollups={}, r=this.required, roll,
-        info = this.moduleInfo, rolled, c;
+        info = this.moduleInfo, rolled, c, smod;
 
     // find and cache rollup modules
     if (this.dirty || !this.rollups) {
@@ -1827,6 +1848,7 @@ Y.Loader.prototype._rollup = function() {
 
                     // check the threshold
                     for (j=0;j<s.length;j=j+1) {
+                        smod = info[s[j]];
 
                         // if the superseded module is loaded, we can't load the rollup
                         // unless it has been forced
@@ -1835,7 +1857,7 @@ Y.Loader.prototype._rollup = function() {
                             break;
                         // increment the counter if this module is required.  if we are
                         // beyond the rollup threshold, we will use the rollup module
-                        } else if (r[s[j]]) {
+                        } else if (r[s[j]] && m.type == smod.type) {
                             c++;
                             roll = (c >= m.rollup);
                             if (roll) {
@@ -1998,8 +2020,7 @@ YUI.Env[Y.version].modules = {
             "console-filters": {
                 "requires": [
                     "plugin", 
-                    "console", 
-                    "skin-sam-console-filters"
+                    "console"
                 ], 
                 "skinnable": true
             }
@@ -2007,8 +2028,7 @@ YUI.Env[Y.version].modules = {
         "requires": [
             "yui-log", 
             "widget", 
-            "substitute", 
-            "skin-sam-console"
+            "substitute"
         ], 
         "skinnable": true
     }, 
@@ -2550,8 +2570,7 @@ YUI.Env[Y.version].modules = {
             "node", 
             "classnamemanager", 
             "plugin", 
-            "node-focusmanager", 
-            "skin-sam-node-menunav"
+            "node-focusmanager"
         ], 
         "skinnable": true
     }, 
@@ -2567,8 +2586,7 @@ YUI.Env[Y.version].modules = {
             "widget-position", 
             "widget-position-align", 
             "widget-stack", 
-            "widget-position-constrain", 
-            "skin-sam-overlay"
+            "widget-position-constrain"
         ], 
         "skinnable": true
     }, 
@@ -2643,8 +2661,7 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "widget", 
                     "dd-constrain", 
-                    "substitute", 
-                    "skin-sam-slider-base"
+                    "substitute"
                 ], 
                 "skinnable": true
             }, 
@@ -2692,7 +2709,6 @@ YUI.Env[Y.version].modules = {
         }, 
         "requires": [
             "widget", 
-            "skin-sam-tabview", 
             "widget-parent", 
             "widget-child", 
             "tabview-base"
@@ -2736,16 +2752,10 @@ YUI.Env[Y.version].modules = {
                 ]
             }, 
             "widget-stack": {
-                "requires": [
-                    "skin-sam-widget-stack"
-                ], 
                 "skinnable": true
             }, 
             "widget-stdmod": {}
         }, 
-        "requires": [
-            "skin-sam-widget"
-        ], 
         "skinnable": true, 
         "submodules": {
             "widget-base": {

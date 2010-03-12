@@ -19,7 +19,7 @@ YUI.add('loader-rollup', function(Y) {
  */
 Y.Loader.prototype._rollup = function() {
     var i, j, m, s, rollups={}, r=this.required, roll,
-        info = this.moduleInfo, rolled, c;
+        info = this.moduleInfo, rolled, c, smod;
 
     // find and cache rollup modules
     if (this.dirty || !this.rollups) {
@@ -59,6 +59,7 @@ Y.Loader.prototype._rollup = function() {
 
                     // check the threshold
                     for (j=0;j<s.length;j=j+1) {
+                        smod = info[s[j]];
 
                         // if the superseded module is loaded, we can't load the rollup
                         // unless it has been forced
@@ -67,7 +68,7 @@ Y.Loader.prototype._rollup = function() {
                             break;
                         // increment the counter if this module is required.  if we are
                         // beyond the rollup threshold, we will use the rollup module
-                        } else if (r[s[j]]) {
+                        } else if (r[s[j]] && m.type == smod.type) {
                             c++;
                             roll = (c >= m.rollup);
                             if (roll) {
