@@ -536,6 +536,8 @@ Y.Loader.prototype = {
                     val = o[i];
                     if (i == 'require') {
                         self.require(val);
+                    } else if (i == 'skin') {
+                        Y.mix(self.skin, o[i], true);
                     } else if (i == 'groups') {
                         for (j in val) {
                             if (val.hasOwnProperty(j)) {
@@ -708,7 +710,8 @@ Y.Loader.prototype = {
 
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
-            j, langs, packName, supName, flatSup, flatLang, lang, ret;
+            j, langs, packName, supName, flatSup, flatLang, lang, ret,
+            overrides, skinname;
         if (subs) {
             sup = o.supersedes || []; 
             l   = 0;
@@ -726,12 +729,21 @@ Y.Loader.prototype = {
                     }
 
 
-                    this.addModule(s, i);
+                    smod = this.addModule(s, i);
                     sup.push(i);
 
-                    if (o.skinnable) {
-                        smod = this._addSkin(this.skin.defaultSkin, i, name);
-                        sup.push(smod.name);
+                    if (smod.skinnable) {
+                        o.skinnable = true;
+                        overrides = this.skin.overrides;
+                        if (overrides && overrides[i]) {
+                            for (j=0; j<overrides[i].length; j++) {
+                                skinname = this._addSkin(overrides[i][j], i, name);
+                                sup.push(skinname);
+                            }
+                        } else {
+                            skinname = this._addSkin(this.skin.defaultSkin, i, name);
+                            sup.push(skinname);
+                        }
                     }
 
                     // looks like we are expected to work out the metadata
@@ -1000,12 +1012,13 @@ Y.Loader.prototype = {
                     if (o && o[name]) {
                         for (i=0; i<o[name].length; i=i+1) {
                             smod = this._addSkin(o[name][i], name);
+                            m.requires.push(smod);
                         }
                     } else {
                         smod = this._addSkin(this.skin.defaultSkin, name);
+                        m.requires.push(smod);
                     }
 
-                    m.requires.push(smod);
                 }
 
                 // Create lang pack modules
