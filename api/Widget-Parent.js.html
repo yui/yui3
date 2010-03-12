@@ -528,6 +528,10 @@
         <span class="nx">child</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
         <span class="nx">child</span><span class="p">.</span><span class="nx">addTarget</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
+        <span class="c1">// Update index in case it got normalized after addition</span>
+        <span class="c1">// (e.g. user passed in 10, and there are only 3 items, the actual index would be 3. We don&#39;t want to pass 10 around in the event facade).</span>
+        <span class="nx">event</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">);</span>
+
         <span class="c1">//  TO DO: Remove in favor of using event bubbling</span>
         <span class="nx">child</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_updateSelection</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
     <span class="p">},</span>
@@ -720,7 +724,6 @@
     <span class="nx">selectAll</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
     <span class="p">},</span>
-    
 
     <span class="cm">/**</span>
 <span class="cm">     * Deselects all children.</span>
@@ -729,7 +732,7 @@
 <span class="cm">     */</span>
     <span class="nx">deselectAll</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-    <span class="p">},</span>    
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Updates the UI in response to a child being added.</span>
@@ -739,21 +742,32 @@
 <span class="cm">     * @param child {Widget} The child Widget instance to render.</span>
 <span class="cm">     * @param parentNode {Object} The Node under which the </span>
 <span class="cm">     * child Widget is to be rendered.</span>
-<span class="cm">     * @param index {Number} Number representing the position at </span>
-<span class="cm">     * which the child Widget will be inserted.</span>
 <span class="cm">     */</span>    
-    <span class="nx">_uiAddChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">parentNode</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_uiAddChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="nx">child</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">parentNode</span><span class="p">);</span>
 
-        <span class="c1">//  TO DO: Better way to handle inserts?  Perhaps Widget&#39;s </span>
-        <span class="c1">//  render() method should be able to accept an optional index.</span>
+        <span class="c1">// TODO: Ideally this should be in Child&#39;s render UI. </span>
+        
+        <span class="kd">var</span> <span class="nx">childBB</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">),</span>
+            <span class="nx">siblingBB</span><span class="p">,</span>
+            <span class="nx">nextSibling</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="kc">false</span><span class="p">),</span>
+            <span class="nx">prevSibling</span><span class="p">;</span>
 
-        <span class="c1">// If index is valid, and actually inserting (as opposed to appending)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">index</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">before</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
-                <span class="nx">beforeNode</span> <span class="o">=</span> <span class="p">(</span><span class="nx">before</span><span class="p">)</span> <span class="o">?</span> <span class="nx">before</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="nx">parentNode</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">),</span> <span class="nx">beforeNode</span><span class="p">);</span>
+        <span class="c1">// Insert or Append to last child.</span>
+
+        <span class="c1">// Avoiding index, and using the current sibling </span>
+        <span class="c1">// state (which should be accurate), means we don&#39;t have </span>
+        <span class="c1">// to worry about decorator elements which may be added </span>
+        <span class="c1">// to the _childContainer node.</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">nextSibling</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">siblingBB</span> <span class="o">=</span> <span class="nx">nextSibling</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">);</span>
+            <span class="nx">siblingBB</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">childBB</span><span class="p">,</span> <span class="s2">&quot;before&quot;</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">prevSibling</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">previous</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+            <span class="nx">siblingBB</span> <span class="o">=</span> <span class="nx">prevSibling</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">);</span>
+            <span class="nx">siblingBB</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">childBB</span><span class="p">,</span> <span class="s2">&quot;after&quot;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -772,7 +786,7 @@
         <span class="kd">var</span> <span class="nx">child</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">child</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_uiAddChild</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_childrenContainer</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">index</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiAddChild</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_childrenContainer</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
