@@ -207,7 +207,7 @@ package com.yahoo.infographics.data
 		 * @private
 		 * Storage for keys
 		 */
-		private var _keys:Object = {};
+		protected var _keys:Object = {};
 
 		/**
 		 * Hash of array identifed by a string value.
@@ -228,12 +228,10 @@ package com.yahoo.infographics.data
 			if(this._keys.hasOwnProperty(value)) return;
 			this._dataClone = this._dataProvider.data.concat();
 			var keys:Object = this._keys,
-				keyArray:Array  = this.getDataByKey(value),
 				eventKeys:Object = {},
 				event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
-			keys[value] = keyArray;
-			eventKeys[value] = keyArray;
-			this._data = this._data.concat(keyArray);
+			this.setDataByKey(value);
+			eventKeys[value] = keys[value].concat();
 			this.updateMinAndMax();
 			event.keysAdded = eventKeys; 
 			this.dispatchEvent(event);
@@ -244,15 +242,16 @@ package com.yahoo.infographics.data
 		 *
 		 * Creates an array of data based on a key value.
 		 */
-		protected function getDataByKey(key:String):Array
+		protected function setDataByKey(key:String):void
 		{
-			var obj:Object, arr:Array = [], dv:Array = this._dataClone.concat(), len:int = this._dataClone.length;
+			var obj:Object, arr:Array = [], dv:Array = this._dataClone.concat(), len:int = dv.length;
 			for(var i:int = 0; i < len; i++)
 			{
 				obj = dv[i];
 				arr[i] = obj[key];
 			}
-			return arr;
+			this._keys[key] = arr;
+			this._data = this._data.concat(arr);
 		}
 		
 		/**
@@ -269,16 +268,17 @@ package com.yahoo.infographics.data
 				newKeys:Object = {},
 				newData:Array = [],
 				removedKeys:Object = {},
+				keys:Object = this._keys,
 				event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
-			removedKeys[value] = (this.keys[value] as Array).concat();
-			for(var key:String in this.keys)
+			removedKeys[value] = (keys[value] as Array).concat();
+			for(var key:String in keys)
 			{
 				if(key == value) continue;
-				oldKey = this.keys[key] as Array;
+				oldKey = keys[key] as Array;
 				newData = newData.concat(oldKey);
 				newKeys[key] = oldKey;
 			}
-			this._keys = newKeys;
+			keys = newKeys;
 			this._data = newData;
 			this.updateMinAndMax();
 			event.keysRemoved = removedKeys;
@@ -310,7 +310,7 @@ package com.yahoo.infographics.data
 			this._dataClone = this._dataProvider.data.concat();
 			for(var i:String in this.keys)
 			{
-				this._keys[i] = this.getDataByKey(i);
+				this._keys[i] = this.setDataByKey(i);
 				this._data = this._data.concat(this.keys[i]);
 			}
 			this.updateMinAndMax();

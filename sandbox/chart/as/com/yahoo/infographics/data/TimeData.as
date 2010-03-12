@@ -17,7 +17,7 @@ package com.yahoo.infographics.data
 		/**
 		 * @private (override)
 		 */
-		override protected function getDataByKey(key:String):Array
+		override protected function setDataByKey(key:String):void
 		{
 			var obj:Object, arr:Array = [], len:int, dv:Array = this._dataClone.concat(), i:int, val:Number;
 			len = dv.length;
@@ -38,8 +38,8 @@ package com.yahoo.infographics.data
 				}
 				arr[i] = val;
 			}
-			return arr;
+			this._keys[key] = arr;
+			this._data = this._data.concat(arr);
 		}
-
 	}
 }
