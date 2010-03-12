@@ -766,8 +766,10 @@
             <span class="nx">siblingBB</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">childBB</span><span class="p">,</span> <span class="s2">&quot;before&quot;</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">prevSibling</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">previous</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
-            <span class="nx">siblingBB</span> <span class="o">=</span> <span class="nx">prevSibling</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">);</span>
-            <span class="nx">siblingBB</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">childBB</span><span class="p">,</span> <span class="s2">&quot;after&quot;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">prevSibling</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">siblingBB</span> <span class="o">=</span> <span class="nx">prevSibling</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">);</span>
+                <span class="nx">siblingBB</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">childBB</span><span class="p">,</span> <span class="s2">&quot;after&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
