@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>WidgetStdMod PE</title>
+
+    <script type="text/javascript" src="../../../../build/yui/yui.js"></script>
+
+    <style>
+        body {
+            padding:0;
+            margin:0;
+        }
+        
+        .yui3-overlay {
+            background-color:#0000ff;
+        }
+
+        .yui3-overlay .yui3-overlay-content {
+            border:5px solid #000000;
+            padding:0.4em;
+            background-color:#eee;
+        }
+
+        .yui3-overlay .yui3-widget-stdmod .yui3-widget-hd {
+            border:2px solid red;
+            background-color:#cc0000;
+            color:#fff;
+            padding:2px;
+        }
+
+        .yui3-overlay .yui3-widget-stdmod .yui3-widget-bd {
+            font-family:monospace;
+            border:2px solid blue;
+            padding:2px;
+        }
+
+        .yui3-overlay .yui3-widget-stdmod .yui3-widget-ft {
+            border:2px solid green;
+            background-color:#00cc00;
+            color:#fff;
+            padding:2px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+    
+    <ul id="instructions">
+        <li><strong>Left:</strong> All Sections From Markup. All text should have click listeners maintained</li>
+        <li><strong>Middle:</strong> Header From Markup. Body and Footer from Script. Header text should have click listeners maintained</li>
+        <li><strong>Right:</strong> All Sections From Script. No listeners to maintain</li>
+    </ul>
+
+    <div id="fromMarkup">
+        <div class="yui3-widget-hd">
+            <span>Header From Markup</span>
+        </div>
+        <div class="yui3-widget-bd">
+            <span>Body From Markup</span>
+        </div>
+        <div id="fourth" class="yui3-widget-ft">
+            <span>Footer From Markup</span>
+        </div>
+    </div>
+
+    <div id="mixed">
+        <div class="yui3-widget-hd">
+            <span>Header From Markup</span>
+        </div>
+        <div class="yui3-widget-bd">
+            <span>Body From Markup</span>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        YUI({filter:"raw"}).use("overlay", function(Y) {
+
+            Y.on('click', function() { alert('Still Around'); }, Y.Node.all('#fromMarkup span'));
+            Y.on('click', function() { alert('Still Around'); }, Y.Node.all('#mixed span'));
+
+            new Y.Overlay({
+                srcNode: "#fromMarkup",
+                width:200,
+                height:200,
+                xy: [10,200],
+                render:true
+            });
+
+            new Y.Overlay({
+                srcNode: "#mixed",
+                width:200,
+                height:200,
+                bodyContent: "Override Body From Markup with Script",
+                footerContent: "Footer From Script",
+                xy: [300,200],
+                render:true
+            });
+
+            new Y.Overlay({
+                id: "#fromScript",
+                width:200,
+                height:200,
+                xy: [600, 200],
+                headerContent: "Header From Script",
+                bodyContent: "Body From Script",
+                footerContent: "Footer From Script",
+                render:true
+            });
+        });
+    </script>
+</body>
+</html>

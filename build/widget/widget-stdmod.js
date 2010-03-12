@@ -20,13 +20,13 @@ YUI.add('widget-stdmod', function(Y) {
         FOOTER = "footer",
         FILL_HEIGHT = "fillHeight",
         STDMOD = "stdmod",
-
+        
         NODE_SUFFIX = "Node",
         CONTENT_SUFFIX = "Content",
+
         INNER_HTML = "innerHTML",
         FIRST_CHILD = "firstChild",
         CHILD_NODES = "childNodes",
-        CREATE_DOCUMENT_FRAGMENT = "createDocumentFragment",
         OWNER_DOCUMENT = "ownerDocument",
 
         CONTENT_BOX = "contentBox",
@@ -39,12 +39,14 @@ YUI.add('widget-stdmod', function(Y) {
         BodyChange = "bodyContentChange",
         FooterChange = "footerContentChange",
         FillHeightChange = "fillHeightChange",
-        HeightChange = "heightChange",        
+        HeightChange = "heightChange",
         ContentUpdate = "contentUpdate",
 
         RENDERUI = "renderUI",
         BINDUI = "bindUI",
         SYNCUI = "syncUI",
+
+        APPLY_PARSED_CONFIG = "_applyParsedConfig",
 
         UI = Y.Widget.UI_SRC;
 
@@ -76,6 +78,7 @@ YUI.add('widget-stdmod', function(Y) {
      * @type String
      */
     StdMod.HEADER = HEADER;
+
     /**
      * Constant used to refer the the standard module body, in methods which expect a section specifier
      * 
@@ -84,6 +87,7 @@ YUI.add('widget-stdmod', function(Y) {
      * @type String
      */
     StdMod.BODY = BODY;
+
     /**
      * Constant used to refer the the standard module footer, in methods which expect a section specifier
      * 
@@ -131,6 +135,11 @@ YUI.add('widget-stdmod', function(Y) {
     var STD_HEADER = StdMod.HEADER,
         STD_BODY = StdMod.BODY,
         STD_FOOTER = StdMod.FOOTER,
+        
+        HEADER_CONTENT = STD_HEADER + CONTENT_SUFFIX,
+        FOOTER_CONTENT = STD_FOOTER + CONTENT_SUFFIX,
+        BODY_CONTENT = STD_BODY + CONTENT_SUFFIX,
+
         AFTER = StdMod.AFTER,
         BEFORE = StdMod.BEFORE;
 
@@ -262,9 +271,20 @@ YUI.add('widget-stdmod', function(Y) {
          * @protected
          */
         _syncUIStdMod : function() {
-            this._uiSetStdMod(STD_HEADER, this.get(STD_HEADER + CONTENT_SUFFIX));
-            this._uiSetStdMod(STD_BODY, this.get(STD_BODY + CONTENT_SUFFIX));
-            this._uiSetStdMod(STD_FOOTER, this.get(STD_FOOTER + CONTENT_SUFFIX));
+            var stdModParsed = this._stdModParsed;
+
+            if (!stdModParsed || !stdModParsed[HEADER_CONTENT]) { 
+                this._uiSetStdMod(STD_HEADER, this.get(HEADER_CONTENT)); 
+            }
+            
+            if (!stdModParsed || !stdModParsed[BODY_CONTENT]) { 
+                this._uiSetStdMod(STD_BODY, this.get(BODY_CONTENT));
+            }
+            
+            if (!stdModParsed || !stdModParsed[FOOTER_CONTENT]) {
+                this._uiSetStdMod(STD_FOOTER, this.get(FOOTER_CONTENT));
+            }
+
             this._uiSetFillHeight(this.get(FILL_HEIGHT));
         },
 
@@ -283,9 +303,9 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         _renderStdModSections : function() {
-            if (L.isValue(this.get(STD_HEADER + CONTENT_SUFFIX))) { this._renderStdMod(STD_HEADER); }
-            if (L.isValue(this.get(STD_BODY + CONTENT_SUFFIX))) { this._renderStdMod(STD_BODY); }
-            if (L.isValue(this.get(STD_FOOTER + CONTENT_SUFFIX))) { this._renderStdMod(STD_FOOTER); }
+            if (L.isValue(this.get(HEADER_CONTENT))) { this._renderStdMod(STD_HEADER); }
+            if (L.isValue(this.get(BODY_CONTENT))) { this._renderStdMod(STD_BODY); }
+            if (L.isValue(this.get(FOOTER_CONTENT))) { this._renderStdMod(STD_FOOTER); }
         },
 
         /**
@@ -621,26 +641,39 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {String} Inner HTML string with the contents of the section
          */
         _parseStdModHTML : function(section) {
-            var node = this._findStdModSection(section),
-                docFrag, children;
+
+            var node = this._findStdModSection(section);
 
             if (node) {
-                docFrag = node.get(OWNER_DOCUMENT).invoke(CREATE_DOCUMENT_FRAGMENT);
-                children = node.get(CHILD_NODES);
-
-                for (var i = children.size() - 1; i >= 0; i--) {
-                    var fc = docFrag.get(FIRST_CHILD);
-                    if (fc) {
-                        docFrag.insertBefore(children.item(i), fc);
-                    } else {
-                        docFrag.appendChild(children.item(i));
-                    }
+                if (!this._stdModParsed) {
+                    this._stdModParsed = {};
+                    Y.before(this._applyStdModParsedConfig, this, APPLY_PARSED_CONFIG);
                 }
+                this._stdModParsed[section + CONTENT_SUFFIX] = 1;
 
-                return docFrag;
+                return node.get("innerHTML");
             }
 
             return null;
+        },
+
+        /**
+         * This method is injected before the _applyParsedConfig step in 
+         * the application of HTML_PARSER, and sets up the state to 
+         * identify whether or not we should remove the current DOM content
+         * or not, based on whether or not the current content attribute value
+         * was extracted from the DOM, or provided by the user configuration
+         * 
+         * @method _applyStdModParsedConfig
+         * @private
+         */
+        _applyStdModParsedConfig : function(node, cfg, parsedCfg) {
+            var parsed = this._stdModParsed; 
+            if (parsed) {
+                parsed[HEADER_CONTENT] = !(HEADER_CONTENT in cfg) && (HEADER_CONTENT in parsed);
+                parsed[BODY_CONTENT] = !(BODY_CONTENT in cfg) && (BODY_CONTENT in parsed);
+                parsed[FOOTER_CONTENT] = !(FOOTER_CONTENT in cfg) && (FOOTER_CONTENT in parsed);
+            }
         },
 
         /**
