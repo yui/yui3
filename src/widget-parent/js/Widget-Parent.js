@@ -15,8 +15,6 @@ var Lang = Y.Lang;
  */
 function Parent(config) {
 
-    //  TO DO:  look at DataType for event facade documentation
-
     /**
     * Fires when a Widget is add as a child.  The event object will have a 
     * 'child' property that returns a reference to the child Widget, as well 
@@ -82,7 +80,6 @@ function Parent(config) {
 
     }
 
-
     //  Widget method overlap
     Y.after(this._renderChildren, this, "renderUI");
     Y.after(this._bindUIParent, this, "bindUI");
@@ -90,10 +87,10 @@ function Parent(config) {
 
     this.after("selectionChange", this._afterSelectionChange);
     this.after("selectedChange", this._afterParentSelectedChange);
-    this.after("activeItemChange", this._afterActiveItemChange);
+    this.after("activeDescendantChange", this._afterActiveDescendantChange);
 
     this._hDestroyChild = this.after("*:destroy", this._afterDestroyChild);
-    this.after("*:focusedChange", this._updateActiveItem);
+    this.after("*:focusedChange", this._updateActiveDescendant);
 
 }
 
@@ -118,22 +115,19 @@ Parent.ATTRS = {
             }
             
             return returnVal;
-            
         }
     },
 
-
     /**
-     * @attribute activeItem
+     * @attribute activeDescendant
      * @type Widget
      * @readOnly
      *
      * @description Returns the Widget's currently focused descendant Widget.
      */
-    activeItem: {    
+    activeDescendant: {    
         readOnly: true
     },
-
 
     /**
      * @attribute multiple
@@ -257,35 +251,25 @@ Parent.prototype = {
             this.set("selected", selectedVal, { src: this });
         
         }
-        
     },
 
 
     /**
-     * Attribute change listener for the <code>activeItem</code> 
+     * Attribute change listener for the <code>activeDescendant</code> 
      * attribute, responsible for setting the value of the 
-     * parent's <code>activeItem</code> attribute.
+     * parent's <code>activeDescendant</code> attribute.
      *
-     * @method _afterSelectionChange
+     * @method _afterActiveDescendantChange
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
-     */    
-    _afterActiveItemChange: function (event) {
+     */
+    _afterActiveDescendantChange: function (event) {
+        var parent = this.get("parent");
 
-        var parent;
-
-        if (event.target == this) {
-
-            parent = this.get("parent");
-
-            if (parent) {
-                parent._set("activeItem", this);
-            }
-            
+        if (parent) {
+            parent._set("activeDescendant", event.newVal);
         }
-        
     },
-    
 
     /**
      * Attribute change listener for the <code>selected</code> 
@@ -404,33 +388,19 @@ Parent.prototype = {
 
     },
 
-
     /**
      * Attribute change listener for the <code>focused</code> 
      * attribute of child Widgets, responsible for setting the value of the 
-     * parent's <code>activeItem</code> attribute.
+     * parent's <code>activeDescendant</code> attribute.
      *
-     * @method _updateActiveItem
+     * @method _updateActiveDescendant
      * @protected
      * @param {EventFacade} event The event facade for the attribute change.
      */
-    _updateActiveItem: function (event) {
-
-        var child = event.target,
-            val = null;
-        
-        if (child.get("parent") == this) {
-
-            if (event.newVal === true) {
-                val = event.target;
-            }
-
-            this._set("activeItem", val);
-            
-        }
-
+    _updateActiveDescendant: function (event) {
+        var activeDescendant = (event.newVal === true) ? event.target : null;
+        this._set("activeDescendant", activeDescendant);
     },
-
 
     /**
      * Creates an instance of a child Widget using the specified configuration.
@@ -509,10 +479,12 @@ Parent.prototype = {
         child._set("parent", this);
         child.addTarget(this);
 
+        // Update index in case it got normalized after addition
+        // (e.g. user passed in 10, and there are only 3 items, the actual index would be 3. We don't want to pass 10 around in the event facade).
+        event.index = child.get("index");
+
         //  TO DO: Remove in favor of using event bubbling
         child.after("selectedChange", Y.bind(this._updateSelection, this));
-        //child.after("focusedChange", Y.bind(this._updateActiveItem, this));
-        
     },
 
 
@@ -703,7 +675,6 @@ Parent.prototype = {
     selectAll: function () {
         this.set("selected", 1);
     },
-    
 
     /**
      * Deselects all children.
@@ -712,8 +683,7 @@ Parent.prototype = {
      */
     deselectAll: function () {
         this.set("selected", 0);
-    },    
-
+    },
 
     /**
      * Updates the UI in response to a child being added.
@@ -723,22 +693,36 @@ Parent.prototype = {
      * @param child {Widget} The child Widget instance to render.
      * @param parentNode {Object} The Node under which the 
      * child Widget is to be rendered.
-     * @param index {Number} Number representing the position at 
-     * which the child Widget will be inserted.
      */    
-    _uiAddChild: function (child, parentNode, index) {
+    _uiAddChild: function (child, parentNode) {
 
         child.render(parentNode);
 
-        //  TO DO: Better way to handle inserts?  Perhaps Widget's 
-        //  render() method should be able to accept an optional index.
+        // TODO: Ideally this should be in Child's render UI. 
         
-        if (Lang.isNumber(index)) {
-            parentNode.insert(child.get("boundingBox"), index);
-        }
-        
-    },
+        var childBB = child.get("boundingBox"),
+            siblingBB,
+            nextSibling = child.next(false),
+            prevSibling;
 
+        // Insert or Append to last child.
+
+        // Avoiding index, and using the current sibling 
+        // state (which should be accurate), means we don't have 
+        // to worry about decorator elements which may be added 
+        // to the _childContainer node.
+
+        if (nextSibling) {
+            siblingBB = nextSibling.get("boundingBox");
+            siblingBB.insert(childBB, "before");
+        } else {
+            prevSibling = child.previous(false);
+            if (prevSibling) {
+                siblingBB = prevSibling.get("boundingBox");
+                siblingBB.insert(childBB, "after");
+            }
+        }
+    },
 
     /**
      * Updates the UI in response to a child being removed.
@@ -751,12 +735,11 @@ Parent.prototype = {
         child.get("boundingBox").remove();
     },
 
-
     _afterAddChild: function (event) {
         var child = event.child;
 
         if (child.get("parent") == this) {
-            this._uiAddChild(child, this.get("contentBox"), event.index);
+            this._uiAddChild(child, this._childrenContainer);
         }
     },
 
@@ -767,7 +750,6 @@ Parent.prototype = {
             this._uiRemoveChild(child);
         }
     },
-
 
     /**
      * Sets up DOM and CustomEvent listeners for the parent widget.
@@ -784,7 +766,6 @@ Parent.prototype = {
         this.after("removeChild", this._afterRemoveChild);
     },
 
-
     /**
      * Renders all child Widgets for the parent.
      * <p>
@@ -795,12 +776,28 @@ Parent.prototype = {
      * @protected
      */
     _renderChildren: function () {
-        var contentBox = this.get("contentBox");
+
+        /**
+         * <p>By default WidgetParent will render it's children to the parent's content box.</p>
+         *
+         * <p>If the children need to be rendered somewhere else, the _childrenContainer property
+         * can be set to the Node which the children should be rendered to. This property should be
+         * set before the _renderChildren method is invoked, ideally in your renderUI method, 
+         * as soon as you create the element to be rendered to.</p>
+         *
+         * @protected
+         * @property _childrenContainer
+         * @value The content box
+         * @type Node
+         */
+        var renderTo = this._childrenContainer || this.get("contentBox");
+
+        this._childrenContainer = renderTo;
+
         this.each(function (child) {
-            child.render(contentBox);
+            child.render(renderTo);
         });
     },
-
 
     /**
      * Destroys all child Widgets for the parent.

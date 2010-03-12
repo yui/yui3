@@ -16,7 +16,8 @@ YUI.add('selection', function(Y) {
     FONT_FAMILY = 'fontFamily';
 
     Y.Selection = function() {
-        var sel, el, cur, curStr, curID;
+        var sel, par, ieNode, nodes, rng;
+
         if (Y.config.win.getSelection) {
 	        sel = Y.config.win.getSelection();
         } else if (Y.config.doc.selection) {
@@ -29,9 +30,9 @@ YUI.add('selection', function(Y) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
 
             if (this.isCollapsed) {
-                var par = sel.parentElement(),
-                    nodes = par.childNodes, ieNode,
-                    rng = sel.duplicate();
+                par = sel.parentElement();
+                nodes = par.childNodes;
+                rng = sel.duplicate();
 
                 Y.each(nodes, function(v) {
                     rng.select(v);
@@ -49,7 +50,7 @@ YUI.add('selection', function(Y) {
                     this.anchorNode = Y.Selection.resolve(ieNode);
                     this.focusNode = Y.Selection.resolve(ieNode);
                     
-                    this.anchorOffset = this.focusOffset = ieNode.nodeValue.length;
+                    this.anchorOffset = this.focusOffset = (ieNode.nodeValue) ? ieNode.nodeValue.length : 0 ;
                     
                     this.anchorTextNode = this.focusTextNode = Y.one(ieNode);
                 }
@@ -84,7 +85,8 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.filter = function() {
         var nodes = Y.all(Y.Selection.ALL),
-            baseNodes = Y.all('strong,em');
+            baseNodes = Y.all('strong,em'),
+            ls;
 
         Y.log('Filtering nodes', 'info', 'selection');
         nodes.each(function(n) {
@@ -111,6 +113,16 @@ YUI.add('selection', function(Y) {
             }
             Y.Selection.prototype._swap(baseNodes.item(k), newTag);
         });
+
+        //Filter out all the empty UL/OL's
+        ls = Y.all('ol,ul');
+        ls.each(function(v, k) {
+            var lis = v.all('li');
+            if (!lis.size()) {
+                v.remove();
+            }
+        });
+
     };
     /**
     * Undoes what filter does enough to return the HTML from the Editor, then re-applies the filter.
@@ -120,7 +132,7 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.unfilter = function() {
         var nodes = Y.all('body [class]'),
-            html = '';
+            html = '', nons, ids;
         
         Y.log('UnFiltering nodes', 'info', 'selection');
         
@@ -134,14 +146,15 @@ YUI.add('selection', function(Y) {
                 }
             }
         });
-        var nons = Y.all('.yui-non');
+
+        nons = Y.all('.yui-non');
         nons.each(function(n) {
             if (n.get('innerHTML') === '') {
                 n.remove();
             }
         });
 
-        var ids = Y.all('body [id]');
+        ids = Y.all('body [id]');
         ids.each(function(n) {
             if (n.get('id').indexOf('yui_3_') === 0) {
                 n.removeAttribute('id');
@@ -298,7 +311,7 @@ YUI.add('selection', function(Y) {
                     if (n.getAttribute('style') === '') {
                         n.removeAttribute('style');
                     }
-                    items.push(nodes.item(k));
+                    items.push(Y.Node.getDOMNode(nodes.item(k)));
                 }
             });
             return Y.all(items);
@@ -438,19 +451,26 @@ YUI.add('selection', function(Y) {
         * @chainable
         * @return {Y.Selection}
         */
-        selectNode: function(node, collapse) {
+        selectNode: function(node, collapse, end) {
+            end = end || 0;
+            node = Y.Node.getDOMNode(node);
 		    var range = this.createRange();
             if (range.selectNode) {
-                range.selectNode(Y.Node.getDOMNode(node));
+                range.selectNode(node);
                 this._selection.removeAllRanges();
                 this._selection.addRange(range);
                 if (collapse) {
-                    this._selection.collapse(Y.Node.getDOMNode(node), 0);
+                    try {
+                        this._selection.collapse(node, end);
+                    } catch (e) {
+                        this._selection.collapse(node, 0);
+                    }
                 }
             } else {
-                range.select(Y.Node.getDOMNode(node));
+                range.moveToElementText(node);
+                range.select();
                 if (collapse) {
-                    range.collapse();
+                    range.collapse(((end) ? false : true));
                 }
             }
             return this;
