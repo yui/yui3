@@ -12,11 +12,11 @@ body {
 <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
 <script type="text/javascript" charset="utf-8">                                                                                                                 
 YUI({
-    allowRollup: false,
+    // allowRollup: false, // so apparently
     skin: {
        // page level skin overrides.  you can specify one or more skin per component to load
        overrides: {
-           // this works if you use 'slider-base'
+           // this works if you use 'slider-base' and allowRollup to false
            'slider-base': ['round-dark', 'audio'],
            // this will work when when you use 'slider', but only after the slider.css show 
            // back up in the alt skin directories (you need both files... slider.css
@@ -24,7 +24,8 @@ YUI({
            'slider': ['round-dark', 'audio']
        }
     }
-}).use('slider-base', function (Y) {
+// }).use('slider-base',  "clickable-rail", "range-slider", function (Y) {
+}).use('slider-base',  "clickable-rail", function (Y) {
 
 });
 </script>     
