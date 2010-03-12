@@ -19,7 +19,6 @@
         },
         "requires": [
             "widget", 
-            "skin-sam-tabview",
             "widget-parent",
             "widget-child",
             "tabview-base"

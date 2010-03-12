@@ -64,8 +64,6 @@
 <span class="cm"> */</span>
 <span class="kd">function</span> <span class="nx">Parent</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="c1">//  TO DO:  look at DataType for event facade documentation</span>
-
     <span class="cm">/**</span>
 <span class="cm">    * Fires when a Widget is add as a child.  The event object will have a </span>
 <span class="cm">    * &#39;child&#39; property that returns a reference to the child Widget, as well </span>
@@ -138,10 +136,10 @@
 
     <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectionChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterSelectionChange</span><span class="p">);</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterParentSelectedChange</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;activeItemChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterActiveItemChange</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;activeDescendantChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterActiveDescendantChange</span><span class="p">);</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">_hDestroyChild</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;*:destroy&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterDestroyChild</span><span class="p">);</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;*:focusedChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_updateActiveItem</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;*:focusedChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_updateActiveDescendant</span><span class="p">);</span>
 
 <span class="p">}</span>
 
@@ -170,13 +168,13 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * @attribute activeItem</span>
+<span class="cm">     * @attribute activeDescendant</span>
 <span class="cm">     * @type Widget</span>
 <span class="cm">     * @readOnly</span>
 <span class="cm">     *</span>
 <span class="cm">     * @description Returns the Widget&#39;s currently focused descendant Widget.</span>
 <span class="cm">     */</span>
-    <span class="nx">activeItem</span><span class="o">:</span> <span class="p">{</span>    
+    <span class="nx">activeDescendant</span><span class="o">:</span> <span class="p">{</span>    
         <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span>
 
@@ -302,35 +300,25 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">,</span> <span class="nx">selectedVal</span><span class="p">,</span> <span class="p">{</span> <span class="nx">src</span><span class="o">:</span> <span class="k">this</span> <span class="p">});</span>
         
         <span class="p">}</span>
-        
     <span class="p">},</span>
 
 
     <span class="cm">/**</span>
-<span class="cm">     * Attribute change listener for the &lt;code&gt;activeItem&lt;/code&gt; </span>
+<span class="cm">     * Attribute change listener for the &lt;code&gt;activeDescendant&lt;/code&gt; </span>
 <span class="cm">     * attribute, responsible for setting the value of the </span>
-<span class="cm">     * parent&#39;s &lt;code&gt;activeItem&lt;/code&gt; attribute.</span>
+<span class="cm">     * parent&#39;s &lt;code&gt;activeDescendant&lt;/code&gt; attribute.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _afterSelectionChange</span>
+<span class="cm">     * @method _afterActiveDescendantChange</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     * @param {EventFacade} event The event facade for the attribute change.</span>
-<span class="cm">     */</span>    
-    <span class="nx">_afterActiveItemChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+<span class="cm">     */</span>
+    <span class="nx">_afterActiveDescendantChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">);</span>
 
-        <span class="kd">var</span> <span class="nx">parent</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span> <span class="o">==</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
-
-            <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">);</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">parent</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;activeItem&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
-            <span class="p">}</span>
-            
+        <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">parent</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;activeDescendant&quot;</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
         <span class="p">}</span>
-        
     <span class="p">},</span>
-    
 
     <span class="cm">/**</span>
 <span class="cm">     * Attribute change listener for the &lt;code&gt;selected&lt;/code&gt; </span>
@@ -449,33 +437,19 @@
 
     <span class="p">},</span>
 
-
     <span class="cm">/**</span>
 <span class="cm">     * Attribute change listener for the &lt;code&gt;focused&lt;/code&gt; </span>
 <span class="cm">     * attribute of child Widgets, responsible for setting the value of the </span>
-<span class="cm">     * parent&#39;s &lt;code&gt;activeItem&lt;/code&gt; attribute.</span>
+<span class="cm">     * parent&#39;s &lt;code&gt;activeDescendant&lt;/code&gt; attribute.</span>
 <span class="cm">     *</span>
-<span class="cm">     * @method _updateActiveItem</span>
+<span class="cm">     * @method _updateActiveDescendant</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     * @param {EventFacade} event The event facade for the attribute change.</span>
 <span class="cm">     */</span>
-    <span class="nx">_updateActiveItem</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="kd">var</span> <span class="nx">child</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        
-        <span class="k">if</span> <span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">newVal</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
-            <span class="p">}</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;activeItem&quot;</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
-            
-        <span class="p">}</span>
-
+    <span class="nx">_updateActiveDescendant</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">activeDescendant</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">newVal</span> <span class="o">===</span> <span class="kc">true</span><span class="p">)</span> <span class="o">?</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;activeDescendant&quot;</span><span class="p">,</span> <span class="nx">activeDescendant</span><span class="p">);</span>
     <span class="p">},</span>
-
 
     <span class="cm">/**</span>
 <span class="cm">     * Creates an instance of a child Widget using the specified configuration.</span>
@@ -554,10 +528,12 @@
         <span class="nx">child</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
         <span class="nx">child</span><span class="p">.</span><span class="nx">addTarget</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
+        <span class="c1">// Update index in case it got normalized after addition</span>
+        <span class="c1">// (e.g. user passed in 10, and there are only 3 items, the actual index would be 3. We don&#39;t want to pass 10 around in the event facade).</span>
+        <span class="nx">event</span><span class="p">.</span><span class="nx">index</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">);</span>
+
         <span class="c1">//  TO DO: Remove in favor of using event bubbling</span>
         <span class="nx">child</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_updateSelection</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
-        <span class="c1">//child.after(&quot;focusedChange&quot;, Y.bind(this._updateActiveItem, this));</span>
-        
     <span class="p">},</span>
 
 
@@ -748,7 +724,6 @@
     <span class="nx">selectAll</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
     <span class="p">},</span>
-    
 
     <span class="cm">/**</span>
 <span class="cm">     * Deselects all children.</span>
@@ -757,7 +732,7 @@
 <span class="cm">     */</span>
     <span class="nx">deselectAll</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-    <span class="p">},</span>    
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Updates the UI in response to a child being added.</span>
@@ -767,21 +742,34 @@
 <span class="cm">     * @param child {Widget} The child Widget instance to render.</span>
 <span class="cm">     * @param parentNode {Object} The Node under which the </span>
 <span class="cm">     * child Widget is to be rendered.</span>
-<span class="cm">     * @param index {Number} Number representing the position at </span>
-<span class="cm">     * which the child Widget will be inserted.</span>
 <span class="cm">     */</span>    
-    <span class="nx">_uiAddChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">parentNode</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_uiAddChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">parentNode</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="nx">child</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">parentNode</span><span class="p">);</span>
 
-        <span class="c1">//  TO DO: Better way to handle inserts?  Perhaps Widget&#39;s </span>
-        <span class="c1">//  render() method should be able to accept an optional index.</span>
+        <span class="c1">// TODO: Ideally this should be in Child&#39;s render UI. </span>
+        
+        <span class="kd">var</span> <span class="nx">childBB</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">),</span>
+            <span class="nx">siblingBB</span><span class="p">,</span>
+            <span class="nx">nextSibling</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="kc">false</span><span class="p">),</span>
+            <span class="nx">prevSibling</span><span class="p">;</span>
 
-        <span class="c1">// If index is valid, and actually inserting (as opposed to appending)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">index</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">before</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
-                <span class="nx">beforeNode</span> <span class="o">=</span> <span class="p">(</span><span class="nx">before</span><span class="p">)</span> <span class="o">?</span> <span class="nx">before</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">)</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="nx">parentNode</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">),</span> <span class="nx">beforeNode</span><span class="p">);</span>
+        <span class="c1">// Insert or Append to last child.</span>
+
+        <span class="c1">// Avoiding index, and using the current sibling </span>
+        <span class="c1">// state (which should be accurate), means we don&#39;t have </span>
+        <span class="c1">// to worry about decorator elements which may be added </span>
+        <span class="c1">// to the _childContainer node.</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">nextSibling</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">siblingBB</span> <span class="o">=</span> <span class="nx">nextSibling</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">);</span>
+            <span class="nx">siblingBB</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">childBB</span><span class="p">,</span> <span class="s2">&quot;before&quot;</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">prevSibling</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">previous</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">prevSibling</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">siblingBB</span> <span class="o">=</span> <span class="nx">prevSibling</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;boundingBox&quot;</span><span class="p">);</span>
+                <span class="nx">siblingBB</span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">childBB</span><span class="p">,</span> <span class="s2">&quot;after&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -800,7 +788,7 @@
         <span class="kd">var</span> <span class="nx">child</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">child</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_uiAddChild</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_childrenContainer</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">index</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiAddChild</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_childrenContainer</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -811,7 +799,6 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_uiRemoveChild</span><span class="p">(</span><span class="nx">child</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
-
 
     <span class="cm">/**</span>
 <span class="cm">     * Sets up DOM and CustomEvent listeners for the parent widget.</span>
@@ -990,7 +977,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeItem", "url": "WidgetParent.html#config_activeItem", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeItemChange", "url": "WidgetParent.html#event_activeItemChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_add", "url": "WidgetParent.html#method__add", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterDestroyChild", "url": "WidgetParent.html#method__afterDestroyChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_bindUIParent", "url": "WidgetParent.html#method__bindUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "childAdded", "url": "WidgetParent.html#event_childAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "childRemoved", "url": "WidgetParent.html#event_childRemoved", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_childrenContainer", "url": "WidgetParent.html#property__childrenContainer", "type": "property"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defAddChildFn", "url": "WidgetParent.html#method__defAddChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defRemoveChildFn", "url": "WidgetParent.html#method__defRemoveChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "deselectAll", "url": "WidgetParent.html#method_deselectAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_destroyChildren", "url": "WidgetParent.html#method__destroyChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderChildren", "url": "WidgetParent.html#method__renderChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectAll", "url": "WidgetParent.html#method_selectAll", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectChild", "url": "WidgetParent.html#method_selectChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiAddChild", "url": "WidgetParent.html#method__uiAddChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiRemoveChild", "url": "WidgetParent.html#method__uiRemoveChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveItem", "url": "WidgetParent.html#method__updateActiveItem", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeDescendant", "url": "WidgetParent.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeDescendantChange", "url": "WidgetParent.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_add", "url": "WidgetParent.html#method__add", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterActiveDescendantChange", "url": "WidgetParent.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterDestroyChild", "url": "WidgetParent.html#method__afterDestroyChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_bindUIParent", "url": "WidgetParent.html#method__bindUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "childAdded", "url": "WidgetParent.html#event_childAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "childRemoved", "url": "WidgetParent.html#event_childRemoved", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_childrenContainer", "url": "WidgetParent.html#property__childrenContainer", "type": "property"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defAddChildFn", "url": "WidgetParent.html#method__defAddChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defRemoveChildFn", "url": "WidgetParent.html#method__defRemoveChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "deselectAll", "url": "WidgetParent.html#method_deselectAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_destroyChildren", "url": "WidgetParent.html#method__destroyChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderChildren", "url": "WidgetParent.html#method__renderChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectAll", "url": "WidgetParent.html#method_selectAll", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectChild", "url": "WidgetParent.html#method_selectChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiAddChild", "url": "WidgetParent.html#method__uiAddChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiRemoveChild", "url": "WidgetParent.html#method__uiRemoveChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveDescendant", "url": "WidgetParent.html#method__updateActiveDescendant", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
 </script>
 </body>
 </html>

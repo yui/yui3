@@ -4,8 +4,7 @@
             "node", 
             "classnamemanager", 
             "plugin", 
-            "node-focusmanager", 
-            "skin-sam-node-menunav"
+            "node-focusmanager"
         ], 
         "skinnable": true
     }

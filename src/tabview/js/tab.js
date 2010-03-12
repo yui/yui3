@@ -84,7 +84,6 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     _renderLabel: function(contentBox, parentContentBox) {
         var label = this.get('label');
         contentBox.setContent(label);
-        //parentContentBox.one(_queries.tabviewList).appendChild(this.get('boundingBox'));
     },
 
     _renderPanel: function(contentBox, parentContentBox) {
