@@ -481,6 +481,10 @@ Parent.prototype = {
         child._set("parent", this);
         child.addTarget(this);
 
+        // Update index in case it got normalized after addition
+        // (e.g. user passed in 10, and there are only 3 items, the actual index would be 3. We don't want to pass 10 around in the event facade).
+        event.index = child.get("index");
+
         //  TO DO: Remove in favor of using event bubbling
         child.after("selectedChange", Y.bind(this._updateSelection, this));
     },
@@ -673,7 +677,6 @@ Parent.prototype = {
     selectAll: function () {
         this.set("selected", 1);
     },
-    
 
     /**
      * Deselects all children.
@@ -682,7 +685,7 @@ Parent.prototype = {
      */
     deselectAll: function () {
         this.set("selected", 0);
-    },    
+    },
 
     /**
      * Updates the UI in response to a child being added.
@@ -692,21 +695,32 @@ Parent.prototype = {
      * @param child {Widget} The child Widget instance to render.
      * @param parentNode {Object} The Node under which the 
      * child Widget is to be rendered.
-     * @param index {Number} Number representing the position at 
-     * which the child Widget will be inserted.
      */    
-    _uiAddChild: function (child, parentNode, index) {
+    _uiAddChild: function (child, parentNode) {
 
         child.render(parentNode);
 
-        //  TO DO: Better way to handle inserts?  Perhaps Widget's 
-        //  render() method should be able to accept an optional index.
+        // TODO: Ideally this should be in Child's render UI. 
+        
+        var childBB = child.get("boundingBox"),
+            siblingBB,
+            nextSibling = child.next(false),
+            prevSibling;
 
-        // If index is valid, and actually inserting (as opposed to appending)
-        if (Lang.isNumber(index) && index < (this.size() - 1)) {
-            var before = this.item(index + 1),
-                beforeNode = (before) ? before.get("boundingBox") : null;
-            parentNode.insert(child.get("boundingBox"), beforeNode);
+        // Insert or Append to last child.
+
+        // Avoiding index, and using the current sibling 
+        // state (which should be accurate), means we don't have 
+        // to worry about decorator elements which may be added 
+        // to the _childContainer node.
+
+        if (nextSibling) {
+            siblingBB = nextSibling.get("boundingBox");
+            siblingBB.insert(childBB, "before");
+        } else {
+            prevSibling = child.previous(false);
+            siblingBB = prevSibling.get("boundingBox");
+            siblingBB.insert(childBB, "after");
         }
     },
 
@@ -725,7 +739,7 @@ Parent.prototype = {
         var child = event.child;
 
         if (child.get("parent") == this) {
-            this._uiAddChild(child, this._childrenContainer, event.index);
+            this._uiAddChild(child, this._childrenContainer);
         }
     },
 
