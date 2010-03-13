@@ -928,19 +928,19 @@ var NodeList = function(nodes) {
     if (typeof nodes === 'string') { // selector query
         this._query = nodes;
         nodes = Y.Selector.query(nodes);
-    } else { // handle DOMNode and/or Y.Node
-        if (!nodes.item && !Y.Lang.isArray(nodes)) { // single Node
-            nodes = [nodes];
-        }
-
+    } else if (nodes.nodeType) { // domNode
+        nodes = [nodes];
+    } else if (nodes instanceof Y.Node) {
+        nodes = [nodes._node];
+    } else if (nodes[0] instanceof Y.Node) { // allow array of Y.Nodes
         Y.Array.each(nodes, function(node) {
-            if (node.nodeType) {
-                tmp.push(node);
-            } else if (node instanceof Y.Node) {
+            if (node._node) {
                 tmp.push(node._node);
             }
         });
         nodes = tmp;
+    } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
+        nodes = Y.Array(nodes, 0, true);
     }
 
     NodeList._instances[Y.stamp(this)] = this;
