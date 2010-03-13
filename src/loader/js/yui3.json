@@ -124,8 +124,7 @@
             "console-filters": {
                 "requires": [
                     "plugin", 
-                    "console", 
-                    "skin-sam-console-filters"
+                    "console"
                 ], 
                 "skinnable": true
             }
@@ -133,8 +132,7 @@
         "requires": [
             "yui-log", 
             "widget", 
-            "substitute", 
-            "skin-sam-console"
+            "substitute"
         ], 
         "skinnable": true
     }, 
@@ -587,7 +585,20 @@
     "loader": {
         "requires": [
             "get"
-        ]
+        ], 
+        "submodules": {
+            "loader-base": {}, 
+            "rollup": {
+                "requires": [
+                    "loader-base"
+                ]
+            }, 
+            "yui3": {
+                "requires": [
+                    "loader-base"
+                ]
+            }
+        }
     }, 
     "node": {
         "plugins": {
@@ -663,8 +674,7 @@
             "node", 
             "classnamemanager", 
             "plugin", 
-            "node-focusmanager", 
-            "skin-sam-node-menunav"
+            "node-focusmanager"
         ], 
         "skinnable": true
     }, 
@@ -680,8 +690,7 @@
             "widget-position", 
             "widget-position-align", 
             "widget-stack", 
-            "widget-position-constrain", 
-            "skin-sam-overlay"
+            "widget-position-constrain"
         ], 
         "skinnable": true
     }, 
@@ -756,8 +765,7 @@
                 "requires": [
                     "widget", 
                     "dd-constrain", 
-                    "substitute", 
-                    "skin-sam-slider-base"
+                    "substitute"
                 ], 
                 "skinnable": true
             }, 
@@ -793,6 +801,32 @@
         ]
     }, 
     "swfdetect": {}, 
+    "tabview": {
+        "plugins": {
+            "tabview-plugin": {
+                "requires": [
+                    "tabview-base", 
+                    "node-focusmanager"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "widget", 
+            "widget-parent", 
+            "widget-child", 
+            "tabview-base"
+        ], 
+        "skinnable": true, 
+        "submodules": {
+            "tabview-base": {
+                "requires": [
+                    "node-event-delegate", 
+                    "classnamemanager"
+                ]
+            }
+        }
+    }, 
     "test": {
         "requires": [
             "substitute", 
@@ -822,16 +856,10 @@
                 ]
             }, 
             "widget-stack": {
-                "requires": [
-                    "skin-sam-widget-stack"
-                ], 
                 "skinnable": true
             }, 
             "widget-stdmod": {}
         }, 
-        "requires": [
-            "skin-sam-widget"
-        ], 
         "skinnable": true, 
         "submodules": {
             "widget-base": {

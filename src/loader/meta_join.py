@@ -18,8 +18,8 @@ class MetaJoin(object):
         TEMPLATE_TOKEN = '{ /* METAGEN */ }' 
 
         DEST_DIR       = 'js'
-        DEST_JSON      = 'modules.json'
-        DEST_JS        = 'meta.js'
+        DEST_JSON      = 'yui3.json'
+        DEST_JS        = 'yui3.js'
 
         src_path       = os.path.abspath(SRC_DIR)
 
@@ -51,10 +51,14 @@ class MetaJoin(object):
                         # read all [component].json files
                         if j.endswith(SRC_EXT):
                             string_data = readFile(metadir, j)
-                            data = simplejson.loads(string_data)
+                            try:
+                                data = simplejson.loads(string_data)
+                            except:
+                                print 'WARNING: could not read ' + j
                             # print simplejson.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
-                            for k, v in data.iteritems():
-                                modules[k] = v
+                            if data:
+                                for k, v in data.iteritems():
+                                    modules[k] = v
 
         jsonstr = simplejson.dumps(modules, ensure_ascii=False, sort_keys=True, indent=4)
 

@@ -46,7 +46,7 @@ Y.mix(L, {
         var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null,
             ov = (wl), args = [r, s, ov];
 
-        if (wl[0] !== true) {
+        if (wl && wl[0] !== true) {
             args.push(wl);
         }
 

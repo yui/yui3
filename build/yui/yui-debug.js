@@ -49,8 +49,9 @@ if (typeof YUI === 'undefined') {
 }
 
 (function() {
-    var p, i,
+    var p, prop,
         VERSION       = '@VERSION@', 
+        BASE          = 'http://yui.yahooapis.com/',
         DOC_LABEL     = 'yui3-js-enabled',
         NOOP          = function() {},
         SLICE         = Array.prototype.slice,
@@ -103,33 +104,20 @@ if (VERSION.indexOf('@') > -1) {
 YUI.prototype = {
     _config: function(o) {
         o = o || {};
-        var i, 
-            // j, m, g,
+        var attr, 
             config = this.config, 
             mods   = config.modules,
             groups = config.groups;
-        for (i in o) {
-            if (mods && i == 'modules') {
-                // m = o[i];
-                // for (j in m) {
-                //     if (m.hasOwnProperty(j)) {
-                //         mods[j] = m[j];
-                //     }
-                // }
-                this.mix(mods, o[i], true);
-            } else if (groups && i == 'groups') {
-                // g = o[i];
-                // for (j in g) {
-                //     if (g.hasOwnProperty(j)) {
-                //         groups[j] = g[j];
-                //     }
-                // }
-                this.mix(groups, o[i], true);
-            } else if (i == 'win') {
-                config[i] = o[i].contentWindow || o[i];
-                config.doc = config[i].document;
+        for (attr in o) {
+            if (mods && attr == 'modules') {
+                this.mix(mods, o[attr], true);
+            } else if (groups && attr == 'groups') {
+                this.mix(groups, o[attr], true);
+            } else if (attr == 'win') {
+                config[attr] = o[attr].contentWindow || o[attr];
+                config.doc = config[attr].document;
             } else {
-                config[i] = o[i];
+                config[attr] = o[attr];
             }
         }
     },
@@ -145,12 +133,12 @@ YUI.prototype = {
             Env   = Y.Env;
 
         Y.version = VERSION;
-        Y.gallery = 'gallery-2010.02.22-22'; // @TODO build time
 
         if (!Env) {
             Y.Env = {
                 mods:         {},
-                cdn:          'http://yui.yahooapis.com/' + VERSION + '/build/',
+                base:         BASE,
+                cdn:          BASE + VERSION + '/build/',
                 bootstrapped: false,
                 _idx:         0,
                 _used:        {},
@@ -238,7 +226,7 @@ YUI.prototype = {
      */
     _setup: function(o) {
 
-        var Y = this,
+        var i, Y = this,
             core = [],
             mods = YUI.Env.mods,
             extras = Y.config.core || ['get', 'intl-base', 'loader', 'yui-log', 'yui-later', 'yui-throttle'];
@@ -690,9 +678,9 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
     p = YUI.prototype;
 
     // inheritance utilities are not available yet
-    for (i in p) {
+    for (prop in p) {
         if (1) { // intenionally ignoring hasOwnProperty check
-            YUI[i] = p[i];
+            YUI[prop] = p[prop];
         }
     }
 
@@ -1080,9 +1068,29 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  */
 
 /**
- * The default gallery version to create gallery module urls
+ * The default gallery version to build gallery module urls
  * @property gallery
  * @type string
+ */
+
+/**
+ * The default YUI 2 version to build yui2 module urls.  This is for
+ * intrinsic YUI 2 support via the 2in3 project.  Also @see the '2in3'
+ * config for pulling different revisions of the wrapped YUI 2 
+ * modules.
+ * @property yui2 
+ * @type string
+ * @default 2.8.0
+ */
+
+/**
+ * The 2in3 project is a deployment of the various versions of YUI 2
+ * deployed as first-class YUI 3 modules.  Eventually, the wrapper
+ * modules will change, and you can select a particular version of
+ * the wrapper modules via this config.
+ * @property 2in3
+ * @type string
+ * @default 1
  */
 
 /**
@@ -3131,7 +3139,7 @@ INSTANCE.log = function(msg, cat, src, silent) {
                 m = (src) ? src + ': ' + msg : msg;
                 if (Y.Lang.isFunction(c.logFn)) {
                     c.logFn(msg, cat, src);
-                } if (typeof console != UNDEFINED && console.log) {
+                } else if (typeof console != UNDEFINED && console.log) {
                     f = (cat && console[cat] && (cat in LEVELS)) ? cat : 'log';
                     console[f](m);
                 } else if (typeof opera != UNDEFINED) {
