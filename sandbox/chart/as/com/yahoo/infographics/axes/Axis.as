@@ -47,6 +47,15 @@ package com.yahoo.infographics.axes
 		 */
 		private var _axisMode:IAxisMode;
 
+		override public function get sizeMode():String
+		{
+			if(this._layout)
+			{
+				return this._layout.sizeMode;
+			}
+			var axisPosition:String = this.getStyle("position") as String;
+			return axisPosition == "left" || axisPosition == "right" ? "hbox" : "vbox";
+		}
 		/**
 		 * Algorithm for calculating values based on the axis type.
 		 */
@@ -163,12 +172,14 @@ package com.yahoo.infographics.axes
 		 */
 		override protected function render():void
 		{
+			var axisPosition:String = this.getStyle("position") as String;
 			if(this.checkFlag("position"))
 			{
-				var layoutClass:Class = this.getAxisLayout(this.getStyle("position") as String) as Class;
+				var layoutClass:Class = this.getAxisLayout(axisPosition) as Class;
 				this._layout = new layoutClass();
 				this._layout.addEventListener(RendererEvent.RESIZE, this.handleContentResize);
 			}
+
 
 			if(this.checkFlag("dataFormat")) this._axisMode.props = this.getStyle("dataFormat");
 			if(this.checkFlag("calculateSizeByTickLength")) this._layout.calculateSizeByTickLength = this.getStyle("calculateSizeByTickLength") as Boolean;
@@ -249,6 +260,7 @@ package com.yahoo.infographics.axes
 				else
 				{
 					label = new AxisLabel(IStyle(labelStyles));
+					label.autoRender = false;
 					content.addChild(label);
 				}
 				labels.push(label);

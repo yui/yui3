@@ -4,8 +4,9 @@ package com.yahoo.renderers.layout
 	import flash.utils.Dictionary;	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.events.IEventDispatcher;
 
-	public interface ILayoutStrategy extends IStyle 
+	public interface ILayoutStrategy extends IEventDispatcher 
 	{
 		/**
 		 * Reference to the style class
@@ -64,6 +65,11 @@ package com.yahoo.renderers.layout
 		 * layout algorithms.
 		 */
 		function get childData():Dictionary;
+		
+		/**
+		 * Default <code>sizeMode</code> value for the layout
+		 */
+		function get sizeMode():String;
 
 		/**
 		 * Algorithm for positioning visual objects of the container.

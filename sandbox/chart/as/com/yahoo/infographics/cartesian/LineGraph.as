@@ -8,7 +8,7 @@ package com.yahoo.infographics.cartesian
 	import com.yahoo.renderers.events.RendererEvent;
 	import com.yahoo.renderers.Skin;
 	import flash.display.Graphics;
-	
+
 	/**
 	 * Class used for drawing a line graph.
 	 */
@@ -103,27 +103,29 @@ package com.yahoo.infographics.cartesian
 		 */
 		override protected function drawGraph():void
 		{
+			if(!this._pointValues) return;
 			var values:Vector.<int> = this._pointValues,
-			len:int = values.length,
-			lastValidX:int,
-			lastValidY:int,
-			lastX:int = values[0] as int,
-			lastY:int = values[1] as int,
-			nextX:int,
-			nextY:int,
-			i:int,
-			styles:Object = this.getStyles(),
-			lineType:String = styles.type as String,
-			dashLength:Number = Number(styles.dashLength),
-			gapSpace:Number = Number(styles.gapSpace),
-			connectDiscontinuousPoints:Boolean = styles.connectDiscontinuousPoints as Boolean,
-			discontinuousType:String = String(styles.discontinuousType),
-			discontinuousDashLength:Number = Number(styles.discontinuousDashLength),
-			discontinuousGapSpace:Number = Number(styles.discontinuousGapSpace),
-			graphics:Graphics = this.graphics;
+				len:int = values.length,
+				lastValidX:int,
+				lastValidY:int,
+				lastX:int = values[0] as int,
+				lastY:int = values[1] as int,
+				nextX:int,
+				nextY:int,
+				i:int,
+				styles:Object = this.getStyles(),
+				lineType:String = styles.type as String,
+				dashLength:Number = Number(styles.dashLength),
+				gapSpace:Number = Number(styles.gapSpace),
+				connectDiscontinuousPoints:Boolean = styles.connectDiscontinuousPoints as Boolean,
+				discontinuousType:String = String(styles.discontinuousType),
+				discontinuousDashLength:Number = Number(styles.discontinuousDashLength),
+				discontinuousGapSpace:Number = Number(styles.discontinuousGapSpace),
+				graphics:Graphics = this.graphics;
 			graphics.clear();
 			lastValidX = lastX;
 			lastValidY = lastY;
+
 			graphics.lineStyle (this._weight, this._color, this._alpha);
 			graphics.moveTo (lastX, lastY);
 			for(i = 2; i < len; i = i + 2)

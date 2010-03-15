@@ -17,6 +17,20 @@ package com.yahoo.infographics.axes
 		 * @private
 		 */
 		private const PI:Number = Math.PI;
+
+		/**
+		 * @inheritDoc
+		 */
+		private static var _styleClass:Class = AxisLabelStyles;
+		
+		/**
+		 * Constructor
+		 */
+		public function AxisLabel(styles:IStyle = null):void
+		{
+			super(styles);
+		}
+		
 		/**
 		 * @private
 		 */
@@ -26,7 +40,6 @@ package com.yahoo.infographics.axes
 		 * @private (override)
 		 */
 		override public function get width():Number
-									
 		{
 			return this._width;
 		}
@@ -43,28 +56,7 @@ package com.yahoo.infographics.axes
 		{
 			return this._height;
 		}
-
-		/**
-		 * @inheritDoc
-		 */
-		private static var _styleClass:Class = AxisLabelStyles;
 		
-		/**
-		 * Constructor
-		 */
-		public function AxisLabel(styles:IStyle = null):void
-		{
-			super(styles);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		override public function getStyleClass():Class
-		{
-			return _styleClass;
-		}		
-
 		/**
 		 * @private
 		 * Flags for rendering
@@ -99,6 +91,14 @@ package com.yahoo.infographics.axes
 	//--------------------------------------
 	//  Public Methods
 	//--------------------------------------		
+		/**
+		 * @inheritDoc
+		 */
+		override public function getStyleClass():Class
+		{
+			return _styleClass;
+		}		
+
 		/**
 		 * @inheritDoc
 		 */

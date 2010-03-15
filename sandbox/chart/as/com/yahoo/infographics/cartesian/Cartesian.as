@@ -316,7 +316,7 @@ package com.yahoo.infographics.cartesian
 			if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))
 			{
 				this.setAreaData();
-				this.setLaterFlag("drawGraph");
+				if(this._pointValues) this.setLaterFlag("drawGraph");
 				return;
 			}
 			

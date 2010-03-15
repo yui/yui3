@@ -3,7 +3,6 @@ package com.yahoo.renderers.layout
 	import com.yahoo.renderers.Renderer;
 	import com.yahoo.renderers.events.LayoutEvent;
 	import com.yahoo.renderers.events.RendererEvent;
-	import com.yahoo.renderers.events.StyleEvent;
 	import com.yahoo.renderers.styles.LayoutStyles;
 	import flash.utils.Dictionary;	
 	import flash.display.DisplayObject;
@@ -30,6 +29,18 @@ package com.yahoo.renderers.layout
 	// Properties
 	//**********************************	
 
+		/**
+		 * @private (override)
+		 */
+		override public function get sizeMode():String
+		{
+			if(!this._layout) return super.sizeMode;
+			return this._layout.sizeMode;
+		}
+
+		/**
+		 * @private
+		 */
 		private var _defaultStrategyClass:Class = LayoutStrategy;
 
 		/**
@@ -166,10 +177,10 @@ package com.yahoo.renderers.layout
 		/**
 		 * @inheritDoc
 		 */
-		override public function setStyle(style:String, value:Object):void
+		override public function setStyle(style:String, value:Object):Boolean
 		{
 			this._containerStyleHash[style] = value;
-			super.setStyle(style, value);
+			return super.setStyle(style, value);
 		}
 
 		/**
@@ -232,13 +243,11 @@ package com.yahoo.renderers.layout
 		 */
 		override protected function setStyleInstance():void
 		{
-			if(this._styles) this._styles.removeEventListener(StyleEvent.STYLE_CHANGE, this.styleChangeHandler);
 			if(this.layout)
 			{
 				this._styles = this.layout.styles;
-				this._styles.setStyles(this._containerStyleHash);
+				this.setStyles(this._containerStyleHash);
 				this._containerStyleHash = {};
-				this._styles.addEventListener(StyleEvent.STYLE_CHANGE, this.styleChangeHandler);		
 			}
 		}
 

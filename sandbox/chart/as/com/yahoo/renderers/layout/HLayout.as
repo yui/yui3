@@ -11,6 +11,14 @@ package com.yahoo.renderers.layout
 		}
 
 		/**
+		 * @copy com.yahoo.renderers.layout.ILayoutStrategy#sizeMode
+		 */
+		override public function get sizeMode():String
+		{
+			return ContainerType.HBOX;
+		}
+
+		/**
 		 * @copy com.yahoo.renderers.layout.ILayoutStrategy#layoutChildren()
 		 */
 		override public function layoutChildren():void

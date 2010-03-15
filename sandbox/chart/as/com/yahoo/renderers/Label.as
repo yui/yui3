@@ -27,7 +27,6 @@ package com.yahoo.renderers
 		public function Label(styles:IStyle = null):void
 		{
 			super(styles);
-			this.setStyle("sizeMode", ContainerType.NONE);
 		}
 		
 		/**

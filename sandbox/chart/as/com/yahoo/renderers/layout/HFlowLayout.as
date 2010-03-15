@@ -12,9 +12,16 @@ package com.yahoo.renderers.layout
 		public function HFlowLayout()
 		{
 			super();
-			this.setStyle("sizeMode", ContainerType.VBOX);
 		}
 
+		/**
+		 * @copy com.yahoo.renderers.layout.ILayoutStrategy#sizeMode
+		 */
+		override public function get sizeMode():String
+		{
+			return ContainerType.VBOX;
+		}
+		
 		/**
 		 * @private
 		 */

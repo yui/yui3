@@ -3,7 +3,6 @@ package com.yahoo.renderers.layout
 	import com.yahoo.renderers.Renderer;
 	import com.yahoo.renderers.events.LayoutEvent;
 	import com.yahoo.renderers.events.RendererEvent;
-	import com.yahoo.renderers.events.StyleEvent;
 	import com.yahoo.renderers.styles.LayoutStyles;
 	import flash.display.DisplayObject;
 
@@ -204,29 +203,24 @@ package com.yahoo.renderers.layout
 		private function addContainers():void
 		{
 			this.topLayout.stretchChildrenToFit = true;
-			this.topLayout.setStyle("sizeMode", ContainerType.VBOX);
-			this._topContainer = new Container(this.topLayout);
-			this.addItem(this.topContainer);
+			this._topContainer = new Container(this._topLayout);
+			this.addItem(this._topContainer);
 
 			this.rightLayout.stretchChildrenToFit = true;
-			this.rightLayout.setStyle("sizeMode", ContainerType.HBOX);
-			this._rightContainer = new Container(this.rightLayout);
-			this.addItem(this.rightContainer);
+			this._rightContainer = new Container(this._rightLayout);
+			this.addItem(this._rightContainer);
 
 			this.bottomLayout.stretchChildrenToFit = true;
-			this.bottomLayout.setStyle("sizeMode", ContainerType.VBOX);
-			this._bottomContainer = new Container(this.bottomLayout);
-			this.addItem(this.bottomContainer);
+			this._bottomContainer = new Container(this._bottomLayout);
+			this.addItem(this._bottomContainer);
 
 			this.leftLayout.stretchChildrenToFit = true;
-			this.leftLayout.setStyle("sizeMode", ContainerType.HBOX);
-			this._leftContainer = new Container(this.leftLayout);
-			this.addItem(this.leftContainer);
+			this._leftContainer = new Container(this._leftLayout);
+			this.addItem(this._leftContainer);
 
 			this._centerStack = new Container();
-			this.centerStack.setStyle("sizeMode", ContainerType.BOX);
-			this.centerStack.layout = this.centerLayout;
-			this.addItem(this.centerStack);
+			this._centerStack.layout = this.centerLayout;
+			this.addItem(this._centerStack);
 		}
 	
 		/**

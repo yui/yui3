@@ -5,7 +5,6 @@ package com.yahoo.renderers
 	import com.yahoo.renderers.layout.ContainerType;
 	import com.yahoo.renderers.styles.RendererStyles;
 	import com.yahoo.renderers.styles.IStyle;
-	import com.yahoo.renderers.events.StyleEvent;
 	import com.yahoo.renderers.events.RendererEvent;
 	import com.yahoo.renderers.ApplicationGlobals;
 	import flash.events.Event;
@@ -13,9 +12,8 @@ package com.yahoo.renderers
 	/**
 	 * Base class for rendering DisplayObjects with styles
 	 */
-	public class Renderer extends Sprite implements IStyle
+	public class Renderer extends Sprite
 	{
-		
 	//--------------------------------------
 	//  Static Properties
 	//--------------------------------------		
@@ -48,6 +46,38 @@ package com.yahoo.renderers
 		protected var _hasFlag:Boolean = false;
 	
 		/**
+		 * @private 
+		 * Storage for sizing algorithm
+		 */
+		public var _sizeMode:String = ContainerType.BOX;
+
+		/**
+		 * Gets or sets the <code>sizeMode</code>.
+		 * <p>The <code>sizeMode</code> determines how the dimensions of a renderer are determined.
+		 * The available settings are below:
+		 * <ul>
+		 * 	<li><code>none</code>: The dimensions will be determined by the sum of its contents.</li>
+		 * 	<li><code>box</code>: Width and height are explicitly set.</li>
+		 * 	<li><code>hbox</code>: Height is explicitly set. Width is determined by the sum of its contents.</li>
+		 * 	<li><code>vbox</code>: Width is explicitly set. Height is determined by the sum of its contents.</li>
+		 * </ul>
+		 */
+		public function get sizeMode():String
+		{
+			return this._sizeMode;
+		}
+
+		/**
+		 * @private (setter)
+		 */
+		public function set sizeMode(value:String):void
+		{
+			if(value == this.sizeMode) return;
+			this._sizeMode = value;
+			this.setFlag("sizeMode");
+		}
+		
+		/**
 	 	 * @private
 	 	 * Storage for width
 	 	 */
@@ -63,7 +93,7 @@ package com.yahoo.renderers
 	 	 */
 		override public function get width():Number
 		{
-			if(this.getStyle("sizeMode") == ContainerType.BOX || this.getStyle("sizeMode") == ContainerType.VBOX) return this._width;
+			if(this.sizeMode == ContainerType.BOX || this.sizeMode == ContainerType.VBOX) return this._width;
 			return this.contentWidth;
 		}
 	
@@ -74,7 +104,7 @@ package com.yahoo.renderers
 		{
 			if(this.width == value) return;
 			this._width = value;
-			if(this.getStyle("sizeMode") == ContainerType.HBOX || this.getStyle("sizeMode") == ContainerType.NONE) return;
+			if(this.sizeMode == ContainerType.HBOX || this.sizeMode == ContainerType.NONE) return;
 			if(isNaN(value)) return;
 			var resizeEvent:RendererEvent = new RendererEvent(RendererEvent.RESIZE);
 			resizeEvent.widthChange = true;
@@ -106,7 +136,7 @@ package com.yahoo.renderers
 	 	 */		
 		override public function get height():Number
 		{
-			if(this.getStyle("sizeMode") == ContainerType.BOX || this.getStyle("sizeMode") == ContainerType.HBOX) return this._height;
+			if(this.sizeMode == ContainerType.BOX || this.sizeMode == ContainerType.HBOX) return this._height;
 			return this.contentHeight;
 		}
 
@@ -117,7 +147,7 @@ package com.yahoo.renderers
 		{
 			if(this.height == value) return;
 			this._height = value;
-			if(this.getStyle("sizeMode") == ContainerType.VBOX || this.getStyle("sizeMode") == ContainerType.NONE) return;
+			if(this.sizeMode == ContainerType.VBOX || this.sizeMode == ContainerType.NONE) return;
 			if(isNaN(value)) return;
 			var resizeEvent:RendererEvent = new RendererEvent(RendererEvent.RESIZE);
 			resizeEvent.heightChange = true;
@@ -133,24 +163,6 @@ package com.yahoo.renderers
 			return super.height;
 		}
 
-		/**
-		 * Indicates whether or not to render on a style or property change.
-		 */
-		public function get autoRender():Boolean
-		{
-			if(this._globalApp) return this._globalApp.autoRender;
-			return false;
-		}
-		
-		/**
-		 * @private (setter)
-		 */
-		public function set autoRender(value:Boolean):void
-		{
-			if(value == this._globalApp.autoRender) return;
-			this._globalApp.autoRender = value;
-		}
-		
 		/**
 		 * @private 
 		 * Storage for styles property
@@ -177,6 +189,7 @@ package com.yahoo.renderers
 		 * Indicates whether the Renderer is in the process of rendering.
 		 */
 		public var rendering:Boolean = false;
+
 	//--------------------------------------
 	//  Public Methods
 	//--------------------------------------			
@@ -207,14 +220,16 @@ package com.yahoo.renderers
 		/**
 		 * Sets the value of a style
 		 */
-		public function setStyle(style:String, value:Object):void
+		public function setStyle(style:String, value:Object):Boolean
 		{
-			if(style == "width" || style == "height") 
+			if(style == "width" || style == "height" || style == "sizeMode") 
 			{
 				this[style] = value as Number;
-				return;
+				return true;
 			}
-			this._styles.setStyle(style, value);
+			var styleSet:Boolean = this._styles.setStyle(style, value);
+			if(styleSet) this.setFlag(style);
+			return styleSet;
 		}
 	
 		/**
@@ -222,9 +237,19 @@ package com.yahoo.renderers
 		 */
 		public function setStyles(styles:Object):void
 		{
+			var styleSet:Boolean,
+				i:String;
 			if(styles.hasOwnProperty("width")) this.width = styles.width as Number;
 			if(styles.hasOwnProperty("height")) this.height = styles.height as Number;
-			this._styles.setStyles(styles);
+			if(styles.hasOwnProperty("sizeMode")) this.sizeMode = styles.sizeMode as String;
+			for(i in styles)
+			{
+				if(styles.hasOwnProperty(i))
+				{
+					styleSet = this._styles.setStyle(i, styles[i]);
+					if(styleSet) this.setFlag(i);
+				}
+			}
 		}
 		
 		/**
@@ -252,8 +277,6 @@ package com.yahoo.renderers
 		protected function initializeRenderer():void
 		{
 			this._globalApp = ApplicationGlobals.getInstance();
-			if(this.stage) this.stage.addEventListener(Event.ENTER_FRAME, this.callRender, false, 0, true);
-			this.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage); 	
 			this.setStyleInstance();
 		}
 
@@ -267,7 +290,6 @@ package com.yahoo.renderers
 				var styleClass:Class = this.getStyleClass();			
 				this._styles = new styleClass();
 			}
-			this._styles.addEventListener(StyleEvent.STYLE_CHANGE, this.styleChangeHandler);		
 		}
 	
 	//--------------------------------------
@@ -277,9 +299,9 @@ package com.yahoo.renderers
 	 	 * @private
 	 	 * Event handler for rendering. 
 	 	 */
-		private function callRender(event:Event):void
+		public function callRender():void
 		{
-			if(this._hasFlag && this.autoRender && !this.rendering)
+			if(!this.rendering)
 			{
 				this.rendering = true;
 				this.render();
@@ -310,30 +332,38 @@ package com.yahoo.renderers
 			this._previousHeight = this.height;
 			this.dispatchEvent(event);
 		}
-				
-		/**
-		 * @private
-		 */
-		private function handleAddedToStage(event:Event):void
-		{
-			this.stage.addEventListener(Event.ENTER_FRAME, this.callRender, false, 0, true);
-		}
 		
+		public var autoRender:Boolean = true;
+
 		/**
 		 * @private
 		 */
 		protected function setFlag(value:String):void
 		{
-			this._hasFlag = true;
+			if(!this._hasFlag)
+			{
+				this._hasFlag = true;
+				if(this.autoRender) 
+				{
+					this._globalApp.addRenderer(this);
+				}
+			}
 			this._renderFlags[value] = true;
 		}
-		
+	
+		protected var _hasLaterFlag:Boolean = false;
+
 		/**
 		 * @private 
 		 * Sets a flag to mark for rendering on a later enterFrame.
 		 */
 		protected function setLaterFlag(value:String):void
 		{
+			if(!this._hasLaterFlag)
+			{
+				this._hasLaterFlag = true;
+				if(this.autoRender) this._globalApp.addLaterRenderer(this);
+			}
 			this._laterFlags[value] = true;
 		}
 
@@ -342,11 +372,9 @@ package com.yahoo.renderers
 		 */
 		private function setFlags(value:Array):void
 		{
-			this._hasFlag = true;
 			for(var i:int = 0; i < value.length; i++)
 			{
-				var obj:Object = value[i];
-				if(obj.style) this._renderFlags[obj.style] = true;
+				this.setFlag(value[i]);
 			}
 		}	
 
@@ -359,8 +387,9 @@ package com.yahoo.renderers
 			this._hasFlag = false;
 			for(var i:String in this._laterFlags)
 			{
-				this.setFlag(i);
+				this._renderFlags[i] = this._laterFlags[i];
 			}
+			this._hasLaterFlag = false;
 			this._laterFlags = {};
 		}
 		
@@ -389,17 +418,5 @@ package com.yahoo.renderers
 			return hasFlag;
 		}
 
-	//--------------------------------------
-	//  Event Handlers
-	//--------------------------------------		
-		/**
-		 * @private
-		 */
-		protected function styleChangeHandler(event:StyleEvent):void
-		{
-			if(event.style && event.style.style) this.setFlag(event.style.style);
-			if(event.styles && event.styles.length > 0) this.setFlags(event.styles as Array);
-			this.setFlag(DisplayChangeType.STYLES);
-		}
 	}
 }

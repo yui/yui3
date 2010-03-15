@@ -13,11 +13,21 @@ package com.yahoo.renderers.layout
 		{
 		}
 
+		protected var _sizeMode:String = ContainerType.BOX;
+
+		/**
+		 * @copy com.yahoo.renderers.layout.ILayoutStrategy#sizeMode
+		 */
+		public function get sizeMode():String
+		{
+			return this._sizeMode;
+		}
+
 		/**
 		 * @private 
 		 * Storage for styles property
 		 */
-		private var _styles:IStyle = new LayoutStyles();
+		protected var _styles:IStyle = new LayoutStyles();
 
 		/**
 		 * @copy com.yahoo.renderers.layout.ILayoutStrategy#styles
@@ -327,25 +337,9 @@ package com.yahoo.renderers.layout
 		 */
 		public function getStyle(value:String):Object
 		{
-			return this._styles.getStyle(value);
+			return this._styles[value];
 		}
 	
-		/**
-		 * Sets the value of a style
-		 */
-		public function setStyle(styles:String, value:Object):void
-		{
-			this._styles.setStyle(styles, value);
-		}
-	
-		/**
-		 * @copy com.yahoo.styles.IStyle#setStyles()
-		 */
-		public function setStyles(styles:Object):void
-		{
-			this._styles.setStyles(styles);
-		}
-		
 		/**
 		 * @copy com.yahoo.renderers.layout.ILayoutStrategy#measureContent()
 		 */

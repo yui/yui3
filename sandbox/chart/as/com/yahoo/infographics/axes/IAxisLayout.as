@@ -14,6 +14,11 @@ package com.yahoo.infographics.axes
 	public interface IAxisLayout extends IEventDispatcher
 	{
 		/**
+		 * Determines how the width and height are calculated.
+		 */
+		function get sizeMode():String;
+
+		/**
 		 * Returns the greatest width of a label on the axis.
 		 */
 		function get maxLabelWidth():Number

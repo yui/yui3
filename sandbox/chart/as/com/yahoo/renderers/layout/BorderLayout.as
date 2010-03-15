@@ -25,7 +25,6 @@ package com.yahoo.renderers.layout
 		{
 			super.container = value;
 			this._borderContainer = BorderContainer(container);
-			this.setStyle("sizeMode", ContainerType.BOX);
 		}
 
 		/**
