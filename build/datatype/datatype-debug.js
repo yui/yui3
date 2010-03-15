@@ -343,7 +343,7 @@ var Dt = {
 		F: "%Y-%m-%d",
 		h: "%b",
 		n: "\n",
-		r: "locale",
+		r: "%I:%M:%S %p",
 		R: "%H:%M",
 		t: "\t",
 		T: "%H:%M:%S",
@@ -483,6 +483,9 @@ var Dt = {
         }
 
 		var replace_aggs = function (m0, m1) {
+			if (compatMode && m1 === "r") {
+			    return resources[m1];
+			}
 			var f = Dt.aggregates[m1];
 			return (f === "locale" ? resources[m1] : f);
 		};

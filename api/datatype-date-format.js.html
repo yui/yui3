@@ -197,7 +197,7 @@
 		<span class="nx">F</span><span class="o">:</span> <span class="s2">&quot;%Y-%m-%d&quot;</span><span class="p">,</span>
 		<span class="nx">h</span><span class="o">:</span> <span class="s2">&quot;%b&quot;</span><span class="p">,</span>
 		<span class="nx">n</span><span class="o">:</span> <span class="s2">&quot;\n&quot;</span><span class="p">,</span>
-		<span class="nx">r</span><span class="o">:</span> <span class="s2">&quot;locale&quot;</span><span class="p">,</span>
+		<span class="nx">r</span><span class="o">:</span> <span class="s2">&quot;%I:%M:%S %p&quot;</span><span class="p">,</span>
 		<span class="nx">R</span><span class="o">:</span> <span class="s2">&quot;%H:%M&quot;</span><span class="p">,</span>
 		<span class="nx">t</span><span class="o">:</span> <span class="s2">&quot;\t&quot;</span><span class="p">,</span>
 		<span class="nx">T</span><span class="o">:</span> <span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">,</span>
@@ -337,6 +337,9 @@
         <span class="p">}</span>
 
 		<span class="kd">var</span> <span class="nx">replace_aggs</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">m0</span><span class="p">,</span> <span class="nx">m1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span><span class="nx">compatMode</span> <span class="o">&amp;&amp;</span> <span class="nx">m1</span> <span class="o">===</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="p">{</span>
+			    <span class="k">return</span> <span class="nx">resources</span><span class="p">[</span><span class="nx">m1</span><span class="p">];</span>
+			<span class="p">}</span>
 			<span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">Dt</span><span class="p">.</span><span class="nx">aggregates</span><span class="p">[</span><span class="nx">m1</span><span class="p">];</span>
 			<span class="k">return</span> <span class="p">(</span><span class="nx">f</span> <span class="o">===</span> <span class="s2">&quot;locale&quot;</span> <span class="o">?</span> <span class="nx">resources</span><span class="p">[</span><span class="nx">m1</span><span class="p">]</span> <span class="o">:</span> <span class="nx">f</span><span class="p">);</span>
 		<span class="p">};</span>

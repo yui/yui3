@@ -6,7 +6,6 @@
 ,"c":"%a, %d. %b %Y %H:%M:%S %Z"
 ,"p":["VORM.","NACHM."]
 ,"P":["vorm.","nachm."]
-,"r":"%I:%M:%S %p"
 ,"x":"%d.%m.%y"
 ,"X":"%H:%M:%S"
 }

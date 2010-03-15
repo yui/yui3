@@ -7,7 +7,7 @@ The Console tool
     * Internal reorganization (API and functionality unaffected)
     * Fixed double escapement of & when used with ConsoleFilters and hiding and
       showing content with html entities
-    * Strings broken out into Intl language packs.  English (en, default) and
+    * Strings broken out into Intl language resource bundles.  English (en, default) and
       Spanish (es) supported
 
 3.0.0
