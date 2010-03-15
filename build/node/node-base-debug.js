@@ -924,19 +924,28 @@ Y.one = Y.Node.one;
  */
 
 var NodeList = function(nodes) {
-    if (typeof nodes === 'string') {
+    var tmp = [];
+    if (typeof nodes === 'string') { // selector query
         this._query = nodes;
         nodes = Y.Selector.query(nodes);
-    } else if (nodes.nodeType) {
+    } else if (nodes.nodeType) { // domNode
         nodes = [nodes];
-    } else {
+    } else if (nodes instanceof Y.Node) {
+        nodes = [nodes._node];
+    } else if (nodes[0] instanceof Y.Node) { // allow array of Y.Nodes
+        Y.Array.each(nodes, function(node) {
+            if (node._node) {
+                tmp.push(node._node);
+            }
+        });
+        nodes = tmp;
+    } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
         nodes = Y.Array(nodes, 0, true);
     }
 
     NodeList._instances[Y.stamp(this)] = this;
     this._nodes = nodes;
 };
-// end "globals"
 
 NodeList.NAME = 'NodeList';
 

@@ -8,6 +8,10 @@ ul, li {
     margin: 0;
     padding: 0;
 }
+
+.yui3-tabview {
+    margin-bottom: 1em;
+}
 </style>
 </head>
 <body class="yui3-skin-sam">
@@ -31,7 +35,7 @@ ul, li {
 </div>
 </body>
 <script type="text/javascript">
-YUI({filter: 'raw'}).use('tabview', function(Y) {
+YUI({filter: 'raw'}).use('tabview', 'tabview-plugin', function(Y) {
     var tabview = new Y.TabView({
         boundingBox: '#demo',
         children: [{
@@ -52,7 +56,6 @@ YUI({filter: 'raw'}).use('tabview', function(Y) {
     //tabview.remove(0);
     //tablist.get('selection').next().set('selected', 1);
 
-
     var tabview2 = new Y.TabView({
         contentBox: '#demo2'
     });
@@ -62,7 +65,6 @@ YUI({filter: 'raw'}).use('tabview', function(Y) {
         label: 'foobar',
         content: 'foobar content'
     });
-    console.log(tabview2.get('contentBox').focusManager.get('descendants'));
     tabview2.selectChild(2);
     //tabview2.add(tabview.item(1));
 });

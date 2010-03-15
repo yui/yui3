@@ -93,10 +93,12 @@ var _queries = Y.TabviewBase._queries,
     _renderListBox: function(contentBox) {
         var list = contentBox.one(_queries.tabviewList);
         if (!list) {
-            contentBox.append(TabView.LIST_TEMPLATE);
+            list = contentBox.appendChild(Y.Node.create(TabView.LIST_TEMPLATE));
         } else {
             list.addClass(_classNames.tabviewList);
         }
+
+        this._childrenContainer = list;
     },
 
     _renderPanelBox: function(contentBox) {

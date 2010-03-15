@@ -11,8 +11,6 @@
     display:block;
 }
 
-/* core */
-
 .yui3-tabview-list,
 .yui3-tab {
     margin:0;
@@ -25,14 +23,13 @@
     zoom:1;
 }
 
-.yui3-tabvew-panel,
+.yui3-tabview-panel,
 .yui3-tab-panel {
     zoom:1;
 }
 
 .yui3-tab {
     display:inline-block;
-    display:-moz-inline-stack;
     *display:inline; /* IE */
     vertical-align:bottom; /* safari: for overlap */
     cursor:pointer; /* gecko: due to -moz-inline-stack on anchor */
@@ -44,6 +41,10 @@
 .yui3-tab-label {
     display:block;
     display:inline-block;
+    position:relative; /* IE: to allow overlap */
+    text-decoration: none;
     vertical-align:bottom; /* safari: for overlap */
     zoom:1;
 }
+
+

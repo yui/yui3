@@ -142,10 +142,12 @@
     <span class="nx">_renderListBox</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">list</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewList</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">list</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">contentBox</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">TabView</span><span class="p">.</span><span class="nx">LIST_TEMPLATE</span><span class="p">);</span>
+            <span class="nx">list</span> <span class="o">=</span> <span class="nx">contentBox</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">TabView</span><span class="p">.</span><span class="nx">LIST_TEMPLATE</span><span class="p">));</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">list</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabviewList</span><span class="p">);</span>
         <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">_childrenContainer</span> <span class="o">=</span> <span class="nx">list</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="nx">_renderPanelBox</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
@@ -299,7 +301,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Tab", "name": "label", "url": "Tab.html#config_label", "type": "config"}, {"access": "", "host": "Tab", "name": "labelChange", "url": "Tab.html#event_labelChange", "type": "event"}, {"access": "", "host": "Tab", "name": "triggerEvent", "url": "Tab.html#config_triggerEvent", "type": "config"}, {"access": "", "host": "Tab", "name": "triggerEventChange", "url": "Tab.html#event_triggerEventChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Tab", "name": "content", "url": "Tab.html#config_content", "type": "config"}, {"access": "", "host": "Tab", "name": "contentChange", "url": "Tab.html#event_contentChange", "type": "event"}, {"access": "", "host": "Tab", "name": "label", "url": "Tab.html#config_label", "type": "config"}, {"access": "", "host": "Tab", "name": "labelChange", "url": "Tab.html#event_labelChange", "type": "event"}, {"access": "", "host": "Tab", "name": "triggerEvent", "url": "Tab.html#config_triggerEvent", "type": "config"}, {"access": "", "host": "Tab", "name": "triggerEventChange", "url": "Tab.html#event_triggerEventChange", "type": "event"}];
 </script>
 </body>
 </html>
