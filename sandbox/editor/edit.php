@@ -133,8 +133,8 @@ del {
 </style>
 </div>
 
-<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.0pr1/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
+<!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
+<script type="text/javascript" src="http://yui.yahooapis.com/3.1.0pr1/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
@@ -148,7 +148,6 @@ del {
 <script type="text/javascript">
 var yConfig = {
     debug: true,
-    //base: '../../build/',
     filter: 'DEBUG',
     allowRollup: false,
     logExclude: {
