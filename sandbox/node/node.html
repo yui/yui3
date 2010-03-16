@@ -4,27 +4,16 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>Node</title>
 
-<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+<script type="text/javascript" src="../../build/yui/yui.js"></script>
 </head>
 
 <body>
+<div id="foo">foo</div>
 <script type="text/javascript">
 
 
-YUI().use('node', function(Y) {
-    
-    var oDIV = document.createElement('div');
-    
-    oDIV.innerHTML = '<div id="foo"><div class="bar"></div></div>';
-    
-    var oNode = Y.one(oDIV);
-    
-    var oFoo = oNode.one('#foo');
-    
-    var oBar = oFoo.one('.bar');
-    
-    alert(oBar.get('nodeName'));
-    
+YUI({filter:'debug'}).use('node', function(Y) {
+    console.log(Y.all('#foo').removeAttribute('id').get('id'));
 });
 
 

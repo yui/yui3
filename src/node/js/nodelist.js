@@ -88,7 +88,7 @@ NodeList.addMethod = function(name, fn, context) {
             return ret.length ? ret : this;
         };
     } else {
-        Y.log('unable to add method: ' + name, 'warn', 'Node');
+        Y.log('unable to add method: ' + name + ' to NodeList', 'warn', 'node');
     }
 };
 

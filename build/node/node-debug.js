@@ -998,7 +998,7 @@ NodeList.addMethod = function(name, fn, context) {
             return ret.length ? ret : this;
         };
     } else {
-        Y.log('unable to add method: ' + name, 'warn', 'Node');
+        Y.log('unable to add method: ' + name + ' to NodeList', 'warn', 'node');
     }
 };
 
@@ -1552,7 +1552,7 @@ Y.Node.importMethod(Y.DOM, [
  * @param {string} name The attribute name 
  * @return {string} The attribute value 
  */
-Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
+Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'removeAttribute']);
 (function(Y) {
     var methods = [
     /**
