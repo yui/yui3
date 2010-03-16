@@ -98,7 +98,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * @property rail
          * @type {Node}
          */
-        this.rail = this._renderRail();
+        this.rail = this.renderRail();
 
         this._uiSetRailLength( this.get( 'length' ) );
 
@@ -109,7 +109,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * @property thumb
          * @type {Node}
          */
-        this.thumb = this._renderThumb();
+        this.thumb = this.renderThumb();
 
         this.rail.appendChild( this.thumb );
         // @TODO: insert( contentBox, 'replace' ) or setContent?
@@ -121,13 +121,13 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
 
     /**
      * Creates the Slider rail DOM subtree for insertion into the Slider's
-     * <code>contentBox</code>.
+     * <code>contentBox</code>.  Override this method if you want to provide
+     * the rail element (presumably from existing markup).
      *
-     * @method _renderRail
+     * @method renderRail
      * @return {Node} the rail node subtree
-     * @protected
      */
-    _renderRail: function () {
+    renderRail: function () {
         var minCapClass = this.getClassName( 'rail', 'cap', this._key.minEdge ),
             maxCapClass = this.getClassName( 'rail', 'cap', this._key.maxEdge );
 
@@ -152,13 +152,13 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
 
     /**
      * Creates the Slider thumb DOM subtree for insertion into the Slider's
-     * rail.
+     * rail.  Override this method if you want to provide the thumb element
+     * (presumably from existing markup).
      *
-     * @method _renderThumb
+     * @method renderThumb
      * @return {Node} the thumb node subtree
-     * @protected
      */
-    _renderThumb: function () {
+    renderThumb: function () {
         this._initThumbUrl();
 
         var imageUrl = this.get( 'thumbUrl' );
