@@ -494,7 +494,7 @@
             <span class="nx">_tE</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="nx">c</span><span class="p">).</span><span class="nx">fire</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span> <span class="p">);</span>
+        <span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
     <span class="p">}</span>
 
    <span class="cm">/**</span>
@@ -596,7 +596,7 @@
             <span class="c1">// Remove the custom header when making cross-domain</span>
             <span class="c1">// requests to avoid unintended pre-flight requests</span>
             <span class="c1">// or access control conflicts.</span>
-            <span class="nx">_setHeader</span><span class="p">(</span><span class="s1">&#39;X-Requested-With&#39;</span><span class="p">);</span>
+            <span class="k">delete</span> <span class="nx">_headers</span><span class="p">[</span><span class="s1">&#39;X-Requested-With&#39;</span><span class="p">];</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="nx">o</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="p">{};</span>
@@ -776,10 +776,10 @@
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="kd">function</span> <span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">_destroy</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// IE, when using XMLHttpRequest as an ActiveX Object, will throw</span>
         <span class="c1">// a &quot;Type Mismatch&quot; error if the event handler is set to &quot;null&quot;.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">XMLHttpRequest</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">w</span><span class="p">.</span><span class="nx">XMLHttpRequest</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">}</span>
