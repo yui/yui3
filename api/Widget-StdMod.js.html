@@ -112,9 +112,9 @@
 
         <span class="k">this</span><span class="p">.</span><span class="nx">_stdModNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">CONTENT_BOX</span><span class="p">);</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_renderUIStdMod</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">RENDERUI</span><span class="p">);</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_bindUIStdMod</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">BINDUI</span><span class="p">);</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_syncUIStdMod</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">SYNCUI</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_renderUIStdMod</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">RENDERUI</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_bindUIStdMod</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">BINDUI</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">before</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_syncUIStdMod</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">SYNCUI</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="cm">/**</span>

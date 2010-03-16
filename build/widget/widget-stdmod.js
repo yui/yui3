@@ -65,9 +65,9 @@ YUI.add('widget-stdmod', function(Y) {
 
         this._stdModNode = this.get(CONTENT_BOX);
 
-        Y.after(this._renderUIStdMod, this, RENDERUI);
-        Y.after(this._bindUIStdMod, this, BINDUI);
-        Y.after(this._syncUIStdMod, this, SYNCUI);
+        Y.before(this._renderUIStdMod, this, RENDERUI);
+        Y.before(this._bindUIStdMod, this, BINDUI);
+        Y.before(this._syncUIStdMod, this, SYNCUI);
     }
 
     /**
