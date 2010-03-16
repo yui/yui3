@@ -191,7 +191,7 @@ YUI.add('io-xdr', function(Y) {
                 o.c.send(c.data);
             }
             else {
-                o.c.send(uri, c, o.id)
+                o.c.send(uri, o, c);
             }
 
             return {

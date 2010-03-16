@@ -447,7 +447,7 @@ YUI.add('io-base', function(Y) {
             _tE('end', c).fire(o.id);
         }
 
-        _destroy(o, c.xdr ? true : false );
+        _destroy(o);
     }
 
    /**
@@ -549,7 +549,7 @@ YUI.add('io-base', function(Y) {
             // Remove the custom header when making cross-domain
             // requests to avoid unintended pre-flight requests
             // or access control conflicts.
-            _setHeader('X-Requested-With');
+            delete _headers['X-Requested-With'];
         }
         else {
             o.c = {};
@@ -729,10 +729,10 @@ YUI.add('io-base', function(Y) {
         }
     }
 
-    function _destroy(o, t) {
+    function _destroy(o) {
         // IE, when using XMLHttpRequest as an ActiveX Object, will throw
         // a "Type Mismatch" error if the event handler is set to "null".
-        if (w.XMLHttpRequest && !t) {
+        if (w.XMLHttpRequest) {
             if (o.c) {
                 o.c.onreadystatechange = null;
             }
@@ -1074,7 +1074,7 @@ YUI.add('io-xdr', function(Y) {
                 o.c.send(c.data);
             }
             else {
-                o.c.send(uri, c, o.id)
+                o.c.send(uri, o, c);
             }
 
             return {
