@@ -1,7 +1,6 @@
 package com.yahoo.renderers.layout
 {
 	import flash.display.DisplayObject;
-	import com.yahoo.renderers.events.LayoutEvent;
 
 	public class HLayout extends LayoutStrategy
 	{
@@ -127,8 +126,7 @@ package com.yahoo.renderers.layout
 			}
 			this._contentHeight += this._topPadding + this._bottomPadding;
 			this._contentWidth += this._rightPadding - this._horizontalGap;
-			if(this._contentWidth != oldWidth) this.dispatchEvent(new LayoutEvent(LayoutEvent.CONTENT_WIDTH_UPDATE));
-			if(this._contentHeight != oldHeight) this.dispatchEvent(new LayoutEvent(LayoutEvent.CONTENT_HEIGHT_UPDATE));
+			this.container.update(this._contentWidth != oldWidth, this._contentHeight != oldHeight);
 		}
 	}
 }

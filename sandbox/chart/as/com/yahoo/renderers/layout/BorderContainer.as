@@ -1,7 +1,6 @@
 package com.yahoo.renderers.layout
 {
 	import com.yahoo.renderers.Renderer;
-	import com.yahoo.renderers.events.LayoutEvent;
 	import com.yahoo.renderers.events.RendererEvent;
 	import com.yahoo.renderers.styles.LayoutStyles;
 	import flash.display.DisplayObject;
@@ -204,22 +203,27 @@ package com.yahoo.renderers.layout
 		{
 			this.topLayout.stretchChildrenToFit = true;
 			this._topContainer = new Container(this._topLayout);
+			this._topContainer.autoRender = false;
 			this.addItem(this._topContainer);
 
 			this.rightLayout.stretchChildrenToFit = true;
 			this._rightContainer = new Container(this._rightLayout);
+			this._rightContainer.autoRender = false;
 			this.addItem(this._rightContainer);
 
 			this.bottomLayout.stretchChildrenToFit = true;
 			this._bottomContainer = new Container(this._bottomLayout);
+			this._bottomContainer.autoRender = false;
 			this.addItem(this._bottomContainer);
 
 			this.leftLayout.stretchChildrenToFit = true;
 			this._leftContainer = new Container(this._leftLayout);
+			this._leftContainer.autoRender = false;
 			this.addItem(this._leftContainer);
 
 			this._centerStack = new Container();
 			this._centerStack.layout = this.centerLayout;
+			this._centerStack.autoRender = false;
 			this.addItem(this._centerStack);
 		}
 	

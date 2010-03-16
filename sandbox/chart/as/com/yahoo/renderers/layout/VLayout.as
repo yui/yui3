@@ -1,8 +1,7 @@
 package com.yahoo.renderers.layout
 {
 	import flash.display.DisplayObject;
-	import com.yahoo.renderers.events.LayoutEvent;
-
+	
 	public class VLayout extends LayoutStrategy implements ILayoutStrategy
 	{
 		public function VLayout()
@@ -128,8 +127,7 @@ package com.yahoo.renderers.layout
 			}
 			this._contentWidth += this._leftPadding + this._rightPadding;
 			this._contentHeight += this._bottomPadding - this._verticalGap;
-			if(this._contentWidth != oldWidth) this.dispatchEvent(new LayoutEvent(LayoutEvent.CONTENT_WIDTH_UPDATE));
-			if(this._contentHeight != oldHeight) this.dispatchEvent(new LayoutEvent(LayoutEvent.CONTENT_HEIGHT_UPDATE));
+			this.container.update(this._contentWidth != oldWidth, this._contentHeight != oldHeight);
 		}
 	}
 }

@@ -71,12 +71,12 @@ package com.yahoo.renderers.layout
 		 * @private 
 		 * Storage for container.
 		 */
-		private var _container:DisplayObjectContainer;
+		private var _container:Container;
 
 		/**
 		 * Gets or sets the <code>Container</code>
 		 */
-		public function get container():DisplayObjectContainer
+		public function get container():Container
 		{
 			return this._container;
 		}
@@ -84,7 +84,7 @@ package com.yahoo.renderers.layout
 		/**
 		 * @private (setter)
 		 */
-		public function set container(value:DisplayObjectContainer):void
+		public function set container(value:Container):void
 		{
 			this._container = value;
 		}

@@ -2,7 +2,7 @@ package com.yahoo.renderers.layout
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	import com.yahoo.renderers.events.LayoutEvent;
+	
 	/**
 	 * Contains algorithms for laying out display objects in a 
 	 * border pattern with a header, footer, 2 sidebars and a center
@@ -21,7 +21,7 @@ package com.yahoo.renderers.layout
 		/**
 		 * @private
 		 */
-		override public function set container(value:DisplayObjectContainer):void
+		override public function set container(value:Container):void
 		{
 			super.container = value;
 			this._borderContainer = BorderContainer(container);
@@ -133,25 +133,25 @@ package com.yahoo.renderers.layout
 			if(rc.height != this._availableHeight)
 			{
 				rc.height = this._availableHeight;
-//				rc.forceRender();
+				rc.forceRender();
 			}
 
 			if(lc.height != this._availableHeight)
 			{
 				lc.height = this._availableHeight;
-//				lc.forceRender();
+				lc.forceRender();
 			}
 
 			if(tc.width != this._availableWidth)
 			{
 				tc.width = this._availableWidth;
-//				tc.forceRender();
+				tc.forceRender();
 			}
 
 			if(bc.width != this._availableWidth)
 			{
 				bc.width = this._availableWidth;
-//				bc.forceRender();
+				bc.forceRender();
 			}
 
 			tc.x = this._totalLeftBorder;
@@ -173,7 +173,7 @@ package com.yahoo.renderers.layout
 			this._borderContainer.centerStack.y = this._totalTopBorder;
 			this._borderContainer.centerStack.width = this._availableWidth;
 			this._borderContainer.centerStack.height = this._availableHeight;
-//			this._borderContainer.centerStack.forceRender();
+			this._borderContainer.centerStack.forceRender();
 		}
 	}
 }

@@ -233,25 +233,29 @@ package com.yahoo.util
 		 */
 		private function parseInstances(args:Array):Array
 		{
-			var first:String;
-			for (var i:int = 0; i < args.length; i++) 
+			var first:String,
+				i:int,
+				len:int = args.length,
+				arg:String;
+			for (i = 0; i < len; ++i) 
 			{
 				if (args[i] is String)
 				{
-					first = args[i].substr(0, 1);
+					arg = args[i] as String;
+					first = arg.substr(0, 1);
 					if(first == "$") 
 					{
-						args[i] = getInstance(args[i].substr(1));
+						args[i] = getInstance(arg.substr(1));
 					}
 					else if(first == "[" || first == "{")
 					{
-						args[i] = JSON.decode(args[i]); 
+						args[i] = JSON.decode(arg); 
 					}
 				}
 			}
 			return args;
 		}
-
+		
 		/**
 		 * @private
 		 */

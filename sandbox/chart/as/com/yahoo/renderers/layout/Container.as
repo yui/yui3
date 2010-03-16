@@ -1,12 +1,11 @@
 package com.yahoo.renderers.layout
 {
 	import com.yahoo.renderers.Renderer;
-	import com.yahoo.renderers.events.LayoutEvent;
 	import com.yahoo.renderers.events.RendererEvent;
 	import com.yahoo.renderers.styles.LayoutStyles;
 	import flash.utils.Dictionary;	
 	import flash.display.DisplayObject;
-
+	
 	public class Container extends Renderer implements IContainer
 	{
 		/**
@@ -81,19 +80,11 @@ package com.yahoo.renderers.layout
 		 */
 		public function set layout(value:ILayoutStrategy):void
 		{
-			if(this._layout) 
-			{
-				this._layout.removeEventListener(LayoutEvent.CONTENT_WIDTH_UPDATE, handleContentWidthUpdate);
-				this._layout.removeEventListener(LayoutEvent.CONTENT_HEIGHT_UPDATE, handleContentHeightUpdate);
-			}
-
 			this._layout = value;
-			this._layout.addEventListener(LayoutEvent.CONTENT_WIDTH_UPDATE, handleContentWidthUpdate);
-			this._layout.addEventListener(LayoutEvent.CONTENT_HEIGHT_UPDATE, handleContentHeightUpdate);
 			this._layout.container = this;
 			this.setStyleInstance();
 		}
-
+		
 		/**
 		 * @private
 		 */
@@ -261,21 +252,10 @@ package com.yahoo.renderers.layout
 		{
 			this.updateRenderStatus();
 		}
-
-		/**
-		 * @private
-		 */
-		protected function handleContentWidthUpdate(event:LayoutEvent):void
+		
+		public function update(widthChange:Boolean = false, heightChange:Boolean = false):void
 		{
-			this.updateRenderStatus();
-		}
-
-		/**
-		 * @private
-		 */
-		protected function handleContentHeightUpdate(event:LayoutEvent):void
-		{
-			this.updateRenderStatus();
+			if(widthChange || heightChange) this.updateRenderStatus();
 		}
 		
 		/**

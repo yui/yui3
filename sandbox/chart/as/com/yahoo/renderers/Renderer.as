@@ -330,7 +330,7 @@ package com.yahoo.renderers
 			event.heightChange = this._previousHeight != this.height;
 			this._previousWidth = this.width;
 			this._previousHeight = this.height;
-			this.dispatchEvent(event);
+			if(this.willTrigger(event.type)) this.dispatchEvent(event);
 		}
 		
 		public var autoRender:Boolean = true;

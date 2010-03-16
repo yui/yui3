@@ -17,12 +17,12 @@ package com.yahoo.renderers.layout
 		 * Gets or sets the renderer that in which to apply
 		 * a layout strategy for.
 		 */
-		function get container():DisplayObjectContainer;
+		function get container():Container;
 
 		/**
 	     * @private (setter)
 		 */
-		function set container(value:DisplayObjectContainer):void;
+		function set container(value:Container):void;
 
 		/**
 		 * Total width of all children, padding and gaps.

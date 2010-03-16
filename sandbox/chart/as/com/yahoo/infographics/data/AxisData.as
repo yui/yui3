@@ -2,7 +2,7 @@ package com.yahoo.infographics.data
 {
 	import flash.events.EventDispatcher;
 	import com.yahoo.infographics.data.events.DataEvent;
-
+	import com.yahoo.renderers.ApplicationGlobals;
 	/**
 	 * Base class for axis data classes
 	 */
@@ -14,8 +14,11 @@ package com.yahoo.infographics.data
 		public function AxisData(dataProvider:ChartDataProvider = null)
 		{
 			super();
+			this._appGlobals = ApplicationGlobals.getInstance();
 			if(dataProvider) this.dataProvider = dataProvider;
 		}
+
+		protected var _appGlobals:ApplicationGlobals;
 
 		/**
 		 * @private (protected)
@@ -230,7 +233,9 @@ package com.yahoo.infographics.data
 			var keys:Object = this._keys,
 				eventKeys:Object = {},
 				event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
+			this._appGlobals.autoRender = false;
 			this.setDataByKey(value);
+			this._appGlobals.autoRender = true;
 			eventKeys[value] = keys[value].concat();
 			this.updateMinAndMax();
 			event.keysAdded = eventKeys; 
