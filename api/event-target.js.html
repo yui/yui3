@@ -416,7 +416,8 @@
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="nx">ce</span> <span class="o">=</span> <span class="nx">evts</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+        <span class="c1">// ce = evts[type];</span>
+        <span class="nx">ce</span> <span class="o">=</span> <span class="nx">evts</span><span class="p">[</span><span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]];</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
         <span class="p">}</span>
