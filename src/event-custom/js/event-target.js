@@ -368,7 +368,8 @@ ET.prototype = {
             }
         }
 
-        ce = evts[type];
+        // ce = evts[type];
+        ce = evts[parts[1]];
         if (ce) {
             ce.detach(fn, context);
         }

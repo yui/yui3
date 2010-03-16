@@ -335,7 +335,6 @@
                     }, []);
                     
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
-                    
 
                 },
 
@@ -356,23 +355,35 @@
                         },
                         els = document.getElementsByTagName('p');
 
-                    Y.on('click', fn, 'clicker1', obj, 2, 3);
-                    Y.detach('click', fn, 'clicker1', obj, 2, 3);
+
+                    Y.on('click', fn, '#clicker1', obj, 2, 3);
 
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
-                    Y.Assert.areEqual(0, clicked, "detach by signature was a failure");
 
-                    Y.on('click', fn, 'clicker1');
-                    Y.detach('click', fn, 'clicker1');
+                    Y.detach('click', fn, '#clicker1', obj, 2, 3);
+
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
+
+                    Y.on('click', fn, '#clicker1');
+                    Y.detach('click', fn, '#clicker1');
                     
                     Y.Event.simulate(document.getElementById('clicker1'), 'click');
-                    Y.Assert.areEqual(0, clicked, "detach by signature was a failure");
+                    Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
+
+                    var node = Y.one("#clicker1");
+
+                    node.on('click', fn);
+                    node.detach('click', fn);
+                    
+                    Y.Event.simulate(document.getElementById('clicker1'), 'click');
+                    Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
 
                     // Y.on('windowresize', fn);
                     // // unbind windowresize - THIS IS NOT WORKING
                     // Y.detach('windowresize', fn);
                     // Y.Event.simulate(window, 'resize');
-                    // Y.Assert.areEqual(0, clicked, "detach by signature was a failure");
+                    // Y.Assert.areEqual(1, clicked, "detach by signature was a failure");
 
                 },
 
