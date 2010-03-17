@@ -308,6 +308,8 @@
             (Y.Lang.isUndefined(doc.documentMode) || doc.documentMode > 7)) {
 
             // The HTML5 way of handling DHTML history...
+            // @TODO This is case-insensitive, at least in IE (WHY? spec, please actually specify things)
+            // bug #2528444
             win.onhashchange = function () {
                 var hash = _getHash();
                 _handleFQStateChange(hash);
@@ -588,6 +590,8 @@
          *     this method uses the URL in the address bar.
          * @return {string} The value of the specified parameter, or null.
          * @public
+         * @deprecated Use Y.QueryString.parse() in the querystring module.
+         * This will be removed in 3.2.0.
          */
         getQueryStringParameter: function (paramName, url) {
             var m, q, i;
