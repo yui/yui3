@@ -61,26 +61,24 @@
         EV_HISTORY_MODULE_STATE_CHANGE = 'history:moduleStateChange';
 
 
-    if (!YUI.Env.history) {
+    G = YUI.Env.history || {
 
-        YUI.Env.history = G = {
+        // Flag used to tell whether the history utility is ready to be used.
+        ready: false,
 
-            // Flag used to tell whether the history utility is ready to be used.
-            ready: false,
+        // List of registered modules.
+        _modules: [],
 
-            // List of registered modules.
-            _modules: [],
+        // INPUT field (with type="hidden" or type="text") or TEXTAREA.
+        // This field keeps the value of the initial state, current state
+        // the list of all states across pages within a single browser session.
+        _stateField: null,
 
-            // INPUT field (with type="hidden" or type="text") or TEXTAREA.
-            // This field keeps the value of the initial state, current state
-            // the list of all states across pages within a single browser session.
-            _stateField: null,
+        // Hidden IFrame used to store the browsing history on IE6/7.
+        _historyIFrame: null
+    };
 
-            // Hidden IFrame used to store the browsing history on IE6/7.
-            _historyIFrame: null
-        };
-
-    }
+    YUI.Env.history = G;
 
     /**
      * Returns the portion of the hash after the '#' symbol.
