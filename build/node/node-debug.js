@@ -200,11 +200,14 @@ Y_Node.importMethod = function(host, name, altName) {
 
 /**
  * Returns a single Node instance bound to the node or the
- * first element matching the given selector.
+ * first element matching the given selector. Returns null if no match found.
+ * <strong>Note:</strong> For chaining purposes you may want to
+ * use <code>Y.all</code>, which returns a NodeList when no match is found.
  * @method Y.one
  * @static
  * @param {String | HTMLElement} node a node or Selector 
- * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ * @param {Y.Node | HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ * @return {Y.Node | null} a Node instance or null if no match found.
  */
 Y_Node.one = function(node) {
     var instance = null,
