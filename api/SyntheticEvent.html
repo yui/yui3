@@ -61,7 +61,7 @@
                     <div class="summary description" property="yui:description">
                         <p>Wrapper class for the integration of new events into the YUI event
 infrastructure.  Don't instantiate this object directly, use
-<code>Y.Event.define( config )</code>.</p>
+<code>Y.Event.define( type, config )</code>.</p>
 <p>The configuration object must include the event <code>type</code>, and should include implementation methods for <code>on</code> and <code>detach</code>.  This is the full list of configuration properties:</p>
 <dl>
 <dt><code>type</code></dt>
@@ -95,6 +95,7 @@ function will be stored on the <code>subscription</code> object passed
 to <code>on</code> and <code>detach</code> under
 <code>subscription._extra</code>.</dd>
 <dt>
+</dl>
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
