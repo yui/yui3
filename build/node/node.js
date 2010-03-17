@@ -16,6 +16,7 @@ YUI.add('node-base', function(Y) {
  *
  * @class Node
  * @constructor
+ * @param {DOMNode} node the DOM node to be mapped to the Node instance.
  * @for Node
  */
 
@@ -205,7 +206,6 @@ Y_Node.importMethod = function(host, name, altName) {
  * @method Y.one
  * @static
  * @param {String | HTMLElement} node a node or Selector 
- * @param {Y.Node | HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
  * @return {Y.Node | null} a Node instance or null if no match found.
  */
 Y_Node.one = function(node) {
@@ -405,7 +405,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Returns an attribute value on the Node instance
      * @method get
-     * @param {String} attr The attribute 
+     * @param {String} attr The attribute
      * @return {any} The current value of the attribute
      */
     get: function(attr) {
