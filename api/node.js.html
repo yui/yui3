@@ -247,11 +247,14 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * Returns a single Node instance bound to the node or the</span>
-<span class="cm"> * first element matching the given selector.</span>
+<span class="cm"> * first element matching the given selector. Returns null if no match found.</span>
+<span class="cm"> * &lt;strong&gt;Note:&lt;/strong&gt; For chaining purposes you may want to</span>
+<span class="cm"> * use &lt;code&gt;Y.all&lt;/code&gt;, which returns a NodeList when no match is found.</span>
 <span class="cm"> * @method Y.one</span>
 <span class="cm"> * @static</span>
 <span class="cm"> * @param {String | HTMLElement} node a node or Selector </span>
-<span class="cm"> * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. </span>
+<span class="cm"> * @param {Y.Node | HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. </span>
+<span class="cm"> * @return {Y.Node | null} a Node instance or null if no match found.</span>
 <span class="cm"> */</span>
 <span class="nx">Y_Node</span><span class="p">.</span><span class="nx">one</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>

@@ -313,6 +313,9 @@
 <span class="cm">     * @method create</span>
 <span class="cm">     * @param {String} html The markup used to create the element</span>
 <span class="cm">     * @param {HTMLDocument} doc An optional document context </span>
+<span class="cm">     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement </span>
+<span class="cm">     * when creating one node, and a documentFragment when creating</span>
+<span class="cm">     * multiple nodes.</span>
 <span class="cm">     */</span>
     <span class="nx">create</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">html</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>

@@ -490,7 +490,7 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                         
                                         
                                         
-                                        void
+                                        HTMLElement|DocumentFragment
                                             <strong property="yui:name">create</strong>
                                            (
                                                 
@@ -527,6 +527,15 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            HTMLElement|DocumentFragment
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">returns a single HTMLElement 
+when creating one node, and a documentFragment when creating
+multiple nodes.</dd>
+                                                </dl>
 
 
              

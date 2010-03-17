@@ -3546,7 +3546,7 @@ first element matching the given selector.
                                         
                                          static 
                                         
-                                        void
+                                        Y.Node | null
                                             <strong property="yui:name">Y.one</strong>
                                            (
                                                 
@@ -3563,7 +3563,9 @@ first element matching the given selector.
                                         
                                         <div class="description" property="yui:description">
                                             Returns a single Node instance bound to the node or the
-first element matching the given selector.
+first element matching the given selector. Returns null if no match found.
+<strong>Note:</strong> For chaining purposes you may want to
+use <code>Y.all</code>, which returns a NodeList when no match is found.
                                         </div>
 
                                         <div class="description">
@@ -3578,12 +3580,19 @@ first element matching the given selector.
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">doc</span>
-                                                        &lt;<span property="yui:type">Y.Node || HTMLElement</span>&gt;
+                                                        &lt;<span property="yui:type">Y.Node | HTMLElement</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> an optional document to scan. Defaults to Y.config.doc.</span>
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Y.Node | null
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">a Node instance or null if no match found.</dd>
+                                                </dl>
 
 
              
