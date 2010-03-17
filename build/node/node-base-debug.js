@@ -336,6 +336,13 @@ Y_Node.ATTRS = {
         }
     },
 
+    /**
+     * A generic attribute for storing arbitrary data
+     * on a Node instance.  Data is stored internally,
+     * not on the DOM element itself.
+     * @config data
+     * @type any
+     */
     data: {
         getter: function() {
             return this._data;
