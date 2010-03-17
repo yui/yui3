@@ -16,6 +16,7 @@ YUI.add('node-base', function(Y) {
  *
  * @class Node
  * @constructor
+ * @param {DOMNode} node the DOM node to be mapped to the Node instance.
  * @for Node
  */
 
@@ -200,11 +201,13 @@ Y_Node.importMethod = function(host, name, altName) {
 
 /**
  * Returns a single Node instance bound to the node or the
- * first element matching the given selector.
+ * first element matching the given selector. Returns null if no match found.
+ * <strong>Note:</strong> For chaining purposes you may want to
+ * use <code>Y.all</code>, which returns a NodeList when no match is found.
  * @method Y.one
  * @static
  * @param {String | HTMLElement} node a node or Selector 
- * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ * @return {Y.Node | null} a Node instance or null if no match found.
  */
 Y_Node.one = function(node) {
     var instance = null,
@@ -333,6 +336,13 @@ Y_Node.ATTRS = {
         }
     },
 
+    /**
+     * A generic attribute for storing arbitrary data
+     * on a Node instance.  Data is stored internally,
+     * not on the DOM element itself.
+     * @config data
+     * @type any
+     */
     data: {
         getter: function() {
             return this._data;
@@ -404,7 +414,7 @@ Y.mix(Y_Node.prototype, {
     /**
      * Returns an attribute value on the Node instance
      * @method get
-     * @param {String} attr The attribute 
+     * @param {String} attr The attribute
      * @return {any} The current value of the attribute
      */
     get: function(attr) {
