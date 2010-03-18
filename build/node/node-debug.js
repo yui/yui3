@@ -491,7 +491,10 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Returns an attribute value on the Node instance
+     * Returns an attribute value on the Node instance.
+     * Unless pre-configured (via Node.ATTRS), get hands 
+     * off to the underlying DOM node.  Only valid
+     * attributes/properties for the node will be set.
      * @method get
      * @param {String} attr The attribute
      * @return {any} The current value of the attribute
@@ -535,6 +538,10 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Sets an attribute on the Node instance.
+     * Unless pre-configured (via Node.ATTRS), set hands 
+     * off to the underlying DOM node.  Only valid
+     * attributes/properties for the node will be set.
+     * To set custom attributes use setAttribute.
      * @method set
      * @param {String} attr The attribute to be set.  
      * @param {any} val The value to set the attribute to.  
