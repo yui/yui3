@@ -42,6 +42,11 @@ var DOT = '.',
 
         this[UID] = uid;
 
+        /**
+         * The underlying DOM node bound to the Y.Node instance
+         * @property _node
+         * @private
+         */
         this._node = node;
         Y_Node._instances[uid] = this;
 

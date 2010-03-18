@@ -44,6 +44,11 @@ var DOT = '.',
 
         this[UID] = uid;
 
+        /**
+         * The underlying DOM node bound to the Y.Node instance
+         * @property _node
+         * @private
+         */
         this._node = node;
         Y_Node._instances[uid] = this;
 
@@ -1039,6 +1044,11 @@ var NodeList = function(nodes) {
     }
 
     NodeList._instances[Y.stamp(this)] = this;
+    /**
+     * The underlying array of DOM nodes bound to the Y.NodeList instance
+     * @property _nodes
+     * @private
+     */
     this._nodes = nodes;
 };
 
