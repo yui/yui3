@@ -69,9 +69,23 @@ var DOT = '.',
     };
 // end "globals"
 
-Y_Node.NAME = 'Node';
+/**
+ * The name of the component 
+ * @static
+ * @property NAME
+ */    
+Y_Node.NAME = 'node';
 
+/*
+ * The pattern used to identify ARIA attributes 
+ */    
 Y_Node.re_aria = /^(?:role$|aria-)/;
+
+/**
+ * List of events that route to DOM events 
+ * @static
+ * @property DOM_EVENTS
+ */    
 
 Y_Node.DOM_EVENTS = {
     abort: 1,
@@ -128,11 +142,18 @@ Y_Node.DOM_EVENTS = {
 // be available through Node.on
 Y.mix(Y_Node.DOM_EVENTS, Y.Env.evt.plugins);
 
+/**
+ * A list of Node instances that have been created 
+ * @private
+ * @property _instances
+ * @static
+ *
+ */
 Y_Node._instances = {};
 
 /**
  * Retrieves the DOM node bound to a Node instance
- * @method Node.getDOMNode
+ * @method getDOMNode
  * @static
  *
  * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
@@ -146,6 +167,17 @@ Y_Node.getDOMNode = function(node) {
     return null;
 };
  
+/**
+ * Checks Node return values and wraps DOM Nodes as Y.Node instances
+ * and DOM Collections / Arrays as Y.NodeList instances.
+ * Other return values just pass thru.  If undefined is returned (e.g. no return)
+ * then the Node instance is returned for chainability.
+ * @method scrubVal
+ * @static
+ *
+ * @param {any} node The Node instance or an HTMLNode
+ * @return {Y.Node | Y.NodeList | any} Depends on what is returned from the DOM node.
+ */
 Y_Node.scrubVal = function(val, node) {
     if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
@@ -163,6 +195,17 @@ Y_Node.scrubVal = function(val, node) {
     return val;
 };
 
+/**
+ * Adds methods to the Y.Node prototype, routing through scrubVal.
+ * @method addMethod
+ * @static
+ *
+ * @param {String} name The name of the method to add 
+ * @param {Function} fn The function that becomes the method 
+ * @param {Object} context An optional context to call the method with
+ * (defaults to the Node instance)
+ * @return {any} Depends on what is returned from the DOM node.
+ */
 Y_Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
         Y_Node.prototype[name] = function() {
@@ -186,6 +229,16 @@ Y_Node.addMethod = function(name, fn, context) {
     }
 };
 
+/**
+ * Imports utility methods to be added as Y.Node methods.
+ * @method importMethod
+ * @static
+ *
+ * @param {Object} host The object that contains the method to import. 
+ * @param {String} name The name of the method to import
+ * @param {String} altName An optional name to use in place of the host name 
+ * @param {Object} context An optional context to call the method with
+ */
 Y_Node.importMethod = function(host, name, altName) {
     if (typeof name === 'string') {
         altName = altName || name;
@@ -264,6 +317,12 @@ Y_Node.create = function() {
     return Y.one(Y_DOM.create.apply(Y_DOM, arguments));
 };
 
+/**
+ * Static collection of configuration attributes for special handling
+ * @property ATTRS
+ * @static
+ * @type object
+ */
 Y_Node.ATTRS = {
     /**
      * Allows for getting and setting the text of an element.
@@ -353,7 +412,15 @@ Y_Node.ATTRS = {
     }
 };
 
-// call with instance context
+/**
+ * The default setter for DOM properties 
+ * Called with instance context (this === the Node instance)
+ * @method DEFAULT_SETTER
+ * @static
+ * @param {String} name The attribute/property being set 
+ * @param {any} val The value to be set 
+ * @return {any} The value
+ */
 Y_Node.DEFAULT_SETTER = function(name, val) {
     var node = this._stateProxy,
         strPath;
@@ -370,7 +437,14 @@ Y_Node.DEFAULT_SETTER = function(name, val) {
     return val;
 };
 
-// call with instance context
+/**
+ * The default getter for DOM properties 
+ * Called with instance context (this === the Node instance)
+ * @method DEFAULT_GETTER
+ * @static
+ * @param {String} name The attribute/property to look up 
+ * @return {any} The current value
+ */
 Y_Node.DEFAULT_GETTER = function(name) {
     var node = this._stateProxy,
         val;
@@ -387,6 +461,11 @@ Y_Node.DEFAULT_GETTER = function(name) {
 Y.augment(Y_Node, Y.Event.Target);
 
 Y.mix(Y_Node.prototype, {
+/**
+ * The method called when outputting Node instances as strings
+ * @method toString
+ * @return {String} A string representation of the Node instance 
+ */
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
@@ -430,6 +509,13 @@ Y.mix(Y_Node.prototype, {
         return val;
     },
 
+    /**
+     * Helper method for get.  
+     * @method _get
+     * @private
+     * @param {String} attr The attribute
+     * @return {any} The current value of the attribute
+     */
     _get: function(attr) {
         var attrConfig = Y_Node.ATTRS[attr],
             val;
