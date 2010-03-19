@@ -2,13 +2,13 @@
 <html>
 <head>
     <title>Test Page</title>
-    <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/sam-dark/slider-base.css">
+    <!--link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/sam-dark/slider-base.css">
     <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/round/slider-base.css">
     <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/round-dark/slider-base.css">
     <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/capsule/slider-base.css">
     <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/capsule-dark/slider-base.css">
     <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/audio/slider-base.css">
-    <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/audio-light/slider-base.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/audio-light/slider-base.css"-->
     <style type="text/css">
         div {
             margin-bottom: 1em;
@@ -103,14 +103,28 @@
 <div id="round-dark"   class="yui3-skin-round-dark"></div>
 <div id="capsule"      class="yui3-skin-capsule"></div>
 <div id="capsule-dark" class="yui3-skin-capsule-dark"></div>
-<div id="audio"        class="yui3-skin-audio"></div>
 <div id="audio-light"  class="yui3-skin-audio-light"></div>
+<div id="audio"        class="yui3-skin-audio"></div>
 
 <script src="../../../../build/yui/yui.js"></script>
 <!--script src="../../../../build/slider/slider.js"></script-->
 <script>
 YUI( {
-    filter: 'raw'
+    filter: 'raw',
+    skin: {
+        overrides: {
+            slider: [
+                'sam',
+                'sam-dark',
+                'round',
+                'round-dark',
+                'capsule',
+                'capsule-dark',
+                'audio',
+                'audio-light'
+            ]
+        }
+    }
 } ).use( 'slider', function ( Y ) {
 
 var base = Y.config.base + 'slider/assets/skins',
