@@ -7,7 +7,7 @@ body {
 	padding:0;
 }
 </style> 
-<style id="overrides"> 
+<style id="styleoverrides"> 
     .yui-skin-sam .yui-toolbar-container .yui-toolbar-flickr span.yui-toolbar-icon {
         background-image: url( ../../../yui2-docs/templates/examples/editor/assets/flickr_default.gif );
         background-position: 1px 0px;
@@ -109,12 +109,12 @@ body {
 </style> 
 <title>use('yui2-rte') and then get dependencies</title>
 <!--
-<script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
--->
 <script src="http://yui.yahooapis.com/3.1.0pr2/build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+-->
+<script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
 <script type="text/javascript" charset="utf-8">                                                                                                                 
 YUI({
-    insertBefore: 'overrides',
+    insertBefore: 'styleoverrides',
     combine: true // running locally, so I need to force combo handling
     // gallery: 'gallery-2010.02.22-22'
 }).use('yui2-animation', 'yui2-connection', 'yui2-autocomplete', 'yui2-editor', function (Y) {

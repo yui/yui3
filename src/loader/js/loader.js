@@ -1380,11 +1380,27 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
             // Y.log("trying to load css first");
             this._internalCallback = function() {
-                var f = self.onCSS;
+
+                var f = self.onCSS, n, p, sib;
+
+                // IE hack for style overrides that are not being applied
+                if (this.insertBefore && Y.UA.ie) {
+                    n = Y.config.doc.getElementById(this.insertBefore);
+                    p = n.parentNode;
+                    sib = n.nextSibling;
+                    p.removeChild(n);
+                    if (sib) {
+                        p.insertBefore(n, sib);
+                    } else {
+                        p.appendChild(n);
+                    }
+                }
+
                 if (f) {
                     f.call(self.context, Y);
                 }
                 self._internalCallback = null;
+
                 self._insert(null, null, JS);
             };
 
