@@ -227,6 +227,11 @@
 <span class="cm">         * If no from value is specified, the DEFAULT_GETTER will be used. </span>
 <span class="cm">         * @attribute from</span>
 <span class="cm">         * @type Object</span>
+<span class="cm">         * supports any unit, provided it matches the &quot;to&quot; (or default)</span>
+<span class="cm">         * unit (e.g. &quot;{width: 10em&#39;, color: &#39;rgb(0, 0 0)&#39;, borderColor: &#39;#ccc&#39;}&quot;.</span>
+<span class="cm">         * If using the default (&#39;px&#39; for length-based units), the unit may be omitted  (</span>
+<span class="cm">         * (e.g. &quot;{width: 100}, borderColor: &#39;ccc&#39;}&quot;, which defaults to pixels </span>
+<span class="cm">         * and hex, respectively).</span>
 <span class="cm">         */</span>
         <span class="nx">from</span><span class="o">:</span> <span class="p">{},</span>
 
@@ -235,6 +240,11 @@
 <span class="cm">         * Fields may be strings, numbers, or functions.</span>
 <span class="cm">         * @attribute to</span>
 <span class="cm">         * @type Object</span>
+<span class="cm">         * supports any unit, provided it matches the &quot;from&quot; (or default)</span>
+<span class="cm">         * unit (e.g. &quot;{width: &#39;50%&#39;, color: &#39;red&#39;, borderColor: &#39;#ccc&#39;}&quot;.</span>
+<span class="cm">         * If using the default (&#39;px&#39; for length-based units), the unit may be omitted (</span>
+<span class="cm">         * (e.g. &quot;{width: 100}, borderColor: &#39;ccc&#39;}&quot;, which defaults to pixels </span>
+<span class="cm">         * and hex, respectively).</span>
 <span class="cm">         */</span>
         <span class="nx">to</span><span class="o">:</span> <span class="p">{},</span>
 

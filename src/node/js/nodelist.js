@@ -34,6 +34,11 @@ var NodeList = function(nodes) {
     }
 
     NodeList._instances[Y.stamp(this)] = this;
+    /**
+     * The underlying array of DOM nodes bound to the Y.NodeList instance
+     * @property _nodes
+     * @private
+     */
     this._nodes = nodes;
 };
 
