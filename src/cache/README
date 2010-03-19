@@ -1,9 +1,7 @@
-**** version 3.0.0 ****
+3.0.0
 
-* Added uniqueKeys Attribute.
+    * Added uniqueKeys Attribute.
 
+3.0.0 beta 1
 
-
-**** version 3.0.0 beta 1 ****
-
-* Initial release.
+    * Initial release.
