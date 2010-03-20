@@ -414,6 +414,9 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method on
      * @param {Function} fn The function to execute
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * when the event fires.
      * @return {EventHandle} An object with a detach method to detch the handler(s)
      */
     on: function(fn, context) {
@@ -430,6 +433,9 @@ Y.CustomEvent.prototype = {
      * default behavior, it also prevents after listeners from firing.
      * @method after
      * @param {Function} fn The function to execute
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * when the event fires.
      * @return {EventHandle} handle Unsubscribe handle
      */
     after: function(fn, context) {
