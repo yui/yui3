@@ -304,6 +304,7 @@ Y.Get = function() {
         if (q.insertBefore) {
             s = _get(q.insertBefore, id);
             if (s) {
+                Y.log('inserting before: ' + q.insertBefore);
                 s.parentNode.insertBefore(n, s);
             }
         } else {
@@ -381,7 +382,11 @@ Y.Get = function() {
                       (type === "script") ? true : false;
 
         q.attributes = q.attributes || {};
-        q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
+        // q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
+        var charset = opts.charset || q.attributes.charset;
+        if (charset) {
+            q.attributes.charset = charset;
+        }
 
         setTimeout(function() {
             _next(id);

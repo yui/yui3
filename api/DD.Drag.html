@@ -2058,6 +2058,11 @@
                                             <strong property="yui:name">drag:addHandle</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2069,6 +2074,17 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl><dt>handle</dt><dd>The handle that was added.</dd></dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2090,6 +2106,11 @@
                                             <strong property="yui:name">drag:addInvalid</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2101,6 +2122,17 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl><dt>handle</dt><dd>The handle that was added.</dd></dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2124,7 +2156,7 @@
                                             (
                                                 
                                                         
-                                                         ev
+                                                         event
                                                     
                                                 
                                             )
@@ -2141,10 +2173,11 @@
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">ev</span>
+                                                            <code><span property="yui:name">event</span>
                                                                 &lt;<span property="yui:type">Event.Facade</span>&gt;
                                                             </code>
-                                                            <span property="yui:description"> The mousedown event.</span>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl><dt>ev</dt><dd>The original mousedown event.</dd></dl></span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -2169,6 +2202,11 @@
                                             <strong property="yui:name">drag:align</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2180,6 +2218,20 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl>
+<dt>pageX</dt><dd>The current node position X.</dd>
+<dt>pageY</dt><dd>The current node position Y.</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2204,6 +2256,11 @@
                                             <strong property="yui:name">drag:drag</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2215,6 +2272,22 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl>
+<dt>pageX</dt><dd>The current node position X.</dd>
+<dt>pageY</dt><dd>The current node position Y.</dd>
+<dt>scroll</dt><dd>Should a scroll action occur.</dd>
+<dt>info</dt><dd>Object hash containing calculated XY arrays: start, xy, delta, offset</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2236,6 +2309,11 @@
                                             <strong property="yui:name">drag:drophit</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2247,6 +2325,21 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl>
+<dt>drop</dt><dd>The best guess on what was dropped on.</dd>
+<dt>drag</dt><dd>The drag object at the time of the event.</dd>
+<dt>others</dt><dd>An array of all the other drop targets that was dropped on.</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2268,6 +2361,11 @@
                                             <strong property="yui:name">drag:dropmiss</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2279,6 +2377,20 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl>
+<dt>pageX</dt><dd>The current node position X.</dd>
+<dt>pageY</dt><dd>The current node position Y.</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2300,6 +2412,11 @@
                                             <strong property="yui:name">drag:end</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2311,6 +2428,22 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl>
+<dt>pageX</dt><dd>The current node position X.</dd>
+<dt>pageY</dt><dd>The current node position Y.</dd>
+<dt>startTime</dt><dd>The startTime of the event, from the start event.</dd>
+<dt>endTime</dt><dd>The endTime of the event. getTime on the current Date object.</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2332,6 +2465,11 @@
                                             <strong property="yui:name">drag:enter</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2343,6 +2481,20 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl>
+<dt>drop</dt><dd>The drop object at the time of the event.</dd>
+<dt>drag</dt><dd>The drag object at the time of the event.</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2364,6 +2516,11 @@
                                             <strong property="yui:name">drag:exit</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2375,6 +2532,19 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl>
+<dt>drop</dt><dd>The drop object at the time of the event.</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2398,7 +2568,7 @@
                                             (
                                                 
                                                         
-                                                         ev
+                                                         event
                                                     
                                                 
                                             )
@@ -2415,10 +2585,11 @@
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">ev</span>
+                                                            <code><span property="yui:name">event</span>
                                                                 &lt;<span property="yui:type">Event.Facade</span>&gt;
                                                             </code>
-                                                            <span property="yui:description"> The mousedown event.</span>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl><dt>ev</dt><dd>The original mousedown event.</dd></dl></span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -2446,6 +2617,11 @@
                                             <strong property="yui:name">drag:over</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2457,6 +2633,20 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl>
+<dt>drop</dt><dd>The drop object at the time of the event.</dd>
+<dt>drag</dt><dd>The drag object at the time of the event.</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2478,6 +2668,11 @@
                                             <strong property="yui:name">drag:removeHandle</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2489,6 +2684,17 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl><dt>handle</dt><dd>The handle that was removed.</dd></dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2510,6 +2716,11 @@
                                             <strong property="yui:name">drag:removeInvalid</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2521,6 +2732,17 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl><dt>handle</dt><dd>The handle that was removed.</dd></dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.
@@ -2542,6 +2764,11 @@
                                             <strong property="yui:name">drag:start</strong>
 
                                             (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
                                             )
 
                                         </code>
@@ -2553,6 +2780,21 @@
                                         <div class="description">
 
 
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> An Event Facade object with the following specific property added:
+<dl>
+<dt>pageX</dt><dd>The original node position X.</dd>
+<dt>pageY</dt><dd>The original node position Y.</dd>
+<dt>startTime</dt><dd>The startTime of the event. getTime on the current Date object.</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
 
                                             <div class="bubbles">
                                                 <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html" title="DDM">DDM</a>.

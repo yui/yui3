@@ -28,6 +28,7 @@ Y.mix(Y.namespace("Intl"), {
     *
     * @return {String} The available language that best matches the
     * preferred language list, or "".
+    * @since 3.1.0
     */
     lookupBestLang : function (preferredLanguages, availableLanguages) {
 

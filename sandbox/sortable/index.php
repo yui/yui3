@@ -105,7 +105,7 @@ var yConfig = {
 };
 
 YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-constrain', 'dd-drop-plugin', 'event-mouseenter', 'sortable', 'yui-throttle', function(Y) {
-    console.log(Y);
+    //console.log(Y);
     
     //Y.DD.DDM._debugShim = true;
 
