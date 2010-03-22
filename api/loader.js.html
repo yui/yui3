@@ -62,7 +62,6 @@
 <span class="cm"> * @submodule loader-base</span>
 <span class="cm"> */</span>
 
-
 <span class="cm">/**</span>
 <span class="cm"> * Loader dynamically loads script and css files.  It includes the dependency</span>
 <span class="cm"> * info for the version of the library in use, and will automatically pull in</span>
@@ -83,8 +82,6 @@
 <span class="cm"> * &lt;ul&gt;</span>
 <span class="cm"> *  &lt;li&gt;base:</span>
 <span class="cm"> *  The base dir&lt;/li&gt;</span>
-<span class="cm"> *  &lt;li&gt;secureBase:</span>
-<span class="cm"> *  The secure base dir (not implemented)&lt;/li&gt;</span>
 <span class="cm"> *  &lt;li&gt;comboBase:</span>
 <span class="cm"> *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?&lt;/li&gt;</span>
 <span class="cm"> *  &lt;li&gt;root:</span>
@@ -307,7 +304,7 @@
 <span class="cm">     * Browsers:</span>
 <span class="cm">     *    IE: 2048</span>
 <span class="cm">     *    Other A-Grade Browsers: Higher that what is typically supported </span>
-<span class="cm">     *    &#39;Capable&#39; mobile browsers: @TODO</span>
+<span class="cm">     *    &#39;capable&#39; mobile browsers: @TODO</span>
 <span class="cm">     *</span>
 <span class="cm">     * Servers:</span>
 <span class="cm">     *    Apache: 8192</span>
@@ -449,14 +446,6 @@
 <span class="cm">     *      // the default root directory for a skin. ex:</span>
 <span class="cm">     *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/</span>
 <span class="cm">     *      base: &#39;assets/skins/&#39;,</span>
-<span class="cm">     *</span>
-<span class="cm">     *      // The name of the rollup css file for the skin</span>
-<span class="cm">     *      path: &#39;skin.css&#39;,</span>
-<span class="cm">     *</span>
-<span class="cm">     *      // The number of skinnable components requested that are</span>
-<span class="cm">     *      // required before using the rollup file rather than the</span>
-<span class="cm">     *      // individual component css files</span>
-<span class="cm">     *      rollup: 3,</span>
 <span class="cm">     *</span>
 <span class="cm">     *      // Any component-specific overrides can be specified here,</span>
 <span class="cm">     *      // making it possible to load different skins for different</span>
@@ -1440,11 +1429,27 @@
 
             <span class="c1">// Y.log(&quot;trying to load css first&quot;);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">onCSS</span><span class="p">;</span>
+
+                <span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">onCSS</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">sib</span><span class="p">;</span>
+
+                <span class="c1">// IE hack for style overrides that are not being applied</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">insertBefore</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">);</span>
+                    <span class="nx">p</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+                    <span class="nx">sib</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">;</span>
+                    <span class="nx">p</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">sib</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">p</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">sib</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">p</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
                 <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span> <span class="nx">Y</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="nx">self</span><span class="p">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
                 <span class="nx">self</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">JS</span><span class="p">);</span>
             <span class="p">};</span>
 

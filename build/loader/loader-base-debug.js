@@ -11,7 +11,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.03.16-20',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.03.18-19',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '1',
@@ -82,7 +82,6 @@ YUI.Env[VERSION] = META;
  * @submodule loader-base
  */
 
-
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
  * info for the version of the library in use, and will automatically pull in
@@ -103,8 +102,6 @@ YUI.Env[VERSION] = META;
  * <ul>
  *  <li>base:
  *  The base dir</li>
- *  <li>secureBase:
- *  The secure base dir (not implemented)</li>
  *  <li>comboBase:
  *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
  *  <li>root:
@@ -327,7 +324,7 @@ Y.Loader = function(o) {
      * Browsers:
      *    IE: 2048
      *    Other A-Grade Browsers: Higher that what is typically supported 
-     *    'Capable' mobile browsers: @TODO
+     *    'capable' mobile browsers: @TODO
      *
      * Servers:
      *    Apache: 8192
@@ -469,14 +466,6 @@ Y.Loader = function(o) {
      *      // the default root directory for a skin. ex:
      *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
      *      base: 'assets/skins/',
-     *
-     *      // The name of the rollup css file for the skin
-     *      path: 'skin.css',
-     *
-     *      // The number of skinnable components requested that are
-     *      // required before using the rollup file rather than the
-     *      // individual component css files
-     *      rollup: 3,
      *
      *      // Any component-specific overrides can be specified here,
      *      // making it possible to load different skins for different
@@ -1460,11 +1449,27 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
             // Y.log("trying to load css first");
             this._internalCallback = function() {
-                var f = self.onCSS;
+
+                var f = self.onCSS, n, p, sib;
+
+                // IE hack for style overrides that are not being applied
+                if (this.insertBefore && Y.UA.ie) {
+                    n = Y.config.doc.getElementById(this.insertBefore);
+                    p = n.parentNode;
+                    sib = n.nextSibling;
+                    p.removeChild(n);
+                    if (sib) {
+                        p.insertBefore(n, sib);
+                    } else {
+                        p.appendChild(n);
+                    }
+                }
+
                 if (f) {
                     f.call(self.context, Y);
                 }
                 self._internalCallback = null;
+
                 self._insert(null, null, JS);
             };
 

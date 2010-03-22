@@ -462,6 +462,9 @@
 <span class="cm">     * Listen for this event</span>
 <span class="cm">     * @method on</span>
 <span class="cm">     * @param {Function} fn The function to execute</span>
+<span class="cm">     * @param context {object} optional execution context.</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
+<span class="cm">     * when the event fires.</span>
 <span class="cm">     * @return {EventHandle} An object with a detach method to detch the handler(s)</span>
 <span class="cm">     */</span>
     <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
@@ -478,6 +481,9 @@
 <span class="cm">     * default behavior, it also prevents after listeners from firing.</span>
 <span class="cm">     * @method after</span>
 <span class="cm">     * @param {Function} fn The function to execute</span>
+<span class="cm">     * @param context {object} optional execution context.</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
+<span class="cm">     * when the event fires.</span>
 <span class="cm">     * @return {EventHandle} handle Unsubscribe handle</span>
 <span class="cm">     */</span>
     <span class="nx">after</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>

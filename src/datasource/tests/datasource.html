@@ -812,10 +812,12 @@
                     callCount: 3
                 });
 
-                var id = ds.setInterval(500, null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
-                        ASSERT.fail("IO failure case.");
+                var id = ds.setInterval(500, {
+                    callback: {
+                        success: handler.handleSuccess,
+                        failure: function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }
                     }
                 });
                 
@@ -839,22 +841,28 @@
                     callCount: 3
                 });
 
-                ds.setInterval(500, null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
-                        ASSERT.fail("IO failure case.");
+                ds.setInterval(500, {
+                    callback: {
+                        success: handler.handleSuccess,
+                        failure: function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }
                     }
                 });
-                ds.setInterval(500, null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
-                        ASSERT.fail("IO failure case.");
+                ds.setInterval(500, {
+                    callback: {
+                        success: handler.handleSuccess,
+                        failure: function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }
                     }
                 });
-                ds.setInterval(500, null, {
-                    success: handler.handleSuccess,
-                    failure: function(e) {
-                        ASSERT.fail("IO failure case.");
+                ds.setInterval(500, {
+                    callback: {
+                        success: handler.handleSuccess,
+                        failure: function(e) {
+                            ASSERT.fail("IO failure case.");
+                        }
                     }
                 });
 
