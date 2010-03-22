@@ -81,7 +81,7 @@ ArrayListProto = {
      * <p>Unlike <code>each</code>, if the callback returns true, the
      * iteratation will stop.</p>
      *
-     * @method each
+     * @method some
      * @param fn { Function } the function to execute
      * @param context { mixed } optional override 'this' in the function
      * @return { Boolean } True if the function returned true on an item
