@@ -4,7 +4,6 @@ package com.yahoo.infographics.axes
 	import com.yahoo.infographics.styles.AxisLabelStyles;
 	import com.yahoo.renderers.styles.IStyle;
 	import com.yahoo.renderers.events.RendererEvent;
-	import flash.geom.Point;
 	import flash.display.DisplayObject;
 
 	/**

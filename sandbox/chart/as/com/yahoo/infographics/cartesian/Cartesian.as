@@ -20,9 +20,13 @@ package com.yahoo.infographics.cartesian
 		/**
 		 * Constructor
 		 */
-		public function Cartesian() 
+		public function Cartesian(xAxisData:AxisData, yAxisData:AxisData, xKey:String, yKey:String) 
 		{
 			super();
+			this.xAxisData = xAxisData;
+			this.yAxisData = yAxisData;
+			this.xKey = xKey;
+			this.yKey = yKey;
 		}
 	
 		/**
@@ -283,7 +287,7 @@ package com.yahoo.infographics.cartesian
 		/**
 		 * @private
 		 */
-		protected function drawGraph():void
+		protected function drawGraph(values:Vector.<int>):void
 		{
 		};
 		
@@ -316,11 +320,14 @@ package com.yahoo.infographics.cartesian
 			if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))
 			{
 				this.setAreaData();
-				if(this._pointValues) this.setLaterFlag("drawGraph");
+				if(this._pointValues) 
+				{
+					this.setLaterFlag("drawGraph");
+				}
 				return;
 			}
 			
-			if(this.checkFlag("drawGraph") || styleChange) this.drawGraph();
+			if(this.checkFlag("drawGraph") || (styleChange && this._pointValues)) this.drawGraph(this._pointValues);
 		}
 
 		public function checkDataFlags():Boolean 

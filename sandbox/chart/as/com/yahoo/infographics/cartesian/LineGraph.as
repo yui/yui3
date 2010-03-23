@@ -19,11 +19,7 @@ package com.yahoo.infographics.cartesian
 		 */
 		public function LineGraph(xAxisData:AxisData, yAxisData:AxisData, xKey:String, yKey:String)
 		{
-			super();
-			this.xAxisData = xAxisData;
-			this.yAxisData = yAxisData;
-			this.xKey = xKey;
-			this.yKey = yKey;
+			super(xAxisData, yAxisData, xKey, yKey);
 		}
 		
 		/**
@@ -101,11 +97,9 @@ package com.yahoo.infographics.cartesian
 		/**
 		 * @private
 		 */
-		override protected function drawGraph():void
+		override protected function drawGraph(values:Vector.<int>):void
 		{
-			if(!this._pointValues) return;
-			var values:Vector.<int> = this._pointValues,
-				len:int = values.length,
+			var	len:int = values.length,
 				lastValidX:int,
 				lastValidY:int,
 				lastX:int = values[0] as int,
