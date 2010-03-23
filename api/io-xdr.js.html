@@ -60,8 +60,7 @@
 <span class="cm">    * ready for use.</span>
 <span class="cm">    * @type Event Custom</span>
 <span class="cm">    */</span>
-    <span class="kd">var</span> <span class="nx">E_XDR_READY</span> <span class="o">=</span> <span class="s1">&#39;io:xdrReady&#39;</span><span class="p">,</span>
-
+    <span class="kd">var</span> <span class="nx">E_XDR_READY</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;io:xdrReady&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">fireOnce</span><span class="o">:</span> <span class="kc">true</span> <span class="p">}),</span>
 
    <span class="cm">/**</span>
 <span class="cm">    * @description Object that stores callback handlers for cross-domain requests</span>
