@@ -732,7 +732,7 @@ YUI.add('io-base', function(Y) {
     function _destroy(o) {
         // IE, when using XMLHttpRequest as an ActiveX Object, will throw
         // a "Type Mismatch" error if the event handler is set to "null".
-        if (w.XMLHttpRequest) {
+        if (w && w.XMLHttpRequest) {
             if (o.c) {
                 o.c.onreadystatechange = null;
             }
