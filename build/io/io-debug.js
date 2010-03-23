@@ -896,8 +896,7 @@ YUI.add('io-xdr', function(Y) {
     * ready for use.
     * @type Event Custom
     */
-    var E_XDR_READY = 'io:xdrReady',
-
+    var E_XDR_READY = Y.publish('io:xdrReady', { fireOnce: true }),
 
    /**
     * @description Object that stores callback handlers for cross-domain requests
