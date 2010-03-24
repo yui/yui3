@@ -40,21 +40,6 @@ package com.yahoo.renderers.styles
 	//--------------------------------------
 	//  Properties
 	//--------------------------------------
-
-		/**
-		 * @private
-		 * Storage for sizeMode
-		 */
-		private var _sizeMode:String = "box";
-
-		/**
-		 * @private (override)
-		 */
-		override public function get sizeMode():String
-		{
-			return this._sizeMode;
-		}
-		
 		/**
 		 * @private 
 		 * Storage for rotation

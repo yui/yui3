@@ -47,6 +47,15 @@ package com.yahoo.infographics.axes
 		 */
 		private var _axisMode:IAxisMode;
 
+		override public function get sizeMode():String
+		{
+			if(this._layout)
+			{
+				return this._layout.sizeMode;
+			}
+			var axisPosition:String = this.getStyle("position") as String;
+			return axisPosition == "left" || axisPosition == "right" ? "hbox" : "vbox";
+		}
 		/**
 		 * Algorithm for calculating values based on the axis type.
 		 */
@@ -110,14 +119,14 @@ package com.yahoo.infographics.axes
 		 * @private
 		 * Axis labels on the axis.
 		 */
-		private var _labels:Array = [];
+		private var _labels:Vector.<AxisLabel> = new Vector.<AxisLabel>();
 		
 		/**
 		 * @private
 		 * Collection of labels used to be re-used when creating
 		 * labels.
 		 */
-		private var _labelCache:Array = [];
+		private var _labelCache:Vector.<AxisLabel> = new Vector.<AxisLabel>();
 
 		/**
 		 * @private (override)
@@ -163,12 +172,15 @@ package com.yahoo.infographics.axes
 		 */
 		override protected function render():void
 		{
-			if(this.checkFlag("position"))
+			var axisPosition:String = this.getStyle("position") as String;
+			if(!axisPosition) return;
+			if(this.checkFlag("position") || (!this._layout && axisPosition))
 			{
-				var layoutClass:Class = this.getAxisLayout(this.getStyle("position") as String) as Class;
+				var layoutClass:Class = this.getAxisLayout(axisPosition) as Class;
 				this._layout = new layoutClass();
 				this._layout.addEventListener(RendererEvent.RESIZE, this.handleContentResize);
 			}
+			if(!this._layout) return;
 
 			if(this.checkFlag("dataFormat")) this._axisMode.props = this.getStyle("dataFormat");
 			if(this.checkFlag("calculateSizeByTickLength")) this._layout.calculateSizeByTickLength = this.getStyle("calculateSizeByTickLength") as Boolean;
@@ -181,7 +193,10 @@ package com.yahoo.infographics.axes
 				this.checkFlag("resize") ||
 				this.checkFlag("majorUnit") ||
 				this.checkFlag("label") ||
-				this.checkFlag("calculateSizeByTickLength")) this.drawAxis();
+				this.checkFlag("calculateSizeByTickLength")) 
+			{
+				this.drawAxis();
+			}
 		}
 		
 		/**
@@ -192,28 +207,71 @@ package com.yahoo.infographics.axes
 		{
 			this._content.graphics.clear();
 			this.createLabelCache();
-			var majorTickStyles:Object = this.getStyle("majorTicks") as Object;
-			var labelStyles:Object = this.getStyle("label");
+			var majorTickStyles:Object = this.getStyle("majorTicks") as Object,
+				labelStyles:Object = this.getStyle("label"),
+				dimensions:Object = this.getStyle("padding"),
+				drawTicks:Boolean = majorTickStyles.display != "none",
+				tickPoint:Point,
+				majorUnit:Object = this.getStyle("majorUnit"),
+				len:int,
+				majorUnitDistance:Number,
+				i:int,
+				layout:IAxisLayout = this._layout,
+				layoutLength:Number,
+				layoutReset:Function = layout.reset,
+				getFirstPoint:Function = layout.getFirstPoint,
+				getNextPoint:Function = layout.getNextPoint,
+				getLabelPoint:Function = layout.getLabelPoint,
+				axisMode:IAxisMode = this._axisMode,
+				getTotalMajorUnits:Function = axisMode.getTotalMajorUnits,
+				updateContentPosition:Function = layout.updateContentPosition,
+				getPosition:Function = layout.getPosition,
+				getLabelAtPosition:Function = axisMode.getLabelAtPosition,
+				position:Number,
+				labelText:String,
+				label:AxisLabel,
+				labels:Vector.<AxisLabel> = this._labels,
+				labelCache:Vector.<AxisLabel> = this._labelCache,
+				content:Sprite = this._content,
+				labelPoint:Point;
 			
-			var dimensions:Object = this.getStyle("padding");
+			
 			dimensions.width = this.width;
 			dimensions.height = this.height;
-			var drawTicks:Boolean = majorTickStyles.display != "none";
-			this._layout.reset(majorTickStyles, dimensions);
-			var tickPoint:Point = this._layout.getFirstPoint();
-			this.drawLine(this._layout.lineStart, this._layout.lineEnd, this.getStyle("line") as Object);
+			layoutReset(majorTickStyles, dimensions);
+			layoutLength = layout.length;
+			tickPoint = getFirstPoint();
+			
+			this.drawLine(layout.lineStart, layout.lineEnd, this.getStyle("line") as Object);
 			
 			if(drawTicks) this.drawTick(tickPoint, majorTickStyles);
-			this.drawLabel(tickPoint, labelStyles);
-			var majorUnit:Object = this.getStyle("majorUnit");
-			var len:int = this._axisMode.getTotalMajorUnits(majorUnit, this._layout.length);
-			if(len < 2) return;
-			var majorUnitDistance:Number = this._layout.length/(len - 1);
-			for(var i:int = 1; i < len; i ++)
+			len = getTotalMajorUnits(majorUnit, layoutLength);
+			if(len < 1) return;
+			majorUnitDistance = layoutLength/(len - 1);
+			for(i = 0; i < len; ++i)
 			{	
-				tickPoint = this._layout.getNextPoint(tickPoint, majorUnitDistance);
 				if(drawTicks) this.drawTick(tickPoint, majorTickStyles);
-				this.drawLabel(tickPoint, labelStyles);
+				
+				position = getPosition(tickPoint);
+				labelText = getLabelAtPosition(position, layoutLength);
+				if(labelCache.length > 0)
+				{
+					label = labelCache.shift() as AxisLabel;
+				}
+				else
+				{
+					label = new AxisLabel(IStyle(labelStyles));
+					label.autoRender = false;
+					content.addChild(label);
+				}
+				labels.push(label);
+				label.text = labelText;
+				labelPoint = getLabelPoint(tickPoint);
+				label.y = labelPoint.y;
+				label.x = labelPoint.x;
+				label.forceRender();
+				updateContentPosition(Number(label.width), Number(label.height));
+				tickPoint = getNextPoint(tickPoint, majorUnitDistance);
 			}
 			
 			this.clearLabelCache();
@@ -263,41 +321,12 @@ package com.yahoo.infographics.axes
 		
 		/**
 		 * @private
-		 * Places a label on the axis.
-		 */
-		private function drawLabel(tickPoint:Point, labelStyles:Object):void
-		{
-			var position:Number = this._layout.getPosition(tickPoint);
-			
-			var labelText:String = this._axisMode.getLabelAtPosition(position, this._layout.length);
-			var label:AxisLabel;
-
-			if(this._labelCache.length > 0)
-			{
-				label = this._labelCache.shift() as AxisLabel;
-			}
-			else
-			{
-				label = new AxisLabel();
-				this._content.addChild(label);
-				label.addEventListener(RendererEvent.RENDER_COMPLETE, this._layout.handleLabelResize);
-			}
-			this._labels.push(label);
-			label.text = labelText;
-			label.setStyles(IStyle(labelStyles).getStyles());
-			var labelPoint:Point = this._layout.getLabelPoint(tickPoint);
-			label.y = labelPoint.y;
-			label.x = labelPoint.x;
-		}
-
-		/**
-		 * @private
 		 * Creates a cache of labels for reuse.
 		 */
 		private function createLabelCache():void
 		{
 			this._labelCache = this._labels.concat();
-			this._labels = [];
+			this._labels = new Vector.<AxisLabel>();
 		}
 		
 		/**
@@ -306,14 +335,16 @@ package com.yahoo.infographics.axes
 		 */
 		private function clearLabelCache():void
 		{
-			var len:int = this._labelCache.length;
-			for(var i:int = 0; i < len; i++)
+			var len:int = this._labelCache.length,
+				i:int,
+				label:AxisLabel,
+				labelCache:Vector.<AxisLabel>;
+			for(i = 0; i < len; i++)
 			{
-				var label:AxisLabel = this._labelCache[i] as AxisLabel;
-				label.removeEventListener(RendererEvent.RENDER_COMPLETE, this._layout.handleLabelResize);
+				label = labelCache[i] as AxisLabel;
 				this.removeChild(label);
 			}
-			this._labelCache = [];
+			this._labelCache = new Vector.<AxisLabel>();
 		}
 		
 		/**
@@ -339,12 +370,14 @@ package com.yahoo.infographics.axes
 		 */
 		protected function childRenderingComplete():Boolean
 		{
-			var renderingComplete:Boolean = true;
-			var labels:Array = this._labels;
-			var len:int = labels.length;
-			for(var i:int = 0; i < len; i++)
+			var renderingComplete:Boolean = true,
+				labels:Vector.<AxisLabel> = this._labels,
+				len:int = labels.length,
+				i:int,
+				item:Renderer;
+			for(i = 0; i < len; ++i)
 			{
-				var item:Renderer = Renderer(labels[i]);
+				item = Renderer(labels[i]);
 				if(item is Renderer && item.hasOwnProperty("rendering") && item.rendering)
 				{
 					renderingComplete = false;

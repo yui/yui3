@@ -17,6 +17,7 @@ var _queries = Y.TabviewBase._queries,
      * @class TabView
      * @constructor
      * @extends Widget
+     * @uses WidgetParent
      */
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
     _afterChildRemoved: function(e) { // update the selected tab when removed

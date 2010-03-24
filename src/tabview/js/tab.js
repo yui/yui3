@@ -11,6 +11,7 @@ var Lang = Y.Lang,
  * @class Tab
  * @constructor
  * @extends Widget
+ * @uses WidgetChild
  */
 Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     BOUNDING_TEMPLATE: '<li class="' + _classNames.tab + '"></li>',

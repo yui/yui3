@@ -104,20 +104,27 @@ if (VERSION.indexOf('@') > -1) {
 YUI.prototype = {
     _config: function(o) {
         o = o || {};
-        var attr, 
+        var attr,
+            name, 
+            detail,
             config = this.config, 
             mods   = config.modules,
             groups = config.groups;
-        for (attr in o) {
-            if (mods && attr == 'modules') {
-                this.mix(mods, o[attr], true);
-            } else if (groups && attr == 'groups') {
-                this.mix(groups, o[attr], true);
-            } else if (attr == 'win') {
-                config[attr] = o[attr].contentWindow || o[attr];
-                config.doc = config[attr].document;
+        for (name in o) {
+            attr = o[name];
+            if (mods && name == 'modules') {
+                for (detail in attr) {
+                    mods[detail] = attr[detail];
+                }
+            } else if (groups && name == 'groups') {
+                for (detail in attr) {
+                    groups[detail] = attr[detail];
+                }
+            } else if (name == 'win') {
+                config[name] = attr.contentWindow || attr;
+                config.doc = config[name].document;
             } else {
-                config[attr] = o[attr];
+                config[name] = attr;
             }
         }
     },
@@ -691,9 +698,7 @@ YUI.prototype = {
 
     // inheritance utilities are not available yet
     for (prop in p) {
-        if (1) { // intenionally ignoring hasOwnProperty check
-            YUI[prop] = p[prop];
-        }
+        YUI[prop] = p[prop];
     }
 
     // set up the environment

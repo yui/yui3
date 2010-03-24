@@ -1,9 +1,7 @@
 package com.yahoo.renderers.layout
 {
 	import com.yahoo.renderers.Renderer;
-	import com.yahoo.renderers.events.LayoutEvent;
 	import com.yahoo.renderers.events.RendererEvent;
-	import com.yahoo.renderers.events.StyleEvent;
 	import com.yahoo.renderers.styles.LayoutStyles;
 	import flash.display.DisplayObject;
 
@@ -204,29 +202,29 @@ package com.yahoo.renderers.layout
 		private function addContainers():void
 		{
 			this.topLayout.stretchChildrenToFit = true;
-			this.topLayout.setStyle("sizeMode", ContainerType.VBOX);
-			this._topContainer = new Container(this.topLayout);
-			this.addItem(this.topContainer);
+			this._topContainer = new Container(this._topLayout);
+			this._topContainer.autoRender = false;
+			this.addItem(this._topContainer);
 
 			this.rightLayout.stretchChildrenToFit = true;
-			this.rightLayout.setStyle("sizeMode", ContainerType.HBOX);
-			this._rightContainer = new Container(this.rightLayout);
-			this.addItem(this.rightContainer);
+			this._rightContainer = new Container(this._rightLayout);
+			this._rightContainer.autoRender = false;
+			this.addItem(this._rightContainer);
 
 			this.bottomLayout.stretchChildrenToFit = true;
-			this.bottomLayout.setStyle("sizeMode", ContainerType.VBOX);
-			this._bottomContainer = new Container(this.bottomLayout);
-			this.addItem(this.bottomContainer);
+			this._bottomContainer = new Container(this._bottomLayout);
+			this._bottomContainer.autoRender = false;
+			this.addItem(this._bottomContainer);
 
 			this.leftLayout.stretchChildrenToFit = true;
-			this.leftLayout.setStyle("sizeMode", ContainerType.HBOX);
-			this._leftContainer = new Container(this.leftLayout);
-			this.addItem(this.leftContainer);
+			this._leftContainer = new Container(this._leftLayout);
+			this._leftContainer.autoRender = false;
+			this.addItem(this._leftContainer);
 
 			this._centerStack = new Container();
-			this.centerStack.setStyle("sizeMode", ContainerType.BOX);
-			this.centerStack.layout = this.centerLayout;
-			this.addItem(this.centerStack);
+			this._centerStack.layout = this.centerLayout;
+			this._centerStack.autoRender = false;
+			this.addItem(this._centerStack);
 		}
 	
 		/**
@@ -274,11 +272,11 @@ package com.yahoo.renderers.layout
 		 */
 		override protected function updateRenderStatus():void
 		{
-			
 			if(this.childRenderingComplete())
 			{
-				var oldAvailableWidth:Number = BorderLayout(this.layout).availableWidth;
-				var oldAvailableHeight:Number = BorderLayout(this.layout).availableHeight;
+				this.rendering = false;
+				var oldAvailableWidth:Number = BorderLayout(this.layout).availableWidth,
+					oldAvailableHeight:Number = BorderLayout(this.layout).availableHeight;
 				BorderLayout(this.layout).measureContent();
 				if(oldAvailableWidth == BorderLayout(this.layout).availableWidth && oldAvailableHeight == BorderLayout(this.layout).availableHeight)
 				{
@@ -289,6 +287,7 @@ package com.yahoo.renderers.layout
 						return;
 					}
 					BorderLayout(this.layout).resizeCenterStack();
+					this.setFlag("childResize");
 					if(this.noChildResizing()) 
 					{
 						this.visible = true;
@@ -309,12 +308,7 @@ package com.yahoo.renderers.layout
 		{
 			var container:Container = Container(event.currentTarget);
 			var layout:ILayoutStrategy = container.layout;
-			if(layout is HLayout && event.widthChange)
-			{
-				this.updateRenderStatus();
-			}
-
-			if(layout is VLayout && event.heightChange)
+			if((layout is HLayout && event.widthChange) || (layout is VLayout && event.heightChange))
 			{
 				this.updateRenderStatus();
 			}

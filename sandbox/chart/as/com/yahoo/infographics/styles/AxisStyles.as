@@ -2,7 +2,6 @@ package com.yahoo.infographics.styles
 {
 	import com.yahoo.renderers.styles.IStyle;
 	import com.yahoo.renderers.styles.RendererStyles;
-	import com.yahoo.renderers.events.StyleEvent;
 
 	/**
 	 * Base style class for Axes
@@ -145,7 +144,13 @@ package com.yahoo.infographics.styles
 		 */
 		public function set label(value:Object):void
 		{
-			(this._label as IStyle).setStyles(value);
+			for(var i:String in value)
+			{
+				if(this.label.hasOwnProperty(i))
+				{
+					this._label[i] = value[i];
+				}
+			}
 		}
 
 		/**
@@ -296,15 +301,6 @@ package com.yahoo.infographics.styles
 			{
 				if(this._majorUnit.hasOwnProperty(i)) this._majorUnit[i] = value[i];
 			}
-		}
-
-		/**
-		 * @private (override)
-		 */
-		override public function get sizeMode():String
-		{
-			if(this.position == "left" || this.position == "right") return "hbox";
-			return "vbox";
 		}
 
 		/**

@@ -2,7 +2,9 @@ package com.yahoo.renderers
 {
 	import flash.display.Stage;
 	import flash.events.EventDispatcher;
+	import flash.events.Event;
 	import com.yahoo.renderers.events.RendererEvent;
+
 	/**
 	 * Application level class that defines properties for all renderer classes.
 	 */
@@ -42,9 +44,27 @@ package com.yahoo.renderers
 		{
 			if(value == this._autoRender) return;
 			this._autoRender = value;
-			this.dispatchEvent(new RendererEvent(RendererEvent.TOGGLE_AUTO_RENDER));
+			if(value)
+			{
+				this.addStageListeners();
+			}
+			else
+			{
+				this.removeStageListeners();
+			}
 		}
 
+		/**
+		 * @private (protected)
+		 * Collection or Renderers to be queued for a rendering.
+		 */
+		protected var _queue:Vector.<Renderer> = new Vector.<Renderer>();
+
+		/**
+		 * @private Collection of renderers to be updated on the following cycle.
+		 */
+		protected var _laterQueue:Vector.<Renderer> = new Vector.<Renderer>();
+		
 		/**
 		 * Constructor
 		 */
@@ -96,5 +116,68 @@ package com.yahoo.renderers
 		{
 			this._flashvars = value;
 		}
+
+		/**
+		 * @private (protected)
+		 */
+		protected function dispatch(event:Event):void
+		{
+			var renderer:Renderer;
+			if(this._queue.length < 1) return;
+			while(this._queue.length > 0)
+			{
+				renderer = Renderer(this._queue.shift());
+				renderer.callRender();
+			}
+			this._queue = this._laterQueue.concat();
+			this._laterQueue = new Vector.<Renderer>();
+			if(this._queue.length < 1) 
+			{
+				this.removeStageListeners();
+			}
+		}
+		
+		/**
+		 * Adds a renderer to the queue
+		 */
+		public function addRenderer(renderer:Renderer):void
+		{
+			if (this._queue.length < 1) this.addStageListeners();
+			if(this._queue.indexOf(renderer) == -1)
+			{
+				this._queue.push(renderer);
+			}
+		}
+
+		/**
+		 * Adds a renderer to the later queue
+		 */
+		public function addLaterRenderer(renderer:Renderer):void
+		{
+			if(this._laterQueue.indexOf(renderer) == -1)
+			{
+				this._laterQueue.push(renderer);
+			}
+		}
+		
+		/**
+		 * @private (protected)
+		 */
+		protected function addStageListeners():void
+		{
+			this._stage.addEventListener(Event.RENDER, this.dispatch, false, 0, true);
+			this._stage.addEventListener(Event.ENTER_FRAME, this.dispatch, false, 0, true);
+			this._stage.invalidate();
+		}
+		
+		/**
+		 * @private (protected)
+		 */
+		protected function removeStageListeners():void
+		{
+			this._stage.removeEventListener(Event.RENDER, this.dispatch);
+			this._stage.removeEventListener(Event.ENTER_FRAME, this.dispatch);
+		}
+
 	}
 }
