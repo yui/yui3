@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                  &gt; Loader 
@@ -96,8 +96,6 @@ While the loader can be instantiated by the end user, it normally is not.
 <ul>
 <li>base:
 The base dir</li>
-<li>secureBase:
-The secure base dir (not implemented)</li>
 <li>comboBase:
 The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
 <li>root:
@@ -555,7 +553,7 @@ only take effect if lower than the default.
 Browsers:
 IE: 2048
 Other A-Grade Browsers: Higher that what is typically supported 
-'Capable' mobile browsers: @TODO
+'capable' mobile browsers: @TODO
 Servers:
 Apache: 8192
                                         </div>
@@ -669,12 +667,6 @@ defaultSkin: 'sam',
 // the default root directory for a skin. ex:
 // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
 base: 'assets/skins/',
-// The name of the rollup css file for the skin
-path: 'skin.css',
-// The number of skinnable components requested that are
-// required before using the rollup file rather than the
-// individual component css files
-rollup: 3,
 // Any component-specific overrides can be specified here,
 // making it possible to load different skins for different
 // components.  It is possible to load more than one skin
@@ -967,7 +959,8 @@ calculate() after we have the mega list of all dependencies
                                             Look for rollup packages to determine if all of the modules a
 rollup supersedes are required.  If so, include the rollup to
 help reduce the total number of connections required.  Called
-by calculate()
+by calculate().  This is an optional feature, and requires the
+appropriate submodule to function.
                                         </div>
 
                                         <div class="description">
@@ -1202,7 +1195,10 @@ the object passed in did not provide all required attributes</dd>
 <dt>rollup:</dt>     <dd>the number of superseded modules required for automatic rollup</dd>
 <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
 <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
-<dt>submodules:</dt> <dd>a has of submodules</dd>
+<dt>submodules:</dt> <dd>a hash of submodules</dd>
+<dt>lang:</dt>       <dd>array of BCP 47 language tags of
+languages for which this module has localized resource bundles,
+e.g., ["en-GB","zh-Hans-CN"]</dd>
 </dl>
                                         </div>
 
@@ -1910,6 +1906,8 @@ with an insert
                         <ul class="content">        
                                 <li class=""><a href="loader.js.html" title="loader.js">loader.js</a></li>
                                 <li class=""><a href="meta.js.html" title="meta.js">meta.js</a></li>
+                                <li class=""><a href="rollup.js.html" title="rollup.js">rollup.js</a></li>
+                                <li class=""><a href="yui3.js.html" title="yui3.js">yui3.js</a></li>
                         </ul>
                     </div>
 

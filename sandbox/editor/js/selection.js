@@ -10,26 +10,14 @@ YUI.add('selection', function(Y) {
      * @constructor
      */
     
-    /**
-    * Resolve a node from the selection object and return a Node instance
-    * @private
-    * @method resolve
-    * @param {HTMLElement} n The HTMLElement to resolve. Might be a TextNode.
-    * @return Node
-    * @type Node
-    */
-    var resolve = function(n) {
-        if (n && n.nodeType === 3) {
-            n = n.parentNode;
-        }
-        return Y.one(n);
-    }, textContent = 'textContent',
+    //TODO This shouldn't be there, Y.Node doesn't normalize getting textnode content.
+    var textContent = 'textContent',
     INNER_HTML = 'innerHTML',
     FONT_FAMILY = 'fontFamily';
 
-
     Y.Selection = function() {
-        var sel, el;
+        var sel, par, ieNode, nodes, rng;
+
         if (Y.config.win.getSelection) {
 	        sel = Y.config.win.getSelection();
         } else if (Y.config.doc.selection) {
@@ -42,28 +30,39 @@ YUI.add('selection', function(Y) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
 
             if (this.isCollapsed) {
-                sel.pasteHTML(Y.Selection.CURSOR);
-                el = Y.one('#' + Y.Selection.CURID).previous(function(n) {
-                    if (n.get('nodeType') === 3) {
-                        return true;
-                    }
-                }, true);
+                par = sel.parentElement();
+                nodes = par.childNodes;
+                rng = sel.duplicate();
 
-                this.anchorNode = resolve(Y.Node.getDOMNode(el));
-                this.focusNode = resolve(Y.Node.getDOMNode(el));
+                Y.each(nodes, function(v) {
+                    rng.select(v);
+                    if (rng.inRange(sel)) {
+                       ieNode = v; 
+                    }
+                });
+
+                this.ieNode = ieNode;
                 
-                this.anchorOffset = this.focusOffset = el.get('nodeValue.length');
+                if (ieNode) {
+                    if (ieNode.nodeType !== 3) {
+                        ieNode = ieNode.firstChild;
+                    }
+                    this.anchorNode = Y.Selection.resolve(ieNode);
+                    this.focusNode = Y.Selection.resolve(ieNode);
+                    
+                    this.anchorOffset = this.focusOffset = (ieNode.nodeValue) ? ieNode.nodeValue.length : 0 ;
+                    
+                    this.anchorTextNode = this.focusTextNode = Y.one(ieNode);
+                }
                 
-                this.anchorTextNode = this.focusTextNode = el;
-                Y.one('#' + Y.Selection.CURID).remove();
             }
-            
+
             //var self = this;
             //debugger;
         } else {
             this.isCollapsed = sel.isCollapsed;
-            this.anchorNode = resolve(sel.anchorNode);
-            this.focusNode = resolve(sel.focusNode);
+            this.anchorNode = Y.Selection.resolve(sel.anchorNode);
+            this.focusNode = Y.Selection.resolve(sel.focusNode);
             this.anchorOffset = sel.anchorOffset;
             this.focusOffset = sel.focusOffset;
             
@@ -85,7 +84,10 @@ YUI.add('selection', function(Y) {
     * @method filter
     */
     Y.Selection.filter = function() {
-        var nodes = Y.all(Y.Selection.ALL);
+        var nodes = Y.all(Y.Selection.ALL),
+            baseNodes = Y.all('strong,em'),
+            ls;
+
         Y.log('Filtering nodes', 'info', 'selection');
         nodes.each(function(n) {
             if (n.getStyle(FONT_FAMILY)) {
@@ -103,7 +105,6 @@ YUI.add('selection', function(Y) {
         });
         
         //Not sure about this one?
-        var baseNodes = Y.all('strong,em');
         baseNodes.each(function(n, k) {
             var t = n.get('tagName').toLowerCase(),
                 newTag = 'i';
@@ -112,7 +113,81 @@ YUI.add('selection', function(Y) {
             }
             Y.Selection.prototype._swap(baseNodes.item(k), newTag);
         });
+
+        //Filter out all the empty UL/OL's
+        ls = Y.all('ol,ul');
+        ls.each(function(v, k) {
+            var lis = v.all('li');
+            if (!lis.size()) {
+                v.remove();
+            }
+        });
+
     };
+    /**
+    * Undoes what filter does enough to return the HTML from the Editor, then re-applies the filter.
+    * @static
+    * @method unfilter
+    * @return {String} The filtered HTML
+    */
+    Y.Selection.unfilter = function() {
+        var nodes = Y.all('body [class]'),
+            html = '', nons, ids;
+        
+        Y.log('UnFiltering nodes', 'info', 'selection');
+        
+        nodes.each(function(n) {
+            if (n.hasClass(n._yuid)) {
+                //One of ours
+                n.setStyle(FONT_FAMILY, n.getStyle(FONT_FAMILY));
+                n.removeClass(n._yuid);
+                if (n.getAttribute('class') === '') {
+                    n.removeAttribute('class');
+                }
+            }
+        });
+
+        nons = Y.all('.yui-non');
+        nons.each(function(n) {
+            if (n.get('innerHTML') === '') {
+                n.remove();
+            }
+        });
+
+        ids = Y.all('body [id]');
+        ids.each(function(n) {
+            if (n.get('id').indexOf('yui_3_') === 0) {
+                n.removeAttribute('id');
+                n.removeAttribute('_yuid');
+            }
+        });
+
+        html = Y.one('body').get('innerHTML');
+        
+        nodes.each(function(n) {
+            n.addClass(n._yuid);
+            n.setStyle(FONT_FAMILY, '');
+            if (n.getAttribute('style') === '') {
+                n.removeAttribute('style');
+            }
+        });
+        
+        return html;
+    };
+    /**
+    * Resolve a node from the selection object and return a Node instance
+    * @static
+    * @method resolve
+    * @param {HTMLElement} n The HTMLElement to resolve. Might be a TextNode, gives parentNode.
+    * @return {Node} The Resolved node
+    */
+    Y.Selection.resolve = function(n) {
+        if (n && n.nodeType === 3) {
+            n = n.parentNode;
+        }
+        return Y.one(n);
+    };
+
     /**
     * The selector to use when looking for Nodes to cache the value of: [style],font[face]
     * @static
@@ -131,58 +206,54 @@ YUI.add('selection', function(Y) {
     * @property DEFAULT_TAG
     */
     Y.Selection.DEFAULT_TAG = 'span';
-    /**
-    * The DOM id of the tmp node inserted into the doc to track the cursor: __CUR__
-    * @static
-    * @property CURID
-    */
-    Y.Selection.CURID = '__CUR__';
-    /**
-    * The HTML used to create the temporary cursor.
-    * @static
-    * @property CURSOR
-    */
-    Y.Selection.CURSOR = '<' + Y.Selection.DEFAULT_TAG + ' id="' + Y.Selection.CURID + '" style="height: 0; line-height: 0; font-size: 0;"> </' + Y.Selection.DEFAULT_TAG + '>';
 
     Y.Selection.prototype = {
         /**
         * Range text value
         * @property text
+        * @type String
         */
         text: null,
         /**
         * Flag to show if the range is collapsed or not
         * @property isCollapsed
+        * @type Boolean
         */
         isCollapsed: null,
         /**
         * A Node instance of the parentNode of the anchorNode of the range
         * @property anchorNode
+        * @type Node
         */
         anchorNode: null,
         /**
         * The offset from the range object
         * @property anchorOffset
+        * @type Number
         */
         anchorOffset: null,
         /**
         * A Node instance of the actual textNode of the range.
         * @property anchorTextNode
+        * @type Node
         */
         anchorTextNode: null,
         /**
         * A Node instance of the parentNode of the focusNode of the range
         * @property focusNode
+        * @type Node
         */
         focusNode: null,
         /**
         * The offset from the range object
         * @property focusOffset
+        * @type Number
         */
         focusOffset: null,
         /**
         * A Node instance of the actual textNode of the range.
         * @property focusTextNode
+        * @type Node
         */
         focusTextNode: null,
         /**
@@ -197,6 +268,7 @@ YUI.add('selection', function(Y) {
         * @method _wrap
         * @param {HTMLElement} n The node to wrap 
         * @param {String} tag The tag to use when creating the new element.
+        * @return {HTMLElement} The wrapped node
         */
         _wrap: function(n, tag) {
             var tmp = Y.Node.create('<' + tag + '></' + tag + '>');
@@ -211,6 +283,7 @@ YUI.add('selection', function(Y) {
         * @method _swap
         * @param {HTMLElement} n The node to swap 
         * @param {String} tag The tag to use when creating the new element.
+        * @return {HTMLElement} The new node
         */
         _swap: function(n, tag) {
             var tmp = Y.Node.create('<' + tag + '></' + tag + '>');
@@ -223,7 +296,7 @@ YUI.add('selection', function(Y) {
         * Then it calls doc.execCommand('fontname', null, 'yui-tmp') to touch all nodes in the selection.
         * The it compiles a list of all nodes affected by the execCommand and builds a NodeList to return.
         * @method getSelected
-        * @return NodeList
+        * @return {NodeList} A NodeList of all items in the selection.
         */
         getSelected: function() {
             Y.Selection.filter();
@@ -238,7 +311,7 @@ YUI.add('selection', function(Y) {
                     if (n.getAttribute('style') === '') {
                         n.removeAttribute('style');
                     }
-                    items.push(nodes.item(k));
+                    items.push(Y.Node.getDOMNode(nodes.item(k)));
                 }
             });
             return Y.all(items);
@@ -247,16 +320,10 @@ YUI.add('selection', function(Y) {
         * Insert HTML at the current cursor position and return a Node instance of the newly inserted element.
         * @method insertContent
         * @param {String} html The HTML to insert.
-        * @return Node
+        * @return {Node} The inserted Node.
         */
         insertContent: function(html) {
-            if (this.isCollapsed) {
-                var node = this.insertAtCursor(html, this.anchorTextNode, this.anchorOffset);
-                return node;
-            } else {
-                Y.log('Can not insert into a non-collapsed selection, use wrapContent', 'error', 'selection');
-                return null;
-            }
+            return this.insertAtCursor(html, this.anchorTextNode, this.anchorOffset, true);
         },
         /**
         * Insert HTML at the current cursor position, this method gives you control over the text node to insert into and the offset where to put it.
@@ -264,28 +331,32 @@ YUI.add('selection', function(Y) {
         * @param {String} html The HTML to insert.
         * @param {Node} node The text node to break when inserting.
         * @param {Number} offset The left offset of the text node to break and insert the new content.
-        * @return Node
+        * @param {Boolean} collapse Should the range be collapsed after insertion. default: false
+        * @return {Node} The inserted Node.
         */
-        insertAtCursor: function(html, node, offset) {
+        insertAtCursor: function(html, node, offset, collapse) {
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
-                inHTML = node.get(textContent), txt, txt2;
+                inHTML = node.get(textContent), txt, txt2, newNode;
             
+            //TODO using Y.Node.create here throws warnings & strips first white space character
+            //txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));
+            //txt2 = Y.one(Y.Node.create(inHTML.substr(offset)));
             txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
             txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
             
             node.replace(txt, node);
-            var newNode = Y.Node.create(html);
+            newNode = Y.Node.create(html);
             txt.insert(newNode, 'after');
             newNode.insert(cur, 'after');
             cur.insert(txt2, 'after');
-            this.selectNode(cur);
+            this.selectNode(cur, collapse);
             return newNode;
         },
         /**
         * Get all elements inside a selection and wrap them with a new element and return a NodeList of all elements touched.
         * @method wrapContent
         * @param {String} tag The tag to wrap all selected items with.
-        * @return NodeList
+        * @return {NodeList} A NodeList of all items in the selection.
         */
         wrapContent: function(tag) {
             tag = (tag) ? tag : Y.Selection.DEFAULT_TAG;
@@ -293,7 +364,7 @@ YUI.add('selection', function(Y) {
             if (!this.isCollapsed) {
                 Y.log('Wrapping selection with: ' + tag, 'info', 'selection');
                 var items = this.getSelected(),
-                    changed = [], range, last, first;
+                    changed = [], range, last, first, range2;
 
                 items.each(function(n, k) {
                     var t = n.get('tagName').toLowerCase();
@@ -314,11 +385,10 @@ YUI.add('selection', function(Y) {
                     this._selection.addRange(range);
                 } else {
                     range.moveToElementText(Y.Node.getDOMNode(first));
-                    var range2 = this.createRange();
+                    range2 = this.createRange();
                     range2.moveToElementText(Y.Node.getDOMNode(last));
                     range.setEndPoint('EndToEnd', range2);
                     range.select();
-                    
                 }
 
                 changed = Y.all(changed);
@@ -338,22 +408,24 @@ YUI.add('selection', function(Y) {
         * @param {String} se The string to search for.
         * @param {String} re The string of HTML to replace it with.
         * @param {Node} node A Node instance of the text node to interact with.
-        * @return Node
+        * @return {Node} The node inserted.
         */
         replace: function(se,re,node) {
             Y.log('replacing (' + se + ') with (' + re + ')');
             var txt = node.get(textContent),
                 index = txt.indexOf(se),
-                len = txt.length;
+                newNode;
 
             txt = txt.replace(se, '');
             node.set(textContent, txt);
-            var newNode = this.insertAtCursor(re, node, index);
+            newNode = this.insertAtCursor(re, node, index, true);
             return newNode;
         },
         /**
         * Destroy the range.
         * @method remove
+        * @chainable
+        * @return {Y.Selection}
         */
         remove: function() {
             this._selection.removeAllRanges();
@@ -362,6 +434,7 @@ YUI.add('selection', function(Y) {
         /**
         * Wrapper for the different range creation methods.
         * @method createRange
+        * @return {RangeObject}
         */
         createRange: function() {
             if (Y.config.doc.selection) {
@@ -374,21 +447,38 @@ YUI.add('selection', function(Y) {
         * Select a Node (hilighting it).
         * @method selectNode
         * @param {Node} node The node to select
+        * @param {Boolean} collapse Should the range be collapsed after insertion. default: false
+        * @chainable
+        * @return {Y.Selection}
         */
-        selectNode: function(node) {
+        selectNode: function(node, collapse, end) {
+            end = end || 0;
+            node = Y.Node.getDOMNode(node);
 		    var range = this.createRange();
             if (range.selectNode) {
-                range.selectNode(Y.Node.getDOMNode(node));
+                range.selectNode(node);
                 this._selection.removeAllRanges();
                 this._selection.addRange(range);
+                if (collapse) {
+                    try {
+                        this._selection.collapse(node, end);
+                    } catch (e) {
+                        this._selection.collapse(node, 0);
+                    }
+                }
             } else {
-                range.select(Y.Node.getDOMNode(node));
+                range.moveToElementText(node);
+                range.select();
+                if (collapse) {
+                    range.collapse(((end) ? false : true));
+                }
             }
+            return this;
         },
         /**
         * Put a placeholder in the DOM at the current cursor position: NOT FINISHED
         * @method setCursor
-        * @return Node
+        * @return {Node}
         */
         setCursor: function() {
             return this.insertContent(Y.Selection.CURSOR);
@@ -396,10 +486,18 @@ YUI.add('selection', function(Y) {
         /**
         * Get the placeholder in the DOM at the current cursor position: NOT FINISHED
         * @method getCursor
-        * @return Node
+        * @return {Node}
         */
         getCursor: function() {
             return Y.one('#' + Y.Selection.CURID);
+        },
+        /**
+        * Generic toString for logging.
+        * @method toString
+        * @return {String}
+        */
+        toString: function() {
+            return 'Selection Object';
         }
     };
 });

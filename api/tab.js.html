@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>tabview&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>tabview&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_tabview.html" title="tabview">tabview</a>
                 
@@ -60,10 +60,11 @@
 <span class="cm"> * @class Tab</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> * @extends Widget</span>
+<span class="cm"> * @uses WidgetChild</span>
 <span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Tab</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;tab&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span> <span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetChild</span><span class="p">],</span> <span class="p">{</span>
-    <span class="nx">BOUNDING_TEMPLATE</span> <span class="o">:</span> <span class="s1">&#39;&lt;li class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tab</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/li&gt;&#39;</span><span class="p">,</span>
-    <span class="nx">CONTENT_TEMPLATE</span> <span class="o">:</span> <span class="s1">&#39;&lt;a class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabLabel</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/a&gt;&#39;</span><span class="p">,</span>
+    <span class="nx">BOUNDING_TEMPLATE</span><span class="o">:</span> <span class="s1">&#39;&lt;li class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tab</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/li&gt;&#39;</span><span class="p">,</span>
+    <span class="nx">CONTENT_TEMPLATE</span><span class="o">:</span> <span class="s1">&#39;&lt;a class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabLabel</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/a&gt;&#39;</span><span class="p">,</span>
     <span class="nx">PANEL_TEMPLATE</span><span class="o">:</span> <span class="s1">&#39;&lt;div class=&quot;&#39;</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabPanel</span> <span class="o">+</span> <span class="s1">&#39;&quot;&gt;&lt;/div&gt;&#39;</span><span class="p">,</span>
 
     <span class="nx">_uiSetSelectedPanel</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">selected</span><span class="p">)</span> <span class="p">{</span>
@@ -113,6 +114,8 @@
     <span class="p">},</span>
 
     <span class="nx">syncUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">));</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_uiSetSelectedPanel</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">));</span>
     <span class="p">},</span>
 
@@ -122,29 +125,13 @@
     <span class="p">},</span>
 
     <span class="nx">renderUI</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">parentContentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">),</span>
-            <span class="nx">contentBox</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">);</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_renderLabel</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">,</span> <span class="nx">parentContentBox</span><span class="p">);</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_renderPanel</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">,</span> <span class="nx">parentContentBox</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_renderPanel</span><span class="p">();</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">_initAria</span><span class="p">();</span>
     <span class="p">},</span>
 
-    <span class="nx">_renderLabel</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">,</span> <span class="nx">parentContentBox</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">label</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">);</span>
-        <span class="nx">contentBox</span><span class="p">.</span><span class="nx">setContent</span><span class="p">(</span><span class="nx">label</span><span class="p">);</span>
-        <span class="nx">parentContentBox</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewList</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">));</span>
-    <span class="p">},</span>
-
-    <span class="nx">_renderPanel</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">,</span> <span class="nx">parentContentBox</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">panel</span> <span class="o">=</span> <span class="nx">parentContentBox</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabPanel</span><span class="p">).</span><span class="nx">item</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">));</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">panel</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">panel</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">PANEL_TEMPLATE</span><span class="p">);</span>
-            <span class="nx">panel</span><span class="p">.</span><span class="nx">setContent</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">));</span>
-            <span class="nx">parentContentBox</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewPanel</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">panel</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_set</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">,</span> <span class="nx">panel</span><span class="p">);</span>
+    <span class="nx">_renderPanel</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewPanel</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">));</span>
     <span class="p">},</span>
 
     <span class="nx">_add</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -178,6 +165,35 @@
        <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;triggerEvent&#39;</span><span class="p">),</span> <span class="p">{</span> 
            <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_onActivate</span>
        <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">_defLabelSetter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">label</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">).</span><span class="nx">setContent</span><span class="p">(</span><span class="nx">label</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">label</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_defContentSetter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">).</span><span class="nx">setContent</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">content</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">_defPanelNodeValueFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">id</span><span class="p">,</span>
+            <span class="nx">href</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="nx">panel</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">href</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">id</span> <span class="o">=</span> <span class="nx">href</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> 
+            <span class="nx">panel</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">href</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">panel</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">panel</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">PANEL_TEMPLATE</span><span class="p">);</span>
+            <span class="nx">panel</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">panel</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">},</span> <span class="p">{</span>
     <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
@@ -195,18 +211,23 @@
 <span class="cm">         * @type String</span>
 <span class="cm">         */</span>
         <span class="nx">label</span><span class="o">:</span> <span class="p">{</span> 
+            <span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_defLabelSetter&#39;</span><span class="p">,</span>
             <span class="nx">validator</span><span class="o">:</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span>
         <span class="p">},</span>
 
         <span class="cm">/**</span>
-<span class="cm">         * @attribute label</span>
+<span class="cm">         * @attribute content</span>
 <span class="cm">         * @type String</span>
 <span class="cm">         */</span>
         <span class="nx">content</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="s1">&#39;_defContentSetter&#39;</span><span class="p">,</span>
             <span class="nx">validator</span><span class="o">:</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span>
         <span class="p">},</span>
 
-        <span class="nx">panelNode</span><span class="o">:</span> <span class="p">{},</span>
+        <span class="nx">panelNode</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">valueFn</span><span class="o">:</span> <span class="s1">&#39;_defPanelNodeValueFn&#39;</span><span class="p">,</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">},</span>
         
         <span class="nx">tabIndex</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
@@ -216,7 +237,7 @@
     <span class="p">},</span>
 
     <span class="nx">HTML_PARSER</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">selection</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">selected</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">contentBox</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">).</span><span class="nx">hasClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">selectedTab</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -324,7 +345,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Tab", "name": "label", "url": "Tab.html#config_label", "type": "config"}, {"access": "", "host": "Tab", "name": "labelChange", "url": "Tab.html#event_labelChange", "type": "event"}, {"access": "", "host": "Tab", "name": "triggerEvent", "url": "Tab.html#config_triggerEvent", "type": "config"}, {"access": "", "host": "Tab", "name": "triggerEventChange", "url": "Tab.html#event_triggerEventChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Tab", "name": "content", "url": "Tab.html#config_content", "type": "config"}, {"access": "", "host": "Tab", "name": "contentChange", "url": "Tab.html#event_contentChange", "type": "event"}, {"access": "", "host": "Tab", "name": "label", "url": "Tab.html#config_label", "type": "config"}, {"access": "", "host": "Tab", "name": "labelChange", "url": "Tab.html#event_labelChange", "type": "event"}, {"access": "", "host": "Tab", "name": "triggerEvent", "url": "Tab.html#config_triggerEvent", "type": "config"}, {"access": "", "host": "Tab", "name": "triggerEventChange", "url": "Tab.html#event_triggerEventChange", "type": "event"}];
 </script>
 </body>
 </html>

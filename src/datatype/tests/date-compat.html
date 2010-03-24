@@ -133,6 +133,9 @@
 
                 output = Y.DataType.Date.format(date, {format:"%x", locale:"fr-CH"});
                 ASSERT.areSame("17. 12. 95", output, "Expected %x format for fr-CH.");
+                
+                output = Y.DataType.Date.format(date, {format:"%r", locale:"en-GB"});
+                ASSERT.areSame(" 3:24:00 am PST", output, "Expected %r format for en-GB.");
             }
         });
 

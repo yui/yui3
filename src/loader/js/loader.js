@@ -10,6 +10,7 @@
  * YUI files.
  *
  * @module loader
+ * @submodule loader-base
  */
 
 /**
@@ -32,8 +33,6 @@
  * <ul>
  *  <li>base:
  *  The base dir</li>
- *  <li>secureBase:
- *  The secure base dir (not implemented)</li>
  *  <li>comboBase:
  *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
  *  <li>root:
@@ -256,7 +255,7 @@ Y.Loader = function(o) {
      * Browsers:
      *    IE: 2048
      *    Other A-Grade Browsers: Higher that what is typically supported 
-     *    'Capable' mobile browsers: @TODO
+     *    'capable' mobile browsers: @TODO
      *
      * Servers:
      *    Apache: 8192
@@ -399,14 +398,6 @@ Y.Loader = function(o) {
      *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
      *      base: 'assets/skins/',
      *
-     *      // The name of the rollup css file for the skin
-     *      path: 'skin.css',
-     *
-     *      // The number of skinnable components requested that are
-     *      // required before using the rollup file rather than the
-     *      // individual component css files
-     *      rollup: 3,
-     *
      *      // Any component-specific overrides can be specified here,
      *      // making it possible to load different skins for different
      *      // components.  It is possible to load more than one skin
@@ -419,8 +410,10 @@ Y.Loader = function(o) {
      *   @property skin
      */
     self.skin = Y.merge(Y.Env.meta.skin);
-    
 
+    self.config = o;
+    self._config(o);
+    
     self._internal = true;
 
     // YObject.each(defaults, function(k, v) {
@@ -507,8 +500,6 @@ Y.Loader = function(o) {
 
     // Y.on('yui:load', self.loadNext, self);
 
-    self.config = o;
-    self._config(o);
 };
 
 Y.Loader.prototype = {
@@ -535,6 +526,8 @@ Y.Loader.prototype = {
                     val = o[i];
                     if (i == 'require') {
                         self.require(val);
+                    } else if (i == 'skin') {
+                        Y.mix(self.skin, o[i], true);
                     } else if (i == 'groups') {
                         for (j in val) {
                             if (val.hasOwnProperty(j)) {
@@ -676,7 +669,10 @@ Y.Loader.prototype = {
      *     <dt>rollup:</dt>     <dd>the number of superseded modules required for automatic rollup</dd>
      *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
      *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
-     *     <dt>submodules:</dt> <dd>a has of submodules</dd>
+     *     <dt>submodules:</dt> <dd>a hash of submodules</dd>
+     *     <dt>lang:</dt>       <dd>array of BCP 47 language tags of
+     *                              languages for which this module has localized resource bundles,
+     *                              e.g., ["en-GB","zh-Hans-CN"]</dd>
      * </dl>
      * @method addModule
      * @param o An object containing the module data
@@ -707,7 +703,8 @@ Y.Loader.prototype = {
 
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
-            j, langs, packName, supName, flatSup, flatLang, lang;
+            j, langs, packName, supName, flatSup, flatLang, lang, ret,
+            overrides, skinname;
         if (subs) {
             sup = o.supersedes || []; 
             l   = 0;
@@ -725,12 +722,20 @@ Y.Loader.prototype = {
                     }
 
 
-                    this.addModule(s, i);
+                    smod = this.addModule(s, i);
                     sup.push(i);
 
-                    if (o.skinnable) {
-                        smod = this._addSkin(this.skin.defaultSkin, i, name);
-                        sup.push(smod.name);
+                    if (smod.skinnable) {
+                        o.skinnable = true;
+                        overrides = this.skin.overrides;
+                        if (overrides && overrides[i]) {
+                            for (j=0; j<overrides[i].length; j++) {
+                                skinname = this._addSkin(overrides[i][j], i, name);
+                                sup.push(skinname);
+                            }
+                        }
+                        skinname = this._addSkin(this.skin.defaultSkin, i, name);
+                        sup.push(skinname);
                     }
 
                     // looks like we are expected to work out the metadata
@@ -793,6 +798,14 @@ Y.Loader.prototype = {
         }
 
         this.dirty = true;
+
+        if (o.configFn) {
+            ret = o.configFn(o);
+            if (ret === false) {
+                delete this.moduleInfo[name];
+                o = null;
+            }
+        }
 
         return o;
     },
@@ -991,12 +1004,18 @@ Y.Loader.prototype = {
                     if (o && o[name]) {
                         for (i=0; i<o[name].length; i=i+1) {
                             smod = this._addSkin(o[name][i], name);
+                            if (YArray.indexOf(m.requires, smod) == -1) {
+                                m.requires.push(smod);
+                            }
                         }
                     } else {
+
                         smod = this._addSkin(this.skin.defaultSkin, name);
+                        if (YArray.indexOf(m.requires, smod) == -1) {
+                            m.requires.push(smod);
+                        }
                     }
 
-                    m.requires.push(smod);
                 }
 
                 // Create lang pack modules
@@ -1089,39 +1108,29 @@ Y.Loader.prototype = {
         // Y.log('After explode: ' + YObject.keys(r));
     },
 
-    getModule: function(name) {
+    getModule: function(mname) {
         //TODO: Remove name check - it's a quick hack to fix pattern WIP
-        if (!name) {
+        if (!mname) {
             return null;
         }
 
-        var m = this.moduleInfo[name], i, patterns = this.patterns, p, type, found;
+        var p, type, found, pname, 
+            m = this.moduleInfo[mname], 
+            patterns = this.patterns;
 
         // check the patterns library to see if we should automatically add
         // the module with defaults
         if (!m) {
            // Y.log('testing patterns ' + YObject.keys(patterns));
-
-            for (i in patterns) {
-                if (patterns.hasOwnProperty(i)) {
+            for (pname in patterns) {
+                if (patterns.hasOwnProperty(pname)) {
                     // Y.log('testing pattern ' + i);
-                    p = patterns[i];
+                    p = patterns[pname];
                     type = p.type;
-
-                    // switch (type) {
-                        // case 'regex':
-                        //     break;
-                        // case 'function':
-                        //     break;
-                        // default: // prefix
-                        //     if (name.indexOf(i) > -1) {
-                        //         add = true;
-                        //     }
-                    // }
 
                     // use the metadata supplied for the pattern
                     // as the module definition.
-                    if (name.indexOf(i) > -1) {
+                    if (mname.indexOf(pname) > -1) {
                         found = p;
                         break;
                     }
@@ -1130,12 +1139,12 @@ Y.Loader.prototype = {
 
             if (found) {
                 if (p.action) {
-                    // Y.log('executing pattern action: ' + i);
-                    p.action.call(this, name, i);
+                    // Y.log('executing pattern action: ' + pname);
+                    p.action.call(this, mname, pname);
                 } else {
-Y.log('Undefined module: ' + name + ', matched a pattern: ' + i, 'info', 'loader');
+Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'loader');
                     // ext true or false?
-                    m = this.addModule(Y.merge(found), name);
+                    m = this.addModule(Y.merge(found), mname);
                 }
             }
         }
@@ -1143,94 +1152,8 @@ Y.log('Undefined module: ' + name + ', matched a pattern: ' + i, 'info', 'loader
         return m;
     },
 
-    /**
-     * Look for rollup packages to determine if all of the modules a
-     * rollup supersedes are required.  If so, include the rollup to
-     * help reduce the total number of connections required.  Called
-     * by calculate()
-     * @method _rollup
-     * @private
-     */
-    _rollup: function() {
-        var i, j, m, s, rollups={}, r=this.required, roll,
-            info = this.moduleInfo, rolled, c;
-
-        // find and cache rollup modules
-        if (this.dirty || !this.rollups) {
-            for (i in info) {
-                if (info.hasOwnProperty(i)) {
-                    m = this.getModule(i);
-                    // if (m && m.rollup && m.supersedes) {
-                    if (m && m.rollup) {
-                        rollups[i] = m;
-                    }
-                }
-            }
-
-            this.rollups = rollups;
-            this.forceMap = (this.force) ? YArray.hash(this.force) : {};
-        }
-
-        // make as many passes as needed to pick up rollup rollups
-        for (;;) {
-            rolled = false;
-
-            // go through the rollup candidates
-            for (i in rollups) { 
-                if (rollups.hasOwnProperty(i)) {
-                    // there can be only one, unless forced
-                    if (!r[i] && ((!this.loaded[i]) || this.forceMap[i])) {
-                        m = this.getModule(i); 
-                        s = m.supersedes || []; 
-                        roll = false;
-
-                        // @TODO remove continue
-                        if (!m.rollup) {
-                            continue;
-                        }
-
-                        c = 0;
-
-                        // check the threshold
-                        for (j=0;j<s.length;j=j+1) {
-
-                            // if the superseded module is loaded, we can't load the rollup
-                            // unless it has been forced
-                            if (this.loaded[s[j]] && !this.forceMap[s[j]]) {
-                                roll = false;
-                                break;
-                            // increment the counter if this module is required.  if we are
-                            // beyond the rollup threshold, we will use the rollup module
-                            } else if (r[s[j]]) {
-                                c++;
-                                // Y.log("adding to thresh: " + c + ", " + s[j]);
-                                roll = (c >= m.rollup);
-                                if (roll) {
-                                    // Y.log("over thresh " + c + ", " + s[j]);
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (roll) {
-                            // Y.log("adding rollup: " +  i);
-                            // add the rollup
-                            r[i] = true;
-                            rolled = true;
-
-                            // expand the rollup's dependencies
-                            this.getRequires(m);
-                        }
-                    }
-                }
-            }
-
-            // if we made it here w/o rolling up something, we are done
-            if (!rolled) {
-                break;
-            }
-        }
-    },
+    // impl in rollup submodule
+    _rollup: function() { },
 
     /**
      * Remove superceded modules and loaded modules.  Called by
@@ -1457,11 +1380,27 @@ Y.log('Undefined module: ' + name + ', matched a pattern: ' + i, 'info', 'loader
 
             // Y.log("trying to load css first");
             this._internalCallback = function() {
-                var f = self.onCSS;
+
+                var f = self.onCSS, n, p, sib;
+
+                // IE hack for style overrides that are not being applied
+                if (this.insertBefore && Y.UA.ie) {
+                    n = Y.config.doc.getElementById(this.insertBefore);
+                    p = n.parentNode;
+                    sib = n.nextSibling;
+                    p.removeChild(n);
+                    if (sib) {
+                        p.insertBefore(n, sib);
+                    } else {
+                        p.appendChild(n);
+                    }
+                }
+
                 if (f) {
                     f.call(self.context, Y);
                 }
                 self._internalCallback = null;
+
                 self._insert(null, null, JS);
             };
 

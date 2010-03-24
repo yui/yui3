@@ -264,6 +264,9 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
+     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement 
+     * when creating one node, and a documentFragment when creating
+     * multiple nodes.
      */
     create: function(html, doc) {
         if (typeof html === 'string') {

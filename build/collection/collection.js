@@ -19,7 +19,7 @@ var L = Y.Lang, Native = Array.prototype, A = Y.Array;
  * Returns the index of the last item in the array
  * that contains the specified value, -1 if the
  * value isn't found.
- * method Array.lastIndexOf
+ * @method Array.lastIndexOf
  * @static
  * @param a {Array} the array to search
  * @param val the value to search for
@@ -627,9 +627,10 @@ YUI.add('array-invoke', function(Y) {
 
 /**
  * <p>Execute a named method on an array of objects.  Items in the list that do
- * not have a so named function will be skipped.</p>
+ * not have a function by that name will be skipped. For example,
+ * <code>Y.Array.invoke( arrayOfDrags, 'plug', Y.Plugin.DDProxy );</code></p>
  *
- * <p>The return values from each call are stored in an array and returned.</p>
+ * <p>The return values from each call are returned in an array.</p>
  *
  * @method invoke
  * @static

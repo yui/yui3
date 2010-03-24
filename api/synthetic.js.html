@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>event&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
@@ -99,7 +99,7 @@
 <span class="cm">/**</span>
 <span class="cm"> * &lt;p&gt;Wrapper class for the integration of new events into the YUI event</span>
 <span class="cm"> * infrastructure.  Don&#39;t instantiate this object directly, use</span>
-<span class="cm"> * &lt;code&gt;Y.Event.define( config )&lt;/code&gt;.&lt;/p&gt;</span>
+<span class="cm"> * &lt;code&gt;Y.Event.define( type, config )&lt;/code&gt;.&lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;The configuration object must include the event &lt;code&gt;type&lt;/code&gt;, and should include implementation methods for &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt;.  This is the full list of configuration properties:&lt;/p&gt;</span>
 <span class="cm"> * &lt;dl&gt;</span>
@@ -138,6 +138,7 @@
 <span class="cm"> *       to &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt; under</span>
 <span class="cm"> *       &lt;code&gt;subscription._extra&lt;/code&gt;.&lt;/dd&gt;</span>
 <span class="cm"> *   &lt;dt&gt;</span>
+<span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @class SyntheticEvent</span>
 <span class="cm"> * @constructor</span>
@@ -388,12 +389,54 @@
 
 <span class="cm">/**</span>
 <span class="cm"> * &lt;p&gt;Static method to register a synthetic event definition and implementation</span>
-<span class="cm"> * in the DOM Event subsystem. See &lt;code&gt;Y.SyntheticEvent&lt;/code&gt; for the</span>
-<span class="cm"> * configuration object signature required.&lt;/p&gt;</span>
+<span class="cm"> * in the DOM Event subsystem.&lt;/p&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * &lt;p&gt;Pass either a string &lt;code&gt;type&lt;/code&gt; and configuration object as</span>
 <span class="cm"> * separate parameters or a configuration object that includes a</span>
 <span class="cm"> * &lt;code&gt;type&lt;/code&gt; property as a single parameter.&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;The configuration object should include implementation methods for</span>
+<span class="cm"> * &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt;.  This is the full list of</span>
+<span class="cm"> * configuration properties:&lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;dl&gt;</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;type&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;Required if using the &lt;code&gt;Y.Event.define( config )&lt;/code&gt;</span>
+<span class="cm"> *       signature.  The name of the synthetic event.  What goes</span>
+<span class="cm"> *       &lt;code&gt;node.on(&lt;strong&gt;HERE&lt;/strong&gt;, callback )&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;on&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
+<span class="cm"> *       implementation logic for subscription.  Any special setup you need to</span>
+<span class="cm"> *       do to create the environment for the event being fired.  E.g. native</span>
+<span class="cm"> *       DOM event subscriptions.  Store subscription related objects and</span>
+<span class="cm"> *       information on the &lt;code&gt;subscription&lt;/code&gt; object.  When the</span>
+<span class="cm"> *       criteria have been met to fire the synthetic event, call</span>
+<span class="cm"> *       &lt;code&gt;fireEvent.fire()&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;detach&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
+<span class="cm"> *       implementation logic for cleaning up a detached subscription. E.g.</span>
+<span class="cm"> *       detach any DOM subscriptions done in &lt;code&gt;on&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;publishConfig&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;(Object) The configuration object that will be used to instantiate</span>
+<span class="cm"> *       the underlying CustomEvent.  By default, the event is defined with</span>
+<span class="cm"> *       &lt;code&gt;emitFacade: true&lt;/code&gt; so subscribers will receive a DOM-like</span>
+<span class="cm"> *       event object.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;processArgs&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( argArray )&lt;/code&gt;  Optional method to extract any</span>
+<span class="cm"> *       additional arguments from the subscription signature.  Using this</span>
+<span class="cm"> *       allows &lt;code&gt;on&lt;/code&gt; signatures like &lt;code&gt;node.on(</span>
+<span class="cm"> *       &amp;quot;hover&amp;quot;, overCallback, outCallback )&lt;/code&gt;.  Be sure that</span>
+<span class="cm"> *       the args passed in is pruned of any additional arguments using, for</span>
+<span class="cm"> *       example, &lt;code&gt;argArray.splice(2,1);&lt;/code&gt;.  Data returned from the</span>
+<span class="cm"> *       function will be stored on the &lt;code&gt;subscription&lt;/code&gt; object passed</span>
+<span class="cm"> *       to &lt;code&gt;on&lt;/code&gt; and &lt;code&gt;detach&lt;/code&gt; under</span>
+<span class="cm"> *       &lt;code&gt;subscription._extra&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *   &lt;dt&gt;</span>
+<span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> * @method Event.define</span>
 <span class="cm"> * @param type {String} Name given to the synthetic event</span>
@@ -410,8 +453,8 @@
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">(</span><span class="nx">cfg</span> <span class="o">||</span> <span class="p">{}),</span> <span class="p">{</span> <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span> <span class="p">});</span>
 
     <span class="c1">// no redefinition allowed</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
-        <span class="nx">EvtPlugins</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">])</span> <span class="p">{</span>
+        <span class="nx">EvtPlugins</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">DOMEvents</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">SyntheticEvent</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">};</span>
 </pre></div>

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>collection&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>collection&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_collection.html" title="collection">collection</a>
                  &gt; YUI~array~invoke 
@@ -100,8 +100,9 @@
                                         
                                         <div class="description" property="yui:description">
                                             <p>Execute a named method on an array of objects.  Items in the list that do
-not have a so named function will be skipped.</p>
-<p>The return values from each call are stored in an array and returned.</p>
+not have a function by that name will be skipped. For example,
+<code>Y.Array.invoke( arrayOfDrags, 'plug', Y.Plugin.DDProxy );</code></p>
+<p>The return values from each call are returned in an array.</p>
                                         </div>
 
                                         <div class="description">

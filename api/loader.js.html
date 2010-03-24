@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
@@ -59,6 +59,7 @@
 <span class="cm"> * YUI files.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @module loader</span>
+<span class="cm"> * @submodule loader-base</span>
 <span class="cm"> */</span>
 
 <span class="cm">/**</span>
@@ -81,8 +82,6 @@
 <span class="cm"> * &lt;ul&gt;</span>
 <span class="cm"> *  &lt;li&gt;base:</span>
 <span class="cm"> *  The base dir&lt;/li&gt;</span>
-<span class="cm"> *  &lt;li&gt;secureBase:</span>
-<span class="cm"> *  The secure base dir (not implemented)&lt;/li&gt;</span>
 <span class="cm"> *  &lt;li&gt;comboBase:</span>
 <span class="cm"> *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?&lt;/li&gt;</span>
 <span class="cm"> *  &lt;li&gt;root:</span>
@@ -305,7 +304,7 @@
 <span class="cm">     * Browsers:</span>
 <span class="cm">     *    IE: 2048</span>
 <span class="cm">     *    Other A-Grade Browsers: Higher that what is typically supported </span>
-<span class="cm">     *    &#39;Capable&#39; mobile browsers: @TODO</span>
+<span class="cm">     *    &#39;capable&#39; mobile browsers: @TODO</span>
 <span class="cm">     *</span>
 <span class="cm">     * Servers:</span>
 <span class="cm">     *    Apache: 8192</span>
@@ -448,14 +447,6 @@
 <span class="cm">     *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/</span>
 <span class="cm">     *      base: &#39;assets/skins/&#39;,</span>
 <span class="cm">     *</span>
-<span class="cm">     *      // The name of the rollup css file for the skin</span>
-<span class="cm">     *      path: &#39;skin.css&#39;,</span>
-<span class="cm">     *</span>
-<span class="cm">     *      // The number of skinnable components requested that are</span>
-<span class="cm">     *      // required before using the rollup file rather than the</span>
-<span class="cm">     *      // individual component css files</span>
-<span class="cm">     *      rollup: 3,</span>
-<span class="cm">     *</span>
 <span class="cm">     *      // Any component-specific overrides can be specified here,</span>
 <span class="cm">     *      // making it possible to load different skins for different</span>
 <span class="cm">     *      // components.  It is possible to load more than one skin</span>
@@ -468,8 +459,10 @@
 <span class="cm">     *   @property skin</span>
 <span class="cm">     */</span>
     <span class="nx">self</span><span class="p">.</span><span class="nx">skin</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">skin</span><span class="p">);</span>
-    
 
+    <span class="nx">self</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+    
     <span class="nx">self</span><span class="p">.</span><span class="nx">_internal</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
 
     <span class="c1">// YObject.each(defaults, function(k, v) {</span>
@@ -556,8 +549,6 @@
 
     <span class="c1">// Y.on(&#39;yui:load&#39;, self.loadNext, self);</span>
 
-    <span class="nx">self</span><span class="p">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
-    <span class="nx">self</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Loader</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
@@ -584,6 +575,8 @@
                     <span class="nx">val</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;require&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">self</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="nx">val</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;skin&#39;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">skin</span><span class="p">,</span> <span class="nx">o</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;groups&#39;</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="k">in</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">val</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">j</span><span class="p">))</span> <span class="p">{</span>
@@ -725,7 +718,10 @@
 <span class="cm">     *     &lt;dt&gt;rollup:&lt;/dt&gt;     &lt;dd&gt;the number of superseded modules required for automatic rollup&lt;/dd&gt;</span>
 <span class="cm">     *     &lt;dt&gt;fullpath:&lt;/dt&gt;   &lt;dd&gt;If fullpath is specified, this is used instead of the configured base + path&lt;/dd&gt;</span>
 <span class="cm">     *     &lt;dt&gt;skinnable:&lt;/dt&gt;  &lt;dd&gt;flag to determine if skin assets should automatically be pulled in&lt;/dd&gt;</span>
-<span class="cm">     *     &lt;dt&gt;submodules:&lt;/dt&gt; &lt;dd&gt;a has of submodules&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;submodules:&lt;/dt&gt; &lt;dd&gt;a hash of submodules&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;lang:&lt;/dt&gt;       &lt;dd&gt;array of BCP 47 language tags of</span>
+<span class="cm">     *                              languages for which this module has localized resource bundles,</span>
+<span class="cm">     *                              e.g., [&quot;en-GB&quot;,&quot;zh-Hans-CN&quot;]&lt;/dd&gt;</span>
 <span class="cm">     * &lt;/dl&gt;</span>
 <span class="cm">     * @method addModule</span>
 <span class="cm">     * @param o An object containing the module data</span>
@@ -756,7 +752,8 @@
 
         <span class="c1">// Handle submodule logic</span>
         <span class="kd">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">submodules</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">sup</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">smod</span><span class="p">,</span> <span class="nx">plugins</span><span class="p">,</span> <span class="nx">plug</span><span class="p">,</span>
-            <span class="nx">j</span><span class="p">,</span> <span class="nx">langs</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">supName</span><span class="p">,</span> <span class="nx">flatSup</span><span class="p">,</span> <span class="nx">flatLang</span><span class="p">,</span> <span class="nx">lang</span><span class="p">;</span>
+            <span class="nx">j</span><span class="p">,</span> <span class="nx">langs</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">supName</span><span class="p">,</span> <span class="nx">flatSup</span><span class="p">,</span> <span class="nx">flatLang</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span>
+            <span class="nx">overrides</span><span class="p">,</span> <span class="nx">skinname</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">sup</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">||</span> <span class="p">[];</span> 
             <span class="nx">l</span>   <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -774,12 +771,20 @@
                     <span class="p">}</span>
 
 
-                    <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+                    <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
                     <span class="nx">sup</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">skinnable</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">skin</span><span class="p">.</span><span class="nx">defaultSkin</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
-                        <span class="nx">sup</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">smod</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">smod</span><span class="p">.</span><span class="nx">skinnable</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">o</span><span class="p">.</span><span class="nx">skinnable</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                        <span class="nx">overrides</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">skin</span><span class="p">.</span><span class="nx">overrides</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">overrides</span> <span class="o">&amp;&amp;</span> <span class="nx">overrides</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+                            <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">j</span><span class="o">&lt;</span><span class="nx">overrides</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">skinname</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="nx">overrides</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                                <span class="nx">sup</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">skinname</span><span class="p">);</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                        <span class="nx">skinname</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">skin</span><span class="p">.</span><span class="nx">defaultSkin</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                        <span class="nx">sup</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">skinname</span><span class="p">);</span>
                     <span class="p">}</span>
 
                     <span class="c1">// looks like we are expected to work out the metadata</span>
@@ -842,6 +847,14 @@
         <span class="p">}</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">configFn</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">configFn</span><span class="p">(</span><span class="nx">o</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">ret</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+                <span class="nx">o</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
     <span class="p">},</span>
@@ -1040,12 +1053,18 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
                         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                             <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">][</span><span class="nx">i</span><span class="p">],</span> <span class="nx">name</span><span class="p">);</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="nx">YArray</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">,</span> <span class="nx">smod</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">smod</span><span class="p">);</span>
+                            <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
                         <span class="nx">smod</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_addSkin</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">skin</span><span class="p">.</span><span class="nx">defaultSkin</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">YArray</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">,</span> <span class="nx">smod</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">smod</span><span class="p">);</span>
+                        <span class="p">}</span>
                     <span class="p">}</span>
 
-                    <span class="nx">m</span><span class="p">.</span><span class="nx">requires</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">smod</span><span class="p">);</span>
                 <span class="p">}</span>
 
                 <span class="c1">// Create lang pack modules</span>
@@ -1138,39 +1157,29 @@
         <span class="c1">// Y.log(&#39;After explode: &#39; + YObject.keys(r));</span>
     <span class="p">},</span>
 
-    <span class="nx">getModule</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">getModule</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">mname</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">//TODO: Remove name check - it&#39;s a quick hack to fix pattern WIP</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">mname</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">patterns</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">patterns</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">found</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">found</span><span class="p">,</span> <span class="nx">pname</span><span class="p">,</span> 
+            <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">mname</span><span class="p">],</span> 
+            <span class="nx">patterns</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">patterns</span><span class="p">;</span>
 
         <span class="c1">// check the patterns library to see if we should automatically add</span>
         <span class="c1">// the module with defaults</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">)</span> <span class="p">{</span>
            <span class="c1">// Y.log(&#39;testing patterns &#39; + YObject.keys(patterns));</span>
-
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">patterns</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">patterns</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">pname</span> <span class="k">in</span> <span class="nx">patterns</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">patterns</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">pname</span><span class="p">))</span> <span class="p">{</span>
                     <span class="c1">// Y.log(&#39;testing pattern &#39; + i);</span>
-                    <span class="nx">p</span> <span class="o">=</span> <span class="nx">patterns</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                    <span class="nx">p</span> <span class="o">=</span> <span class="nx">patterns</span><span class="p">[</span><span class="nx">pname</span><span class="p">];</span>
                     <span class="nx">type</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
-
-                    <span class="c1">// switch (type) {</span>
-                        <span class="c1">// case &#39;regex&#39;:</span>
-                        <span class="c1">//     break;</span>
-                        <span class="c1">// case &#39;function&#39;:</span>
-                        <span class="c1">//     break;</span>
-                        <span class="c1">// default: // prefix</span>
-                        <span class="c1">//     if (name.indexOf(i) &gt; -1) {</span>
-                        <span class="c1">//         add = true;</span>
-                        <span class="c1">//     }</span>
-                    <span class="c1">// }</span>
 
                     <span class="c1">// use the metadata supplied for the pattern</span>
                     <span class="c1">// as the module definition.</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">mname</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">pname</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">found</span> <span class="o">=</span> <span class="nx">p</span><span class="p">;</span>
                         <span class="k">break</span><span class="p">;</span>
                     <span class="p">}</span>
@@ -1179,12 +1188,12 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">found</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">p</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="c1">// Y.log(&#39;executing pattern action: &#39; + i);</span>
-                    <span class="nx">p</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
+                    <span class="c1">// Y.log(&#39;executing pattern action: &#39; + pname);</span>
+                    <span class="nx">p</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">mname</span><span class="p">,</span> <span class="nx">pname</span><span class="p">);</span>
                 <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Undefined module: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, matched a pattern: &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;loader&#39;</span><span class="p">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Undefined module: &#39;</span> <span class="o">+</span> <span class="nx">mname</span> <span class="o">+</span> <span class="s1">&#39;, matched a pattern: &#39;</span> <span class="o">+</span> <span class="nx">pname</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;loader&#39;</span><span class="p">);</span>
                     <span class="c1">// ext true or false?</span>
-                    <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">found</span><span class="p">),</span> <span class="nx">name</span><span class="p">);</span>
+                    <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">found</span><span class="p">),</span> <span class="nx">mname</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1192,94 +1201,8 @@
         <span class="k">return</span> <span class="nx">m</span><span class="p">;</span>
     <span class="p">},</span>
 
-    <span class="cm">/**</span>
-<span class="cm">     * Look for rollup packages to determine if all of the modules a</span>
-<span class="cm">     * rollup supersedes are required.  If so, include the rollup to</span>
-<span class="cm">     * help reduce the total number of connections required.  Called</span>
-<span class="cm">     * by calculate()</span>
-<span class="cm">     * @method _rollup</span>
-<span class="cm">     * @private</span>
-<span class="cm">     */</span>
-    <span class="nx">_rollup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">rollups</span><span class="o">=</span><span class="p">{},</span> <span class="nx">r</span><span class="o">=</span><span class="k">this</span><span class="p">.</span><span class="nx">required</span><span class="p">,</span> <span class="nx">roll</span><span class="p">,</span>
-            <span class="nx">info</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">,</span> <span class="nx">rolled</span><span class="p">,</span> <span class="nx">c</span><span class="p">;</span>
-
-        <span class="c1">// find and cache rollup modules</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">dirty</span> <span class="o">||</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">rollups</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
-                    <span class="c1">// if (m &amp;&amp; m.rollup &amp;&amp; m.supersedes) {</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">m</span><span class="p">.</span><span class="nx">rollup</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="nx">rollups</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">m</span><span class="p">;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-
-            <span class="k">this</span><span class="p">.</span><span class="nx">rollups</span> <span class="o">=</span> <span class="nx">rollups</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">forceMap</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">force</span><span class="p">)</span> <span class="o">?</span> <span class="nx">YArray</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">force</span><span class="p">)</span> <span class="o">:</span> <span class="p">{};</span>
-        <span class="p">}</span>
-
-        <span class="c1">// make as many passes as needed to pick up rollup rollups</span>
-        <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
-            <span class="nx">rolled</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
-            <span class="c1">// go through the rollup candidates</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">rollups</span><span class="p">)</span> <span class="p">{</span> 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">rollups</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="c1">// there can be only one, unless forced</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="p">((</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">forceMap</span><span class="p">[</span><span class="nx">i</span><span class="p">]))</span> <span class="p">{</span>
-                        <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getModule</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> 
-                        <span class="nx">s</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">supersedes</span> <span class="o">||</span> <span class="p">[];</span> 
-                        <span class="nx">roll</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-
-                        <span class="c1">// @TODO remove continue</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span><span class="p">.</span><span class="nx">rollup</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="k">continue</span><span class="p">;</span>
-                        <span class="p">}</span>
-
-                        <span class="nx">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-
-                        <span class="c1">// check the threshold</span>
-                        <span class="k">for</span> <span class="p">(</span><span class="nx">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">j</span><span class="o">&lt;</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">j</span><span class="o">=</span><span class="nx">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-
-                            <span class="c1">// if the superseded module is loaded, we can&#39;t load the rollup</span>
-                            <span class="c1">// unless it has been forced</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">loaded</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">forceMap</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]])</span> <span class="p">{</span>
-                                <span class="nx">roll</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-                                <span class="k">break</span><span class="p">;</span>
-                            <span class="c1">// increment the counter if this module is required.  if we are</span>
-                            <span class="c1">// beyond the rollup threshold, we will use the rollup module</span>
-                            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">s</span><span class="p">[</span><span class="nx">j</span><span class="p">]])</span> <span class="p">{</span>
-                                <span class="nx">c</span><span class="o">++</span><span class="p">;</span>
-                                <span class="c1">// Y.log(&quot;adding to thresh: &quot; + c + &quot;, &quot; + s[j]);</span>
-                                <span class="nx">roll</span> <span class="o">=</span> <span class="p">(</span><span class="nx">c</span> <span class="o">&gt;=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">rollup</span><span class="p">);</span>
-                                <span class="k">if</span> <span class="p">(</span><span class="nx">roll</span><span class="p">)</span> <span class="p">{</span>
-                                    <span class="c1">// Y.log(&quot;over thresh &quot; + c + &quot;, &quot; + s[j]);</span>
-                                    <span class="k">break</span><span class="p">;</span>
-                                <span class="p">}</span>
-                            <span class="p">}</span>
-                        <span class="p">}</span>
-
-                        <span class="k">if</span> <span class="p">(</span><span class="nx">roll</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="c1">// Y.log(&quot;adding rollup: &quot; +  i);</span>
-                            <span class="c1">// add the rollup</span>
-                            <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                            <span class="nx">rolled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-
-                            <span class="c1">// expand the rollup&#39;s dependencies</span>
-                            <span class="k">this</span><span class="p">.</span><span class="nx">getRequires</span><span class="p">(</span><span class="nx">m</span><span class="p">);</span>
-                        <span class="p">}</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-
-            <span class="c1">// if we made it here w/o rolling up something, we are done</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">rolled</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">break</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
+    <span class="c1">// impl in rollup submodule</span>
+    <span class="nx">_rollup</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Remove superceded modules and loaded modules.  Called by</span>
@@ -1506,11 +1429,27 @@
 
             <span class="c1">// Y.log(&quot;trying to load css first&quot;);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">onCSS</span><span class="p">;</span>
+
+                <span class="kd">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">onCSS</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">sib</span><span class="p">;</span>
+
+                <span class="c1">// IE hack for style overrides that are not being applied</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">insertBefore</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">);</span>
+                    <span class="nx">p</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+                    <span class="nx">sib</span> <span class="o">=</span> <span class="nx">n</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">;</span>
+                    <span class="nx">p</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">sib</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">p</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">sib</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                        <span class="nx">p</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
                 <span class="k">if</span> <span class="p">(</span><span class="nx">f</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">f</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">context</span><span class="p">,</span> <span class="nx">Y</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="nx">self</span><span class="p">.</span><span class="nx">_internalCallback</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
                 <span class="nx">self</span><span class="p">.</span><span class="nx">_insert</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">JS</span><span class="p">);</span>
             <span class="p">};</span>
 
@@ -1938,6 +1877,8 @@
                         <ul class="content">        
                                 <li class="selected"><a href="loader.js.html" title="loader.js">loader.js</a></li>
                                 <li class=""><a href="meta.js.html" title="meta.js">meta.js</a></li>
+                                <li class=""><a href="rollup.js.html" title="rollup.js">rollup.js</a></li>
+                                <li class=""><a href="yui3.js.html" title="yui3.js">yui3.js</a></li>
                         </ul>
                     </div>
 

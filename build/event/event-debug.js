@@ -242,13 +242,14 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     wrapper = wrapper || {};
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, c, t;
+        x = e.pageX, y = e.pageY, c, t, 
+        overrides = wrapper.overrides || {};
 
     this.altKey   = e.altKey;
     this.ctrlKey  = e.ctrlKey;
     this.metaKey  = e.metaKey;
     this.shiftKey = e.shiftKey;
-    this.type     = e.type;
+    this.type     = overrides.type || e.type;
     this.clientX  = e.clientX;
     this.clientY  = e.clientY;
 
@@ -754,6 +755,8 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                         }
                     }
                 });
+
+                cewrapper.overrides = {};
             
                 // for later removeListener calls
                 cewrapper.el = el;
@@ -791,7 +794,8 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                 fn = args[1],
                 el = args[2] || Y.config.win,
                 facade = config && config.facade,
-                capture = config && config.capture;
+                capture = config && config.capture,
+                overrides = config && config.overrides; 
 
             if (args[args.length-1] === COMPAT_ARG) {
                 compat = true;
@@ -876,6 +880,9 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
             }
 
  			cewrapper = this._createWrapper(el, type, capture, compat, facade);
+            if (overrides) {
+                Y.mix(cewrapper.overrides, overrides);
+            }
 
             if (el == Y.config.win && type == "load") {
 
@@ -2068,6 +2075,9 @@ var UA = Y.UA,
 
 	    var a = Y.Array(args, 0, true),
             el = args[2];
+
+        config.overrides = config.overrides || {};
+        config.overrides.type = args[0];
         
         if (el) {
             if (Y.DOM.isWindow(el)) {

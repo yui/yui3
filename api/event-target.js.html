@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event-custom&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>event-custom&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event-custom.html" title="event-custom">event-custom</a>
                 
@@ -181,6 +181,8 @@
 <span class="cm">     * @method once</span>
 <span class="cm">     * @param type    {string}   The type of the event</span>
 <span class="cm">     * @param fn {Function} The callback</span>
+<span class="cm">     * @param context {object} optional execution context.</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
 <span class="cm">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
 <span class="cm">     */</span>
     <span class="nx">once</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -194,9 +196,11 @@
 <span class="cm">     * @method on </span>
 <span class="cm">     * @param type    {string}   The type of the event</span>
 <span class="cm">     * @param fn {Function} The callback</span>
+<span class="cm">     * @param context {object} optional execution context.</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
 <span class="cm">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
 <span class="cm">     */</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">parts</span> <span class="o">=</span> <span class="nx">_parseType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">),</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span>
             <span class="nx">detachcategory</span><span class="p">,</span> <span class="nx">handle</span><span class="p">,</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">handles</span><span class="p">,</span> <span class="nx">after</span><span class="p">,</span> <span class="nx">adapt</span><span class="p">,</span> <span class="nx">shorttype</span><span class="p">,</span>
@@ -416,7 +420,8 @@
             <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="nx">ce</span> <span class="o">=</span> <span class="nx">evts</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
+        <span class="c1">// ce = evts[type];</span>
+        <span class="nx">ce</span> <span class="o">=</span> <span class="nx">evts</span><span class="p">[</span><span class="nx">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]];</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">ce</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">);</span>
         <span class="p">}</span>
@@ -692,6 +697,8 @@
 <span class="cm">     * @method after</span>
 <span class="cm">     * @param type    {string}   The type of the event</span>
 <span class="cm">     * @param fn {Function} The callback</span>
+<span class="cm">     * @param context {object} optional execution context.</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
 <span class="cm">     * @return the event target or a detach handle per &#39;chain&#39; config</span>
 <span class="cm">     */</span>
     <span class="nx">after</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>

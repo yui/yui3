@@ -2,40 +2,23 @@
 <html>
 <head>
     <title>Test Page</title>
-    <link type="text/css" rel="stylesheet" href="../../../build/test/assets/test-console.css">
-    <style type="text/css" id="styleblock" class="highlight-ignore">
+    <style type="text/css">
         h1 {
             font: normal 125%/1.4 Arial, sans-serif;
         }
-        .yui-skin-sam .yui-console .yui-console-content {
+        .yui3-skin-sam .yui3-console .yui3-console-content {
             font-size: 10px;
             width: 32em;
         }
-        .yui-skin-sam .yui-console .yui-console-bd {
+        .yui3-skin-sam .yui3-console .yui3-console-bd {
             height: 50em;
         }
-        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
-            background: #070;
-            color: #fff;
-        }
-        .yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
-            background: #700;
-            color: #fff;
-        }
-        .highlight-example {
-            display: inline;
-            float: left;
-            width: 650px;
-        }
-        .highlight-example h2 {
-            display: none;
-        }
-        .yui-skin-sam .yui-console-entry-time {
+        .yui3-skin-sam .yui3-console-entry-time {
             display: none;
         }
     </style>
 </head>
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
 <h1>Tests</h1>
 <div id="testbed"></div>
 
@@ -43,9 +26,7 @@
 <!--script type="text/javascript" src="../../../build/async-queue/async-queue.js"></script-->
 <script type="text/javascript">
 YUI({
-    base : '../../../build/',
-    filter : 'debug',
-    logInclude : { TestRunner: true }
+    filter : 'raw'
 }).use('test','console','async-queue','io-base',function (Y) {
 
 var suite = new Y.Test.Suite("Tests");
@@ -880,6 +861,47 @@ suite.add(new Y.Test.Case({
     }
 }));
 
+/*
+// Avoiding a Y.Test bug where tests repeat infinitely
+suite.add(new Y.Test.Case({
+    name : "From bugs",
+
+    // Bug 2528602
+    test_double_exec_when_pause_and_run_async : function () {
+        var q = new Y.AsyncQueue(),
+            register = 0,
+            self = this;
+
+        q.defaults.timeout = 10;
+        q.add({
+            id: 'one',
+            fn: function() {
+                q.pause();
+                register += 1;
+                q.run();
+            }
+        }, {
+            id: 'two',
+            fn: function() {
+                register += 10;
+            },
+            iterations: 1
+        });
+
+        q.on( 'complete', function () {
+            self.resume( function () {
+                Y.log( register );
+                Y.Assert.areSame( 11, register );
+            } );
+        } );
+        
+        q.run();
+
+        this.wait();
+
+    }
+}));
+*/
 
 var yconsole = new Y.Console({
     contentBox:"log",

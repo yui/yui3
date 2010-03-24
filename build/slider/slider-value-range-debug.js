@@ -193,6 +193,31 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         },
 
         /**
+         * Returns the current value.  Override this if you want to introduce
+         * output formatting. Otherwise equivalent to slider.get( "value" );
+         *
+         * @method getValue
+         * @return {Number}
+         */
+        getValue: function () {
+            return this.get( VALUE );
+        },
+
+        /**
+         * Updates the current value.  Override this if you want to introduce
+         * input value parsing or preprocessing.  Otherwise equivalent to
+         * slider.set( "value", v );
+         *
+         * @method setValue
+         * @param val {Number} The new value
+         * @return {Slider}
+         * @chainable
+         */
+        setValue: function ( val ) {
+            return this.set( VALUE, val );
+        },
+
+        /**
          * Update position according to new min value.  If the new min results
          * in the current value being out of range, the value is set to the
          * closer of min or max.
@@ -273,7 +298,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
 
             thumb.actXY[ this._key.xyIndex ] = this._valueToOffset( value );
 
-            thumb._moveNode();
+            thumb._alignNode( thumb.actXY );
+            //thumb._moveNode();
         },
 
         /**

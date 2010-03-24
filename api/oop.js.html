@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>oop&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>oop&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_oop.html" title="oop">oop</a>
                 
@@ -263,7 +263,8 @@
     <span class="p">};</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Deep obj/array copy.  Functions are cloned with Y.bind.</span>
+<span class="cm">     * Deep obj/array copy.  Function clones are actually</span>
+<span class="cm">     * wrappers around the original function.</span>
 <span class="cm">     * Array-like objects are treated as arrays.</span>
 <span class="cm">     * Primitives are returned untouched.  Optionally, a</span>
 <span class="cm">     * function can be provided to handle other data types,</span>
@@ -278,7 +279,6 @@
 <span class="cm">     * items that are deleted from the clone will result in the value</span>
 <span class="cm">     * of the source prototype being exposed.  If operating on a non-safe</span>
 <span class="cm">     * clone, items should be nulled out rather than deleted.</span>
-<span class="cm">     * @TODO review</span>
 <span class="cm">     * @param f optional function to apply to each item in a collection;</span>
 <span class="cm">     *          it will be executed prior to applying the value to</span>
 <span class="cm">     *          the new object.  Return false to prevent the copy.</span>

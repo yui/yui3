@@ -178,6 +178,11 @@
          * If no from value is specified, the DEFAULT_GETTER will be used. 
          * @attribute from
          * @type Object
+         * supports any unit, provided it matches the "to" (or default)
+         * unit (e.g. "{width: 10em', color: 'rgb(0, 0 0)', borderColor: '#ccc'}".
+         * If using the default ('px' for length-based units), the unit may be omitted  (
+         * (e.g. "{width: 100}, borderColor: 'ccc'}", which defaults to pixels 
+         * and hex, respectively).
          */
         from: {},
 
@@ -186,6 +191,11 @@
          * Fields may be strings, numbers, or functions.
          * @attribute to
          * @type Object
+         * supports any unit, provided it matches the "from" (or default)
+         * unit (e.g. "{width: '50%', color: 'red', borderColor: '#ccc'}".
+         * If using the default ('px' for length-based units), the unit may be omitted (
+         * (e.g. "{width: 100}, borderColor: 'ccc'}", which defaults to pixels 
+         * and hex, respectively).
          */
         to: {},
 

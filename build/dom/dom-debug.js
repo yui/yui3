@@ -266,6 +266,9 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
+     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement 
+     * when creating one node, and a documentFragment when creating
+     * multiple nodes.
      */
     create: function(html, doc) {
         if (typeof html === 'string') {
@@ -1457,7 +1460,7 @@ Y.mix(Y_DOM, {
         doc = doc || (node) ? Y_DOM._getDoc(node) : Y.config.doc; // perf optimization
         var dv = doc.defaultView,
             pageOffset = (dv) ? dv.pageYOffset : 0;
-        return Math.max(doc[DOCUMENT_ELEMENT].scrollLeft, doc.body.scrollLeft, pageOffset);
+        return Math.max(doc[DOCUMENT_ELEMENT].scrollTop, doc.body.scrollTop, pageOffset);
     },
 
     /**

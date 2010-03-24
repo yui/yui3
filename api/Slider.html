@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>slider&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>slider&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_slider.html" title="slider">slider</a>
                  &gt; Slider 
@@ -289,12 +289,6 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                             <span rel="yui:method" resource="SliderBase.html#method__onDragStart">                                        
                                             <a class="protected" href="SliderBase.html#method__onDragStart" property="yui:name" title="_onDragStart">_onDragStart</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__renderRail">                                        
-                                            <a class="protected" href="SliderBase.html#method__renderRail" property="yui:name" title="_renderRail">_renderRail</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderBase.html#method__renderThumb">                                        
-                                            <a class="protected" href="SliderBase.html#method__renderThumb" property="yui:name" title="_renderThumb">_renderThumb</a><span class="protected">,</span>
-                                            </span>
                                             <span rel="yui:method" resource="SliderBase.html#method__setAxis">                                        
                                             <a class="protected" href="SliderBase.html#method__setAxis" property="yui:name" title="_setAxis">_setAxis</a><span class="protected">,</span>
                                             </span>
@@ -312,6 +306,12 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                             </span>
                                             <span rel="yui:method" resource="SliderBase.html#method_initializer">                                        
                                             <a class="protected" href="SliderBase.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="SliderBase.html#method_renderRail">                                        
+                                            <a class="" href="SliderBase.html#method_renderRail" property="yui:name" title="renderRail">renderRail</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="SliderBase.html#method_renderThumb">                                        
+                                            <a class="" href="SliderBase.html#method_renderThumb" property="yui:name" title="renderThumb">renderThumb</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="SliderBase.html#method_renderUI">                                        
                                             <a class="protected" href="SliderBase.html#method_renderUI" property="yui:name" title="renderUI">renderUI</a><span class="protected">,</span>
@@ -415,7 +415,7 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                             <a class="protected" href="Widget.html#method__applyParsedConfig" property="yui:name" title="_applyParsedConfig">_applyParsedConfig</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__applyParser">                                        
-                                            <a class="private" href="Widget.html#method__applyParser" property="yui:name" title="_applyParser">_applyParser</a><span class="private">,</span>
+                                            <a class="protected" href="Widget.html#method__applyParser" property="yui:name" title="_applyParser">_applyParser</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="Widget.html#method__bindAttrUI">                                        
                                             <a class="private" href="Widget.html#method__bindAttrUI" property="yui:name" title="_bindAttrUI">_bindAttrUI</a><span class="private">,</span>
@@ -709,7 +709,7 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                             <a class="protected" href="ClickableRail.html#method__defRailMouseDownFn" property="yui:name" title="_defRailMouseDownFn">_defRailMouseDownFn</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="ClickableRail.html#method__getThumbDestination">                                        
-                                            <a class="" href="ClickableRail.html#method__getThumbDestination" property="yui:name" title="_getThumbDestination">_getThumbDestination</a><span class="">,</span>
+                                            <a class="protected" href="ClickableRail.html#method__getThumbDestination" property="yui:name" title="_getThumbDestination">_getThumbDestination</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="ClickableRail.html#method__initClickableRail">                                        
                                             <a class="protected" href="ClickableRail.html#method__initClickableRail" property="yui:name" title="_initClickableRail">_initClickableRail</a><span class="protected">,</span>
@@ -779,7 +779,13 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                             <a class="protected" href="SliderValueRange.html#method__valueToOffset" property="yui:name" title="_valueToOffset">_valueToOffset</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="SliderValueRange.html#method__verifyValue">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__verifyValue" property="yui:name" title="_verifyValue">_verifyValue</a>
+                                            <a class="protected" href="SliderValueRange.html#method__verifyValue" property="yui:name" title="_verifyValue">_verifyValue</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="SliderValueRange.html#method_getValue">                                        
+                                            <a class="" href="SliderValueRange.html#method_getValue" property="yui:name" title="getValue">getValue</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="SliderValueRange.html#method_setValue">                                        
+                                            <a class="" href="SliderValueRange.html#method_setValue" property="yui:name" title="setValue">setValue</a>
                                             </span>
                                     </code>
                                 </div>
@@ -1140,7 +1146,7 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "ClickableRail", "name": "_bindClickableRail", "url": "ClickableRail.html#method__bindClickableRail", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "clickableRail", "url": "ClickableRail.html#config_clickableRail", "type": "config"}, {"access": "", "host": "ClickableRail", "name": "clickableRailChange", "url": "ClickableRail.html#event_clickableRailChange", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_defRailMouseDownFn", "url": "ClickableRail.html#method__defRailMouseDownFn", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "_getThumbDestination", "url": "ClickableRail.html#method__getThumbDestination", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_initClickableRail", "url": "ClickableRail.html#method__initClickableRail", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_onRailMouseDown", "url": "ClickableRail.html#method__onRailMouseDown", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "railMouseDown", "url": "ClickableRail.html#event_railMouseDown", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_resolveThumb", "url": "ClickableRail.html#method__resolveThumb", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_unbindClickableRail", "url": "ClickableRail.html#method__unbindClickableRail", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "ClickableRail", "name": "_bindClickableRail", "url": "ClickableRail.html#method__bindClickableRail", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "clickableRail", "url": "ClickableRail.html#config_clickableRail", "type": "config"}, {"access": "", "host": "ClickableRail", "name": "clickableRailChange", "url": "ClickableRail.html#event_clickableRailChange", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_defRailMouseDownFn", "url": "ClickableRail.html#method__defRailMouseDownFn", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_getThumbDestination", "url": "ClickableRail.html#method__getThumbDestination", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_initClickableRail", "url": "ClickableRail.html#method__initClickableRail", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_onRailMouseDown", "url": "ClickableRail.html#method__onRailMouseDown", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "railMouseDown", "url": "ClickableRail.html#event_railMouseDown", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_resolveThumb", "url": "ClickableRail.html#method__resolveThumb", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_unbindClickableRail", "url": "ClickableRail.html#method__unbindClickableRail", "type": "method"}];
 </script>
 </body>
 </html>

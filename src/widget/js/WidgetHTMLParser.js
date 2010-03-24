@@ -95,7 +95,7 @@ Y.mix(Widget.prototype, {
      * instance, to retrieve config data values.
      *
      * @method _applyParser
-     * @private
+     * @protected
      * @param config {Object} User configuration object (will be populated with values from Node) 
      */
     _applyParser : function(config) {

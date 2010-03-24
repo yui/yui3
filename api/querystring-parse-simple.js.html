@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>querystring&nbsp; <span class="subtitle">3.1.0pr1</span></h3>
+        <h3>querystring&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_querystring.html" title="querystring">querystring</a>
                 
@@ -47,7 +47,12 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="cm">/*global Y */</span>
+                        <div class="highlight"><pre><span class="c1">// @TODO this looks like we are requiring the user to extract the querystring</span>
+<span class="c1">// portion of the url, which isn&#39;t good.  The majority use case will be to</span>
+<span class="c1">// extract querystring from the document configured for this YUI instance.</span>
+<span class="c1">// This should be the default if qs is not supplied.</span>
+
+<span class="cm">/*global Y */</span>
 <span class="cm">/**</span>
 <span class="cm"> * &lt;p&gt;Provides Y.QueryString.stringify method for converting objects to Query Strings.</span>
 <span class="cm"> * This is a simpler implementation than the full querystring-stringify.&lt;/p&gt;</span>

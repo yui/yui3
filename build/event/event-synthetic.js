@@ -13,10 +13,8 @@ var Evt         = Y.Env.evt,
     DOMEvents   = Y.Node.DOM_EVENTS,
     isFunction  = Y.Lang.isFunction;
 
-/**
+/*
  * Adds the following method to CustomEvent's prototype.
- *
- * @class CustomEvent~extras
  */
 
 /**
@@ -29,6 +27,9 @@ var Evt         = Y.Env.evt,
  * @param fn {Function} Optional. The subscribed callback function
  * @param ctx {Object} Optional.  The context override for the callback
  * @return {Subscriber} or null
+ * @for CustomEvent
+ * @since 3.1.0
+ * @in event-synthetic
  */
 Y.CustomEvent.prototype.getSubscriber = function (fn, ctx) {
     var subs = this.getSubs(), // on, after subs and their *:type siblings
@@ -51,7 +52,7 @@ Y.CustomEvent.prototype.getSubscriber = function (fn, ctx) {
 /**
  * <p>Wrapper class for the integration of new events into the YUI event
  * infrastructure.  Don't instantiate this object directly, use
- * <code>Y.Event.define( config )</code>.</p>
+ * <code>Y.Event.define( type, config )</code>.</p>
  *
  * <p>The configuration object must include the event <code>type</code>, and should include implementation methods for <code>on</code> and <code>detach</code>.  This is the full list of configuration properties:</p>
  * <dl>
@@ -90,10 +91,13 @@ Y.CustomEvent.prototype.getSubscriber = function (fn, ctx) {
  *       to <code>on</code> and <code>detach</code> under
  *       <code>subscription._extra</code>.</dd>
  *   <dt>
+ * </dl>
  *
  * @class SyntheticEvent
  * @constructor
  * @param cfg {Object} Implementation pieces and configuration
+ * @since 3.1.0
+ * @in event-synthetic
  */
 function SyntheticEvent(cfg) {
     this._init(cfg);
@@ -332,26 +336,69 @@ SyntheticEvent.prototype = {
 
 Y.SyntheticEvent = SyntheticEvent;
 
-/**
+/*
  * Static method added to <code>Y.Event</code>
- *
- * @class Y~Event
  */
 
 /**
  * <p>Static method to register a synthetic event definition and implementation
- * in the DOM Event subsystem. See <code>Y.SyntheticEvent</code> for the
- * configuration object signature required.</p>
+ * in the DOM Event subsystem.</p>
  *
  * <p>Pass either a string <code>type</code> and configuration object as
  * separate parameters or a configuration object that includes a
  * <code>type</code> property as a single parameter.</p>
+ *
+ * <p>The configuration object should include implementation methods for
+ * <code>on</code> and <code>detach</code>.  This is the full list of
+ * configuration properties:</p>
+ *
+ * <dl>
+ *   <dt><code>type</code></dt>
+ *       <dd>Required if using the <code>Y.Event.define( config )</code>
+ *       signature.  The name of the synthetic event.  What goes
+ *       <code>node.on(<strong>HERE</strong>, callback )</code>.</dd>
+ *
+ *   <dt><code>on</code></dt>
+ *       <dd><code>function ( node, subscription, fireEvent )</code> The
+ *       implementation logic for subscription.  Any special setup you need to
+ *       do to create the environment for the event being fired.  E.g. native
+ *       DOM event subscriptions.  Store subscription related objects and
+ *       information on the <code>subscription</code> object.  When the
+ *       criteria have been met to fire the synthetic event, call
+ *       <code>fireEvent.fire()</code>.</dd>
+ *
+ *   <dt><code>detach</code></dt>
+ *       <dd><code>function ( node, subscription, fireEvent )</code> The
+ *       implementation logic for cleaning up a detached subscription. E.g.
+ *       detach any DOM subscriptions done in <code>on</code>.</dd>
+ *
+ *   <dt><code>publishConfig</code></dt>
+ *       <dd>(Object) The configuration object that will be used to instantiate
+ *       the underlying CustomEvent.  By default, the event is defined with
+ *       <code>emitFacade: true</code> so subscribers will receive a DOM-like
+ *       event object.</dd>
+ *
+ *   <dt><code>processArgs</code></dt>
+ *       <dd><code>function ( argArray )</code>  Optional method to extract any
+ *       additional arguments from the subscription signature.  Using this
+ *       allows <code>on</code> signatures like <code>node.on(
+ *       &quot;hover&quot;, overCallback, outCallback )</code>.  Be sure that
+ *       the args passed in is pruned of any additional arguments using, for
+ *       example, <code>argArray.splice(2,1);</code>.  Data returned from the
+ *       function will be stored on the <code>subscription</code> object passed
+ *       to <code>on</code> and <code>detach</code> under
+ *       <code>subscription._extra</code>.</dd>
+ *   <dt>
+ * </dl>
  *
  * @method Event.define
  * @param type {String} Name given to the synthetic event
  * @param cfg {Object} configuration object.  Pass this as the first
  *                  parameter if it includes the <code>type</code> property.
  * @static
+ * @for Event
+ * @since 3.1.0
+ * @in event-synthetic
  */
 Y.Event.define = function (type, cfg) {
     var e = Y.Lang.isObject(type) ?
@@ -359,8 +406,8 @@ Y.Event.define = function (type, cfg) {
                 Y.mix(Y.Object(cfg || {}), { type: type });
 
     // no redefinition allowed
-    if (!DOMEvents[type]) {
-        EvtPlugins[type] = DOMEvents[type] = new Y.SyntheticEvent(e);
+    if (!DOMEvents[e.type]) {
+        EvtPlugins[e.type] = DOMEvents[e.type] = new Y.SyntheticEvent(e);
     }
 };
 

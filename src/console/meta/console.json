@@ -4,8 +4,7 @@
             "console-filters": {
                 "requires": [
                     "plugin", 
-                    "console", 
-                    "skin-sam-console-filters"
+                    "console"
                 ], 
                 "skinnable": true
             }
@@ -13,8 +12,7 @@
         "requires": [
             "yui-log", 
             "widget", 
-            "substitute", 
-            "skin-sam-console"
+            "substitute"
         ], 
         "skinnable": true,
 	"lang" : ["en", "es"]

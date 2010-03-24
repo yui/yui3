@@ -1,3 +1,8 @@
+// @TODO this looks like we are requiring the user to extract the querystring
+// portion of the url, which isn't good.  The majority use case will be to
+// extract querystring from the document configured for this YUI instance.
+// This should be the default if qs is not supplied.
+
 /*global Y */
 /**
  * <p>Provides Y.QueryString.stringify method for converting objects to Query Strings.

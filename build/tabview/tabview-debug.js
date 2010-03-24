@@ -102,7 +102,6 @@ Y.mix(TabviewBase.prototype, {
     // collapse extra space between list-items
     _scrubTextNodes: function() {
         this._node.one(_queries.tabviewList).get('childNodes').each(function(node) {
-        console.log(node);
             if (node.get('nodeType') === 3) { // text node
                 node.remove();
             }
@@ -135,7 +134,7 @@ Y.mix(TabviewBase.prototype, {
     },
 
     destroy: function() {
-        this._node.detach('tabview|*');
+        this._node.detach(this.tabEventName);
     }
 });
 
@@ -159,6 +158,7 @@ var _queries = Y.TabviewBase._queries,
      * @class TabView
      * @constructor
      * @extends Widget
+     * @uses WidgetParent
      */
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
     _afterChildRemoved: function(e) { // update the selected tab when removed
@@ -235,10 +235,12 @@ var _queries = Y.TabviewBase._queries,
     _renderListBox: function(contentBox) {
         var list = contentBox.one(_queries.tabviewList);
         if (!list) {
-            contentBox.append(TabView.LIST_TEMPLATE);
+            list = contentBox.appendChild(Y.Node.create(TabView.LIST_TEMPLATE));
         } else {
             list.addClass(_classNames.tabviewList);
         }
+
+        this._childrenContainer = list;
     },
 
     _renderPanelBox: function(contentBox) {
@@ -303,10 +305,11 @@ var Lang = Y.Lang,
  * @class Tab
  * @constructor
  * @extends Widget
+ * @uses WidgetChild
  */
 Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
-    BOUNDING_TEMPLATE : '<li class="' + _classNames.tab + '"></li>',
-    CONTENT_TEMPLATE : '<a class="' + _classNames.tabLabel + '"></a>',
+    BOUNDING_TEMPLATE: '<li class="' + _classNames.tab + '"></li>',
+    CONTENT_TEMPLATE: '<a class="' + _classNames.tabLabel + '"></a>',
     PANEL_TEMPLATE: '<div class="' + _classNames.tabPanel + '"></div>',
 
     _uiSetSelectedPanel: function(selected) {
@@ -356,6 +359,8 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
 
     syncUI: function() {
+        this.set('label', this.get('label'));
+        this.set('content', this.get('content'));
         this._uiSetSelectedPanel(this.get('selected'));
     },
 
@@ -365,29 +370,13 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
 
     renderUI: function() {
-        var parentContentBox = this.get('parent').get('contentBox'),
-            contentBox = this.get('contentBox');
-
-        this._renderLabel(contentBox, parentContentBox);
-        this._renderPanel(contentBox, parentContentBox);
+        this._renderPanel();
         this._initAria();
     },
 
-    _renderLabel: function(contentBox, parentContentBox) {
-        var label = this.get('label');
-        contentBox.setContent(label);
-        parentContentBox.one(_queries.tabviewList).appendChild(this.get('boundingBox'));
-    },
-
-    _renderPanel: function(contentBox, parentContentBox) {
-        var panel = parentContentBox.all(_queries.tabPanel).item(this.get('index'));
-        if (!panel) {
-            panel = Y.Node.create(this.PANEL_TEMPLATE);
-            panel.setContent(this.get('content'));
-            parentContentBox.one(_queries.tabviewPanel).appendChild(panel);
-        }
-
-        this._set('panelNode', panel);
+    _renderPanel: function() {
+        this.get('parent').get('contentBox')
+            .one(_queries.tabviewPanel).appendChild(this.get('panelNode'));
     },
 
     _add: function() {
@@ -421,6 +410,35 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
        this.publish(this.get('triggerEvent'), { 
            defaultFn: this._onActivate
        });
+    },
+
+    _defLabelSetter: function(label) {
+        this.get('contentBox').setContent(label);
+        return label;
+    },
+
+    _defContentSetter: function(content) {
+        this.get('panelNode').setContent(content);
+        return content;
+    },
+
+    _defPanelNodeValueFn: function() {
+        var id,
+            href = this.get('contentBox').get('href') || '',
+            panel;
+
+        if (href.charAt(0) === '#') {
+            id = href.substr(1); 
+            panel = Y.one(href);
+        } else {
+            id = Y.guid();
+        }
+
+        if (!panel) {
+            panel = Y.Node.create(this.PANEL_TEMPLATE);
+            panel.set('id', id);
+        }
+        return panel;
     }
 }, {
     ATTRS: {
@@ -438,18 +456,23 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
          * @type String
          */
         label: { 
+            setter: '_defLabelSetter',
             validator: Lang.isString
         },
 
         /**
-         * @attribute label
+         * @attribute content
          * @type String
          */
         content: {
+            setter: '_defContentSetter',
             validator: Lang.isString
         },
 
-        panelNode: {},
+        panelNode: {
+            valueFn: '_defPanelNodeValueFn',
+            readOnly: true
+        },
         
         tabIndex: {
             value: null,
@@ -459,7 +482,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
 
     HTML_PARSER: {
-        selection: function(contentBox) {
+        selected: function(contentBox) {
             return this.get('boundingBox').hasClass(_classNames.selectedTab);
         }
     }
