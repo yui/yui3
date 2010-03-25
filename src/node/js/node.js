@@ -987,6 +987,15 @@ Y.mix(Y_Node.prototype, {
         },
 
 
+    /**
+    * @method getData
+    * @description Retrieves arbitrary data stored on a Node instance.
+    * This is not stored with the DOM node.
+    * @param {string} name Optional name of the data field to retrieve.
+    * If no name is given, all data is returned.
+    * @return {any | Object} Whatever is stored at the given field,
+    * or an object hash of all fields.
+    */
     getData: function(name) {
         var ret;
         this._data = this._data || {};
@@ -1000,6 +1009,14 @@ Y.mix(Y_Node.prototype, {
         
     },
 
+    /**
+    * @method setData
+    * @description Stores arbitrary data on a Node instance.
+    * This is not stored with the DOM node.
+    * @param {string} name The name of the field to set. If no name
+    * is given, name is treated as the data and overrides any existing data.
+    * @chainable
+    */
     setData: function(name, val) {
         this._data = this._data || {};
         if (arguments.length > 1) {
@@ -1011,12 +1028,21 @@ Y.mix(Y_Node.prototype, {
        return this;
     },
 
+    /**
+    * @method clearData
+    * @description Clears stored data. 
+    * @param {string} name The name of the field to clear. If no name
+    * is given, all data is cleared..
+    * @chainable
+    */
     clearData: function(name) {
         if (arguments.length) {
             delete this._data[name];
         } else {
             this._data = {};
         }
+
+        return this;
     },
 
     hasMethod: function(method) {
