@@ -1337,7 +1337,8 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
 
                 var m = info[mod1], i, r, after, other = info[mod2], s;
 
-                if (loaded[mod2] || !m || !other) {
+                // if (loaded[mod2] || !m || !other) {
+                if (!m || !other) {
                     return false;
                 }
 
@@ -1389,6 +1390,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
                 // find a requirement for the current item
                 for (k=j+1; k<l; k=k+1) {
                     doneKey = a + s[k];
+
                     if (!done[doneKey] && requires(a, s[k])) {
 
                         // extract the dependency so we can move it up
