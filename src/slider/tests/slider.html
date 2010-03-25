@@ -12,13 +12,13 @@
 YUI({
     filter: 'raw',
     modules: {
-        'json-test': {
+        'slider-test': {
             fullpath: 'testsuite.js',
-            requires: ['json','test']
+            requires: ['slider','test']
         }
     },
     useBrowserConsole: false
-}).use('console-filters', 'json-test', function (Y) {
+}).use('console-filters', 'slider-test', function (Y) {
 
     new Y.Console({
         style: 'block',

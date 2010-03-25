@@ -12,13 +12,13 @@
 YUI({
     filter: 'raw',
     modules: {
-        'json-test': {
+        'event-synthetic-test': {
             fullpath: 'testsuite.js',
-            requires: ['json','test']
+            requires: ['event-synthetic','test']
         }
     },
     useBrowserConsole: false
-}).use('console-filters', 'json-test', function (Y) {
+}).use('console-filters', 'event-synthetic-test', function (Y) {
 
     new Y.Console({
         style: 'block',
