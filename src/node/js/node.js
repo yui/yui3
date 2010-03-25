@@ -396,24 +396,6 @@ Y_Node.ATTRS = {
             Y_DOM.setValue(this._node, val);
             return val;
         }
-    },
-
-    /**
-     * A generic attribute for storing arbitrary data
-     * on a Node instance.  Data is stored internally,
-     * not on the DOM element itself.
-     * @config data
-     * @type any
-     */
-    data: {
-        getter: function() {
-            return this._data;
-        },
-
-        setter: function(val) {
-            this._data = val;
-            return val;
-        }
     }
 };
 
@@ -1004,6 +986,38 @@ Y.mix(Y_Node.prototype, {
             return this;
         },
 
+
+    getData: function(name) {
+        var ret;
+        this._data = this._data || {};
+        if (arguments.length) {
+            ret = this._data[name];
+        } else {
+            ret = this._data;
+        }
+
+        return ret;
+        
+    },
+
+    setData: function(name, val) {
+        this._data = this._data || {};
+        if (arguments.length > 1) {
+            this._data[name] = val;
+        } else {
+            this._data = name;
+        }
+       
+       return this;
+    },
+
+    clearData: function(name) {
+        if (arguments.length) {
+            delete this._data[name];
+        } else {
+            this._data = {};
+        }
+    },
 
     hasMethod: function(method) {
         var node = this._node;
