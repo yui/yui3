@@ -1317,7 +1317,8 @@
 
                 <span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod1</span><span class="p">],</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">after</span><span class="p">,</span> <span class="nx">other</span> <span class="o">=</span> <span class="nx">info</span><span class="p">[</span><span class="nx">mod2</span><span class="p">],</span> <span class="nx">s</span><span class="p">;</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">loaded</span><span class="p">[</span><span class="nx">mod2</span><span class="p">]</span> <span class="o">||</span> <span class="o">!</span><span class="nx">m</span> <span class="o">||</span> <span class="o">!</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// if (loaded[mod2] || !m || !other) {</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">m</span> <span class="o">||</span> <span class="o">!</span><span class="nx">other</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="p">}</span>
 
@@ -1369,6 +1370,7 @@
                 <span class="c1">// find a requirement for the current item</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">k</span><span class="o">=</span><span class="nx">j</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="nx">k</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">k</span><span class="o">=</span><span class="nx">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">doneKey</span> <span class="o">=</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">s</span><span class="p">[</span><span class="nx">k</span><span class="p">];</span>
+
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">done</span><span class="p">[</span><span class="nx">doneKey</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">requires</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">s</span><span class="p">[</span><span class="nx">k</span><span class="p">]))</span> <span class="p">{</span>
 
                         <span class="c1">// extract the dependency so we can move it up</span>
