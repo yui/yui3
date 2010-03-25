@@ -248,7 +248,8 @@ YUI.add('oop', function(Y) {
             case 'date':
                 return new Date(o);
             case 'regexp':
-                return new RegExp(o.source);
+                // return new RegExp(o.source); // if we do this we need to set the flags too
+                return o;
             case 'function':
                 o2 = Y.bind(o, owner);
                 break;
