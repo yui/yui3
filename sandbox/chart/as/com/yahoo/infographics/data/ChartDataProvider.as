@@ -2,7 +2,7 @@ package com.yahoo.infographics.data
 {
 	import flash.events.EventDispatcher;
 	import com.yahoo.infographics.data.events.DataEvent;
-
+	
 	/**
 	 * DataStructure that provides methods for setting and retrieving data and events
 	 * to notify of changes in the data structure.
@@ -50,24 +50,6 @@ package com.yahoo.infographics.data
 		}
 
 		/**
-		 * Returns an array of values from the <code>data</code> array
-		 * based on a string identifier.
-		 *
-		 * @param key The value used to determine what values will be 
-		 * returned in the array.
-		 */
-		public function getDataByKey(key:String):Array
-		{
-			var len:int = this.data.length;
-			var returnArray:Array = [];
-			for(var i:int = 0; i < len; i++)
-			{
-				returnArray.push(this._data[i][key]);
-			}
-			return returnArray.concat();
-		}
-
-		/**
 		 * Adds key value pairs to each object of the <code>data</code>
 		 * array.
 		 *
@@ -77,8 +59,8 @@ package com.yahoo.infographics.data
 		public function setDataByKey(key:String, data:Array):void
 		{
 			this.addArrayOfKeys(key, data);
-			var event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
-			var changedKeys:Object = {};
+			var event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE),
+				changedKeys:Object = {};
 			changedKeys[key] = data.concat();
 			event.keysAdded = changedKeys;
 			this.dispatchEvent(event);
@@ -92,12 +74,12 @@ package com.yahoo.infographics.data
 		 */
 		public function setDataByKeys(keys:Object):void
 		{
-			var changedKeys:Array = [];
+			var changedKeys:Array = [],
+				event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
 			for(var i:String in keys)
 			{
 				this.addArrayOfKeys(i, keys[i]);
 			}
-			var event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
 			event.keysAdded = keys;
 			this.dispatchEvent(event);
 		}
@@ -107,8 +89,10 @@ package com.yahoo.infographics.data
 		 */
 		private function addArrayOfKeys(key:String, data:Array):void
 		{
-			var len:int = data.length;
-			for(var i:int = 0; i < len; i++)
+			var len:int = data.length,
+				i:int,
+				obj:Object;
+			for(i= 0; i < len; i++)
 			{
 				if(this._data[i]) 
 				{
@@ -116,7 +100,7 @@ package com.yahoo.infographics.data
 				}
 				else
 				{
-					var obj:Object = {};
+					obj = {};
 					obj[key] = data[i];
 					this._data.push(obj);
 				}

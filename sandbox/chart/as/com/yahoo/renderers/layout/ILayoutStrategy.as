@@ -4,8 +4,9 @@ package com.yahoo.renderers.layout
 	import flash.utils.Dictionary;	
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.events.IEventDispatcher;
 
-	public interface ILayoutStrategy extends IStyle 
+	public interface ILayoutStrategy extends IEventDispatcher 
 	{
 		/**
 		 * Reference to the style class
@@ -16,12 +17,12 @@ package com.yahoo.renderers.layout
 		 * Gets or sets the renderer that in which to apply
 		 * a layout strategy for.
 		 */
-		function get container():DisplayObjectContainer;
+		function get container():Container;
 
 		/**
 	     * @private (setter)
 		 */
-		function set container(value:DisplayObjectContainer):void;
+		function set container(value:Container):void;
 
 		/**
 		 * Total width of all children, padding and gaps.
@@ -64,6 +65,11 @@ package com.yahoo.renderers.layout
 		 * layout algorithms.
 		 */
 		function get childData():Dictionary;
+		
+		/**
+		 * Default <code>sizeMode</code> value for the layout
+		 */
+		function get sizeMode():String;
 
 		/**
 		 * Algorithm for positioning visual objects of the container.

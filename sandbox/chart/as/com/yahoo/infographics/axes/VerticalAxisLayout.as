@@ -18,6 +18,20 @@ package com.yahoo.infographics.axes
 		}
 
 		/**
+		 * @private
+		 * Storage for sizeMode
+		 */
+		protected var _sizeMode:String = "hbox";
+
+		/**
+		 * @copy com.yahoo.infographics.axes.IAxisLayout#sizeMode
+		 */
+		public function get sizeMode():String
+		{
+			return this._sizeMode;
+		}
+
+		/**
 		 * @copy com.yahoo.infographics.axes.IAxisLayout#lineEnd
 		 */
 		public function get lineEnd():Point

@@ -4,7 +4,6 @@ package com.yahoo.infographics.axes
 	import com.yahoo.infographics.styles.AxisLabelStyles;
 	import com.yahoo.renderers.styles.IStyle;
 	import com.yahoo.renderers.events.RendererEvent;
-	import flash.geom.Point;
 	import flash.display.DisplayObject;
 
 	/**
@@ -16,13 +15,30 @@ package com.yahoo.infographics.axes
 		/**
 		 * @private
 		 */
+		private const PI:Number = Math.PI;
+
+		/**
+		 * @inheritDoc
+		 */
+		private static var _styleClass:Class = AxisLabelStyles;
+		
+		/**
+		 * Constructor
+		 */
+		public function AxisLabel(styles:IStyle = null):void
+		{
+			super(styles);
+		}
+		
+		/**
+		 * @private
+		 */
 		private var _width:Number = 0;
 
 		/**
 		 * @private (override)
 		 */
 		override public function get width():Number
-									
 		{
 			return this._width;
 		}
@@ -39,28 +55,7 @@ package com.yahoo.infographics.axes
 		{
 			return this._height;
 		}
-
-		/**
-		 * @inheritDoc
-		 */
-		private static var _styleClass:Class = AxisLabelStyles;
 		
-		/**
-		 * Constructor
-		 */
-		public function AxisLabel(styles:IStyle = null):void
-		{
-			super(styles);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		override public function getStyleClass():Class
-		{
-			return _styleClass;
-		}		
-
 		/**
 		 * @private
 		 * Flags for rendering
@@ -98,12 +93,19 @@ package com.yahoo.infographics.axes
 		/**
 		 * @inheritDoc
 		 */
+		override public function getStyleClass():Class
+		{
+			return _styleClass;
+		}		
+
+		/**
+		 * @inheritDoc
+		 */
 		override protected function render():void
 		{
 			if(!this.checkFlags(this._textFlags)) return;
 			this.createText();
 			this.rotate();
-			this.dispatchEvent(new RendererEvent(RendererEvent.RESIZE));
 		}
 
 		/**
@@ -111,15 +113,16 @@ package com.yahoo.infographics.axes
 		 */
 		override protected function rotate():void
 		{
-			var rotation:Number = this.getStyle("rotation") as Number;
+			var rotation:Number = this.getStyle("rotation") as Number,
+				margin:Object = this.getStyle("margin"),
+				absRotation:Number = rotation < 0 ? -rotation : rotation,
+				radConverter:Number = PI/180;
 			this.textLine.rotation = rotation;
-			var absRotation:Number = Math.abs(rotation);
-			var radConverter:Number = Math.PI/180;
 			this._baselineOffset = (this.textLine.ascent - this.textLine.descent)/2;
 			this._sinRadians = Math.sin(absRotation * radConverter);
 			this._cosRadians = Math.cos(absRotation * radConverter);
-			this._width = (this._cosRadians * this.textLine.textWidth) + (this._sinRadians * this.textLine.textHeight);
-			this._height = (this._sinRadians * this.textLine.textWidth) + (this._cosRadians * this.textLine.textHeight);
+			this._width = int(0.5 + ((this._cosRadians * this.textLine.textWidth) + (this._sinRadians * this.textLine.textHeight)));
+			this._height = int(0.5 + ((this._sinRadians * this.textLine.textWidth) + (this._cosRadians * this.textLine.textHeight)));
 			
 			switch(this.getStyle("position") as String)
 			{
@@ -137,11 +140,10 @@ package com.yahoo.infographics.axes
 				break;
 			}
 
-			var margin:Object = this.getStyle("margin");
 			this._width += Number(margin.left) + Number(margin.right);
 			this._height += Number(margin.top) + Number(margin.bottom);
-			this.textLine.y = Math.round(this.textLine.y);
-			this.textLine.x = Math.round(this.textLine.x);
+			this.textLine.y = int(0.5 + this.textLine.y);
+			this.textLine.x = int(0.5 + this.textLine.x);
 		}
 
 		/**

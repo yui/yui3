@@ -1,13 +1,11 @@
 package com.yahoo.renderers.layout
 {
 	import com.yahoo.renderers.Renderer;
-	import com.yahoo.renderers.events.LayoutEvent;
 	import com.yahoo.renderers.events.RendererEvent;
-	import com.yahoo.renderers.events.StyleEvent;
 	import com.yahoo.renderers.styles.LayoutStyles;
 	import flash.utils.Dictionary;	
 	import flash.display.DisplayObject;
-
+	
 	public class Container extends Renderer implements IContainer
 	{
 		/**
@@ -30,6 +28,18 @@ package com.yahoo.renderers.layout
 	// Properties
 	//**********************************	
 
+		/**
+		 * @private (override)
+		 */
+		override public function get sizeMode():String
+		{
+			if(!this._layout) return super.sizeMode;
+			return this._layout.sizeMode;
+		}
+
+		/**
+		 * @private
+		 */
 		private var _defaultStrategyClass:Class = LayoutStrategy;
 
 		/**
@@ -70,19 +80,11 @@ package com.yahoo.renderers.layout
 		 */
 		public function set layout(value:ILayoutStrategy):void
 		{
-			if(this._layout) 
-			{
-				this._layout.removeEventListener(LayoutEvent.CONTENT_WIDTH_UPDATE, handleContentWidthUpdate);
-				this._layout.removeEventListener(LayoutEvent.CONTENT_HEIGHT_UPDATE, handleContentHeightUpdate);
-			}
-
 			this._layout = value;
-			this._layout.addEventListener(LayoutEvent.CONTENT_WIDTH_UPDATE, handleContentWidthUpdate);
-			this._layout.addEventListener(LayoutEvent.CONTENT_HEIGHT_UPDATE, handleContentHeightUpdate);
 			this._layout.container = this;
 			this.setStyleInstance();
 		}
-
+		
 		/**
 		 * @private
 		 */
@@ -166,10 +168,10 @@ package com.yahoo.renderers.layout
 		/**
 		 * @inheritDoc
 		 */
-		override public function setStyle(style:String, value:Object):void
+		override public function setStyle(style:String, value:Object):Boolean
 		{
 			this._containerStyleHash[style] = value;
-			super.setStyle(style, value);
+			return super.setStyle(style, value);
 		}
 
 		/**
@@ -232,13 +234,11 @@ package com.yahoo.renderers.layout
 		 */
 		override protected function setStyleInstance():void
 		{
-			if(this._styles) this._styles.removeEventListener(StyleEvent.STYLE_CHANGE, this.styleChangeHandler);
 			if(this.layout)
 			{
 				this._styles = this.layout.styles;
-				this._styles.setStyles(this._containerStyleHash);
+				this.setStyles(this._containerStyleHash);
 				this._containerStyleHash = {};
-				this._styles.addEventListener(StyleEvent.STYLE_CHANGE, this.styleChangeHandler);		
 			}
 		}
 
@@ -252,21 +252,10 @@ package com.yahoo.renderers.layout
 		{
 			this.updateRenderStatus();
 		}
-
-		/**
-		 * @private
-		 */
-		protected function handleContentWidthUpdate(event:LayoutEvent):void
+		
+		public function update(widthChange:Boolean = false, heightChange:Boolean = false):void
 		{
-			this.updateRenderStatus();
-		}
-
-		/**
-		 * @private
-		 */
-		protected function handleContentHeightUpdate(event:LayoutEvent):void
-		{
-			this.updateRenderStatus();
+			if(widthChange || heightChange) this.updateRenderStatus();
 		}
 		
 		/**

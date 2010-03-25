@@ -11,7 +11,6 @@ package com.yahoo.renderers.layout
 		public function LayerStack()
 		{
 			super();
-			this.setStyle("sizeMode", ContainerType.BOX);
 		}
 
 		/**
