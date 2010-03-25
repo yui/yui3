@@ -1122,6 +1122,31 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             nodes.item(1).swap(nodes.item(2));
             Assert.areEqual(elements[1], nodes.item(1)._node);
             Assert.areEqual(elements[2], nodes.item(2)._node);
+        },
+
+        test_data: function() {
+            var node = Y.one('body');
+            node.setData('foo', 'foo');
+            Assert.areEqual('foo', node.getData('foo'),
+                "node.setData('foo', 'foo')");
+
+            node.setData({'bar': 'bar', 'baz': 'baz'});
+            Assert.areEqual('bar', node.getData('bar'),
+                "node.setData({'bar': 'bar', 'baz': 'baz'})");
+
+            Assert.areEqual('baz', node.getData('baz'),
+                "node.setData({'bar': 'bar', 'baz': 'baz'})");
+
+            node.clearData('bar');
+            Assert.areEqual(undefined, node.getData('bar'),
+                "node.clearData('bar')");
+
+            Assert.areEqual('baz', node.getData('baz'),
+                "node.clearData('bar')");
+
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData()");
         }
     })); 
 

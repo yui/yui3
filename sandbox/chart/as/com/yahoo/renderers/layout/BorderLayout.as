@@ -2,7 +2,7 @@ package com.yahoo.renderers.layout
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	import com.yahoo.renderers.events.LayoutEvent;
+	
 	/**
 	 * Contains algorithms for laying out display objects in a 
 	 * border pattern with a header, footer, 2 sidebars and a center
@@ -21,11 +21,10 @@ package com.yahoo.renderers.layout
 		/**
 		 * @private
 		 */
-		override public function set container(value:DisplayObjectContainer):void
+		override public function set container(value:Container):void
 		{
 			super.container = value;
 			this._borderContainer = BorderContainer(container);
-			this.setStyle("sizeMode", ContainerType.BOX);
 		}
 
 		/**
@@ -122,22 +121,47 @@ package com.yahoo.renderers.layout
 		 */
 		override public function layoutChildren():void
 		{
+			var pc:BorderContainer = this._borderContainer,
+				tc:Container = pc.topContainer,
+				bc:Container = pc.bottomContainer,
+				rc:Container = pc.rightContainer,
+				lc:Container = pc.leftContainer;
+			
 			super.layoutChildren();
 			this.measureContent();
 		
-			this._borderContainer.rightContainer.height = this._availableHeight;
-			this._borderContainer.leftContainer.height = this._availableHeight;
-			this._borderContainer.topContainer.width = this._availableWidth;
-			this._borderContainer.bottomContainer.width = this._availableWidth;
+			if(rc.height != this._availableHeight)
+			{
+				rc.height = this._availableHeight;
+				rc.forceRender();
+			}
 
-			this._borderContainer.topContainer.x = this._totalLeftBorder;
-			this._borderContainer.topContainer.y = this._topPadding;
-			this._borderContainer.bottomContainer.x = this._totalLeftBorder;
-			this._borderContainer.bottomContainer.y = this._borderContainer.height - this._totalBottomBorder; 
-			this._borderContainer.leftContainer.x = this._leftPadding;
-			this._borderContainer.leftContainer.y = this._totalTopBorder;
-			this._borderContainer.rightContainer.x = this._borderContainer.width - this._totalRightBorder;
-			this._borderContainer.rightContainer.y = this._totalTopBorder;
+			if(lc.height != this._availableHeight)
+			{
+				lc.height = this._availableHeight;
+				lc.forceRender();
+			}
+
+			if(tc.width != this._availableWidth)
+			{
+				tc.width = this._availableWidth;
+				tc.forceRender();
+			}
+
+			if(bc.width != this._availableWidth)
+			{
+				bc.width = this._availableWidth;
+				bc.forceRender();
+			}
+
+			tc.x = this._totalLeftBorder;
+			tc.y = this._topPadding;
+			bc.x = this._totalLeftBorder;
+			bc.y = pc.height - this._totalBottomBorder; 
+			lc.x = this._leftPadding;
+			lc.y = this._totalTopBorder;
+			rc.x = pc.width - this._totalRightBorder;
+			rc.y = this._totalTopBorder;
 		}
 
 		/**
@@ -149,6 +173,7 @@ package com.yahoo.renderers.layout
 			this._borderContainer.centerStack.y = this._totalTopBorder;
 			this._borderContainer.centerStack.width = this._availableWidth;
 			this._borderContainer.centerStack.height = this._availableHeight;
+			this._borderContainer.centerStack.forceRender();
 		}
 	}
 }

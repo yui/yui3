@@ -1,12 +1,11 @@
 package com.yahoo.renderers.layout
 {
 	import com.yahoo.renderers.Renderer;
-	import com.yahoo.renderers.styles.IStyle;
 
 	/**
 	 * Interface for renderer layout managers.
 	 */
-	public interface IContainer extends IStyle
+	public interface IContainer
 	{
 		/**
 		 * Strategy for positioning of children.

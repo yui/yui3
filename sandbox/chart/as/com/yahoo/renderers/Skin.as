@@ -2,6 +2,7 @@ package com.yahoo.renderers
 {
 	import com.yahoo.renderers.styles.IStyle;
 	import com.yahoo.renderers.styles.SkinStyles;
+	import flash.display.DisplayObject;
 	
 	/**
 	 * Rendering class responsible for programatic fills
@@ -33,7 +34,7 @@ package com.yahoo.renderers
 		 * @private
 		 * Storage for drawSkinFunction
 		 */
-		private var _drawSkinFunction:Function = defaultDrawSkinFunction;
+		private var _drawSkinFunction:Function = skinAll;
 	
 		/**
 		 * Algorithm for drawing skin
@@ -59,13 +60,13 @@ package com.yahoo.renderers
 		 */
 		override protected function render():void
 		{
-			this.drawSkinFunction();
+			this.drawSkin();
 		}
 
 		/**
 		 * @private
 		 */
-		public function defaultDrawSkinFunction():void
+		public function drawSkin():void
 		{	
 			this.graphics.clear();
 			var props:Object = this.getStyles();
@@ -75,14 +76,6 @@ package com.yahoo.renderers
 				return;
 			}
 			
-			if(props.borderColor == props.fillColor)
-			{
-				this.graphics.lineStyle(0, 0, 0);
-			}
-			else
-			{
-				this.graphics.lineStyle(props.borderWidth, props.borderColor, props.borderAlpha);
-			}
 			if(props.fillType != "linear" && props.fillType != "radial")
 			{
 				this.graphics.beginFill(props.fillColor, props.fillAlpha);
@@ -91,8 +84,30 @@ package com.yahoo.renderers
 			{
 				this.graphics.beginGradientFill(props.fillType, props.colors, props.alphas, props.ratios, props.matrix, props.spreadMethod, props.interpolationMethod, props.focalPointRatio);
 			}
-			this.graphics.drawRect(props.borderWidth * 0.5, props.borderWidth * 0.5, this.width - Number(props.borderWidth), this.height - Number(props.borderWidth));
+			if(props.borderColor == props.fillColor)
+			{
+				this.graphics.lineStyle(0, 0, 0);
+			}
+			else
+			{
+				this.graphics.lineStyle(props.borderWidth, props.borderColor, props.borderAlpha);
+			}
+			props.width = this.width;
+			props.height = this.height;
+			props.x = this.x;
+			props.y = this.y;
+			if(this._drawSkinFunction is Function)
+			{
+				props.width = this.width;
+				props.height = this.height;
+				this._drawSkinFunction.call(this, this, props);
+			}
 			this.graphics.endFill();			
-		}			
+		}
+
+		protected function skinAll(target:DisplayObject, props:Object):void
+		{
+			this.graphics.drawRect(props.borderWidth * 0.5, props.borderWidth * 0.5, this.width - Number(props.borderWidth), this.height - Number(props.borderWidth));
+		}
 	}
 }

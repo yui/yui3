@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <property file="test.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" 
+            description="Default Build Properties and Targets" />
+
+    <target name="all" depends="local, deploy, copytotest"></target>
+    <target name="copytotest">
+        <copy file="${global.build.component}/${component}.js" tofile="${deploy.destination}" preservelastmodified="true"/>
+    </target>
+</project>
