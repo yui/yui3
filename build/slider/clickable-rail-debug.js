@@ -105,21 +105,33 @@ Y.ClickableRail = Y.mix( ClickableRail, {
 
             // Logic that determines which thumb should be used is abstracted
             // to someday support multi-thumb sliders
-            var thumb = this._resolveThumb( e ),
+            var dd     = this._resolveThumb( e ),
+                i      = this._key.xyIndex,
+                length = parseFloat( this.get( 'length' ), 10 ),
+                thumb,
+                thumbSize,
                 xy;
                 
-            if ( thumb ) {
+            if ( dd ) {
+                thumb = dd.get( 'dragNode' );
+                thumbSize = parseFloat( thumb.getStyle( this._key.dim ), 10);
 
-                if ( !thumb.startXY ) {
-                    thumb._setStartPosition( thumb.getXY() );
-                }
+                // Step 1. Allow for aligning to thumb center or edge, etc
+                xy = this._getThumbDestination( e, thumb );
 
-                xy = this._getThumbDestination( e, thumb.get( 'dragNode' ) );
+                // Step 2. Remove page offsets to give just top/left style val
+                xy = xy[ i ] - this.rail.getXY()[i];
 
-                thumb._alignNode( xy );
+                // Step 3. Constrain within the rail in case of attempt to
+                // center the thumb when clicking on the end of the rail
+                xy = Math.min(
+                        Math.max( xy, 0 ),
+                        ( length - thumbSize ) );
+
+                this._uiMoveThumb( xy );
 
                 // Delegate to DD's natural behavior
-                thumb._handleMouseDownEvent( e );
+                dd._handleMouseDownEvent( e );
             }
         },
 
