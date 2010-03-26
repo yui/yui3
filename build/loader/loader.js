@@ -1310,7 +1310,7 @@ Y.Loader.prototype = {
         // create an indexed list
         var s = YObject.keys(this.required), 
             info = this.moduleInfo, 
-            loaded = this.loaded,
+            // loaded = this.loaded,
             done = {},
             p=0, l, a, b, j, k, moved, doneKey,
 
@@ -2567,12 +2567,12 @@ YUI.Env[Y.version].modules = {
         ], 
         "submodules": {
             "loader-base": {}, 
-            "rollup": {
+            "loader-rollup": {
                 "requires": [
                     "loader-base"
                 ]
             }, 
-            "yui3": {
+            "loader-yui3": {
                 "requires": [
                     "loader-base"
                 ]

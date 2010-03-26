@@ -1310,7 +1310,7 @@ Y.Loader.prototype = {
         // create an indexed list
         var s = YObject.keys(this.required), 
             info = this.moduleInfo, 
-            loaded = this.loaded,
+            // loaded = this.loaded,
             done = {},
             p=0, l, a, b, j, k, moved, doneKey,
 

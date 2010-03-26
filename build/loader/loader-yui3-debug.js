@@ -671,12 +671,12 @@ YUI.Env[Y.version].modules = {
         ], 
         "submodules": {
             "loader-base": {}, 
-            "rollup": {
+            "loader-rollup": {
                 "requires": [
                     "loader-base"
                 ]
             }, 
-            "yui3": {
+            "loader-yui3": {
                 "requires": [
                     "loader-base"
                 ]
