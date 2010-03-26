@@ -1310,7 +1310,7 @@ Y.Loader.prototype = {
         // create an indexed list
         var s = YObject.keys(this.required), 
             info = this.moduleInfo, 
-            loaded = this.loaded,
+            // loaded = this.loaded,
             done = {},
             p=0, l, a, b, j, k, moved, doneKey,
 
@@ -1320,7 +1320,8 @@ Y.Loader.prototype = {
 
                 var m = info[mod1], i, r, after, other = info[mod2], s;
 
-                if (loaded[mod2] || !m || !other) {
+                // if (loaded[mod2] || !m || !other) {
+                if (!m || !other) {
                     return false;
                 }
 
@@ -1372,6 +1373,7 @@ Y.Loader.prototype = {
                 // find a requirement for the current item
                 for (k=j+1; k<l; k=k+1) {
                     doneKey = a + s[k];
+
                     if (!done[doneKey] && requires(a, s[k])) {
 
                         // extract the dependency so we can move it up
@@ -2565,12 +2567,12 @@ YUI.Env[Y.version].modules = {
         ], 
         "submodules": {
             "loader-base": {}, 
-            "rollup": {
+            "loader-rollup": {
                 "requires": [
                     "loader-base"
                 ]
             }, 
-            "yui3": {
+            "loader-yui3": {
                 "requires": [
                     "loader-base"
                 ]
@@ -2702,13 +2704,13 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "querystring-parse-simple": {
-        "path": "querystring/querystring-parse-simple.js", 
+        "path": "querystring/querystring-parse-simple-min.js", 
         "requires": [
             "yui-base"
         ]
     }, 
     "querystring-stringify-simple": {
-        "path": "querystring/querystring-stringify-simple.js", 
+        "path": "querystring/querystring-stringify-simple-min.js", 
         "requires": [
             "yui-base"
         ]

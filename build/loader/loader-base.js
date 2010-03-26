@@ -1310,7 +1310,7 @@ Y.Loader.prototype = {
         // create an indexed list
         var s = YObject.keys(this.required), 
             info = this.moduleInfo, 
-            loaded = this.loaded,
+            // loaded = this.loaded,
             done = {},
             p=0, l, a, b, j, k, moved, doneKey,
 
@@ -1320,7 +1320,8 @@ Y.Loader.prototype = {
 
                 var m = info[mod1], i, r, after, other = info[mod2], s;
 
-                if (loaded[mod2] || !m || !other) {
+                // if (loaded[mod2] || !m || !other) {
+                if (!m || !other) {
                     return false;
                 }
 
@@ -1372,6 +1373,7 @@ Y.Loader.prototype = {
                 // find a requirement for the current item
                 for (k=j+1; k<l; k=k+1) {
                     doneKey = a + s[k];
+
                     if (!done[doneKey] && requires(a, s[k])) {
 
                         // extract the dependency so we can move it up

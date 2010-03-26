@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>slider&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
+        <h3>slider&nbsp; <span class="subtitle">3.1.0pr4</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_slider.html" title="slider">slider</a>
                  &gt; Slider 
@@ -217,11 +217,7 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                 <code>
                                     
                                         <span rel="yui:property" resource="SliderValueRange.html#property__factor">
-                                        <a class="protected" href="SliderValueRange.html#property__factor" property="yui:name" title="_factor">_factor</a><span class="protected">,</span>
-                                        </span>
-                                    
-                                        <span rel="yui:property" resource="SliderValueRange.html#property__offsetXY">
-                                        <a class="protected" href="SliderValueRange.html#property__offsetXY" property="yui:name" title="_offsetXY">_offsetXY</a>
+                                        <a class="protected" href="SliderValueRange.html#property__factor" property="yui:name" title="_factor">_factor</a>
                                         </span>
                                     
                                 </code>
@@ -265,11 +261,11 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                 <h4>Methods inherited from <a href="SliderBase.html" property="yui:name" title="SliderBase">SliderBase</a>:</h4>
                                 <div class="content" rel="yui:methods">
                                     <code>
-                                            <span rel="yui:method" resource="SliderBase.html#method__afterAlign">                                        
-                                            <a class="protected" href="SliderBase.html#method__afterAlign" property="yui:name" title="_afterAlign">_afterAlign</a><span class="protected">,</span>
-                                            </span>
                                             <span rel="yui:method" resource="SliderBase.html#method__afterDisabledChange">                                        
                                             <a class="protected" href="SliderBase.html#method__afterDisabledChange" property="yui:name" title="_afterDisabledChange">_afterDisabledChange</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="SliderBase.html#method__afterDrag">                                        
+                                            <a class="protected" href="SliderBase.html#method__afterDrag" property="yui:name" title="_afterDrag">_afterDrag</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="SliderBase.html#method__afterLengthChange">                                        
                                             <a class="protected" href="SliderBase.html#method__afterLengthChange" property="yui:name" title="_afterLengthChange">_afterLengthChange</a><span class="protected">,</span>
@@ -297,6 +293,9 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                             </span>
                                             <span rel="yui:method" resource="SliderBase.html#method__syncThumbPosition">                                        
                                             <a class="protected" href="SliderBase.html#method__syncThumbPosition" property="yui:name" title="_syncThumbPosition">_syncThumbPosition</a><span class="protected">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="SliderBase.html#method__uiMoveThumb">                                        
+                                            <a class="protected" href="SliderBase.html#method__uiMoveThumb" property="yui:name" title="_uiMoveThumb">_uiMoveThumb</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="SliderBase.html#method__uiSetRailLength">                                        
                                             <a class="protected" href="SliderBase.html#method__uiSetRailLength" property="yui:name" title="_uiSetRailLength">_uiSetRailLength</a><span class="protected">,</span>
@@ -742,9 +741,6 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                             <span rel="yui:method" resource="SliderValueRange.html#method__bindValueLogic">                                        
                                             <a class="protected" href="SliderValueRange.html#method__bindValueLogic" property="yui:name" title="_bindValueLogic">_bindValueLogic</a><span class="protected">,</span>
                                             </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__cacheRailOffset">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__cacheRailOffset" property="yui:name" title="_cacheRailOffset">_cacheRailOffset</a><span class="protected">,</span>
-                                            </span>
                                             <span rel="yui:method" resource="SliderValueRange.html#method__calculateFactor">                                        
                                             <a class="protected" href="SliderValueRange.html#method__calculateFactor" property="yui:name" title="_calculateFactor">_calculateFactor</a><span class="protected">,</span>
                                             </span>
@@ -760,6 +756,9 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                             <span rel="yui:method" resource="SliderValueRange.html#method__offsetToValue">                                        
                                             <a class="protected" href="SliderValueRange.html#method__offsetToValue" property="yui:name" title="_offsetToValue">_offsetToValue</a><span class="protected">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="SliderValueRange.html#method__setNewValue">                                        
+                                            <a class="protected" href="SliderValueRange.html#method__setNewValue" property="yui:name" title="_setNewValue">_setNewValue</a><span class="protected">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="SliderValueRange.html#method__setPosition">                                        
                                             <a class="protected" href="SliderValueRange.html#method__setPosition" property="yui:name" title="_setPosition">_setPosition</a><span class="protected">,</span>
                                             </span>
@@ -771,9 +770,6 @@ maximum.  Sliders may be aligned vertically or horizontally, based on the
                                             </span>
                                             <span rel="yui:method" resource="SliderValueRange.html#method__validateNewMin">                                        
                                             <a class="protected" href="SliderValueRange.html#method__validateNewMin" property="yui:name" title="_validateNewMin">_validateNewMin</a><span class="protected">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="SliderValueRange.html#method__validateNewValue">                                        
-                                            <a class="protected" href="SliderValueRange.html#method__validateNewValue" property="yui:name" title="_validateNewValue">_validateNewValue</a><span class="protected">,</span>
                                             </span>
                                             <span rel="yui:method" resource="SliderValueRange.html#method__valueToOffset">                                        
                                             <a class="protected" href="SliderValueRange.html#method__valueToOffset" property="yui:name" title="_valueToOffset">_valueToOffset</a><span class="protected">,</span>

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>slider&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
+        <h3>slider&nbsp; <span class="subtitle">3.1.0pr4</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_slider.html" title="slider">slider</a>
                  &gt; SliderValueRange 
@@ -78,22 +78,6 @@ appropriate location on the rail) in configuration as well if appropriate.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Factor used to translate value -&gt; position -&gt; value.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:property" resource="#property__offsetXY">
-                                    <h4><a name="property__offsetXY" property="yui:name">_offsetXY</a>
-                                        - <code>protected <span property="yui:type">{Number}</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Cached X or Y offset for the rail to avoid extraneous
-<code>getXY()</code> calls during run time calculation.
                                         </div>
                                     </div>
      
@@ -295,37 +279,6 @@ trigger UI and related state updates.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__cacheRailOffset">
-                                    <h4>
-                                        <a name="method__cacheRailOffset">_cacheRailOffset</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_cacheRailOffset</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Captures the current top left of the rail to avoid excessive DOM
-lookups at run time.
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__calculateFactor">
                                     <h4>
                                         <a name="method__calculateFactor">_calculateFactor</a></h4>
@@ -342,7 +295,7 @@ lookups at run time.
                                         
                                         <div class="description" property="yui:description">
                                             Calculates and caches
-(range between max and min) / (rail width or height)
+(range between max and min) / (rail length)
 for fast runtime calculation of position -&gt; value.
                                         </div>
 
@@ -418,8 +371,8 @@ operations.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Attach event listeners to keep the UI in sync with the min/max/value
-attributes and thumb position.
+                                            Stub for construction logic.  Override if extending this class and
+you need to set something up during the initializer phase.
                                         </div>
 
                                         <div class="description">
@@ -501,7 +454,7 @@ the provided value is returned.
                                            (
                                                 
                                                         
-                                                         X
+                                                         offset
                                                     
                                                 
                                             )
@@ -509,7 +462,7 @@ the provided value is returned.
                                         
                                         <div class="description" property="yui:description">
                                             <p>Converts a pixel position into a value.  Calculates current
-position minus xy offsets of the rail multiplied by the
+thumb offset from the leading edge of the rail multiplied by the
 ratio of <code>(max - min) / (constraining dim)</code>.</p>
 <p>Override this if you want to use a different value mapping
 algorithm.</p>
@@ -520,10 +473,10 @@ algorithm.</p>
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">X</span>
+                                                        <code><span property="yui:name">offset</span>
                                                         &lt;<span property="yui:type"> Number </span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> or Y pixel position</span>
+                                                        <span property="yui:description">  X or Y pixel offset</span>
                                                         </dd>
                                                 </dl>
 
@@ -532,7 +485,60 @@ algorithm.</p>
                                                     <code property="yui:return">
                                                              mixed 
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Value corresponding to the provided pixel position</dd>
+                                                    <dd property="yui:returnInfo">Value corresponding to the provided pixel offset</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setNewValue">
+                                    <h4>
+                                        <a name="method__setNewValue">_setNewValue</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                         Number 
+                                            <strong property="yui:name">_setNewValue</strong>
+                                           (
+                                                
+                                                        
+                                                         value
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Restricts new values assigned to <code>value</code> attribute to be
+between the configured <code>min</code> and <code>max</code>.
+Rounds to nearest integer value.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">value</span>
+                                                        &lt;<span property="yui:type"> Number </span>&gt;
+                                                        </code>
+                                                        <span property="yui:description">  Value assigned to <code>value</code> attribute</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                             Number 
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Normalized and constrained value</dd>
                                                 </dl>
 
 
@@ -709,60 +715,6 @@ are acceptable.  Override this to enforce different rules.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="protected" rel="yui:method" resource="#method__validateNewValue">
-                                    <h4>
-                                        <a name="method__validateNewValue">_validateNewValue</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                         Boolean 
-                                            <strong property="yui:name">_validateNewValue</strong>
-                                           (
-                                                
-                                                        
-                                                         value
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Validates new values assigned to <code>value</code> attribute.
-Numbers between the configured <code>min</code> and <code>max</code>
-are acceptable.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">value</span>
-                                                        &lt;<span property="yui:type"> mixed </span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  Value assigned to <code>value</code> attribute</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                             Boolean 
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">True if value is a number between the configured
-<code>min</code> and <code>max</code>.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__valueToOffset">
                                     <h4>
                                         <a name="method__valueToOffset">_valueToOffset</a></h4>
@@ -771,7 +723,7 @@ are acceptable.
                                          protected 
                                         
                                         
-                                         Array 
+                                         Number 
                                             <strong property="yui:name">_valueToOffset</strong>
                                            (
                                                 
@@ -783,7 +735,7 @@ are acceptable.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Converts a value into a positional pixel value for use in positioning
+                                            Converts a value into a pixel offset for use in positioning
 the thumb according to the reverse of the
 <code>_offsetToValue( xy )</code> operation.
                                         </div>
@@ -803,9 +755,9 @@ the thumb according to the reverse of the
                                                 <dl>
                                                     <dt>Returns:
                                                     <code property="yui:return">
-                                                             Array 
+                                                             Number 
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo"><code>[ <em>X</em>px, <em>Y</em>px ] positional values</dd>
+                                                    <dd property="yui:returnInfo">The pixel offset</dd>
                                                 </dl>
 
 
@@ -1234,7 +1186,6 @@ thumb to the position that corresponds to the supplied value.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="protected"><a href="#property__factor" title="_factor">_factor</a></li>
-                                <li class="protected"><a href="#property__offsetXY" title="_offsetXY">_offsetXY</a></li>
                                 <li class="protected"><a href="#property_ATTRS" title="ATTRS">ATTRS</a></li>
                         </ul>
                     </div>
@@ -1246,17 +1197,16 @@ thumb to the position that corresponds to the supplied value.
                                 <li class="protected"><a href="#method__afterMinChange" title="_afterMinChange">_afterMinChange</a></li>
                                 <li class="protected"><a href="#method__afterValueChange" title="_afterValueChange">_afterValueChange</a></li>
                                 <li class="protected"><a href="#method__bindValueLogic" title="_bindValueLogic">_bindValueLogic</a></li>
-                                <li class="protected"><a href="#method__cacheRailOffset" title="_cacheRailOffset">_cacheRailOffset</a></li>
                                 <li class="protected"><a href="#method__calculateFactor" title="_calculateFactor">_calculateFactor</a></li>
                                 <li class="protected"><a href="#method__defThumbMoveFn" title="_defThumbMoveFn">_defThumbMoveFn</a></li>
                                 <li class="protected"><a href="#method__initSliderValueRange" title="_initSliderValueRange">_initSliderValueRange</a></li>
                                 <li class="protected"><a href="#method__nearestValue" title="_nearestValue">_nearestValue</a></li>
                                 <li class="protected"><a href="#method__offsetToValue" title="_offsetToValue">_offsetToValue</a></li>
+                                <li class="protected"><a href="#method__setNewValue" title="_setNewValue">_setNewValue</a></li>
                                 <li class="protected"><a href="#method__setPosition" title="_setPosition">_setPosition</a></li>
                                 <li class="protected"><a href="#method__syncThumbPosition" title="_syncThumbPosition">_syncThumbPosition</a></li>
                                 <li class="protected"><a href="#method__validateNewMax" title="_validateNewMax">_validateNewMax</a></li>
                                 <li class="protected"><a href="#method__validateNewMin" title="_validateNewMin">_validateNewMin</a></li>
-                                <li class="protected"><a href="#method__validateNewValue" title="_validateNewValue">_validateNewValue</a></li>
                                 <li class="protected"><a href="#method__valueToOffset" title="_valueToOffset">_valueToOffset</a></li>
                                 <li class="protected"><a href="#method__verifyValue" title="_verifyValue">_verifyValue</a></li>
                                 <li class=""><a href="#method_getValue" title="getValue">getValue</a></li>
@@ -1292,7 +1242,7 @@ thumb to the position that corresponds to the supplied value.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "SliderBase", "name": "_afterAlign", "url": "SliderBase.html#method__afterAlign", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterDisabledChange", "url": "SliderBase.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterLengthChange", "url": "SliderBase.html#method__afterLengthChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMaxChange", "url": "SliderValueRange.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMinChange", "url": "SliderValueRange.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterValueChange", "url": "SliderValueRange.html#method__afterValueChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "ATTRS", "url": "SliderValueRange.html#property_ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#property_axis", "type": "property"}, {"access": "", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#config_axis", "type": "config"}, {"access": "", "host": "SliderBase", "name": "axisChange", "url": "SliderBase.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_bindClickableRail", "url": "ClickableRail.html#method__bindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindThumbDD", "url": "SliderBase.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "bindUI", "url": "SliderBase.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindValueLogic", "url": "SliderBase.html#method__bindValueLogic", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_bindValueLogic", "url": "SliderValueRange.html#method__bindValueLogic", "type": "method"}, {"access": "", "host": "SliderBase", "name": "BOUNDING_TEMPLATE", "url": "SliderBase.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderValueRange", "name": "_cacheRailOffset", "url": "SliderValueRange.html#method__cacheRailOffset", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_calculateFactor", "url": "SliderValueRange.html#method__calculateFactor", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "clickableRail", "url": "ClickableRail.html#config_clickableRail", "type": "config"}, {"access": "", "host": "ClickableRail", "name": "clickableRailChange", "url": "ClickableRail.html#event_clickableRailChange", "type": "event"}, {"access": "", "host": "SliderBase", "name": "CONTENT_TEMPLATE", "url": "SliderBase.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_dd", "url": "SliderBase.html#property__dd", "type": "property"}, {"access": "protected", "host": "ClickableRail", "name": "_defRailMouseDownFn", "url": "ClickableRail.html#method__defRailMouseDownFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_defThumbMoveFn", "url": "SliderValueRange.html#method__defThumbMoveFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_factor", "url": "SliderValueRange.html#property__factor", "type": "property"}, {"access": "protected", "host": "ClickableRail", "name": "_getThumbDestination", "url": "ClickableRail.html#method__getThumbDestination", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "getValue", "url": "SliderValueRange.html#method_getValue", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_initClickableRail", "url": "ClickableRail.html#method__initClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "initializer", "url": "SliderBase.html#method_initializer", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_initSliderValueRange", "url": "SliderValueRange.html#method__initSliderValueRange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_initThumbUrl", "url": "SliderBase.html#method__initThumbUrl", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_key", "url": "SliderBase.html#property__key", "type": "property"}, {"access": "", "host": "SliderBase", "name": "length", "url": "SliderBase.html#config_length", "type": "config"}, {"access": "", "host": "SliderBase", "name": "lengthChange", "url": "SliderBase.html#event_lengthChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "max", "url": "SliderValueRange.html#config_max", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "maxChange", "url": "SliderValueRange.html#event_maxChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "min", "url": "SliderValueRange.html#config_min", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "minChange", "url": "SliderValueRange.html#event_minChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_nearestValue", "url": "SliderValueRange.html#method__nearestValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_offsetToValue", "url": "SliderValueRange.html#method__offsetToValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_offsetXY", "url": "SliderValueRange.html#property__offsetXY", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_onDragEnd", "url": "SliderBase.html#method__onDragEnd", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_onDragStart", "url": "SliderBase.html#method__onDragStart", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_onRailMouseDown", "url": "ClickableRail.html#method__onRailMouseDown", "type": "method"}, {"access": "", "host": "SliderBase", "name": "rail", "url": "SliderBase.html#property_rail", "type": "property"}, {"access": "", "host": "ClickableRail", "name": "railMouseDown", "url": "ClickableRail.html#event_railMouseDown", "type": "event"}, {"access": "", "host": "SliderBase", "name": "RAIL_TEMPLATE", "url": "SliderBase.html#property_RAIL_TEMPLATE", "type": "property"}, {"access": "", "host": "SliderBase", "name": "renderRail", "url": "SliderBase.html#method_renderRail", "type": "method"}, {"access": "", "host": "SliderBase", "name": "renderThumb", "url": "SliderBase.html#method_renderThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "renderUI", "url": "SliderBase.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_resolveThumb", "url": "ClickableRail.html#method__resolveThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setAxis", "url": "SliderBase.html#method__setAxis", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setLength", "url": "SliderBase.html#method__setLength", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_setPosition", "url": "SliderValueRange.html#method__setPosition", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "setValue", "url": "SliderValueRange.html#method_setValue", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.ATTRS", "url": "SliderBase.html#property_SliderBase.ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.NAME", "url": "SliderBase.html#property_SliderBase.NAME", "type": "property"}, {"access": "", "host": "SliderBase", "name": "slideStart", "url": "SliderBase.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_syncThumbPosition", "url": "SliderBase.html#method__syncThumbPosition", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_syncThumbPosition", "url": "SliderValueRange.html#method__syncThumbPosition", "type": "method"}, {"access": "", "host": "SliderBase", "name": "syncUI", "url": "SliderBase.html#method_syncUI", "type": "method"}, {"access": "", "host": "SliderBase", "name": "thumb", "url": "SliderBase.html#property_thumb", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbMove", "url": "SliderBase.html#event_thumbMove", "type": "event"}, {"access": "", "host": "SliderBase", "name": "THUMB_TEMPLATE", "url": "SliderBase.html#property_THUMB_TEMPLATE", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbUrl", "url": "SliderBase.html#config_thumbUrl", "type": "config"}, {"access": "", "host": "SliderBase", "name": "thumbUrlChange", "url": "SliderBase.html#event_thumbUrlChange", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_uiSetRailLength", "url": "SliderBase.html#method__uiSetRailLength", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_unbindClickableRail", "url": "ClickableRail.html#method__unbindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMax", "url": "SliderValueRange.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMin", "url": "SliderValueRange.html#method__validateNewMin", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewValue", "url": "SliderValueRange.html#method__validateNewValue", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "value", "url": "SliderValueRange.html#config_value", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "valueChange", "url": "SliderValueRange.html#event_valueChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_valueToOffset", "url": "SliderValueRange.html#method__valueToOffset", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_verifyValue", "url": "SliderValueRange.html#method__verifyValue", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "SliderBase", "name": "_afterDisabledChange", "url": "SliderBase.html#method__afterDisabledChange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterDrag", "url": "SliderBase.html#method__afterDrag", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_afterLengthChange", "url": "SliderBase.html#method__afterLengthChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMaxChange", "url": "SliderValueRange.html#method__afterMaxChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterMinChange", "url": "SliderValueRange.html#method__afterMinChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_afterValueChange", "url": "SliderValueRange.html#method__afterValueChange", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "ATTRS", "url": "SliderValueRange.html#property_ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#property_axis", "type": "property"}, {"access": "", "host": "SliderBase", "name": "axis", "url": "SliderBase.html#config_axis", "type": "config"}, {"access": "", "host": "SliderBase", "name": "axisChange", "url": "SliderBase.html#event_axisChange", "type": "event"}, {"access": "protected", "host": "ClickableRail", "name": "_bindClickableRail", "url": "ClickableRail.html#method__bindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindThumbDD", "url": "SliderBase.html#method__bindThumbDD", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "bindUI", "url": "SliderBase.html#method_bindUI", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_bindValueLogic", "url": "SliderBase.html#method__bindValueLogic", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_bindValueLogic", "url": "SliderValueRange.html#method__bindValueLogic", "type": "method"}, {"access": "", "host": "SliderBase", "name": "BOUNDING_TEMPLATE", "url": "SliderBase.html#property_BOUNDING_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderValueRange", "name": "_calculateFactor", "url": "SliderValueRange.html#method__calculateFactor", "type": "method"}, {"access": "", "host": "ClickableRail", "name": "clickableRail", "url": "ClickableRail.html#config_clickableRail", "type": "config"}, {"access": "", "host": "ClickableRail", "name": "clickableRailChange", "url": "ClickableRail.html#event_clickableRailChange", "type": "event"}, {"access": "", "host": "SliderBase", "name": "CONTENT_TEMPLATE", "url": "SliderBase.html#property_CONTENT_TEMPLATE", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "_dd", "url": "SliderBase.html#property__dd", "type": "property"}, {"access": "protected", "host": "ClickableRail", "name": "_defRailMouseDownFn", "url": "ClickableRail.html#method__defRailMouseDownFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_defThumbMoveFn", "url": "SliderValueRange.html#method__defThumbMoveFn", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_factor", "url": "SliderValueRange.html#property__factor", "type": "property"}, {"access": "protected", "host": "ClickableRail", "name": "_getThumbDestination", "url": "ClickableRail.html#method__getThumbDestination", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "getValue", "url": "SliderValueRange.html#method_getValue", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_initClickableRail", "url": "ClickableRail.html#method__initClickableRail", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "initializer", "url": "SliderBase.html#method_initializer", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_initSliderValueRange", "url": "SliderValueRange.html#method__initSliderValueRange", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_initThumbUrl", "url": "SliderBase.html#method__initThumbUrl", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_key", "url": "SliderBase.html#property__key", "type": "property"}, {"access": "", "host": "SliderBase", "name": "length", "url": "SliderBase.html#config_length", "type": "config"}, {"access": "", "host": "SliderBase", "name": "lengthChange", "url": "SliderBase.html#event_lengthChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "max", "url": "SliderValueRange.html#config_max", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "maxChange", "url": "SliderValueRange.html#event_maxChange", "type": "event"}, {"access": "", "host": "SliderValueRange", "name": "min", "url": "SliderValueRange.html#config_min", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "minChange", "url": "SliderValueRange.html#event_minChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_nearestValue", "url": "SliderValueRange.html#method__nearestValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_offsetToValue", "url": "SliderValueRange.html#method__offsetToValue", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_onDragEnd", "url": "SliderBase.html#method__onDragEnd", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_onDragStart", "url": "SliderBase.html#method__onDragStart", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_onRailMouseDown", "url": "ClickableRail.html#method__onRailMouseDown", "type": "method"}, {"access": "", "host": "SliderBase", "name": "rail", "url": "SliderBase.html#property_rail", "type": "property"}, {"access": "", "host": "ClickableRail", "name": "railMouseDown", "url": "ClickableRail.html#event_railMouseDown", "type": "event"}, {"access": "", "host": "SliderBase", "name": "RAIL_TEMPLATE", "url": "SliderBase.html#property_RAIL_TEMPLATE", "type": "property"}, {"access": "", "host": "SliderBase", "name": "renderRail", "url": "SliderBase.html#method_renderRail", "type": "method"}, {"access": "", "host": "SliderBase", "name": "renderThumb", "url": "SliderBase.html#method_renderThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "renderUI", "url": "SliderBase.html#method_renderUI", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_resolveThumb", "url": "ClickableRail.html#method__resolveThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setAxis", "url": "SliderBase.html#method__setAxis", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_setLength", "url": "SliderBase.html#method__setLength", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_setNewValue", "url": "SliderValueRange.html#method__setNewValue", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_setPosition", "url": "SliderValueRange.html#method__setPosition", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "setValue", "url": "SliderValueRange.html#method_setValue", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.ATTRS", "url": "SliderBase.html#property_SliderBase.ATTRS", "type": "property"}, {"access": "protected", "host": "SliderBase", "name": "SliderBase.NAME", "url": "SliderBase.html#property_SliderBase.NAME", "type": "property"}, {"access": "", "host": "SliderBase", "name": "slideStart", "url": "SliderBase.html#event_slideStart", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_syncThumbPosition", "url": "SliderBase.html#method__syncThumbPosition", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_syncThumbPosition", "url": "SliderValueRange.html#method__syncThumbPosition", "type": "method"}, {"access": "", "host": "SliderBase", "name": "syncUI", "url": "SliderBase.html#method_syncUI", "type": "method"}, {"access": "", "host": "SliderBase", "name": "thumb", "url": "SliderBase.html#property_thumb", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbMove", "url": "SliderBase.html#event_thumbMove", "type": "event"}, {"access": "", "host": "SliderBase", "name": "THUMB_TEMPLATE", "url": "SliderBase.html#property_THUMB_TEMPLATE", "type": "property"}, {"access": "", "host": "SliderBase", "name": "thumbUrl", "url": "SliderBase.html#config_thumbUrl", "type": "config"}, {"access": "", "host": "SliderBase", "name": "thumbUrlChange", "url": "SliderBase.html#event_thumbUrlChange", "type": "event"}, {"access": "protected", "host": "SliderBase", "name": "_uiMoveThumb", "url": "SliderBase.html#method__uiMoveThumb", "type": "method"}, {"access": "protected", "host": "SliderBase", "name": "_uiSetRailLength", "url": "SliderBase.html#method__uiSetRailLength", "type": "method"}, {"access": "protected", "host": "ClickableRail", "name": "_unbindClickableRail", "url": "ClickableRail.html#method__unbindClickableRail", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMax", "url": "SliderValueRange.html#method__validateNewMax", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_validateNewMin", "url": "SliderValueRange.html#method__validateNewMin", "type": "method"}, {"access": "", "host": "SliderValueRange", "name": "value", "url": "SliderValueRange.html#config_value", "type": "config"}, {"access": "", "host": "SliderValueRange", "name": "valueChange", "url": "SliderValueRange.html#event_valueChange", "type": "event"}, {"access": "protected", "host": "SliderValueRange", "name": "_valueToOffset", "url": "SliderValueRange.html#method__valueToOffset", "type": "method"}, {"access": "protected", "host": "SliderValueRange", "name": "_verifyValue", "url": "SliderValueRange.html#method__verifyValue", "type": "method"}];
 </script>
 </body>
 </html>

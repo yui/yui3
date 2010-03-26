@@ -671,12 +671,12 @@ YUI.Env[Y.version].modules = {
         ], 
         "submodules": {
             "loader-base": {}, 
-            "rollup": {
+            "loader-rollup": {
                 "requires": [
                     "loader-base"
                 ]
             }, 
-            "yui3": {
+            "loader-yui3": {
                 "requires": [
                     "loader-base"
                 ]
@@ -808,13 +808,13 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "querystring-parse-simple": {
-        "path": "querystring/querystring-parse-simple.js", 
+        "path": "querystring/querystring-parse-simple-min.js", 
         "requires": [
             "yui-base"
         ]
     }, 
     "querystring-stringify-simple": {
-        "path": "querystring/querystring-stringify-simple.js", 
+        "path": "querystring/querystring-stringify-simple-min.js", 
         "requires": [
             "yui-base"
         ]
