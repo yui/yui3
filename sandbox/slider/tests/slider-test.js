@@ -208,21 +208,19 @@ suite.add( new Y.Test.Case({
         s.setValue(50);
         Y.Assert.areEqual( 50, s.getValue() );
 
-        // TODO: this is a bug; should be 3
         s.setValue(3.3333);
-        Y.Assert.areEqual( 3.3333, s.getValue() );
+        Y.Assert.areEqual( 3, s.getValue() );
 
-        // out of range rejected by validator
+        // out of range constrained by setter
         s.setValue(-10);
-        Y.Assert.areEqual( 3.3333, s.getValue() );
+        Y.Assert.areEqual( 0, s.getValue() );
 
         s.setValue(110);
-        Y.Assert.areEqual( 3.3333, s.getValue() );
+        Y.Assert.areEqual( 100, s.getValue() );
         Y.Assert.areEqual( s.get('value'), s.getValue() );
 
-        // TODO: this is a bug; should be 7
         s.set('value', 6.66666);
-        Y.Assert.areEqual( 6.66666, s.getValue() );
+        Y.Assert.areEqual( 7, s.getValue() );
         Y.Assert.areEqual( s.get('value'), s.getValue() );
     },
 
@@ -237,20 +235,18 @@ suite.add( new Y.Test.Case({
         s.setValue(50);
         Y.Assert.areEqual( 50, s.getValue() );
 
-        // TODO: this is a bug; should be 3
         s.setValue(3.3333);
-        Y.Assert.areEqual( 3.3333, s.getValue() );
+        Y.Assert.areEqual( 3, s.getValue() );
 
         s.setValue(-10);
-        Y.Assert.areEqual( 3.3333, s.getValue() );
+        Y.Assert.areEqual( 0, s.getValue() );
 
         s.setValue(110);
-        Y.Assert.areEqual( 3.3333, s.getValue() );
+        Y.Assert.areEqual( 100, s.getValue() );
         Y.Assert.areEqual( s.get('value'), s.getValue() );
 
-        // TODO: this is a bug; should be 7
         s.set('value', 6.66666);
-        Y.Assert.areEqual( 6.66666, s.getValue() );
+        Y.Assert.areEqual( 7, s.getValue() );
         Y.Assert.areEqual( s.get('value'), s.getValue() );
     },
 
@@ -268,10 +264,10 @@ suite.add( new Y.Test.Case({
         Y.Assert.areEqual( 3, s.getValue() );
 
         s.setValue(-10);
-        Y.Assert.areEqual( 3, s.getValue() );
+        Y.Assert.areEqual( 0, s.getValue() );
 
         s.setValue(110);
-        Y.Assert.areEqual( 3, s.getValue() );
+        Y.Assert.areEqual( 100, s.getValue() );
         Y.Assert.areEqual( s.get('value'), s.getValue() );
 
         s.set('value', 6.66666);
@@ -307,7 +303,7 @@ suite.add( new Y.Test.Case({
         Y.Assert.areEqual( 135, parseInt(s.thumb.getStyle('left'),10) );
     },
 
-    "syncUI() should move the thumb after setValue(v) while hidden": function () {
+    "setValue(v) when hidden should still move the thumb": function () {
         var s = this.slider;
 
         Y.one('#testbed').setStyle('display','none');
@@ -317,13 +313,10 @@ suite.add( new Y.Test.Case({
         Y.Assert.areEqual( 0, parseInt(s.thumb.getStyle('left'),10) );
 
         s.setValue(20);
-        Y.Assert.areEqual( 0, parseInt(s.thumb.getStyle('left'),10) );
+        Y.Assert.areEqual( 27, parseInt(s.thumb.getStyle('left'),10) );
 
 
         Y.one('#testbed').setStyle('display','');
-        Y.Assert.areEqual( 0, parseInt(s.thumb.getStyle('left'),10) );
-
-        s.syncUI();
         Y.Assert.areEqual( 27, parseInt(s.thumb.getStyle('left'),10) );
     }
 }));
@@ -454,10 +447,41 @@ suite.add( new Y.Test.Case({
         Y.Assert.areEqual( (ref.get('offsetHeight') + delta), bb.get('offsetHeight') );
     },
 
-    "test thumbUrl": function () {
+    "thumbUrl should default at render()": function () {
+        var slider = new Y.Slider();
+        
+        Y.Assert.isNull( slider.get('thumbUrl') );
+        
+        slider.render('#testbed');
+
+        Y.Assert.isString( slider.get('thumbUrl') );
+
+        slider.destroy();
+    },
+
+    "thumbUrl should default to sam skin": function () {
+        var slider = new Y.Slider().render("#testbed");
+
+        Y.Assert.areEqual( Y.config.base + 'slider/assets/skins/sam/thumb-x.png', slider.get('thumbUrl') );
+
+        slider.destroy();
+    },
+
+    "thumbUrl should default from the current skin": function () {
+        var testbed = Y.one("#testbed"),
+            slider  = new Y.Slider();
+
+        testbed.addClass("yui3-skin-foo");
+
+        slider.render( testbed );
+
+        Y.Assert.areEqual( Y.config.base + 'slider/assets/skins/foo/thumb-x.png', slider.get('thumbUrl') );
+
+        slider.destroy();
     },
 
     "test clickableRail": function () {
+        
     },
 
     "test min": function () {
