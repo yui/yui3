@@ -1126,6 +1126,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
 
         test_data: function() {
             var node = Y.one('body');
+
+            // deprecated usage
+            node.set('data', 'foo');
+            Assert.areEqual('foo', node.get('data'),
+                "node.set('data', 'foo')");
+
             node.setData('foo', 'foo');
             Assert.areEqual('foo', node.getData('foo'),
                 "node.setData('foo', 'foo')");
