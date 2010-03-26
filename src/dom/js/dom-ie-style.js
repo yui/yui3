@@ -105,11 +105,12 @@ var HAS_LAYOUT = 'hasLayout',
             var unit = omitUnit ? '' : PX,
                 current = el.currentStyle[property];
 
-            if (current.indexOf(PX) < 0) { // look up keywords
-                if (ComputedStyle.borderMap[current]) {
+            if (current.indexOf(PX) < 0) { // look up keywords if a border exists
+                if (ComputedStyle.borderMap[current] &&
+                        el.currentStyle.borderStyle !== 'none') {
                     current = ComputedStyle.borderMap[current];
-                } else {
-                    Y.log('borderWidth computing not implemented', 'warn', 'dom-ie-style');
+                } else { // otherwise no border (default is "medium")
+                    current = 0;
                 }
             }
             return (omitUnit) ? parseFloat(current) : current;
