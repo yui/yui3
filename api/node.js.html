@@ -445,6 +445,24 @@
             <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">setValue</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
         <span class="p">}</span>
+    <span class="p">},</span>
+    
+    
+    <span class="cm">/*</span>
+<span class="cm">     * Flat data store for off-DOM usage </span>
+<span class="cm">     * @config data</span>
+<span class="cm">     * @type any</span>
+<span class="cm">     * @deprecated Use getData/setData</span>
+<span class="cm">     */</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> 
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_dataVal</span><span class="p">;</span> 
+        <span class="p">},</span>
+        <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span> <span class="p">{</span> 
+            <span class="k">this</span><span class="p">.</span><span class="nx">_dataVal</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">value</span><span class="o">:</span> <span class="kc">null</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
