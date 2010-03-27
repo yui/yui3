@@ -3,6 +3,10 @@ module (header, body, footer) support to a Widget class.
 
 3.1.0
 
+* Changed widget stdmod renderUI/syncUI/bindUI to Y.before, so that they are 
+  called before the Widget implementation, and setup the header/body/footer
+  node references for the Widget impl to use.
+
 * Setting section content to "" will now create the respective section. 
 
 * Fixed fillHeight, to work with contentBox height, now that it fills boundingBox

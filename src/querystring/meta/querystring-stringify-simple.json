@@ -1,0 +1,8 @@
+{
+    "querystring-stringify-simple": {
+        "path": "querystring/querystring-stringify-simple-min.js", 
+        "requires": [
+            "yui-base"
+        ]
+    }
+}

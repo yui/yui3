@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+        h1 {
+            font: normal 125%/1.4 Arial, sans-serif;
+        }
+        .yui3-skin-sam .yui3-console .yui3-console-content {
+            font-size: 10px;
+            width: 32em;
+        }
+        .yui3-skin-sam .yui3-console .yui3-console-bd {
+            height: 50em;
+        }
+        .yui3-skin-sam .yui3-console-entry-time {
+            display: none;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+<h1>Tests</h1>
+
+<script src="../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    filter : 'raw'
+}).use('test','console','async-queue',function (Y) {
+
+var suite = new Y.Test.Suite("Tests");
+
+suite.add(new Y.Test.Case({
+    name : "YUI Test infinite loop bug",
+
+    test_infinite_loop : function () {
+        /*
+        var q = new Y.AsyncQueue(),
+            register = 0,
+            self = this;
+
+        q.defaults.timeout = 10;
+        q.add({
+            id: 'one',
+            fn: function() {
+                q.pause();
+                register += 1;
+                q.run();
+            }
+        }, {
+            id: 'two',
+            fn: function() {
+                register += 10;
+                self.resume( function () {
+                    //Y.log( register );
+                    Y.Assert.areSame( 11, register );
+                } );
+            },
+            iterations: 1
+        });
+
+        q.run();
+
+        this.wait();
+        */
+        /*
+        var self = this,
+            x = new EventTarget( { emitFacade: true } );
+            x.count = 3;
+
+        x.publish( 'exec', { defaultFn: function () {
+            this.count--;
+            if (this.count) {
+                setTimeout( function () {
+                    x.fire( 'exec' );
+                }, 10 );
+            } else {
+                self.resume( function () {
+                    Y.Assert.isTrue( true );
+                } );
+            }
+        } } );
+        x.fire( 'exec' );
+        
+        this.wait();
+        */
+
+    }
+}));
+
+var yconsole = new Y.Console({
+    contentBox:"log",
+    newestOnTop: false,
+    height: '500px'
+}).render();
+
+//yconsole.hideCategory('info');
+
+Y.Test.Runner.add(suite);
+
+Y.Test.Runner.run();
+
+});
+</script>
+</body>
+</html>

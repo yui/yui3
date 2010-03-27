@@ -2,7 +2,7 @@ package com.yahoo.infographics.data
 {
 	import flash.events.EventDispatcher;
 	import com.yahoo.infographics.data.events.DataEvent;
-
+	import com.yahoo.renderers.ApplicationGlobals;
 	/**
 	 * Base class for axis data classes
 	 */
@@ -14,8 +14,11 @@ package com.yahoo.infographics.data
 		public function AxisData(dataProvider:ChartDataProvider = null)
 		{
 			super();
+			this._appGlobals = ApplicationGlobals.getInstance();
 			if(dataProvider) this.dataProvider = dataProvider;
 		}
+
+		protected var _appGlobals:ApplicationGlobals;
 
 		/**
 		 * @private (protected)
@@ -65,8 +68,15 @@ package com.yahoo.infographics.data
 			this._dataProvider = value;
 			this.dataProvider.addEventListener(DataEvent.NEW_DATA, this.newDataUpdateHandler);
 			this.dataProvider.addEventListener(DataEvent.DATA_CHANGE, this.keyDataUpdateHandler);
+			this._dataClone = this._dataProvider.data.concat();
 		}
 
+		/**
+		 * @private (protected)
+		 * Instance copy of the ChartDataProvider's data array.
+		 */
+		protected var _dataClone:Array;
+		
 		/**
 		 * @private
 		 * Storage for maximum when autoMax is false.
@@ -200,7 +210,7 @@ package com.yahoo.infographics.data
 		 * @private
 		 * Storage for keys
 		 */
-		private var _keys:Object = {};
+		protected var _keys:Object = {};
 
 		/**
 		 * Hash of array identifed by a string value.
@@ -218,18 +228,37 @@ package com.yahoo.infographics.data
 		 */
 		public function addKey(value:String):void
 		{
-			if(this.keys.hasOwnProperty(value)) return;
-			var keyArray:Array  = this.dataProvider.getDataByKey(value);
-			this._keys[value] = keyArray;
-			var eventKeys:Object = {};
-			eventKeys[value] = keyArray;
-			this._data = this._data.concat(keyArray);
+			if(this._keys.hasOwnProperty(value)) return;
+			this._dataClone = this._dataProvider.data.concat();
+			var keys:Object = this._keys,
+				eventKeys:Object = {},
+				event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
+			this._appGlobals.autoRender = false;
+			this.setDataByKey(value);
+			this._appGlobals.autoRender = true;
+			eventKeys[value] = keys[value].concat();
 			this.updateMinAndMax();
-			var event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
 			event.keysAdded = eventKeys; 
 			this.dispatchEvent(event);
 		}
 
+		/**
+		 * @private (protected)
+		 *
+		 * Creates an array of data based on a key value.
+		 */
+		protected function setDataByKey(key:String):void
+		{
+			var obj:Object, arr:Array = [], dv:Array = this._dataClone.concat(), len:int = dv.length;
+			for(var i:int = 0; i < len; i++)
+			{
+				obj = dv[i];
+				arr[i] = obj[key];
+			}
+			this._keys[key] = arr;
+			this._data = this._data.concat(arr);
+		}
+		
 		/**
 		 * Removes an array from the key hash.
 		 * 
@@ -240,21 +269,23 @@ package com.yahoo.infographics.data
 		public function removeKey(value:String):void
 		{
 			if(!this.keys.hasOwnProperty(value)) return;
-			var newKeys:Object = {};
-			var newData:Array = [];
-			var removedKeys:Object = {};
-			removedKeys[value] = (this.keys[value] as Array).concat();
-			for(var key:String in this.keys)
+			var oldKey:Array,
+				newKeys:Object = {},
+				newData:Array = [],
+				removedKeys:Object = {},
+				keys:Object = this._keys,
+				event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
+			removedKeys[value] = (keys[value] as Array).concat();
+			for(var key:String in keys)
 			{
 				if(key == value) continue;
-				var oldKey:Array = this.keys[key] as Array;
+				oldKey = keys[key] as Array;
 				newData = newData.concat(oldKey);
 				newKeys[key] = oldKey;
 			}
-			this._keys = newKeys;
+			keys = newKeys;
 			this._data = newData;
 			this.updateMinAndMax();
-			var event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
 			event.keysRemoved = removedKeys;
 			this.dispatchEvent(event);
 		}
@@ -264,10 +295,11 @@ package com.yahoo.infographics.data
 		 */
 		public function getKeyValueAt(key:String, index:int):Number
 		{
-			var value:Number = NaN;
-			if(this.keys[key] && this.keys[key][index]) 
+			var value:Number = NaN,
+				keys:Object = this.keys;
+			if(keys[key] && keys[key][index]) 
 			{
-				value = Number((this.keys[key] as Array)[index]);
+				value = Number((keys[key] as Array)[index]);
 			}
 			return value;
 		}
@@ -280,9 +312,10 @@ package com.yahoo.infographics.data
 		protected function newDataUpdateHandler(event:DataEvent):void
 		{
 			this._data = [];
+			this._dataClone = this._dataProvider.data.concat();
 			for(var i:String in this.keys)
 			{
-				this._keys[i] = this.dataProvider.getDataByKey(i);
+				this._keys[i] = this.setDataByKey(i);
 				this._data = this._data.concat(this.keys[i]);
 			}
 			this.updateMinAndMax();
@@ -298,9 +331,10 @@ package com.yahoo.infographics.data
 		 */
 		protected function keyDataUpdateHandler(event:DataEvent):void
 		{
-			var hasKey:Boolean = false;
-			var keysAdded:Object = event.keysAdded;
-			var keysRemoved:Object = event.keysRemoved;
+			var hasKey:Boolean = false,
+				keysAdded:Object = event.keysAdded,
+				keysRemoved:Object = event.keysRemoved,
+				event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
 			for(var i:String in this.keys)
 			{
 				if(keysAdded.hasOwnProperty(i))
@@ -318,7 +352,6 @@ package com.yahoo.infographics.data
 			this._data = [];
 			for(i in this.keys) this._data = this._data.concat(this.keys[i]);
 			this.updateMinAndMax();
-			var event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
 			event.keysAdded = keysAdded;
 			event.keysRemoved = keysRemoved
 			this.dispatchEvent(event);
@@ -330,7 +363,29 @@ package com.yahoo.infographics.data
 		 */
 		protected function updateMinAndMax():void
 		{
-			//abstract class
+			var data:Array = this.data,
+				max:Number = 0,
+				min:Number = 0,
+				len:int,
+				num:Number,
+				i:int;
+			if(data && data.length > 0)
+			{
+				len = data.length
+				max = min = Number(data[0]);
+				if(len > 1)
+				{
+					for(i = 1; i < len; i++)
+					{	
+						num = Number(data[i]);
+						if(isNaN(num)) continue;
+						max = Math.max(num, max);
+						min = Math.min(num, min);
+					}
+				}
+			}
+			this._dataMaximum = Object(max);
+			this._dataMinimum = Object(min);
 		}
 	}
 }

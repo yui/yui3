@@ -14,6 +14,7 @@ YUI.add('yui-throttle', function(Y) {
  * @param ms {int} The number of milliseconds to throttle the method call. Can set
  * globally with Y.config.throttleTime or by call. Passing a -1 will disable the throttle. Defaults to 150
  * @return {function} Returns a wrapped function that calls fn throttled.
+ * @since 3.1.0
  */
 
 /*! Based on work by Simon Willison: http://gist.github.com/292562 */

@@ -14,7 +14,7 @@ var INVALID_VALUE = Y.Attribute.INVALID_VALUE;
  * Create a slider to represent an input control capable of representing a
  * series of intermediate states based on the position of the slider's thumb.
  * These states are typically aligned to a value algorithm whereby the thumb
- * position corresponds to a given value. Sliders may be aligned vertically or
+ * position corresponds to a given value. Sliders may be oriented vertically or
  * horizontally, based on the <code>axis</code> configuration.
  *
  * @class SliderBase
@@ -63,19 +63,24 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         this._key = {
             dim    : ( this.axis === 'y' ) ? 'height' : 'width',
             minEdge: ( this.axis === 'y' ) ? 'top'    : 'left',
-            maxEdge: ( this.axis === 'y' ) ? 'bottom' : 'right'
+            maxEdge: ( this.axis === 'y' ) ? 'bottom' : 'right',
+            xyIndex: ( this.axis === 'y' ) ? 1 : 0
         };
 
         /**
          * Signals that the thumb has moved.  Payload includes the thumb's
-         * <code>drag:align</code>.
+         * pixel offset from the top/left edge of the rail, and if triggered by
+         * dragging the thumb, the <code>drag:drag</code> event.
          *
          * @event thumbMove
          * @param event {Event} The event object for the thumbMove with the
          *                      following extra properties:
          *  <dl>
+         *      <dt>offset</dt>
+         *          <dd>Pixel offset from top/left of the slider to the new
+         *          thumb position</dd>
          *      <dt>ddEvent</dt>
-         *          <dd><code>drag:align</code> event from the thumb</dd>
+         *          <dd><code>drag:drag</code> event from the thumb</dd>
          *  </dl>
          */
         this.publish( 'thumbMove', {
@@ -100,7 +105,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * @property rail
          * @type {Node}
          */
-        this.rail = this._renderRail();
+        this.rail = this.renderRail();
 
         this._uiSetRailLength( this.get( 'length' ) );
 
@@ -111,7 +116,7 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
          * @property thumb
          * @type {Node}
          */
-        this.thumb = this._renderThumb();
+        this.thumb = this.renderThumb();
 
         this.rail.appendChild( this.thumb );
         // @TODO: insert( contentBox, 'replace' ) or setContent?
@@ -123,13 +128,13 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
 
     /**
      * Creates the Slider rail DOM subtree for insertion into the Slider's
-     * <code>contentBox</code>.
+     * <code>contentBox</code>.  Override this method if you want to provide
+     * the rail element (presumably from existing markup).
      *
-     * @method _renderRail
+     * @method renderRail
      * @return {Node} the rail node subtree
-     * @protected
      */
-    _renderRail: function () {
+    renderRail: function () {
         var minCapClass = this.getClassName( 'rail', 'cap', this._key.minEdge ),
             maxCapClass = this.getClassName( 'rail', 'cap', this._key.maxEdge );
 
@@ -154,13 +159,13 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
 
     /**
      * Creates the Slider thumb DOM subtree for insertion into the Slider's
-     * rail.
+     * rail.  Override this method if you want to provide the thumb element
+     * (presumably from existing markup).
      *
-     * @method _renderThumb
+     * @method renderThumb
      * @return {Node} the thumb node subtree
-     * @protected
      */
-    _renderThumb: function () {
+    renderThumb: function () {
         this._initThumbUrl();
 
         var imageUrl = this.get( 'thumbUrl' );
@@ -217,8 +222,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
                 'drag:start': Y.bind( this._onDragStart, this )
             },
             after  : {
-                'drag:align': Y.bind( this._afterAlign,   this ),
-                'drag:end'  : Y.bind( this._afterDragEnd, this )
+                'drag:drag': Y.bind( this._afterDrag,    this ),
+                'drag:end' : Y.bind( this._afterDragEnd, this )
             }
         } );
 
@@ -235,6 +240,22 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @protected
      */
     _bindValueLogic: function () {},
+
+    /**
+     * Moves the thumb to pixel offset position along the rail.
+     *
+     * @method _uiMoveThumb
+     * @param offset {Number} the pixel offset to set as left or top style
+     * @protected
+     */
+    _uiMoveThumb: function ( offset ) {
+        if ( this.thumb ) {
+            this.thumb.setStyle( this._key.minEdge, offset + 'px' );
+
+
+            this.fire( 'thumbMove', { offset: offset } );
+        }
+    },
 
     /**
      * Dispatches the <code>slideStart</code> event.
@@ -262,12 +283,18 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
     /**
      * Dispatches the <code>thumbMove</code> event.
      *
-     * @method _afterAlign
-     * @param e {Event} the <code>drag:align</code> event from the thumb
+     * @method _afterDrag
+     * @param e {Event} the <code>drag:drag</code> event from the thumb
      * @protected
      */
-    _afterAlign: function ( e ) {
-        this.fire( 'thumbMove', { ddEvent: e } );
+    _afterDrag: function ( e ) {
+        var thumbXY = e.info.xy[ this._key.xyIndex ],
+            railXY  = e.target.con._regionCache[ this._key.minEdge ];
+
+        this.fire( 'thumbMove', {
+            offset : (thumbXY - railXY),
+            ddEvent: e
+        } );
     },
 
     /**

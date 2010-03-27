@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+	<head>
+		<script src="../../build/yui/yui.js"></script>
+		<script type="text/javascript">
+			YUI({ filter: "RAW", combine: false }).use('history', function(Y){
+				console.log('registering first module');
+				Y.History.register('module_1', 'defaultState');
+				console.log(Y.History);
+			});
+			YUI({ filter: "RAW", combine: false }).use('history', function(Y){
+				console.log('registering second module');
+				Y.History.register('module_2', 'defaultState');
+				console.log(Y.History);
+			});
+		</script>
+	</head>
+	<body>
+		<input id="yui-history-field" type="hidden"/>
+		<p>
+			Please look at the console logging
+		</p>
+	</body>
+</html>

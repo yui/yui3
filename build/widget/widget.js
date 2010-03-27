@@ -758,6 +758,15 @@ Y.extend(Widget, Y.Base, {
         return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE);
     },
 
+    /**
+     * Returns the default value for the contentBox attribute. 
+     *
+     * For the Widget class, this will be the srcNode if provided, otherwise null (resulting in
+     * a new contentBox node instance being created)
+     *
+     * @method _defaultCB
+     * @protected
+     */
     _defaultCB : function(node) {
         return this.get(SRC_NODE) || null;
     },
@@ -1422,7 +1431,7 @@ Y.mix(Widget.prototype, {
      * instance, to retrieve config data values.
      *
      * @method _applyParser
-     * @private
+     * @protected
      * @param config {Object} User configuration object (will be populated with values from Node) 
      */
     _applyParser : function(config) {

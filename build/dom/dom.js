@@ -266,6 +266,9 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
+     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement 
+     * when creating one node, and a documentFragment when creating
+     * multiple nodes.
      */
     create: function(html, doc) {
         if (typeof html === 'string') {
@@ -1145,10 +1148,12 @@ var HAS_LAYOUT = 'hasLayout',
             var unit = omitUnit ? '' : PX,
                 current = el.currentStyle[property];
 
-            if (current.indexOf(PX) < 0) { // look up keywords
-                if (ComputedStyle.borderMap[current]) {
+            if (current.indexOf(PX) < 0) { // look up keywords if a border exists
+                if (ComputedStyle.borderMap[current] &&
+                        el.currentStyle.borderStyle !== 'none') {
                     current = ComputedStyle.borderMap[current];
-                } else {
+                } else { // otherwise no border (default is "medium")
+                    current = 0;
                 }
             }
             return (omitUnit) ? parseFloat(current) : current;

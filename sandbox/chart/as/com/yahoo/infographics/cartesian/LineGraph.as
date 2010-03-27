@@ -6,7 +6,9 @@ package com.yahoo.infographics.cartesian
 	import com.yahoo.infographics.constants.ScaleTypes;
 	import com.yahoo.infographics.styles.LineStyles;
 	import com.yahoo.renderers.events.RendererEvent;
-	import flash.geom.Point;
+	import com.yahoo.renderers.Skin;
+	import flash.display.Graphics;
+
 	/**
 	 * Class used for drawing a line graph.
 	 */
@@ -17,11 +19,7 @@ package com.yahoo.infographics.cartesian
 		 */
 		public function LineGraph(xAxisData:AxisData, yAxisData:AxisData, xKey:String, yKey:String)
 		{
-			super();
-			this.xAxisData = xAxisData;
-			this.yAxisData = yAxisData;
-			this.xKey = xKey;
-			this.yKey = yKey;
+			super(xAxisData, yAxisData, xKey, yKey);
 		}
 		
 		/**
@@ -73,49 +71,9 @@ package com.yahoo.infographics.cartesian
 		 */
 		protected var _alpha:Number;
 		
-		/**
-		 * @private (protected)
-		 */
-		protected var _xMin:Number;
-		
-		/**
-		 * @private (protected)
-		 */
-		protected var _xMax:Number;
-		
-		/**
-		 * @private (protected)
-		 */
-		protected var _yMin:Number;
-		
-		/**
-		 * @private (protected)
-		 */
-		protected var _yMax:Number;
-
-		/**
-		 * @private (protected)
-		 */
-		protected var _pointValues:Vector.<Point>;
-
-		/**
-		 * @private (override)
-		 */
-		override protected function render():void
+		override public function checkStyleFlags():Boolean  
 		{
-			var dataChange:Boolean = this.checkFlags(
-			{
-				axisDataChange:true,
-				xKeyChange:true,
-				yKeyChange:true
-			});
-			var resize:Boolean = this.checkFlags(
-			{
-				padding:true,
-				resize:true
-			});
-			
-			var styleChange:Boolean = this.checkFlags({
+			return this.checkFlags({
 				color:true,
 				weight:true,
 				alpha:true,	
@@ -127,105 +85,47 @@ package com.yahoo.infographics.cartesian
 				discontinuousDashLength:true,
 				discontinuousGapLength:true
 			});
-			
+		}
+
+		override public function updateStyleProps():void
+		{
 			if(this.checkFlag("weight")) this._weight = Number(this.getStyle("weight"));
 			if(this.checkFlag("color")) this._color = uint(this.getStyle("color"));
 			if(this.checkFlag("alpha")) this._alpha = Number(this.getStyle("alpha"));
-			
-			if(dataChange)
-			{
-				this._xMin = xAxisData.minimum as Number;
-				this._xMax = xAxisData.maximum as Number;
-				this._yMin = yAxisData.minimum as Number;
-				this._yMax = yAxisData.maximum as Number;
-			}
-			
-			if(resize)
-			{
-				this.setDimensions();
-			}
-
-			if (resize || dataChange)
-			{
-				this.setAreaData();
-				this.setLaterFlag("drawGraph");
-				return;
-			}
-			
-			if(this.checkFlag("drawGraph") || styleChange) this.drawLines();
-		}
-
-		/**
-		 * @private (protected)
-		 */
-		protected function setDimensions():void
-		{
-			var padding:Object = this.getStyle("padding");
-			this._topPadding = Number(padding.top);
-			this._rightPadding = Number(padding.right);
-			this._bottomPadding = Number(padding.bottom);
-			this._leftPadding = Number(padding.left);
-			this._dataWidth = this.width - (this._leftPadding + this._rightPadding);
-			this._dataHeight = this.height - (this._topPadding + this._bottomPadding);
 		}
 
 		/**
 		 * @private
 		 */
-		private function setAreaData():void
+		override protected function drawGraph(values:Vector.<int>):void
 		{
-			var pointValues:Vector.<Point> = new Vector.<Point>();
-			var xScaleFactor:Number = this._dataWidth / (this._xMax - this._xMin);
-			var yScaleFactor:Number = this._dataHeight / (this._yMax - this._yMin);
-			var xData:Array = xAxisData.keys[xKey] as Array;
-			var yData:Array = yAxisData.keys[yKey] as Array;
-			
-			var dataLength:int = xData.length;
-			var nextX:int = Math.round((this.xAxisData.getKeyValueAt(this.xKey, 0) - this._xMin) * xScaleFactor);
-			nextX = Math.round(nextX + this._leftPadding);
-			var nextY:int = Math.round(this._dataHeight - (this.yAxisData.getKeyValueAt(this.yKey, 0) - this._yMin) * yScaleFactor);
-			nextY = Math.round(nextY + this._topPadding);
-			var midY:Number = this._dataHeight/2;
-			pointValues.push(new Point(nextX, nextY));
-
-			var numHolder:Number;
-			for (var i:int = 1; i < dataLength; i++) 
-			{
-				numHolder = (this.xAxisData.getKeyValueAt(this.xKey, i) - this._xMin) * xScaleFactor;
-				numHolder += this._leftPadding;
-				nextX = Math.round(numHolder);
-				numHolder = this._dataHeight - (this.yAxisData.getKeyValueAt(this.yKey, i) - this._yMin) * yScaleFactor;
-				numHolder += this._topPadding;
-				nextY = Math.round(numHolder);
-
-				pointValues.push(new Point(nextX, nextY));
-			}
-			this._pointValues = pointValues;
-		}
-		
-		/**
-		 * @private
-		 */
-		private function drawLines():void
-		{
-			var values:Vector.<Point> = this._pointValues;
-			var lastValidX:int;
-			var lastValidY:int;
-			var lastX:int = Point(values[0]).x as int;
-			var lastY:int = Point(values[0]).y as int;
-			var nextX:int;
-			var nextY:int;
-
-			clear();
+			var	len:int = values.length,
+				lastValidX:int,
+				lastValidY:int,
+				lastX:int = values[0] as int,
+				lastY:int = values[1] as int,
+				nextX:int,
+				nextY:int,
+				i:int,
+				styles:Object = this.getStyles(),
+				lineType:String = styles.type as String,
+				dashLength:Number = Number(styles.dashLength),
+				gapSpace:Number = Number(styles.gapSpace),
+				connectDiscontinuousPoints:Boolean = styles.connectDiscontinuousPoints as Boolean,
+				discontinuousType:String = String(styles.discontinuousType),
+				discontinuousDashLength:Number = Number(styles.discontinuousDashLength),
+				discontinuousGapSpace:Number = Number(styles.discontinuousGapSpace),
+				graphics:Graphics = this.graphics;
+			graphics.clear();
 			lastValidX = lastX;
 			lastValidY = lastY;
-			this.graphics.lineStyle (this._weight, this._color, this._alpha);
-			this.graphics.moveTo (lastX, lastY);
-			var len:int = values.length;
-			for(var i:int = 1; i < len; i++)
+
+			graphics.lineStyle (this._weight, this._color, this._alpha);
+			graphics.moveTo (lastX, lastY);
+			for(i = 2; i < len; i = i + 2)
 			{
-				nextX = Point(values[i]).x as int;
-				nextY = Point(values[i]).y as int;
+				nextX = values[i] as int;
+				nextY = values[i + 1] as int;
 				if(isNaN(nextY))
 				{
 					lastValidX = nextX;
@@ -234,35 +134,35 @@ package com.yahoo.infographics.cartesian
 				}
 				if(lastValidX == lastX)
 				{
-					if(this.getStyle("type") != "dashed")
+					if(lineType != "dashed")
 					{
-						this.graphics.lineTo(nextX, nextY);
+						graphics.lineTo(nextX, nextY);
 					}
 					else
 					{
-						GraphicsUtil.drawDashedLine(this.graphics, lastValidX, lastValidY, nextX, nextY, 
-													this.getStyle("dashLength") as Number, 
-													this.getStyle("gapSpace") as Number);
+						GraphicsUtil.drawDashedLine(graphics, lastValidX, lastValidY, nextX, nextY, 
+													dashLength, 
+													gapSpace);
 					}
 				}
-				else if(!(this.getStyle("connectDiscontinuousPoints") as Boolean))
+				else if(!connectDiscontinuousPoints)
 				{
-					this.graphics.moveTo(nextX, nextY);
+					graphics.moveTo(nextX, nextY);
 				}
 				else
 				{
-					if(this.getStyle("discontinuousType") != "solid")
+					if(discontinuousType != "solid")
 					{
-						GraphicsUtil.drawDashedLine(this.graphics, lastValidX, lastValidY, nextX, nextY, 
-													this.getStyle("discontinuousDashLength") as Number, 
-													this.getStyle("discontinuousGapSpace") as Number);
+						GraphicsUtil.drawDashedLine(graphics, lastValidX, lastValidY, nextX, nextY, 
+													discontinuousDashLength, 
+													discontinuousGapSpace);
 					}
 					else
 					{
-						this.graphics.lineTo(nextX, nextY);
+						graphics.lineTo(nextX, nextY);
 					}
-
 				}
+			
 				lastX = lastValidX = nextX;
 				lastY = lastValidY = nextY;
 			}

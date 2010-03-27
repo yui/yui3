@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dd&nbsp; <span class="subtitle">3.1.0pr2</span></h3>
+        <h3>dd&nbsp; <span class="subtitle">3.1.0pr4</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dd.html" title="dd">dd</a>
                 
@@ -67,6 +67,11 @@
         <span class="cm">/**</span>
 <span class="cm">        * @event drop:over</span>
 <span class="cm">        * @description Fires when a drag element is over this target.</span>
+<span class="cm">        * @param {Event.Facade} event An Event Facade object with the following specific property added:</span>
+<span class="cm">        * &lt;dl&gt;</span>
+<span class="cm">        * &lt;dt&gt;drop&lt;/dt&gt;&lt;dd&gt;The drop object at the time of the event.&lt;/dd&gt;</span>
+<span class="cm">        * &lt;dt&gt;drag&lt;/dt&gt;&lt;dd&gt;The drag object at the time of the event.&lt;/dd&gt;</span>
+<span class="cm">        * &lt;/dl&gt;        </span>
 <span class="cm">        * @bubbles DDM</span>
 <span class="cm">        * @type {Event.Custom}</span>
 <span class="cm">        */</span>
@@ -74,6 +79,11 @@
         <span class="cm">/**</span>
 <span class="cm">        * @event drop:enter</span>
 <span class="cm">        * @description Fires when a drag element enters this target.</span>
+<span class="cm">        * @param {Event.Facade} event An Event Facade object with the following specific property added:</span>
+<span class="cm">        * &lt;dl&gt;</span>
+<span class="cm">        * &lt;dt&gt;drop&lt;/dt&gt;&lt;dd&gt;The drop object at the time of the event.&lt;/dd&gt;</span>
+<span class="cm">        * &lt;dt&gt;drag&lt;/dt&gt;&lt;dd&gt;The drag object at the time of the event.&lt;/dd&gt;</span>
+<span class="cm">        * &lt;/dl&gt;        </span>
 <span class="cm">        * @bubbles DDM</span>
 <span class="cm">        * @type {Event.Custom}</span>
 <span class="cm">        */</span>
@@ -81,6 +91,7 @@
         <span class="cm">/**</span>
 <span class="cm">        * @event drop:exit</span>
 <span class="cm">        * @description Fires when a drag element exits this target.</span>
+<span class="cm">        * @param {Event.Facade} event An Event Facade object</span>
 <span class="cm">        * @bubbles DDM</span>
 <span class="cm">        * @type {Event.Custom}</span>
 <span class="cm">        */</span>
@@ -89,6 +100,12 @@
         <span class="cm">/**</span>
 <span class="cm">        * @event drop:hit</span>
 <span class="cm">        * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)</span>
+<span class="cm">        * @param {Event.Facade} event An Event Facade object with the following specific property added:</span>
+<span class="cm">        * &lt;dl&gt;</span>
+<span class="cm">        * &lt;dt&gt;drop&lt;/dt&gt;&lt;dd&gt;The best guess on what was dropped on.&lt;/dd&gt;</span>
+<span class="cm">        * &lt;dt&gt;drag&lt;/dt&gt;&lt;dd&gt;The drag object at the time of the event.&lt;/dd&gt;</span>
+<span class="cm">        * &lt;dt&gt;others&lt;/dt&gt;&lt;dd&gt;An array of all the other drop targets that was dropped on.&lt;/dd&gt;</span>
+<span class="cm">        * &lt;/dl&gt;        </span>
 <span class="cm">        * @bubbles DDM</span>
 <span class="cm">        * @type {Event.Custom}</span>
 <span class="cm">        */</span>

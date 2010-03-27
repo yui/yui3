@@ -7,7 +7,7 @@
             margin:0;
         }
 
-        .yui3-overlay-content {
+        .yui3-widget-content {
             background-color:#ccc;
             border:1px solid green;
         }
@@ -18,25 +18,26 @@
     <script src="../../../../build/widget-anim/widget-anim.js"></script>
 
     <button id="btn" type="button">Toggle</button>
+    
+    <div id="widget">
+        My Widget Content
+    </div>
 
     <script>
-        YUI({filter:"raw"}).use("anim", "widget-anim", "overlay", function(Y) {
+        YUI({filter:"raw"}).use("anim", "widget-anim", "widget", function(Y) {
 
-            var o = new Y.Overlay({
+            var w = new Y.Widget({
+                srcNode:"#widget",
                 visible:true,
                 height:"200px",
                 width:"200px",
-                xy: [100,100],
-                bodyContent:"Body",
-                headerContent:"Header",
-                footerContent:"Footer",
-                render:"#constraint"
+                render:true
             });
 
-            o.plug(Y.Plugin.WidgetAnim);
+            w.plug(Y.Plugin.WidgetAnim);
 
             Y.Node.one("#btn").on("click", function() {
-                o.set("visible", !o.get("visible"));
+                w.set("visible", !w.get("visible"));
             });
         });
     </script>

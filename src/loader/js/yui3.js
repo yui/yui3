@@ -305,10 +305,86 @@ YUI.Env[Y.version].modules = {
         "submodules": {
             "datatype-date": {
                 "lang": [
+                    "ar", 
+                    "ar-JO", 
+                    "ca", 
+                    "ca-ES", 
+                    "da", 
+                    "da-DK", 
+                    "de", 
+                    "de-AT", 
+                    "de-DE", 
+                    "el", 
+                    "el-GR", 
                     "en", 
+                    "en-AU", 
+                    "en-CA", 
+                    "en-GB", 
+                    "en-IE", 
+                    "en-IN", 
+                    "en-JO", 
+                    "en-MY", 
+                    "en-NZ", 
+                    "en-PH", 
+                    "en-SG", 
                     "en-US", 
+                    "es", 
+                    "es-AR", 
+                    "es-BO", 
+                    "es-CL", 
+                    "es-CO", 
+                    "es-EC", 
+                    "es-ES", 
+                    "es-MX", 
+                    "es-PE", 
+                    "es-PY", 
+                    "es-US", 
+                    "es-UY", 
+                    "es-VE", 
+                    "fi", 
+                    "fi-FI", 
+                    "fr", 
+                    "fr-BE", 
+                    "fr-CA", 
                     "fr-FR", 
-                    "ko-KR"
+                    "hi", 
+                    "hi-IN", 
+                    "id", 
+                    "id-ID", 
+                    "it", 
+                    "it-IT", 
+                    "ja", 
+                    "ja-JP", 
+                    "ko", 
+                    "ko-KR", 
+                    "ms", 
+                    "ms-MY", 
+                    "nb", 
+                    "nb-NO", 
+                    "nl", 
+                    "nl-BE", 
+                    "nl-NL", 
+                    "pl", 
+                    "pl-PL", 
+                    "pt", 
+                    "pt-BR", 
+                    "ro", 
+                    "ro-RO", 
+                    "ru", 
+                    "ru-RU", 
+                    "sv", 
+                    "sv-SE", 
+                    "th", 
+                    "th-TH", 
+                    "tr", 
+                    "tr-TR", 
+                    "vi", 
+                    "vi-VN", 
+                    "zh-Hans", 
+                    "zh-Hans-CN", 
+                    "zh-Hant", 
+                    "zh-Hant-HK", 
+                    "zh-Hant-TW"
                 ], 
                 "requires": [
                     "yui-base"
@@ -593,12 +669,12 @@ YUI.Env[Y.version].modules = {
         ], 
         "submodules": {
             "loader-base": {}, 
-            "rollup": {
+            "loader-rollup": {
                 "requires": [
                     "loader-base"
                 ]
             }, 
-            "yui3": {
+            "loader-yui3": {
                 "requires": [
                     "loader-base"
                 ]
@@ -730,13 +806,13 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "querystring-parse-simple": {
-        "path": "querystring/querystring-parse-simple.js", 
+        "path": "querystring/querystring-parse-simple-min.js", 
         "requires": [
             "yui-base"
         ]
     }, 
     "querystring-stringify-simple": {
-        "path": "querystring/querystring-stringify-simple.js", 
+        "path": "querystring/querystring-stringify-simple-min.js", 
         "requires": [
             "yui-base"
         ]

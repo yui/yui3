@@ -133,6 +133,8 @@ ET.prototype = {
      * @method once
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
      * @return the event target or a detach handle per 'chain' config
      */
     once: function() {
@@ -146,9 +148,11 @@ ET.prototype = {
      * @method on 
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
      * @return the event target or a detach handle per 'chain' config
      */
-    on: function(type, fn, context, x) {
+    on: function(type, fn, context) {
 
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
@@ -368,7 +372,8 @@ ET.prototype = {
             }
         }
 
-        ce = evts[type];
+        // ce = evts[type];
+        ce = evts[parts[1]];
         if (ce) {
             ce.detach(fn, context);
         }
@@ -644,6 +649,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * @method after
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
      * @return the event target or a detach handle per 'chain' config
      */
     after: function(type, fn) {

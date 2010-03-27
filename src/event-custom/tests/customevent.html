@@ -9,6 +9,18 @@
 <h1>Event Tests</h1>
 <p><input type="button" value="Run Tests" id="btnRun" disabled="true" /></p>
 <div id="adiv">a div</div>
+<div id="demo" class="yui-module">
+    <div class="yui-hd">
+        <h4>Animation Demo</h4>
+        <a title="remove module" class="yui-remove"><em>x</em></a>
+
+    </div>
+    <div class="yui-bd">
+        <p>This an example of what you can do with the YUI Animation Utility.</p>
+        <p><em>Follow the instructions above to see the animation in action.</em></p>
+    </div>
+</div>
+
 
 
 <script type="text/javascript">
@@ -30,7 +42,7 @@
             // dom: null,
             attribute: 'min'
         }
-    }).use("dump", "test", "console", function(Y) {
+    }).use("dump", "test", "anim", "console", function(Y) {
 
         // Y.Global.on('yui:log', function(e) {
         //     console.log('GLOBAL LOG: ' + e.msg);
@@ -97,6 +109,47 @@
                 });
 
                 o.fire('testAugment', 1, 2);
+
+            },
+
+            test_detach_by_signature: function() {
+
+                var anim = new Y.Anim({
+                        node: '#demo',
+                        to: { opacity: 0 }
+                    }),
+                    count = 0.
+                    tester = function() {
+                        count++;
+                        Y.detach('foo', tester);
+                    };
+
+                Y.on('foo', tester);
+
+                Y.fire('foo');
+                Y.fire('foo');
+                Y.Assert.areEqual(1, count);
+
+                var onEnd = function() {
+                    count++;
+                    // this.detach('anim:end', onEnd);
+                    this.detach('end', onEnd);
+                    this.setAttrs({
+                        to: { height: 1 },
+                        easing: Y.Easing.bounceOut
+                    });
+                    this.run();
+
+                    if (count > 2) {
+                        throw new Error('onEnd should only have happened once');
+                    }
+                };
+
+                anim.on('end', onEnd);
+
+                anim.run();
+                anim.run();
+
 
             },
 

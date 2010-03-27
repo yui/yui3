@@ -110,12 +110,13 @@
     *
     * xdr: Defines the transport to be used for cross-domain requests.  By
     *      setting this property, the transaction will use the specified
-    *      transport instead of XMLHttpRequest.  Currently, the alternate
-    *      transports supported are Flash and native, cross-site XHR support.
+    *      transport instead of XMLHttpRequest.
     *      The properties are:
     *      {
-    *        use: Specify the transport to be used -- 'flash' or 'native'.
-    *        datatype:
+    *        use: Specify the transport to be used: 'flash' and 'native'
+    *        dataType: Set the value to 'XML' if that is the expected
+    *                  response content type.
+    *      }
     *
     *
     * form: This is a defined object used to process HTML form as data.  The
@@ -150,6 +151,10 @@
     *     Each property can reference a function or be written as an
     *     inline function.
     *
+    * sync: To enable synchronous transactions, set the configuration property
+    *       "sync" to true; the default behavior is false.  Synchronous
+    *       transactions are limited to same-domain requests only.
+    *
     * context: Object reference for all defined transaction event handlers
     *          when it is implemented as a method of a base object. Defining
     *          "context" will set the reference of "this," used in the
@@ -160,7 +165,7 @@
     *
     * headers: This is a defined object of client headers, as many as.
     *          desired for the transaction.  The object pattern is:
-    *          { header: value }.
+    *          { 'header': 'value' }.
     *
     * timeout: This value, defined as milliseconds, is a time threshold for the
     *          transaction. When this threshold is reached, and the transaction's
@@ -177,15 +182,17 @@
     * @static
     * @param {string} uri - qualified path to transaction resource.
     * @param {object} c - configuration object for the transaction.
-    * @param {number} i - transaction id, if already set by queue.
+    * @param {number} i - transaction id, if already set.
     * @return object
     */
     function _io(uri, c, i) {
-        var f, o, d, m, r, s;
+        var f, o, d, m, r, s, oD,
+            u = uri;
             c = Y.Object(c);
             o = _create(c.xdr || c.form, i);
             m = c.method ? c.method = c.method.toUpperCase() : c.method = 'GET';
             s = c.sync;
+            oD = c.data;
 
         //To serialize an object into a key-value string, add the
         //QueryString module in the YUI instance's 'use' method.
@@ -202,7 +209,6 @@
                 f = Y.io._serialize(c.form, c.data);
                 if (m === 'POST' || m === 'PUT') {
                     c.data = f;
-                    c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded' }, c.headers);
                 }
                 else if (m === 'GET') {
                     uri = _concat(uri, f);
@@ -214,10 +220,8 @@
             Y.log('HTTP GET with configuration data.  The querystring is: ' + uri, 'info', 'io');
         }
 
-        if (c.xdr) {
-            if (c.xdr.use === 'native' && window.XDomainRequest || c.xdr.use === 'flash') {
-                return Y.io.xdr(uri, o, c);
-            }
+        if (o.t) {
+            return Y.io.xdr(uri, o, c);
         }
 
         if (!s) {
@@ -232,11 +236,11 @@
                 o.c.withCredentials = true;
             }
         }
-        catch(a){
+        catch(a) {
             if (c.xdr) {
                 // This exception is usually thrown by browsers
                 // that do not support native XDR transactions.
-                return _resend(o, uri, c);
+                return _resend(o, u, c, oD);
             }
         }
 
@@ -244,11 +248,11 @@
             c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
         }
 
-        _setHeaders(o.c, c.headers || {});
+        _setHeaders(o.c, c.headers);
         _ioStart(o.id, c);
         try {
-            // Using "null" will result in a POST request with
-            // no Content-Length defined.
+            // Using "null" with HTTP POST will  result in a request
+            // with no Content-Length header defined.
             o.c.send(c.data || '');
             if (s) {
                 d = o.c;
@@ -267,7 +271,7 @@
             if (c.xdr) {
                 // This exception is usually thrown by browsers
                 // that do not support native XDR transactions.
-                return _resend(o, uri, c);
+                return _resend(o, u, c, oD);
             }
         }
 
@@ -329,7 +333,7 @@
             // the property is null or undefined.
             c.on = c.on || {};
 
-        a ? Y.fire(E_START, id, a, c) : Y.fire(E_START, id, c);
+        a ? Y.fire(E_START, id, a) : Y.fire(E_START, id);
         if (c.on.start) {
             _tE('start', c).fire(id);
         }
@@ -350,13 +354,13 @@
     * @return void
     */
     function _ioComplete(o, c) {
-        var r = o.status ? { status: 0, statusText: o.status } : o.c,
+        var r = o.e ? { status: 0, statusText: o.e } : o.c,
             a = c.arguments;
             // Set default value of argument c, property "on" to Object if
             // the property is null or undefined.
             c.on = c.on || {};
 
-        a ? Y.fire(E_COMPLETE, o.id, r, a, c) : Y.fire(E_COMPLETE, o.id, r, c);
+        a ? Y.fire(E_COMPLETE, o.id, r, a) : Y.fire(E_COMPLETE, o.id, r);
         if (c.on.complete) {
             _tE('complete', c).fire(o.id, r);
         }
@@ -381,7 +385,7 @@
             // the property is null or undefined.
             c.on = c.on || {};
 
-        a ? Y.fire(E_SUCCESS, o.id, o.c, a, c) : Y.fire(E_SUCCESS, o.id, o.c, c);
+        a ? Y.fire(E_SUCCESS, o.id, o.c, a) : Y.fire(E_SUCCESS, o.id, o.c);
         if (c.on.success) {
             _tE('success', c).fire(o.id, o.c);
         }
@@ -403,13 +407,13 @@
     * @return void
     */
     function _ioFailure(o, c) {
-        var r = o.status ? { status: 0, statusText: o.status } : o.c,
+        var r = o.e ? { status: 0, statusText: o.e } : o.c,
             a = c.arguments;
             // Set default value of argument c, property "on" to Object if
             // the property is null or undefined.
             c.on = c.on || {};
 
-        a ? Y.fire(E_FAILURE, o.id, r, a, c) : Y.fire(E_FAILURE, o.id, r, c);
+        a ? Y.fire(E_FAILURE, o.id, r, a) : Y.fire(E_FAILURE, o.id, r);
         if (c.on.failure) {
             _tE('failure', c).fire(o.id, r);
         }
@@ -436,12 +440,12 @@
             // the property is null or undefined.
             c.on = c.on || {};
 
-        a ? Y.fire(E_END, o.id, a, c) : Y.fire(E_END, o.id, c);
+        a ? Y.fire(E_END, o.id, a) : Y.fire(E_END, o.id);
         if (c.on.end) {
             _tE('end', c).fire(o.id);
         }
 
-        _destroy(o, c.xdr ? true : false );
+        _destroy(o);
     }
 
    /**
@@ -458,7 +462,7 @@
     */
     function _ioCancel(o, s) {
         if (o && o.c) {
-            o.status = s;
+            o.e = s;
             o.c.abort();
         }
     }
@@ -477,11 +481,14 @@
     *
     * @return void
     */
-    function _resend(o, uri, c) {
+    function _resend(o, uri, c, d) {
         var id = parseInt(o.id);
 
         _destroy(o);
         c.xdr.use = 'flash';
+        // If the original request included serialized form data,
+        // it must be reset to prevent duplication.
+        c.form && d ? c.data = d : c.data = null;
 
         return Y.io(uri, c, id);
     }
@@ -524,15 +531,23 @@
             o.c = _xhr();
         }
         else if (c.use) {
-            if (c.use === 'flash') {
-                o.c = Y.io._transport[c.use];
-            }
-            else if (c.use === 'native' && window.XDomainRequest) {
-                o.c = new XDomainRequest();
+            if (c.use === 'native') {
+                if (w.XDomainRequest) {
+                    o.c = new XDomainRequest();
+                    o.t = c.use;
+                }
+                else {
+                    o.c = _xhr();
+                }
             }
             else {
-                o.c = _xhr();
+                o.c = Y.io._transport[c.use];
+                o.t = c.use;
             }
+            // Remove the custom header when making cross-domain
+            // requests to avoid unintended pre-flight requests
+            // or access control conflicts.
+            delete _headers['X-Requested-With'];
         }
         else {
             o.c = {};
@@ -601,6 +616,7 @@
     */
     function _setHeaders(o, h) {
         var p;
+            h = h || {};
 
         for (p in _headers) {
             if (_headers.hasOwnProperty(p)) {
@@ -711,10 +727,10 @@
         }
     }
 
-    function _destroy(o, t) {
+    function _destroy(o) {
         // IE, when using XMLHttpRequest as an ActiveX Object, will throw
         // a "Type Mismatch" error if the event handler is set to "null".
-        if (w.XMLHttpRequest && !t) {
+        if (w && w.XMLHttpRequest) {
             if (o.c) {
                 o.c.onreadystatechange = null;
             }

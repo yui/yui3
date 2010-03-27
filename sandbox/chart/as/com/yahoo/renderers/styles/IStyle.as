@@ -1,11 +1,9 @@
 package com.yahoo.renderers.styles
 {
-	import flash.events.IEventDispatcher;
-	
 	/**
 	 * Defines properties and methods for style classes.
 	 */
-	public interface IStyle extends IEventDispatcher 
+	public interface IStyle 
 	{
 		/**
 		 * Gets a style value based on a property name.
@@ -15,7 +13,7 @@ package com.yahoo.renderers.styles
 		/**
 		 * Sets a property on the style object
 		 */
-		function setStyle(style:String, value:Object):void;
+		function setStyle(style:String, value:Object):Boolean;
 			
 		/**
 		 * Returns an object containing all properties of the style class.

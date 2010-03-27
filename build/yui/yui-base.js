@@ -98,26 +98,33 @@ if (docEl && docClass.indexOf(DOC_LABEL) == -1) {
 }
 
 if (VERSION.indexOf('@') > -1) {
-    VERSION = '3.0.0';
+    VERSION = '3.0.0'; // dev time hack for cdn test
 }
         
 YUI.prototype = {
     _config: function(o) {
         o = o || {};
-        var attr, 
+        var attr,
+            name, 
+            detail,
             config = this.config, 
             mods   = config.modules,
             groups = config.groups;
-        for (attr in o) {
-            if (mods && attr == 'modules') {
-                this.mix(mods, o[attr], true);
-            } else if (groups && attr == 'groups') {
-                this.mix(groups, o[attr], true);
-            } else if (attr == 'win') {
-                config[attr] = o[attr].contentWindow || o[attr];
-                config.doc = config[attr].document;
+        for (name in o) {
+            attr = o[name];
+            if (mods && name == 'modules') {
+                for (detail in attr) {
+                    mods[detail] = attr[detail];
+                }
+            } else if (groups && name == 'groups') {
+                for (detail in attr) {
+                    groups[detail] = attr[detail];
+                }
+            } else if (name == 'win') {
+                config[name] = attr.contentWindow || attr;
+                config.doc = config[name].document;
             } else {
-                config[attr] = o[attr];
+                config[name] = attr;
             }
         }
     },
@@ -276,27 +283,33 @@ YUI.prototype = {
     }, 
 
     /**
-     * Register a module
+     * Registers a module with the YUI global.  The easiest way to create a 
+     * first-class YUI module is to use the YUI component build tool.  
+     *
+     * http://yuilibrary.com/projects/builder 
+     *
+     * The build system will produce the YUI.add wrapper for you module, along
+     * with any configuration info required for the module.
      * @method add
      * @param name {string} module name
      * @param fn {Function} entry point into the module that
      * is used to bind module to the YUI instance
      * @param version {string} version string
      * @param details optional config data: 
-     * requires   - features that should be present before loading
-     * optional   - optional features that should be present if load optional defined
-     * use  - features that should be attached automatically
-     * skinnable  -
-     * rollup
-     * omit - features that should not be loaded if this module is present
+     * requires: features that must be present before this module can be attached.
+     * optional: optional features that should be present if loadOptional is
+     *           defined.  Note: modules are not often loaded this way in YUI 3,
+     *           but this field is still useful to inform the user that certain
+     *           features in the component will require additional dependencies.
+     * use:      features that are included within this module which need to be
+     *           be attached automatically when this module is attached.  This
+     *           supports the YUI 3 rollup system -- a module with submodules 
+     *           defined will need to have the submodules listed in the 'use'
+     *           config.  The YUI component build tool does this for you.
      * @return {YUI} the YUI instance
      *
      */
     add: function(name, fn, version, details) {
-        // this.log('Adding a new component ' + name);
-        // @todo expand this to include version mapping
-        // @todo may want to restore the build property
-        // @todo fire moduleAvailable event
         details = details || {};
 
         YUI.Env.mods[name] = {
@@ -309,6 +322,12 @@ YUI.prototype = {
         return this;
     },
 
+    /**
+     * Executes the function associated with each required
+     * module, binding the module to the YUI instance.
+     * @method _attach
+     * @private
+     */
     _attach: function(r, fromLoader) {
         var i, name, mod, details, req, use,
             mods = YUI.Env.mods,
@@ -343,25 +362,41 @@ YUI.prototype = {
     },
 
     /**
-     * Bind a module to a YUI instance
+     * Attaches one or more modules to the YUI instance.  When this
+     * is executed, the requirements are analyzed, and one of 
+     * several things can happen:
+     *
+     * - All requirements are available on the page --  The modules
+     *   are attached to the instance.  If supplied, the use callback
+     *   is executed synchronously.  
+     *
+     * - Modules are missing, the Get utility is not available OR
+     *   the 'bootstrap' config is false -- A warning is issued about
+     *   the missing modules and all available modules are attached.
+     *
+     * - Modules are missing, the Loader is not available but the Get
+     *   utility is and boostrap is not false -- The loader is bootstrapped
+     *   before doing the following....
+     *
+     * - Modules are missing and the Loader is available -- The loader
+     *   expands the dependency tree and fetches missing modules.  When
+     *   the loader is finshed the callback supplied to use is executed
+     *   asynchronously.
+     *
      * @param modules* {string} 1-n modules to bind (uses arguments array)
      * @param *callback {function} callback function executed when 
      * the instance has the required functionality.  If included, it
      * must be the last parameter.
-     *
-     * @TODO 
-     * Implement versioning?  loader can load different versions?
-     * Should sub-modules/plugins be normal modules, or do
-     * we add syntax for specifying these?
-     *
-     * YUI().use('dragdrop')
-     * YUI().use('dragdrop:2.4.0'); // specific version
-     * YUI().use('dragdrop:2.4.0-'); // at least this version
-     * YUI().use('dragdrop:2.4.0-2.9999.9999'); // version range
-     * YUI().use('*'); // use all available modules
-     * YUI().use('lang+dump+substitute'); // use lang and some plugins
-     * YUI().use('lang+*'); // use lang and all known plugins
-     *
+     * <code>
+     * // loads and attaches drag and drop and its dependencies
+     * YUI().use('dd', function(Y) &#123;&#125);
+     * // attaches all modules that are available on the page
+     * YUI().use('*', function(Y) &#123;&#125);
+     * // intrinsic YUI gallery support (since 3.1.0)
+     * YUI().use('gallery-yql', function(Y) &#123;&#125);
+     * // intrinsic YUI 2in3 support (since 3.1.0)
+     * YUI().use('yui2-datatable', function(Y) &#123;&#125);
+     * </code>
      *
      * @return {YUI} the YUI instance
      */
@@ -663,9 +698,7 @@ YUI.prototype = {
 
     // inheritance utilities are not available yet
     for (prop in p) {
-        if (1) { // intenionally ignoring hasOwnProperty check
-            YUI[prop] = p[prop];
-        }
+        YUI[prop] = p[prop];
     }
 
     // set up the environment
@@ -834,7 +867,7 @@ YUI.prototype = {
  * @type string
  */
 
-/**
+/*
  * The secure base dir (not implemented)
  * For dynamic loading.
  * @property secureBase
@@ -884,13 +917,39 @@ YUI.prototype = {
  */
 
 /**
+ * The 'skin' config let's you configure application level skin
+ * customizations.  It contains the following attributes which
+ * can be specified to override the defaults:
+ *
+ *      // The default skin, which is automatically applied if not
+ *      // overriden by a component-specific skin definition.
+ *      // Change this in to apply a different skin globally
+ *      defaultSkin: 'sam', 
+ *
+ *      // This is combined with the loader base property to get
+ *      // the default root directory for a skin.
+ *      base: 'assets/skins/',
+ *
+ *      // Any component-specific overrides can be specified here,
+ *      // making it possible to load different skins for different
+ *      // components.  It is possible to load more than one skin
+ *      // for a given component as well.
+ *      overrides: {
+ *          slider: ['capsule', 'round']
+ *      }
+ *
+ * For dynamic loading.
+ *
+ *  @property skin
+ */
+
+/**
  * Hash of per-component filter specification.  If specified for a given component, 
  * this overrides the filter config
  *
  * For dynamic loading.
  *
  * @property filters
- * @type object
  */
 
 /**
@@ -1055,6 +1114,7 @@ YUI.prototype = {
  * The default gallery version to build gallery module urls
  * @property gallery
  * @type string
+ * @since 3.1.0
  */
 
 /**
@@ -1062,6 +1122,7 @@ YUI.prototype = {
  * intrinsic YUI 2 support via the 2in3 project.  Also @see the '2in3'
  * config for pulling different revisions of the wrapped YUI 2 
  * modules.
+ * @since 3.1.0
  * @property yui2 
  * @type string
  * @default 2.8.0
@@ -1070,8 +1131,10 @@ YUI.prototype = {
 /**
  * The 2in3 project is a deployment of the various versions of YUI 2
  * deployed as first-class YUI 3 modules.  Eventually, the wrapper
- * modules will change, and you can select a particular version of
+ * for the modules will change (but the underlying YUI 2 code will
+ * be the same), and you can select a particular version of
  * the wrapper modules via this config.
+ * @since 3.1.0
  * @property 2in3
  * @type string
  * @default 1
@@ -1079,7 +1142,8 @@ YUI.prototype = {
 
 /**
  * Alternative console log function for use in environments without
- * a supported native console
+ * a supported native console.
+ * @since 3.1.0
  * @property logFn
  * @type Function
  */
@@ -2103,7 +2167,7 @@ Y.UA = function() {
          * Webkit nightly 1/2008:525+    <-- Supports DOMContentLoaded event.
          *                                   yahoo.com user agent hack removed.
          * </pre>
-         * http://en.wikipedia.org/wiki/Safari_(web_browser)#Version_history
+         * http://en.wikipedia.org/wiki/Safari_version_history
          * @property webkit
          * @type float
          * @static

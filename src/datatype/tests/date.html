@@ -115,7 +115,7 @@
                 ASSERT.areSame("03:24:00 AM", output, "Expected %r format.");
 
                 output = Y.DataType.Date.format(date, {format:"%R"});
-                ASSERT.areSame("03:24", output, "Expected %r format.");
+                ASSERT.areSame("03:24", output, "Expected %R format.");
             }
         });
             
@@ -177,6 +177,9 @@
 
                 output = dateUS.format(date, {format:"%x"});
                 ASSERT.areSame("12/17/95", output, "Expected %x format.");
+
+                output = dateUS.format(date, {format:"%r"});
+                ASSERT.areSame("03:24:00 AM", output, "Expected %r format.");
             }
         });
 
@@ -200,6 +203,9 @@
 
                 output = dateFR.format(date, {format:"%x"});
                 ASSERT.areSame("17/12/95", output, "Expected %x format.");
+
+                output = dateFR.format(date, {format:"%r"});
+                ASSERT.areSame("03:24:00 AM", output, "Expected %r format.");
             }
         });
 
@@ -223,6 +229,9 @@
 
                 output = dateKR.format(date, {format:"%x"});
                 ASSERT.areSame("95. 12. 17.", output, "Expected %x format.");
+
+                output = dateKR.format(date, {format:"%r"});
+                ASSERT.areSame("03:24:00 오전", output, "Expected %r format.");
             }
         });
 
@@ -239,7 +248,6 @@
                         "c":"%a, %Y %b %d %l:%M:%S %p %Z",
                         "p":["ਸਵੇਰੇ","ਸ਼ਾਮ"],
                         "P":["ਸਵੇਰੇ","ਸ਼ਾਮ"],
-                        "r":"%I:%M:%S %p",
                         "x":"%d/%m/%Y",
                         "X":"%l:%M:%S %p"
                     });
@@ -264,6 +272,9 @@
 
                 output = dateIN.format(date, {format:"%x"});
                 ASSERT.areSame("17/12/1995", output, "Expected %x format.");
+
+                output = dateIN.format(date, {format:"%r"});
+                ASSERT.areSame("03:24:00 ਸਵੇਰੇ", output, "Expected %r format.");
             }
         });
 

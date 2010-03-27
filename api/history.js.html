@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>history&nbsp; <span class="subtitle">3.1.0pr2</span></h3>
+        <h3>history&nbsp; <span class="subtitle">3.1.0pr4</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_history.html" title="history">history</a>
                 
@@ -110,26 +110,24 @@
         <span class="nx">EV_HISTORY_MODULE_STATE_CHANGE</span> <span class="o">=</span> <span class="s1">&#39;history:moduleStateChange&#39;</span><span class="p">;</span>
 
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">G</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">history</span> <span class="o">||</span> <span class="p">{</span>
 
-        <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="nx">G</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1">// Flag used to tell whether the history utility is ready to be used.</span>
+        <span class="nx">ready</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
 
-            <span class="c1">// Flag used to tell whether the history utility is ready to be used.</span>
-            <span class="nx">ready</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="c1">// List of registered modules.</span>
+        <span class="nx">_modules</span><span class="o">:</span> <span class="p">[],</span>
 
-            <span class="c1">// List of registered modules.</span>
-            <span class="nx">_modules</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="c1">// INPUT field (with type=&quot;hidden&quot; or type=&quot;text&quot;) or TEXTAREA.</span>
+        <span class="c1">// This field keeps the value of the initial state, current state</span>
+        <span class="c1">// the list of all states across pages within a single browser session.</span>
+        <span class="nx">_stateField</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 
-            <span class="c1">// INPUT field (with type=&quot;hidden&quot; or type=&quot;text&quot;) or TEXTAREA.</span>
-            <span class="c1">// This field keeps the value of the initial state, current state</span>
-            <span class="c1">// the list of all states across pages within a single browser session.</span>
-            <span class="nx">_stateField</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="c1">// Hidden IFrame used to store the browsing history on IE6/7.</span>
+        <span class="nx">_historyIFrame</span><span class="o">:</span> <span class="kc">null</span>
+    <span class="p">};</span>
 
-            <span class="c1">// Hidden IFrame used to store the browsing history on IE6/7.</span>
-            <span class="nx">_historyIFrame</span><span class="o">:</span> <span class="kc">null</span>
-        <span class="p">};</span>
-
-    <span class="p">}</span>
+    <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="nx">G</span><span class="p">;</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Returns the portion of the hash after the &#39;#&#39; symbol.</span>
@@ -357,6 +355,8 @@
             <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentMode</span><span class="p">)</span> <span class="o">||</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentMode</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">))</span> <span class="p">{</span>
 
             <span class="c1">// The HTML5 way of handling DHTML history...</span>
+            <span class="c1">// @TODO This is case-insensitive, at least in IE (WHY? spec, please actually specify things)</span>
+            <span class="c1">// bug #2528444</span>
             <span class="nx">win</span><span class="p">.</span><span class="nx">onhashchange</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="p">();</span>
                 <span class="nx">_handleFQStateChange</span><span class="p">(</span><span class="nx">hash</span><span class="p">);</span>
@@ -637,6 +637,8 @@
 <span class="cm">         *     this method uses the URL in the address bar.</span>
 <span class="cm">         * @return {string} The value of the specified parameter, or null.</span>
 <span class="cm">         * @public</span>
+<span class="cm">         * @deprecated Use Y.QueryString.parse() in the querystring module.</span>
+<span class="cm">         * This will be removed in 3.2.0.</span>
 <span class="cm">         */</span>
         <span class="nx">getQueryStringParameter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">paramName</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>

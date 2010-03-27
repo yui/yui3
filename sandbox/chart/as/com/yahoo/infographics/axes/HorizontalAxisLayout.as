@@ -10,6 +10,20 @@ package com.yahoo.infographics.axes
 	public class HorizontalAxisLayout extends BaseAxisLayout
 	{
 		/**
+	     * @private
+		 * Storage for sizeMode
+		 */
+		protected var _sizeMode:String = "vbox";
+
+		/**
+		 * @copy com.yahoo.infographics.axes.IAxisLayout#sizeMode
+		 */
+		public function get sizeMode():String
+		{
+			return this._sizeMode;
+		}
+		
+		/**
 		 * @copy com.yahoo.infographics.axes.IAxisLayout#length
 		 */
 		public function get length():Number

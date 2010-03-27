@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dom&nbsp; <span class="subtitle">3.1.0pr2</span></h3>
+        <h3>dom&nbsp; <span class="subtitle">3.1.0pr4</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dom.html" title="dom">dom</a>
                  &gt; DOM 
@@ -490,7 +490,7 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                         
                                         
                                         
-                                        void
+                                        HTMLElement|DocumentFragment
                                             <strong property="yui:name">create</strong>
                                            (
                                                 
@@ -527,6 +527,15 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                                         </dd>
                                                 </dl>
 
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            HTMLElement|DocumentFragment
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">returns a single HTMLElement 
+when creating one node, and a documentFragment when creating
+multiple nodes.</dd>
+                                                </dl>
 
 
              

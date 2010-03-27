@@ -34,5 +34,17 @@ package com.yahoo.infographics.data
 			this._dataMinimum = Object(0);
 		}
 
+		override protected function setDataByKey(key:String):void
+		{
+			var obj:Object, arr:Array = [], labels:Array = [], dv:Array = this._dataClone.concat(), len:int = dv.length;
+			for(var i:int = 0; i < len; i++)
+			{
+				obj = dv[i];
+				arr[i] = i;
+				labels[i] = obj[key];
+			}
+			this._keys[key] = arr;
+			this._data = this._data.concat(labels);
+		}
 	}
 }

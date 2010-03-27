@@ -87,7 +87,7 @@ Y.UA = function() {
          * Webkit nightly 1/2008:525+    <-- Supports DOMContentLoaded event.
          *                                   yahoo.com user agent hack removed.
          * </pre>
-         * http://en.wikipedia.org/wiki/Safari_(web_browser)#Version_history
+         * http://en.wikipedia.org/wiki/Safari_version_history
          * @property webkit
          * @type float
          * @static

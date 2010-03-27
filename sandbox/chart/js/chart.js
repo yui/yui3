@@ -171,9 +171,15 @@
 
 			setter: function(val)
 			{
-				this._dataProvider = val;
+				this._dataProvider = Y.JSON.stringify(val);
 				this._initDataProvider();
+			},
+
+			getter: function()
+			{
+				return Y.JSON.parse(this._dataProvider);
 			}
+
 		}
 	};
 	
@@ -224,12 +230,12 @@
 		{
 			var i, item, len;
 			this._setAutoRender();
+			this.swfReadyFlag = true;
 			if(this._dataProvider)
 			{
 				this._initDataProvider();
 			}
 			this._addBackground();
-			this.swfReadyFlag = true;
 			len = this._items.length;
 			if(len < 1)
 			{
@@ -251,7 +257,7 @@
 		 */
 		_initDataProvider: function() 
 		{
-			if(this.appswf) 
+			if(this.appswf && this.swfReadyFlag) 
 			{
 				this.appswf.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
 			}

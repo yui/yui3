@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event-custom&nbsp; <span class="subtitle">3.1.0pr2</span></h3>
+        <h3>event-custom&nbsp; <span class="subtitle">3.1.0pr4</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event-custom.html" title="event-custom">event-custom</a>
                 
@@ -81,6 +81,8 @@
 <span class="cm">     * @param obj the object hosting the method to displace</span>
 <span class="cm">     * @param sFn {string} the name of the method to displace</span>
 <span class="cm">     * @param c The execution context for fn</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
+<span class="cm">     * when the event fires.</span>
 <span class="cm">     * @return {string} handle for the subscription</span>
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
@@ -102,6 +104,7 @@
 <span class="cm">     * @param obj the object hosting the method to displace</span>
 <span class="cm">     * @param sFn {string} the name of the method to displace</span>
 <span class="cm">     * @param c The execution context for fn</span>
+<span class="cm">     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber</span>
 <span class="cm">     * @return {string} handle for the subscription</span>
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>

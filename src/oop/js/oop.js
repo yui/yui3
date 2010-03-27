@@ -214,7 +214,8 @@
     };
 
     /**
-     * Deep obj/array copy.  Functions are cloned with Y.bind.
+     * Deep obj/array copy.  Function clones are actually
+     * wrappers around the original function.
      * Array-like objects are treated as arrays.
      * Primitives are returned untouched.  Optionally, a
      * function can be provided to handle other data types,
@@ -229,7 +230,6 @@
      * items that are deleted from the clone will result in the value
      * of the source prototype being exposed.  If operating on a non-safe
      * clone, items should be nulled out rather than deleted.
-     * @TODO review
      * @param f optional function to apply to each item in a collection;
      *          it will be executed prior to applying the value to
      *          the new object.  Return false to prevent the copy.
@@ -250,7 +250,8 @@
             case 'date':
                 return new Date(o);
             case 'regexp':
-                return new RegExp(o.source);
+                // return new RegExp(o.source); // if we do this we need to set the flags too
+                return o;
             case 'function':
                 o2 = Y.bind(o, owner);
                 break;

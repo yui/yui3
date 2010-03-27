@@ -2,7 +2,6 @@ package com.yahoo.renderers.layout
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	import com.yahoo.renderers.events.LayoutEvent;
 
 	public class HFlowLayout extends LayoutStrategy
 	{
@@ -12,13 +11,20 @@ package com.yahoo.renderers.layout
 		public function HFlowLayout()
 		{
 			super();
-			this.setStyle("sizeMode", ContainerType.VBOX);
 		}
 
 		/**
+		 * @copy com.yahoo.renderers.layout.ILayoutStrategy#sizeMode
+		 */
+		override public function get sizeMode():String
+		{
+			return ContainerType.VBOX;
+		}
+		
+		/**
 		 * @private
 		 */
-		override public function set container(value:DisplayObjectContainer):void
+		override public function set container(value:Container):void
 		{
 			super.container = value;
 		}
@@ -101,8 +107,7 @@ package com.yahoo.renderers.layout
 
 			this._contentHeight += this._bottomPadding;
 			this._rows = rows;
-			if(this._contentWidth != oldWidth) this.dispatchEvent(new LayoutEvent(LayoutEvent.CONTENT_WIDTH_UPDATE));
-			if(this._contentHeight != oldHeight) this.dispatchEvent(new LayoutEvent(LayoutEvent.CONTENT_HEIGHT_UPDATE));
+			this.container.update(this._contentWidth != oldWidth, this._contentHeight != oldHeight);
 		}
 	}
 }
