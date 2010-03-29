@@ -396,6 +396,24 @@ Y_Node.ATTRS = {
             Y_DOM.setValue(this._node, val);
             return val;
         }
+    },
+    
+    
+    /*
+     * Flat data store for off-DOM usage 
+     * @config data
+     * @type any
+     * @deprecated Use getData/setData
+     */
+    data: {
+        getter: function() { 
+            return this._dataVal; 
+        },
+        setter: function(val) { 
+            this._dataVal = val;
+            return val;
+        },
+        value: null
     }
 };
 
