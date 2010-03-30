@@ -195,8 +195,8 @@
             oD = c.data;
 
         //To serialize an object into a key-value string, add the
-        //QueryString module in the YUI instance's 'use' method.
-        if (Y.Lang.isObject(c.data)) {
+        //QueryString module to the YUI instance's 'use' method.
+        if (Y.Lang.isObject(c.data) && Y.QueryString) {
             c.data = Y.QueryString.stringify(c.data);
             Y.log('Configuration property "data" is an object. The serialized value is: ' + c.data, 'info', 'io');
         }
