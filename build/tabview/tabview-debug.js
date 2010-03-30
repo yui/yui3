@@ -390,11 +390,15 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         if (tabviewPanel) {
             tabviewPanel.appendChild(this.get('panelNode'));
         }
+
+        parentNode.focusManager.refresh();
     },
     
     _remove: function() {
         this.get('boundingBox').remove();
         this.get('panelNode').remove();
+
+        this.get('parent').get('contentBox').focusManager.refresh();
     },
 
     _onActivate: function(e) {

@@ -303,81 +303,81 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 			nDescendants = descendants.size();
 			
 
-			//if (nDescendants > 1) {
+            for (i = 0; i < nDescendants; i++) {
 
-				for (i = 0; i < nDescendants; i++) {
+                oNode = descendants.item(i);
 
-					oNode = descendants.item(i);
-
-					if (nFirstEnabled === -1 && !oNode.get(DISABLED)) {
-						nFirstEnabled = i;
-					}
+                if (nFirstEnabled === -1 && !oNode.get(DISABLED)) {
+                    nFirstEnabled = i;
+                }
 
 
-					//	If the user didn't specify a value for the 
-					//	"activeDescendant" attribute try to infer it from 
-					//	the markup.
+                //	If the user didn't specify a value for the 
+                //	"activeDescendant" attribute try to infer it from 
+                //	the markup.
 
-					//	Need to pass "2" when using "getAttribute" for IE to get
-					//	the attribute value as it is set in the markup.
-					//	Need to use "parseInt" because IE always returns the 
-					//	value as a number, whereas all other browsers return
-					//	the attribute as a string when accessed 
-					//	via "getAttribute".
+                //	Need to pass "2" when using "getAttribute" for IE to get
+                //	the attribute value as it is set in the markup.
+                //	Need to use "parseInt" because IE always returns the 
+                //	value as a number, whereas all other browsers return
+                //	the attribute as a string when accessed 
+                //	via "getAttribute".
 
-					if (nActiveDescendant < 0 && 
-							parseInt(oNode.getAttribute(TAB_INDEX, 2), 10) === 0) {
+                if (nActiveDescendant < 0 && 
+                        parseInt(oNode.getAttribute(TAB_INDEX, 2), 10) === 0) {
 
-						nActiveDescendant = i;
+                    nActiveDescendant = i;
 
-					}
+                }
 
-					oNode.set(TAB_INDEX, -1);
+                if (oNode) {
+                    oNode.set(TAB_INDEX, -1);
+                }
 
-					sID = oNode.get(ID);
+                sID = oNode.get(ID);
 
-					if (!sID) {
-						sID = Y.guid();
-						oNode.set(ID, sID);
-					}
-					
-					descendantsMap[sID] = i;
-					
-				}
-				
+                if (!sID) {
+                    sID = Y.guid();
+                    oNode.set(ID, sID);
+                }
+                
+                descendantsMap[sID] = i;
+                
+            }
+            
 
-				//	If the user didn't specify a value for the  
-				//	"activeDescendant" attribute and no default value could be 
-				//	determined from the markup, then default to 0.
-				
-				if (nActiveDescendant < 0) {
-					nActiveDescendant = 0;
-				}
-				
+            //	If the user didn't specify a value for the  
+            //	"activeDescendant" attribute and no default value could be 
+            //	determined from the markup, then default to 0.
+            
+            if (nActiveDescendant < 0) {
+                nActiveDescendant = 0;
+            }
+            
 
-				oNode = descendants.item(nActiveDescendant);
+            oNode = descendants.item(nActiveDescendant);
 
-				//	Check to make sure the active descendant isn't disabled, 
-				//	and fall back to the first enabled descendant if it is.
+            //	Check to make sure the active descendant isn't disabled, 
+            //	and fall back to the first enabled descendant if it is.
 
-				if (!oNode || oNode.get(DISABLED)) {
-					oNode = descendants.item(nFirstEnabled);
-					nActiveDescendant = nFirstEnabled;
-				}
+            if (!oNode || oNode.get(DISABLED)) {
+                oNode = descendants.item(nFirstEnabled);
+                nActiveDescendant = nFirstEnabled;
+            }
 
-				this._lastNodeIndex = nDescendants - 1;
-				this._descendants = descendants;
-				this._descendantsMap = descendantsMap;
+            this._lastNodeIndex = nDescendants - 1;
+            this._descendants = descendants;
+            this._descendantsMap = descendantsMap;
 
-				this.set(ACTIVE_DESCENDANT, nActiveDescendant);
+            this.set(ACTIVE_DESCENDANT, nActiveDescendant);
 
-				//	Need to set the "tabIndex" attribute here, since the 
-				//	"activeDescendantChange" event handler used to manage
-				//	the setting of the "tabIndex" attribute isn't wired up yet.
+            //	Need to set the "tabIndex" attribute here, since the 
+            //	"activeDescendantChange" event handler used to manage
+            //	the setting of the "tabIndex" attribute isn't wired up yet.
 
-				oNode.set(TAB_INDEX, 0);
-
-			//}
+            if (oNode) {
+                oNode.set(TAB_INDEX, 0);
+            }
 			
 		}
 
