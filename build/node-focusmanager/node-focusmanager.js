@@ -305,7 +305,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 			nDescendants = descendants.size();
 			
 
-			if (nDescendants > 1) {
+			//if (nDescendants > 1) {
 
 				for (i = 0; i < nDescendants; i++) {
 
@@ -379,7 +379,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 				oNode.set(TAB_INDEX, 0);
 
-			}
+			//}
 			
 		}
 
@@ -571,7 +571,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 			oDocument,
 			handle;
 
-		if (descendants && descendants.size() > 1) {
+		if (descendants && descendants.size()) {
 
 			aHandlers = this._eventHandlers || [];
 			oDocument = this.get(HOST).get("ownerDocument");
@@ -826,7 +826,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 			oNode = this._descendants.item(nActiveDescendant);
 			
-			if (oNode.get(DISABLED)) {
+			if (oNode && oNode.get(DISABLED)) {
 				this._focusNext(event, nActiveDescendant);
 			}
 			else {
@@ -864,7 +864,7 @@ Y.extend(NodeFocusManager, Y.Plugin.Base, {
 
 			oNode = this._descendants.item(nActiveDescendant);
 
-			if (oNode.get(DISABLED)) {
+			if (oNode && oNode.get(DISABLED)) {
 				this._focusPrevious(event, nActiveDescendant);
 			}
 			else {
