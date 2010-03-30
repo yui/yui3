@@ -69,6 +69,10 @@
 <span class="cm">     * @uses WidgetParent</span>
 <span class="cm">     */</span>
     <span class="nx">TabView</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">&#39;tabView&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Widget</span><span class="p">,</span> <span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetParent</span><span class="p">],</span> <span class="p">{</span>
+    <span class="nx">_afterChildAdded</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">).</span><span class="nx">focusManager</span><span class="p">.</span><span class="nx">refresh</span><span class="p">();</span>
+    <span class="p">},</span>
+
     <span class="nx">_afterChildRemoved</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// update the selected tab when removed</span>
         <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">index</span><span class="p">,</span>
             <span class="nx">selection</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;selection&#39;</span><span class="p">);</span>
@@ -79,6 +83,8 @@
                 <span class="nx">selection</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
+
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">).</span><span class="nx">focusManager</span><span class="p">.</span><span class="nx">refresh</span><span class="p">();</span>
     <span class="p">},</span>
 
     <span class="nx">_initAria</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
@@ -114,12 +120,13 @@
         <span class="c1">//  Pressing the left and right arrow keys will move focus</span>
         <span class="c1">//  among each of the tabs.</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">).</span><span class="nx">plug</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">NodeFocusManager</span><span class="p">,</span> <span class="p">{</span>
-                        <span class="nx">descendants</span><span class="o">:</span> <span class="nx">_queries</span><span class="p">.</span><span class="nx">tabLabel</span><span class="p">,</span>
+                        <span class="nx">descendants</span><span class="o">:</span> <span class="nx">DOT</span> <span class="o">+</span> <span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabLabel</span><span class="p">,</span>
                         <span class="nx">keys</span><span class="o">:</span> <span class="p">{</span> <span class="nx">next</span><span class="o">:</span> <span class="s1">&#39;down:39&#39;</span><span class="p">,</span> <span class="c1">// Right arrow</span>
                                 <span class="nx">previous</span><span class="o">:</span> <span class="s1">&#39;down:37&#39;</span> <span class="p">},</span>  <span class="c1">// Left arrow</span>
                         <span class="nx">circular</span><span class="o">:</span> <span class="kc">true</span>
                     <span class="p">});</span>
 
+        <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;addChild&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterChildAdded</span><span class="p">);</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;removeChild&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterChildRemoved</span><span class="p">);</span>
     <span class="p">},</span>
     
