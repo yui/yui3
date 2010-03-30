@@ -619,9 +619,11 @@ YUI.Env[Y.version].modules = {
     "io": {
         "submodules": {
             "io-base": {
-                "requires": [
-                    "event-custom-base", 
+                "optional": [
                     "querystring-stringify-simple"
+                ], 
+                "requires": [
+                    "event-custom-base"
                 ]
             }, 
             "io-form": {
