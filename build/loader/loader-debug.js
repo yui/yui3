@@ -2816,8 +2816,7 @@ YUI.Env[Y.version].modules = {
         "plugins": {
             "tabview-plugin": {
                 "requires": [
-                    "tabview-base", 
-                    "node-focusmanager"
+                    "tabview-base"
                 ], 
                 "skinnable": true
             }
@@ -2833,6 +2832,7 @@ YUI.Env[Y.version].modules = {
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-focusmanager", 
                     "classnamemanager"
                 ]
             }

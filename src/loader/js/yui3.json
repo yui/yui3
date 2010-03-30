@@ -883,8 +883,7 @@
         "plugins": {
             "tabview-plugin": {
                 "requires": [
-                    "tabview-base", 
-                    "node-focusmanager"
+                    "tabview-base"
                 ], 
                 "skinnable": true
             }
@@ -900,6 +899,7 @@
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-focusmanager", 
                     "classnamemanager"
                 ]
             }
