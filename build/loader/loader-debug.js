@@ -11,7 +11,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.03.29-18-07',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.03.30-17-26',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '1',
@@ -2545,6 +2545,9 @@ YUI.Env[Y.version].modules = {
     "io": {
         "submodules": {
             "io-base": {
+                "optional": [
+                    "querystring-stringify-simple"
+                ], 
                 "requires": [
                     "event-custom-base"
                 ]

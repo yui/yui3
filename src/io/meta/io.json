@@ -4,6 +4,9 @@
             "io-base": {
                 "requires": [
                     "event-custom-base"
+                ],
+                "optional": [
+                    "querystring-stringify-simple"
                 ]
             }, 
             "io-form": {
