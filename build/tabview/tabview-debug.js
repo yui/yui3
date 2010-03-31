@@ -161,6 +161,10 @@ var _queries = Y.TabviewBase._queries,
      * @uses WidgetParent
      */
     TabView = Y.Base.create('tabView', Y.Widget, [Y.WidgetParent], {
+    _afterChildAdded: function(e) {
+        this.get('contentBox').focusManager.refresh();
+    },
+
     _afterChildRemoved: function(e) { // update the selected tab when removed
         var i = e.index,
             selection = this.get('selection');
@@ -171,6 +175,8 @@ var _queries = Y.TabviewBase._queries,
                 selection.set('selected', 1);
             }
         }
+
+        this.get('contentBox').focusManager.refresh();
     },
 
     _initAria: function() {
@@ -206,12 +212,13 @@ var _queries = Y.TabviewBase._queries,
         //  Pressing the left and right arrow keys will move focus
         //  among each of the tabs.
         this.get('contentBox').plug(Y.Plugin.NodeFocusManager, {
-                        descendants: _queries.tabLabel,
+                        descendants: DOT + _classNames.tabLabel,
                         keys: { next: 'down:39', // Right arrow
                                 previous: 'down:37' },  // Left arrow
                         circular: true
                     });
 
+        this.after('addChild', this._afterChildAdded);
         this.after('removeChild', this._afterChildRemoved);
     },
     
@@ -469,9 +476,12 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
             validator: Lang.isString
         },
 
+        /**
+         * @attribute panelNode
+         * @type Y.Node
+         */
         panelNode: {
-            valueFn: '_defPanelNodeValueFn',
-            readOnly: true
+            valueFn: '_defPanelNodeValueFn'
         },
         
         tabIndex: {

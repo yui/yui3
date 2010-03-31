@@ -619,9 +619,11 @@ YUI.Env[Y.version].modules = {
     "io": {
         "submodules": {
             "io-base": {
-                "requires": [
-                    "event-custom-base", 
+                "optional": [
                     "querystring-stringify-simple"
+                ], 
+                "requires": [
+                    "event-custom-base"
                 ]
             }, 
             "io-form": {
@@ -888,8 +890,7 @@ YUI.Env[Y.version].modules = {
         "plugins": {
             "tabview-plugin": {
                 "requires": [
-                    "tabview-base", 
-                    "node-focusmanager"
+                    "tabview-base"
                 ], 
                 "skinnable": true
             }
@@ -905,6 +906,7 @@ YUI.Env[Y.version].modules = {
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-focusmanager", 
                     "classnamemanager"
                 ]
             }

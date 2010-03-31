@@ -197,8 +197,8 @@ YUI.add('io-base', function(Y) {
             oD = c.data;
 
         //To serialize an object into a key-value string, add the
-        //QueryString module in the YUI instance's 'use' method.
-        if (Y.Lang.isObject(c.data)) {
+        //QueryString module to the YUI instance's 'use' method.
+        if (Y.Lang.isObject(c.data) && Y.QueryString) {
             c.data = Y.QueryString.stringify(c.data);
         }
 
@@ -780,7 +780,7 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base']});
+}, '@VERSION@' ,{requires:['event-custom-base'], optional:['querystring-stringify-simple']});
 
 YUI.add('io-form', function(Y) {
 

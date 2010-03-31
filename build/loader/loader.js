@@ -11,7 +11,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.03.24-20-12',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.03.30-17-26',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '1',
@@ -2515,9 +2515,11 @@ YUI.Env[Y.version].modules = {
     "io": {
         "submodules": {
             "io-base": {
-                "requires": [
-                    "event-custom-base", 
+                "optional": [
                     "querystring-stringify-simple"
+                ], 
+                "requires": [
+                    "event-custom-base"
                 ]
             }, 
             "io-form": {
@@ -2784,8 +2786,7 @@ YUI.Env[Y.version].modules = {
         "plugins": {
             "tabview-plugin": {
                 "requires": [
-                    "tabview-base", 
-                    "node-focusmanager"
+                    "tabview-base"
                 ], 
                 "skinnable": true
             }
@@ -2801,6 +2802,7 @@ YUI.Env[Y.version].modules = {
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-focusmanager", 
                     "classnamemanager"
                 ]
             }

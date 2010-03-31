@@ -423,6 +423,10 @@ YUI.prototype = {
             r        = [], 
             fetchCSS = config.fetchCSS,
             process  = function(name) {
+
+                // add this module to full list of things to attach
+                r.push(name);
+
                 // only attach a module once
                 if (used[name]) {
                     return;
@@ -451,8 +455,6 @@ YUI.prototype = {
                     YArray.each(YArray(use), process);
                 }
 
-                // add this module to full list of things to attach
-                r.push(name);
 
             },
 
