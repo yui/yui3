@@ -474,6 +474,10 @@
             <span class="nx">r</span>        <span class="o">=</span> <span class="p">[],</span> 
             <span class="nx">fetchCSS</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">fetchCSS</span><span class="p">,</span>
             <span class="nx">process</span>  <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="c1">// add this module to full list of things to attach</span>
+                <span class="nx">r</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
+
                 <span class="c1">// only attach a module once</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">used</span><span class="p">[</span><span class="nx">name</span><span class="p">])</span> <span class="p">{</span>
                     <span class="k">return</span><span class="p">;</span>
@@ -502,8 +506,6 @@
                     <span class="nx">YArray</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">YArray</span><span class="p">(</span><span class="nx">use</span><span class="p">),</span> <span class="nx">process</span><span class="p">);</span>
                 <span class="p">}</span>
 
-                <span class="c1">// add this module to full list of things to attach</span>
-                <span class="nx">r</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">name</span><span class="p">);</span>
 
             <span class="p">},</span>
 
