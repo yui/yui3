@@ -197,9 +197,9 @@ var whitelist = {
         63277: 34, // page down
         25:     9, // SHIFT-TAB (Safari provides a different key code in
                    // this case, even though the shiftKey modifier is set)
-		63272: 46, // delete
-		63273: 36, // home
-		63275: 35  // end
+        63272: 46, // delete
+        63273: 36, // home
+        63275: 35  // end
     },
 
     /**
@@ -657,7 +657,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                     // set by the event system for lazy DOM listeners
                     if (availHandle.handle) {
                         availHandle.handle.detach();
-						return;
+                        return;
                     }
 
                     var i, j;
@@ -724,11 +724,11 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
             return Event._attach(Y.Array(arguments, 0, true));
         },
 
-		_createWrapper: function (el, type, capture, compat, facade) {
+        _createWrapper: function (el, type, capture, compat, facade) {
 
             var cewrapper,
                 ek  = Y.stamp(el),
-	            key = 'event:' + ek + type;
+                key = 'event:' + ek + type;
 
             if (false === facade) {
                 key += 'native';
@@ -766,7 +766,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                 cewrapper.fn = function(e) {
                     cewrapper.fire(Event.getEvent(e, el, (compat || (false === facade))));
                 };
-				cewrapper.capture = capture;
+                cewrapper.capture = capture;
             
                 if (el == Y.config.win && type == "load") {
                     // window load happens once
@@ -781,9 +781,9 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                 add(el, type, cewrapper.fn, capture);
             }
 
-			return cewrapper;
-			
-		},
+            return cewrapper;
+            
+        },
 
         _attach: function(args, config) {
 
@@ -879,7 +879,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 el = Y.Node.getDOMNode(el);
             }
 
- 			cewrapper = this._createWrapper(el, type, capture, compat, facade);
+            cewrapper = this._createWrapper(el, type, capture, compat, facade);
             if (overrides) {
                 Y.mix(cewrapper.overrides, overrides);
             }
