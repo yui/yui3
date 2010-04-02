@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<title>use('gallery-')</title>
+    <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <script src="../../build/dump/dump-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
+    <script type="text/javascript" charset="utf-8">                                                                                                                 
+
+
+YUI.add("myapp-base", function(Y){
+
+    Y.MyApplication = function () {};
+
+    // Class definition
+    Y.MyApplication.prototype = {
+       //...
+    };
+
+}, "3.0.0b1", {requires:["node"]});
+
+// Submodule definition
+YUI.add("myapp-submodule", function(Y){
+ //...
+}, "3.0.0b1", {requires:["myapp-base"]});
+
+// Rollup definition
+YUI.add("myapp", function(Y){}, "3.0.0b1", {use: ["myapp-base", "myapp-submodule"]});
+
+// YUI().use('myapp-base', function(Y) {
+YUI().use('myapp-submodule', function(Y) {
+
+});
+
+</script>     
+<body>
+</body>
+</html>
