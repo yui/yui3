@@ -301,6 +301,37 @@ YUI.Env[Y.version].modules = {
             }
         }
     }, 
+    "datatable": {
+        "submodules": {
+            "column": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "columnset": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "datatable-base": {
+                "requires": [
+                    "columnset", 
+                    "rowset", 
+                    "widget"
+                ]
+            }, 
+            "row": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "rowset": {
+                "requires": [
+                    "base"
+                ]
+            }
+        }
+    }, 
     "datatype": {
         "submodules": {
             "datatype-date": {
