@@ -84,9 +84,9 @@ var whitelist = {
         63277: 34, // page down
         25:     9, // SHIFT-TAB (Safari provides a different key code in
                    // this case, even though the shiftKey modifier is set)
-		63272: 46, // delete
-		63273: 36, // home
-		63275: 35  // end
+        63272: 46, // delete
+        63273: 36, // home
+        63275: 35  // end
     },
 
     /**

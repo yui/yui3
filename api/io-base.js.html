@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>io&nbsp; <span class="subtitle">3.1.0pr5</span></h3>
+        <h3>io&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_io.html" title="io">io</a>
                 
@@ -235,7 +235,7 @@
 <span class="cm">    * @return object</span>
 <span class="cm">    */</span>
     <span class="kd">function</span> <span class="nx">_io</span><span class="p">(</span><span class="nx">uri</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">oD</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">oD</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span>
             <span class="nx">u</span> <span class="o">=</span> <span class="nx">uri</span><span class="p">;</span>
             <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
             <span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">xdr</span> <span class="o">||</span> <span class="nx">c</span><span class="p">.</span><span class="nx">form</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
@@ -244,8 +244,8 @@
             <span class="nx">oD</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
 
         <span class="c1">//To serialize an object into a key-value string, add the</span>
-        <span class="c1">//QueryString module in the YUI instance&#39;s &#39;use&#39; method.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">))</span> <span class="p">{</span>
+        <span class="c1">//QueryString module to the YUI instance&#39;s &#39;use&#39; method.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">QueryString</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Configuration property &quot;data&quot; is an object. The serialized value is: &#39;</span> <span class="o">+</span> <span class="nx">c</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;io&#39;</span><span class="p">);</span>
         <span class="p">}</span>
@@ -305,11 +305,15 @@
             <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">data</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">d</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">;</span>
+                <span class="nx">a</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;statusText&#39;</span><span class="p">,</span> <span class="s1">&#39;responseText&#39;</span><span class="p">,</span> <span class="s1">&#39;responseXML&#39;</span><span class="p">];</span>
                 <span class="nx">r</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span> <span class="o">?</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nx">arguments</span><span class="o">:</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arguments</span> <span class="p">}</span> <span class="o">:</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">id</span> <span class="p">};</span>
-                <span class="nx">r</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">d</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="s1">&#39;statusText&#39;</span><span class="p">,</span> <span class="s1">&#39;responseText&#39;</span><span class="p">,</span> <span class="s1">&#39;responseXML&#39;</span><span class="p">]);</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">r</span><span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="nx">j</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">c</span><span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="nx">j</span><span class="p">]];</span>
+                <span class="p">}</span>
+
                 <span class="nx">r</span><span class="p">.</span><span class="nx">getAllResponseHeaders</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getAllResponseHeaders</span><span class="p">();</span> <span class="p">};</span>
                 <span class="nx">r</span><span class="p">.</span><span class="nx">getResponseHeader</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getResponseHeader</span><span class="p">(</span><span class="nx">h</span><span class="p">);</span> <span class="p">};</span>
-
                 <span class="nx">_ioComplete</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
                 <span class="nx">_handleResponse</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">c</span><span class="p">);</span>
 

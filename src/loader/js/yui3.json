@@ -296,6 +296,37 @@
             }
         }
     }, 
+    "datatable": {
+        "submodules": {
+            "column": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "columnset": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "datatable-base": {
+                "requires": [
+                    "columnset", 
+                    "rowset", 
+                    "widget"
+                ]
+            }, 
+            "row": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "rowset": {
+                "requires": [
+                    "base"
+                ]
+            }
+        }
+    }, 
     "datatype": {
         "submodules": {
             "datatype-date": {
@@ -612,9 +643,11 @@
     "io": {
         "submodules": {
             "io-base": {
-                "requires": [
-                    "event-custom-base", 
+                "optional": [
                     "querystring-stringify-simple"
+                ], 
+                "requires": [
+                    "event-custom-base"
                 ]
             }, 
             "io-form": {
@@ -881,8 +914,7 @@
         "plugins": {
             "tabview-plugin": {
                 "requires": [
-                    "tabview-base", 
-                    "node-focusmanager"
+                    "tabview-base"
                 ], 
                 "skinnable": true
             }
@@ -898,6 +930,7 @@
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-focusmanager", 
                     "classnamemanager"
                 ]
             }

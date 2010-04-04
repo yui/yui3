@@ -188,7 +188,7 @@ YUI.add('io-base', function(Y) {
     * @return object
     */
     function _io(uri, c, i) {
-        var f, o, d, m, r, s, oD,
+        var f, o, d, m, r, s, oD, a, j,
             u = uri;
             c = Y.Object(c);
             o = _create(c.xdr || c.form, i);
@@ -197,8 +197,8 @@ YUI.add('io-base', function(Y) {
             oD = c.data;
 
         //To serialize an object into a key-value string, add the
-        //QueryString module in the YUI instance's 'use' method.
-        if (Y.Lang.isObject(c.data)) {
+        //QueryString module to the YUI instance's 'use' method.
+        if (Y.Lang.isObject(c.data) && Y.QueryString) {
             c.data = Y.QueryString.stringify(c.data);
             Y.log('Configuration property "data" is an object. The serialized value is: ' + c.data, 'info', 'io');
         }
@@ -258,11 +258,15 @@ YUI.add('io-base', function(Y) {
             o.c.send(c.data || '');
             if (s) {
                 d = o.c;
+                a  = ['status', 'statusText', 'responseText', 'responseXML'];
                 r = c.arguments ? { id: o.id, arguments: c.arguments } : { id: o.id };
-                r = Y.mix(r, d, false, ['status', 'statusText', 'responseText', 'responseXML']);
+
+                for (j = 0; j < 4; j++) {
+                    r[a[j]] = o.c[a[j]];
+                }
+
                 r.getAllResponseHeaders = function() { return d.getAllResponseHeaders(); };
                 r.getResponseHeader = function(h) { return d.getResponseHeader(h); };
-
                 _ioComplete(o, c);
                 _handleResponse(o, c);
 
@@ -783,7 +787,7 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base']});
+}, '@VERSION@' ,{requires:['event-custom-base'], optional:['querystring-stringify-simple']});
 
 YUI.add('io-form', function(Y) {
 

@@ -175,9 +175,12 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
             validator: Lang.isString
         },
 
+        /**
+         * @attribute panelNode
+         * @type Y.Node
+         */
         panelNode: {
-            valueFn: '_defPanelNodeValueFn',
-            readOnly: true
+            valueFn: '_defPanelNodeValueFn'
         },
         
         tabIndex: {

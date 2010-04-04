@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event&nbsp; <span class="subtitle">3.1.0pr5</span></h3>
+        <h3>event&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
@@ -270,7 +270,7 @@
                     <span class="c1">// set by the event system for lazy DOM listeners</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">availHandle</span><span class="p">.</span><span class="nx">handle</span><span class="p">)</span> <span class="p">{</span>
                         <span class="nx">availHandle</span><span class="p">.</span><span class="nx">handle</span><span class="p">.</span><span class="nx">detach</span><span class="p">();</span>
-						<span class="k">return</span><span class="p">;</span>
+                        <span class="k">return</span><span class="p">;</span>
                     <span class="p">}</span>
 
                     <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">;</span>
@@ -337,11 +337,11 @@
             <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">));</span>
         <span class="p">},</span>
 
-		<span class="nx">_createWrapper</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">capture</span><span class="p">,</span> <span class="nx">compat</span><span class="p">,</span> <span class="nx">facade</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">_createWrapper</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">capture</span><span class="p">,</span> <span class="nx">compat</span><span class="p">,</span> <span class="nx">facade</span><span class="p">)</span> <span class="p">{</span>
 
             <span class="kd">var</span> <span class="nx">cewrapper</span><span class="p">,</span>
                 <span class="nx">ek</span>  <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span>
-	            <span class="nx">key</span> <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">ek</span> <span class="o">+</span> <span class="nx">type</span><span class="p">;</span>
+                <span class="nx">key</span> <span class="o">=</span> <span class="s1">&#39;event:&#39;</span> <span class="o">+</span> <span class="nx">ek</span> <span class="o">+</span> <span class="nx">type</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">facade</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">key</span> <span class="o">+=</span> <span class="s1">&#39;native&#39;</span><span class="p">;</span>
@@ -379,7 +379,7 @@
                 <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">fn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">Event</span><span class="p">.</span><span class="nx">getEvent</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="p">(</span><span class="nx">compat</span> <span class="o">||</span> <span class="p">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">facade</span><span class="p">))));</span>
                 <span class="p">};</span>
-				<span class="nx">cewrapper</span><span class="p">.</span><span class="nx">capture</span> <span class="o">=</span> <span class="nx">capture</span><span class="p">;</span>
+                <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">capture</span> <span class="o">=</span> <span class="nx">capture</span><span class="p">;</span>
             
                 <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">==</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;load&quot;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="c1">// window load happens once</span>
@@ -394,9 +394,9 @@
                 <span class="nx">add</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">cewrapper</span><span class="p">.</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">capture</span><span class="p">);</span>
             <span class="p">}</span>
 
-			<span class="k">return</span> <span class="nx">cewrapper</span><span class="p">;</span>
-			
-		<span class="p">},</span>
+            <span class="k">return</span> <span class="nx">cewrapper</span><span class="p">;</span>
+            
+        <span class="p">},</span>
 
         <span class="nx">_attach</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
 
@@ -492,7 +492,7 @@
                 <span class="nx">el</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">el</span><span class="p">);</span>
             <span class="p">}</span>
 
- 			<span class="nx">cewrapper</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createWrapper</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">capture</span><span class="p">,</span> <span class="nx">compat</span><span class="p">,</span> <span class="nx">facade</span><span class="p">);</span>
+            <span class="nx">cewrapper</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_createWrapper</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">capture</span><span class="p">,</span> <span class="nx">compat</span><span class="p">,</span> <span class="nx">facade</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">overrides</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">cewrapper</span><span class="p">.</span><span class="nx">overrides</span><span class="p">,</span> <span class="nx">overrides</span><span class="p">);</span>
             <span class="p">}</span>
