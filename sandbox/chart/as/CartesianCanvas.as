@@ -54,7 +54,7 @@ package
 			BorderContainer:BorderContainer,
 			Graph:function(arg:Array):Graph
 			{
-				arg = this.parseCollection(arg);
+				arg = this.parseCollections(arg);
 				return new Graph(arg);
 			}
 		};
