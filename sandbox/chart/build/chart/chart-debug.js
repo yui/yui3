@@ -1013,7 +1013,7 @@ Y.extend(Graph, Y.Container,
 		this.appswf = this.swfowner.appswf;
 		if(this.get("seriesCollection"))
 		{
-			this.appswf.createInstance(this._id, "Graph", [this._seriesCollection]);
+			this.appswf.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection"))]);
 		}
 	},
 

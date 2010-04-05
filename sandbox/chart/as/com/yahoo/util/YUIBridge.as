@@ -237,23 +237,26 @@ package com.yahoo.util
 		public function parseCollections(value:Array):Array
 		{
 			var i:int,
-				len:int,
+				len:int = value.length,
 				key:String,
 				keyvalue:Object,
-				obj:Object;
+				obj:Object,
+				collection:Array = [],
+				hash:Object;
 			for(i = 0; i < len; ++i)
 			{
 				obj = value[i];
 				if(obj is Array)
 				{
-					value[i] = this.parseCollections(obj as Array);
+					collection.push(this.parseCollections(obj as Array));
 				}
 				else if(obj is String)
 				{
-					value[i] = this.parseInstances(obj as String);
+					collection.push(this.parseInstances(obj as String));
 				}
 				else
 				{
+					hash = {};
 					for(key in obj)
 					{
 						if(obj.hasOwnProperty(key))
@@ -261,13 +264,18 @@ package com.yahoo.util
 							keyvalue = obj[key];
 							if(keyvalue is String)
 							{
-								value[i][key] = this.parseInstances(keyvalue as String);
+								hash[key] = this.parseInstances(keyvalue as String);
+							}
+							else
+							{
+								hash[key] = keyvalue;
 							}
 						}
 					}
+					collection.push(hash);
 				}
 			}
-			return value;
+			return collection;
 		}
 
 		/**

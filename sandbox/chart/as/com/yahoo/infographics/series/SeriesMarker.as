@@ -78,6 +78,11 @@ package com.yahoo.infographics.series
 
 		public function drawSkin():void
 		{
+			if(this.width == 0 || this.height == 0 || isNaN(this.width) || isNaN(this.height))
+			{
+				return;
+			}
+			this.graphics.clear();
 			this.drawSkinFunction(this._styles);
 		}
 	}

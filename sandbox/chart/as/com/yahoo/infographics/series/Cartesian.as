@@ -479,6 +479,10 @@ package com.yahoo.infographics.series
 			{
 				this.yKey = series.yKey;
 			}
+			if(series.hasOwnProperty("styles"))
+			{
+				this.setStyles(series.styles);
+			}
 		}
 	
 		public function checkDataFlags():Boolean 
