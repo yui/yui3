@@ -28,10 +28,7 @@ package com.yahoo.infographics.styles
 			hideOverlappingLabels:"hideOverlappingLabels",
 			hideOverlappingLabelTicks:"hideOverlappingLabelTicks",	
 			line:"line",
-			majorUnitProps:"majorUnit",
-			majorUnitCount:"majorUnitCount",
-			majorUnitDistance:"majorUnitDistance",
-			majorUnitDeterminant:"majorUnitDeterminant",
+			majorUnit:"majorUnit",
 			calculateSizeByTickLength:"calculateSizeByTickLength",
 			dataFormat:"dataFormat"
 		};
@@ -276,11 +273,12 @@ package com.yahoo.infographics.styles
 		/**
 		 * Hash of properties used to determine a <code>majorUnit</code>.
 		 * <ul>
-		 * 	<li><code>determninatn</code>: Indicate how the major unit will be determined
+		 * 	<li><code>determinant</code>: Indicate how the major unit will be determined
 		 * 		<ul>
 		 * 			<li><code>distance</code>: the majorUnit will correspond to a specified distance on the axis</li>
 		 * 			<li><code>count</code>: the majorUnit will correspond to a percentage of the axis length derived by a specified count</li>
 		 * 			<li><code>userSpecified</code>: no calculate will occur, the majorUnit is specified by the developer</li>
+		 * 			<li><code>roundingUnit</code>: calculates the majorUnit based on the <code>roundingUnit</code> of the <code>AxisData</code> class. </li>
 		 * 		</ul>
 		 * 	</li>
 		 * 	<li><code>count</code>: Indicates the number of major units on an axis when <code>majorUnitDeterminant</code> is set to <code>count</code>.</li>
