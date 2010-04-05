@@ -29,7 +29,6 @@
 				<arg value="com.yahoo.renderers.layout.BorderLayout"/>
 				<arg value="com.yahoo.infographics.axes.Axis"/>
 				<arg value="com.yahoo.infographics.data.ChartDataProvider"/>
-				<arg value="com.yahoo.infographics.cartesian.LineGraph"/>
 				<arg line="--output '${classpath}/cartesiancanvas.swc'"/>
 			</exec>
 		</target>

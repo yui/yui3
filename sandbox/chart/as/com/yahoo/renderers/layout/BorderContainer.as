@@ -220,13 +220,13 @@ package com.yahoo.renderers.layout
 			this._leftContainer = new Container(this._leftLayout);
 			this._leftContainer.autoRender = false;
 			this.addItem(this._leftContainer);
-
+			
 			this._centerStack = new Container();
 			this._centerStack.layout = this.centerLayout;
 			this._centerStack.autoRender = false;
 			this.addItem(this._centerStack);
 		}
-	
+
 		/**
 		 * @inheritDoc
 		 */
@@ -272,7 +272,7 @@ package com.yahoo.renderers.layout
 		 */
 		override protected function updateRenderStatus():void
 		{
-			if(this.childRenderingComplete())
+			if(this.childRenderingComplete() && this.width > 0 && this.width > 0)
 			{
 				this.rendering = false;
 				var oldAvailableWidth:Number = BorderLayout(this.layout).availableWidth,

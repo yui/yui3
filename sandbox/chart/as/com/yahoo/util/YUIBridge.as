@@ -69,7 +69,7 @@ package com.yahoo.util
 		 */
 		public function applyMethod(instanceId:String, method:String, params:Array = null):*
 		{	
-			if(params) params = this.parseInstances(params);
+			if(params) params = this.parseArgs(params);
 			return (this._instances[instanceId][method] as Function).apply(this._instances[instanceId], params);
 		}
 
@@ -79,28 +79,38 @@ package com.yahoo.util
 		public function createInstance(instanceId:String, className:String, constructorArguments:Array = null) : void 
 		{
 			var cA:Array = constructorArguments ? constructorArguments : [];
-			var classReference:Class = this.getClass(className) as Class;
+			var classReferenceObject:Object = this.getClass(className);
 			var instance:Object;
 			
-			cA = this.parseInstances(cA);
+			cA = this.parseArgs(cA);
 
-			switch (cA.length) 
+			if(classReferenceObject is Class)
 			{
-				default: instance = new classReference(); break;
-				case 1: instance = new classReference(cA[0]); break;
-				case 2: instance = new classReference(cA[0], cA[1]); break;
-				case 3: instance = new classReference(cA[0], cA[1], cA[2]); break;
-				case 4: instance = new classReference(cA[0], cA[1], cA[2], cA[3]); break;
-				case 5: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4]); break;
-				case 6: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5]); break;
-				case 7: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6]); break;
-				case 8: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7]); break;
-				case 9: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8]); break;
-				case 10: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8], cA[9]); break;
-				case 11: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8], cA[9], cA[10]); break;
-				case 12: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8], cA[9], cA[10], cA[11]); break;
-				case 13: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8], cA[9], cA[10], cA[11], cA[12]); break;
+				var classReference:Class = classReferenceObject as Class;
+				switch (cA.length) 
+				{
+					default: instance = new classReference(); break;
+					case 1: instance = new classReference(cA[0]); break;
+					case 2: instance = new classReference(cA[0], cA[1]); break;
+					case 3: instance = new classReference(cA[0], cA[1], cA[2]); break;
+					case 4: instance = new classReference(cA[0], cA[1], cA[2], cA[3]); break;
+					case 5: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4]); break;
+					case 6: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5]); break;
+					case 7: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6]); break;
+					case 8: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7]); break;
+					case 9: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8]); break;
+					case 10: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8], cA[9]); break;
+					case 11: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8], cA[9], cA[10]); break;
+					case 12: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8], cA[9], cA[10], cA[11]); break;
+					case 13: instance = new classReference(cA[0], cA[1], cA[2], cA[3], cA[4], cA[5], cA[6], cA[7], cA[8], cA[9], cA[10], cA[11], cA[12]); break;
+				}
 			}
+			else
+			{
+				var classFunction:Function = classReferenceObject as Function;
+				instance = classFunction.apply(this, cA);
+			}
+			
 			_instances[instanceId] = instance;	
 		}
 
@@ -208,6 +218,88 @@ package com.yahoo.util
 		}
 
 		/**
+		 * Parses string for class instances.
+		 * @param value Reference key from <code>_instances</code> hash.
+		 * @return *
+		 */
+		public function parseInstances(value:String):*
+		{
+			if(value.substr(0, 1) == "$")
+			{
+				return this.getInstance(value.substr(1));
+			}
+			return value;
+		}
+		
+		/**
+		 * Parses array items for class instance references.
+		 */
+		public function parseCollections(value:Array):Array
+		{
+			var i:int,
+				len:int,
+				key:String,
+				keyvalue:Object,
+				obj:Object;
+			for(i = 0; i < len; ++i)
+			{
+				obj = value[i];
+				if(obj is Array)
+				{
+					value[i] = this.parseCollections(obj as Array);
+				}
+				else if(obj is String)
+				{
+					value[i] = this.parseInstances(obj as String);
+				}
+				else
+				{
+					for(key in obj)
+					{
+						if(obj.hasOwnProperty(key))
+						{
+							keyvalue = obj[key];
+							if(keyvalue is String)
+							{
+								value[i][key] = this.parseInstances(keyvalue as String);
+							}
+						}
+					}
+				}
+			}
+			return value;
+		}
+
+		/**
+		 * Parses object literals for instance references.
+		 */
+		public function parseHash(value:Object):Object
+		{
+			var key:String,
+				keyvalue:Object;
+			for(key in value)
+			{
+				if(value.hasOwnProperty(key))
+				{
+					keyvalue = value[key];
+					if(keyvalue is String)
+					{
+						value[key] = this.parseInstances(keyvalue as String);
+					}
+					else if(keyvalue is Array)
+					{
+						value[key] = this.parseCollections(keyvalue as Array);
+					}
+					else
+					{
+						value[key] = this.parseHash(keyvalue);
+					}
+				}
+			}
+			return value;
+		}
+
+		/**
 		 * @private (protected)
 		 */
 		protected function initializeBridge():void
@@ -231,7 +323,7 @@ package com.yahoo.util
 		/**
 		 * @private
 		 */
-		private function parseInstances(args:Array):Array
+		private function parseArgs(args:Array):Array
 		{
 			var first:String,
 				i:int,
@@ -255,14 +347,17 @@ package com.yahoo.util
 			}
 			return args;
 		}
-		
+
 		/**
 		 * @private
 		 */
-		private function getClass(value:String):Class
+		private function getClass(value:String):Object
 		{
-			if(this._classHash.hasOwnProperty(value)) return this._classHash[value] as Class;
-			return getDefinitionByName(value) as Class;
+			if(this._classHash.hasOwnProperty(value)) 
+			{
+				return this._classHash[value];
+			}
+			return getDefinitionByName(value);
 		}
 	}
 }
