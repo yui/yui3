@@ -5,7 +5,8 @@ package
 	import com.yahoo.renderers.events.RendererEvent;
 	import com.yahoo.renderers.layout.*;
 	import com.yahoo.infographics.data.*;
-	import com.yahoo.infographics.cartesian.LineGraph;
+	import com.yahoo.infographics.series.*;
+	import com.yahoo.infographics.cartesian.Graph;
 	import com.yahoo.infographics.axes.*;
 	import com.yahoo.infographics.styles.*;
 	import com.yahoo.util.YUIBridge;
@@ -35,7 +36,11 @@ package
 			CategoryData:CategoryData,
 			TimeData:TimeData,
 			Axis:Axis,
-			LineGraph:LineGraph,
+			LineSeries:function(arg:Object):LineSeries
+			{
+				arg = this.parseHash(arg);
+				return new LineSeries(arg);
+			},
 			Container:Container,
 			BorderLayout:BorderLayout,
 			ILayoutStrategy:ILayoutStrategy,
@@ -46,7 +51,12 @@ package
 			LayerStack:LayerStack,
 			Skin:Skin,
 			ImageSkin:ImageSkin,
-			BorderContainer:BorderContainer
+			BorderContainer:BorderContainer,
+			Graph:function(arg:Array):Graph
+			{
+				arg = this.parseCollections(arg);
+				return new Graph(arg);
+			}
 		};
 
 		/**

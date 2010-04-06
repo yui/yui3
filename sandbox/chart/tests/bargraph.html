@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<head>
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<script type="text/javascript" src="../build/chart/chart.js"></script>
+
+<style>
+/*Supplemental CSS for the YUI distribution*/
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+</style>
+
+</head>
+	
+<body>
+<!-- BEGIN EXAMPLE CODE -->
+<div>
+		<h1>Customized Simple Chart</h1>
+			<div id="testdiv" style="height:400px;width:850px">
+				This content will be replaced by an instance of a Flash player.
+			</div>
+			<script>
+
+				YUI({filter:"debug"}).use('json', 'node', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
+					{
+
+					// Create application level styles
+					var chartstyles = {
+						chart:{
+							padding:{left:20, top:20, bottom:10, right:20}
+						},
+						background:{
+							fillColor:0x000000,
+							borderColor:0xff0000,
+							borderWidth:2
+						}
+					};
+
+					// Create bottom axis styles
+					var bottomaxisstyles = {
+						label:{
+							fontName:"Georgia",
+							fontSize:11,
+							color:0xBDD7EB,
+							rotation:-45,
+							margin:{top:5}
+						},
+						dataFormat:{
+							prefix:"$",
+							decimalPlaces:0
+						},
+						majorTicks:{
+							color:0xBDD7EB
+						},
+						line:{
+							color:0xBDD7EB
+						},
+						majorUnit:
+						{
+							count:30
+						}
+					};	
+
+					// Create left axis styles
+					var leftaxisstyles = {
+						label:{
+							fontName:"Georgia",
+							fontSize:11,
+							color:0x5577AF,
+							margin:{right:5},
+						},
+						majorTicks:{
+							color:0xBDD7EB
+						},
+						line:{
+							color:0xBDD7EB
+						},
+						majorUnit:{
+							count:15
+						},
+						padding:{top:50, bottom:50}
+					};
+
+					// Add expense graph styles
+					var expensegraphstyles = {
+						color:0x5577AF,
+						weight:"2",
+						marker:{fillColor:0x5577AF, borderColor:0x5577AF, width:10},
+						padding:{bottom:50, top:50}
+					};
+
+					// Add revenue graph styles
+					var revenuegraphstyles = {
+						color:0xFF0000,
+						weight:"2",
+						marker:{width:10},
+						padding:{top:50, bottom:50}
+					};
+
+					var mydata = {
+						id:"myData", 
+						data: [
+							{day:"Monday", expenses:3700, revenue:2200}, {day:"Tuesday", expenses:9100, revenue:100}, 
+							{day:"Wednesday", expenses:1100, revenue:1500}, {day:"Thursday", expenses:1900, revenue:2800}, {day:"Friday", expenses:700, revenue:2650}
+						]
+					};					
+
+						var mychart = new Y.Chart({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
+						mychart.set("dataProvider", mydata.data);
+						var myleftaxis = new Y.Axis({parent:mychart, axisType:"Category", styles:leftaxisstyles});
+						var mybottomaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:bottomaxisstyles});
+						mybottomaxis.addKey("expenses");
+						mybottomaxis.addKey("revenue");
+						myleftaxis.addKey("day");
+						var mygraph = new Y.Graph({parent:mychart, seriesCollection:[
+							{
+								type:"bar",
+								xAxisData:mybottomaxis,
+								yAxisData:myleftaxis,
+								xKey:"expenses",
+								yKey:"day",
+								styles:expensegraphstyles
+							},
+							{
+								type:"bar",
+								xAxisData:mybottomaxis,
+								yAxisData:myleftaxis,
+								xKey:"revenue",
+								yKey:"day",
+								styles:revenuegraphstyles
+							}
+						]});
+
+						
+						mychart.addBottomItem(mybottomaxis);
+						mychart.addLeftItem(myleftaxis);
+						mychart.addCenterItem(mygraph);
+
+					});
+</script>
+<!-- END EXAMPLE CODE -->
+</div>
+</body>
+</html>
