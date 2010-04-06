@@ -33,3 +33,13 @@ Y.Node.ATTRS.type = {
 
     _bypassProxy: true // don't update DOM when using with Attribute
 };
+
+if (Y.config.doc.createElement('form').elements.nodeType) {
+    // IE: elements collection is also FORM node which trips up scrubVal.
+    Y.Node.ATTRS.elements = {
+            getter: function() {
+                return this.all('input, textarea, button, select');
+            }
+    };
+}
+

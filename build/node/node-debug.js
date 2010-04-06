@@ -354,15 +354,6 @@ Y_Node.ATTRS = {
         }
     },
 
-     // IE: elements collection is also FORM node which trips up scrubVal.
-     // preconverting to NodeList
-     // TODO: break out for IE only
-    'elements': {
-        getter: function() {
-            return Y.all(this._node.elements);
-        }
-    },
-
     /**
      * Returns a NodeList instance of all HTMLElement children.
      * @readOnly
@@ -1850,6 +1841,16 @@ Y.Node.ATTRS.type = {
 
     _bypassProxy: true // don't update DOM when using with Attribute
 };
+
+if (Y.config.doc.createElement('form').elements.nodeType) {
+    // IE: elements collection is also FORM node which trips up scrubVal.
+    Y.Node.ATTRS.elements = {
+            getter: function() {
+                return this.all('input, textarea, button, select');
+            }
+    };
+}
+
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});
