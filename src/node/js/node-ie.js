@@ -1,6 +1,11 @@
 
 if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
+        if (attr === 'value') {
+            if (this.get('value') !== "") { // IE < 8 fails to populate specified when set in HTML
+                return true;
+            }
+        }
         return !!(this._node.attributes[attr] &&
                 this._node.attributes[attr].specified);
     };
