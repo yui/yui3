@@ -82,35 +82,17 @@ YUI.add('editor-base', function(Y) {
             this.fire('nodeChange', { changedNode: e.frameTarget, changedType: 'mousedown', changedEvent: e  });
         },
         /**
-        * The Y.later handle to determine if there is an active timer running.
-        * @property _keyUpTimer
-        * @private
-        */
-        _keyupTimer: null,
-        /**
-        * Fires nodeChange event from _onKeyUpTimer on a timer for performance
-        * @method _onKeyUpTimer
-        * @param {Boolean} fromTimer If it's from the timer, kill the _keyUpTimer property
-        * @private
-        */
-        _onKeyUpTimer: function(e) {
-            var inst = this.frame.getInstance(),
-                sel = new inst.Selection();
-
-            if (sel.anchorNode) {
-                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
-            }
-            this._keyUpTimer = null;
-        },
-        /**
-        * Fires nodeChange event via _onKeyUpTimer on a timer for performance
+        * Fires nodeChange event for keyup on specific keys
         * @method _onFrameKeyUp
         * @private
         */
         _onFrameKeyUp: function(e) {
             if (EditorBase.NC_KEYS[e.keyCode]) {
-                if (!this._keyUpTimer) {
-                    this._keyUpTimer = Y.later(250, this, Y.bind(this._onKeyUpTimer, this, e));
+                var inst = this.frame.getInstance(),
+                    sel = new inst.Selection();
+
+                if (sel.anchorNode) {
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
                 }
             }
         },
