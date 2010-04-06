@@ -835,8 +835,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
 
             // test fragment insertion
 
-            html = '<a>bar</a><h2>foo</h2>';
-            content = node.get('innerHTML').toLowerCase();
+            html = '<a>bar</a> <h2>foo</h2>';
+            content = Y.Lang.trim(node.get('innerHTML').toLowerCase());
 
             node.insert(html);
             Assert.areEqual(Y.Lang.trim(node._node.innerHTML.toLowerCase()),

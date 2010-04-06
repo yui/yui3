@@ -691,7 +691,7 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
         if (!o) {
             return o;
         }
-        var uid = (typeof o === 'string') ? o : o._yuid;
+        var uid = (typeof o === 'string') ? o : o.uniqueID || o._yuid;
         if (!uid) {
             uid = this.guid();
             if (!readOnly) {

@@ -29,13 +29,13 @@ var DOT = '.',
     Y_DOM = Y.DOM,
 
     Y_Node = function(node) {
-        var uid = node[UID];
+        var uid = node.uniqueID || node[UID];
 
         if (uid && Y_Node._instances[uid] && Y_Node._instances[uid]._node !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
-        uid = Y.stamp(node);
+        uid = uid || Y.stamp(node);
         if (!uid) { // stamp failed; likely IE non-HTMLElement
             uid = Y.guid();
         }
@@ -286,7 +286,7 @@ Y_Node.one = function(node) {
             return node; // NOTE: return
         }
 
-        uid = node._yuid;
+        uid = node.uniqueID || node._yuid;
         instance = Y_Node._instances[uid]; // reuse exising instances
         cachedNode = instance ? instance._node : null;
         if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
