@@ -66,7 +66,7 @@
     <span class="nx">VISIBLE</span> <span class="o">=</span> <span class="s1">&#39;visible&#39;</span><span class="p">,</span>
     <span class="nx">GET_COMPUTED_STYLE</span> <span class="o">=</span> <span class="s1">&#39;getComputedStyle&#39;</span><span class="p">,</span>
     <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">,</span>
-    <span class="nx">documentElement</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
+    <span class="nx">documentElement</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span>
 
     <span class="c1">// TODO: unit-less lineHeight (e.g. 1.22)</span>
     <span class="nx">re_unit</span> <span class="o">=</span> <span class="sr">/^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i</span><span class="p">,</span>
@@ -266,11 +266,11 @@
         <span class="p">};</span>
     <span class="p">}</span>
 <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;document.documentElement.filters error (activeX disabled)&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;documentElement.filters error (activeX disabled)&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="k">try</span> <span class="p">{</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">).</span><span class="nx">style</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="s1">&#39;-1px&#39;</span><span class="p">;</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">).</span><span class="nx">style</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="s1">&#39;-1px&#39;</span><span class="p">;</span>
 <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// IE throws error on invalid style set; trap common cases</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">CUSTOM_STYLES</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="nx">style</span><span class="p">)</span> <span class="p">{</span>

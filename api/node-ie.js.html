@@ -47,7 +47,7 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">hasAttribute</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// IE &lt; 8</span>
+                        <div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">hasAttribute</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// IE &lt; 8</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">hasAttribute</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="o">!!</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">attr</span><span class="p">]</span> <span class="o">&amp;&amp;</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">attr</span><span class="p">].</span><span class="nx">specified</span><span class="p">);</span>
@@ -81,6 +81,15 @@
 
     <span class="nx">_bypassProxy</span><span class="o">:</span> <span class="kc">true</span> <span class="c1">// don&#39;t update DOM when using with Attribute</span>
 <span class="p">};</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">).</span><span class="nx">elements</span><span class="p">.</span><span class="nx">nodeType</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// IE: elements collection is also FORM node which trips up scrubVal.</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">.</span><span class="nx">elements</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="s1">&#39;input, textarea, button, select&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">}</span>
 </pre></div>
 
                     </div>

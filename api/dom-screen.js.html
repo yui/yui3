@@ -156,7 +156,7 @@
 <span class="cm">     TODO: test inDocument/display?</span>
 <span class="cm">     */</span>
     <span class="nx">getXY</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">][</span><span class="nx">GET_BOUNDING_CLIENT_RECT</span><span class="p">])</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="p">][</span><span class="nx">GET_BOUNDING_CLIENT_RECT</span><span class="p">])</span> <span class="p">{</span>
             <span class="k">return</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
                     <span class="nx">scrollLeft</span><span class="p">,</span>
