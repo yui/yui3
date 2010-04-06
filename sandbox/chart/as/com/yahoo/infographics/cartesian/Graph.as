@@ -120,25 +120,7 @@ package com.yahoo.infographics.cartesian
 			}
 			return false;
 		}
-/*
-		public function getXOffset(type:String, order:int):Number
-		{
-			var seriesCollection:Vector.<ISeries> = this._seriesTypes[type] as Vector.<ISeries>;
-
-			var	len:int = seriesCollection.length,
-				i:int,
-				renderer:Renderer,
-				left:Number,
-				totalWidth:Number;
-			for(i = 0; i < len; ++i)
-			{
-				renderer = Renderer(seriesCollection[i]);
-				totalWidth += renderer.getStyle("marker").styles.width as Number;
-				if(i < order) left = totalWidth;
-			}
-			return left - (totalWidth * .5);
-		}
-*/
+	
 	//--------------------------------------
 	//  Protected Methods
 	//--------------------------------------		

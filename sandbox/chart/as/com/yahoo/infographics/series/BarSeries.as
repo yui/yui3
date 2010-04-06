@@ -55,10 +55,10 @@ package com.yahoo.infographics.series
 				ratio:Number,
 				markerHeight:Number = this.getStyle("marker").props.width,
 				renderer:Renderer,
-				dataWidth:Number = this.width - (this._leftPadding + this._rightPadding),
+				leftPadding:Number = this._leftPadding,
+				dataWidth:Number = this.width - (leftPadding + this._rightPadding),
 				xmin:Number = this._xMin,
 				xScaleFactor:Number = dataWidth / (this._xMax - xmin),
-				leftPadding:Number = this._leftPadding,
 				origin:Number = int(0.5 + (((0 - xmin) * xScaleFactor) + leftPadding));
 			for(i = 0; i < seriesLen; ++i)
 			{
@@ -86,10 +86,10 @@ package com.yahoo.infographics.series
 				marker = this.getMarker();
 				marker.x = origin;
 				marker.y = Number(ycoords[i]) + offset;
-				marker.width = Number(xcoords[i]) - origin;
-				marker.height = markerHeight;
+				this._markerFactory.properties.width = Number(xcoords[i]) - origin;
+				this._markerFactory.properties.height = markerHeight;
+				this._markerFactory.restoreInstance(marker);
 				this._markers.push(marker);
-
 			}
 			this.clearMarkerCache();
 		}
