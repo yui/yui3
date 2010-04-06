@@ -22,25 +22,41 @@ p, h3 {
 
 /* proof of concept for equal column heights (not implemented in IE < 8) */
 .equal-height {
-    Xdisplay:table;
+    border-collapse:collapse;
+    display:table;
     width:100%;
 
-    height:70px;
+    /* IE < 8:fix height */
+    /* the simplest approach is to set the height statically *
+     * see below for JS implementation of dynamic sizing */
+    _height:70px; /* can be set dynamically if needed, but will be slower */
+    *min-height:70px;
+    *width:auto;
 }
 
 
-.equal-height .yui3-u-4 {
-    Xbackground: red;
-    Xborder: 2px solid green;
-    Xdisplay:table-cell;
-    height:100%;
+.equal-height {
+    text-align:center;
     overflow:visible;
+    white-space:nowrap;
+
+}
+
+/* move styles from unit content to units themselves */
+.equal-height .yui3-u-4 {
+    background: red;
+    border: 4px solid green;
+    display:table-cell;
+    height:99%;
+
+    overflow:visible;
+    *margin-right:-8px; /* IE: handles border-collapse:collapse (set to border-width) */
 }
 
 .equal-height .mod {
-    Xbackground: none;
-    Xborder: none;
-    height:100%;
+    background: none;
+    border: none;
+    white-space:normal;
 }
 
 /* 
@@ -51,36 +67,6 @@ p, h3 {
 </head>
 <body class="yui3-layout">
     <h1>Using YUI Layout Blocks</h1>
-    <h2>25/25/25/25 equal height</h2>
-    <div class="yui3-g equal-height">
-        <div class="yui3-u-4">
-            <div class="mod">
-                <h3>1/4 equal height</h3>
-            </div>
-        </div>
-        <div class="yui3-u-4">
-            <div class="mod">
-                <h3>1/4 equal height</h3>
-                <p>This unit will fill a quarter of its container.</p>
-            </div>
-        </div>
-        <div class="yui3-u-4">
-            <div class="mod">
-                <h3>1/4 equal height</h3>
-                <p>This unit will fill a quarter of its container.</p>
-                <p>This unit will fill a quarter of its container.</p>
-            </div>
-        </div>
-        <div class="yui3-u-4">
-            <div class="mod">
-                <h3>1/4 equal height</h3>
-                <p>This unit will fill a quarter of its container.</p>
-                <p>This unit will fill a quarter of its container.</p>
-                <p>This unit will fill a quarter of its container.</p>
-            </div>
-        </div>
-    </div>
-
     <h2>50/50</h2>
     <div class="yui3-g">
         <div class="yui3-u-2">
@@ -155,6 +141,8 @@ p, h3 {
             <div class="mod">
                 <h3>This is a 2/3 unit (yui3-u-3-2)</h3>
                 <p>This unit will fill a two-thirds of its container.</p>
+                <p>This unit will fill a two-thirds of its container.</p>
+                <p>This unit will fill a two-thirds of its container.</p>
             </div>
         </div>
         <div class="yui3-u-3">
@@ -167,13 +155,13 @@ p, h3 {
 
     <h2>66/ one sixth centered</h2>
     <div class="yui3-g" style="text-align:center">
-        <div class="yui3-u-3-2">
+        <div class="yui3-u-3-2" style="vertical-align:middle">
             <div class="mod">
                 <h3>This is a 2/3 unit (yui3-u-3-2)</h3>
                 <p>This unit will fill a two-thirds of its container.</p>
             </div>
         </div>
-        <div class="yui3-u-6">
+        <div class="yui3-u-6" style="vertical-align:middle">
             <div class="mod">
                 <h3>This is a 1/6 unit (yui3-u-6)</h3>
                 <p>This unit will fill a a sixth of its container.</p>
@@ -212,6 +200,35 @@ p, h3 {
             </div>
         </div>
     </div>
+
+    <h2>25/25/25/25 equal height</h2>
+    <div class="yui3-g equal-height">
+        <div class="yui3-u-4">
+            <div class="mod">
+                <h3>1/4 equal height</h3>
+            </div>
+        </div>
+        <div class="yui3-u-4">
+            <div class="mod">
+                <h3>1/4 equal height</h3>
+                <p>This unit will fill a quarter of its container.</p>
+            </div>
+        </div>
+        <div class="yui3-u-4">
+            <div class="mod">
+                <h3>1/4 equal height</h3>
+                <p>This unit will fill a quarter of its container.</p>
+                <p>This unit will fill a quarter of its container.</p>
+            </div>
+        </div>
+        <div class="yui3-u-4">
+            <div class="mod">
+                <h3>1/4 equal height</h3>
+                <p>This unit will fill a quarter of its container. This unit will fill a quarter of its container. This unit will fill a quarter of its container.</p>
+            </div>
+        </div>
+    </div>
+
     <h2>Caveats</h2>
     <ul>
         <li>the only children of yui3-g should be a yui3-u(-*)</li>
@@ -220,23 +237,17 @@ p, h3 {
     </ul>
 
     <script>
-    /*
-    YUI().use('node', function(Y) {
-        if (Y.UA.ie) { 
+    YUI({filter:'raw'}).use('node', function(Y) {
+        // enable equal-height for IE < 8
+        /*
+        if (Y.UA.ie && Y.UA.ie < 8) { 
             Y.all('div.equal-height').each(function(row) {
-                var height = 0;
-                row.all('.mod').each(function(unit) {
-                    var unitHeight = unit.get('offsetHeight');
-                    height = (unitHeight > height) ? unitHeight : height;
-                    unit.setStyle('position', 'absolute');
-                });
-
-                row.set('offsetHeight', height);
+                row.setStyle('height', row.getStyle('height')); // set style.height to fix height
             });
         }
+        */
 
     });
-    */
     </script>
 </body>
 
