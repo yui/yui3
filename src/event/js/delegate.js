@@ -114,7 +114,7 @@ var Event = Y.Event,
 
             args = [type, 
             function (e) {
-                delegateHandler(key, (e || window.event), element);
+                delegateHandler(key, (e || Y.config.win.event), element);
             }, 
             element];
 
