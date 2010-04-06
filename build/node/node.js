@@ -977,7 +977,7 @@ Y.mix(Y_Node.prototype, {
     * @param {Node} otherNode The node to swap with
      * @chainable
     */
-    swap: document.documentElement.swapNode ? 
+    swap: Y.config.doc.documentElement.swapNode ? 
         function(otherNode) {
             this._node.swapNode(Y_Node.getDOMNode(otherNode));
         } :
@@ -1806,7 +1806,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'remo
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
-if (!document.documentElement.hasAttribute) { // IE < 8
+if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
         return !!(this._node.attributes[attr] &&
                 this._node.attributes[attr].specified);

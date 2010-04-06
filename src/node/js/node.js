@@ -983,7 +983,7 @@ Y.mix(Y_Node.prototype, {
     * @param {Node} otherNode The node to swap with
      * @chainable
     */
-    swap: document.documentElement.swapNode ? 
+    swap: Y.config.doc.documentElement.swapNode ? 
         function(otherNode) {
             this._node.swapNode(Y_Node.getDOMNode(otherNode));
         } :

@@ -1,5 +1,5 @@
 
-if (!document.documentElement.hasAttribute) { // IE < 8
+if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
         return !!(this._node.attributes[attr] &&
                 this._node.attributes[attr].specified);
