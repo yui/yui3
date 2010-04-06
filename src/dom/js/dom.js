@@ -26,7 +26,7 @@ var NODE_TYPE = 'nodeType',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     EMPTY_STRING = '',
 
-    documentElement = document.documentElement,
+    documentElement = Y.config.doc.documentElement,
 
     re_tag = /<([a-z]+)/i;
 

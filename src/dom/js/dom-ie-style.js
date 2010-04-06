@@ -17,7 +17,7 @@ var HAS_LAYOUT = 'hasLayout',
     VISIBLE = 'visible',
     GET_COMPUTED_STYLE = 'getComputedStyle',
     UNDEFINED = undefined,
-    documentElement = document.documentElement,
+    documentElement = Y.config.doc.documentElement,
 
     // TODO: unit-less lineHeight (e.g. 1.22)
     re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i,
@@ -217,11 +217,11 @@ try {
         };
     }
 } catch(e) {
-    Y.log('document.documentElement.filters error (activeX disabled)', 'warn', 'dom-style');
+    Y.log('documentElement.filters error (activeX disabled)', 'warn', 'dom-style');
 }
 
 try {
-    document.createElement('div').style.height = '-1px';
+    Y.config.doc.createElement('div').style.height = '-1px';
 } catch(e) { // IE throws error on invalid style set; trap common cases
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {

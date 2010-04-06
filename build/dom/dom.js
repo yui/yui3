@@ -28,7 +28,7 @@ var NODE_TYPE = 'nodeType',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     EMPTY_STRING = '',
 
-    documentElement = document.documentElement,
+    documentElement = Y.config.doc.documentElement,
 
     re_tag = /<([a-z]+)/i;
 
@@ -1060,7 +1060,7 @@ var HAS_LAYOUT = 'hasLayout',
     VISIBLE = 'visible',
     GET_COMPUTED_STYLE = 'getComputedStyle',
     UNDEFINED = undefined,
-    documentElement = document.documentElement,
+    documentElement = Y.config.doc.documentElement,
 
     // TODO: unit-less lineHeight (e.g. 1.22)
     re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i,
@@ -1262,7 +1262,7 @@ try {
 }
 
 try {
-    document.createElement('div').style.height = '-1px';
+    Y.config.doc.createElement('div').style.height = '-1px';
 } catch(e) { // IE throws error on invalid style set; trap common cases
     Y.DOM.CUSTOM_STYLES.height = {
         set: function(node, val, style) {
@@ -1464,7 +1464,7 @@ Y.mix(Y_DOM, {
      TODO: test inDocument/display?
      */
     getXY: function() {
-        if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
+        if (Y.config.doc[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
             return function(node) {
                 var xy = null,
                     scrollLeft,
@@ -2445,7 +2445,7 @@ var PARENT_NODE = 'parentNode',
                     // add prefiltering for ID and CLASS
                     if ((match[1] === 'id' && operator === '=') ||
                             (match[1] === 'className' &&
-                            document.documentElement.getElementsByClassName &&
+                            Y.config.doc.documentElement.getElementsByClassName &&
                             (operator === '~=' || operator === '='))) {
                         token.prefilter = match[1];
                         token[match[1]] = match[3];
@@ -2627,7 +2627,7 @@ Y.mix(Y.Selector, SelectorCSS2, true);
 Y.Selector.getters.src = Y.Selector.getters.rel = Y.Selector.getters.href;
 
 // IE wants class with native queries
-if (Y.Selector.useNative && document.querySelector) {
+if (Y.Selector.useNative && Y.config.doc.querySelector) {
     Y.Selector.shorthand['\\.(-?[_a-z]+[-\\w]*)'] = '[class~=$1]';
 }
 
