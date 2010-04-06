@@ -1966,7 +1966,7 @@ var Selector = {
 
     useNative: true,
 
-    _compare: ('sourceIndex' in document.documentElement) ?
+    _compare: ('sourceIndex' in Y.config.doc.documentElement) ?
         function(nodeA, nodeB) {
             var a = nodeA.sourceIndex,
                 b = nodeB.sourceIndex;
@@ -1979,7 +1979,7 @@ var Selector = {
 
             return -1;
 
-        } : (document.documentElement[COMPARE_DOCUMENT_POSITION] ?
+        } : (Y.config.doc.documentElement[COMPARE_DOCUMENT_POSITION] ?
         function(nodeA, nodeB) {
             if (nodeA[COMPARE_DOCUMENT_POSITION](nodeB) & 4) {
                 return -1;
@@ -2044,7 +2044,7 @@ var Selector = {
     query: function(selector, root, firstOnly, skipNative) {
         root = root || Y.config.doc;
         var ret = [],
-            useNative = (Y.Selector.useNative && document.querySelector && !skipNative),
+            useNative = (Y.Selector.useNative && Y.config.doc.querySelector && !skipNative),
             queries = [[selector, root]],
             query,
             result,
