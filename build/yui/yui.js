@@ -344,7 +344,7 @@ YUI.prototype = {
                 req        = details.requires; 
                 use        = details.use;
 
-                if (req) {
+                if (req && req.length) {
                     this._attach(this.Array(req));
                 }
 
@@ -354,7 +354,7 @@ YUI.prototype = {
                     mod.fn(this, name);
                 }
 
-                if (use) {
+                if (use && use.length) {
                     this._attach(this.Array(use));
                 }
             }

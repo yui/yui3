@@ -7,7 +7,7 @@
             margin: 1em;
         }
         #test1 {
-            height: 333px;
+            height: 355px;
             border: 3px solid red;
             width: 740px;
             margin: 1em;
@@ -232,9 +232,18 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         editor.execCommand('inserthtml', '<span>&nbsp;<img src="' + img.get('src') + '">&nbsp;</span>');
     }, 'img');
     
+    var buttons = Y.all('#test1 button');
+    var f_options = Y.all('#fontname option');
+    var s_options = Y.all('#fontsize option');
+    var buttonTimer = null;
+
     var updateButtons = function(tar) {
+        if (buttonTimer) {
+            return;
+        }
         if (tar) {
-            var buttons = Y.all('#test1 button').removeClass('selected');
+            buttonTimer = true;
+            buttons.removeClass('selected');
             buttons.each(function(v) {
                 var val = v.get('value');
                 if (tar.test(val + ', ' + val + ' *')) {
@@ -249,7 +258,6 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             }
             fname = fname.toLowerCase();
 
-            var f_options = Y.all('#fontname option');
             f_options.item(0).set('selected', true);
             f_options.each(function(v) {
                 var val = v.get('value').toLowerCase();
@@ -257,7 +265,6 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                     v.set('selected', true);
                 }
             });
-            var s_options = Y.all('#fontsize option');
             s_options.item(0).set('selected', true);
             size = size.replace('px', '');
             s_options.each(function(v) {
@@ -267,6 +274,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                     v.set('selected', true);
                 }
             });
+            buttonTimer = null;
         }
     };
 
@@ -283,18 +291,22 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         content: Y.one('#stub').get('innerHTML')
     });
     editor.after('nodeChange', function(e) {
-        updateButtons(e.changedNode);
+        //This is the lag in IE 6 & 7 !!!
+        //Y.later(100, this, updateButtons, e.changedNode);
+        //updateButtons(e.changedNode);
+        
         if (e.changedType === 'keyup') {
             if (e.changedNode) {
                 var txt = e.changedNode.get('text');
                 Y.each(smilies, function(v, k) {
                     //Hackey, doesn't work on new line.
                     if (txt.indexOf(' ' + v) !== -1) {
-                        e.selection.replace(v, '<span>&nbsp;<img src="smilies/' + k + '.gif">&nbsp;</span>', e.selection.anchorTextNode);
+                        e.selection.replace(v, '<span>&nbsp;<img src="smilies/' + k + '.gif">&nbsp;</span>');
                     }
                 });
             }
         }
+        
     });
     editor.plug(Y.Plugin.EditorLists);
     editor.plug(Y.Plugin.EditorTab);

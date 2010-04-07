@@ -354,15 +354,6 @@ Y_Node.ATTRS = {
         }
     },
 
-     // IE: elements collection is also FORM node which trips up scrubVal.
-     // preconverting to NodeList
-     // TODO: break out for IE only
-    'elements': {
-        getter: function() {
-            return Y.all(this._node.elements);
-        }
-    },
-
     /**
      * Returns a NodeList instance of all HTMLElement children.
      * @readOnly
@@ -985,7 +976,7 @@ Y.mix(Y_Node.prototype, {
     * @param {Node} otherNode The node to swap with
      * @chainable
     */
-    swap: document.documentElement.swapNode ? 
+    swap: Y.config.doc.documentElement.swapNode ? 
         function(otherNode) {
             this._node.swapNode(Y_Node.getDOMNode(otherNode));
         } :
@@ -1816,8 +1807,13 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'remo
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
-if (!document.documentElement.hasAttribute) { // IE < 8
+if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
+        if (attr === 'value') {
+            if (this.get('value') !== "") { // IE < 8 fails to populate specified when set in HTML
+                return true;
+            }
+        }
         return !!(this._node.attributes[attr] &&
                 this._node.attributes[attr].specified);
     };
@@ -1850,6 +1846,16 @@ Y.Node.ATTRS.type = {
 
     _bypassProxy: true // don't update DOM when using with Attribute
 };
+
+if (Y.config.doc.createElement('form').elements.nodeType) {
+    // IE: elements collection is also FORM node which trips up scrubVal.
+    Y.Node.ATTRS.elements = {
+            getter: function() {
+                return this.all('input, textarea, button, select');
+            }
+    };
+}
+
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});

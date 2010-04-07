@@ -105,7 +105,7 @@ Y.mix(Y_DOM, {
      TODO: test inDocument/display?
      */
     getXY: function() {
-        if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
+        if (Y.config.doc[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
             return function(node) {
                 var xy = null,
                     scrollLeft,

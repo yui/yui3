@@ -52,7 +52,7 @@
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
-		AS_CLASS:  "LineGraph",
+		AS_CLASS:  "LineSeries",
 
 		GUID: "yuilinechart",
 
@@ -68,7 +68,16 @@
 		{
 			this.swfowner = swfowner;
 			this.appswf = this.swfowner.appswf;
-			this.appswf.createInstance(this._id, "LineGraph", ["$" + this.get("xaxis")._id + "data", "$" + this.get("yaxis")._id + "data", this.get("xkey"), this.get("ykey")]);
+			this.appswf.createInstance(this._id, 
+				"LineSeries", 
+				[
+					{
+						xAxisData:"$" + this.get("xaxis")._id + "data", 
+						yAxisData:"$" + this.get("yaxis")._id + "data", 
+						xKey:this.get("xkey"), 
+						yKey:this.get("ykey")
+					}
+				]);
 			this._updateStyles();
 		}
 

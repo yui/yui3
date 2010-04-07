@@ -14,8 +14,8 @@ var stateChangeListener,
     GLOBAL_ENV   = YUI.Env, 
     config       = YUI.config, 
     doc          = config.doc, 
-    docElement   = doc.documentElement, 
-    doScrollCap  = docElement.doScroll,
+    docElement   = doc && doc.documentElement, 
+    doScrollCap  = docElement && docElement.doScroll,
     add          = YUI.Env.add,
     remove       = YUI.Env.remove,
     targetEvent  = (doScrollCap) ? 'onreadystatechange' : 'DOMContentLoaded',
@@ -454,18 +454,20 @@ Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
 var _eventenv = Y.Env.evt,
+config = Y.config,
+win = config.win,
 add = YUI.Env.add,
 remove = YUI.Env.remove,
 
 onLoad = function() {
     YUI.Env.windowLoaded = true;
     Y.Event._load();
-    remove(window, "load", onLoad);
+    remove(win, "load", onLoad);
 },
 
 onUnload = function() {
     Y.Event._unload();
-    remove(window, "unload", onUnload);
+    remove(win, "unload", onUnload);
 },
 
 EVENT_READY = 'domready',
@@ -768,7 +770,7 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
                 };
                 cewrapper.capture = capture;
             
-                if (el == Y.config.win && type == "load") {
+                if (el == win && type == "load") {
                     // window load happens once
                     cewrapper.fireOnce = true;
                     _windowLoadKey = key;
@@ -785,17 +787,17 @@ Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
             
         },
 
-        _attach: function(args, config) {
+        _attach: function(args, conf) {
 
             var compat, 
                 handles, oEl, cewrapper, context, 
                 fireNow = false, ret,
                 type = args[0],
                 fn = args[1],
-                el = args[2] || Y.config.win,
-                facade = config && config.facade,
-                capture = config && config.capture,
-                overrides = config && config.overrides; 
+                el = args[2] || win,
+                facade = conf && conf.facade,
+                capture = conf && conf.capture,
+                overrides = conf && conf.overrides; 
 
             if (args[args.length-1] === COMPAT_ARG) {
                 compat = true;
@@ -815,7 +817,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 
                 Y.each(el, function(v, k) {
                     args[2] = v;
-                    handles.push(Event._attach(args, config));
+                    handles.push(Event._attach(args, conf));
                 });
 
                 // return (handles.length === 1) ? handles[0] : handles;
@@ -845,7 +847,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                             break;
                         default:
                             args[2] = oEl;
-                            return Event._attach(args, config);
+                            return Event._attach(args, conf);
                     }
                 }
 
@@ -860,7 +862,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     ret = this.onAvailable(el, function() {
                         // Y.log('lazy attach: ' + args);
                         
-                        ret.handle = Event._attach(args, config);
+                        ret.handle = Event._attach(args, conf);
 
                     }, Event, true, false, compat);
 
@@ -884,7 +886,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 Y.mix(cewrapper.overrides, overrides);
             }
 
-            if (el == Y.config.win && type == "load") {
+            if (el == win && type == "load") {
 
                 // if the load is complete, fire immediately.
                 // all subscribers, including the current one
@@ -1007,7 +1009,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
          * @static
          */
         getEvent: function(e, el, noFacade) {
-            var ev = e || window.event;
+            var ev = e || win.event;
 
             return (noFacade) ? ev : 
                 new Y.DOMEventFacade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
@@ -1316,10 +1318,10 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
 Y.Event = Event;
 
-if (Y.config.injected || YUI.Env.windowLoaded) {
+if (config.injected || YUI.Env.windowLoaded) {
     onLoad();
 } else {
-    add(window, "load", onLoad);
+    add(win, "load", onLoad);
 }
 
 // Process onAvailable/onContentReady items when when the DOM is ready in IE

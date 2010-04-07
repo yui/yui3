@@ -70,6 +70,10 @@
 					
 					var foo = false, t, ct, boundEl;
 					
+                    // the detach prefix broke when delegate from converted
+                    // from a custom event to a function (the function should
+                    // simply delegated to the custom event)
+					// Y.delegate('foo|click', function(e) {
 					Y.delegate('click', function(e) {
 						foo = true;
 						t = e.target;

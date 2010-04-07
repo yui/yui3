@@ -17,22 +17,54 @@ ul, li {
 <body>
 <h1>Tabs</h1>
 
-<div id="demo">
+<div id="demo" class="yui3-skin-sam">
 </div>
 
 <div id="demo2">
     <ul>
-        <li><a>foo</a></li>
-        <li><a>bar</a></li>
-        <li><a>baz</a></li>
+        <li><a href="#foo">foo</a></li>
+        <li><a href="#bar">bar</a></li>
+        <li><a href="#baz">baz</a></li>
     </ul>
 
     <div>
-        <div>foo content</div>
-        <div>bar content</div>
-        <div>baz content</div>
+        <div id="foo">foo content</div>
+        <div id="bar">bar content</div>
+        <div id="baz">baz content</div>
     </div>
 </div>
+<div id="demo3">
+  <div id="yui_3_1_0_1_1270489731578892" class="yui3-widget yui3-tabview">
+    <div class="yui3-tabview-content" id="yui_3_1_0_1_1270489731578894">
+      <ul class="yui3-tabview-list">
+
+        <li id="yui_3_1_0_1_1270489731578917" class="yui3-tab yui3-widget" role="presentation">
+          <a id="yui_3_1_0_1_1270489731578919" class="yui3-tab-label yui3-tab-content" role="tab">foo</a>
+        </li>
+        <li id="yui_3_1_0_1_1270489731578939" class="yui3-tab yui3-widget" role="presentation">
+          <a id="yui_3_1_0_1_1270489731578941" class="yui3-tab-label yui3-tab-content" role="tab">bar</a>
+        </li>
+        <li id="yui_3_1_0_1_1270489731578961" class="yui3-tab yui3-widget" role="presentation">
+          <a id="yui_3_1_0_1_1270489731578963" class="yui3-tab-label yui3-tab-content" role="tab">baz</a>
+
+        </li>
+      </ul>
+      <div class="yui3-tabview-panel">
+        <div class="yui3-tab-panel" id="yui_3_1_0_1_1270489731578923" role="tabpanel" aria-labelledby="yui_3_1_0_1_1270489731578919">
+          <p>foo content</p>
+        </div>
+        <div class="yui3-tab-panel" id="yui_3_1_0_1_1270489731578945" role="tabpanel" aria-labelledby="yui_3_1_0_1_1270489731578941">
+          <p>bar content</p>
+
+        </div>
+        <div class="yui3-tab-panel" id="yui_3_1_0_1_1270489731578967" role="tabpanel" aria-labelledby="yui_3_1_0_1_1270489731578963">
+          <p>baz content</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 <script type="text/javascript">
 YUI({filter: 'raw'}).use('tabview', 'tabview-plugin', function(Y) {
@@ -68,6 +100,13 @@ YUI({filter: 'raw'}).use('tabview', 'tabview-plugin', function(Y) {
     tabview2.get('contentBox').focusManager.refresh();
     tabview2.selectChild(2);
     //tabview2.add(tabview.item(1));
+
+    var tabview3 = new Y.TabView({
+        srcNode: '#demo3 .yui3-tabview-content'
+    });
+
+    tabview3.render();
+
 });
 
 </script>

@@ -30,6 +30,8 @@ YUI.add('selection', function(Y) {
             this.isCollapsed = (sel.compareEndPoints('StartToEnd', sel)) ? false : true;
 
             if (this.isCollapsed) {
+                this.anchorNode = this.focusNode = Y.one(sel.parentElement());
+                /*
                 par = sel.parentElement();
                 nodes = par.childNodes;
                 rng = sel.duplicate();
@@ -54,6 +56,7 @@ YUI.add('selection', function(Y) {
                     
                     this.anchorTextNode = this.focusTextNode = Y.one(ieNode);
                 }
+                */
                 
             }
 
@@ -336,20 +339,31 @@ YUI.add('selection', function(Y) {
         */
         insertAtCursor: function(html, node, offset, collapse) {
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
-                inHTML = node.get(textContent), txt, txt2, newNode;
+                inHTML, txt, txt2, newNode, range = this.createRange();
+
             
-            //TODO using Y.Node.create here throws warnings & strips first white space character
-            //txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));
-            //txt2 = Y.one(Y.Node.create(inHTML.substr(offset)));
-            txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
-            txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
-            
-            node.replace(txt, node);
-            newNode = Y.Node.create(html);
-            txt.insert(newNode, 'after');
-            newNode.insert(cur, 'after');
-            cur.insert(txt2, 'after');
-            this.selectNode(cur, collapse);
+            if (range.pasteHTML) {
+                newNode = Y.Node.create(html);
+                range.pasteHTML('<span id="rte-insert"></span>');
+                inHTML = Y.one('#rte-insert');
+                inHTML.set('id', '');
+                inHTML.replace(newNode);
+                return newNode;
+            } else {
+                //TODO using Y.Node.create here throws warnings & strips first white space character
+                //txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));
+                //txt2 = Y.one(Y.Node.create(inHTML.substr(offset)));
+                inHTML = node.get(textContent);
+                txt = Y.one(Y.config.doc.createTextNode(inHTML.substr(0, offset)));
+                txt2 = Y.one(Y.config.doc.createTextNode(inHTML.substr(offset)));
+                
+                node.replace(txt, node);
+                newNode = Y.Node.create(html);
+                txt.insert(newNode, 'after');
+                newNode.insert(cur, 'after');
+                cur.insert(txt2, 'after');
+                this.selectNode(cur, collapse);
+            }
             return newNode;
         },
         /**
@@ -407,18 +421,27 @@ YUI.add('selection', function(Y) {
         * @method replace
         * @param {String} se The string to search for.
         * @param {String} re The string of HTML to replace it with.
-        * @param {Node} node A Node instance of the text node to interact with.
         * @return {Node} The node inserted.
         */
-        replace: function(se,re,node) {
+        replace: function(se,re) {
             Y.log('replacing (' + se + ') with (' + re + ')');
-            var txt = node.get(textContent),
-                index = txt.indexOf(se),
-                newNode;
+            var range = this.createRange(), node, txt, index, newNode;
 
-            txt = txt.replace(se, '');
-            node.set(textContent, txt);
-            newNode = this.insertAtCursor(re, node, index, true);
+            if (range.getBookmark) {
+                index = range.getBookmark();
+                txt = this.anchorNode.get('innerHTML').replace(se, re);
+                this.anchorNode.set('innerHTML', txt);
+                range.moveToBookmark(index);
+                newNode = Y.one(range.parentElement());
+            } else {
+                node = this.anchorTextNode;
+                txt = node.get(textContent);
+                index = txt.indexOf(se);
+
+                txt = txt.replace(se, '');
+                node.set(textContent, txt);
+                newNode = this.insertAtCursor(re, node, index, true);
+            }
             return newNode;
         },
         /**

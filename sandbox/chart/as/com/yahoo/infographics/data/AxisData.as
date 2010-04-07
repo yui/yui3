@@ -3,6 +3,8 @@ package com.yahoo.infographics.data
 	import flash.events.EventDispatcher;
 	import com.yahoo.infographics.data.events.DataEvent;
 	import com.yahoo.renderers.ApplicationGlobals;
+	import com.yahoo.util.NumberUtil;
+	
 	/**
 	 * Base class for axis data classes
 	 */
@@ -18,6 +20,58 @@ package com.yahoo.infographics.data
 			if(dataProvider) this.dataProvider = dataProvider;
 		}
 
+		/**
+		 * @private 
+		 * Storage for rounding unit
+		 */
+		protected var _roundingUnit:Number = NaN;
+
+		/**
+		 * The number for rounding the max and min values
+		 */
+		public function get roundingUnit():Number
+		{
+			return this._roundingUnit;
+		}
+
+		/**
+		 * @private (setter)
+		 */
+		public function set roundingUnit(value:Number):void
+		{
+			this._roundingUnit = value;
+			if(this._roundMinAndMax) this.updateMinAndMax();
+		}
+
+		/**
+		 * @private 
+		 * Storage for round min and max
+		 */
+		protected var _roundMinAndMax:Boolean = true;
+
+		/**
+		 * Indicates whether or not to round values when calculating
+		 * <code>maximum</code> and <code>minimum</code>.
+		 */
+		public function get roundMinAndMax():Boolean
+		{
+			return this._roundMinAndMax;
+		}
+
+		/**
+		 * @private (setter)
+		 */
+		public function set roundMinAndMax(value:Boolean):void
+		{
+			if(this._roundMinAndMax == value) return;
+			this._roundMinAndMax = value;
+			this.updateMinAndMax();
+		}
+
+		/**
+		 * @private
+		 * Reference to the ApplicationGlobals instance
+		 */
 		protected var _appGlobals:ApplicationGlobals;
 
 		/**
@@ -233,9 +287,7 @@ package com.yahoo.infographics.data
 			var keys:Object = this._keys,
 				eventKeys:Object = {},
 				event:DataEvent = new DataEvent(DataEvent.DATA_CHANGE);
-			this._appGlobals.autoRender = false;
 			this.setDataByKey(value);
-			this._appGlobals.autoRender = true;
 			eventKeys[value] = keys[value].concat();
 			this.updateMinAndMax();
 			event.keysAdded = eventKeys; 
@@ -302,6 +354,18 @@ package com.yahoo.infographics.data
 				value = Number((keys[key] as Array)[index]);
 			}
 			return value;
+		}
+
+		/**
+		 * Returns an array of values based on an identifier key.
+		 */
+		public function getDataByKey(value:String):Array
+		{
+			if(this._keys[value])
+			{
+				return this._keys[value];
+			}
+			return null;
 		}
 
 		/**
