@@ -1429,7 +1429,7 @@ Y.mix(Widget.prototype, {
      * @return {Object} The merged configuration literal
      */
     _applyParsedConfig : function(node, cfg, parsedCfg) {
-        return (parsedCfg) ? Y.aggregate(cfg, parsedCfg, false) : cfg;
+        return (parsedCfg) ? Y.mix(cfg, parsedCfg, false) : cfg;
     },
 
     /**
