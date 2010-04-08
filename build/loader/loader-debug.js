@@ -2906,6 +2906,15 @@ YUI.Env[Y.version].modules = {
         ], 
         "skinnable": true
     }, 
+    "value-change": {
+        "optional": [
+            "event-custom-complex"
+        ], 
+        "requires": [
+            "node-base", 
+            "event-focus"
+        ]
+    }, 
     "widget": {
         "plugins": {
             "widget-child": {}, 

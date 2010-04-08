@@ -1,0 +1,11 @@
+{
+    "value-change": {
+        "requires": [
+            "node-base",
+            "event-focus"
+        ],
+        "optional": [
+            "event-custom-complex"
+        ]
+    }
+}
