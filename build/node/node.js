@@ -952,7 +952,7 @@ Y.mix(Y_Node.prototype, {
             if (content._node) { // map to DOMNode
                 content = content._node;
             } else if (content._nodes) { // convert DOMNodeList to documentFragment
-                content = Y_DOM._nl2Frag(content._nodes);
+                content = Y_DOM._nl2frag(content._nodes);
             }
 
         }

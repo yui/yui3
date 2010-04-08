@@ -385,6 +385,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             node.insertBefore(Y.Node.create('foo'), node.get('firstChild'));
             Assert.areEqual('foobar', node.get('innerHTML'), "node.get('innerHTML')");
             Assert.areEqual('foobar', node.get('text'), "node.get('text')");
+
+            // test setContent with NodeList
+            html = '<div>foo</div>';
+            node.setContent(Y.all(Y.Node.create(html)));
+            Assert.areEqual(html, node.get('innerHTML'), "node.setContent(Y.all(Y.Node.create(html)))");
+
         },
 
         test_setter: function() {
