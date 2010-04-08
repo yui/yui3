@@ -395,7 +395,7 @@
                 <span class="nx">req</span>        <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span> 
                 <span class="nx">use</span>        <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">req</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">req</span><span class="p">));</span>
                 <span class="p">}</span>
 
@@ -405,7 +405,7 @@
                     <span class="nx">mod</span><span class="p">.</span><span class="nx">fn</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
                 <span class="p">}</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">use</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">use</span> <span class="o">&amp;&amp;</span> <span class="nx">use</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">use</span><span class="p">));</span>
                 <span class="p">}</span>
             <span class="p">}</span>
