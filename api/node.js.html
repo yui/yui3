@@ -1007,7 +1007,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// map to DOMNode</span>
                 <span class="nx">content</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// convert DOMNodeList to documentFragment</span>
-                <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2Frag</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">);</span>
+                <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">);</span>
             <span class="p">}</span>
 
         <span class="p">}</span>
