@@ -17,6 +17,9 @@ Development Master
   set in the user config still take precedence over properties set
   from the html parser implementation.
 
+* Changed _initUIEvent, to account for change to fireOnce events,
+  which makes them synchronous (in 3.1.0, they were async).
+
 3.1.0
 
 * "render" event now published with the defaultTargetOnly set to true.
