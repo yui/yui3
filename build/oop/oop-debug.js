@@ -246,6 +246,11 @@ YUI.add('oop', function(Y) {
             return o;
         }
 
+        // @TODO cloning YUI instances doesn't currently work
+        if (o instanceof YUI) {
+            return o;
+        }
+
         var o2, marked = cloned || {}, stamp,
             each = Y.each || Y.Object.each;
 
@@ -283,8 +288,8 @@ YUI.add('oop', function(Y) {
                     if (k !== CLONE_MARKER) {
                         if (k == 'prototype') {
                             // skip the prototype
-                        } else if (o[k] === o) {
-                            this[k] = this;
+                        // } else if (o[k] === o) {
+                        //     this[k] = this;
                         } else {
                             this[k] = Y.clone(v, safe, f, c, owner || o, marked);
                         }
