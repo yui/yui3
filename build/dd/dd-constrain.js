@@ -215,7 +215,7 @@ YUI.add('dd-constrain', function(Y) {
             if (con) {
                 if (con instanceof Y.Node) {
                     if (!this._regionCache) {
-                        Y.on('resize', Y.bind(this._cacheRegion, this), window);
+                        Y.on('resize', Y.bind(this._cacheRegion, this), Y.config.win);
                         this._cacheRegion();
                     }
                     region = Y.clone(this._regionCache);
@@ -448,4 +448,4 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag']});
+}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false});
