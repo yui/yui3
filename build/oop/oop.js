@@ -242,7 +242,8 @@ YUI.add('oop', function(Y) {
             return o;
         }
 
-        var o2, marked = cloned || {}, stamp;
+        var o2, marked = cloned || {}, stamp,
+            each = Y.each || Y.Object.each;
 
         switch (L.type(o)) {
             case 'date':
@@ -273,10 +274,12 @@ YUI.add('oop', function(Y) {
 
         // #2528250 don't try to clone element properties
         if (!o.addEventListener && !o.attachEvent) {
-            Y.Object.each(o, function(v, k) {
+            each(o, function(v, k) {
                 if (!f || (f.call(c || this, v, k, this, o) !== false)) {
                     if (k !== CLONE_MARKER) {
-                        if (o[k] === o) {
+                        if (k == 'prototype') {
+                            // skip the prototype
+                        } else if (o[k] === o) {
                             this[k] = this;
                         } else {
                             this[k] = Y.clone(v, safe, f, c, owner || o, marked);
