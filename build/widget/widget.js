@@ -1285,14 +1285,12 @@ Y.extend(Widget, Y.Base, {
 
         if (sType && !queue[sType]) {
 
+            this._uiEvtsInitQueue = queue[sType] = 1;
 
             this.after(RENDER, function() { 
                 this._createUIEvent(sType);
                 delete this._uiEvtsInitQueue[sType];
             });
-            
-            this._uiEvtsInitQueue = queue[sType] = 1;
-
         }
     },
 
