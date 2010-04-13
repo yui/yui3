@@ -160,7 +160,7 @@ YUI.add('dd-ddm-base', function(Y) {
         _setupListeners: function() {
             this._createPG();
             this._active = true;
-            var doc = Y.one(document);
+            var doc = Y.one(Y.config.doc);
             doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
             //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
             doc.on('mouseup', Y.bind(this._end, this));

@@ -160,7 +160,7 @@
             h.on('drag:align', Y.bind(this.align, this));
 
             //TODO - This doesn't work yet??
-            Y.one(window).on('scroll', Y.bind(function() {
+            Y.one('win').on('scroll', Y.bind(function() {
                 this._vpRegionCache = null;
             }, this));
         },
@@ -342,7 +342,7 @@
             value: true,
             setter: function(scroll) {
                 if (scroll) {
-                    this.set(PARENT_SCROLL, Y.one(window));
+                    this.set(PARENT_SCROLL, Y.one('win'));
                 }
                 return scroll;
             }

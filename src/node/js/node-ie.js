@@ -1,6 +1,11 @@
 
-if (!document.documentElement.hasAttribute) { // IE < 8
+if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
+        if (attr === 'value') {
+            if (this.get('value') !== "") { // IE < 8 fails to populate specified when set in HTML
+                return true;
+            }
+        }
         return !!(this._node.attributes[attr] &&
                 this._node.attributes[attr].specified);
     };
@@ -33,3 +38,13 @@ Y.Node.ATTRS.type = {
 
     _bypassProxy: true // don't update DOM when using with Attribute
 };
+
+if (Y.config.doc.createElement('form').elements.nodeType) {
+    // IE: elements collection is also FORM node which trips up scrubVal.
+    Y.Node.ATTRS.elements = {
+            getter: function() {
+                return this.all('input, textarea, button, select');
+            }
+    };
+}
+
