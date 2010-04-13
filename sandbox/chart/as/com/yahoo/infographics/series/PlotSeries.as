@@ -5,7 +5,10 @@ package com.yahoo.infographics.series
 	import com.yahoo.renderers.Renderer;
 	import com.yahoo.infographics.styles.PlotStyles;
 	import flash.display.Sprite;
-	import com.yahoo.util.InstanceFactory;
+	import flash.display.DisplayObject;
+	import flash.display.InteractiveObject;
+	import flash.events.MouseEvent;
+	import com.yahoo.display.*;
 
 	public class PlotSeries extends Cartesian
 	{
@@ -16,7 +19,7 @@ package com.yahoo.infographics.series
 		{
 			super(series);
 		}
-		
+
 		/**
 		 * @private
 		 * Style class for the graph.
@@ -56,13 +59,17 @@ package com.yahoo.infographics.series
 		 * @private (protected)
 		 * Collection or markers to be displayed.
 		 */
-		protected var _markers:Vector.<Sprite> = new Vector.<Sprite>();
+		protected var _markers:Vector.<SeriesMarker> = new Vector.<SeriesMarker>();
 
+		public function get markers():Vector.<SeriesMarker>
+		{
+			return this._markers;
+		}
 		/**
 		 * @private (protected)
 		 * Collection of markers to be displayed.
 		 */
-		protected var _markerCache:Vector.<Sprite> = new Vector.<Sprite>();
+		protected var _markerCache:Vector.<SeriesMarker> = new Vector.<SeriesMarker>();
 
 		/**
 		 * @private
@@ -78,8 +85,24 @@ package com.yahoo.infographics.series
 		 * @private (protected)
 		 * Factory for creating <code>SeriesMarker</code> instances.
 		 */
-		protected var _markerFactory:InstanceFactory;
+		protected var _markerFactory:ISkinFactory;
 		
+		/**
+		 * @private (protected)
+		 * Hash ISkinFactory classes.
+		 */
+		protected var _skinFactoryHash:Object = {
+			bitmap:BitmapSkinFactory
+		};
+
+		/**
+		 * @private (protected)
+		 */
+		protected function getSkinFactoryClass(value:String):Class
+		{
+			return this._skinFactoryHash[value] as Class;
+		}
+
 		/**
 		 * @private
 		 */
@@ -107,21 +130,26 @@ package com.yahoo.infographics.series
 				this.updateMarker();
 			}
 		}
-
+		
 		/**
 		 * @private (protected)
 		 * Creates a <code>InstanceFactory</code> for creating markers.
 		 */
 		protected function updateMarker():void
 		{
-			var marker:Object = this.getStyle("marker"),
-			markerClass:Class = SeriesMarker;
-			marker.props.styles = marker.styles;
-			if(markerClass !== this._markerClass)
+			var i:int,
+				len:int = this._markers.length,
+				marker:Object = this.getStyle("marker"),
+				markerClass:Class = this.getSkinFactoryClass(marker.skin);
+			this.removeMarkers();
+			if(!(this._markerClass is markerClass))
 			{
-				this.removeMarkers();
-				this._markerFactory = new InstanceFactory(markerClass, marker.props, [{methodName:"drawSkin"}]);
-				this._markerClass = markerClass as Class;
+				this._markerFactory = new markerClass(marker.props, marker.styles);
+				this._markerClass = markerClass;
+			}
+			else
+			{
+				this._markerFactory.createTemplate(marker.props, marker.styles);
 			}
 		}
 
@@ -135,7 +163,7 @@ package com.yahoo.infographics.series
 				ycoords:Vector.<int> = this._ycoords,
 				len:int = xcoords.length,
 				i:int,
-				marker:Sprite;
+				marker:SeriesMarker;
 			this.createMarkerCache();
 			for(i = 0;i < len; i = ++i)
 			{
@@ -157,7 +185,7 @@ package com.yahoo.infographics.series
 		protected function createMarkerCache():void
 		{
 			this._markerCache = this._markers.concat();
-			this._markers = new Vector.<Sprite>();
+			this._markers = new Vector.<SeriesMarker>();
 		}
 
 		/**
@@ -167,11 +195,17 @@ package com.yahoo.infographics.series
 		 */
 		protected function clearMarkerCache():void
 		{
-			var cache:Vector.<Sprite> = this._markerCache,
-				len:int = cache.length;
+			var cache:Vector.<SeriesMarker> = this._markerCache,
+				len:int = cache.length,
+				marker:SeriesMarker;
 			while(len > 0)
 			{
-				this.removeChild(DisplayObject(cache.shift()));
+				marker = SeriesMarker(cache.shift());
+				marker.removeEventListener(MouseEvent.ROLL_OVER, markerRollOverHandler);
+				marker.removeEventListener(MouseEvent.ROLL_OUT, markerRollOutHandler);
+				marker.removeEventListener(MouseEvent.CLICK, markerClickHandler);
+				marker.removeEventListener(MouseEvent.DOUBLE_CLICK, markerDoubleClickHandler);
+				this.removeChild(marker);
 				--len;
 			}
 		}
@@ -181,23 +215,29 @@ package com.yahoo.infographics.series
 		 * Returns a marker. If one does not exist in the cache
 		 * collection, one is created.
 		 */
-		protected function getMarker():Sprite
+		protected function getMarker():SeriesMarker
 		{
-			var marker:Sprite,
-				cache:Vector.<Sprite> = this._markerCache,
+			var marker:SeriesMarker,
+				cache:Vector.<SeriesMarker> = this._markerCache,
 				len:int = cache.length,
 				styles:Object = this._markerStyles;
 			if(len > 0)
 			{
-				marker = Sprite(cache.shift());
+				marker = SeriesMarker(cache.shift());
 			}
 			else
 			{
-				marker = this._markerFactory.createInstance() as Sprite;
+				marker = new SeriesMarker();
+				marker.series = this;
+				marker.skin = this._markerFactory.getSkinInstance(); 
+				InteractiveObject(marker).doubleClickEnabled = true;
+				marker.addEventListener(MouseEvent.ROLL_OVER, markerRollOverHandler, false, 0, true);
+				marker.addEventListener(MouseEvent.ROLL_OUT, markerRollOutHandler, false, 0, true);
+				marker.addEventListener(MouseEvent.CLICK, markerClickHandler, false, 0, true);
+				marker.addEventListener(MouseEvent.DOUBLE_CLICK, markerDoubleClickHandler, false, 0, true);
 			}
 			this.addChild(marker);	
 			return marker;
-
 		}
 
 		/**
@@ -207,14 +247,48 @@ package com.yahoo.infographics.series
 		 */
 		protected function removeMarkers():void
 		{
-			var cache:Vector.<Sprite> = this._markers,
-				len:int = cache.length;
+			var cache:Vector.<SeriesMarker> = this._markers,
+				len:int = cache.length,
+				marker:SeriesMarker;
 			while(len > 0)
 			{
-				this.removeChild(DisplayObject(cache.shift()));
+				marker = SeriesMarker(cache.shift());
+				marker.removeEventListener(MouseEvent.ROLL_OVER, markerRollOverHandler);
+				marker.removeEventListener(MouseEvent.ROLL_OUT, markerRollOutHandler);
+				marker.removeEventListener(MouseEvent.CLICK, markerClickHandler);
+				marker.removeEventListener(MouseEvent.DOUBLE_CLICK, markerDoubleClickHandler);
+				this.removeChild(marker);
 				--len;
 			}
 			this.clearMarkerCache();
+		}
+
+		/**
+		 * @private (protected)
+		 */
+		protected function markerRollOverHandler(event:MouseEvent):void
+		{
+		}
+
+		/**
+		 * @private (protected)
+		 */
+		protected function markerRollOutHandler(event:MouseEvent):void
+		{
+		}
+		
+		/**
+		 * @private (protected)
+		 */
+		protected function markerClickHandler(event:MouseEvent):void
+		{
+		}
+		
+		/**
+		 * @private (protected)
+		 */
+		protected function markerDoubleClickHandler(event:MouseEvent):void
+		{
 		}
 	}
 }

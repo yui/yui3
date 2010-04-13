@@ -23,6 +23,30 @@ package com.yahoo.infographics.cartesian
 	//--------------------------------------
 	//  Properties
 	//--------------------------------------		
+		
+		/**
+		 * @private (protected)
+		 * Storage for <code>markers</code>
+		 */
+		protected var _markers:Vector.<SeriesMarker> = new Vector.<SeriesMarker>();
+
+		/**
+		 * Collection of all <code>SeriesMarker</code> instances that exist in
+		 * the graph.
+		 */
+		public function get markers():Vector.<SeriesMarker>
+		{
+			return this._markers;
+		}
+
+		/**
+		 * @private (setter)
+		 */
+		public function set markers(value:Vector.<SeriesMarker>):void
+		{
+			this._markers = value;
+		}
+
 		/**
 		 * @private (protected) 
 		 * Returns type from key value.
@@ -98,6 +122,16 @@ package com.yahoo.infographics.cartesian
 		 */
 		protected var _seriesCollection:Vector.<ISeries> = new Vector.<ISeries>();
 
+		public function get seriesCollection():Vector.<ISeries>
+		{
+			return this._seriesCollection;
+		}
+
+		public function set seriesCollection(value:Vector.<ISeries>):void
+		{
+			this._seriesCollection = value;
+		}
+
 	//--------------------------------------
 	//  Public Methods
 	//--------------------------------------		
@@ -111,6 +145,7 @@ package com.yahoo.infographics.cartesian
 		{
 			var seriesType:Class,
 				series:ISeries;
+				seriesData.graph = this;
 			if(seriesData.hasOwnProperty("type"))
 			{
 				seriesType = this.getSeries(seriesData.type);
@@ -187,9 +222,10 @@ package com.yahoo.infographics.cartesian
 				seriesCollection:Vector.<ISeries> = this._seriesCollection,
 				graphSeriesLength:int = seriesCollection.length,
 				seriesTypes:Object = this._seriesTypes,
-				typeSeriesCollection:Vector.<ISeries>;	
+				typeSeriesCollection:Vector.<ISeries>,
+				index:int;	
 			this.setCategoryCoordsReference(series);
-			series.graph = this;
+			if(!series.graph) series.graph = this;
 			series.graphOrder = graphSeriesLength;
 			seriesCollection.push(series);
 			if(!seriesTypes.hasOwnProperty(type))
@@ -199,7 +235,8 @@ package com.yahoo.infographics.cartesian
 			typeSeriesCollection = this._seriesTypes[type];
 			series.order = typeSeriesCollection.length;
 			typeSeriesCollection.push(series);
-			this.addItem(Renderer(series));
+			index = this.numChildren > 0 ? this.numChildren - 1 : 0;
+			this.addItem(Renderer(series), {index:index});
 		}
 
 		/**

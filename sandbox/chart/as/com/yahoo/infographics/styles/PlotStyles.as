@@ -1,6 +1,5 @@
 package com.yahoo.infographics.styles
 {
-	import com.yahoo.renderers.Skin;
 	/**
 	 * Styles used by a line graph.
 	 */
@@ -32,7 +31,7 @@ package com.yahoo.infographics.styles
 		 */
 		private var _marker:Object = 
 		{
-			className:Skin,
+			skin:"bitmap",
 			styles:
 			{
 				borderColor:0xff0000,
@@ -45,10 +44,10 @@ package com.yahoo.infographics.styles
 			{
 				width:6,
 				height:6,
-				drawSkinFunction:function(styles:Object):void
+				drawSkinFunction:function(props:Object, styles:Object):void
 				{
 					this.graphics.beginFill(styles.fillColor);
-					this.graphics.drawEllipse(0, 0, this.width, this.height);
+					this.graphics.drawEllipse(0, 0, props.width, props.height);
 					this.graphics.endFill();
 				}
 			}
