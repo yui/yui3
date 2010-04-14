@@ -11,10 +11,10 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.03.30-17-26',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.04.08-12-35',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
-    TNT_VERSION     = CONFIG[TNT] || '1',
+    TNT_VERSION     = CONFIG[TNT] || '2',
     YUI2_VERSION    = CONFIG.yui2 || '2.8.0',
     YUI2_ROOT       = TNT + '.' + TNT_VERSION + '/' + YUI2_VERSION + BUILD,
     COMBO_BASE      = CDN_BASE + 'combo?',
@@ -496,7 +496,7 @@ Y.Loader = function(o) {
     }
 
     for (i in onPage) {
-        if (!self.moduleInfo[i] && onPage[i].details) {
+        if (onPage[i].details) {
             self.addModule(onPage[i].details, i);
         }
     }
@@ -746,7 +746,7 @@ Y.Loader.prototype = {
      * @method addModule
      * @param o An object containing the module data
      * @param name the module name (optional), required if not in the module data
-     * @return {boolean} true if the module was added, false if 
+     * @return the module definition or null if 
      * the object passed in did not provide all required attributes
      */
     addModule: function(o, name) {
@@ -754,7 +754,7 @@ Y.Loader.prototype = {
         o.name = name;
 
         if (!o || !o.name) {
-            return false;
+            return null;
         }
 
         if (!o.type) {
@@ -768,12 +768,30 @@ Y.Loader.prototype = {
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
         o.requires = o.requires || [];
 
-        this.moduleInfo[name] = o;
-
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname;
+            overrides, skinname, existing = this.moduleInfo[name], newr;
+
+        // Adding a module again merges requirements to pick up new
+        // requirements when the module arrives.  We allow this only
+        // once to prevent redundant checks when an application calls
+        // use() many times.
+        if (existing && !existing.reparsed) {
+            for (i=0; i<o.requires.length; i++) {
+                newr = o.requires[i];
+                if (YArray.indexOf(existing.requires, newr) == -1) {
+                    existing.requires.push(newr);
+                    delete existing.expanded;
+                }
+            }
+            existing.reparsed = true;
+            return existing;
+        }
+
+        this.moduleInfo[name] = o;
+
+
         if (subs) {
             sup = o.supersedes || []; 
             l   = 0;
@@ -789,7 +807,6 @@ Y.Loader.prototype = {
                     if (s.supersedes) {
                         sup = sup.concat(s.supersedes);
                     }
-
 
                     smod = this.addModule(s, i);
                     sup.push(i);
@@ -915,24 +932,14 @@ Y.Loader.prototype = {
             r    = mod.requires, 
             o    = mod.optional, 
             intl = mod.lang || mod.intl,
-            info = this.moduleInfo;
+            info = this.moduleInfo,
+            hash = {};
 
         for (i=0; i<r.length; i++) {
             // Y.log(mod.name + ' requiring ' + r[i]);
-            d.push(r[i]);
-            m = this.getModule(r[i]);
-            add = this.getRequires(m);
-            intl = intl || YArray.indexOf(add, 'intl') > -1;
-            for (j=0; j<add.length; j++) {
-                d.push(add[j]);
-            }
-        }
-
-        // get the requirements from superseded modules, if any
-        r=mod.supersedes;
-        if (r) {
-            for (i=0; i<r.length; i++) {
+            if (!hash[r[i]]) {
                 d.push(r[i]);
+                hash[r[i]] = true;
                 m = this.getModule(r[i]);
                 add = this.getRequires(m);
                 intl = intl || YArray.indexOf(add, 'intl') > -1;
@@ -942,13 +949,33 @@ Y.Loader.prototype = {
             }
         }
 
+        // get the requirements from superseded modules, if any
+        r=mod.supersedes;
+        if (r) {
+            for (i=0; i<r.length; i++) {
+                if (!hash[r[i]]) {
+                    d.push(r[i]);
+                    hash[r[i]] = true;
+                    m = this.getModule(r[i]);
+                    add = this.getRequires(m);
+                    intl = intl || YArray.indexOf(add, 'intl') > -1;
+                    for (j=0; j<add.length; j++) {
+                        d.push(add[j]);
+                    }
+                }
+            }
+        }
+
         if (o && this.loadOptional) {
             for (i=0; i<o.length; i++) {
-                d.push(o[i]);
-                add = this.getRequires(info[o[i]]);
-                intl = intl || YArray.indexOf(add, 'intl') > -1;
-                for (j=0; j<add.length; j++) {
-                    d.push(add[j]);
+                if (!hash[o[i]]) {
+                    d.push(o[i]);
+                    hash[o[i]] = true;
+                    add = this.getRequires(info[o[i]]);
+                    intl = intl || YArray.indexOf(add, 'intl') > -1;
+                    for (j=0; j<add.length; j++) {
+                        d.push(add[j]);
+                    }
                 }
             }
         }
@@ -1028,15 +1055,16 @@ Y.Loader.prototype = {
     },
 
     _addLangPack: function(lang, m, packName) {
-        var name = m.name, packPath = _path((m.pkg || name), packName, JS, true);
+        var name = m.name, 
+            packPath = _path((m.pkg || name), packName, JS, true),
+            existing = this.moduleInfo[packName];
 
-        // if (name.indexOf('lang/') === 0) {
-        //     return null;
-        // }
+        if (existing) {
+            return existing;
+        }
 
         this.addModule({
             path: packPath,
-            // requires: ['intl'], // happens in getRequires
             intl: true,
             langPack: true,
             ext: m.ext,

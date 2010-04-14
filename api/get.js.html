@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>yui&nbsp; <span class="subtitle">3.1.0pr9</span></h3>
+        <h3>yui&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_yui.html" title="yui">yui</a>
                 
@@ -429,11 +429,11 @@
                       <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="p">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
 
         <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">=</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="c1">// q.attributes.charset = opts.charset || q.attributes.charset || &#39;utf-8&#39;;</span>
-        <span class="kd">var</span> <span class="nx">charset</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">charset</span> <span class="o">||</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">charset</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">charset</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="nx">charset</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">charset</span> <span class="o">||</span> <span class="nx">q</span><span class="p">.</span><span class="nx">attributes</span><span class="p">.</span><span class="nx">charset</span> <span class="o">||</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">;</span>
+        <span class="c1">// var charset = opts.charset || q.attributes.charset;</span>
+        <span class="c1">// if (charset) {</span>
+        <span class="c1">//     q.attributes.charset = charset;</span>
+        <span class="c1">// }</span>
 
         <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="nx">_next</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>

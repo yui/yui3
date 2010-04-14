@@ -21,6 +21,11 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:over
         * @description Fires when a drag element is over this target.
+        * @param {Event.Facade} event An Event Facade object with the following specific property added:
+        * <dl>
+        * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
+        * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
+        * </dl>        
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -28,6 +33,11 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:enter
         * @description Fires when a drag element enters this target.
+        * @param {Event.Facade} event An Event Facade object with the following specific property added:
+        * <dl>
+        * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
+        * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
+        * </dl>        
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -35,6 +45,7 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:exit
         * @description Fires when a drag element exits this target.
+        * @param {Event.Facade} event An Event Facade object
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -43,6 +54,12 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:hit
         * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
+        * @param {Event.Facade} event An Event Facade object with the following specific property added:
+        * <dl>
+        * <dt>drop</dt><dd>The best guess on what was dropped on.</dd>
+        * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
+        * <dt>others</dt><dd>An array of all the other drop targets that was dropped on.</dd>
+        * </dl>        
         * @bubbles DDM
         * @type {Event.Custom}
         */

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget&nbsp; <span class="subtitle">3.1.0pr9</span></h3>
+        <h3>widget&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget.html" title="widget">widget</a>
                 
@@ -1336,16 +1336,14 @@
             <span class="nx">queue</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_uiEvtsInitQueue</span> <span class="o">||</span> <span class="p">{};</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">sType</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">queue</span><span class="p">[</span><span class="nx">sType</span><span class="p">])</span> <span class="p">{</span>
-
             <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Deferring creation of &quot;</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot; delegate until render.&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;widget&quot;</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">_uiEvtsInitQueue</span> <span class="o">=</span> <span class="nx">queue</span><span class="p">[</span><span class="nx">sType</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
             <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">RENDER</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> 
                 <span class="k">this</span><span class="p">.</span><span class="nx">_createUIEvent</span><span class="p">(</span><span class="nx">sType</span><span class="p">);</span>
                 <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_uiEvtsInitQueue</span><span class="p">[</span><span class="nx">sType</span><span class="p">];</span>
             <span class="p">});</span>
-            
-            <span class="k">this</span><span class="p">.</span><span class="nx">_uiEvtsInitQueue</span> <span class="o">=</span> <span class="nx">queue</span><span class="p">[</span><span class="nx">sType</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-
         <span class="p">}</span>
     <span class="p">},</span>
 

@@ -8,49 +8,49 @@ YUI.add('event-delegate', function(Y) {
  */
 
 var Event = Y.Event,
-	Lang = Y.Lang,
+    Lang = Y.Lang,
 
-	delegates = {},
-	
-	specialTypes = {
-		mouseenter: "mouseover",
-		mouseleave: "mouseout"
-	},
+    delegates = {},
+    
+    specialTypes = {
+        mouseenter: "mouseover",
+        mouseleave: "mouseout"
+    },
 
-	resolveTextNode = function(n) {
-	    try {
-	        if (n && 3 == n.nodeType) {
-	            return n.parentNode;
-	        }
-	    } catch(e) { }
-	    return n;
-	},
+    resolveTextNode = function(n) {
+        try {
+            if (n && 3 == n.nodeType) {
+                return n.parentNode;
+            }
+        } catch(e) { }
+        return n;
+    },
 
     delegateHandler = function(delegateKey, e, el) {
 
         var target = resolveTextNode((e.target || e.srcElement)), 
             tests  = delegates[delegateKey],
             spec, 
-			ename,
-			matched,
-			fn,
-			ev;
+            ename,
+            matched,
+            fn,
+            ev;
 
 
-		var getMatch = function(el, selector, container) {
-			
-			var returnVal;
-			
-			if (!el || el === container) {
-				returnVal = false;
-			}
-			else {
-				returnVal = Y.Selector.test(el, selector, container) ? el: getMatch(el.parentNode, selector, container);
-			}
-			
-			return returnVal;
-			
-		};
+        var getMatch = function(el, selector, container) {
+            
+            var returnVal;
+            
+            if (!el || el === container) {
+                returnVal = false;
+            }
+            else {
+                returnVal = Y.Selector.test(el, selector, container) ? el: getMatch(el.parentNode, selector, container);
+            }
+            
+            return returnVal;
+            
+        };
 
 
         for (spec in tests) {
@@ -58,13 +58,13 @@ var Event = Y.Event,
             if (tests.hasOwnProperty(spec)) {
 
                 ename  = tests[spec];
-				fn	= tests.fn;
-				matched = null;
+                fn  = tests.fn;
+                matched = null;
 
 
-				if (Y.Selector.test(target, spec, el)) {
-					matched = target;
-				}
+                if (Y.Selector.test(target, spec, el)) {
+                    matched = target;
+                }
                 else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
                      
                  //  The target is a descendant of an element matching 
@@ -76,7 +76,7 @@ var Event = Y.Event,
                 }
 
 
-				if (matched) {
+                if (matched) {
 
                     if (!ev) {
                         ev = new Y.DOMEventFacade(e, el);
@@ -85,50 +85,50 @@ var Event = Y.Event,
 
                     ev.currentTarget = Y.one(matched);
 
-					Y.publish(ename, {
-			               contextFn: function() {
-			                   return ev.currentTarget;
-			               }
-			           });
+                    Y.publish(ename, {
+                           contextFn: function() {
+                               return ev.currentTarget;
+                           }
+                       });
 
-					if (fn) {
-						fn(ev, ename);
-					}
-					else {
-                    	Y.fire(ename, ev);								
-					}
-					
-				}
+                    if (fn) {
+                        fn(ev, ename);
+                    }
+                    else {
+                        Y.fire(ename, ev);                              
+                    }
+                    
+                }
 
             }
         }
 
     },
 
-	attach = function (type, key, element) {
+    attach = function (type, key, element) {
 
-		var focusMethods = {
-				focus: Event._attachFocus,
-				blur: Event._attachBlur
-			},
+        var focusMethods = {
+                focus: Event._attachFocus,
+                blur: Event._attachBlur
+            },
 
-			attachFn = focusMethods[type],
+            attachFn = focusMethods[type],
 
-			args = [type, 
-			function (e) {
-	            delegateHandler(key, (e || window.event), element);
-			}, 
-			element];
+            args = [type, 
+            function (e) {
+                delegateHandler(key, (e || Y.config.win.event), element);
+            }, 
+            element];
 
 
-		if (attachFn) {
-			return attachFn(args, { capture: true, facade: false });
-		}
-		else {
-			return Event._attach(args, { facade: false });
-		}
-		
-	},
+        if (attachFn) {
+            return attachFn(args, { capture: true, facade: false });
+        }
+        else {
+            return Event._attach(args, { facade: false });
+        }
+        
+    },
 
     sanitize = Y.cached(function(str) {
         return str.replace(/[|,:]/g, '~');
@@ -172,40 +172,40 @@ Event.delegate = function (type, fn, el, spec) {
     }
 
 
-    var args = Y.Array(arguments, 0, true),	    
-		element = el,	// HTML element serving as the delegation container
-		availHandle;	
+    var args = Y.Array(arguments, 0, true),     
+        element = el,   // HTML element serving as the delegation container
+        availHandle;    
 
 
-	if (Lang.isString(el)) {
-		
-		//	Y.Selector.query returns an array of matches unless specified 
-		//	to return just the first match.  Since the primary use case for
-		//	event delegation is to use a single event handler on a container,
-		//	Y.delegate doesn't currently support being able to bind a 
-		//	single listener to multiple containers.
-		
-		element = Y.Selector.query(el, null, true);
-		
-		if (!element) { // Not found, check using onAvailable
+    if (Lang.isString(el)) {
+        
+        //  Y.Selector.query returns an array of matches unless specified 
+        //  to return just the first match.  Since the primary use case for
+        //  event delegation is to use a single event handler on a container,
+        //  Y.delegate doesn't currently support being able to bind a 
+        //  single listener to multiple containers.
+        
+        element = Y.Selector.query(el, null, true);
+        
+        if (!element) { // Not found, check using onAvailable
 
-			availHandle = Event.onAvailable(el, function() {
+            availHandle = Event.onAvailable(el, function() {
 
-				availHandle.handle = Event.delegate.apply(Event, args);
+                availHandle.handle = Event.delegate.apply(Event, args);
 
             }, Event, true, false);
 
             return availHandle;
-			
-		}
-		
-	}
+            
+        }
+        
+    }
 
 
-	element = Y.Node.getDOMNode(element);
+    element = Y.Node.getDOMNode(element);
 
 
-	var	guid = Y.stamp(element),
+    var guid = Y.stamp(element),
             
         // The Custom Event for the delegation spec
         ename = 'delegate:' + guid + type + sanitize(spec),
@@ -213,69 +213,69 @@ Event.delegate = function (type, fn, el, spec) {
         // The key to the listener for the event type and container
         delegateKey = type + guid,
 
-		delegate = delegates[delegateKey],
+        delegate = delegates[delegateKey],
 
-		domEventHandle,
-		
-		ceHandle,
-		
-		listeners;
-	
+        domEventHandle,
+        
+        ceHandle,
+        
+        listeners;
+    
 
     if (!delegate) {
 
-		delegate = {};
+        delegate = {};
 
-		if (specialTypes[type]) {
-			
-			if (!Event._fireMouseEnter) {
-				Y.log("Delegating a " + type + " event requires the event-mouseenter submodule.", "error", "Event");
-				return false;				
-			}
-			
-			type = specialTypes[type];
-			delegate.fn = Event._fireMouseEnter;
-			
-		}
+        if (specialTypes[type]) {
+            
+            if (!Event._fireMouseEnter) {
+                Y.log("Delegating a " + type + " event requires the event-mouseenter submodule.", "error", "Event");
+                return false;               
+            }
+            
+            type = specialTypes[type];
+            delegate.fn = Event._fireMouseEnter;
+            
+        }
 
-		//	Create the DOM Event wrapper that will fire the Custom Event
+        //  Create the DOM Event wrapper that will fire the Custom Event
 
-		domEventHandle = attach(type, delegateKey, element);
+        domEventHandle = attach(type, delegateKey, element);
 
 
-		//	Hook into the _delete method for the Custom Event wrapper of this
-		//	DOM Event in order to clean up the 'delegates' map and unsubscribe
-		//	the associated Custom Event listeners fired by this DOM event
-		//	listener if/when the user calls "purgeElement" OR removes all 
-		//	listeners of the Custom Event.
-		
-		Y.after(function (sub) {
+        //  Hook into the _delete method for the Custom Event wrapper of this
+        //  DOM Event in order to clean up the 'delegates' map and unsubscribe
+        //  the associated Custom Event listeners fired by this DOM event
+        //  listener if/when the user calls "purgeElement" OR removes all 
+        //  listeners of the Custom Event.
+        
+        Y.after(function (sub) {
 
-			if (domEventHandle.sub == sub) {
+            if (domEventHandle.sub == sub) {
 
-				//	Delete this event from the map of known delegates
-				delete delegates[delegateKey];
+                //  Delete this event from the map of known delegates
+                delete delegates[delegateKey];
 
-				Y.log("DOM event listener associated with the " + ename + " Custom Event removed.  Removing all " + ename + " listeners.", "info", "Event");
+                Y.log("DOM event listener associated with the " + ename + " Custom Event removed.  Removing all " + ename + " listeners.", "info", "Event");
 
-				//	Unsubscribe all listeners of the Custom Event fired 
-				//	by this DOM event.
-				Y.detachAll(ename);
-				
-			}
+                //  Unsubscribe all listeners of the Custom Event fired 
+                //  by this DOM event.
+                Y.detachAll(ename);
+                
+            }
 
-		}, domEventHandle.evt, "_delete");
-			
-		delegate.handle = domEventHandle;
+        }, domEventHandle.evt, "_delete");
+            
+        delegate.handle = domEventHandle;
 
         delegates[delegateKey] = delegate;
 
     }
 
 
-	listeners = delegate.listeners;
+    listeners = delegate.listeners;
 
-	delegate.listeners = listeners ? (listeners + 1) : 1;
+    delegate.listeners = listeners ? (listeners + 1) : 1;
     delegate[spec] = ename;
 
 
@@ -287,27 +287,27 @@ Event.delegate = function (type, fn, el, spec) {
 
     // Subscribe to the Custom Event for the delegation spec
 
-	ceHandle = Y.on.apply(Y, args);
+    ceHandle = Y.on.apply(Y, args);
 
 
-	//	Hook into the detach method of the handle in order to clean up the 
-	//	'delegates' map and remove the associated DOM event handler 
-	//	responsible for firing this Custom Event if all listener for this 
-	//	event have been removed.
+    //  Hook into the detach method of the handle in order to clean up the 
+    //  'delegates' map and remove the associated DOM event handler 
+    //  responsible for firing this Custom Event if all listener for this 
+    //  event have been removed.
 
-	Y.after(function () {
-			
-		delegate.listeners = (delegate.listeners - 1);
-		
-		if (delegate.listeners === 0) {
-			Y.log("No more listeners for the " + ename + " Custom Event.  Removing its associated DOM event listener.", "info", "Event");
-			delegate.handle.detach();
-		}
+    Y.after(function () {
+            
+        delegate.listeners = (delegate.listeners - 1);
+        
+        if (delegate.listeners === 0) {
+            Y.log("No more listeners for the " + ename + " Custom Event.  Removing its associated DOM event listener.", "info", "Event");
+            delegate.handle.detach();
+        }
 
-	}, ceHandle, "detach");
+    }, ceHandle, "detach");
 
     return ceHandle;
-	
+    
 };
 
 Y.delegate = Event.delegate;

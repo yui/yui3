@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>yui&nbsp; <span class="subtitle">3.1.0pr9</span></h3>
+        <h3>yui&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_yui.html" title="yui">yui</a>
                 
@@ -395,7 +395,7 @@
                 <span class="nx">req</span>        <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">requires</span><span class="p">;</span> 
                 <span class="nx">use</span>        <span class="o">=</span> <span class="nx">details</span><span class="p">.</span><span class="nx">use</span><span class="p">;</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">req</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">req</span><span class="p">));</span>
                 <span class="p">}</span>
 
@@ -405,7 +405,7 @@
                     <span class="nx">mod</span><span class="p">.</span><span class="nx">fn</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
                 <span class="p">}</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="nx">use</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">use</span> <span class="o">&amp;&amp;</span> <span class="nx">use</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">use</span><span class="p">));</span>
                 <span class="p">}</span>
             <span class="p">}</span>

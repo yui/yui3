@@ -1,12 +1,11 @@
 package com.yahoo.infographics.styles
 {
 	import com.yahoo.renderers.styles.RendererStyles;
-	import com.yahoo.infographics.constants.ScaleTypes;
 
 	/**
 	 * Styles used by a line graph.
 	 */
-	public class LineStyles extends CartesianStyles
+	public class LineStyles extends PlotStyles
 	{
 
 		/**
@@ -23,7 +22,9 @@ package com.yahoo.infographics.styles
 			connectDiscontinuousPoints:"connectDiscontinuousPoints",
 			discontinuousType:"discontinuousType",
 			discontinuousDashLength:"discontinuousDashLength",
-			discontinuousGapSpace:"discontinuousGapSpace"
+			discontinuousGapSpace:"discontinuousGapSpace",
+			showLines:"showLines",
+			showMarkers:"showMarkers"
 		};
 
 	//--------------------------------------
@@ -276,6 +277,50 @@ package com.yahoo.infographics.styles
 		public function set discontinuousGapSpace(value:Number):void
 		{
 			this._discontinuousGapSpace = value;
+		}
+
+		/**
+		 * @private (protected)
+		 * Storage for <code>showLines</code>
+		 */
+		protected var _showLines:Boolean = true;
+
+		/**
+		 * Indicates whether to show lines.
+		 */
+		public function get showLines():Boolean
+		{
+			return this._showLines;
+		}
+
+		/**
+		 * @private (setter)
+		 */
+		public function set showLines(value:Boolean):void
+		{
+			this._showLines = value;
+		}
+
+		/**
+		 * @private (protected)
+		 * Storage for <code>showMarkers</code>
+		 */
+		protected var _showMarkers:Boolean = true;
+
+		/**
+		 * Indicates whether to show markers
+		 */
+		public function get showMarkers():Boolean
+		{
+			return this._showMarkers;
+		}
+
+		/**
+		 * @private (setter)
+		 */
+		public function set showMarkers(value:Boolean):void
+		{
+			this._showMarkers = value;
 		}
 	}
 }

@@ -10,6 +10,16 @@ It provides the following pieces of core functionality:
 * Consistent class-name generation support
 * Plugin support
 
+Development Master
+
+* Use Y.mix in _applyParsedConfig instead of Y.aggregate, so that 
+  object and array properties don't get merged. Any properties
+  set in the user config still take precedence over properties set
+  from the html parser implementation.
+
+* Changed _initUIEvent, to account for change to fireOnce events,
+  which makes them synchronous (in 3.1.0, they were async).
+
 3.1.0
 
 * "render" event now published with the defaultTargetOnly set to true.

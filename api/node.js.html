@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>node&nbsp; <span class="subtitle">3.1.0pr9</span></h3>
+        <h3>node&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_node.html" title="node">node</a>
                 
@@ -398,15 +398,6 @@
     <span class="s1">&#39;options&#39;</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;option&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
-     <span class="c1">// IE: elements collection is also FORM node which trips up scrubVal.</span>
-     <span class="c1">// preconverting to NodeList</span>
-     <span class="c1">// TODO: break out for IE only</span>
-    <span class="s1">&#39;elements&#39;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">elements</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -1016,7 +1007,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// map to DOMNode</span>
                 <span class="nx">content</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// convert DOMNodeList to documentFragment</span>
-                <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2Frag</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">);</span>
+                <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">);</span>
             <span class="p">}</span>
 
         <span class="p">}</span>
@@ -1032,7 +1023,7 @@
 <span class="cm">    * @param {Node} otherNode The node to swap with</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">    */</span>
-    <span class="nx">swap</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">swapNode</span> <span class="o">?</span> 
+    <span class="nx">swap</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">swapNode</span> <span class="o">?</span> 
         <span class="kd">function</span><span class="p">(</span><span class="nx">otherNode</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">swapNode</span><span class="p">(</span><span class="nx">Y_Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">otherNode</span><span class="p">));</span>
         <span class="p">}</span> <span class="o">:</span>

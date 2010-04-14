@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>Test</title>
+<script src="../../build/yui/yui-debug.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+Y = new YUI({
+  filter: 'RAW',
+  modules: {
+    somelib: {
+      requires: ['someotherlib','io'],
+      fullpath: 'somelib.js'
+    },
+    someotherlib: {
+      fullpath: 'someotherlib.js'
+    }
+  }
+});
+
+Y.use('somelib', function(Y) {
+  Y.log("somelib: " + typeof(Y.somelib));
+});
+</script>
+</body>
+</html>
+

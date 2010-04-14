@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>dd&nbsp; <span class="subtitle">3.1.0pr9</span></h3>
+        <h3>dd&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_dd.html" title="dd">dd</a>
                 
@@ -208,7 +208,7 @@
             <span class="nx">h</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;drag:align&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">align</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
 
             <span class="c1">//TODO - This doesn&#39;t work yet??</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;scroll&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;win&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;scroll&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_vpRegionCache</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
             <span class="p">},</span> <span class="k">this</span><span class="p">));</span>
         <span class="p">},</span>
@@ -390,7 +390,7 @@
             <span class="nx">value</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">scroll</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">scroll</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">PARENT_SCROLL</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nb">window</span><span class="p">));</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">PARENT_SCROLL</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;win&#39;</span><span class="p">));</span>
                 <span class="p">}</span>
                 <span class="k">return</span> <span class="nx">scroll</span><span class="p">;</span>
             <span class="p">}</span>

@@ -303,6 +303,37 @@ YUI.Env[Y.version].modules = {
             }
         }
     }, 
+    "datatable": {
+        "submodules": {
+            "column": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "columnset": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "datatable-base": {
+                "requires": [
+                    "columnset", 
+                    "rowset", 
+                    "widget"
+                ]
+            }, 
+            "row": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "rowset": {
+                "requires": [
+                    "base"
+                ]
+            }
+        }
+    }, 
     "datatype": {
         "submodules": {
             "datatype-date": {
@@ -920,6 +951,15 @@ YUI.Env[Y.version].modules = {
             "event-simulate"
         ], 
         "skinnable": true
+    }, 
+    "value-change": {
+        "optional": [
+            "event-custom-complex"
+        ], 
+        "requires": [
+            "node-base", 
+            "event-focus"
+        ]
     }, 
     "widget": {
         "plugins": {

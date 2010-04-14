@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>querystring&nbsp; <span class="subtitle">3.1.0pr9</span></h3>
+        <h3>querystring&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_querystring.html" title="querystring">querystring</a>
                  &gt; QueryString 
@@ -98,11 +98,7 @@ complementary functionality, or include the rollup for both.</p>
                                                     
                                                 
                                                         , 
-                                                         sep
-                                                    
-                                                
-                                                        , 
-                                                         eq
+                                                         cfg
                                                     
                                                 
                                             )
@@ -119,21 +115,19 @@ complementary functionality, or include the rollup for both.</p>
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">obj</span>
-                                                        &lt;<span property="yui:type">Variant</span>&gt;
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  any arbitrary value to convert to query string</span>
+                                                        <span property="yui:description">  A single-level object to convert to a querystring.</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">sep</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        <code><span property="yui:name">cfg</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  (optional) Character that should join param k=v pairs together. Default: "&"</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">eq</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">   (optional) Character that should join keys to their values. Default: "="</span>
+                                                        <span property="yui:description">  (optional) Configuration object.  In the simple
+module, only the arrayKey setting is
+supported.  When set to true, the key of an
+array will have the '[]' notation appended
+to the key;.</span>
                                                         </dd>
                                                 </dl>
 

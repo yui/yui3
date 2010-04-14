@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>querystring&nbsp; <span class="subtitle">3.1.0pr9</span></h3>
+        <h3>querystring&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_querystring.html" title="querystring">querystring</a>
                 
@@ -50,35 +50,21 @@
                         <div class="highlight"><pre><span class="cm">/*global Y */</span>
 <span class="cm">/**</span>
 <span class="cm"> * &lt;p&gt;Provides Y.QueryString.stringify method for converting objects to Query Strings.</span>
-<span class="cm"> * This is a simpler implementation than the full querystring-stringify.&lt;/p&gt;</span>
-<span class="cm"> * &lt;p&gt;Because io requires at least some basic query string escaping functionality,</span>
-<span class="cm"> * this module provides the bare minimum functionality (encoding a hash of simple values),</span>
-<span class="cm"> * without the additional support for arrays, objects, and so on.  Every item is</span>
-<span class="cm"> * converted to a string, and escaped, with no fanciness.&lt;/p&gt;</span>
-<span class="cm"> * &lt;p&gt;This provides a friendly way for IO to handle objects-as-data, without necessitating</span>
-<span class="cm"> * a lot of code for simple use-cases.&lt;/p&gt;</span>
-<span class="cm"> * </span>
+<span class="cm"> * This is a subset implementation of the full querystring-stringify.&lt;/p&gt;</span>
+<span class="cm"> * &lt;p&gt;This module provides the bare minimum functionality (encoding a hash of simple values),</span>
+<span class="cm"> * without the additional support for nested data structures.  Every key-value pair is</span>
+<span class="cm"> * encoded by encodeURIComponent.&lt;/p&gt;</span>
+<span class="cm"> * &lt;p&gt;This module provides a minimalistic way for io to handle  single-level objects</span>
+<span class="cm"> * as transaction data.&lt;/p&gt;</span>
+<span class="cm"> *</span>
 <span class="cm"> * @module querystring</span>
 <span class="cm"> * @submodule querystring-stringify-simple</span>
 <span class="cm"> * @for QueryString</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">QueryString</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;QueryString&quot;</span><span class="p">);</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * &lt;p&gt;Provides Y.QueryString.escape method to be able to override default encoding</span>
-<span class="cm"> * method.  This is important in cases where non-standard delimiters are used, if</span>
-<span class="cm"> * the delimiters would not normally be handled properly by the builtin</span>
-<span class="cm"> * (en|de)codeURIComponent functions.&lt;/p&gt;</span>
-<span class="cm"> * Default: encodeURIComponent</span>
-<span class="cm"> * @module querystring</span>
-<span class="cm"> * @submodule querystring-stringify-simple</span>
-<span class="cm"> * @for QueryString</span>
-<span class="cm"> * @static</span>
-<span class="cm"> **/</span>
-<span class="nx">QueryString</span><span class="p">.</span><span class="nx">escape</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">;</span>
-
+<span class="kd">var</span> <span class="nx">QueryString</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;QueryString&quot;</span><span class="p">),</span>
+    <span class="nx">EUC</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">;</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * &lt;p&gt;Converts a simple object to a Query String representation.&lt;/p&gt;</span>
@@ -87,19 +73,34 @@
 <span class="cm"> * @method stringify</span>
 <span class="cm"> * @for QueryString</span>
 <span class="cm"> * @submodule querystring-stringify-simple</span>
-<span class="cm"> * @param obj {Variant} any arbitrary value to convert to query string</span>
-<span class="cm"> * @param sep {String} (optional) Character that should join param k=v pairs together. Default: &quot;&amp;&quot;</span>
-<span class="cm"> * @param eq  {String} (optional) Character that should join keys to their values. Default: &quot;=&quot;</span>
+<span class="cm"> * @param obj {Object} A single-level object to convert to a querystring.</span>
+<span class="cm"> * @param cfg {Object} (optional) Configuration object.  In the simple</span>
+<span class="cm"> *                                module, only the arrayKey setting is</span>
+<span class="cm"> *                                supported.  When set to true, the key of an</span>
+<span class="cm"> *                                array will have the &#39;[]&#39; notation appended</span>
+<span class="cm"> *                                to the key;.</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
-<span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">sep</span><span class="p">,</span> <span class="nx">eq</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">sep</span> <span class="o">=</span> <span class="nx">sep</span> <span class="o">||</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">;</span>
-    <span class="nx">eq</span> <span class="o">=</span> <span class="nx">eq</span> <span class="o">||</span> <span class="s2">&quot;=&quot;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">qs</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">escape</span> <span class="o">=</span> <span class="nx">QueryString</span><span class="p">.</span><span class="nx">escape</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">obj</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">qs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">escape</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">+</span> <span class="nx">eq</span> <span class="o">+</span> <span class="nx">escape</span><span class="p">(</span><span class="nb">String</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">])));</span>
+<span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">qs</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="c1">// Default behavior is false; standard key notation.</span>
+        <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arrayKey</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="nx">key</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="nx">key</span> <span class="k">in</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">]))</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">qs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">EUC</span><span class="p">(</span><span class="nx">s</span> <span class="o">?</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;[]&#39;</span> <span class="o">:</span> <span class="nx">key</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">EUC</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">][</span><span class="nx">i</span><span class="p">]));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">qs</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">EUC</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nx">EUC</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">]));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">qs</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">sep</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">qs</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">);</span>
 <span class="p">};</span>
 </pre></div>
 

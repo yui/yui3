@@ -344,7 +344,7 @@ YUI.prototype = {
                 req        = details.requires; 
                 use        = details.use;
 
-                if (req) {
+                if (req && req.length) {
                     this._attach(this.Array(req));
                 }
 
@@ -354,7 +354,7 @@ YUI.prototype = {
                     mod.fn(this, name);
                 }
 
-                if (use) {
+                if (use && use.length) {
                     this._attach(this.Array(use));
                 }
             }
@@ -2685,11 +2685,11 @@ Y.Get = function() {
                       (type === "script") ? true : false;
 
         q.attributes = q.attributes || {};
-        // q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
-        var charset = opts.charset || q.attributes.charset;
-        if (charset) {
-            q.attributes.charset = charset;
-        }
+        q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
+        // var charset = opts.charset || q.attributes.charset;
+        // if (charset) {
+        //     q.attributes.charset = charset;
+        // }
 
         setTimeout(function() {
             _next(id);

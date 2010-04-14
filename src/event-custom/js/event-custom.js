@@ -381,8 +381,8 @@ Y.CustomEvent.prototype = {
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-            // Y.later(0, this, Y.bind(this._notify, this, s, this.firedWith));
-            setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+            // setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+            this._notify(s, this.firedWith);
         }
 
         if (when == AFTER) {

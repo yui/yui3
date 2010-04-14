@@ -92,6 +92,117 @@ suite.add(new Y.Test.Case({
         } catch(e) {
             Y.Assert.fail("w.destroy() on an unrendered widget threw an exception" + e);
         }
+    },
+    
+    testWidgetClone : function() {
+        var a = new Y.Widget();
+        var b = new Y.Widget();
+        var c = new Y.Widget();
+
+        var a1 = Y.clone(a);
+        var a2 = Y.clone(a1);
+        var a3 = Y.clone(a2);
+
+        Y.Assert.isTrue(a instanceof Y.Widget);
+        Y.Assert.isTrue(a1 instanceof Y.Widget);
+        Y.Assert.isTrue(a2 instanceof Y.Widget);
+        Y.Assert.isTrue(a3 instanceof Y.Widget);
+
+        var b1 = Y.clone(b);
+        var b2 = Y.clone(b1);
+        var b3 = Y.clone(b2);
+
+        Y.Assert.isTrue(b instanceof Y.Widget);
+        Y.Assert.isTrue(b1 instanceof Y.Widget);
+        Y.Assert.isTrue(b2 instanceof Y.Widget);
+        Y.Assert.isTrue(b3 instanceof Y.Widget);
+
+        var c1 = Y.clone(c);
+        var c2 = Y.clone(c1);
+        var c3 = Y.clone(c2);
+
+        Y.Assert.isTrue(c instanceof Y.Widget);
+        Y.Assert.isTrue(c1 instanceof Y.Widget);
+        Y.Assert.isTrue(c2 instanceof Y.Widget);
+        Y.Assert.isTrue(c3 instanceof Y.Widget);
+    },
+
+    testWidgetHashClone : function() {
+        // When Widget's are properties of an object it seems to break apart
+        // something not passed to the recursive call maybe?
+
+        var a = new Y.Widget();
+        var b = new Y.Widget();
+        var c = new Y.Widget();
+
+        var o = {
+            a : a,
+            b : b,
+            c : c
+        };
+
+        var o1 = Y.clone(o);
+        var o2 = Y.clone(o1);
+        var o3 = Y.clone(o2);
+
+        Y.Assert.isTrue(o3.a instanceof Y.Widget);
+        Y.Assert.isTrue(o3.b instanceof Y.Widget);
+        Y.Assert.isTrue(o3.c instanceof Y.Widget);
+    },
+
+    testBaseClone : function() {
+        var a = new Y.Base();
+        var b = new Y.Base();
+        var c = new Y.Base();
+
+        // Base works fine
+
+        var a1 = Y.clone(a);
+        var a2 = Y.clone(a1);
+        var a3 = Y.clone(a2);
+
+        Y.Assert.isTrue(a instanceof Y.Base);
+        Y.Assert.isTrue(a1 instanceof Y.Base);
+        Y.Assert.isTrue(a2 instanceof Y.Base);
+        Y.Assert.isTrue(a3 instanceof Y.Base);
+
+        var b1 = Y.clone(b);
+        var b2 = Y.clone(b1);
+        var b3 = Y.clone(b2);
+
+        Y.Assert.isTrue(b instanceof Y.Base);
+        Y.Assert.isTrue(b1 instanceof Y.Base);
+        Y.Assert.isTrue(b2 instanceof Y.Base);
+        Y.Assert.isTrue(b3 instanceof Y.Base);
+
+        var c1 = Y.clone(c);
+        var c2 = Y.clone(c1);
+        var c3 = Y.clone(c2);
+
+        Y.Assert.isTrue(c instanceof Y.Base);
+        Y.Assert.isTrue(c1 instanceof Y.Base);
+        Y.Assert.isTrue(c2 instanceof Y.Base);
+        Y.Assert.isTrue(c3 instanceof Y.Base);
+    },
+
+    testBaseHashClone : function() {
+        var a = new Y.Base();
+        var b = new Y.Base();
+        var c = new Y.Base();
+
+        var o = {
+            a : a,
+            b : b,
+            c : c
+        };
+
+        var o1 = Y.clone(o);
+        var o2 = Y.clone(o1);
+        var o3 = Y.clone(o2);
+
+        Y.Assert.isTrue(o3.a instanceof Y.Base);
+        Y.Assert.isTrue(o3.b instanceof Y.Base);
+        Y.Assert.isTrue(o3.c instanceof Y.Base);
     }
 
 }));

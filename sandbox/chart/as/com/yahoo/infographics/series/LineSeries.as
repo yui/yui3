@@ -1,25 +1,23 @@
-package com.yahoo.infographics.cartesian
+package com.yahoo.infographics.series
 {
 	import com.yahoo.util.GraphicsUtil;
 	import com.yahoo.infographics.data.AxisData;
 	import com.yahoo.infographics.data.events.DataEvent;
-	import com.yahoo.infographics.constants.ScaleTypes;
 	import com.yahoo.infographics.styles.LineStyles;
 	import com.yahoo.renderers.events.RendererEvent;
-	import com.yahoo.renderers.Skin;
 	import flash.display.Graphics;
 
 	/**
 	 * Class used for drawing a line graph.
 	 */
-	public class LineGraph extends Cartesian
+	public class LineSeries extends PlotSeries
 	{
 		/**
 		 * Constructor
 		 */
-		public function LineGraph(xAxisData:AxisData, yAxisData:AxisData, xKey:String, yKey:String)
+		public function LineSeries(series:Object)
 		{
-			super(xAxisData, yAxisData, xKey, yKey);
+			super(series);
 		}
 		
 		/**
@@ -29,14 +27,36 @@ package com.yahoo.infographics.cartesian
 		private static var _styleClass:Class = LineStyles;
 		
 		/**
+		 * @private (protected)
+		 */
+		private var _type:String = "line";
+		
+		/**
+		 * Indicates the type of graph.
+		 */
+		override public function get type():String
+		{
+			return this._type;
+		}
+
+		/**
+		 * @private (setter)
+		 */
+		override public function set type(value:String):void
+		{
+			this._type = value;
+		}
+		/**
 		 * @private (override)
 		 */
-		override protected function initializeRenderer():void
+		override protected function initializeStyleProps():void
 		{
-			super.initializeRenderer();
+			super.initializeStyleProps();
 			this._weight = Number(this.getStyle("weight"));
 			this._color = uint(this.getStyle("color"));
 			this._alpha = Number(this.getStyle("alpha")); 
+			this._showMarkers = this.getStyle("showMarkers");
+			this._showLines = this.getStyle("showLines");
 			this.setDimensions();
 		}
 		
@@ -47,14 +67,6 @@ package com.yahoo.infographics.cartesian
 		{
 			return _styleClass;
 		}		
-
-		/**
-		 * Clears the graphics for the LineGraph
-		 */
-		public function clear () : void
-		{
-			this.graphics.clear();
-		}
 
 		/**
 		 * @private (protected)
@@ -70,7 +82,20 @@ package com.yahoo.infographics.cartesian
 		 * @private (protected)
 		 */
 		protected var _alpha:Number;
+
+		/**
+		 * @private (protected)
+		 */
+		protected var _showMarkers:Boolean;
+
+		/**
+		 * @private (protected)
+		 */
+		protected var _showLines:Boolean;
 		
+		/**
+		 * @private (override)
+		 */
 		override public function checkStyleFlags():Boolean  
 		{
 			return this.checkFlags({
@@ -87,23 +112,41 @@ package com.yahoo.infographics.cartesian
 			});
 		}
 
-		override public function updateStyleProps():void
+		/**
+		 * @private (override)
+		 */
+		override protected function updateStyleProps():void
 		{
+			super.updateStyleProps();
 			if(this.checkFlag("weight")) this._weight = Number(this.getStyle("weight"));
 			if(this.checkFlag("color")) this._color = uint(this.getStyle("color"));
 			if(this.checkFlag("alpha")) this._alpha = Number(this.getStyle("alpha"));
+			if(this.checkFlag("showMarkers")) this._showMarkers = this.getStyle("showMarkers");
+			if(this.checkFlag("showLines")) this._showLines = this.getStyle("showLine");
 		}
 
 		/**
 		 * @private
 		 */
-		override protected function drawGraph(values:Vector.<int>):void
+		override protected function drawGraph():void
 		{
-			var	len:int = values.length,
+			if(this._showLines) this.drawLines();
+			if(this._showMarkers) this.drawMarkers();
+		}
+
+		/**
+		 * @protected
+		 */
+		protected function drawLines():void
+		{
+			if(this._xcoords.length < 1) return;
+			var	xcoords:Vector.<int> = this._xcoords,
+				ycoords:Vector.<int> = this._ycoords,
+				len:int = xcoords.length,
 				lastValidX:int,
 				lastValidY:int,
-				lastX:int = values[0] as int,
-				lastY:int = values[1] as int,
+				lastX:int = xcoords[0] as int,
+				lastY:int = ycoords[0] as int,
 				nextX:int,
 				nextY:int,
 				i:int,
@@ -122,10 +165,10 @@ package com.yahoo.infographics.cartesian
 
 			graphics.lineStyle (this._weight, this._color, this._alpha);
 			graphics.moveTo (lastX, lastY);
-			for(i = 2; i < len; i = i + 2)
+			for(i = 1; i < len; i = ++i)
 			{
-				nextX = values[i] as int;
-				nextY = values[i + 1] as int;
+				nextX = xcoords[i] as int;
+				nextY = ycoords[i] as int;
 				if(isNaN(nextY))
 				{
 					lastValidX = nextX;
