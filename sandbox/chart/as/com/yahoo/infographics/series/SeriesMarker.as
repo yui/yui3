@@ -2,6 +2,7 @@ package com.yahoo.infographics.series
 {
 	import flash.display.Sprite;
 	import flash.display.DisplayObject;
+	import flash.events.MouseEvent;
 
 	public class SeriesMarker extends Sprite
 	{
@@ -125,5 +126,158 @@ package com.yahoo.infographics.series
 			this._skin = value;
 			this.addChild(this._skin);
 		}
+		
+		/**
+		 * @private (protected)
+		 * Indicates the current hover state of the mouse in relation to the marker.
+		 */
+		protected var _mouseOutside:Boolean = true;
+		
+		/**
+		 * @private
+		 * Indicates what test to use for determining a <code>rollOver</code> event.
+		 */
+		protected var _rollOverTest:Function = _overHitTest;
+
+		/**
+		 * @private (protected)
+		 * Indicates what test to use to determine a <code>rollOut</code> event.
+		 */
+		protected var _rollOutTest:Function = _offHitTest;
+		
+		/**
+		 * Allows for mouse events to be determined by an external click layer. 
+		 * @param delegate Click layer that listens to events.
+		 * @param intersectionTest Specifies what algorithm will be used for determining 
+		 * <code>rollOver</code> and <code>rollOut</code> events. 
+		 *	<ul>
+		 * 		<li><code>marker</code>: events will be dispatched if the mouse intersects the marker.</li>
+		 * 		<li><code>horizontal</code>: events will be dispatched if the mouse intersects the horizontal plane
+		 * of the marker.</li>
+		 * 		<li><code>vertical</code>: events will be dispatched if the mouse intersects the vertical plane
+		 * of the marker.</li>
+		 * 	</ul>
+		 */
+		public function delegateListener(delegate:Sprite, intersectionTest:String = "marker"):void
+		{
+			switch(intersectionTest)
+			{
+				case "horizontal" :
+					this._rollOverTest = _horizontalOverHitTest;
+					this._rollOutTest = _horizontalOffHitTest;
+					break;
+				case "vertical" :
+					this._rollOverTest = _verticalOverHitTest;
+					this._rollOutTest = _verticalOffHitTest;
+					break;
+				default :
+					this._rollOverTest = _overHitTest;
+					this._rollOutTest = _offHitTest;
+					break;
+			}
+			delegate.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
+			delegate.addEventListener(MouseEvent.CLICK, handleMouseClick);
+			delegate.addEventListener(MouseEvent.DOUBLE_CLICK, handleMouseDoubleClick);
+		}
+
+		/**
+		 * Handles <code>mouseMove</code> events when the <code>listener</code> is delegated to another class.
+		 */
+		public function handleMouseMove(event:MouseEvent):void
+		{
+			if(this._mouseOutside)
+			{
+				if(this._rollOverTest(event))
+				{
+					this._mouseOutside = false;
+					this.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER));
+				}
+			}
+			else
+			{
+				if(this._rollOutTest(event))
+				{
+					this._mouseOutside = true;
+					this.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT));
+				}
+			}
+		}
+	
+		/**
+		 * Handles <code>click</code> events when the <code>listener</code> is delegated to another class.
+		 */
+		protected function handleMouseClick(event:MouseEvent):void
+		{
+			if(event.localX >= this.x && event.localX <= (this.x + this.width) && event.localY >= this.y && event.localY <= (this.y + this.height))
+			{
+				this.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
+			}
+		}
+
+		/**
+		 * Handles <code>doubleClick</code> events when the <code>listener</code> is delegated to another class.
+		 */
+		protected function handleMouseDoubleClick(event:MouseEvent):void
+		{
+			if(event.localX >= this.x && event.localX <= (this.x + this.width) && event.localY >= this.y && event.localY <= (this.y + this.height))
+			{
+				this.dispatchEvent(new MouseEvent(MouseEvent.DOUBLE_CLICK));
+			}
+		}
+
+		/**
+		 * @private (protected)
+		 * Checks to see if cursor rolls over the marker.
+		 */
+		protected function _overHitTest(event:MouseEvent):Boolean
+		{
+			return (event.localX >= this.x && event.localX <= (this.x + this.width) && event.localY >= this.y && event.localY <= (this.y + this.height))
+		}
+
+		/**
+		 * @private (protected)
+		 * Checks to see if the cursor rolls out of the marker.
+		 */
+		protected function _offHitTest(event:MouseEvent):Boolean
+		{
+			return (event.localX < this.x || event.localX > (this.x + this.width) || event.localY < this.y || event.localY > (this.y + this.height))
+		}
+		
+		/**
+		 * @private (protected)
+		 * Checks to see if cursor rolls over the marker.
+		 */
+		protected function _verticalOverHitTest(event:MouseEvent):Boolean
+		{
+			return (event.localY >= this.y && event.localY <= (this.y + this.height))
+		}
+
+		/**
+		 * @private (protected)
+		 * Checks to see if the cursor rolls out of the marker.
+		 */
+		protected function _verticalOffHitTest(event:MouseEvent):Boolean
+		{
+			return (event.localY < this.y || event.localY > (this.y + this.height))
+		}
+		
+		/**
+		 * @private (protected)
+		 * Checks to see if cursor rolls over the marker.
+		 */
+		protected function _horizontalOverHitTest(event:MouseEvent):Boolean
+		{
+			return (event.localX >= this.x && event.localX <= (this.x + this.width))
+		}
+
+		/**
+		 * @private (protected)
+		 * Checks to see if the cursor rolls out of the marker.
+		 */
+		protected function _horizontalOffHitTest(event:MouseEvent):Boolean
+		{
+			return (event.localX < this.x || event.localX > (this.x + this.width))
+		}
+
 	}
 }

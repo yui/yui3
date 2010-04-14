@@ -1,5 +1,4 @@
-package com.yahoo.infographics.series
-{
+package com.yahoo.infographics.series {
 	import com.yahoo.infographics.data.AxisData;
 	import flash.display.DisplayObject;
 	import com.yahoo.renderers.Renderer;
@@ -9,6 +8,7 @@ package com.yahoo.infographics.series
 	import flash.display.InteractiveObject;
 	import flash.events.MouseEvent;
 	import com.yahoo.display.*;
+	import com.yahoo.infographics.events.GraphEvent;
 
 	public class PlotSeries extends Cartesian
 	{
@@ -57,10 +57,13 @@ package com.yahoo.infographics.series
 	
 		/**
 		 * @private (protected)
-		 * Collection or markers to be displayed.
+		 * Storage for markers
 		 */
 		protected var _markers:Vector.<SeriesMarker> = new Vector.<SeriesMarker>();
-
+		
+		/**
+		 * Collection or markers to be displayed.
+		 */
 		public function get markers():Vector.<SeriesMarker>
 		{
 			return this._markers;
@@ -168,6 +171,7 @@ package com.yahoo.infographics.series
 			for(i = 0;i < len; i = ++i)
 			{
 				marker = this.getMarker();
+				marker.index = i;
 				marker.x = Number(xcoords[i] - marker.width/2);
 				marker.y = Number(ycoords[i] - marker.height/2);
 				marker.x = Number(xcoords[i] - marker.width/2);
@@ -228,6 +232,10 @@ package com.yahoo.infographics.series
 			else
 			{
 				marker = new SeriesMarker();
+				if(this._graph && this._graph.hotSpot)
+				{
+					marker.delegateListener(this._graph.hotSpot, this._hitTest);
+				}
 				marker.series = this;
 				marker.skin = this._markerFactory.getSkinInstance(); 
 				InteractiveObject(marker).doubleClickEnabled = true;
@@ -268,6 +276,15 @@ package com.yahoo.infographics.series
 		 */
 		protected function markerRollOverHandler(event:MouseEvent):void
 		{
+			var marker:SeriesMarker = SeriesMarker(event.target),
+				type:String = event.type,
+				series:ISeries = marker.series,
+				xkey:String = this.xKey,
+				ykey:String = this.yKey,
+				index:int = marker.index,
+				xvalue:String = this._xAxisMode.getLabelByIndex(xkey, index),
+				yvalue:String = this._yAxisMode.getLabelByIndex(ykey, index); 
+			this.dispatchEvent(new GraphEvent(GraphEvent.ITEM_ROLL_OVER, false, false, index, marker, series)); 
 		}
 
 		/**
@@ -275,6 +292,15 @@ package com.yahoo.infographics.series
 		 */
 		protected function markerRollOutHandler(event:MouseEvent):void
 		{
+			var marker:SeriesMarker = SeriesMarker(event.target),
+				type:String = event.type,
+				series:ISeries = marker.series,
+				xkey:String = this.xKey,
+				ykey:String = this.yKey,
+				index:int = marker.index,
+				xvalue:String = this._xAxisMode.getLabelByIndex(xkey, index),
+				yvalue:String = this._yAxisMode.getLabelByIndex(ykey, index); 
+			this.dispatchEvent(new GraphEvent(GraphEvent.ITEM_ROLL_OUT, false, false, index, marker, series)); 
 		}
 		
 		/**
@@ -282,6 +308,15 @@ package com.yahoo.infographics.series
 		 */
 		protected function markerClickHandler(event:MouseEvent):void
 		{
+			var marker:SeriesMarker = SeriesMarker(event.target),
+				type:String = event.type,
+				series:ISeries = marker.series,
+				xkey:String = this.xKey,
+				ykey:String = this.yKey,
+				index:int = marker.index,
+				xvalue:String = this._xAxisMode.getLabelByIndex(xkey, index),
+				yvalue:String = this._yAxisMode.getLabelByIndex(ykey, index); 
+			this.dispatchEvent(new GraphEvent(GraphEvent.ITEM_CLICK, false, false, index, marker, series)); 
 		}
 		
 		/**
@@ -289,6 +324,15 @@ package com.yahoo.infographics.series
 		 */
 		protected function markerDoubleClickHandler(event:MouseEvent):void
 		{
+			var marker:SeriesMarker = SeriesMarker(event.target),
+				type:String = event.type,
+				series:ISeries = marker.series,
+				xkey:String = this.xKey,
+				ykey:String = this.yKey,
+				index:int = marker.index,
+				xvalue:String = this._xAxisMode.getLabelByIndex(xkey, index),
+				yvalue:String = this._yAxisMode.getLabelByIndex(ykey, index); 
+			this.dispatchEvent(new GraphEvent(GraphEvent.ITEM_DOUBLE_CLICK, false, false, index, marker, series)); 
 		}
 	}
 }

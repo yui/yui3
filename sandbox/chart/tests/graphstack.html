@@ -89,10 +89,10 @@
 		</script>
 	<div>
 		<h1>Chart with Multiple Axes</h1>
-			<div id="testdiv" style="height:600px;width:900px">
+			<div id="testdiv" style="float:left;height:600px;width:900px">
 				This content will be replaced by an instance of a Flash player.
 			</div>
-			<div id="output"></div>
+			<div style="float:right" id="output"></div>
 		<script>
 
 			YUI().use('node', 'json', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
@@ -218,7 +218,8 @@
 								yAxisData:myleftaxis,
 								xKey:"date",
 								yKey:"expenses",
-								styles:expensegraphstyles
+								styles:expensegraphstyles,
+								hitTest:"horizontal"
 							},
 							{
 								type:"line",
@@ -226,9 +227,11 @@
 								yAxisData:myleftaxis,
 								xKey:"date",
 								yKey:"revenue",
-								styles:revenuegraphstyles
+								styles:revenuegraphstyles,
+								hitTest:"horizontal"
 							}
-						]
+						],
+						handleEventListening:true
 					});
 
 					// Add items
