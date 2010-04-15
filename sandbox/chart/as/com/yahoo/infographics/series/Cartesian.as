@@ -5,6 +5,10 @@ package com.yahoo.infographics.series
 	import com.yahoo.renderers.Renderer;
 	import com.yahoo.infographics.styles.CartesianStyles;
 	import com.yahoo.infographics.cartesian.Graph;
+	import com.yahoo.infographics.axes.IAxisMode;
+	import com.yahoo.infographics.axes.NumericMode;
+	import com.yahoo.infographics.axes.TimeMode;
+	import com.yahoo.infographics.axes.CategoryMode;
 
 	/**
 	 * Cartesian is the base class for Cartesian Graphs. The Cartesian class is an abstract 
@@ -28,7 +32,38 @@ package com.yahoo.infographics.series
 			{
 				this.parseSeriesData(series);
 			}
+			this.setAxisModes();
 			this.initializeStyleProps();
+		}
+
+		/**
+		 * @private 
+		 * Storage for hitTest
+		 *	<ul>
+		 * 		<li><code>marker</code>: events will be dispatched if the mouse intersects the marker.</li>
+		 * 		<li><code>horizontal</code>: events will be dispatched if the mouse intersects the horizontal plane
+		 * of the marker.</li>
+		 * 		<li><code>vertical</code>: events will be dispatched if the mouse intersects the vertical plane
+		 * of the marker.</li>
+		 * 	</ul>
+		 */
+		protected var _hitTest:String = "marker";
+
+		/**
+	     * Indicates the algorithm to use when for mouse events when event listening
+		 * is delegated to the <code>Graph<code> instance.
+		 */
+		public function get hitTest():String
+		{
+			return this._hitTest;
+		}
+		
+		/**
+		 * @private (setter)
+		 */
+		public function set hitTest(value:String):void
+		{
+			this._hitTest = value;
 		}
 
 		/**
@@ -145,6 +180,7 @@ package com.yahoo.infographics.series
 		public function set graph(value:Graph):void
 		{
 			this._graph = value;
+			this.setFlag("graph");
 		}
 		
 		/**
@@ -347,6 +383,67 @@ package com.yahoo.infographics.series
 		protected var _xCoords:Vector.<int>;
 
 		/**
+		 * @private
+		 * Storage for xAxisMode
+		 */
+		protected var _xAxisMode:IAxisMode;
+
+		/**
+		 * Algorithm for calculating x axis labels based on the axis type.
+		 */
+		public function get xAxisMode():IAxisMode
+		{
+			return this._xAxisMode;
+		}
+
+		/**
+		 * @private
+		 * Storage for yAxisMode
+		 */
+		protected var _yAxisMode:IAxisMode;
+
+		/**
+		 * Algorithm for calculating y axis labels based on the axis type.
+		 */
+		public function get yAxisMode():IAxisMode
+		{
+			return this._yAxisMode;
+		}
+		
+		/**
+		 * @private 
+		 * Hash of axis type classes
+		 */
+		protected var _modeSelector:Object = {
+			time:TimeMode,
+			numeric:NumericMode,
+			category:CategoryMode
+		};
+
+		/**
+		 * @private (protected)
+		 * Returns the appropriate axis type class.
+		 */
+		protected function getAxisMode(type:String):Class
+		{
+			return this._modeSelector[type] as Class;
+		}
+	
+		/**
+		 * @private (protected)
+		 * Sets the mode for creating labels relating to axes.
+		 */
+		protected function setAxisModes():void
+		{
+			var xAxis:AxisData = this._xAxisData,
+				yAxis:AxisData = this._yAxisData,
+				xModeClass:Class = this.getAxisMode(xAxis.dataType),
+				yModeClass:Class = this.getAxisMode(yAxis.dataType);
+			this._xAxisMode = new xModeClass(xAxis,this.getStyle("xAxisDataFormat"));
+			this._yAxisMode = new yModeClass(yAxis, this.getStyle("yAxisDataFormat"));
+		}
+
+		/**
 		 * @private (protected)
 		 * Handles updating the graph when the x < code>AxisData</code> values
 		 * change.
@@ -365,7 +462,8 @@ package com.yahoo.infographics.series
 		{
 			if(this.yKey) this.setFlag("axisDataChange");
 		}
-		
+	
+
 		/**
 		 * @private
 		 */
@@ -479,12 +577,23 @@ package com.yahoo.infographics.series
 			{
 				this.yKey = series.yKey;
 			}
+			if(series.hasOwnProperty("graph"))
+			{
+				this._graph = series.graph;
+			}
 			if(series.hasOwnProperty("styles"))
 			{
 				this.setStyles(series.styles);
 			}
+			if(series.hasOwnProperty("hitTest"))
+			{
+				this._hitTest = series.hitTest;
+			}
 		}
-	
+
+		/**
+		 * Determines whether a data change has occurred during this render cycle.
+		 */
 		public function checkDataFlags():Boolean 
 		{
 			return this.checkFlags({
@@ -494,6 +603,9 @@ package com.yahoo.infographics.series
 			});
 		}
 
+		/**
+		 * Indicates whether there has been a resize during the current render cycle.
+		 */
 		public function checkResizeFlags():Boolean
 		{
 			return this.checkFlags({
@@ -502,11 +614,19 @@ package com.yahoo.infographics.series
 			});
 		}
 
+		/**
+		 * Indicates whether there has been a style change during the current
+		 * render cycle.
+		 */
 		public function checkStyleFlags():Boolean 
 		{
 			return false;
 		}
 
+		/**
+		 * @private (protected)
+		 * Sets initial style properties.
+		 */
 		protected function initializeStyleProps():void
 		{
 		}

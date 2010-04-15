@@ -1,9 +1,6 @@
 package com.yahoo.infographics.series
 {
-	import com.yahoo.infographics.data.AxisData;
-	import flash.display.DisplayObject;
 	import com.yahoo.renderers.Renderer;
-	import com.yahoo.util.InstanceFactory;
 	import com.yahoo.infographics.styles.HistogramStyles;
 	import com.yahoo.infographics.series.ISeries;
 	import flash.display.Sprite;
@@ -59,7 +56,7 @@ package com.yahoo.infographics.series
 				ycoords:Vector.<int> = this._ycoords,
 				len:int = xcoords.length,
 				i:int,
-				marker:Sprite,
+				marker:SeriesMarker,
 				seriesCollection:Vector.<ISeries> = this._graph.seriesTypes[this._type] as Vector.<ISeries>,
 				seriesLen:int = seriesCollection.length,
 				seriesWidth:Number = 0,
@@ -99,9 +96,7 @@ package com.yahoo.infographics.series
 				marker = this.getMarker();
 				marker.x = Number(xcoords[i]) + offset;
 				marker.y = Number(ycoords[i]);
-				this._markerFactory.properties.height = origin - marker.y;
-				this._markerFactory.properties.width = markerWidth;
-				this._markerFactory.restoreInstance(marker);
+				marker.height = origin - marker.y;
 				this._markers.push(marker);
 			}
 			this.clearMarkerCache();

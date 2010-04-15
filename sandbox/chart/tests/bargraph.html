@@ -23,7 +23,7 @@
 			</div>
 			<script>
 
-				YUI({filter:"debug"}).use('json', 'node', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
+				YUI().use('json', 'node', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
 					{
 
 					// Create application level styles
@@ -107,38 +107,38 @@
 						]
 					};					
 
-						var mychart = new Y.Chart({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
-						mychart.set("dataProvider", mydata.data);
-						var myleftaxis = new Y.Axis({parent:mychart, axisType:"Category", styles:leftaxisstyles});
-						var mybottomaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:bottomaxisstyles});
-						mybottomaxis.addKey("expenses");
-						mybottomaxis.addKey("revenue");
-						myleftaxis.addKey("day");
-						var mygraph = new Y.Graph({parent:mychart, seriesCollection:[
-							{
-								type:"bar",
-								xAxisData:mybottomaxis,
-								yAxisData:myleftaxis,
-								xKey:"expenses",
-								yKey:"day",
-								styles:expensegraphstyles
-							},
-							{
-								type:"bar",
-								xAxisData:mybottomaxis,
-								yAxisData:myleftaxis,
-								xKey:"revenue",
-								yKey:"day",
-								styles:revenuegraphstyles
-							}
-						]});
+					var mychart = new Y.Chart({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
+					mychart.set("dataProvider", mydata.data);
+					var myleftaxis = new Y.Axis({parent:mychart, axisType:"Category", styles:leftaxisstyles});
+					var mybottomaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:bottomaxisstyles});
+					mybottomaxis.addKey("expenses");
+					mybottomaxis.addKey("revenue");
+					myleftaxis.addKey("day");
+					var mygraph = new Y.Graph({parent:mychart, seriesCollection:[
+						{
+							type:"bar",
+							xAxisData:mybottomaxis,
+							yAxisData:myleftaxis,
+							xKey:"expenses",
+							yKey:"day",
+							styles:expensegraphstyles
+						},
+						{
+							type:"bar",
+							xAxisData:mybottomaxis,
+							yAxisData:myleftaxis,
+							xKey:"revenue",
+							yKey:"day",
+							styles:revenuegraphstyles
+						}
+					]});
 
-						
-						mychart.addBottomItem(mybottomaxis);
-						mychart.addLeftItem(myleftaxis);
-						mychart.addCenterItem(mygraph);
+					
+					mychart.addBottomItem(mybottomaxis);
+					mychart.addLeftItem(myleftaxis);
+					mychart.addCenterItem(mygraph);
 
-					});
+				});
 </script>
 <!-- END EXAMPLE CODE -->
 </div>
