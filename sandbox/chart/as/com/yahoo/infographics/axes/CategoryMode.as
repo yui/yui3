@@ -26,6 +26,16 @@ package com.yahoo.infographics.axes
 		}
 	
 		/**
+		 * @copy com.yahoo.infographics.axes.IAxisMode#getLabelByKey()
+		 */
+		public function getLabelByIndex(key:String, index:int):String
+		{
+			var dataCollection:Array = this._data.getDataByKey(key),
+				value:Object = dataCollection[index];
+			return this.labelFunction[this.props.func](value);
+		}
+		
+		/**
 		 * @copy com.yahoo.infographics.IAxisMode#getTotalMajorUnits()
 		 */
 		override public function getTotalMajorUnits(majorUnit:Object, length:Number):int

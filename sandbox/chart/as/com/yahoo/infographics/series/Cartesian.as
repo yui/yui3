@@ -37,6 +37,36 @@ package com.yahoo.infographics.series
 		}
 
 		/**
+		 * @private 
+		 * Storage for hitTest
+		 *	<ul>
+		 * 		<li><code>marker</code>: events will be dispatched if the mouse intersects the marker.</li>
+		 * 		<li><code>horizontal</code>: events will be dispatched if the mouse intersects the horizontal plane
+		 * of the marker.</li>
+		 * 		<li><code>vertical</code>: events will be dispatched if the mouse intersects the vertical plane
+		 * of the marker.</li>
+		 * 	</ul>
+		 */
+		protected var _hitTest:String = "marker";
+
+		/**
+	     * Indicates the algorithm to use when for mouse events when event listening
+		 * is delegated to the <code>Graph<code> instance.
+		 */
+		public function get hitTest():String
+		{
+			return this._hitTest;
+		}
+		
+		/**
+		 * @private (setter)
+		 */
+		public function set hitTest(value:String):void
+		{
+			this._hitTest = value;
+		}
+
+		/**
 		 * @private
 		 */
 		private var _type:String = "cartesian";
@@ -356,7 +386,7 @@ package com.yahoo.infographics.series
 		 * @private
 		 * Storage for xAxisMode
 		 */
-		private var _xAxisMode:IAxisMode;
+		protected var _xAxisMode:IAxisMode;
 
 		/**
 		 * Algorithm for calculating x axis labels based on the axis type.
@@ -370,7 +400,7 @@ package com.yahoo.infographics.series
 		 * @private
 		 * Storage for yAxisMode
 		 */
-		private var _yAxisMode:IAxisMode;
+		protected var _yAxisMode:IAxisMode;
 
 		/**
 		 * Algorithm for calculating y axis labels based on the axis type.
@@ -389,7 +419,7 @@ package com.yahoo.infographics.series
 			numeric:NumericMode,
 			category:CategoryMode
 		};
-		
+
 		/**
 		 * @private (protected)
 		 * Returns the appropriate axis type class.
@@ -432,7 +462,8 @@ package com.yahoo.infographics.series
 		{
 			if(this.yKey) this.setFlag("axisDataChange");
 		}
-		
+	
+
 		/**
 		 * @private
 		 */
@@ -553,6 +584,10 @@ package com.yahoo.infographics.series
 			if(series.hasOwnProperty("styles"))
 			{
 				this.setStyles(series.styles);
+			}
+			if(series.hasOwnProperty("hitTest"))
+			{
+				this._hitTest = series.hitTest;
 			}
 		}
 

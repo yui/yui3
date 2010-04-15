@@ -7,15 +7,20 @@ package com.yahoo.infographics.cartesian
 	import flash.display.DisplayObject;
 	import com.yahoo.renderers.layout.Container;
 	import com.yahoo.renderers.layout.LayerStack;
-	
+	import com.yahoo.renderers.Skin;
+
 	public class Graph extends Container
 	{
 	
 	//--------------------------------------
 	//  Constructor
 	//--------------------------------------		
-		public function Graph(seriesCollection:Array = null)
+		/**
+		 * Constructor
+		 */
+		public function Graph(seriesCollection:Array = null, handleEventListening:Boolean = false)
 		{
+			this._handleEventListening = handleEventListening;
 			super(new LayerStack());
 			this.parseSeriesCollection(seriesCollection);
 		}
@@ -23,7 +28,25 @@ package com.yahoo.infographics.cartesian
 	//--------------------------------------
 	//  Properties
 	//--------------------------------------		
-		
+		/**
+		 * @private (protected)
+		 */
+		protected var _handleEventListening:Boolean = false;
+
+		/**
+		 * @private
+		 * Storage for hotSpot
+		 */
+		private var _hotSpot:Skin;
+
+		/**
+		 * Overlay that acts as a hot spot for graph related events.
+		 */
+		public function get hotSpot():Skin
+		{
+			return this._hotSpot;
+		}
+
 		/**
 		 * @private (protected)
 		 * Storage for <code>markers</code>
@@ -159,6 +182,20 @@ package com.yahoo.infographics.cartesian
 	//--------------------------------------
 	//  Protected Methods
 	//--------------------------------------		
+		/**
+		 * @private (override)
+		 */
+		override protected function initializeRenderer():void
+		{
+			super.initializeRenderer();
+			if(this._handleEventListening)
+			{
+				this._hotSpot = new Skin();
+				this._hotSpot.setStyle("fillAlpha", 0);
+				this.addItem(this._hotSpot);
+			}
+		}
+		
 		/**
 		 * @private (protected)
 		 */

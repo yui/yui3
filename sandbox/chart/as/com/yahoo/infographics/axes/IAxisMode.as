@@ -16,9 +16,14 @@ package com.yahoo.infographics.axes
 		function set props(value:Object):void
 
 		/**
-		 *  Returns a text to be used as a label.
+		 *  Returns a text to be used as a label based on position.
 		 */
 		function getLabelAtPosition(position:Number, length:Number):String
+		
+		/**
+		 *  Returns a text to be used as a label based on index.
+		 */
+		function getLabelByIndex(key:String, index:int):String
 
 		/**
 		 * Returns number of total major units for the axis.
