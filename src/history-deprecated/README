@@ -5,6 +5,11 @@ Browser History Utility
       "history-deprecated". Please use the new History Manager (module name
       "history") instead.
 
+3.1.1
+    * Fixed bug 2528792: HTML characters were not properly escaped before being
+      inserted into an iframe in IE6/7, which had the potential to be used as an
+      XSS vector.
+
 3.1.0
     * deprecated getQueryStringParameter
 
