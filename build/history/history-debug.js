@@ -170,7 +170,12 @@ YUI.add('history', function(Y) {
     function _updateIFrame(fqstate) {
         var html, doc;
 
-        html = '<html><body>' + fqstate + '</body></html>';
+        html = '<html><body>' +
+                   fqstate.replace(/&/g,'&amp;').
+                           replace(/</g,'&lt;').
+                           replace(/>/g,'&gt;').
+                           replace(/"/g,'&quot;') +
+               '</body></html>';
 
         try {
             doc = G._historyIFrame.get('contentWindow.document');
@@ -663,4 +668,4 @@ YUI.add('history', function(Y) {
     Y.History = H;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node-base']});
+}, '@VERSION@' ,{requires:['node-base'], skinnable:false});
