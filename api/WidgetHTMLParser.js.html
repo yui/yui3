@@ -136,7 +136,7 @@
 <span class="cm">     * @return {Object} The merged configuration literal</span>
 <span class="cm">     */</span>
     <span class="nx">_applyParsedConfig</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">cfg</span><span class="p">,</span> <span class="nx">parsedCfg</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nx">parsedCfg</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">cfg</span><span class="p">,</span> <span class="nx">parsedCfg</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span> <span class="o">:</span> <span class="nx">cfg</span><span class="p">;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">parsedCfg</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">cfg</span><span class="p">,</span> <span class="nx">parsedCfg</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span> <span class="o">:</span> <span class="nx">cfg</span><span class="p">;</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
