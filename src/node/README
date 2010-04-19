@@ -1,3 +1,13 @@
+release 3.1.0 
+#2528195 - added support for invalid IDs
+#2528199 - fixed ID dupes across YUI instancs
+#2528269 - allow for empty setContent call
+#2528295 - fixed next() args
+#2528330 - allow insert to accept a Y.Node instance
+#2528359 - fixed IDs for subsequent clones
+#2528392 - fixed hasAttribute for tabIndex
+#2528450 - allow replace to accept a Y.Node instance
+
 release 3.0.0 
 - Node no longer extends Base or augments Attribute
 - set() no longer fires attribute change events

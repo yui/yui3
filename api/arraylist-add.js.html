@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>collection&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>collection&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_collection.html" title="collection">collection</a>
                 
@@ -65,11 +65,20 @@
 <span class="cm">     * @method add</span>
 <span class="cm">     * @param item { mixed } Item presumably of the same type as others in the</span>
 <span class="cm">     *                       ArrayList</span>
+<span class="cm">     * @param index {Number} (Optional.)  Number representing the position at </span>
+<span class="cm">     * which the item should be inserted.</span>
 <span class="cm">     * @return {ArrayList} the instance</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
-    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">item</span> <span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="nx">item</span> <span class="p">);</span>
+    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">item</span><span class="p">,</span> <span class="nx">index</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_items</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">items</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">item</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+        <span class="p">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">},</span>
@@ -147,6 +156,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -158,17 +168,25 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
@@ -180,6 +198,7 @@
                         <ul class="content">
                                 <li class=""><a href="ArrayList.html" title="ArrayList">ArrayList</a></li>
                                 <li class=""><a href="ArrayList~add.html" title="ArrayList~add">ArrayList~add</a></li>
+                                <li class=""><a href="ArrayList~filter.html" title="ArrayList~filter">ArrayList~filter</a></li>
                                 <li class=""><a href="YUI~array~extras.html" title="YUI~array~extras">YUI~array~extras</a></li>
                                 <li class=""><a href="YUI~array~invoke.html" title="YUI~array~invoke">YUI~array~invoke</a></li>
                         </ul>
@@ -190,6 +209,7 @@
                         <ul class="content">        
                                 <li class=""><a href="array-extras.js.html" title="array-extras.js">array-extras.js</a></li>
                                 <li class="selected"><a href="arraylist-add.js.html" title="arraylist-add.js">arraylist-add.js</a></li>
+                                <li class=""><a href="arraylist-filter.js.html" title="arraylist-filter.js">arraylist-filter.js</a></li>
                                 <li class=""><a href="arraylist.js.html" title="arraylist.js">arraylist.js</a></li>
                                 <li class=""><a href="invoke.js.html" title="invoke.js">invoke.js</a></li>
                         </ul>
@@ -209,7 +229,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayList~add", "name": "add", "url": "ArrayList~add.html#method_add", "type": "method"}, {"access": "", "host": "ArrayList", "name": "addMethod", "url": "ArrayList.html#method_addMethod", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "ArrayList", "name": "each", "url": "ArrayList.html#method_each", "type": "method"}, {"access": "", "host": "ArrayList", "name": "filter", "url": "ArrayList.html#method_filter", "type": "method"}, {"access": "", "host": "ArrayList", "name": "indexOf", "url": "ArrayList.html#method_indexOf", "type": "method"}, {"access": "", "host": "YUI~array~invoke", "name": "invoke", "url": "YUI~array~invoke.html#method_invoke", "type": "method"}, {"access": "", "host": "ArrayList", "name": "isEmpty", "url": "ArrayList.html#method_isEmpty", "type": "method"}, {"access": "protected", "host": "ArrayList", "name": "_item", "url": "ArrayList.html#method__item", "type": "method"}, {"access": "", "host": "ArrayList", "name": "item", "url": "ArrayList.html#method_item", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "itemsAreEqual", "url": "ArrayList~add.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "lastIndexOf", "url": "YUI~array~extras.html#property_lastIndexOf", "type": "property"}, {"access": "", "host": "ArrayList~add", "name": "remove", "url": "ArrayList~add.html#method_remove", "type": "method"}, {"access": "", "host": "ArrayList", "name": "size", "url": "ArrayList.html#method_size", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "ArrayList~add", "name": "add", "url": "ArrayList~add.html#method_add", "type": "method"}, {"access": "", "host": "ArrayList", "name": "addMethod", "url": "ArrayList.html#method_addMethod", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.every", "url": "YUI~array~extras.html#method_Array.every", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.filter", "url": "YUI~array~extras.html#method_Array.filter", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.find", "url": "YUI~array~extras.html#method_Array.find", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.grep", "url": "YUI~array~extras.html#method_Array.grep", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.lastIndexOf", "url": "YUI~array~extras.html#method_Array.lastIndexOf", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.map", "url": "YUI~array~extras.html#method_Array.map", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.partition", "url": "YUI~array~extras.html#method_Array.partition", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reduce", "url": "YUI~array~extras.html#method_Array.reduce", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.reject", "url": "YUI~array~extras.html#method_Array.reject", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.unique", "url": "YUI~array~extras.html#method_Array.unique", "type": "method"}, {"access": "", "host": "YUI~array~extras", "name": "Array.zip", "url": "YUI~array~extras.html#method_Array.zip", "type": "method"}, {"access": "", "host": "ArrayList", "name": "each", "url": "ArrayList.html#method_each", "type": "method"}, {"access": "", "host": "ArrayList~filter", "name": "filter", "url": "ArrayList~filter.html#method_filter", "type": "method"}, {"access": "", "host": "ArrayList", "name": "indexOf", "url": "ArrayList.html#method_indexOf", "type": "method"}, {"access": "", "host": "YUI~array~invoke", "name": "invoke", "url": "YUI~array~invoke.html#method_invoke", "type": "method"}, {"access": "", "host": "ArrayList", "name": "isEmpty", "url": "ArrayList.html#method_isEmpty", "type": "method"}, {"access": "protected", "host": "ArrayList", "name": "_item", "url": "ArrayList.html#method__item", "type": "method"}, {"access": "", "host": "ArrayList", "name": "item", "url": "ArrayList.html#method_item", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "itemsAreEqual", "url": "ArrayList~add.html#method_itemsAreEqual", "type": "method"}, {"access": "", "host": "ArrayList~add", "name": "remove", "url": "ArrayList~add.html#method_remove", "type": "method"}, {"access": "", "host": "ArrayList", "name": "size", "url": "ArrayList.html#method_size", "type": "method"}, {"access": "", "host": "ArrayList", "name": "some", "url": "ArrayList.html#method_some", "type": "method"}];
 </script>
 </body>
 </html>

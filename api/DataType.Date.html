@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>datatype&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>datatype&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_datatype.html" title="datatype">datatype</a>
                  &gt; DataType.Date 
@@ -123,7 +123,8 @@ PHP added a few of its own, defined at <a href="http://www.php.net/strftime">htt
 This javascript implementation supports all the PHP specifiers and a few more.  The full list is below.
 </p>
 <p>
-If not specified, it defaults to the ISO8601 standard date format: %Y-%m-%d.  This may be overridden by changing Y.config.dateFormat
+If not specified, it defaults to the ISO 8601 standard date format: %Y-%m-%d.
+This may be overridden by the deprecated Y.config.dateFormat property.
 </p>
 <dl>
 <dt>%a</dt> <dd>abbreviated weekday name according to the current locale</dd>
@@ -175,10 +176,11 @@ first Monday as the first day of the first week</dd>
 </dd>
 <dt>locale {String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  (Optional)</dt>
+                                                        <span property="yui:description">  (Deprecated, optional)</dt>
 <dd>
+<b>Deprecated - use Y.config.lang instead, which provides access to a much larger set of built-in languages.</b>
 The locale to use when displaying days of week, months of the year, and other locale specific
-strings. If not specified, this defaults to "en" (though this may be overridden by changing Y.config.locale).
+strings. If not specified, this defaults to "en" (though this may be overridden by the deprecated Y.config.locale).
 The following locales are built in:
 <dl>
 <dt>en</dt>
@@ -190,7 +192,7 @@ The following locales are built in:
 <dt>en-AU</dt>
 <dd>Australian English (identical to British English)</dd>
 </dl>
-More locales may be added by subclassing of Y.DataType.Date.Locale["en"].
+More locales may be added by subclassing of the deprecated Y.DataType.Date.Locale["en"].
 See Y.DataType.Date.Locale for more information.
 </dd>
 </dl></span>
@@ -372,6 +374,7 @@ See Y.DataType.Date.Locale for more information.
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -383,17 +386,25 @@ See Y.DataType.Date.Locale for more information.
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

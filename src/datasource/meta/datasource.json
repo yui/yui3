@@ -1,0 +1,67 @@
+{
+    "datasource": {
+        "submodules": {
+            "datasource-arrayschema": {
+                "requires": [
+                    "datasource-local", 
+                    "plugin", 
+                    "dataschema-array"
+                ]
+            }, 
+            "datasource-cache": {
+                "requires": [
+                    "datasource-local", 
+                    "cache"
+                ]
+            }, 
+            "datasource-function": {
+                "requires": [
+                    "datasource-local"
+                ]
+            }, 
+            "datasource-get": {
+                "requires": [
+                    "datasource-local", 
+                    "get"
+                ]
+            }, 
+            "datasource-io": {
+                "requires": [
+                    "datasource-local", 
+                    "io-base"
+                ]
+            }, 
+            "datasource-jsonschema": {
+                "requires": [
+                    "datasource-local", 
+                    "plugin", 
+                    "dataschema-json"
+                ]
+            }, 
+            "datasource-local": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "datasource-polling": {
+                "requires": [
+                    "datasource-local"
+                ]
+            }, 
+            "datasource-textschema": {
+                "requires": [
+                    "datasource-local", 
+                    "plugin", 
+                    "dataschema-text"
+                ]
+            }, 
+            "datasource-xmlschema": {
+                "requires": [
+                    "datasource-local", 
+                    "plugin", 
+                    "dataschema-xml"
+                ]
+            }
+        }
+    }
+}

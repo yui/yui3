@@ -23,7 +23,7 @@ YUI({
         augment: true,
         useConsole: true
     }
-}).use('dd', 'console', 'test', 'substitute', function(Y) {
+}).use('dd', 'console', 'test', 'substitute', 'selector-css3', function(Y) {
         var myConsole = new Y.Console({
             height: Y.one(window).get('winHeight') + 'px',
             width: '375px'
@@ -89,13 +89,12 @@ YUI({
         },
         test_shim: function() {
             var s = Y.DD.DDM._pg;
-            Y.Assert.isInstanceOf(Y.Node, s, 'Shim: Node Instance');
-
+            Y.Assert.isNull(s, 'Shim: Node Instance');
         },
         test_drop_setup: function() {
             drop = new Y.DD.Drop({ node: '#drop', data: { one: 1, two: 2, three: 3 } });
             Y.Assert.isInstanceOf(Y.DD.Drop, drop, 'drop: Drop Instance');
-            Y.Assert.isTrue(drop.get('node').hasClass('yui-dd-drop'), 'drop: Drop Instance ClassName');
+            Y.Assert.isTrue(drop.get('node').hasClass('yui3-dd-drop'), 'drop: Drop Instance ClassName');
         },
         test_drop_setup_events: function() {
             Y.each(dd_events, function(v) {
@@ -106,14 +105,21 @@ YUI({
         test_drag_setup: function() {
             dd = new Y.DD.Drag({ node: '#drag' });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
-            Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
+            Y.Assert.isTrue(dd.get('node').hasClass('yui3-dd-draggable'), 'dd: Drag Instance ClassName');
+        },
+        test_shim_after: function() {
+            var s = Y.DD.DDM._pg;
+            Y.Assert.isInstanceOf(Y.Node, s, 'Shim: Node Instance');
         },
         test_drag_drop_setup: function() {
             dd.destroy();
             dd = new Y.DD.Drag({ node: '#drag', target: true });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
-            Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
+            Y.Assert.isTrue(dd.get('node').hasClass('yui3-dd-draggable'), 'dd: Drag Instance ClassName');
             Y.Assert.isInstanceOf(Y.DD.Drop, dd.target, 'drag.target: Drop Instance');
+            Y.each(dd._yuievt.targets, function(v, k) {
+                Y.Assert.areSame(v, dd.target._yuievt.targets[k], 'bubbleTargets are not the same');
+            });
         },
         test_drag_drop_group_setup: function() {
             dd.destroy();
@@ -130,12 +136,20 @@ YUI({
             Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
             dd.set('handles', ['h2']);
             Y.Assert.isObject(dd._handles, 'dd: Handles not an object');
-            Y.Assert.isTrue(dd._handles.h2, 'dd: Handles H2 not there');
+            Y.Assert.isNotUndefined(dd._handles.h2, 'dd: Handles H2 not there');
             dd.set('handles', false);
             Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
             dd.addHandle('h2');
             Y.Assert.isObject(dd._handles, 'dd: Handles not an object');
-            Y.Assert.isTrue(dd._handles.h2, 'dd: Handles H2 not there');
+            Y.Assert.isNotUndefined(dd._handles.h2, 'dd: Handles H2 not there');
+            dd.set('handles', false);
+            Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
+            var wrap = Y.one('#wrap');
+            dd.addHandle(wrap);
+            Y.Assert.isObject(dd._handles, 'dd: Handles not an object');
+            Y.Assert.isNotUndefined(dd._handles[wrap._yuid], 'dd: Handles ' + wrap._yuid + ' not there (Node Based Handle)');
+            dd.set('handles', false);
+            Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
         },
         test_drag_setup_events: function() {
             Y.each(dd_events, function(v) {
@@ -161,7 +175,7 @@ YUI({
         },
         test_drag_destroy: function() {
             dd.destroy();
-            Y.Assert.isFalse(dd.get('node').hasClass('yui-dd-draggable'), 'drag: Drag Instance NO ClassName');
+            Y.Assert.isFalse(dd.get('node').hasClass('yui3-dd-draggable'), 'drag: Drag Instance NO ClassName');
             Y.Assert.isTrue(dd.get('destroyed'), 'drag: Destroyed Attribute');
         },
         test_proxy: function() {
@@ -175,7 +189,7 @@ YUI({
             var p = Y.DD.DDM._proxy;
             Y.Assert.isInstanceOf(Y.Node, p, 'Proxy: Node Instance');
             Y.Assert.isInstanceOf(Y.Plugin.DDProxy, proxy.proxy, 'Proxy: Proxy Instance');
-            Y.Assert.isTrue(p.hasClass('yui-dd-proxy'), 'proxy: Proxy Node Instance ClassName');
+            Y.Assert.isTrue(p.hasClass('yui3-dd-proxy'), 'proxy: Proxy Node Instance ClassName');
         },
         test_proxy_setup_events: function() {
             Y.each(dd_events, function(v) {
@@ -199,12 +213,12 @@ YUI({
         },
         test_proxy_destroy: function() {
             proxy.destroy();
-            Y.Assert.isFalse(proxy.get('node').hasClass('yui-dd-draggable'), 'proxy: Drag Instance NO ClassName');
+            Y.Assert.isFalse(proxy.get('node').hasClass('yui3-dd-draggable'), 'proxy: Drag Instance NO ClassName');
             Y.Assert.isTrue(proxy.get('destroyed'), 'Proxy: Destroyed Attribute');
         },
         test_drop_destroy: function() {
             drop.destroy();
-            Y.Assert.isFalse(drop.get('node').hasClass('yui-dd-drop'), 'Drop: Drop Instance NO ClassName');
+            Y.Assert.isFalse(drop.get('node').hasClass('yui3-dd-drop'), 'Drop: Drop Instance NO ClassName');
             Y.Assert.isTrue(drop.get('destroyed'), 'Drop: Destroyed Attribute');
         },
         
@@ -217,7 +231,7 @@ YUI({
             });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isInstanceOf(Y.Plugin.DDConstrained, dd.con, 'Constrained: DDConstrained Instance');
-            Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
+            Y.Assert.isTrue(dd.get('node').hasClass('yui3-dd-draggable'), 'dd: Drag Instance ClassName');
         },
         test_constrain_node_move: function() {
             var inRegion_before = dd.get('node').inRegion(Y.one('#wrap'));
@@ -239,7 +253,7 @@ YUI({
             });
             Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
             Y.Assert.isInstanceOf(Y.Plugin.DDConstrained, dd.con, 'Constrained: DDConstrained Instance');
-            Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
+            Y.Assert.isTrue(dd.get('node').hasClass('yui3-dd-draggable'), 'dd: Drag Instance ClassName');
         },
         test_constrain_view_move: function() {
             var inRegion_before = dd.get('node').inViewportRegion();
@@ -313,14 +327,14 @@ YUI({
                     top: 0, left: 0
                 });
             });
-            del._handleDelegate({
+            del._delMouseDown({
                 currentTarget: Y.one('#del ul li')
             });
             _fakeMove(del.dd, moveCount);
         },
         test_delegate_move2: function() {
             _resetCount();
-            del._handleDelegate({
+            del._delMouseDown({
                 currentTarget: Y.one('#del ul li:nth-child(4)')
             });
             _fakeMove(del.dd, moveCount);
@@ -332,7 +346,7 @@ YUI({
             del.on('drag:mouseDown', function() {
                 mDown = true;
             });
-            del._handleDelegate({
+            del._delMouseDown({
                 currentTarget: Y.one('#del ul li:nth-child(6)')
             });
             Y.Assert.isFalse(mDown, 'Delegate mouseDown fired on a disabled item');

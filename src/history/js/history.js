@@ -1,6 +1,5 @@
 /*global YUI */
 
-
 /**
  * The Browser History Utility provides the ability to use the back/forward
  * navigation buttons in a DHTML application. It also allows a DHTML
@@ -62,26 +61,24 @@
         EV_HISTORY_MODULE_STATE_CHANGE = 'history:moduleStateChange';
 
 
-    if (!YUI.Env.history) {
+    G = YUI.Env.history || {
 
-        YUI.Env.history = G = {
+        // Flag used to tell whether the history utility is ready to be used.
+        ready: false,
 
-            // Flag used to tell whether the history utility is ready to be used.
-            ready: false,
+        // List of registered modules.
+        _modules: [],
 
-            // List of registered modules.
-            _modules: [],
+        // INPUT field (with type="hidden" or type="text") or TEXTAREA.
+        // This field keeps the value of the initial state, current state
+        // the list of all states across pages within a single browser session.
+        _stateField: null,
 
-            // INPUT field (with type="hidden" or type="text") or TEXTAREA.
-            // This field keeps the value of the initial state, current state
-            // the list of all states across pages within a single browser session.
-            _stateField: null,
+        // Hidden IFrame used to store the browsing history on IE6/7.
+        _historyIFrame: null
+    };
 
-            // Hidden IFrame used to store the browsing history on IE6/7.
-            _historyIFrame: null
-        };
-
-    }
+    YUI.Env.history = G;
 
     /**
      * Returns the portion of the hash after the '#' symbol.
@@ -309,6 +306,8 @@
             (Y.Lang.isUndefined(doc.documentMode) || doc.documentMode > 7)) {
 
             // The HTML5 way of handling DHTML history...
+            // @TODO This is case-insensitive, at least in IE (WHY? spec, please actually specify things)
+            // bug #2528444
             win.onhashchange = function () {
                 var hash = _getHash();
                 _handleFQStateChange(hash);
@@ -348,7 +347,7 @@
     }
 
 
-    H = {
+    H = Y.mix(new Y.EventTarget(), {
 
         /**
          * Registers a new module.
@@ -589,6 +588,8 @@
          *     this method uses the URL in the address bar.
          * @return {string} The value of the specified parameter, or null.
          * @public
+         * @deprecated Use Y.QueryString.parse() in the querystring module.
+         * This will be removed in 3.2.0.
          */
         getQueryStringParameter: function (paramName, url) {
             var m, q, i;
@@ -611,13 +612,7 @@
 
             return null;
         }
-    };
-
-
-    // Make Y.History an event target
-    Y.mix(H, Y.Event.Target.prototype);
-    Y.Event.Target.call(H);
-
+    });
 
     /**
      * This class represents a browser history module.
@@ -627,8 +622,6 @@
      * @param initialState {String} the module's initial state
      */
     H.Module = function (id, initialState) {
-
-        Y.Event.Target.call(this);
 
         /**
          * The module identifier
@@ -663,6 +656,6 @@
         this.upcomingState = initialState;
     };
 
-    Y.mix(H.Module, Y.Event.Target, false, null, 1);
+    Y.augment(H.Module, Y.EventTarget);
 
     Y.History = H;

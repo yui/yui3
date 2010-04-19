@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget-child&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>widget-child&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget-child.html" title="widget-child">widget-child</a>
                  &gt; WidgetChild 
@@ -65,6 +65,33 @@ child of another Widget.
 
                     
                     <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_ROOT_TYPE">
+                                    <h4><a name="property_ROOT_TYPE" property="yui:name">ROOT_TYPE</a>
+                                        - <code><span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Constructor reference used to determine the root of a Widget-based 
+object tree.
+<p>
+Currently used to control the behavior of the <code>root</code>  
+attribute so that recursing up the object heirarchy can be constrained 
+to a specific type of Widget.  Widget authors should set this property
+to the constructor function for a given Widget implementation.
+</p>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -168,9 +195,11 @@ using YUI's aop infrastructure.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Synchronizes the UI to match the WidgetChild state. This method in 
-invoked after syncUI is invoked for the Widget class using YUI's aop 
-infrastructure.
+                                            Synchronizes the UI to match the WidgetChild state.
+<p>
+This method is invoked after bindUI is invoked for the Widget class
+using YUI's aop infrastructure.
+</p>
                                         </div>
 
                                         <div class="description">
@@ -220,6 +249,57 @@ infrastructure.
                                                         </dd>
                                                 </dl>
 
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_ancestor">
+                                    <h4>
+                                        <a name="method_ancestor">ancestor</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Widget
+                                            <strong property="yui:name">ancestor</strong>
+                                           (
+                                                
+                                                        
+                                                         depth
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Returns the Widget instance at the specified depth.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">depth</span>
+                                                        &lt;<span property="yui:type">number</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> Number representing the depth of the ancestor.</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            Widget
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Widget instance.</dd>
+                                                </dl>
 
 
              
@@ -617,8 +697,8 @@ should be returned if the child has no previous sibling.</span>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Number representing the depth of this Widget in the object 
-hierarchy.
+                                            Number representing the depth of this Widget relative to 
+the root Widget in the object heirarchy.
                                         </div>
                                     </div>
  
@@ -664,7 +744,9 @@ parent Widget.
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            Returns the root Widget in the object hierarchy.
+                                            Returns the root Widget in the object hierarchy.  If the
+ROOT_TYPE property is set, the search for the root Widget will be 
+constrained to parent Widgets of the specified type.
                                         </div>
                                     </div>
  
@@ -731,6 +813,7 @@ values are:
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -742,17 +825,25 @@ values are:
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class="selected"><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
@@ -773,6 +864,12 @@ values are:
                         </ul>
                     </div>
 
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_ROOT_TYPE" title="ROOT_TYPE">ROOT_TYPE</a></li>
+                        </ul>
+                    </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
@@ -781,6 +878,7 @@ values are:
                                 <li class="protected"><a href="#method__bindUIChild" title="_bindUIChild">_bindUIChild</a></li>
                                 <li class="protected"><a href="#method__syncUIChild" title="_syncUIChild">_syncUIChild</a></li>
                                 <li class="protected"><a href="#method__uiSetChildSelected" title="_uiSetChildSelected">_uiSetChildSelected</a></li>
+                                <li class=""><a href="#method_ancestor" title="ancestor">ancestor</a></li>
                                 <li class=""><a href="#method_isRoot" title="isRoot">isRoot</a></li>
                                 <li class=""><a href="#method_next" title="next">next</a></li>
                                 <li class=""><a href="#method_previous" title="previous">previous</a></li>
@@ -819,7 +917,7 @@ values are:
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetChild", "name": "_afterChildSelectedChange", "url": "WidgetChild.html#method__afterChildSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_bindUIChild", "url": "WidgetChild.html#method__bindUIChild", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "depth", "url": "WidgetChild.html#config_depth", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "depthChange", "url": "WidgetChild.html#event_depthChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "index", "url": "WidgetChild.html#config_index", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "indexChange", "url": "WidgetChild.html#event_indexChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "isRoot", "url": "WidgetChild.html#method_isRoot", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "next", "url": "WidgetChild.html#method_next", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "parent", "url": "WidgetChild.html#config_parent", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "parentChange", "url": "WidgetChild.html#event_parentChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "previous", "url": "WidgetChild.html#method_previous", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "root", "url": "WidgetChild.html#config_root", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "rootChange", "url": "WidgetChild.html#event_rootChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "selected", "url": "WidgetChild.html#config_selected", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "selectedChange", "url": "WidgetChild.html#event_selectedChange", "type": "event"}, {"access": "protected", "host": "WidgetChild", "name": "_syncUIChild", "url": "WidgetChild.html#method__syncUIChild", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_uiSetChildSelected", "url": "WidgetChild.html#method__uiSetChildSelected", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetChild", "name": "_afterChildSelectedChange", "url": "WidgetChild.html#method__afterChildSelectedChange", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "ancestor", "url": "WidgetChild.html#method_ancestor", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_bindUIChild", "url": "WidgetChild.html#method__bindUIChild", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "depth", "url": "WidgetChild.html#config_depth", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "depthChange", "url": "WidgetChild.html#event_depthChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "index", "url": "WidgetChild.html#config_index", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "indexChange", "url": "WidgetChild.html#event_indexChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "isRoot", "url": "WidgetChild.html#method_isRoot", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "next", "url": "WidgetChild.html#method_next", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "parent", "url": "WidgetChild.html#config_parent", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "parentChange", "url": "WidgetChild.html#event_parentChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "previous", "url": "WidgetChild.html#method_previous", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "root", "url": "WidgetChild.html#config_root", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "rootChange", "url": "WidgetChild.html#event_rootChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "ROOT_TYPE", "url": "WidgetChild.html#property_ROOT_TYPE", "type": "property"}, {"access": "", "host": "WidgetChild", "name": "selected", "url": "WidgetChild.html#config_selected", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "selectedChange", "url": "WidgetChild.html#event_selectedChange", "type": "event"}, {"access": "protected", "host": "WidgetChild", "name": "_syncUIChild", "url": "WidgetChild.html#method__syncUIChild", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_uiSetChildSelected", "url": "WidgetChild.html#method__uiSetChildSelected", "type": "method"}];
 </script>
 </body>
 </html>

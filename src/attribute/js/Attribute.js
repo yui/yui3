@@ -27,6 +27,7 @@
         SETTER = "setter",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
+        INIT_ONLY = "initOnly",
         VALIDATOR = "validator",
         VALUE = "value",
         VALUE_FN = "valueFn",
@@ -529,7 +530,9 @@
                 initialSet,
                 strPath,
                 path,
-                currVal;
+                currVal,
+                writeOnce,
+                initializing;
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
@@ -552,9 +555,12 @@
                 Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
             } else {
 
+                writeOnce = state.get(name, WRITE_ONCE);
+                initializing = state.get(name, INITIALIZING);
+
                 if (!initialSet && !force) {
 
-                    if (state.get(name, WRITE_ONCE)) {
+                    if (writeOnce) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
                         allowSet = false;
                     }
@@ -563,6 +569,11 @@
                         Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
                         allowSet = false;
                     }
+                }
+
+                if (!initializing && !force && writeOnce === INIT_ONLY) {
+                    Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce: "initOnly"', 'warn', 'attribute');
+                    allowSet = false;
                 }
 
                 if (allowSet) {
@@ -581,7 +592,7 @@
                     }
 
                     if (allowSet) {
-                        if (state.get(name, INITIALIZING)) {
+                        if (initializing) {
                             this._setAttrVal(name, strPath, currVal, val);
                         } else {
                             this._fireAttrChange(name, strPath, currVal, val, opts);
@@ -613,7 +624,8 @@
 
             if (!state.get(attrName, PUBLISHED)) {
                 host.publish(eventName, {
-                    queuable:false, 
+                    queuable:false,
+                    defaultTargetOnly: true, 
                     defaultFn:host._defAttrChangeFn, 
                     silent:true,
                     broadcast : state.get(attrName, BROADCAST)
@@ -640,20 +652,13 @@
          * @param {EventFacade} e The event object for attribute change events.
          */
         _defAttrChangeFn : function(e) {
-
-            //  Temporary fix for bug #2528350
-            if (e.target === this) {
-
-                if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
-                    Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
-                    // Prevent "after" listeners from being invoked since nothing changed.
-                    e.stopImmediatePropagation();
-                } else {
-                    e.newVal = this._getStateVal(e.attrName);
-                }
-                
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+                Y.log('State not updated and stopImmediatePropagation called for attribute: ' + e.attrName + ' , value:' + e.newVal, 'warn', 'attribute');
+                // Prevent "after" listeners from being invoked since nothing changed.
+                e.stopImmediatePropagation();
+            } else {
+                e.newVal = this.get(e.attrName);
             }
-
         },
 
         /**

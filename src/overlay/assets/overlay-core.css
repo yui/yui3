@@ -1,7 +1,11 @@
-.yui-overlay {
+.yui3-overlay {
     position:absolute;
 }
 
-.yui-overlay-hidden {
+.yui3-overlay-hidden {
     visibility:hidden
+}
+
+.yui3-widget-tmp-forcesize .yui3-overlay-content {
+    overflow:hidden !important;
 }

@@ -139,7 +139,7 @@ Y.Event.detach("click", handler, "#button0");
     //     Y.log("TEXT focus fired");
     // }, '#text1');
 
-    var node = Y.get('#text1');
+    var node = Y.one('#text1');
 
     node.on('blahblah|focus', function(e) {
         Y.log("TEXT focus fired: " + e.type);
@@ -157,19 +157,19 @@ Y.Event.detach("click", handler, "#button0");
         }, true);
     */
 
-    var el = Y.get('#button1');
+    var el = Y.one('#button1');
     Y.log("get got " + el);
 
     // el.setStyle('border', '3px solid red');
 
     var f = function(e) {
-        Y.log("SUB1, " + this.get('id') + " click event facade: " + e.target);
+        Y.log("SUB1, " + this.one('id') + " click event facade: " + e.target);
         e.stopPropagation();
         // e.stopImmediatePropagation();
     },
     f2 = function(e) {
 
-        Y.log("SUB2, " + this.get('id') + " click event facade: " + e.target);
+        Y.log("SUB2, " + this.one('id') + " click event facade: " + e.target);
         // h.detach();
         // Y.detach('click', f, el);
         // console.log(Y.Event.getListeners(this, 'click'));
@@ -190,14 +190,14 @@ Y.Event.detach("click", handler, "#button0");
     }, null, el);
 
     var ret = Y.on('click', function(e) {
-        Y.log(this.get('id') + " click event facade: " + e.target);
+        Y.log(this.one('id') + " click event facade: " + e.target);
     }, '#button2');
 
     Y.log('ret: ' + Y.Lang.dump(ret, 1));
 
     var buts = Y.Node.all('.button');
 
-    Y.log('queryAll buttons: ' + Y.Lang.dump(buts.get('length')));
+    Y.log('queryAll buttons: ' + Y.Lang.dump(buts.one('length')));
 
     buts.each(function(v, k) {
         Y.log('blah: ' + v);
@@ -210,7 +210,7 @@ Y.Event.detach("click", handler, "#button0");
 /*
     Y.on('mouseover', function(e) {
         // alert('asdf');
-        Y.log(this.id || this.get('id') + " mouseover: " + e.target);
+        Y.log(this.id || this.one('id') + " mouseover: " + e.target);
         // },  Y.Node.queryAll('.button'));
     //},  Y.Selector.query('.button'));
     },  ['#button1', '#button2']);
@@ -275,7 +275,7 @@ function handleClick(){
 
 /*
 
-var body = Y.Node.get("body");
+var body = Y.Node.one("body");
 handle = body.on("click", handleClick);
 */
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <style>
+        html, body {
+            padding:0;
+            margin:0;
+        }
+
+        .yui3-widget-content {
+            background-color:#ccc;
+            border:1px solid green;
+        }
+    </style>
+</head>
+<body>
+    <script src="../../../../build/yui/yui.js"></script>
+    <script src="../../../../build/widget-anim/widget-anim.js"></script>
+
+    <button id="btn" type="button">Toggle</button>
+    
+    <div id="widget">
+        My Widget Content
+    </div>
+
+    <script>
+        YUI({filter:"raw"}).use("anim", "widget-anim", "widget", function(Y) {
+
+            var w = new Y.Widget({
+                srcNode:"#widget",
+                visible:true,
+                height:"200px",
+                width:"200px",
+                render:true
+            });
+
+            w.plug(Y.Plugin.WidgetAnim);
+
+            Y.Node.one("#btn").on("click", function() {
+                w.set("visible", !w.get("visible"));
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{
+    "widget-anim": {
+	"requires": ["plugin", "anim-base"]
+    }
+}

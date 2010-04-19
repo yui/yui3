@@ -1,0 +1,9 @@
+{
+    "sortable": {
+        "requires": [
+            "dd-delegate", 
+            "dd-drop-plugin", 
+            "dd-proxy"
+        ]
+    }
+}

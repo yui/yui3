@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="assets/test.css">
+</head>
+<body class="yui3-skin-sam">
+
+<div id="log"></div>
+<script src="/dev/yui/yui3/build/yui/yui.js"></script>
+<script>
+YUI({
+    filter: 'raw',
+    groups: {
+        yui3t: {
+            base: '/dev/yui/yui3/sandbox/unittest/build/',
+
+            modules: {
+                'async-queue-test': {
+                    path: 'queue/async-queue-test.js',
+                    requires: ['async-queue','io-base']
+                },
+                'arraylist-test': {
+                    path: 'collection/arraylist-test.js',
+                    requires: ['arraylist','arraylist-add','arraylist-filter','array-invoke']
+                },
+                'console-test': {
+                    path: 'console/console-test.js',
+                    requires: ['console-filters']
+                },
+                'event-synthetic-test': {
+                    path: 'event/event-synthetic-test.js',
+                    requires: ['event-synthetic']
+                },
+                'json-test': {
+                    path: 'json/json-test.js',
+                    requires: ['json']
+                },
+                'slider-test': {
+                    path: 'slider/slider-test.js',
+                    requires: ['slider']
+                },
+                'stylesheet-test': {
+                    path: 'stylesheet/stylesheet-test.js',
+                    requires: ['stylesheet']
+                }
+            }
+        }
+    },
+    useBrowserConsole: false
+}).use('test', 'node', 'console', 'selector-css3', function (Y) {
+
+    new Y.Console({
+        newestOnTop: false,
+        style: 'block',
+        width: 'inherit',
+        entryTemplate: '<div class="{entry_class} {cat_class} {src_class}">'+
+            '<pre class="{entry_content_class}">{message}</pre>'+
+        '</div>',
+        on: {
+            entry: function (e) {
+                var m = e.message,
+                    node;
+
+                if (m.category === 'info') {
+                    if (/\scase\s|yuitests\d+|began/.test(m.message)) {
+                        e.preventDefault();
+                    } else if (/started/.test(m.message)) {
+                        m.message = m.message.replace(/.*?"(.*?)".*/, '$1 ...');
+                    } else if (/" completed/.test(m.message)) {
+                        this.printBuffer();
+                        node = Y.one('#log pre.yui3-console-entry-content:contains(...)');
+                        node.setContent(
+                            node.get('text').replace(/\.{3}/,
+                                '- ' + m.message.replace(/.*\n/,'')));
+
+                        e.preventDefault();
+                    } else if (/Testing completed/.test(m.message)) {
+                        m.message = m.message.replace(/ at .*\n/, ' - ');
+                    }
+                } else if (m.category === 'fail') {
+                    this.printBuffer();
+                    m.category = 'error';
+
+                    Y.one('#log div.yui3-console-entry:contains(...)')
+                        .replaceClass('yui3-console-entry-info', 'yui3-console-entry-warn');
+                } else if (m.category === 'pass') {
+                    e.preventDefault();
+                }
+            }
+        }
+    }).render( "#log" );
+
+    var use = Y.Object.keys( Y.config.groups.yui3t.modules );
+
+    use.push(function (Y) {
+        Y.Test.Runner.run();
+    });
+
+    Y.use.apply(Y, use);
+});
+</script>
+</body>
+</html>

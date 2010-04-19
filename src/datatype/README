@@ -1,9 +1,9 @@
-**** version 3.0.0 ****
+3.1.0
+    * Changed to use YUI language resource bundles rather than proprietary
+      infrastructure. 
 
-* No changes.
+3.0.0
+    * No changes.
 
-
-
-**** version 3.0.0 beta 1 ****
-
-* Initial release.
+3.0.0 beta 1
+    * Initial release.

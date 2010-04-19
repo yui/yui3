@@ -19,7 +19,7 @@ var L = Y.Lang, Native = Array.prototype, A = Y.Array;
  * Returns the index of the last item in the array
  * that contains the specified value, -1 if the
  * value isn't found.
- * method Array.lastIndexOf
+ * @method Array.lastIndexOf
  * @static
  * @param a {Array} the array to search
  * @param val the value to search for

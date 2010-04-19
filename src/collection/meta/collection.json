@@ -1,0 +1,19 @@
+{
+    "collection": {
+        "submodules": {
+            "array-extras": {}, 
+            "array-invoke": {}, 
+            "arraylist": {}, 
+            "arraylist-add": {
+                "requires": [
+                    "arraylist"
+                ]
+            }, 
+            "arraylist-filter": {
+                "requires": [
+                    "arraylist"
+                ]
+            }
+        }
+    }
+}

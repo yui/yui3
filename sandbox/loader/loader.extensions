@@ -1,0 +1,67 @@
+YUI.add("hydra", function(Y){
+	/**
+	 * @module hydra
+	 */
+	 
+	/**
+	 * @class Hydra
+	 */
+    Y.Hydra = {
+    	/**
+    	 * getBasePath
+    	 * 
+    	 * @param {String} url
+    	 * @param {String} default base path
+    	 * @return {Object}
+    	 */
+    	getBasePath: function(url, def) {
+    		var nodes, i, regexp, match;
+    		nodes = document.getElementsByTagName("script");
+    		regexp = new RegExp("^(.*)"+url+"(.*)$");
+    		for (i=0;i<nodes.length;i++) {
+    			match = nodes[i].src.match(regexp);
+    			basePath = match && match[1];
+    			if (basePath) {
+    				return {
+    					basePath: basePath,
+    					args: match[2].substr(1)
+    				};
+    			}
+    		}
+    		return {
+    			basePath: def,
+    			args: ""
+    		};
+    	},
+    	/**
+    	 * addConfig
+    	 * 
+    	 * @param {Object} config
+    	 * @param {String} basePAth
+    	 */
+    	addConfig: function(config, basePath) {
+		    // complete the modules definition.
+		    var mods = config.modules;
+		    for (var m in mods) {
+		        var o=mods[m], css = m.length>4&&m.lastIndexOf("_css")==m.length-4;
+		        if (css) {
+		            m = m.substr(0,m.length-4);
+		            o.type = "css";
+		        }
+		        if (!o.fullpath) {
+		            o.fullpath = basePath+m+"/"+m+(css?".css":".js");
+		        }
+		    }
+		    // debug mode
+//		    config.debug = true;
+//		    config.filter = "debug";
+		    // horrible hack to add data about the messenger modules in every instance of YUI hereafter. 
+		    (function(i){
+		        YUI.prototype._init=function(){
+		            i.apply(this,arguments);
+		            this._config(config);
+		        };
+		    })(YUI.prototype._init);
+    	}
+    };
+}, "0.1");

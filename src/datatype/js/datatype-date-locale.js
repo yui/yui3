@@ -66,6 +66,7 @@
  * @requires oop
  * @class DataType.Date.Locale
  * @static
+ * @deprecated - use Y.config.lang to request one of many built-in languages instead.
  */
 var YDateEn = {
 	a: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],

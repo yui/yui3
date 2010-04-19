@@ -10,33 +10,29 @@
 // introduced into the page -- and it should only be executed one time
 // regardless of the number of instances that use it.
 
-var GLOBAL_ENV = YUI.Env, 
-    config = YUI.config, 
-    doc = config.doc, 
-    docElement = doc.documentElement, 
-    doScrollCap = docElement.doScroll,
-    add = YUI.Env.add,
-    remove = YUI.Env.remove,
-    targetEvent = (doScrollCap) ? 'onreadystatechange' : 'DOMontentLoaded',
+var stateChangeListener,
+    GLOBAL_ENV   = YUI.Env, 
+    config       = YUI.config, 
+    doc          = config.doc, 
+    docElement   = doc && doc.documentElement, 
+    doScrollCap  = docElement && docElement.doScroll,
+    add          = YUI.Env.add,
+    remove       = YUI.Env.remove,
+    targetEvent  = (doScrollCap) ? 'onreadystatechange' : 'DOMContentLoaded',
     pollInterval = config.pollInterval || 40,
-    stateChangeListener,
-
-    _ready = function(e) {
-        GLOBAL_ENV._ready();
-    };
+    _ready       = function(e) {
+                     GLOBAL_ENV._ready();
+                 };
 
 if (!GLOBAL_ENV._ready) {
-
     GLOBAL_ENV._ready = function() {
         if (!GLOBAL_ENV.DOMReady) {
             GLOBAL_ENV.DOMReady = true;
-            // remove DOMContentLoaded listener
-            remove(doc, targetEvent, _ready);
+            remove(doc, targetEvent, _ready); // remove DOMContentLoaded listener
         }
     };
 
 /*! DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller/Diego Perini */
-
 // Internet Explorer: use the doScroll() method on the root element.  This isolates what 
 // appears to be a safe moment to manipulate the DOM prior to when the document's readyState 
 // suggests it is safe to do so.
@@ -44,15 +40,11 @@ if (!GLOBAL_ENV._ready) {
         if (self !== self.top) {
             stateChangeListener = function() {
                 if (doc.readyState == 'complete') {
-                    // remove onreadystatechange listener
-                    remove(doc, targetEvent, stateChangeListener);
+                    remove(doc, targetEvent, stateChangeListener); // remove onreadystatechange listener
                     _ready();
                 }
             };
-
-            // add onreadystatechange listener
-            add(doc, targetEvent, stateChangeListener);
-
+            add(doc, targetEvent, stateChangeListener); // add onreadystatechange listener
         } else {
             GLOBAL_ENV._dri = setInterval(function() {
                 try {
@@ -63,10 +55,8 @@ if (!GLOBAL_ENV._ready) {
                 } catch (domNotReady) { }
             }, pollInterval); 
         }
-// FireFox, Opera, Safari 3+ provide an event for this moment.
-    } else {
-        // add DOMContentLoaded listener
-        add(doc, targetEvent, _ready);
+    } else { // FireFox, Opera, Safari 3+ provide an event for this moment.
+        add(doc, targetEvent, _ready); // add DOMContentLoaded listener
     }
 }
 
@@ -86,6 +76,27 @@ var GLOBAL_ENV = YUI.Env,
         Y.fire('domready');
     };
 
+/**
+ * The domready event fires at the moment the browser's DOM is
+ * usable. In most cases, this is before images are fully
+ * downloaded, allowing you to provide a more responsive user
+ * interface.
+ *
+ * In YUI 3, domready subscribers will be notified immediately if
+ * that moment has already passed when the subscription is created.
+ *
+ * One exception is if the yui.js file is dynamically injected into
+ * the page.  If this is done, you must tell the YUI instance that
+ * you did this in order for DOMReady (and window load events) to
+ * fire normally.  That configuration option is 'injected' -- set
+ * it to true if the yui.js script is not included inline.
+ *
+ * This method is part of the 'event-ready' module, which is a
+ * submodule of 'event'.  
+ *
+ * @event domready
+ * @for YUI
+ */
 Y.publish('domready', {
     fireOnce: true
 });
@@ -186,9 +197,9 @@ var whitelist = {
         63277: 34, // page down
         25:     9, // SHIFT-TAB (Safari provides a different key code in
                    // this case, even though the shiftKey modifier is set)
-		63272: 46, // delete
-		63273: 36, // home
-		63275: 35  // end
+        63272: 46, // delete
+        63273: 36, // home
+        63275: 35  // end
     },
 
     /**
@@ -231,13 +242,14 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     wrapper = wrapper || {};
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, c, t;
+        x = e.pageX, y = e.pageY, c, t, 
+        overrides = wrapper.overrides || {};
 
     this.altKey   = e.altKey;
     this.ctrlKey  = e.ctrlKey;
     this.metaKey  = e.metaKey;
     this.shiftKey = e.shiftKey;
-    this.type     = e.type;
+    this.type     = overrides.type || e.type;
     this.clientX  = e.clientX;
     this.clientY  = e.clientY;
 
@@ -442,18 +454,20 @@ Y.Env.evt.dom_wrappers = {};
 Y.Env.evt.dom_map = {};
 
 var _eventenv = Y.Env.evt,
+config = Y.config,
+win = config.win,
 add = YUI.Env.add,
 remove = YUI.Env.remove,
 
 onLoad = function() {
     YUI.Env.windowLoaded = true;
     Y.Event._load();
-    remove(window, "load", onLoad);
+    remove(win, "load", onLoad);
 },
 
 onUnload = function() {
     Y.Event._unload();
-    remove(window, "unload", onUnload);
+    remove(win, "unload", onUnload);
 },
 
 EVENT_READY = 'domready',
@@ -586,10 +600,8 @@ Event = function() {
          * @private
          */
         startInterval: function() {
-            var E = Y.Event;
-
-            if (!E._interval) {
-E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
+            if (!Event._interval) {
+Event._interval = setInterval(Y.bind(Event._poll, Event), Event.POLL_INTERVAL);
             }
         },
 
@@ -637,7 +649,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             _retryCount = this.POLL_RETRYS;
 
             // We want the first test to be immediate, but async
-            setTimeout(Y.bind(Y.Event._poll, Y.Event), 0);
+            setTimeout(Y.bind(Event._poll, Event), 0);
 
             availHandle = new Y.EventHandle({
 
@@ -645,7 +657,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     // set by the event system for lazy DOM listeners
                     if (availHandle.handle) {
                         availHandle.handle.detach();
-						return;
+                        return;
                     }
 
                     var i, j;
@@ -709,15 +721,14 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          */
 
         attach: function(type, fn, el, context) {
-            return Y.Event._attach(Y.Array(arguments, 0, true));
+            return Event._attach(Y.Array(arguments, 0, true));
         },
 
-		_createWrapper: function (el, type, capture, compat, facade) {
+        _createWrapper: function (el, type, capture, compat, facade) {
 
-            var ek = Y.stamp(el),
-	            key = 'event:' + ek + type,
-	            cewrapper;
-
+            var cewrapper,
+                ek  = Y.stamp(el),
+                key = 'event:' + ek + type;
 
             if (false === facade) {
                 key += 'native';
@@ -744,6 +755,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                         }
                     }
                 });
+
+                cewrapper.overrides = {};
             
                 // for later removeListener calls
                 cewrapper.el = el;
@@ -751,11 +764,11 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 cewrapper.domkey = ek;
                 cewrapper.type = type;
                 cewrapper.fn = function(e) {
-                    cewrapper.fire(Y.Event.getEvent(e, el, (compat || (false === facade))));
+                    cewrapper.fire(Event.getEvent(e, el, (compat || (false === facade))));
                 };
-				cewrapper.capture = capture;
+                cewrapper.capture = capture;
             
-                if (el == Y.config.win && type == "load") {
+                if (el == win && type == "load") {
                     // window load happens once
                     cewrapper.fireOnce = true;
                     _windowLoadKey = key;
@@ -768,20 +781,21 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 add(el, type, cewrapper.fn, capture);
             }
 
-			return cewrapper;
-			
-		},
+            return cewrapper;
+            
+        },
 
-        _attach: function(args, config) {
+        _attach: function(args, conf) {
 
-            var compat, E=Y.Event,
+            var compat, 
                 handles, oEl, cewrapper, context, 
                 fireNow = false, ret,
                 type = args[0],
                 fn = args[1],
-                el = args[2] || Y.config.win,
-                facade = config && config.facade,
-                capture = config && config.capture;
+                el = args[2] || win,
+                facade = conf && conf.facade,
+                capture = conf && conf.capture,
+                overrides = conf && conf.overrides; 
 
             if (args[args.length-1] === COMPAT_ARG) {
                 compat = true;
@@ -800,7 +814,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 
                 Y.each(el, function(v, k) {
                     args[2] = v;
-                    handles.push(E._attach(args, config));
+                    handles.push(Event._attach(args, conf));
                 });
 
                 // return (handles.length === 1) ? handles[0] : handles;
@@ -830,7 +844,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                             break;
                         default:
                             args[2] = oEl;
-                            return E._attach(args, config);
+                            return Event._attach(args, conf);
                     }
                 }
 
@@ -843,9 +857,9 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
                     ret = this.onAvailable(el, function() {
                         
-                        ret.handle = E._attach(args, config);
+                        ret.handle = Event._attach(args, conf);
 
-                    }, E, true, false, compat);
+                    }, Event, true, false, compat);
 
                     return ret;
 
@@ -861,9 +875,12 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 el = Y.Node.getDOMNode(el);
             }
 
- 			cewrapper = this._createWrapper(el, type, capture, compat, facade);
+            cewrapper = this._createWrapper(el, type, capture, compat, facade);
+            if (overrides) {
+                Y.mix(cewrapper.overrides, overrides);
+            }
 
-            if (el == Y.config.win && type == "load") {
+            if (el == win && type == "load") {
 
                 // if the load is complete, fire immediately.
                 // all subscribers, including the current one
@@ -910,7 +927,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          */
         detach: function(type, fn, el, obj) {
 
-            var args=Y.Array(arguments, 0, true), compat, i, l, ok,
+            var args=Y.Array(arguments, 0, true), compat, l, ok, i,
                 id, ce;
 
             if (args[args.length-1] === COMPAT_ARG) {
@@ -937,17 +954,18 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                         el = el[0];
                     }
                 }
-                // return Y.Event.detach.apply(Y.Event, args);
-
-            // The el argument can be an array of elements or element ids.
+                // return Event.detach.apply(Event, args);
             } 
             
             if (!el) {
                 return false;
             }
-            
-            if (shouldIterate(el)) {
 
+            if (el.detach) {
+                args.splice(2, 1);
+                return el.detach.apply(el, args);
+            // The el argument can be an array of elements or element ids.
+            } else if (shouldIterate(el)) {
                 ok = true;
                 for (i=0, l=el.length; i<l; ++i) {
                     args[2] = el[i];
@@ -955,7 +973,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 }
 
                 return ok;
-
             }
 
             if (!type || !fn || !fn.call) {
@@ -986,7 +1003,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @static
          */
         getEvent: function(e, el, noFacade) {
-            var ev = e || window.event;
+            var ev = e || win.event;
 
             return (noFacade) ? ev : 
                 new Y.DOMEventFacade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
@@ -1033,10 +1050,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @private
          */
         _load: function(e) {
-
             if (!_loadComplete) {
-
-
                 _loadComplete = true;
 
                 // Just in case DOMReady did not go off for some reason
@@ -1049,8 +1063,7 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                 // window load event fires. Try to find them now so that the
                 // the user is more likely to get the onAvailable notifications
                 // before the window load notification
-                Y.Event._poll();
-
+                Event._poll();
             }
         },
 
@@ -1063,7 +1076,6 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
          * @private
          */
         _poll: function() {
-
             if (this.locked) {
                 return;
             }
@@ -1078,13 +1090,12 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
             this.locked = true;
 
-
             // keep trying until after the page is loaded.  We need to 
             // check the page load state prior to trying to bind the 
             // elements so that we can be certain all elements have been 
             // tested appropriately
-            var tryAgain = !_loadComplete, notAvail, executeItem,
-                i, len, item, el;
+            var i, len, item, el, notAvail, executeItem,
+                tryAgain = !_loadComplete;
 
             if (!tryAgain) {
                 tryAgain = (_retryCount > 0);
@@ -1094,11 +1105,8 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
             notAvail = [];
 
             executeItem = function (el, item) {
-
                 var context, ov = item.override;
-
                 if (item.compat) {
-
                     if (item.override) {
                         if (ov === true) {
                             context = item.obj;
@@ -1108,16 +1116,12 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
                     } else {
                         context = el;
                     }
-
                     item.fn.call(context, item.obj);
-
                 } else {
                     context = item.obj || Y.one(el);
                     item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
                 }
-
             };
-
 
             // onAvailable
             for (i=0,len=_avail.length; i<len; ++i) {
@@ -1188,25 +1192,35 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
         purgeElement: function(el, recurse, type) {
             // var oEl = (Y.Lang.isString(el)) ? Y.one(el) : el,
             var oEl = (Y.Lang.isString(el)) ?  Y.Selector.query(el, null, true) : el,
-                lis = this.getListeners(oEl, type), i, len, props;
+                lis = this.getListeners(oEl, type), i, len, props, children, child;
+
+            if (recurse && oEl) {
+                lis = lis || [];
+                children = Y.Selector.query('*', oEl);
+                i = 0;
+                len = children.length;
+                for (; i < len; ++i) {
+                    child = this.getListeners(children[i], type);
+                    if (child) {
+                        lis = lis.concat(child);
+                    }
+                }
+            }
+
             if (lis) {
-                for (i=0,len=lis.length; i<len ; ++i) {
+                i = 0;
+                len = lis.length;
+                for (; i < len; ++i) {
                     props = lis[i];
                     props.detachAll();
                     remove(props.el, props.type, props.fn, props.capture);
                     delete _wrappers[props.key];
                     delete _el_events[props.domkey][props.key];
                 }
-
-            }
-
-            if (recurse && oEl && oEl.childNodes) {
-                for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
-                    this.purgeElement(oEl.childNodes[i], recurse, type);
-                }
             }
 
         },
+
 
         /**
          * Returns all listeners attached to the given element via addListener.
@@ -1294,11 +1308,10 @@ E._interval = setInterval(Y.bind(E._poll, E), E.POLL_INTERVAL);
 
 Y.Event = Event;
 
-
-if (Y.config.injected || YUI.Env.windowLoaded) {
+if (config.injected || YUI.Env.windowLoaded) {
     onLoad();
 } else {
-    add(window, "load", onLoad);
+    add(win, "load", onLoad);
 }
 
 // Process onAvailable/onContentReady items when when the DOM is ready in IE
@@ -1377,49 +1390,49 @@ YUI.add('event-delegate', function(Y) {
  */
 
 var Event = Y.Event,
-	Lang = Y.Lang,
+    Lang = Y.Lang,
 
-	delegates = {},
-	
-	specialTypes = {
-		mouseenter: "mouseover",
-		mouseleave: "mouseout"
-	},
+    delegates = {},
+    
+    specialTypes = {
+        mouseenter: "mouseover",
+        mouseleave: "mouseout"
+    },
 
-	resolveTextNode = function(n) {
-	    try {
-	        if (n && 3 == n.nodeType) {
-	            return n.parentNode;
-	        }
-	    } catch(e) { }
-	    return n;
-	},
+    resolveTextNode = function(n) {
+        try {
+            if (n && 3 == n.nodeType) {
+                return n.parentNode;
+            }
+        } catch(e) { }
+        return n;
+    },
 
     delegateHandler = function(delegateKey, e, el) {
 
         var target = resolveTextNode((e.target || e.srcElement)), 
             tests  = delegates[delegateKey],
             spec, 
-			ename,
-			matched,
-			fn,
-			ev;
+            ename,
+            matched,
+            fn,
+            ev;
 
 
-		var getMatch = function(el, selector, container) {
-			
-			var returnVal;
-			
-			if (!el || el === container) {
-				returnVal = false;
-			}
-			else {
-				returnVal = Y.Selector.test(el, selector, container) ? el: getMatch(el.parentNode, selector, container);
-			}
-			
-			return returnVal;
-			
-		};
+        var getMatch = function(el, selector, container) {
+            
+            var returnVal;
+            
+            if (!el || el === container) {
+                returnVal = false;
+            }
+            else {
+                returnVal = Y.Selector.test(el, selector, container) ? el: getMatch(el.parentNode, selector, container);
+            }
+            
+            return returnVal;
+            
+        };
 
 
         for (spec in tests) {
@@ -1427,13 +1440,13 @@ var Event = Y.Event,
             if (tests.hasOwnProperty(spec)) {
 
                 ename  = tests[spec];
-				fn	= tests.fn;
-				matched = null;
+                fn  = tests.fn;
+                matched = null;
 
 
-				if (Y.Selector.test(target, spec, el)) {
-					matched = target;
-				}
+                if (Y.Selector.test(target, spec, el)) {
+                    matched = target;
+                }
                 else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
                      
                  //  The target is a descendant of an element matching 
@@ -1445,59 +1458,59 @@ var Event = Y.Event,
                 }
 
 
-				if (matched) {
+                if (matched) {
 
                     if (!ev) {
                         ev = new Y.DOMEventFacade(e, el);
                         ev.container = ev.currentTarget;
                     }
 
-                    ev.currentTarget = Y.Node.get(matched);
+                    ev.currentTarget = Y.one(matched);
 
-					Y.publish(ename, {
-			               contextFn: function() {
-			                   return ev.currentTarget;
-			               }
-			           });
+                    Y.publish(ename, {
+                           contextFn: function() {
+                               return ev.currentTarget;
+                           }
+                       });
 
-					if (fn) {
-						fn(ev, ename);
-					}
-					else {
-                    	Y.fire(ename, ev);								
-					}
-					
-				}
+                    if (fn) {
+                        fn(ev, ename);
+                    }
+                    else {
+                        Y.fire(ename, ev);                              
+                    }
+                    
+                }
 
             }
         }
 
     },
 
-	attach = function (type, key, element) {
+    attach = function (type, key, element) {
 
-		var focusMethods = {
-				focus: Event._attachFocus,
-				blur: Event._attachBlur
-			},
+        var focusMethods = {
+                focus: Event._attachFocus,
+                blur: Event._attachBlur
+            },
 
-			attachFn = focusMethods[type],
+            attachFn = focusMethods[type],
 
-			args = [type, 
-			function (e) {
-	            delegateHandler(key, (e || window.event), element);
-			}, 
-			element];
+            args = [type, 
+            function (e) {
+                delegateHandler(key, (e || Y.config.win.event), element);
+            }, 
+            element];
 
 
-		if (attachFn) {
-			return attachFn(args, { capture: true, facade: false });
-		}
-		else {
-			return Event._attach(args, { facade: false });
-		}
-		
-	},
+        if (attachFn) {
+            return attachFn(args, { capture: true, facade: false });
+        }
+        else {
+            return Event._attach(args, { facade: false });
+        }
+        
+    },
 
     sanitize = Y.cached(function(str) {
         return str.replace(/[|,:]/g, '~');
@@ -1540,40 +1553,40 @@ Event.delegate = function (type, fn, el, spec) {
     }
 
 
-    var args = Y.Array(arguments, 0, true),	    
-		element = el,	// HTML element serving as the delegation container
-		availHandle;	
+    var args = Y.Array(arguments, 0, true),     
+        element = el,   // HTML element serving as the delegation container
+        availHandle;    
 
 
-	if (Lang.isString(el)) {
-		
-		//	Y.Selector.query returns an array of matches unless specified 
-		//	to return just the first match.  Since the primary use case for
-		//	event delegation is to use a single event handler on a container,
-		//	Y.delegate doesn't currently support being able to bind a 
-		//	single listener to multiple containers.
-		
-		element = Y.Selector.query(el, null, true);
-		
-		if (!element) { // Not found, check using onAvailable
+    if (Lang.isString(el)) {
+        
+        //  Y.Selector.query returns an array of matches unless specified 
+        //  to return just the first match.  Since the primary use case for
+        //  event delegation is to use a single event handler on a container,
+        //  Y.delegate doesn't currently support being able to bind a 
+        //  single listener to multiple containers.
+        
+        element = Y.Selector.query(el, null, true);
+        
+        if (!element) { // Not found, check using onAvailable
 
-			availHandle = Event.onAvailable(el, function() {
+            availHandle = Event.onAvailable(el, function() {
 
-				availHandle.handle = Event.delegate.apply(Event, args);
+                availHandle.handle = Event.delegate.apply(Event, args);
 
             }, Event, true, false);
 
             return availHandle;
-			
-		}
-		
-	}
+            
+        }
+        
+    }
 
 
-	element = Y.Node.getDOMNode(element);
+    element = Y.Node.getDOMNode(element);
 
 
-	var	guid = Y.stamp(element),
+    var guid = Y.stamp(element),
             
         // The Custom Event for the delegation spec
         ename = 'delegate:' + guid + type + sanitize(spec),
@@ -1581,67 +1594,67 @@ Event.delegate = function (type, fn, el, spec) {
         // The key to the listener for the event type and container
         delegateKey = type + guid,
 
-		delegate = delegates[delegateKey],
+        delegate = delegates[delegateKey],
 
-		domEventHandle,
-		
-		ceHandle,
-		
-		listeners;
-	
+        domEventHandle,
+        
+        ceHandle,
+        
+        listeners;
+    
 
     if (!delegate) {
 
-		delegate = {};
+        delegate = {};
 
-		if (specialTypes[type]) {
-			
-			if (!Event._fireMouseEnter) {
-				return false;				
-			}
-			
-			type = specialTypes[type];
-			delegate.fn = Event._fireMouseEnter;
-			
-		}
+        if (specialTypes[type]) {
+            
+            if (!Event._fireMouseEnter) {
+                return false;               
+            }
+            
+            type = specialTypes[type];
+            delegate.fn = Event._fireMouseEnter;
+            
+        }
 
-		//	Create the DOM Event wrapper that will fire the Custom Event
+        //  Create the DOM Event wrapper that will fire the Custom Event
 
-		domEventHandle = attach(type, delegateKey, element);
-
-
-		//	Hook into the _delete method for the Custom Event wrapper of this
-		//	DOM Event in order to clean up the 'delegates' map and unsubscribe
-		//	the associated Custom Event listeners fired by this DOM event
-		//	listener if/when the user calls "purgeElement" OR removes all 
-		//	listeners of the Custom Event.
-		
-		Y.after(function (sub) {
-
-			if (domEventHandle.sub == sub) {
-
-				//	Delete this event from the map of known delegates
-				delete delegates[delegateKey];
+        domEventHandle = attach(type, delegateKey, element);
 
 
-				//	Unsubscribe all listeners of the Custom Event fired 
-				//	by this DOM event.
-				Y.detachAll(ename);
-				
-			}
+        //  Hook into the _delete method for the Custom Event wrapper of this
+        //  DOM Event in order to clean up the 'delegates' map and unsubscribe
+        //  the associated Custom Event listeners fired by this DOM event
+        //  listener if/when the user calls "purgeElement" OR removes all 
+        //  listeners of the Custom Event.
+        
+        Y.after(function (sub) {
 
-		}, domEventHandle.evt, "_delete");
-			
-		delegate.handle = domEventHandle;
+            if (domEventHandle.sub == sub) {
+
+                //  Delete this event from the map of known delegates
+                delete delegates[delegateKey];
+
+
+                //  Unsubscribe all listeners of the Custom Event fired 
+                //  by this DOM event.
+                Y.detachAll(ename);
+                
+            }
+
+        }, domEventHandle.evt, "_delete");
+            
+        delegate.handle = domEventHandle;
 
         delegates[delegateKey] = delegate;
 
     }
 
 
-	listeners = delegate.listeners;
+    listeners = delegate.listeners;
 
-	delegate.listeners = listeners ? (listeners + 1) : 1;
+    delegate.listeners = listeners ? (listeners + 1) : 1;
     delegate[spec] = ename;
 
 
@@ -1653,26 +1666,26 @@ Event.delegate = function (type, fn, el, spec) {
 
     // Subscribe to the Custom Event for the delegation spec
 
-	ceHandle = Y.on.apply(Y, args);
+    ceHandle = Y.on.apply(Y, args);
 
 
-	//	Hook into the detach method of the handle in order to clean up the 
-	//	'delegates' map and remove the associated DOM event handler 
-	//	responsible for firing this Custom Event if all listener for this 
-	//	event have been removed.
+    //  Hook into the detach method of the handle in order to clean up the 
+    //  'delegates' map and remove the associated DOM event handler 
+    //  responsible for firing this Custom Event if all listener for this 
+    //  event have been removed.
 
-	Y.after(function () {
-			
-		delegate.listeners = (delegate.listeners - 1);
-		
-		if (delegate.listeners === 0) {
-			delegate.handle.detach();
-		}
+    Y.after(function () {
+            
+        delegate.listeners = (delegate.listeners - 1);
+        
+        if (delegate.listeners === 0) {
+            delegate.handle.detach();
+        }
 
-	}, ceHandle, "detach");
+    }, ceHandle, "detach");
 
     return ceHandle;
-	
+    
 };
 
 Y.delegate = Event.delegate;
@@ -1737,148 +1750,148 @@ YUI.add('event-mouseenter', function(Y) {
  * @submodule event-mouseenter
  */
 var Event = Y.Event,
-	Lang = Y.Lang,
+    Lang = Y.Lang,
 
-	plugins = Y.Env.evt.plugins,
-	
-	listeners = {},
+    plugins = Y.Env.evt.plugins,
+    
+    listeners = {},
 
-	eventConfig = {
+    eventConfig = {
 
-    	on: function(type, fn, el) {
+        on: function(type, fn, el) {
 
-		    var args = Y.Array(arguments, 0, true),	    
-				element = el,
-				availHandle;
-
-
-			if (Lang.isString(el)) {
-
-				//	Need to use Y.all because if el is a string it could be a 
-				//	selector that returns a NodeList
-
-				element = Y.all(el);
-
-				if (element.size() === 0) { // Not found, check using onAvailable
-
-		            availHandle = Event.onAvailable(el, function() {
-
-		                availHandle.handle = Y.on.apply(Y, args);
-
-		            }, Event, true, false);
-		
-					return availHandle;
-
-				}
-
-			}
-			
-
-	        var sDOMEvent = (type === "mouseenter") ? "mouseover" : "mouseout",
-
-				//	The name of the custom event
-				sEventName = type + ":" + Y.stamp(element) + sDOMEvent,
-
-				listener = listeners[sEventName],
-
-				domEventHandle,
-				
-				ceHandle,
-				
-				nListeners;
+            var args = Y.Array(arguments, 0, true),     
+                element = el,
+                availHandle;
 
 
-			//	Bind an actual DOM event listener that will call the 
-			//	the custom event				
-			if (!listener) {
-				
-				domEventHandle = Y.on(sDOMEvent, Y.rbind(Event._fireMouseEnter, Y, sEventName), element);
+            if (Lang.isString(el)) {
 
-				//	Hook into the _delete method for the Custom Event wrapper of this
-				//	DOM Event in order to clean up the 'listeners' map and unsubscribe
-				//	the associated Custom Event listeners fired by this DOM event
-				//	listener if/when the user calls "purgeElement" OR removes all 
-				//	listeners of the Custom Event.
+                //  Need to use Y.all because if el is a string it could be a 
+                //  selector that returns a NodeList
 
-				Y.after(function (sub) {
+                element = Y.all(el);
 
-					if (domEventHandle.sub == sub) {
+                if (element.size() === 0) { // Not found, check using onAvailable
 
-						//	Delete this event from the map of known mouseenter 
-						//	and mouseleave listeners
-						delete listeners[sEventName];
+                    availHandle = Event.onAvailable(el, function() {
+
+                        availHandle.handle = Y.on.apply(Y, args);
+
+                    }, Event, true, false);
+        
+                    return availHandle;
+
+                }
+
+            }
+            
+
+            var sDOMEvent = (type === "mouseenter") ? "mouseover" : "mouseout",
+
+                //  The name of the custom event
+                sEventName = type + ":" + Y.stamp(element) + sDOMEvent,
+
+                listener = listeners[sEventName],
+
+                domEventHandle,
+                
+                ceHandle,
+                
+                nListeners;
 
 
-						//	Unsubscribe all listeners of the Custom Event fired 
-						//	by this DOM event.
-						Y.detachAll(sEventName);
+            //  Bind an actual DOM event listener that will call the 
+            //  the custom event                
+            if (!listener) {
+                
+                domEventHandle = Y.on(sDOMEvent, Y.rbind(Event._fireMouseEnter, Y, sEventName), element);
 
-					}
+                //  Hook into the _delete method for the Custom Event wrapper of this
+                //  DOM Event in order to clean up the 'listeners' map and unsubscribe
+                //  the associated Custom Event listeners fired by this DOM event
+                //  listener if/when the user calls "purgeElement" OR removes all 
+                //  listeners of the Custom Event.
 
-				}, domEventHandle.evt, "_delete");
-				
+                Y.after(function (sub) {
 
-				listener = {};				
-				listener.handle = domEventHandle;				
+                    if (domEventHandle.sub == sub) {
 
-				listeners[sEventName] = listener;
+                        //  Delete this event from the map of known mouseenter 
+                        //  and mouseleave listeners
+                        delete listeners[sEventName];
 
-			}
 
-			nListeners = listener.count;
+                        //  Unsubscribe all listeners of the Custom Event fired 
+                        //  by this DOM event.
+                        Y.detachAll(sEventName);
 
-			listener.count = nListeners ? (nListeners + 1) : 1;
+                    }
 
-	        args[0] = sEventName;
+                }, domEventHandle.evt, "_delete");
+                
 
-	        // Remove the element from the args
-			args.splice(2, 1);
+                listener = {};              
+                listener.handle = domEventHandle;               
 
-	        // Subscribe to the custom event
-	        ceHandle = Y.on.apply(Y, args);
-	
-			//	Hook into the detach method of the handle in order to clean up the 
-			//	'listeners' map and remove the associated DOM event handler 
-			//	responsible for firing this Custom Event if all listener for this 
-			//	event have been removed.
+                listeners[sEventName] = listener;
 
-			Y.after(function () {
+            }
 
-				listener.count = (listener.count - 1);
+            nListeners = listener.count;
 
-				if (listener.count === 0) {
-					listener.handle.detach();
-				}
+            listener.count = nListeners ? (nListeners + 1) : 1;
 
-			}, ceHandle, "detach");	
-	
-	
-			return ceHandle;
+            args[0] = sEventName;
 
-	    }
+            // Remove the element from the args
+            args.splice(2, 1);
 
-	};
-	
+            // Subscribe to the custom event
+            ceHandle = Y.on.apply(Y, args);
+    
+            //  Hook into the detach method of the handle in order to clean up the 
+            //  'listeners' map and remove the associated DOM event handler 
+            //  responsible for firing this Custom Event if all listener for this 
+            //  event have been removed.
+
+            Y.after(function () {
+
+                listener.count = (listener.count - 1);
+
+                if (listener.count === 0) {
+                    listener.handle.detach();
+                }
+
+            }, ceHandle, "detach"); 
+    
+    
+            return ceHandle;
+
+        }
+
+    };
+    
 
 Event._fireMouseEnter = function (e, eventName) {
 
-	var relatedTarget = e.relatedTarget,
-		currentTarget = e.currentTarget;
+    var relatedTarget = e.relatedTarget,
+        currentTarget = e.currentTarget;
 
-	if (currentTarget !== relatedTarget && 
-		!currentTarget.contains(relatedTarget)) {
+    if (currentTarget !== relatedTarget && 
+        !currentTarget.contains(relatedTarget)) {
 
-		Y.publish(eventName, {
+        Y.publish(eventName, {
                contextFn: function() {
                    return currentTarget;
                }
-           });			
+           });          
 
-		Y.fire(eventName, e);
+        Y.fire(eventName, e);
 
-	}
+    }
 
-};	
+};  
 
 
 /**
@@ -2025,45 +2038,48 @@ YUI.add('event-focus', function(Y) {
 (function() {
 
 var UA = Y.UA,
-	Event = Y.Event,
-	plugins = Y.Env.evt.plugins,
-	ie = UA.ie,
-	bUseMutation = (UA.opera || UA.webkit),
-	eventNames = {
-		focus: (ie ? 'focusin' : (bUseMutation ? 'DOMFocusIn' : 'focus')),
-		blur: (ie ? 'focusout' : (bUseMutation ? 'DOMFocusOut' : 'blur'))
-	},
+    Event = Y.Event,
+    plugins = Y.Env.evt.plugins,
+    ie = UA.ie,
+    bUseMutation = (UA.opera || UA.webkit),
+    eventNames = {
+        focus: (ie ? 'focusin' : (bUseMutation ? 'DOMFocusIn' : 'focus')),
+        blur: (ie ? 'focusout' : (bUseMutation ? 'DOMFocusOut' : 'blur'))
+    },
 
-	//	Only need to use capture phase for Gecko since it doesn't support 
-	//	focusin, focusout, DOMFocusIn, or DOMFocusOut
+    //  Only need to use capture phase for Gecko since it doesn't support 
+    //  focusin, focusout, DOMFocusIn, or DOMFocusOut
     CAPTURE_CONFIG = { capture: (UA.gecko ? true : false) },
 
 
-	attach = function (args, config) {
+    attach = function (args, config) {
 
-	    var a = Y.Array(args, 0, true),
+        var a = Y.Array(args, 0, true),
             el = args[2];
+
+        config.overrides = config.overrides || {};
+        config.overrides.type = args[0];
         
         if (el) {
             if (Y.DOM.isWindow(el)) {
                 config.capture = false;
             }
             else {
-		        a[0] = eventNames[a[0]];
-		    }
+                a[0] = eventNames[a[0]];
+            }
         }
 
-	    return Event._attach(a, config);
+        return Event._attach(a, config);
 
-	},
-	
-	eventAdapter = {
+    },
+    
+    eventAdapter = {
 
-		on: function () {
-			return attach(arguments, CAPTURE_CONFIG);
-		}
+        on: function () {
+            return attach(arguments, CAPTURE_CONFIG);
+        }
 
-	};
+    };
 
 
 Event._attachFocus = attach;

@@ -26,7 +26,7 @@
 
 </head>
 
-<body class='yui-skin-sam'>
+<body class='yui3-skin-sam'>
 
 <div class='everything' id='everything'>
 	<div class='topmain' id='topmain'></div>
@@ -64,9 +64,7 @@
 <script type="text/javascript">
 
 YUI({
-	base: '../../../build/',
 	filter: 'debug',
-	useConsole: true,
 	logInclude: {
 		'imageloader': true,
 		'TestRunner': true
@@ -92,7 +90,7 @@ var bgImgUrlTestCase = new Y.Test.Case({
 	},
 
 	testBgImg: function() {
-		Y.get('#topmain').simulate('mouseover');
+		Y.one('#topmain').simulate('mouseover');
 		// style.bgImg is "url('...')", but we can't rely on those quotes across browsers. indexOf is sufficient
 		Y.Assert.areNotEqual(this.mainGroupImage.style.backgroundImage.indexOf(this.bgImgUrl), -1);
 	}
@@ -116,7 +114,7 @@ var srcImgUrlTestCase = new Y.Test.Case({
 	},
 
 	testSrcImg: function() {
-		Y.get('#srcImgCont').simulate('click');
+		Y.one('#srcImgCont').simulate('click');
 		Y.Assert.areEqual(this.srcGroupImage.src, this.srcImgUrl);
 	}
 
@@ -143,7 +141,7 @@ var classNameTestCase = new Y.Test.Case({
 		// We have to just check for the classname. Nothing else in the element will indicate the difference between before and after url application
 		Y.Assert.areEqual(this.duo1Image.className, 'duo1 yui-imgload');
 		Y.Assert.areEqual(this.duo2Image.className, 'yui-imgload');
-		Y.get('#duo1').simulate('mouseover');
+		Y.one('#duo1').simulate('mouseover');
 		Y.Assert.areEqual(this.duo1Image.className, 'duo1');
 		Y.Assert.areEqual(this.duo2Image.className, '');
 	}
@@ -167,7 +165,7 @@ var addTriggerTestCase = new Y.Test.Case({
 
 	testAddTrigger: function() {
 		Y.Assert.areEqual(this.triggerImage.style.backgroundImage, '');
-		Y.get('#addlTrigger').simulate('click');
+		Y.one('#addlTrigger').simulate('click');
 		Y.Assert.areNotEqual(this.triggerImage.style.backgroundImage.indexOf(this.imageUrl), -1);
 	}
 
@@ -240,12 +238,12 @@ var imgSizingTestCase = new Y.Test.Case({
 	},
 
 	testImageVisibility: function() {
-		Y.get('#sizerImg').simulate('mouseover');
+		Y.one('#sizerImg').simulate('mouseover');
 		Y.Assert.areEqual(this.sizerImage.style.visibility, 'visible');
 	},
 
 	testImageSizing: function() {
-		Y.get('#sizerImg').simulate('mouseover');
+		Y.one('#sizerImg').simulate('mouseover');
 		Y.Assert.areEqual(this.sizerImage.height, 150);
 		Y.Assert.areEqual(this.sizerImage.width, 200);
 	}
@@ -276,10 +274,10 @@ var triggerRemovalTestCase = new Y.Test.Case({
 	},
 
 	testCompetingTriggers: function() {
-		Y.get('#sharedTrigger2').simulate('click');
+		Y.one('#sharedTrigger2').simulate('click');
 		Y.Assert.areNotEqual(this.groupZImage.style.backgroundImage.indexOf(this.imageZUrl), -1);
 		Y.Assert.areEqual(this.groupAImage.style.backgroundImage, '');
-		Y.get('#sharedTrigger1').simulate('click');
+		Y.one('#sharedTrigger1').simulate('click');
 		Y.Assert.areNotEqual(this.groupAImage.style.backgroundImage.indexOf(this.imageAUrl), -1);
 	}
 

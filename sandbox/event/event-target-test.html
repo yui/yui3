@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Event Target Test</title>
+
+    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+    <script type="text/javascript">
+    
+        YUI({
+            filter: 'debug'
+        }).use("event-custom", function (Y) {
+
+            var uberParent = new Y.EventTarget();
+
+            uberParent.id = "uberParent";
+
+            uberParent.publish("test", {
+
+               type: "test",
+               bubbles: true, 
+               emitFacade: true,
+               // defaultTargetOnly: true,
+               defaultFn: function (e) {
+                   Y.log("grandParent: inside default for test function");
+               }
+
+            });
+
+            var grandParent = new Y.EventTarget();
+
+            grandParent.id = "grandParent";
+
+            grandParent.publish("test", {
+
+               type: "test",
+               bubbles: true, 
+               emitFacade: true,
+               // defaultTargetOnly: true,
+               defaultFn: function (e) {
+                   Y.log("grandParent: inside default for test function");
+               }
+
+            });
+
+
+           var parent = new Y.EventTarget();
+
+           parent.id = "parent";
+           
+           parent.publish("test", {
+              
+              type: "test",
+              bubbles: true, 
+              emitFacade: true,
+              // defaultTargetOnly: true,              
+              defaultFn: function (e) {
+                  Y.log("parent: inside default for test function");
+              }
+               
+           });
+
+
+           var child = new Y.EventTarget(),
+               current = 'child';
+           
+           child.id = "child";           
+           
+           child.publish("test", {
+              
+              type: "test",
+              bubbles: true, 
+              emitFacade: true,
+              defaultTargetOnly: true,
+              defaultFn: function (e) {
+                 Y.log("child: inside default for test function");
+              }
+               
+           });
+
+           
+           child.addTarget(parent);
+           parent.addTarget(grandParent);
+           grandParent.addTarget(uberParent);
+
+
+           //   For each event listener the target of the event 
+           //   should remain the same.  However, when the event bubbles to
+           //   the grandParent, the event target start changing.
+
+           uberParent.on("test", function (e) {
+               Y.log("[uberParent] target is: " + e.target.id + ", expected " + current);
+           });
+
+           grandParent.on("test", function (e) {
+               Y.log("[grandParent] target is: " + e.target.id + ", expected " + current);
+           });
+
+           parent.on("test", function (e) {
+               Y.log("[parent] target is: " + e.target.id + ", expected " + current);
+           });
+
+           child.on("test", function (e) {
+               Y.log("[child] target is: " + e.target.id + ", expected " + current);
+           });
+
+           uberParent.after("test", function (e) {
+               Y.log("[uberParent] target is: " + e.target.id + ", expected " + current);
+           });
+
+           grandParent.after("test", function (e) {
+               Y.log("[grandParent] target is: " + e.target.id + ", expected " + current);
+           });
+
+           parent.after("test", function (e) {
+               Y.log("[parent] target is: " + e.target.id + ", expected " + current);
+           });
+
+           child.after("test", function (e) {
+               Y.log("[child] target is: " + e.target.id + ", expected " + current);
+           });
+           
+
+           child.fire("test");
+
+           current = 'parent';
+
+           parent.fire("test");
+            
+        });
+    
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>

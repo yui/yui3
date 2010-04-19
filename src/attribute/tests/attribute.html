@@ -5,21 +5,21 @@
     <script type="text/javascript" src="../../../build/yui/yui.js"></script>
 
     <style type="text/css">
-        #console .yui-console-entry {
+        #console .yui3-console-entry {
             padding:2px;
             margin:0px;
             min-height:0;
         }
-        
-        #console .yui-console-entry-fail .yui-console-entry-cat {
+
+        #console .yui3-console-entry-fail .yui3-console-entry-cat {
             background-color:red;
         }
 
-        #console .yui-console-entry-pass .yui-console-entry-cat {
+        #console .yui3-console-entry-pass .yui3-console-entry-cat {
             background-color:green;
         }
 
-        #console .yui-console-entry-perf .yui-console-entry-cat {
+        #console .yui3-console-entry-perf .yui3-console-entry-cat {
             background-color:blue;
         }
 
@@ -34,7 +34,7 @@
 
     <script type="text/javascript">
 
-        YUI({filter:"raw", useBrowserConsole:false}).use("dump", "attribute-complex", "base", "console", "test", function(Y) {
+        YUI({useBrowserConsole:false}).use("dump", "attribute-complex", "base", "console", "test", function(Y) {
 
             function areObjectsReallyEqual(o1, o2) {
                 Y.ObjectAssert.areEqual(o1, o2);
@@ -156,7 +156,7 @@
                     value: null
                 }
             };
-        
+
             Y.extend(Test, Y.Base, {
                 foo: function() {}
             });
@@ -212,7 +212,11 @@
                             A: 3
                         }
                     }
-                }
+                },
+
+                initOnly : {
+                    writeOnce:"initOnly"
+                }    
             };
 
             Y.extend(AttrHost, Y.Base);
@@ -645,6 +649,36 @@
                     Y.Assert.areEqual("MyNewDEVal", h.get("DE"));
                 },
 
+                testWriteOncePostInit : function() {
+
+                    var h = this.createHost();
+                    h.set("E", "MyNewEVal");
+                    h.set("C", "MyNewCVal");
+
+                    Y.Assert.areEqual("MyNewCVal", h.get("C"));   // Write Once, default value
+                    Y.Assert.areEqual("EVal", h.get("E"));   // Write Once, default value
+                },
+
+                testWriteOnce : function() {
+                    var h = this.createHost({E:"MyEVal"});
+                    h.set("E", "MyNewEVal");
+
+                    Y.Assert.areEqual("MyEVal", h.get("E"));   // Write Once, on init
+                },
+
+                testWriteOnceInitOnly : function() {
+                    var h = this.createHost({ initOnly: "initOnlyVal"});
+                    h.set("initOnly", "NewInitOnlyVal");
+
+                    Y.Assert.areEqual("initOnlyVal", h.get("initOnly"));
+                },
+
+                testWriteOnceInitOnlyNotProvided : function() {
+                    var h1 = this.createHost();
+                    h1.set("initOnly", "InitOnlyVal");
+                    Y.Assert.areEqual(undefined, h1.get("initOnly"));
+                },
+
                 testAdHocGetSet : function() {
                     var h = this.createHost();
 
@@ -769,7 +803,7 @@
                 testPrivateSet : function() {
                     var h = this.createHost();
 
-                    var expectedEvents = ["BeforeTryDAgain", "AfterTryDAgain", "BeforeTryEAgain", "AfterTryEAgain"];
+                    var expectedEvents = ["BeforeTryDAgain", "AfterTryDAgain", "BeforeTryEAgain", "Aftertryeagain"];
                     var actualEvents = [];
 
                     h.on("DChange", function(e) {
@@ -1257,7 +1291,7 @@
                 testPrivateSet : function() {
                     var h = this.createHost();
 
-                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "AfterTryEAgain"  ]; // Last entry: e.newVal is not "get" normalized 
+                    var expectedEvents = ["BeforeTryDAgain", "AfterTRYDAGAIN", "BeforeTryEAgain", "Aftertryeagain"  ]; // Last entry: e.newVal is not "get" normalized 
                     var actualEvents = [];
 
                     h.on("DChange", function(e) {
@@ -1640,11 +1674,10 @@
             new Y.Console({
                 width:"100%",
                 height:"95%",
-                boundingBox:"#console",
+                id:"console",
                 verbose : false,
                 printTimeout: 0,
                 newestOnTop : false,
-
                 entryTemplate: '<pre class="{entry_class} {cat_class} {src_class}">'+
                         '<span class="{entry_cat_class}">{label}</span>'+
                         '<span class="{entry_content_class}">{message}</span>'+
@@ -1666,7 +1699,5 @@
         });
     </script>
 </head>
-<body class="yui-skin-sam">
-    <div id="console"></div>
-</body>
+<body class="yui3-skin-sam"></body>
 </html>

@@ -147,6 +147,7 @@ YUI.add('attribute-base', function(Y) {
         SETTER = "setter",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
+        INIT_ONLY = "initOnly",
         VALIDATOR = "validator",
         VALUE = "value",
         VALUE_FN = "valueFn",
@@ -644,7 +645,9 @@ YUI.add('attribute-base', function(Y) {
                 initialSet,
                 strPath,
                 path,
-                currVal;
+                currVal,
+                writeOnce,
+                initializing;
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
@@ -666,15 +669,22 @@ YUI.add('attribute-base', function(Y) {
             if (this._requireAddAttr && !this.attrAdded(name)) {
             } else {
 
+                writeOnce = state.get(name, WRITE_ONCE);
+                initializing = state.get(name, INITIALIZING);
+
                 if (!initialSet && !force) {
 
-                    if (state.get(name, WRITE_ONCE)) {
+                    if (writeOnce) {
                         allowSet = false;
                     }
 
                     if (state.get(name, READ_ONLY)) {
                         allowSet = false;
                     }
+                }
+
+                if (!initializing && !force && writeOnce === INIT_ONLY) {
+                    allowSet = false;
                 }
 
                 if (allowSet) {
@@ -692,7 +702,7 @@ YUI.add('attribute-base', function(Y) {
                     }
 
                     if (allowSet) {
-                        if (state.get(name, INITIALIZING)) {
+                        if (initializing) {
                             this._setAttrVal(name, strPath, currVal, val);
                         } else {
                             this._fireAttrChange(name, strPath, currVal, val, opts);
@@ -724,7 +734,8 @@ YUI.add('attribute-base', function(Y) {
 
             if (!state.get(attrName, PUBLISHED)) {
                 host.publish(eventName, {
-                    queuable:false, 
+                    queuable:false,
+                    defaultTargetOnly: true, 
                     defaultFn:host._defAttrChangeFn, 
                     silent:true,
                     broadcast : state.get(attrName, BROADCAST)
@@ -751,19 +762,12 @@ YUI.add('attribute-base', function(Y) {
          * @param {EventFacade} e The event object for attribute change events.
          */
         _defAttrChangeFn : function(e) {
-
-            //  Temporary fix for bug #2528350
-            if (e.target === this) {
-
-                if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
-                    // Prevent "after" listeners from being invoked since nothing changed.
-                    e.stopImmediatePropagation();
-                } else {
-                    e.newVal = this._getStateVal(e.attrName);
-                }
-                
+            if (!this._setAttrVal(e.attrName, e.subAttrName, e.prevVal, e.newVal)) {
+                // Prevent "after" listeners from being invoked since nothing changed.
+                e.stopImmediatePropagation();
+            } else {
+                e.newVal = this.get(e.attrName);
             }
-
         },
 
         /**

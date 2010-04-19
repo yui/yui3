@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>sortable&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>sortable&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_sortable.html" title="sortable">sortable</a>
                  &gt; Sortable 
@@ -60,7 +60,7 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Sortable Lists.
+                        The class allows you to create a Drag & Drop reordered list.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -145,16 +145,192 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="private" rel="yui:method" resource="#method__handleDragEnd">
+                                    <div class="private" rel="yui:method" resource="#method__join_full">
                                     <h4>
-                                        <a name="method__handleDragEnd">_handleDragEnd</a></h4>
+                                        <a name="method__join_full">_join_full</a></h4>
                                     <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_handleDragEnd</strong>
+                                            <strong property="yui:name">_join_full</strong>
+                                           (
+                                                
+                                                        
+                                                         Sortable
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Joins both of the Sortables together.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Sortable</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> sel The sortable list to join with</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__join_inner">
+                                    <h4>
+                                        <a name="method__join_inner">_join_inner</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_join_inner</strong>
+                                           (
+                                                
+                                                        
+                                                         Sortable
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Allows this Sortable to give items to the passed Sortable.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Sortable</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> sel The sortable list to join with</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__join_none">
+                                    <h4>
+                                        <a name="method__join_none">_join_none</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_join_none</strong>
+                                           (
+                                                
+                                                        
+                                                         Sortable
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Removes the join with the passed Sortable.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Sortable</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> sel The Sortable to remove the join from</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__join_outer">
+                                    <h4>
+                                        <a name="method__join_outer">_join_outer</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_join_outer</strong>
+                                           (
+                                                
+                                                        
+                                                         Sortable
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Allows this Sortable to accept items from the passed Sortable.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">Sortable</span>
+                                                        &lt;<span property="yui:type">object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> sel The sortable list to join with</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__onDragEnd">
+                                    <h4>
+                                        <a name="method__onDragEnd">_onDragEnd</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_onDragEnd</strong>
                                            (
                                                 
                                                         
@@ -189,16 +365,16 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__handleDragOver">
+                                    <div class="private" rel="yui:method" resource="#method__onDragOver">
                                     <h4>
-                                        <a name="method__handleDragOver">_handleDragOver</a></h4>
+                                        <a name="method__onDragOver">_onDragOver</a></h4>
                                     <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_handleDragOver</strong>
+                                            <strong property="yui:name">_onDragOver</strong>
                                            (
                                                 
                                                         
@@ -233,16 +409,16 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__handleDragStart">
+                                    <div class="private" rel="yui:method" resource="#method__onDragStart">
                                     <h4>
-                                        <a name="method__handleDragStart">_handleDragStart</a></h4>
+                                        <a name="method__onDragStart">_onDragStart</a></h4>
                                     <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_handleDragStart</strong>
+                                            <strong property="yui:name">_onDragStart</strong>
                                            (
                                                 
                                                         
@@ -277,16 +453,16 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private" rel="yui:method" resource="#method__handleDropOver">
+                                    <div class="private" rel="yui:method" resource="#method__onDropOver">
                                     <h4>
-                                        <a name="method__handleDropOver">_handleDropOver</a></h4>
+                                        <a name="method__onDropOver">_onDropOver</a></h4>
                                     <div class="detail" >
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong property="yui:name">_handleDropOver</strong>
+                                            <strong property="yui:name">_onDropOver</strong>
                                            (
                                                 
                                                         
@@ -391,9 +567,10 @@
                                         <div class="description" property="yui:description">
                                             Join this Sortable with another Sortable instance.
 <ul>
-<li>Full: Exchange nodes with both lists.</li>
-<li>Inner: Items can go into this list from the joined list.</li>
-<li>Outer: Items can go out of the joined list into this list.</li>
+<li>full: Exchange nodes with both lists.</li>
+<li>inner: Items can go into this list from the joined list.</li>
+<li>outer: Items can go out of the joined list into this list.</li>
+<li>none: Removes the join.</li>
 </ul>
                                         </div>
 
@@ -411,7 +588,7 @@
                                                         <code><span property="yui:name">String</span>
                                                         &lt;<span property="yui:type">object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> type The type of join to do: full, inner, outer. Default: full</span>
+                                                        <span property="yui:description"> type The type of join to do: full, inner, outer, none. Default: full</span>
                                                         </dd>
                                                 </dl>
 
@@ -484,16 +661,16 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_regSortable">
+                                    <div class="" rel="yui:method" resource="#method_reg">
                                     <h4>
-                                        <a name="method_regSortable">regSortable</a></h4>
+                                        <a name="method_reg">reg</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
                                         void
-                                            <strong property="yui:name">regSortable</strong>
+                                            <strong property="yui:name">reg</strong>
                                            (
                                                 
                                                         
@@ -528,16 +705,16 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_unregSortable">
+                                    <div class="" rel="yui:method" resource="#method_unreg">
                                     <h4>
-                                        <a name="method_unregSortable">unregSortable</a></h4>
+                                        <a name="method_unreg">unreg</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
                                          static 
                                         
                                         void
-                                            <strong property="yui:name">unregSortable</strong>
+                                            <strong property="yui:name">unreg</strong>
                                            (
                                                 
                                                         
@@ -583,6 +760,9 @@
                                             <span rel="yui:method" resource="EventTarget.html#method__getType">                                        
                                             <a class="private" href="EventTarget.html#method__getType" property="yui:name" title="_getType">_getType</a><span class="private">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method__monitor">                                        
+                                            <a class="private" href="EventTarget.html#method__monitor" property="yui:name" title="_monitor">_monitor</a><span class="private">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="EventTarget.html#method__parseType">                                        
                                             <a class="private" href="EventTarget.html#method__parseType" property="yui:name" title="_parseType">_parseType</a><span class="private">,</span>
                                             </span>
@@ -610,8 +790,14 @@
                                             <span rel="yui:method" resource="EventTarget.html#method_getEvent">                                        
                                             <a class="" href="EventTarget.html#method_getEvent" property="yui:name" title="getEvent">getEvent</a><span class="">,</span>
                                             </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_getTargets">                                        
+                                            <a class="" href="EventTarget.html#method_getTargets" property="yui:name" title="getTargets">getTargets</a><span class="">,</span>
+                                            </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_on">                                        
                                             <a class="" href="EventTarget.html#method_on" property="yui:name" title="on">on</a><span class="">,</span>
+                                            </span>
+                                            <span rel="yui:method" resource="EventTarget.html#method_once">                                        
+                                            <a class="" href="EventTarget.html#method_once" property="yui:name" title="once">once</a><span class="">,</span>
                                             </span>
                                             <span rel="yui:method" resource="EventTarget.html#method_publish">                                        
                                             <a class="" href="EventTarget.html#method_publish" property="yui:name" title="publish">publish</a><span class="">,</span>
@@ -797,15 +983,15 @@
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
-                                    <div class="" rel="yui:event" resource="#event_contChange">
+                                    <div class="" rel="yui:event" resource="#event_containerChange">
                                     <h4>
-                                        <a name="event_contChange">contChange</a></h4>
+                                        <a name="event_containerChange">containerChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">contChange</strong>
+                                            <strong property="yui:name">containerChange</strong>
 
                                             (
                                                 
@@ -818,7 +1004,51 @@
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Fires when the value for the configuration attribute 'cont' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                            Fires when the value for the configuration attribute 'container' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">event</span>
+                                                                &lt;<span property="yui:type">Event.Facade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description">An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_handlesChange">
+                                    <h4>
+                                        <a name="event_handlesChange">handlesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">handlesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when the value for the configuration attribute 'handles' is changed. You can listen for the event using the <a href="Attribute.html#method_on">on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after">after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -1137,13 +1367,27 @@
                         <div class="section field details">
                             <h3 id="configattributes">Configuration Attributes</h3>
                             <div class="content">
-                                    <div class="" rel="yui:attribute" resource="#config_cont">
-                                    <h4><a name="config_cont">cont</a>
+                                    <div class="" rel="yui:attribute" resource="#config_container">
+                                    <h4><a name="config_container">container</a>
                                         <code>- <span property="yui:type">String</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             A selector query to get the container to listen for mousedown events on. All "nodes" should be a child of this container.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="" rel="yui:attribute" resource="#config_handles">
+                                    <h4><a name="config_handles">handles</a>
+                                        <code>- <span property="yui:type">Array</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Drag handles to pass on to the internal DD.Delegate instance.
                                         </div>
                                     </div>
  
@@ -1185,7 +1429,7 @@
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
-                                            How should an item move to another list: swap, move, copy. Default: swap
+                                            How should an item move to another list: insert, swap, move, copy. Default: insert
                                         </div>
                                     </div>
  
@@ -1287,6 +1531,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -1298,17 +1543,25 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class="selected"><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
@@ -1340,22 +1593,27 @@
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class="private"><a href="#method__handleDragEnd" title="_handleDragEnd">_handleDragEnd</a></li>
-                                <li class="private"><a href="#method__handleDragOver" title="_handleDragOver">_handleDragOver</a></li>
-                                <li class="private"><a href="#method__handleDragStart" title="_handleDragStart">_handleDragStart</a></li>
-                                <li class="private"><a href="#method__handleDropOver" title="_handleDropOver">_handleDropOver</a></li>
+                                <li class="private"><a href="#method__join_full" title="_join_full">_join_full</a></li>
+                                <li class="private"><a href="#method__join_inner" title="_join_inner">_join_inner</a></li>
+                                <li class="private"><a href="#method__join_none" title="_join_none">_join_none</a></li>
+                                <li class="private"><a href="#method__join_outer" title="_join_outer">_join_outer</a></li>
+                                <li class="private"><a href="#method__onDragEnd" title="_onDragEnd">_onDragEnd</a></li>
+                                <li class="private"><a href="#method__onDragOver" title="_onDragOver">_onDragOver</a></li>
+                                <li class="private"><a href="#method__onDragStart" title="_onDragStart">_onDragStart</a></li>
+                                <li class="private"><a href="#method__onDropOver" title="_onDropOver">_onDropOver</a></li>
                                 <li class=""><a href="#method_getSortable" title="getSortable">getSortable</a></li>
                                 <li class=""><a href="#method_join" title="join">join</a></li>
                                 <li class=""><a href="#method_plug" title="plug">plug</a></li>
-                                <li class=""><a href="#method_regSortable" title="regSortable">regSortable</a></li>
-                                <li class=""><a href="#method_unregSortable" title="unregSortable">unregSortable</a></li>
+                                <li class=""><a href="#method_reg" title="reg">reg</a></li>
+                                <li class=""><a href="#method_unreg" title="unreg">unreg</a></li>
                         </ul>
                     </div>
 
                     <div id="eventsList" class="module">
                         <h4>Events</h4>
                         <ul class="content">        
-                                <li class=""><a href="#event_contChange" title="contChange">contChange</a></li>
+                                <li class=""><a href="#event_containerChange" title="containerChange">containerChange</a></li>
+                                <li class=""><a href="#event_handlesChange" title="handlesChange">handlesChange</a></li>
                                 <li class=""><a href="#event_idChange" title="idChange">idChange</a></li>
                                 <li class=""><a href="#event_invalidChange" title="invalidChange">invalidChange</a></li>
                                 <li class=""><a href="#event_moveTypeChange" title="moveTypeChange">moveTypeChange</a></li>
@@ -1368,7 +1626,8 @@
                     <div id="configList" class="module">
                         <h4>Configuration Attributes</h4>
                         <ul class="content">        
-                                <li class=""><a href="#config_cont" title="cont">cont</a></li>
+                                <li class=""><a href="#config_container" title="container">container</a></li>
+                                <li class=""><a href="#config_handles" title="handles">handles</a></li>
                                 <li class=""><a href="#config_id" title="id">id</a></li>
                                 <li class=""><a href="#config_invalid" title="invalid">invalid</a></li>
                                 <li class=""><a href="#config_moveType" title="moveType">moveType</a></li>
@@ -1388,7 +1647,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Sortable", "name": "cont", "url": "Sortable.html#config_cont", "type": "config"}, {"access": "", "host": "Sortable", "name": "contChange", "url": "Sortable.html#event_contChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "delegate", "url": "Sortable.html#property_delegate", "type": "property"}, {"access": "", "host": "Sortable", "name": "getSortable", "url": "Sortable.html#method_getSortable", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDragEnd", "url": "Sortable.html#method__handleDragEnd", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDragOver", "url": "Sortable.html#method__handleDragOver", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDragStart", "url": "Sortable.html#method__handleDragStart", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_handleDropOver", "url": "Sortable.html#method__handleDropOver", "type": "method"}, {"access": "", "host": "Sortable", "name": "id", "url": "Sortable.html#config_id", "type": "config"}, {"access": "", "host": "Sortable", "name": "idChange", "url": "Sortable.html#event_idChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "invalid", "url": "Sortable.html#config_invalid", "type": "config"}, {"access": "", "host": "Sortable", "name": "invalidChange", "url": "Sortable.html#event_invalidChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "join", "url": "Sortable.html#method_join", "type": "method"}, {"access": "", "host": "Sortable", "name": "moveType", "url": "Sortable.html#config_moveType", "type": "config"}, {"access": "", "host": "Sortable", "name": "moveTypeChange", "url": "Sortable.html#event_moveTypeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "nodes", "url": "Sortable.html#config_nodes", "type": "config"}, {"access": "", "host": "Sortable", "name": "nodesChange", "url": "Sortable.html#event_nodesChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "opacity", "url": "Sortable.html#config_opacity", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityChange", "url": "Sortable.html#event_opacityChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "opacityNode", "url": "Sortable.html#config_opacityNode", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityNodeChange", "url": "Sortable.html#event_opacityNodeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "plug", "url": "Sortable.html#method_plug", "type": "method"}, {"access": "", "host": "Sortable", "name": "regSortable", "url": "Sortable.html#method_regSortable", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_sortables", "url": "Sortable.html#property__sortables", "type": "property"}, {"access": "", "host": "Sortable", "name": "unregSortable", "url": "Sortable.html#method_unregSortable", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Sortable", "name": "container", "url": "Sortable.html#config_container", "type": "config"}, {"access": "", "host": "Sortable", "name": "containerChange", "url": "Sortable.html#event_containerChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "delegate", "url": "Sortable.html#property_delegate", "type": "property"}, {"access": "", "host": "Sortable", "name": "getSortable", "url": "Sortable.html#method_getSortable", "type": "method"}, {"access": "", "host": "Sortable", "name": "handles", "url": "Sortable.html#config_handles", "type": "config"}, {"access": "", "host": "Sortable", "name": "handlesChange", "url": "Sortable.html#event_handlesChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "id", "url": "Sortable.html#config_id", "type": "config"}, {"access": "", "host": "Sortable", "name": "idChange", "url": "Sortable.html#event_idChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "invalid", "url": "Sortable.html#config_invalid", "type": "config"}, {"access": "", "host": "Sortable", "name": "invalidChange", "url": "Sortable.html#event_invalidChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "join", "url": "Sortable.html#method_join", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_full", "url": "Sortable.html#method__join_full", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_inner", "url": "Sortable.html#method__join_inner", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_none", "url": "Sortable.html#method__join_none", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_join_outer", "url": "Sortable.html#method__join_outer", "type": "method"}, {"access": "", "host": "Sortable", "name": "moveType", "url": "Sortable.html#config_moveType", "type": "config"}, {"access": "", "host": "Sortable", "name": "moveTypeChange", "url": "Sortable.html#event_moveTypeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "nodes", "url": "Sortable.html#config_nodes", "type": "config"}, {"access": "", "host": "Sortable", "name": "nodesChange", "url": "Sortable.html#event_nodesChange", "type": "event"}, {"access": "private", "host": "Sortable", "name": "_onDragEnd", "url": "Sortable.html#method__onDragEnd", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_onDragOver", "url": "Sortable.html#method__onDragOver", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_onDragStart", "url": "Sortable.html#method__onDragStart", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_onDropOver", "url": "Sortable.html#method__onDropOver", "type": "method"}, {"access": "", "host": "Sortable", "name": "opacity", "url": "Sortable.html#config_opacity", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityChange", "url": "Sortable.html#event_opacityChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "opacityNode", "url": "Sortable.html#config_opacityNode", "type": "config"}, {"access": "", "host": "Sortable", "name": "opacityNodeChange", "url": "Sortable.html#event_opacityNodeChange", "type": "event"}, {"access": "", "host": "Sortable", "name": "plug", "url": "Sortable.html#method_plug", "type": "method"}, {"access": "", "host": "Sortable", "name": "reg", "url": "Sortable.html#method_reg", "type": "method"}, {"access": "private", "host": "Sortable", "name": "_sortables", "url": "Sortable.html#property__sortables", "type": "property"}, {"access": "", "host": "Sortable", "name": "unreg", "url": "Sortable.html#method_unreg", "type": "method"}];
 </script>
 </body>
 </html>

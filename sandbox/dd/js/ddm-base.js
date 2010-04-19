@@ -45,6 +45,15 @@ YUI.add('dd-ddm-base', function(Y) {
             value: 1000
         },
         /**
+        * @attribute throttleTime
+        * @description The number of milliseconds to throttle the mousemove event. Default: 150
+        * @type Number
+        */        
+        throttleTime: {
+            //value: 150
+            value: -1
+        },
+        /**
         * @attribute dragMode
         * @description This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of all future Drag instances. 
         * @type String
@@ -60,6 +69,7 @@ YUI.add('dd-ddm-base', function(Y) {
     };
 
     Y.extend(DDMBase, Y.Base, {
+        _createPG: function() {},
         /**
         * @property _active
         * @description flag set when we activate our first drag, so DDM can start listening for events.
@@ -95,7 +105,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description The PREFIX to attach to all DD CSS class names
         * @type {String}
         */
-        CSS_PREFIX: 'yui-dd',
+        CSS_PREFIX: 'yui3-dd',
         _activateTargets: function() {},        
         /**
         * @private
@@ -148,9 +158,10 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description Add the document listeners.
         */
         _setupListeners: function() {
+            this._createPG();
             this._active = true;
-            var doc = Y.one(document);
-            doc.on('mousemove', Y.bind(this._move, this));
+            var doc = Y.one(Y.config.doc);
+            doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
             //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
             doc.on('mouseup', Y.bind(this._end, this));
         },

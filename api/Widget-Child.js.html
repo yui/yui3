@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget-child&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>widget-child&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget-child.html" title="widget-child">widget-child</a>
                 
@@ -64,8 +64,7 @@
 <span class="cm">*/</span>
 <span class="kd">function</span> <span class="nx">Child</span><span class="p">()</span> <span class="p">{</span>
 
-    <span class="c1">// Widget method overlap</span>
-
+    <span class="c1">//  Widget method overlap</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_syncUIChild</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s2">&quot;syncUI&quot;</span><span class="p">);</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_bindUIChild</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="s2">&quot;bindUI&quot;</span><span class="p">);</span>
 
@@ -105,20 +104,10 @@
         <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             
             <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">),</span>
-                <span class="nx">children</span><span class="p">,</span>
-                <span class="nx">index</span><span class="p">;</span>
+                <span class="nx">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
             
             <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
-                
-                <span class="nx">children</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;children&quot;</span><span class="p">);</span>
-                
-                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="o">==</span> <span class="nx">children</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
-                        <span class="nx">index</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
-                        <span class="k">break</span><span class="p">;</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-                
+                <span class="nx">index</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
             <span class="p">}</span>
             
             <span class="k">return</span> <span class="nx">index</span><span class="p">;</span>
@@ -145,20 +134,27 @@
 <span class="cm">     * @default -1 </span>
 <span class="cm">     * @readOnly         </span>
 <span class="cm">     *</span>
-<span class="cm">     * @description Number representing the depth of this Widget in the object </span>
-<span class="cm">     * hierarchy.</span>
+<span class="cm">     * @description Number representing the depth of this Widget relative to </span>
+<span class="cm">     * the root Widget in the object heirarchy.</span>
 <span class="cm">     */</span>
     <span class="nx">depth</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">value</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
         <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
         <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
             
             <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">),</span>
+                <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;root&quot;</span><span class="p">),</span>
                 <span class="nx">depth</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
             
             <span class="k">while</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+
                 <span class="nx">depth</span> <span class="o">=</span> <span class="p">(</span><span class="nx">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span> <span class="o">==</span> <span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+
                 <span class="nx">parent</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">);</span>
+
             <span class="p">}</span>
             
             <span class="k">return</span> <span class="nx">depth</span><span class="p">;</span>
@@ -171,7 +167,9 @@
 <span class="cm">     * @type Widget </span>
 <span class="cm">     * @readOnly         </span>
 <span class="cm">     *</span>
-<span class="cm">     * @description Returns the root Widget in the object hierarchy.</span>
+<span class="cm">     * @description Returns the root Widget in the object hierarchy.  If the</span>
+<span class="cm">     * ROOT_TYPE property is set, the search for the root Widget will be </span>
+<span class="cm">     * constrained to parent Widgets of the specified type.</span>
 <span class="cm">     */</span>
     <span class="nx">root</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -179,9 +177,15 @@
 
             <span class="kd">var</span> <span class="nx">getParent</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
 
-                <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">),</span>
+                    <span class="nx">FnRootType</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">ROOT_TYPE</span><span class="p">,</span>
+                    <span class="nx">criteria</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">;</span>
 
-                <span class="k">return</span> <span class="p">(</span><span class="nx">parent</span> <span class="o">?</span> <span class="nx">getParent</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="o">:</span> <span class="nx">child</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">FnRootType</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">criteria</span> <span class="o">=</span> <span class="p">(</span><span class="nx">parent</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">parent</span> <span class="k">instanceof</span> <span class="nx">FnRootType</span><span class="p">));</span>
+                <span class="p">}</span>
+
+                <span class="k">return</span> <span class="p">(</span><span class="nx">criteria</span> <span class="o">?</span> <span class="nx">getParent</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="o">:</span> <span class="nx">child</span><span class="p">);</span>
                 
             <span class="p">};</span>
 
@@ -193,6 +197,22 @@
 <span class="p">};</span>
 
 <span class="nx">Child</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Constructor reference used to determine the root of a Widget-based </span>
+<span class="cm">     * object tree.</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Currently used to control the behavior of the &lt;code&gt;root&lt;/code&gt;  </span>
+<span class="cm">     * attribute so that recursing up the object heirarchy can be constrained </span>
+<span class="cm">     * to a specific type of Widget.  Widget authors should set this property</span>
+<span class="cm">     * to the constructor function for a given Widget implementation.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property ROOT_TYPE</span>
+<span class="cm">     * @type Object</span>
+<span class="cm">     */</span>
+    <span class="nx">ROOT_TYPE</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+
 
     <span class="c1">//  Override of Widget&#39;s implementation of _getUIEventNode() to ensure that </span>
     <span class="c1">//  all event listeners are bound to the Widget&#39;s topmost DOM element.</span>
@@ -213,13 +233,13 @@
     <span class="p">},</span>
 
 
-	<span class="cm">/**</span>
-<span class="cm">	* @method next</span>
-<span class="cm">	* @description Returns the Widget&#39;s next sibling.</span>
+    <span class="cm">/**</span>
+<span class="cm">    * @method next</span>
+<span class="cm">    * @description Returns the Widget&#39;s next sibling.</span>
 <span class="cm">    * @param {Boolean} circular Boolean indicating if the parent&#39;s first child </span>
-<span class="cm">    * should be returned if the child has no next sibling.	</span>
-<span class="cm">	* @return {Widget} Widget instance. </span>
-<span class="cm">	*/</span>
+<span class="cm">    * should be returned if the child has no next sibling.  </span>
+<span class="cm">    * @return {Widget} Widget instance. </span>
+<span class="cm">    */</span>
     <span class="nx">next</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">circular</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">),</span>
@@ -229,7 +249,7 @@
             <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">item</span><span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">));</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">circular</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">sibling</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sibling</span> <span class="o">&amp;&amp;</span> <span class="nx">circular</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -238,13 +258,13 @@
     <span class="p">},</span>
 
 
-	<span class="cm">/**</span>
+    <span class="cm">/**</span>
 <span class="cm">    * @method previous</span>
-<span class="cm">	* @description Returns the Widget&#39;s previous sibling.</span>
+<span class="cm">    * @description Returns the Widget&#39;s previous sibling.</span>
 <span class="cm">    * @param {Boolean} circular Boolean indicating if the parent&#39;s last child </span>
 <span class="cm">    * should be returned if the child has no previous sibling.</span>
-<span class="cm">	* @return {Widget} Widget instance. </span>
-<span class="cm">	*/</span>
+<span class="cm">    * @return {Widget} Widget instance. </span>
+<span class="cm">    */</span>
     <span class="nx">previous</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">circular</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">),</span>
@@ -255,8 +275,8 @@
             <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">item</span><span class="p">([(</span><span class="nx">index</span><span class="o">-</span><span class="mi">1</span><span class="p">)]);</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">circular</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">sibling</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">item</span><span class="p">((</span><span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;children&quot;</span><span class="p">).</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sibling</span> <span class="o">&amp;&amp;</span> <span class="nx">circular</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">sibling</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">item</span><span class="p">((</span><span class="nx">parent</span><span class="p">.</span><span class="nx">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">sibling</span><span class="p">;</span> 
@@ -268,50 +288,55 @@
     <span class="c1">//  Sugar implementation allowing a child to remove itself from its parent.</span>
     <span class="nx">remove</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">parent</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">parent</span><span class="p">,</span>
+            <span class="nx">removed</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetParent</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+            <span class="nx">removed</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">WidgetParent</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">remove</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
 
             <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">parent</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">));</span>
+                <span class="nx">removed</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">));</span>
             <span class="p">}</span>
                         
         <span class="p">}</span>
         
+        <span class="k">return</span> <span class="nx">removed</span><span class="p">;</span>
+        
     <span class="p">},</span>
 
 
-	<span class="cm">/**</span>
-<span class="cm">	* @method isRoot</span>
-<span class="cm">	* @description Determines if the Widget is the root Widget in the </span>
-<span class="cm">	* object hierarchy.</span>
-<span class="cm">	* @return {Boolean} Boolean indicating if Widget is the root Widget in the </span>
-<span class="cm">	* object hierarchy.</span>
-<span class="cm">	*/</span>
+    <span class="cm">/**</span>
+<span class="cm">    * @method isRoot</span>
+<span class="cm">    * @description Determines if the Widget is the root Widget in the </span>
+<span class="cm">    * object hierarchy.</span>
+<span class="cm">    * @return {Boolean} Boolean indicating if Widget is the root Widget in the </span>
+<span class="cm">    * object hierarchy.</span>
+<span class="cm">    */</span>
     <span class="nx">isRoot</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">(</span><span class="k">this</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;root&quot;</span><span class="p">));</span>
     <span class="p">},</span>
 
 
-	<span class="cm">/**</span>
-<span class="cm">	* @method isRoot</span>
-<span class="cm">	* @description Returns the Widget instance at the specified depth.</span>
-<span class="cm">	* @return {Widget} Widget instance.</span>
-<span class="cm">	*/</span>
+    <span class="cm">/**</span>
+<span class="cm">    * @method ancestor</span>
+<span class="cm">    * @description Returns the Widget instance at the specified depth.</span>
+<span class="cm">    * @param {number} depth Number representing the depth of the ancestor.</span>
+<span class="cm">    * @return {Widget} Widget instance.</span>
+<span class="cm">    */</span>
     <span class="nx">ancestor</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">depth</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">parent</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;root&quot;</span><span class="p">),</span>
+            <span class="nx">parent</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nx">depth</span> <span class="o">&amp;&amp;</span> <span class="nx">depth</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>  <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nx">depth</span><span class="p">)</span>  <span class="p">{</span>
 
             <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">);</span>
 
-            <span class="k">while</span> <span class="p">(</span><span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nx">depth</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">while</span> <span class="p">(</span><span class="nx">parent</span> <span class="o">!=</span> <span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nx">depth</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">parent</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;parent&quot;</span><span class="p">);</span>
             <span class="p">}</span>
 
@@ -359,9 +384,11 @@
     
 
     <span class="cm">/**</span>
-<span class="cm">     * Synchronizes the UI to match the WidgetChild state. This method in </span>
-<span class="cm">     * invoked after syncUI is invoked for the Widget class using YUI&#39;s aop </span>
-<span class="cm">     * infrastructure.</span>
+<span class="cm">     * Synchronizes the UI to match the WidgetChild state.</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * This method is invoked after bindUI is invoked for the Widget class</span>
+<span class="cm">     * using YUI&#39;s aop infrastructure.</span>
+<span class="cm">     * &lt;/p&gt;     </span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _syncUIChild</span>
 <span class="cm">     * @protected</span>
@@ -381,7 +408,7 @@
 <span class="cm">     * @method _bindUIChild</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>    
-    <span class="nx">_bindUIChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">_bindUIChild</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> 
         <span class="k">this</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s2">&quot;selectedChange&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_afterChildSelectedChange</span><span class="p">);</span>
     <span class="p">}</span>
     
@@ -421,6 +448,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class=""><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -432,17 +460,25 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class="selected"><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
@@ -477,7 +513,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetChild", "name": "_afterChildSelectedChange", "url": "WidgetChild.html#method__afterChildSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_bindUIChild", "url": "WidgetChild.html#method__bindUIChild", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "depth", "url": "WidgetChild.html#config_depth", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "depthChange", "url": "WidgetChild.html#event_depthChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "index", "url": "WidgetChild.html#config_index", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "indexChange", "url": "WidgetChild.html#event_indexChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "isRoot", "url": "WidgetChild.html#method_isRoot", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "next", "url": "WidgetChild.html#method_next", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "parent", "url": "WidgetChild.html#config_parent", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "parentChange", "url": "WidgetChild.html#event_parentChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "previous", "url": "WidgetChild.html#method_previous", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "root", "url": "WidgetChild.html#config_root", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "rootChange", "url": "WidgetChild.html#event_rootChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "selected", "url": "WidgetChild.html#config_selected", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "selectedChange", "url": "WidgetChild.html#event_selectedChange", "type": "event"}, {"access": "protected", "host": "WidgetChild", "name": "_syncUIChild", "url": "WidgetChild.html#method__syncUIChild", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_uiSetChildSelected", "url": "WidgetChild.html#method__uiSetChildSelected", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "protected", "host": "WidgetChild", "name": "_afterChildSelectedChange", "url": "WidgetChild.html#method__afterChildSelectedChange", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "ancestor", "url": "WidgetChild.html#method_ancestor", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_bindUIChild", "url": "WidgetChild.html#method__bindUIChild", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "depth", "url": "WidgetChild.html#config_depth", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "depthChange", "url": "WidgetChild.html#event_depthChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "index", "url": "WidgetChild.html#config_index", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "indexChange", "url": "WidgetChild.html#event_indexChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "isRoot", "url": "WidgetChild.html#method_isRoot", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "next", "url": "WidgetChild.html#method_next", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "parent", "url": "WidgetChild.html#config_parent", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "parentChange", "url": "WidgetChild.html#event_parentChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "previous", "url": "WidgetChild.html#method_previous", "type": "method"}, {"access": "", "host": "WidgetChild", "name": "root", "url": "WidgetChild.html#config_root", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "rootChange", "url": "WidgetChild.html#event_rootChange", "type": "event"}, {"access": "", "host": "WidgetChild", "name": "ROOT_TYPE", "url": "WidgetChild.html#property_ROOT_TYPE", "type": "property"}, {"access": "", "host": "WidgetChild", "name": "selected", "url": "WidgetChild.html#config_selected", "type": "config"}, {"access": "", "host": "WidgetChild", "name": "selectedChange", "url": "WidgetChild.html#event_selectedChange", "type": "event"}, {"access": "protected", "host": "WidgetChild", "name": "_syncUIChild", "url": "WidgetChild.html#method__syncUIChild", "type": "method"}, {"access": "protected", "host": "WidgetChild", "name": "_uiSetChildSelected", "url": "WidgetChild.html#method__uiSetChildSelected", "type": "method"}];
 </script>
 </body>
 </html>

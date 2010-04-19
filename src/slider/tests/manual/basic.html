@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style type="text/css">
+        .markup { 
+            margin: 10px 0 0 300px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+<div class="markup">
+    <div id="slider"></div>
+
+    <p>
+        <input type="button" id="size" value="Change size">
+        <input type="button" id="val" value="Set Value">
+        <input type="button" id="disable" value="Disable">
+    </p>
+    <div id="report">0</div>
+</div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+YUI({
+    filter: 'raw'
+}).use('slider',function (Y) {
+
+var report = Y.get('#report');
+
+var s = new Y.Slider({
+    //axis  : 'y',
+    length: '350px',
+    min   : 37,
+    max   : -218,
+    value : -136,
+    after : {
+        valueChange: function (e) {
+            report.set('innerHTML',e.newVal);
+        }
+    }
+});
+
+s.render('#slider');
+
+report.set('innerHTML',s.get('value'));
+
+Y.get('#size').on('click',function () {
+    s.set('length','155px');
+});
+Y.get('#val').on('click',function () {
+    s.set('value',s.get('value') === -92 ? 100 : -92);
+});
+Y.get('#disable').on('click',function () {
+    var disabled = !s.get('disabled');
+    s.set('disabled',disabled);
+    this.set('value', disabled ? "Enable" : "Disable");
+});
+
+});
+</script>
+</body>
+</html>

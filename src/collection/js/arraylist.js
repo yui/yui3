@@ -79,7 +79,7 @@ ArrayListProto = {
      * <p>Unlike <code>each</code>, if the callback returns true, the
      * iteratation will stop.</p>
      *
-     * @method each
+     * @method some
      * @param fn { Function } the function to execute
      * @param context { mixed } optional override 'this' in the function
      * @return { Boolean } True if the function returned true on an item
@@ -101,31 +101,6 @@ ArrayListProto = {
      */
     indexOf: function ( needle ) {
         return YArray.indexOf( this._items, needle );
-    },
-
-    /**
-     * <p>Create a new ArrayList (or augmenting class instance) from a subset
-     * of items as determined by the boolean function passed as the
-     * argument.  The original ArrayList is unchanged.</p>
-     *
-     * <p>The validator signature is <code>validator( item )</code>.</p>
-     *
-     * @method filter
-     * @param validator { Function } Boolean function to determine in or out
-     * @return { ArrayList } New instance based on who passed the validator
-     */
-    filter: function ( validator ) {
-        var items = [];
-
-        YArray_each( this._items, function ( item, i ) {
-            item = this.item( i );
-
-            if ( validator( item ) ) {
-                items.push( item );
-            }
-        }, this);
-
-        return new this.constructor( items );
     },
 
     /**

@@ -1,0 +1,51 @@
+{
+    "widget": {
+        "plugins": {
+            "widget-child": {}, 
+            "widget-parent": {
+                "requires": [
+                    "arraylist"
+                ]
+            }, 
+            "widget-position": {}, 
+            "widget-position-align": {
+                "requires": [
+                    "widget-position"
+                ]
+            }, 
+            "widget-position-constrain": {
+                "requires": [
+                    "widget-position"
+                ]
+            }, 
+            "widget-stack": {
+                "skinnable": true
+            }, 
+            "widget-stdmod": {}
+        }, 
+        "skinnable": true, 
+        "submodules": {
+            "widget-base": {
+                "requires": [
+                    "attribute", 
+                    "event-focus", 
+                    "base", 
+                    "node", 
+                    "classnamemanager"
+                ]
+            }, 
+            "widget-htmlparser": {
+                "requires": [
+                    "widget-base"
+                ]
+            } 
+        }
+    },
+
+    "widget-locale" : {
+	"requires" : [
+	    "widget-base"
+	],
+	"path": "widget/widget-locale-min.js"
+    }
+}

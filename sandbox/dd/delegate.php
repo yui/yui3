@@ -65,6 +65,8 @@ foreach (range(1, $count) as $k) {
 <div id="drop">Drop Here..</div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/yui/yui-throttle.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/loader/loader.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -103,17 +105,25 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', function(Y) {
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-drop-plugin', 'event-mouseenter', 'yui-throttle', function(Y) {
     //console.log(Y);
     //Y.DD.DDM._debugShim = true;
     //Y.DD.DDM._useShim = false;
 
+    Y.DD.DDM.on('drag:start', function(e) {
+        console.log('DDM:start :: ', e);
+    });
+    Y.DD.DDM.on('drag:end', function(e) {
+        console.log('DDM:end :: ', e);
+    });
+
     var del = new Y.DD.Delegate({
-        cont: '#demo',
+        container: '#demo',
         nodes: '.item',
         target: true,
         invalid: '.disabled',
-        handles: ['strong']
+        handles: ['strong'],
+        bubbleTargets: false
     });
 
     del.on('drag:start', function(e) {
@@ -121,7 +131,7 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         this.get('currentNode').setStyle('zIndex', '999');
     });
     del.on('drag:over', function(e) {
-        var sel = e.currentTarget.get('cont') + ' ' + e.currentTarget.get('nodes');
+        var sel = e.currentTarget.get('container') + ' ' + e.currentTarget.get('nodes');
         if (e.drop.get('node').test(sel)) {
             Y.DD.DDM.swapNode(e.drag, e.drop);
         }
@@ -139,9 +149,9 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         inc = 1;
     
     Y.one('#add').on('click', function(e) {
-        var node, demo = Y.one('#demo');
+        var node, demo = Y.one('#demo ul');
         for (var i = 1; i < count + 1; i++) {
-            node = Y.Node.create('<li class="item">(' + inc + ') ' + i + '</li>');
+            node = Y.Node.create('<li class="item">(' + inc + ') ' + i + ' <strong>[GRAB]</strong></li>');
             demo.append(node);
         }
         inc++;

@@ -16,6 +16,7 @@ YUI.add('node-base', function(Y) {
  *
  * @class Node
  * @constructor
+ * @param {DOMNode} node the DOM node to be mapped to the Node instance.
  * @for Node
  */
 
@@ -43,6 +44,11 @@ var DOT = '.',
 
         this[UID] = uid;
 
+        /**
+         * The underlying DOM node bound to the Y.Node instance
+         * @property _node
+         * @private
+         */
         this._node = node;
         Y_Node._instances[uid] = this;
 
@@ -70,19 +76,36 @@ var DOT = '.',
     };
 // end "globals"
 
-Y_Node.NAME = 'Node';
+/**
+ * The name of the component 
+ * @static
+ * @property NAME
+ */    
+Y_Node.NAME = 'node';
 
+/*
+ * The pattern used to identify ARIA attributes 
+ */    
 Y_Node.re_aria = /^(?:role$|aria-)/;
+
+/**
+ * List of events that route to DOM events 
+ * @static
+ * @property DOM_EVENTS
+ */    
 
 Y_Node.DOM_EVENTS = {
     abort: 1,
     beforeunload: 1,
     blur: 1,
     change: 1,
+    changedTouches: 1, // iphone
     click: 1,
     close: 1,
     command: 1,
     contextmenu: 1,
+    dblclick: 1,
+    DOMMouseScroll: 1,
     drag: 1,
     dragstart: 1,
     dragenter: 1,
@@ -90,9 +113,9 @@ Y_Node.DOM_EVENTS = {
     dragleave: 1,
     dragend: 1,
     drop: 1,
-    dblclick: 1,
     error: 1,
     focus: 1,
+    identifier: 1, // iphone
     key: 1,
     keydown: 1,
     keypress: 1,
@@ -100,20 +123,24 @@ Y_Node.DOM_EVENTS = {
     load: 1,
     message: 1,
     mousedown: 1,
+    mouseenter: 1,
+    mouseleave: 1,
     mousemove: 1,
+    mousemultiwheel: 1,
     mouseout: 1, 
     mouseover: 1, 
     mouseup: 1,
-    mousemultiwheel: 1,
     mousewheel: 1,
-    submit: 1,
-    mouseenter: 1,
-    mouseleave: 1,
-    scroll: 1,
     reset: 1,
     resize: 1,
+    rotation: 1, // iphone
+    scale: 1, // iphone
     select: 1,
+    submit: 1,
+    scroll: 1,
+    targetTouches: 1, // iphone
     textInput: 1,
+    touches: 1, // iphone
     unload: 1
 };
 
@@ -122,11 +149,18 @@ Y_Node.DOM_EVENTS = {
 // be available through Node.on
 Y.mix(Y_Node.DOM_EVENTS, Y.Env.evt.plugins);
 
+/**
+ * A list of Node instances that have been created 
+ * @private
+ * @property _instances
+ * @static
+ *
+ */
 Y_Node._instances = {};
 
 /**
  * Retrieves the DOM node bound to a Node instance
- * @method Node.getDOMNode
+ * @method getDOMNode
  * @static
  *
  * @param {Y.Node || HTMLNode} node The Node instance or an HTMLNode
@@ -140,6 +174,17 @@ Y_Node.getDOMNode = function(node) {
     return null;
 };
  
+/**
+ * Checks Node return values and wraps DOM Nodes as Y.Node instances
+ * and DOM Collections / Arrays as Y.NodeList instances.
+ * Other return values just pass thru.  If undefined is returned (e.g. no return)
+ * then the Node instance is returned for chainability.
+ * @method scrubVal
+ * @static
+ *
+ * @param {any} node The Node instance or an HTMLNode
+ * @return {Y.Node | Y.NodeList | any} Depends on what is returned from the DOM node.
+ */
 Y_Node.scrubVal = function(val, node) {
     if (node && val) { // only truthy values are risky
         if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
@@ -157,6 +202,17 @@ Y_Node.scrubVal = function(val, node) {
     return val;
 };
 
+/**
+ * Adds methods to the Y.Node prototype, routing through scrubVal.
+ * @method addMethod
+ * @static
+ *
+ * @param {String} name The name of the method to add 
+ * @param {Function} fn The function that becomes the method 
+ * @param {Object} context An optional context to call the method with
+ * (defaults to the Node instance)
+ * @return {any} Depends on what is returned from the DOM node.
+ */
 Y_Node.addMethod = function(name, fn, context) {
     if (name && fn && typeof fn === 'function') {
         Y_Node.prototype[name] = function() {
@@ -179,6 +235,16 @@ Y_Node.addMethod = function(name, fn, context) {
     }
 };
 
+/**
+ * Imports utility methods to be added as Y.Node methods.
+ * @method importMethod
+ * @static
+ *
+ * @param {Object} host The object that contains the method to import. 
+ * @param {String} name The name of the method to import
+ * @param {String} altName An optional name to use in place of the host name 
+ * @param {Object} context An optional context to call the method with
+ */
 Y_Node.importMethod = function(host, name, altName) {
     if (typeof name === 'string') {
         altName = altName || name;
@@ -192,11 +258,13 @@ Y_Node.importMethod = function(host, name, altName) {
 
 /**
  * Returns a single Node instance bound to the node or the
- * first element matching the given selector.
+ * first element matching the given selector. Returns null if no match found.
+ * <strong>Note:</strong> For chaining purposes you may want to
+ * use <code>Y.all</code>, which returns a NodeList when no match is found.
  * @method Y.one
  * @static
  * @param {String | HTMLElement} node a node or Selector 
- * @param {Y.Node || HTMLElement} doc an optional document to scan. Defaults to Y.config.doc. 
+ * @return {Y.Node | null} a Node instance or null if no match found.
  */
 Y_Node.one = function(node) {
     var instance = null,
@@ -254,6 +322,12 @@ Y_Node.create = function() {
     return Y.one(Y_DOM.create.apply(Y_DOM, arguments));
 };
 
+/**
+ * Static collection of configuration attributes for special handling
+ * @property ATTRS
+ * @static
+ * @type object
+ */
 Y_Node.ATTRS = {
     /**
      * Allows for getting and setting the text of an element.
@@ -275,15 +349,6 @@ Y_Node.ATTRS = {
     'options': {
         getter: function() {
             return this._node.getElementsByTagName('option');
-        }
-    },
-
-     // IE: elements collection is also FORM node which trips up scrubVal.
-     // preconverting to NodeList
-     // TODO: break out for IE only
-    'elements': {
-        getter: function() {
-            return Y.all(this._node.elements);
         }
     },
 
@@ -323,20 +388,35 @@ Y_Node.ATTRS = {
             return val;
         }
     },
-
+    
+    
+    /*
+     * Flat data store for off-DOM usage 
+     * @config data
+     * @type any
+     * @deprecated Use getData/setData
+     */
     data: {
-        getter: function() {
-            return this._data;
+        getter: function() { 
+            return this._dataVal; 
         },
-
-        setter: function(val) {
-            this._data = val;
+        setter: function(val) { 
+            this._dataVal = val;
             return val;
-        }
+        },
+        value: null
     }
 };
 
-// call with instance context
+/**
+ * The default setter for DOM properties 
+ * Called with instance context (this === the Node instance)
+ * @method DEFAULT_SETTER
+ * @static
+ * @param {String} name The attribute/property being set 
+ * @param {any} val The value to be set 
+ * @return {any} The value
+ */
 Y_Node.DEFAULT_SETTER = function(name, val) {
     var node = this._stateProxy,
         strPath;
@@ -353,7 +433,14 @@ Y_Node.DEFAULT_SETTER = function(name, val) {
     return val;
 };
 
-// call with instance context
+/**
+ * The default getter for DOM properties 
+ * Called with instance context (this === the Node instance)
+ * @method DEFAULT_GETTER
+ * @static
+ * @param {String} name The attribute/property to look up 
+ * @return {any} The current value
+ */
 Y_Node.DEFAULT_GETTER = function(name) {
     var node = this._stateProxy,
         val;
@@ -370,15 +457,21 @@ Y_Node.DEFAULT_GETTER = function(name) {
 Y.augment(Y_Node, Y.Event.Target);
 
 Y.mix(Y_Node.prototype, {
+/**
+ * The method called when outputting Node instances as strings
+ * @method toString
+ * @return {String} A string representation of the Node instance 
+ */
     toString: function() {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
-            node = this._node;
+            node = this._node,
+            id = node.getAttribute('id'); // form.id may be a field name
 
         if (node) {
             str += node[NODE_NAME];
-            if (node.id) {
-                str += '#' + node.id; 
+            if (id) {
+                str += '#' + id; 
             }
 
             if (node.className) {
@@ -392,9 +485,12 @@ Y.mix(Y_Node.prototype, {
     },
 
     /**
-     * Returns an attribute value on the Node instance
+     * Returns an attribute value on the Node instance.
+     * Unless pre-configured (via Node.ATTRS), get hands 
+     * off to the underlying DOM node.  Only valid
+     * attributes/properties for the node will be set.
      * @method get
-     * @param {String} attr The attribute 
+     * @param {String} attr The attribute
      * @return {any} The current value of the attribute
      */
     get: function(attr) {
@@ -412,6 +508,13 @@ Y.mix(Y_Node.prototype, {
         return val;
     },
 
+    /**
+     * Helper method for get.  
+     * @method _get
+     * @private
+     * @param {String} attr The attribute
+     * @return {any} The current value of the attribute
+     */
     _get: function(attr) {
         var attrConfig = Y_Node.ATTRS[attr],
             val;
@@ -429,6 +532,10 @@ Y.mix(Y_Node.prototype, {
 
     /**
      * Sets an attribute on the Node instance.
+     * Unless pre-configured (via Node.ATTRS), set hands 
+     * off to the underlying DOM node.  Only valid
+     * attributes/properties for the node will be set.
+     * To set custom attributes use setAttribute.
      * @method set
      * @param {String} attr The attribute to be set.  
      * @param {any} val The value to set the attribute to.  
@@ -845,7 +952,7 @@ Y.mix(Y_Node.prototype, {
             if (content._node) { // map to DOMNode
                 content = content._node;
             } else if (content._nodes) { // convert DOMNodeList to documentFragment
-                content = Y_DOM._nl2Frag(content._nodes);
+                content = Y_DOM._nl2frag(content._nodes);
             }
 
         }
@@ -861,7 +968,7 @@ Y.mix(Y_Node.prototype, {
     * @param {Node} otherNode The node to swap with
      * @chainable
     */
-    swap: document.documentElement.swapNode ? 
+    swap: Y.config.doc.documentElement.swapNode ? 
         function(otherNode) {
             this._node.swapNode(Y_Node.getDOMNode(otherNode));
         } :
@@ -882,6 +989,64 @@ Y.mix(Y_Node.prototype, {
             return this;
         },
 
+
+    /**
+    * @method getData
+    * @description Retrieves arbitrary data stored on a Node instance.
+    * This is not stored with the DOM node.
+    * @param {string} name Optional name of the data field to retrieve.
+    * If no name is given, all data is returned.
+    * @return {any | Object} Whatever is stored at the given field,
+    * or an object hash of all fields.
+    */
+    getData: function(name) {
+        var ret;
+        this._data = this._data || {};
+        if (arguments.length) {
+            ret = this._data[name];
+        } else {
+            ret = this._data;
+        }
+
+        return ret;
+        
+    },
+
+    /**
+    * @method setData
+    * @description Stores arbitrary data on a Node instance.
+    * This is not stored with the DOM node.
+    * @param {string} name The name of the field to set. If no name
+    * is given, name is treated as the data and overrides any existing data.
+    * @chainable
+    */
+    setData: function(name, val) {
+        this._data = this._data || {};
+        if (arguments.length > 1) {
+            this._data[name] = val;
+        } else {
+            this._data = name;
+        }
+       
+       return this;
+    },
+
+    /**
+    * @method clearData
+    * @description Clears stored data. 
+    * @param {string} name The name of the field to clear. If no name
+    * is given, all data is cleared..
+    * @chainable
+    */
+    clearData: function(name) {
+        if (arguments.length) {
+            delete this._data[name];
+        } else {
+            this._data = {};
+        }
+
+        return this;
+    },
 
     hasMethod: function(method) {
         var node = this._node;
@@ -908,19 +1073,33 @@ Y.one = Y.Node.one;
  */
 
 var NodeList = function(nodes) {
-    if (typeof nodes === 'string') {
+    var tmp = [];
+    if (typeof nodes === 'string') { // selector query
         this._query = nodes;
         nodes = Y.Selector.query(nodes);
-    } else if (nodes.nodeType) {
+    } else if (nodes.nodeType) { // domNode
         nodes = [nodes];
-    } else {
+    } else if (nodes instanceof Y.Node) {
+        nodes = [nodes._node];
+    } else if (nodes[0] instanceof Y.Node) { // allow array of Y.Nodes
+        Y.Array.each(nodes, function(node) {
+            if (node._node) {
+                tmp.push(node._node);
+            }
+        });
+        nodes = tmp;
+    } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
         nodes = Y.Array(nodes, 0, true);
     }
 
     NodeList._instances[Y.stamp(this)] = this;
+    /**
+     * The underlying array of DOM nodes bound to the Y.NodeList instance
+     * @property _nodes
+     * @private
+     */
     this._nodes = nodes;
 };
-// end "globals"
 
 NodeList.NAME = 'NodeList';
 
@@ -1525,7 +1704,7 @@ Y.Node.importMethod(Y.DOM, [
  * @param {string} name The attribute name 
  * @return {string} The attribute value 
  */
-Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
+Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'removeAttribute']);
 (function(Y) {
     var methods = [
     /**
@@ -1618,8 +1797,13 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute']);
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
-if (!document.documentElement.hasAttribute) { // IE < 8
+if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
+        if (attr === 'value') {
+            if (this.get('value') !== "") { // IE < 8 fails to populate specified when set in HTML
+                return true;
+            }
+        }
         return !!(this._node.attributes[attr] &&
                 this._node.attributes[attr].specified);
     };
@@ -1651,6 +1835,16 @@ Y.Node.ATTRS.type = {
 
     _bypassProxy: true // don't update DOM when using with Attribute
 };
+
+if (Y.config.doc.createElement('form').elements.nodeType) {
+    // IE: elements collection is also FORM node which trips up scrubVal.
+    Y.Node.ATTRS.elements = {
+            getter: function() {
+                return this.all('input, textarea, button, select');
+            }
+    };
+}
+
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});
@@ -2093,5 +2287,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 

@@ -14,20 +14,20 @@
             margin:0;
         }
 
-        .yui-widget {
+        .yui3-widget {
             background-color:green;
             position:absolute;
             top:50px;
             left:50px;
         }
 
-        .yui-widget-content {
+        .yui3-widget-content {
             background-color:#ccc;
             padding:20px;
             border:10px solid blue;
         }
 
-        .yui-slider {
+        .yui3-slider {
             position:absolute;
             background-color:transparent;
         }
@@ -43,9 +43,9 @@
         }
     </style>
 </head>
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
 
-    <div class="yui-widget-content">
+    <div class="yui3-widget-content">
         <p>Some content which will drive size when</p>
         <p>slider is set to 0 (translated to height/width = "");</p>
     </div>
@@ -54,7 +54,7 @@
         YUI({filter:"raw"}).use("widget", "slider", function(Y) {
 
             w = new Y.Widget({
-                    contentBox: ".yui-widget-content",
+                    contentBox: ".yui3-widget-content",
                     width:150,
                     height:150
                 }).render();
@@ -62,16 +62,14 @@
             sh = new Y.Slider({
                     id:"y",
                     axis: 'y',
-                    thumbImage: Y.config.base + 'slider/assets/skins/sam/thumb-classic-y.png',
-                    railSize: "1000px",
+                    length: "1000px",
                     max:1000,
                     value: 150
                 }).render();
 
             sw = new Y.Slider({
                     id:"x",
-                    thumbImage: Y.config.base + 'slider/assets/skins/sam/thumb-classic-x.png',
-                    railSize: "1000px",
+                    length: "1000px",
                     max:1000,
                     value:150
                 }).render();

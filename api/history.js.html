@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>history&nbsp; <span class="subtitle">3.0.0</span></h3>
+        <h3>history&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_history.html" title="history">history</a>
                 
@@ -48,7 +48,6 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/*global YUI */</span>
-
 
 <span class="cm">/**</span>
 <span class="cm"> * The Browser History Utility provides the ability to use the back/forward</span>
@@ -111,26 +110,24 @@
         <span class="nx">EV_HISTORY_MODULE_STATE_CHANGE</span> <span class="o">=</span> <span class="s1">&#39;history:moduleStateChange&#39;</span><span class="p">;</span>
 
 
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">history</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">G</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">history</span> <span class="o">||</span> <span class="p">{</span>
 
-        <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="nx">G</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1">// Flag used to tell whether the history utility is ready to be used.</span>
+        <span class="nx">ready</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
 
-            <span class="c1">// Flag used to tell whether the history utility is ready to be used.</span>
-            <span class="nx">ready</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="c1">// List of registered modules.</span>
+        <span class="nx">_modules</span><span class="o">:</span> <span class="p">[],</span>
 
-            <span class="c1">// List of registered modules.</span>
-            <span class="nx">_modules</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="c1">// INPUT field (with type=&quot;hidden&quot; or type=&quot;text&quot;) or TEXTAREA.</span>
+        <span class="c1">// This field keeps the value of the initial state, current state</span>
+        <span class="c1">// the list of all states across pages within a single browser session.</span>
+        <span class="nx">_stateField</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
 
-            <span class="c1">// INPUT field (with type=&quot;hidden&quot; or type=&quot;text&quot;) or TEXTAREA.</span>
-            <span class="c1">// This field keeps the value of the initial state, current state</span>
-            <span class="c1">// the list of all states across pages within a single browser session.</span>
-            <span class="nx">_stateField</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="c1">// Hidden IFrame used to store the browsing history on IE6/7.</span>
+        <span class="nx">_historyIFrame</span><span class="o">:</span> <span class="kc">null</span>
+    <span class="p">};</span>
 
-            <span class="c1">// Hidden IFrame used to store the browsing history on IE6/7.</span>
-            <span class="nx">_historyIFrame</span><span class="o">:</span> <span class="kc">null</span>
-        <span class="p">};</span>
-
-    <span class="p">}</span>
+    <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">history</span> <span class="o">=</span> <span class="nx">G</span><span class="p">;</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Returns the portion of the hash after the &#39;#&#39; symbol.</span>
@@ -358,6 +355,8 @@
             <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentMode</span><span class="p">)</span> <span class="o">||</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentMode</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">))</span> <span class="p">{</span>
 
             <span class="c1">// The HTML5 way of handling DHTML history...</span>
+            <span class="c1">// @TODO This is case-insensitive, at least in IE (WHY? spec, please actually specify things)</span>
+            <span class="c1">// bug #2528444</span>
             <span class="nx">win</span><span class="p">.</span><span class="nx">onhashchange</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
                 <span class="kd">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nx">_getHash</span><span class="p">();</span>
                 <span class="nx">_handleFQStateChange</span><span class="p">(</span><span class="nx">hash</span><span class="p">);</span>
@@ -397,7 +396,7 @@
     <span class="p">}</span>
 
 
-    <span class="nx">H</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">H</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">(),</span> <span class="p">{</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * Registers a new module.</span>
@@ -638,6 +637,8 @@
 <span class="cm">         *     this method uses the URL in the address bar.</span>
 <span class="cm">         * @return {string} The value of the specified parameter, or null.</span>
 <span class="cm">         * @public</span>
+<span class="cm">         * @deprecated Use Y.QueryString.parse() in the querystring module.</span>
+<span class="cm">         * This will be removed in 3.2.0.</span>
 <span class="cm">         */</span>
         <span class="nx">getQueryStringParameter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">paramName</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
             <span class="kd">var</span> <span class="nx">m</span><span class="p">,</span> <span class="nx">q</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
@@ -660,13 +661,7 @@
 
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
-    <span class="p">};</span>
-
-
-    <span class="c1">// Make Y.History an event target</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">H</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span><span class="p">.</span><span class="nx">prototype</span><span class="p">);</span>
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">H</span><span class="p">);</span>
-
+    <span class="p">});</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * This class represents a browser history module.</span>
@@ -676,8 +671,6 @@
 <span class="cm">     * @param initialState {String} the module&#39;s initial state</span>
 <span class="cm">     */</span>
     <span class="nx">H</span><span class="p">.</span><span class="nx">Module</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">initialState</span><span class="p">)</span> <span class="p">{</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 
         <span class="cm">/**</span>
 <span class="cm">         * The module identifier</span>
@@ -712,7 +705,7 @@
         <span class="k">this</span><span class="p">.</span><span class="nx">upcomingState</span> <span class="o">=</span> <span class="nx">initialState</span><span class="p">;</span>
     <span class="p">};</span>
 
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">H</span><span class="p">.</span><span class="nx">Module</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">Target</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">augment</span><span class="p">(</span><span class="nx">H</span><span class="p">.</span><span class="nx">Module</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">);</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">=</span> <span class="nx">H</span><span class="p">;</span>
 </pre></div>
@@ -748,6 +741,7 @@
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
                                 <li class="selected"><a href="module_history.html" title="history">history</a></li>
                                 <li class=""><a href="module_imageloader.html" title="imageloader">imageloader</a></li>
+                                <li class=""><a href="module_intl.html" title="intl">intl</a></li>
                                 <li class=""><a href="module_io.html" title="io">io</a></li>
                                 <li class=""><a href="module_json.html" title="json">json</a></li>
                                 <li class=""><a href="module_loader.html" title="loader">loader</a></li>
@@ -759,17 +753,25 @@
                                 <li class=""><a href="module_plugin.html" title="plugin">plugin</a></li>
                                 <li class=""><a href="module_pluginhost.html" title="pluginhost">pluginhost</a></li>
                                 <li class=""><a href="module_profiler.html" title="profiler">profiler</a></li>
+                                <li class=""><a href="module_querystring.html" title="querystring">querystring</a></li>
                                 <li class=""><a href="module_queue-promote.html" title="queue-promote">queue-promote</a></li>
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
+                                <li class=""><a href="module_swf.html" title="swf">swf</a></li>
+                                <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
+                                <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
+                                <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
+                                <li class=""><a href="module_widget-locale.html" title="widget-locale">widget-locale</a></li>
                                 <li class=""><a href="module_widget-parent.html" title="widget-parent">widget-parent</a></li>
-                                <li class=""><a href="module_widget-position-ext.html" title="widget-position-ext">widget-position-ext</a></li>
+                                <li class=""><a href="module_widget-position.html" title="widget-position">widget-position</a></li>
+                                <li class=""><a href="module_widget-position-align.html" title="widget-position-align">widget-position-align</a></li>
+                                <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>

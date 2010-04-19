@@ -1,0 +1,380 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: editor   editor-base.js  (YUI Library)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
+        <h3>editor&nbsp; <span class="subtitle">3.2.0</span></h3>
+        <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
+            &gt; <a href="./module_editor.html" title="editor">editor</a>
+                
+                 &gt; editor-base.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="nx">YUI</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">&#39;editor-base&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">Y</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.</span>
+<span class="cm">     * @module editor</span>
+<span class="cm">     * @submodule editor-base</span>
+<span class="cm">     */</span>     
+    <span class="cm">/**</span>
+<span class="cm">     * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.</span>
+<span class="cm">     * @class EditorBase</span>
+<span class="cm">     * @extends Base</span>
+<span class="cm">     * @constructor</span>
+<span class="cm">     */</span>
+    
+    <span class="kd">var</span> <span class="nx">EditorBase</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">EditorBase</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Base</span><span class="p">,</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Internal reference to the Y.Frame instance</span>
+<span class="cm">        * @property frame</span>
+<span class="cm">        */</span>
+        <span class="nx">frame</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="nx">initializer</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">frame</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Frame</span><span class="p">({</span>
+                <span class="nx">designMode</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nx">title</span><span class="o">:</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">STRINGS</span><span class="p">.</span><span class="nx">title</span><span class="p">,</span>
+                <span class="nx">use</span><span class="o">:</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">USE</span><span class="p">,</span>
+                <span class="nx">dir</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;dir&#39;</span><span class="p">)</span>
+            <span class="p">}).</span><span class="nx">plug</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">ExecCommand</span><span class="p">);</span>
+
+            <span class="nx">frame</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;ready&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_afterFrameReady</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="nx">frame</span><span class="p">.</span><span class="nx">addTarget</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frame</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">;</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defNodeChangeFn</span>
+            <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * The default handler for the nodeChange event.</span>
+<span class="cm">        * @method _defNodeChangeFn</span>
+<span class="cm">        * @param {Event} e The event</span>
+<span class="cm">        * @private</span>
+<span class="cm">        */</span>
+        <span class="nx">_defNodeChangeFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Default nodeChange function: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">changedType</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedType</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="s1">&#39;enter&#39;</span><span class="o">:</span>
+                    <span class="c1">//Enter key goes here..</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s1">&#39;tab&#39;</span><span class="o">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedNode</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="s1">&#39;li, li *&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedEvent</span><span class="p">.</span><span class="nx">shiftKey</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Overriding TAB key to insert HTML&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
+                        <span class="k">this</span><span class="p">.</span><span class="nx">execCommand</span><span class="p">(</span><span class="s1">&#39;inserthtml&#39;</span><span class="p">,</span> <span class="s1">&#39;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&#39;</span><span class="p">);</span>
+                        <span class="nx">e</span><span class="p">.</span><span class="nx">changedEvent</span><span class="p">.</span><span class="nx">halt</span><span class="p">();</span>
+                    <span class="p">}</span>
+                    <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * After frame ready, bind mousedown &amp; keyup listeners</span>
+<span class="cm">        * @method _afterFrameReady</span>
+<span class="cm">        * @private</span>
+<span class="cm">        */</span>
+        <span class="nx">_afterFrameReady</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;mousedown&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameMouseDown</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;keyup&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameKeyUp</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;keydown&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onFrameKeyDown</span><span class="p">,</span> <span class="k">this</span><span class="p">));</span>
+            <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">filter</span><span class="p">();</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Fires nodeChange event</span>
+<span class="cm">        * @method _onFrameMouseDown</span>
+<span class="cm">        * @private</span>
+<span class="cm">        */</span>
+        <span class="nx">_onFrameMouseDown</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">changedNode</span><span class="o">:</span> <span class="nx">e</span><span class="p">.</span><span class="nx">frameTarget</span><span class="p">,</span> <span class="nx">changedType</span><span class="o">:</span> <span class="s1">&#39;mousedown&#39;</span><span class="p">,</span> <span class="nx">changedEvent</span><span class="o">:</span> <span class="nx">e</span>  <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * The Y.later handle to determine if there is an active timer running.</span>
+<span class="cm">        * @property _keyUpTimer</span>
+<span class="cm">        * @private</span>
+<span class="cm">        */</span>
+        <span class="nx">_keyupTimer</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Fires nodeChange event from _onKeyUpTimer on a timer for performance</span>
+<span class="cm">        * @method _onKeyUpTimer</span>
+<span class="cm">        * @param {Boolean} fromTimer If it&#39;s from the timer, kill the _keyUpTimer property</span>
+<span class="cm">        * @private</span>
+<span class="cm">        */</span>
+        <span class="nx">_onKeyUpTimer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">changedNode</span><span class="o">:</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">,</span> <span class="nx">changedType</span><span class="o">:</span> <span class="s1">&#39;keyup&#39;</span><span class="p">,</span> <span class="nx">selection</span><span class="o">:</span> <span class="nx">sel</span><span class="p">,</span> <span class="nx">changedEvent</span><span class="o">:</span> <span class="nx">e</span>  <span class="p">});</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_keyUpTimer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Fires nodeChange event via _onKeyUpTimer on a timer for performance</span>
+<span class="cm">        * @method _onFrameKeyUp</span>
+<span class="cm">        * @private</span>
+<span class="cm">        */</span>
+        <span class="nx">_onFrameKeyUp</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">EditorBase</span><span class="p">.</span><span class="nx">NC_KEYS</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">_keyUpTimer</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="p">.</span><span class="nx">_keyUpTimer</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">later</span><span class="p">(</span><span class="mi">350</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_onKeyUpTimer</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">e</span><span class="p">));</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Fires nodeChange event</span>
+<span class="cm">        * @method _onFrameKeyDown</span>
+<span class="cm">        * @private</span>
+<span class="cm">        */</span>
+        <span class="nx">_onFrameKeyDown</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">EditorBase</span><span class="p">.</span><span class="nx">NC_KEYS</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">])</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">inst</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">(),</span>
+                    <span class="nx">sel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">inst</span><span class="p">.</span><span class="nx">Selection</span><span class="p">();</span>
+
+                <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="s1">&#39;nodeChange&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">changedNode</span><span class="o">:</span> <span class="nx">sel</span><span class="p">.</span><span class="nx">anchorNode</span><span class="p">,</span> <span class="nx">changedType</span><span class="o">:</span> <span class="nx">EditorBase</span><span class="p">.</span><span class="nx">NC_KEYS</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">],</span> <span class="nx">changedEvent</span><span class="o">:</span> <span class="nx">e</span> <span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Pass through to the frame.execCommand method</span>
+<span class="cm">        * @method execCommand</span>
+<span class="cm">        * @param {String} cmd The command to pass: inserthtml, insertimage, bold</span>
+<span class="cm">        * @param {String} val The optional value of the command: Helvetica</span>
+<span class="cm">        * @return {Node/NodeList} The Node or Nodelist affected by the command. Only returns on override commands, not browser defined commands.</span>
+<span class="cm">        */</span>
+        <span class="nx">execCommand</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">execCommand</span><span class="p">(</span><span class="nx">cmd</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Get the YUI instance of the frame</span>
+<span class="cm">        * @method getInstance</span>
+<span class="cm">        * @return {YUI} The YUI instance bound to the frame.</span>
+<span class="cm">        */</span>
+        <span class="nx">getInstance</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+        <span class="p">},</span>
+        <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Renders the Y.Frame to the passed node.</span>
+<span class="cm">        * @method render</span>
+<span class="cm">        * @param {Selector/HTMLElement/Node} node The node to append the Editor to</span>
+<span class="cm">        * @return {EditorBase}</span>
+<span class="cm">        * @chainable</span>
+<span class="cm">        */</span>
+        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">));</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Focus the contentWindow of the iframe</span>
+<span class="cm">        * @method focus</span>
+<span class="cm">        * @return {EditorBase}</span>
+<span class="cm">        * @chainable</span>
+<span class="cm">        */</span>
+        <span class="nx">focus</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;win&#39;</span><span class="p">).</span><span class="nx">focus</span><span class="p">();</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * (Un)Filters the content of the Editor, cleaning YUI related code. //TODO better filtering</span>
+<span class="cm">        * @method getContent</span>
+<span class="cm">        * @return {String} The filtered content of the Editor</span>
+<span class="cm">        */</span>
+        <span class="nx">getContent</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">Selection</span><span class="p">.</span><span class="nx">unfilter</span><span class="p">();</span>
+            <span class="c1">//Removing the _yuid from the objects in IE</span>
+            <span class="nx">html</span> <span class="o">=</span> <span class="nx">html</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/ _yuid=&quot;([^&gt;]*)&quot;/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">html</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Hash table of keys to fire a nodeChange event for.</span>
+<span class="cm">        * @static</span>
+<span class="cm">        * @property NC_KEYS</span>
+<span class="cm">        * @type Object</span>
+<span class="cm">        */</span>
+        <span class="nx">NC_KEYS</span><span class="o">:</span> <span class="p">{</span>
+            <span class="mi">8</span><span class="o">:</span> <span class="s1">&#39;backspace&#39;</span><span class="p">,</span>
+            <span class="mi">9</span><span class="o">:</span> <span class="s1">&#39;tab&#39;</span><span class="p">,</span>
+            <span class="mi">13</span><span class="o">:</span> <span class="s1">&#39;enter&#39;</span><span class="p">,</span>
+            <span class="mi">32</span><span class="o">:</span> <span class="s1">&#39;space&#39;</span><span class="p">,</span>
+            <span class="mi">33</span><span class="o">:</span> <span class="s1">&#39;pageup&#39;</span><span class="p">,</span>
+            <span class="mi">34</span><span class="o">:</span> <span class="s1">&#39;pagedown&#39;</span><span class="p">,</span>
+            <span class="mi">35</span><span class="o">:</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span>
+            <span class="mi">36</span><span class="o">:</span> <span class="s1">&#39;home&#39;</span><span class="p">,</span>
+            <span class="mi">37</span><span class="o">:</span> <span class="s1">&#39;left&#39;</span><span class="p">,</span>
+            <span class="mi">38</span><span class="o">:</span> <span class="s1">&#39;up&#39;</span><span class="p">,</span>
+            <span class="mi">39</span><span class="o">:</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span>
+            <span class="mi">40</span><span class="o">:</span> <span class="s1">&#39;down&#39;</span><span class="p">,</span>
+            <span class="mi">46</span><span class="o">:</span> <span class="s1">&#39;delete&#39;</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">        * The default modules to use inside the Frame</span>
+<span class="cm">        * @static</span>
+<span class="cm">        * @property USE</span>
+<span class="cm">        * @type Array</span>
+<span class="cm">        */</span>
+        <span class="nx">USE</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;substitute&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">,</span><span class="s1">&#39;selector-css3&#39;</span><span class="p">,</span> <span class="s1">&#39;selection&#39;</span><span class="p">,</span> <span class="s1">&#39;stylesheet&#39;</span><span class="p">],</span>
+        <span class="cm">/**</span>
+<span class="cm">        * The Class Name: editorBase</span>
+<span class="cm">        * @static</span>
+<span class="cm">        * @property NAME</span>
+<span class="cm">        */</span>
+        <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;editorBase&#39;</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">        * Editor Strings</span>
+<span class="cm">        * @static</span>
+<span class="cm">        * @property STRINGS</span>
+<span class="cm">        */</span>
+        <span class="nx">STRINGS</span><span class="o">:</span> <span class="p">{</span>
+            <span class="cm">/**</span>
+<span class="cm">            * Title of frame document: Rich Text Editor</span>
+<span class="cm">            * @static</span>
+<span class="cm">            * @property STRINGS.title</span>
+<span class="cm">            */</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="s1">&#39;Rich Text Editor&#39;</span>
+        <span class="p">},</span>
+        <span class="nx">ATTRS</span><span class="o">:</span> <span class="p">{</span>
+            <span class="cm">/**</span>
+<span class="cm">            * The content to load into the Editor Frame</span>
+<span class="cm">            * @attribute content</span>
+<span class="cm">            */</span>
+            <span class="nx">content</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">,</span>
+                <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">str</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">===</span> <span class="s2">&quot;\n&quot;</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Stripping first carriage return from content before injecting&#39;</span><span class="p">,</span> <span class="s1">&#39;warn&#39;</span><span class="p">,</span> <span class="s1">&#39;editor&#39;</span><span class="p">);</span>
+                        <span class="nx">str</span> <span class="o">=</span> <span class="nx">str</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+                    <span class="p">}</span>
+                    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">,</span> <span class="nx">str</span><span class="p">);</span>
+                <span class="p">},</span>
+                <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">frame</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="cm">/**</span>
+<span class="cm">            * The value of the dir attribute on the HTML element of the frame. Default: ltr</span>
+<span class="cm">            * @attribute dir</span>
+<span class="cm">            */</span>
+            <span class="nx">dir</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">writeOnce</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;ltr&#39;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">EditorBase</span> <span class="o">=</span> <span class="nx">EditorBase</span><span class="p">;</span>
+
+    <span class="cm">/**</span>
+<span class="cm">    * @event nodeChange</span>
+<span class="cm">    * @description Fired from mouseup &amp; keyup.</span>
+<span class="cm">    * @param {Event.Facade} event An Event Facade object with the following specific property added:</span>
+<span class="cm">    * &lt;dl&gt;&lt;dt&gt;node&lt;/dt&gt;&lt;dd&gt;The node currently being interacted with&lt;/dd&gt;&lt;/dl&gt;</span>
+<span class="cm">    * @type {Event.Custom}</span>
+<span class="cm">    */</span>
+
+
+
+<span class="p">},</span> <span class="s1">&#39;@VERSION@&#39;</span> <span class="p">,{</span><span class="nx">requires</span><span class="o">:</span><span class="p">[</span><span class="s1">&#39;base&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;exec-command&#39;</span><span class="p">],</span> <span class="nx">skinnable</span><span class="o">:</span><span class="kc">false</span> <span class="p">});</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="module_editor.html" title="editor">editor</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Plugin.CreateLinkBase.html" title="Plugin.CreateLinkBase">Plugin.CreateLinkBase</a></li>
+                                <li class=""><a href="Plugin.EditorBase.html" title="Plugin.EditorBase">Plugin.EditorBase</a></li>
+                                <li class=""><a href="Plugin.EditorLists.html" title="Plugin.EditorLists">Plugin.EditorLists</a></li>
+                                <li class=""><a href="Plugin.EditorTab.html" title="Plugin.EditorTab">Plugin.EditorTab</a></li>
+                                <li class=""><a href="Plugin.ExecCommand.html" title="Plugin.ExecCommand">Plugin.ExecCommand</a></li>
+                                <li class=""><a href="Plugin.Frame.html" title="Plugin.Frame">Plugin.Frame</a></li>
+                                <li class=""><a href="Plugin.Selection.html" title="Plugin.Selection">Plugin.Selection</a></li>
+                        </ul>
+                    </div>
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="createlink-base.js.html" title="createlink-base.js">createlink-base.js</a></li>
+                                <li class="selected"><a href="editor-base.js.html" title="editor-base.js">editor-base.js</a></li>
+                                <li class=""><a href="editor-tab.js.html" title="editor-tab.js">editor-tab.js</a></li>
+                                <li class=""><a href="exec-command.js.html" title="exec-command.js">exec-command.js</a></li>
+                                <li class=""><a href="frame.js.html" title="frame.js">frame.js</a></li>
+                                <li class=""><a href="lists.js.html" title="lists.js">lists.js</a></li>
+                                <li class=""><a href="selection.js.html" title="selection.js">selection.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2010 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [{"url": "Plugin.EditorBase.html#method__afterFrameReady", "access": "private", "host": "Plugin.EditorBase", "type": "method", "name": "_afterFrameReady"}, {"url": "Plugin.Selection.html#property_ALL", "access": "", "host": "Plugin.Selection", "type": "property", "name": "ALL"}, {"url": "Plugin.Selection.html#property_anchorNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "anchorNode"}, {"url": "Plugin.Selection.html#property_anchorOffset", "access": "", "host": "Plugin.Selection", "type": "property", "name": "anchorOffset"}, {"url": "Plugin.Selection.html#property_anchorTextNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "anchorTextNode"}, {"url": "Plugin.Frame.html#config_basehref", "access": "", "host": "Plugin.Frame", "type": "config", "name": "basehref"}, {"url": "Plugin.Frame.html#event_basehrefChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "basehrefChange"}, {"url": "Plugin.ExecCommand.html#method__command", "access": "private", "host": "Plugin.ExecCommand", "type": "method", "name": "_command"}, {"url": "Plugin.ExecCommand.html#method_command", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "command"}, {"url": "Plugin.ExecCommand.html#property_COMMANDS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "COMMANDS"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.addclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.addclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.createlink", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.createlink"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.inserthtml", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.inserthtml"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.insertimage", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.insertimage"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.insertorderedlist"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.insertunorderedlist"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.removeclass", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.removeclass"}, {"url": "Plugin.ExecCommand.html#method_COMMANDS.wrap", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "COMMANDS.wrap"}, {"url": "Plugin.Frame.html#config_container", "access": "", "host": "Plugin.Frame", "type": "config", "name": "container"}, {"url": "Plugin.Frame.html#event_containerChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "containerChange"}, {"url": "Plugin.EditorBase.html#config_content", "access": "", "host": "Plugin.EditorBase", "type": "config", "name": "content"}, {"url": "Plugin.Frame.html#config_content", "access": "", "host": "Plugin.Frame", "type": "config", "name": "content"}, {"url": "Plugin.EditorBase.html#event_contentChange", "access": "", "host": "Plugin.EditorBase", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#event_contentChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "contentChange"}, {"url": "Plugin.Frame.html#method__create", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_create"}, {"url": "Plugin.Selection.html#method_createRange", "access": "", "host": "Plugin.Selection", "type": "method", "name": "createRange"}, {"url": "Plugin.CreateLinkBase.html#property_DEFAULT", "access": "", "host": "Plugin.CreateLinkBase", "type": "property", "name": "DEFAULT"}, {"url": "Plugin.Selection.html#property_DEFAULT_TAG", "access": "", "host": "Plugin.Selection", "type": "property", "name": "DEFAULT_TAG"}, {"url": "Plugin.EditorBase.html#method__defNodeChangeFn", "access": "private", "host": "Plugin.EditorBase", "type": "method", "name": "_defNodeChangeFn"}, {"url": "Plugin.Frame.html#method__defReadyFn", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_defReadyFn"}, {"url": "Plugin.Frame.html#method_delegate", "access": "", "host": "Plugin.Frame", "type": "method", "name": "delegate"}, {"url": "Plugin.Frame.html#config_designMode", "access": "", "host": "Plugin.Frame", "type": "config", "name": "designMode"}, {"url": "Plugin.Frame.html#event_designModeChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "designModeChange"}, {"url": "Plugin.EditorBase.html#config_dir", "access": "", "host": "Plugin.EditorBase", "type": "config", "name": "dir"}, {"url": "Plugin.Frame.html#config_dir", "access": "", "host": "Plugin.Frame", "type": "config", "name": "dir"}, {"url": "Plugin.EditorBase.html#event_dirChange", "access": "", "host": "Plugin.EditorBase", "type": "event", "name": "dirChange"}, {"url": "Plugin.Frame.html#event_dirChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "dirChange"}, {"url": "Plugin.Frame.html#property_DOC_TYPE", "access": "", "host": "Plugin.Frame", "type": "property", "name": "DOC_TYPE"}, {"url": "Plugin.EditorBase.html#method_execCommand", "access": "", "host": "Plugin.EditorBase", "type": "method", "name": "execCommand"}, {"url": "Plugin.Selection.html#method_filter", "access": "", "host": "Plugin.Selection", "type": "method", "name": "filter"}, {"url": "Plugin.EditorBase.html#method_focus", "access": "", "host": "Plugin.EditorBase", "type": "method", "name": "focus"}, {"url": "Plugin.Frame.html#method_focus", "access": "", "host": "Plugin.Frame", "type": "method", "name": "focus"}, {"url": "Plugin.Selection.html#property_focusNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "focusNode"}, {"url": "Plugin.Selection.html#property_focusOffset", "access": "", "host": "Plugin.Selection", "type": "property", "name": "focusOffset"}, {"url": "Plugin.Selection.html#property_focusTextNode", "access": "", "host": "Plugin.Selection", "type": "property", "name": "focusTextNode"}, {"url": "Plugin.EditorBase.html#property_frame", "access": "", "host": "Plugin.EditorBase", "type": "property", "name": "frame"}, {"url": "Plugin.EditorBase.html#method_getContent", "access": "", "host": "Plugin.EditorBase", "type": "method", "name": "getContent"}, {"url": "Plugin.Selection.html#method_getCursor", "access": "", "host": "Plugin.Selection", "type": "method", "name": "getCursor"}, {"url": "Plugin.Frame.html#method__getHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_getHTML"}, {"url": "Plugin.EditorBase.html#method_getInstance", "access": "", "host": "Plugin.EditorBase", "type": "method", "name": "getInstance"}, {"url": "Plugin.ExecCommand.html#method_getInstance", "access": "", "host": "Plugin.ExecCommand", "type": "method", "name": "getInstance"}, {"url": "Plugin.Frame.html#method_getInstance", "access": "", "host": "Plugin.Frame", "type": "method", "name": "getInstance"}, {"url": "Plugin.Selection.html#method_getSelected", "access": "", "host": "Plugin.Selection", "type": "method", "name": "getSelected"}, {"url": "Plugin.Frame.html#property_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "HTML"}, {"url": "Plugin.Frame.html#config_id", "access": "", "host": "Plugin.Frame", "type": "config", "name": "id"}, {"url": "Plugin.Frame.html#event_idChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "idChange"}, {"url": "Plugin.Frame.html#property__iframe", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_iframe"}, {"url": "Plugin.Selection.html#method_insertAtCursor", "access": "", "host": "Plugin.Selection", "type": "method", "name": "insertAtCursor"}, {"url": "Plugin.Selection.html#method_insertContent", "access": "", "host": "Plugin.Selection", "type": "method", "name": "insertContent"}, {"url": "Plugin.ExecCommand.html#property__inst", "access": "private", "host": "Plugin.ExecCommand", "type": "property", "name": "_inst"}, {"url": "Plugin.Frame.html#property__instance", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_instance"}, {"url": "Plugin.Frame.html#method__instanceLoaded", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_instanceLoaded"}, {"url": "Plugin.Selection.html#property_isCollapsed", "access": "", "host": "Plugin.Selection", "type": "property", "name": "isCollapsed"}, {"url": "Plugin.EditorBase.html#property__keyUpTimer", "access": "private", "host": "Plugin.EditorBase", "type": "property", "name": "_keyUpTimer"}, {"url": "Plugin.Frame.html#config_lang", "access": "", "host": "Plugin.Frame", "type": "config", "name": "lang"}, {"url": "Plugin.Frame.html#event_langChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "langChange"}, {"url": "Plugin.Frame.html#property_META", "access": "", "host": "Plugin.Frame", "type": "property", "name": "META"}, {"url": "Plugin.EditorBase.html#property_NAME", "access": "", "host": "Plugin.EditorBase", "type": "property", "name": "NAME"}, {"url": "Plugin.EditorTab.html#property_NAME", "access": "", "host": "Plugin.EditorTab", "type": "property", "name": "NAME"}, {"url": "Plugin.ExecCommand.html#property_NAME", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NAME"}, {"url": "Plugin.Frame.html#property_NAME", "access": "", "host": "Plugin.Frame", "type": "property", "name": "NAME"}, {"url": "Plugin.EditorLists.html#property_NAME", "access": "", "host": "Plugin.EditorLists", "type": "property", "name": "NAME"}, {"url": "Plugin.EditorBase.html#property_NC_KEYS", "access": "", "host": "Plugin.EditorBase", "type": "property", "name": "NC_KEYS"}, {"url": "Plugin.EditorBase.html#event_nodeChange", "access": "", "host": "Plugin.EditorBase", "type": "event", "name": "nodeChange"}, {"url": "Plugin.EditorTab.html#property_NS", "access": "", "host": "Plugin.EditorTab", "type": "property", "name": "NS"}, {"url": "Plugin.ExecCommand.html#property_NS", "access": "", "host": "Plugin.ExecCommand", "type": "property", "name": "NS"}, {"url": "Plugin.EditorLists.html#property_NS", "access": "", "host": "Plugin.EditorLists", "type": "property", "name": "NS"}, {"url": "Plugin.Frame.html#method__onContentReady", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onContentReady"}, {"url": "Plugin.Frame.html#method__onDomEvent", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_onDomEvent"}, {"url": "Plugin.EditorBase.html#method__onFrameKeyDown", "access": "private", "host": "Plugin.EditorBase", "type": "method", "name": "_onFrameKeyDown"}, {"url": "Plugin.EditorBase.html#method__onFrameKeyUp", "access": "private", "host": "Plugin.EditorBase", "type": "method", "name": "_onFrameKeyUp"}, {"url": "Plugin.EditorBase.html#method__onFrameMouseDown", "access": "private", "host": "Plugin.EditorBase", "type": "method", "name": "_onFrameMouseDown"}, {"url": "Plugin.EditorBase.html#method__onKeyUpTimer", "access": "private", "host": "Plugin.EditorBase", "type": "method", "name": "_onKeyUpTimer"}, {"url": "Plugin.EditorTab.html#method__onNodeChange", "access": "private", "host": "Plugin.EditorTab", "type": "method", "name": "_onNodeChange"}, {"url": "Plugin.EditorLists.html#method__onNodeChange", "access": "private", "host": "Plugin.EditorLists", "type": "method", "name": "_onNodeChange"}, {"url": "Plugin.Frame.html#property_PAGE_HTML", "access": "", "host": "Plugin.Frame", "type": "property", "name": "PAGE_HTML"}, {"url": "Plugin.CreateLinkBase.html#property_PROMPT", "access": "", "host": "Plugin.CreateLinkBase", "type": "property", "name": "PROMPT"}, {"url": "Plugin.Frame.html#property__ready", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_ready"}, {"url": "Plugin.EditorLists.html#property_REMOVE", "access": "", "host": "Plugin.EditorLists", "type": "property", "name": "REMOVE"}, {"url": "Plugin.Selection.html#method_remove", "access": "", "host": "Plugin.Selection", "type": "method", "name": "remove"}, {"url": "Plugin.EditorBase.html#method_render", "access": "", "host": "Plugin.EditorBase", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#method_render", "access": "", "host": "Plugin.Frame", "type": "method", "name": "render"}, {"url": "Plugin.Frame.html#property__rendered", "access": "private", "host": "Plugin.Frame", "type": "property", "name": "_rendered"}, {"url": "Plugin.Selection.html#method_replace", "access": "", "host": "Plugin.Selection", "type": "method", "name": "replace"}, {"url": "Plugin.Selection.html#method_resolve", "access": "", "host": "Plugin.Selection", "type": "method", "name": "resolve"}, {"url": "Plugin.Frame.html#method__resolveBaseHref", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveBaseHref"}, {"url": "Plugin.Frame.html#method__resolveWinDoc", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_resolveWinDoc"}, {"url": "Plugin.Selection.html#property__selection", "access": "private", "host": "Plugin.Selection", "type": "property", "name": "_selection"}, {"url": "Plugin.Selection.html#method_selectNode", "access": "", "host": "Plugin.Selection", "type": "method", "name": "selectNode"}, {"url": "Plugin.Selection.html#method_setCursor", "access": "", "host": "Plugin.Selection", "type": "method", "name": "setCursor"}, {"url": "Plugin.Frame.html#method__setHTML", "access": "private", "host": "Plugin.Frame", "type": "method", "name": "_setHTML"}, {"url": "Plugin.Frame.html#config_src", "access": "", "host": "Plugin.Frame", "type": "config", "name": "src"}, {"url": "Plugin.Frame.html#event_srcChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "srcChange"}, {"url": "Plugin.CreateLinkBase.html#property_STRINGS", "access": "", "host": "Plugin.CreateLinkBase", "type": "property", "name": "STRINGS"}, {"url": "Plugin.EditorBase.html#property_STRINGS", "access": "", "host": "Plugin.EditorBase", "type": "property", "name": "STRINGS"}, {"url": "Plugin.EditorBase.html#property_STRINGS.title", "access": "", "host": "Plugin.EditorBase", "type": "property", "name": "STRINGS.title"}, {"url": "Plugin.Selection.html#method__swap", "access": "private", "host": "Plugin.Selection", "type": "method", "name": "_swap"}, {"url": "Plugin.Selection.html#property_text", "access": "", "host": "Plugin.Selection", "type": "property", "name": "text"}, {"url": "Plugin.Frame.html#config_title", "access": "", "host": "Plugin.Frame", "type": "config", "name": "title"}, {"url": "Plugin.Frame.html#event_titleChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "titleChange"}, {"url": "Plugin.Selection.html#property_TMP", "access": "", "host": "Plugin.Selection", "type": "property", "name": "TMP"}, {"url": "Plugin.Selection.html#method_toString", "access": "", "host": "Plugin.Selection", "type": "method", "name": "toString"}, {"url": "Plugin.Selection.html#method_unfilter", "access": "", "host": "Plugin.Selection", "type": "method", "name": "unfilter"}, {"url": "Plugin.EditorBase.html#property_USE", "access": "", "host": "Plugin.EditorBase", "type": "property", "name": "USE"}, {"url": "Plugin.Frame.html#method_use", "access": "", "host": "Plugin.Frame", "type": "method", "name": "use"}, {"url": "Plugin.Frame.html#config_use", "access": "", "host": "Plugin.Frame", "type": "config", "name": "use"}, {"url": "Plugin.Frame.html#event_useChange", "access": "", "host": "Plugin.Frame", "type": "event", "name": "useChange"}, {"url": "Plugin.Selection.html#method__wrap", "access": "private", "host": "Plugin.Selection", "type": "method", "name": "_wrap"}, {"url": "Plugin.Selection.html#method_wrapContent", "access": "", "host": "Plugin.Selection", "type": "method", "name": "wrapContent"}];
+</script>
+</body>
+</html>

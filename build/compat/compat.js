@@ -1,6 +1,10 @@
 YUI.add('compat', function(Y) {
 
 
+/*global YAHOO*/
+/*global YUI*/
+/*global YUI_config*/
+
 var COMPAT_ARG = '~yui|2|compat~';
 
 
@@ -41,13 +45,20 @@ var L = Y.lang;
 Y.mix(L, {
 
     augmentObject: function(r, s) {
-        var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null;
-        return Y.mix(r, s, (wl), wl);
+        var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null,
+            ov = (wl), args = [r, s, ov];
+
+        if (wl && wl[0] !== true) {
+            args.push(wl);
+        }
+
+        return Y.mix.apply(Y, args);
     },
  
     augmentProto: function(r, s) {
-        var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null;
-        return Y.mix(r, s, (wl), wl, 1);
+        var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null,
+            ov = (wl), args = [r, s, ov];
+        return Y.augment.apply(Y, args);
     },
 
     // extend: Y.bind(Y.extend, Y), 
@@ -92,7 +103,7 @@ Y.mix(Y, {
 });
 
 // add old load listeners
-if ("undefined" !== typeof YAHOO_config) {
+if ("undefined" != typeof YAHOO_config) {
     var l=YAHOO_config.listener,ls=Y.Env.listeners,unique=true,i;
     if (l) {
         // if YAHOO is loaded multiple times we need to check to see if
@@ -115,7 +126,7 @@ Y.register("yahoo", Y, {version: "@VERSION@", build: "@BUILD@"});
 
 if (Y.Event) {
 
-    var o = {
+    o = {
         
         /**
          * Safari detection
@@ -464,9 +475,9 @@ if (Y.Event) {
         return newOnavail(id, fn, p_obj, p_override, true, true);
     };
 
-    Y.Event.onDOMReady = function(fn) {
+    Y.Event.onDOMReady = function() {
         var a = Y.Array(arguments, 0, true);
-        a.unshift('event:ready');
+        a.unshift('domready');
         return Y.on.apply(Y, a);
     };
 
@@ -525,6 +536,9 @@ if (Y.Event) {
     Y.extend(EP, Y.EventTarget, {
 
         createEvent: function(type, o) {
+            // if (!this._yuievt) {
+            //     Y.EventTarget.call(this);
+            // }
             o = o || {};
             o.signature = o.signature || CE.FLAT;
             return this.publish(type, o);
@@ -547,6 +561,9 @@ if (Y.Event) {
         },
 
         hasEvent: function(type) {
+            if (!this._yuievt) {
+                Y.EventTarget.call(this);
+            }
             return this.getEvent(type);
         }
     });
@@ -565,6 +582,7 @@ var patterns = {
     ROOT_TAG: /^body|html$/i, // body for quirks mode, html for standards,
     OP_SCROLL:/^(?:inline|table-row)$/i
 };
+var slice = [].slice;
 
 var hyphenToCamel = function(property) {
     if ( !patterns.HYPHEN.test(property) ) {
@@ -712,7 +730,6 @@ var Dom = {
     getDocumentHeight: YUI.DOM.docHeight,
     getDocumentScrollTop: YUI.DOM.docScrollY,
     getDocumentScrollLeft: YUI.DOM.docScrollX,
-    getDocumentHeight: YUI.DOM.docHeight,
 
     _guid: function(el, prefix) {
         prefix = prefix || 'yui-gen';
@@ -755,7 +772,6 @@ var Dom = {
     }
 };
 
-var slice = [].slice;
 
 var wrap = function(fn, name) {
     Dom[name] = function() {

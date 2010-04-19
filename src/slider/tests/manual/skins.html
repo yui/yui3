@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test Page</title>
+    <!--link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/sam-dark/slider-base.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/round/slider-base.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/round-dark/slider-base.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/capsule/slider-base.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/capsule-dark/slider-base.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/audio/slider-base.css">
+    <link rel="stylesheet" type="text/css" href="http://localhost/dev/yui/yui3/build/slider/assets/skins/audio-light/slider-base.css"-->
+    <style type="text/css">
+        div {
+            margin-bottom: 1em;
+            padding: 2em;
+        }
+
+        div:nth-of-type(even) {
+            background: #000;
+        }
+
+        /* Alternate rails */
+        .alt #sam .yui3-slider-x .yui3-slider-rail,
+        .alt #sam .yui3-slider-x .yui3-slider-rail-cap-left,
+        .alt #sam .yui3-slider-x .yui3-slider-rail-cap-right {
+            background-image: url(../../../../build/slider/assets/skins/sam/rail-x-lines.png);
+        }
+        .alt #sam-dark .yui3-slider-x .yui3-slider-rail,
+        .alt #sam-dark .yui3-slider-x .yui3-slider-rail-cap-left,
+        .alt #sam-dark .yui3-slider-x .yui3-slider-rail-cap-right {
+            background-image: url(../../../../build/slider/assets/skins/sam-dark/rail-x-lines.png);
+        }
+        .alt #sam .yui3-slider-y .yui3-slider-rail,
+        .alt #sam .yui3-slider-y .yui3-slider-rail-cap-top,
+        .alt #sam .yui3-slider-y .yui3-slider-rail-cap-bottom {
+            background-image: url(../../../../build/slider/assets/skins/sam/rail-y-lines.png);
+        }
+        .alt #sam-dark .yui3-slider-y .yui3-slider-rail,
+        .alt #sam-dark .yui3-slider-y .yui3-slider-rail-cap-top,
+        .alt #sam-dark .yui3-slider-y .yui3-slider-rail-cap-bottom {
+            background-image: url(../../../../build/slider/assets/skins/sam-dark/rail-y-lines.png);
+        }
+
+        .alt #capsule .yui3-slider-x .yui3-slider-rail,
+        .alt #capsule .yui3-slider-x .yui3-slider-rail-cap-left,
+        .alt #capsule .yui3-slider-x .yui3-slider-rail-cap-right {
+            background-image: url(../../../../build/slider/assets/skins/capsule/rail-x-dots.png);
+        }
+        .alt #capsule-dark .yui3-slider-x .yui3-slider-rail,
+        .alt #capsule-dark .yui3-slider-x .yui3-slider-rail-cap-left,
+        .alt #capsule-dark .yui3-slider-x .yui3-slider-rail-cap-right {
+            background-image: url(../../../../build/slider/assets/skins/capsule-dark/rail-x-dots.png);
+        }
+        .alt #capsule .yui3-slider-y .yui3-slider-rail,
+        .alt #capsule .yui3-slider-y .yui3-slider-rail-cap-top,
+        .alt #capsule .yui3-slider-y .yui3-slider-rail-cap-bottom {
+            background-image: url(../../../../build/slider/assets/skins/capsule/rail-y-dots.png);
+        }
+        .alt #capsule-dark .yui3-slider-y .yui3-slider-rail,
+        .alt #capsule-dark .yui3-slider-y .yui3-slider-rail-cap-top,
+        .alt #capsule-dark .yui3-slider-y .yui3-slider-rail-cap-bottom {
+            background-image: url(../../../../build/slider/assets/skins/capsule-dark/rail-y-dots.png);
+        }
+
+        .alt2 #capsule .yui3-slider-x .yui3-slider-rail,
+        .alt2 #capsule .yui3-slider-x .yui3-slider-rail-cap-left,
+        .alt2 #capsule .yui3-slider-x .yui3-slider-rail-cap-right {
+            background-image: url(../../../../build/slider/assets/skins/capsule/rail-x-lines.png);
+        }
+        .alt2 #capsule-dark .yui3-slider-x .yui3-slider-rail,
+        .alt2 #capsule-dark .yui3-slider-x .yui3-slider-rail-cap-left,
+        .alt2 #capsule-dark .yui3-slider-x .yui3-slider-rail-cap-right {
+            background-image: url(../../../../build/slider/assets/skins/capsule-dark/rail-x-lines.png);
+        }
+        .alt2 #capsule .yui3-slider-y .yui3-slider-rail,
+        .alt2 #capsule .yui3-slider-y .yui3-slider-rail-cap-top,
+        .alt2 #capsule .yui3-slider-y .yui3-slider-rail-cap-bottom {
+            background-image: url(../../../../build/slider/assets/skins/capsule/rail-y-lines.png);
+        }
+        .alt2 #capsule-dark .yui3-slider-y .yui3-slider-rail,
+        .alt2 #capsule-dark .yui3-slider-y .yui3-slider-rail-cap-top,
+        .alt2 #capsule-dark .yui3-slider-y .yui3-slider-rail-cap-bottom {
+            background-image: url(../../../../build/slider/assets/skins/capsule-dark/rail-y-lines.png);
+        }
+    </style>
+</head>
+<body>
+<form id="controls" action="">
+    <fieldset>
+        <label>Rails</label>
+        <input type="radio" name="alt_rail" value="" id="orig" checked="checked">
+            <label for="orig"> Original</label>
+        <input type="radio" name="alt_rail" value="alt" id="alt">
+            <label for="alt"> Alternate (#1)</label>
+        <input type="radio" name="alt_rail" value="alt2" id="alt2">
+            <label for="alt2"> Alternate (#2)</label>
+    </fieldset>
+</form>
+
+<div id="sam"          class="yui3-skin-sam"></div>
+<div id="sam-dark"     class="yui3-skin-sam-dark"></div>
+<div id="round"        class="yui3-skin-round"></div>
+<div id="round-dark"   class="yui3-skin-round-dark"></div>
+<div id="capsule"      class="yui3-skin-capsule"></div>
+<div id="capsule-dark" class="yui3-skin-capsule-dark"></div>
+<div id="audio-light"  class="yui3-skin-audio-light"></div>
+<div id="audio"        class="yui3-skin-audio"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<!--script src="../../../../build/slider/slider.js"></script-->
+<script>
+YUI( {
+    filter: 'raw',
+    skin: {
+        overrides: {
+            slider: [
+                'sam',
+                'sam-dark',
+                'round',
+                'round-dark',
+                'capsule',
+                'capsule-dark',
+                'audio',
+                'audio-light'
+            ]
+        }
+    }
+} ).use( 'slider', function ( Y ) {
+
+var base = Y.config.base + 'slider/assets/skins',
+    alts = {
+        roundx : base + 'round/thumb-x-grip.png',
+        roundy : base + 'round/thumb-y-grip.png',
+        rounddx: base + 'round-dark/thumb-x-grip.png',
+        rounddy: base + 'round-dark/thumb-y-grip.png',
+
+        capx  : base + 'capsule/thumb-x-line.png',
+        capy  : base + 'capsule/thumb-y-line.png',
+        capdx  : base + 'capsule-dark/thumb-x-line.png',
+        capdy  : base + 'capsule-dark/thumb-y-line.png'
+    };
+
+function report( e ) {
+    Y.one( '#val' ).set( 'value', e.newVal );
+}
+
+new Y.Slider({ axis: 'x' }).render( '#sam' );
+new Y.Slider({ axis: 'x' }).render( '#sam-dark' );
+new Y.Slider({ axis: 'x'/*, thumbUrl: alts.roundy*/ }).render( '#round' );
+new Y.Slider({ axis: 'x'/*, thumbUrl: alts.rounddy*/ }).render( '#round-dark' );
+new Y.Slider({ axis: 'x'/*, thumbUrl: alts.capy*/ }).render( '#capsule' );
+new Y.Slider({ axis: 'x'/*, thumbUrl: alts.capdy*/ }).render( '#capsule-dark' );
+new Y.Slider({ axis: 'x' }).render( '#audio' );
+new Y.Slider({ axis: 'x' }).render( '#audio-light' );
+
+Y.one( '#controls' ).delegate( 'click', function ( e ) {
+    Y.one( 'body' ).set( 'className', this.get( 'value' ) );
+}, 'input[name=alt_rail]' );
+
+});
+</script>
+</body>
+</html>

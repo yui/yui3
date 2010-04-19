@@ -33,6 +33,8 @@ Y.Do = {
      * @param obj the object hosting the method to displace
      * @param sFn {string} the name of the method to displace
      * @param c The execution context for fn
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * when the event fires.
      * @return {string} handle for the subscription
      * @static
      */
@@ -54,6 +56,7 @@ Y.Do = {
      * @param obj the object hosting the method to displace
      * @param sFn {string} the name of the method to displace
      * @param c The execution context for fn
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
      * @return {string} handle for the subscription
      * @static
      */

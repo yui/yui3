@@ -1,0 +1,9 @@
+{
+    "imageloader": {
+        "requires": [
+            "base-base", 
+            "node-style", 
+            "node-screen"
+        ]
+    }
+}

@@ -28,7 +28,7 @@ var NODE_TYPE = 'nodeType',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     EMPTY_STRING = '',
 
-    documentElement = document.documentElement,
+    documentElement = Y.config.doc.documentElement,
 
     re_tag = /<([a-z]+)/i;
 
@@ -266,6 +266,9 @@ Y.DOM = {
      * @method create
      * @param {String} html The markup used to create the element
      * @param {HTMLDocument} doc An optional document context 
+     * @return {HTMLElement|DocumentFragment} returns a single HTMLElement 
+     * when creating one node, and a documentFragment when creating
+     * multiple nodes.
      */
     create: function(html, doc) {
         if (typeof html === 'string') {
@@ -552,12 +555,15 @@ Y.DOM = {
      * @return {Object} The document for the given element or the default document. 
      */
     _getDoc: function(element) {
-        element = element || {};
-
-        return (element[NODE_TYPE] === 9) ? element : // element === document
+        var doc = Y.config.doc;
+        if (element) {
+            doc = (element[NODE_TYPE] === 9) ? element : // element === document
                 element[OWNER_DOCUMENT] || // element === DOM node
                 element.document || // element === window
                 Y.config.doc; // default
+        }
+
+        return doc;
     },
 
     /**
@@ -645,6 +651,16 @@ Y.DOM = {
                 }
 
                 attr.value = val;
+            },
+
+            select: function(node, val) {
+                for (var i = 0, options = node.getElementsByTagName('option'), option;
+                        option = options[i++];) {
+                    if (Y.DOM.getValue(option) === val) {
+                        Y.DOM.setAttribute(option, 'selected', true);
+                        break;
+                    }
+                }
             }
         });
     }
@@ -694,7 +710,7 @@ Y.DOM = {
                 // TODO: implement multipe select
                 if (node.multiple) {
                 } else {
-                    val = Y.DOM.getValue(options[node.selectedIndex], 'value');
+                    val = Y.DOM.getValue(options[node.selectedIndex]);
                 }
             }
 
@@ -757,8 +773,8 @@ Y.mix(Y.DOM, {
      * @param {String} newClassName the class name that will be replacing the old class name
      */
     replaceClass: function(node, oldC, newC) {
+        removeClass(node, oldC); // remove first in case oldC === newC
         addClass(node, newC);
-        removeClass(node, oldC);
     },
 
     /**

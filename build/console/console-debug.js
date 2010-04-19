@@ -61,7 +61,7 @@ var getCN = Y.ClassNameManager.getClassName,
     C_PAUSE_LABEL      = getCN(CONSOLE,PAUSE,'label'),
 
     RE_INLINE_SOURCE = /^(\S+)\s/,
-    RE_AMP = /&/g,
+    RE_AMP = /&(?!#?[a-z0-9]+;)/g,
     RE_GT  = />/g,
     RE_LT  = /</g,
 
@@ -361,7 +361,7 @@ Y.Console = Y.extend(Console, Y.Widget,
         // Apply positioning to the bounding box if appropriate
         var style = this.get('style');
         if (style !== 'block') {
-            this.get('boundingBox').addClass('yui-'+style+'-console');
+            this.get('boundingBox').addClass('yui3-'+style+'-console');
         }
     },
 
@@ -391,7 +391,7 @@ Y.Console = Y.extend(Console, Y.Widget,
 
         this.get(CONTENT_BOX).one('button.'+C_CLEAR).
             on(CLICK,this._onClearClick,this);
-        
+
         // Attribute changes
         this.after(this._evtCat + 'stringsChange',
             this._afterStringsChange);
@@ -810,6 +810,18 @@ Y.Console = Y.extend(Console, Y.Widget,
 
             this._body.setStyle(HEIGHT,h+'px');
         }
+    },
+
+    /**
+     * Over-ride default content box sizing to do nothing, since we're sizing
+     * the body section to fill out height ourselves.
+     * 
+     * @method _uiSizeCB
+     * @protected
+     */
+    _uiSizeCB : function() {
+        // Do Nothing. Ideally want to move to Widget-StdMod, which accounts for
+        // _uiSizeCB        
     },
 
     /**
@@ -1258,13 +1270,7 @@ Y.Console = Y.extend(Console, Y.Widget,
          * @type Object
          */
         strings : {
-            value : {
-                title : "Log Console",
-                pause : "Pause",
-                clear : "Clear",
-                collapse : "Collapse",
-                expand   : "Expand"
-            }
+            valueFn: function() { return Y.Intl.get("console"); }
         },
 
         /**
@@ -1509,4 +1515,4 @@ Y.Console = Y.extend(Console, Y.Widget,
 });
 
 
-}, '@VERSION@' ,{requires:['substitute','widget']});
+}, '@VERSION@' ,{requires:['substitute','widget'], lang:['en', 'es' ]});

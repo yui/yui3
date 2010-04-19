@@ -1,0 +1,50 @@
+{
+    "event": {
+        "expound": "node-base", 
+        "submodules": {
+            "event-base": {
+                "expound": "node-base", 
+                "requires": [
+                    "event-custom-base"
+                ]
+            }, 
+            "event-delegate": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
+            "event-focus": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
+            "event-key": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
+            "event-mouseenter": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
+            "event-mousewheel": {
+                "requires": [
+                    "node-base"
+                ]
+            }, 
+            "event-resize": {
+                "requires": [
+                    "node-base"
+                ]
+            }
+        },
+        "plugins": {
+            "event-synthetic": {
+                "requires": [
+                    "node-base"
+                ]
+            }
+        }
+    }
+}

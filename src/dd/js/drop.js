@@ -19,6 +19,11 @@
         /**
         * @event drop:over
         * @description Fires when a drag element is over this target.
+        * @param {Event.Facade} event An Event Facade object with the following specific property added:
+        * <dl>
+        * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
+        * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
+        * </dl>        
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -26,6 +31,11 @@
         /**
         * @event drop:enter
         * @description Fires when a drag element enters this target.
+        * @param {Event.Facade} event An Event Facade object with the following specific property added:
+        * <dl>
+        * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
+        * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
+        * </dl>        
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -33,6 +43,7 @@
         /**
         * @event drop:exit
         * @description Fires when a drag element exits this target.
+        * @param {Event.Facade} event An Event Facade object
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -41,6 +52,12 @@
         /**
         * @event drop:hit
         * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
+        * @param {Event.Facade} event An Event Facade object with the following specific property added:
+        * <dl>
+        * <dt>drop</dt><dd>The best guess on what was dropped on.</dd>
+        * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
+        * <dt>others</dt><dd>An array of all the other drop targets that was dropped on.</dd>
+        * </dl>        
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -126,14 +143,24 @@
             }
         },
         /**
+        * @deprecated
         * @attribute bubbles
-        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config.
         * @type Object
         */
         bubbles: {
-            writeOnce: true,
-            value: Y.DD.DDM
+            setter: function(t) {
+                Y.log('bubbles is deprecated use bubbleTargets: HOST', 'warn', 'dd');
+                this.addTarget(t);
+                return t;
+            }
         },
+        /**
+        * @deprecated
+        * @attribute useShim
+        * @description Use the Drop shim. Default: true
+        * @type Boolean
+        */
         useShim: {
             value: true,
             setter: function(v) {
@@ -144,6 +171,12 @@
     };
 
     Y.extend(Drop, Y.Base, {
+        /**
+        * @private
+        * @property _bubbleTargets
+        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
+        */
+        _bubbleTargets: Y.DD.DDM,
         /**
         * @method addToGroup
         * @description Add this Drop instance to a group, this should be used for on-the-fly group additions.
@@ -190,11 +223,6 @@
                     prefix: 'drop'
                 });
             }, this);
-
-            if (this.get('bubbles')) {
-                this.addTarget(this.get('bubbles'));
-            }
-            
         },
         /**
         * @private
@@ -250,8 +278,7 @@
         * @method initializer
         * @description Private lifecycle method
         */
-        initializer: function() {
-            //this._createEvents();
+        initializer: function(cfg) {
             Y.later(100, this, this._createEvents);
 
             var node = this.get(NODE), id;

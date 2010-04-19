@@ -21,6 +21,8 @@
         INITIALIZED = "initialized",
         DESTROYED = "destroyed",
         INITIALIZER = "initializer",
+        BUBBLETARGETS = "bubbleTargets",
+        _BUBBLETARGETS = "_bubbleTargets",
         OBJECT_CONSTRUCTOR = Object.prototype.constructor,
         DEEP = "deep",
         SHALLOW = "shallow",
@@ -80,6 +82,16 @@
         }
 
         if (this._lazyAddAttrs !== false) { this._lazyAddAttrs = true; }
+
+        /**
+         * The string used to identify the class of this object.
+         *
+         * @deprecated Use this.constructor.NAME
+         * @property name
+         * @type String
+         */
+        this.name = this.constructor.NAME;
+        this._eventPrefix = this.constructor.EVENT_PREFIX || this.constructor.NAME;
 
         this.init.apply(this, arguments);
     }
@@ -171,14 +183,7 @@
         init: function(config) {
             Y.log('init called', 'life', 'base');
 
-            /**
-             * The string used to identify the class of this object.
-             *
-             * @deprecated Use this.constructor.NAME
-             * @property name
-             * @type String
-             */
-            this._yuievt.config.prefix = this.name = this.constructor.NAME;
+            this._yuievt.config.prefix = this._eventPrefix;
 
             /**
              * <p>
@@ -200,6 +205,7 @@
             this.publish(INIT, {
                 queuable:false,
                 fireOnce:true,
+                defaultTargetOnly:true,
                 defaultFn:this._defInitFn
             });
 
@@ -214,7 +220,7 @@
          * Handles the special on, after and target properties which allow the user to
          * easily configure on and after listeners as well as bubble targets during 
          * construction, prior to init.
-         * 
+         *
          * @method _preInitEventCfg
          * @param {Object} config The user configuration object
          */
@@ -226,15 +232,19 @@
                 if (config.after) {
                     this.after(config.after);
                 }
-                if (config.bubbleTargets) {
-                    var i, l, target = config.bubbleTargets;
-                    if (L.isArray(target)) {
-                        for (i = 0, l = target.length; i < l; i++) { 
-                            this.addTarget(target[i]);
-                        }
-                    } else {
-                        this.addTarget(target);
+            }
+
+            var i, l, target,
+                userTargets = (config && BUBBLETARGETS in config);
+
+            if (userTargets || _BUBBLETARGETS in this) {
+                target = userTargets ? (config && config.bubbleTargets) : this._bubbleTargets;
+                if (L.isArray(target)) {
+                    for (i = 0, l = target.length; i < l; i++) { 
+                        this.addTarget(target[i]);
                     }
+                } else if (target) {
+                    this.addTarget(target);
                 }
             }
         },
@@ -277,9 +287,12 @@
             this.publish(DESTROY, {
                 queuable:false,
                 fireOnce:true,
+                defaultTargetOnly:true,
                 defaultFn: this._defDestroyFn
             });
             this.fire(DESTROY);
+
+            this.detachAll();
             return this;
         },
 
@@ -553,6 +566,7 @@
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         }
+
     };
 
     // Straightup augment, no wrapper functions

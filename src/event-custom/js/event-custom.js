@@ -18,12 +18,13 @@
 var AFTER = 'after', 
     CONFIGS = [
         'broadcast',
-        'monitor',
+        'monitored',
         'bubbles',
         'context',
         'contextFn',
         'currentTarget',
         'defaultFn',
+        'defaultTargetOnly',
         'details',
         'emitFacade',
         'fireOnce',
@@ -36,7 +37,6 @@ var AFTER = 'after',
         'target',
         'type'
     ],
-
 
     YUI3_SIGNATURE = 9,
     YUI_LOG = 'yui:log';
@@ -74,9 +74,22 @@ Y.EventHandle.prototype = {
                 evt._delete(this.sub);
                 detached = 1;
             }
+
         }
 
         return detached;
+    },
+
+    /**
+     * Monitor the event state for the subscribed event.  The first parameter
+     * is what should be monitored, the rest are the normal parameters when
+     * subscribing to an event.
+     * @method monitor
+     * @param what {string} what to monitor ('attach', 'detach', 'publish')
+     * @return {EventHandle} return value from the monitor event subscription
+     */
+    monitor: function(what) {
+        return this.evt.monitor.apply(this.evt, arguments);
     }
 };
 
@@ -118,10 +131,10 @@ Y.CustomEvent = function(type, o) {
     /**
      * Monitor when an event is attached or detached.
      * 
-     * @property monitor
+     * @property monitored
      * @type boolean
      */
-    // this.monitor = false;
+    // this.monitored = false;
 
     this.logSystem = (type == YUI_LOG);
 
@@ -315,7 +328,27 @@ Y.CustomEvent.prototype = {
         return (s + a);
     },
 
-    getSubs: function(when) {
+    /**
+     * Monitor the event state for the subscribed event.  The first parameter
+     * is what should be monitored, the rest are the normal parameters when
+     * subscribing to an event.
+     * @method monitor
+     * @param what {string} what to monitor ('detach', 'attach', 'publish')
+     * @return {EventHandle} return value from the monitor event subscription
+     */
+    monitor: function(what) {
+        this.monitored = true;
+        var type = this.id + '|' + this.type + '_' + what,
+            args = Y.Array(arguments, 0, true);
+        args[0] = type;
+        return this.host.on.apply(this.host, args);
+    },
+
+    /**
+     * Get all of the subscribers to this event and any sibling event
+     * @return {Array} first item is the on subscribers, second the after
+     */
+    getSubs: function() {
         var s = Y.merge(this.subscribers), a = Y.merge(this.afters), sib = this.sibling;
 
         if (sib) {
@@ -348,8 +381,8 @@ Y.CustomEvent.prototype = {
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-            // Y.later(0, this, Y.bind(this._notify, this, s, this.firedWith));
-            setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+            // setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+            this._notify(s, this.firedWith);
         }
 
         if (when == AFTER) {
@@ -368,7 +401,7 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method subscribe
      * @param {Function} fn The function to execute
-     * @return {EventHandle} handle Unsubscribe handle
+     * @return {EventHandle} Unsubscribe handle
      * @deprecated use on
      */
     subscribe: function(fn, context) {
@@ -381,10 +414,16 @@ Y.CustomEvent.prototype = {
      * Listen for this event
      * @method on
      * @param {Function} fn The function to execute
-     * @return {EventHandle} handle Unsubscribe handle
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * when the event fires.
+     * @return {EventHandle} An object with a detach method to detch the handler(s)
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
+        this.host._monitor('attach', this.type, {
+            args: arguments
+        });
         return this._on(fn, context, a, true);
     },
 
@@ -394,6 +433,9 @@ Y.CustomEvent.prototype = {
      * default behavior, it also prevents after listeners from firing.
      * @method after
      * @param {Function} fn The function to execute
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * when the event fires.
      * @return {EventHandle} handle Unsubscribe handle
      */
     after: function(fn, context) {
@@ -442,7 +484,6 @@ Y.CustomEvent.prototype = {
     unsubscribe: function() {
         return this.detach.apply(this, arguments);
     },
-
 
     /**
      * Notify a single subscriber
@@ -503,6 +544,9 @@ Y.CustomEvent.prototype = {
         } else {
 
             var args = Y.Array(arguments, 0, true);
+
+            // this doesn't happen if the event isn't published
+            // this.host._monitor('fire', this.type, args);
 
             this.fired = true;
             this.firedWith = args;
@@ -601,6 +645,11 @@ Y.CustomEvent.prototype = {
             delete this.subscribers[s.id];
             delete this.afters[s.id];
         }
+
+        this.host._monitor('detach', this.type, {
+            ce: this, 
+            sub: s
+        });
     }
 };
 
@@ -651,7 +700,13 @@ Y.Subscriber = function(fn, context, args) {
      * @property events
      * @type {EventTarget}
      */
-    this.events = null;
+    // this.events = null;
+
+    /**
+     * This listener only reacts to the event once
+     * @property once
+     */
+    // this.once = false;
     
 };
 
@@ -674,6 +729,10 @@ Y.Subscriber.prototype = {
                 } else {
                     ret = this.fn.call(c);
                 }
+        }
+
+        if (this.once) {
+            ce._delete(this);
         }
 
         return ret;

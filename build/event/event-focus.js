@@ -11,45 +11,48 @@ YUI.add('event-focus', function(Y) {
 (function() {
 
 var UA = Y.UA,
-	Event = Y.Event,
-	plugins = Y.Env.evt.plugins,
-	ie = UA.ie,
-	bUseMutation = (UA.opera || UA.webkit),
-	eventNames = {
-		focus: (ie ? 'focusin' : (bUseMutation ? 'DOMFocusIn' : 'focus')),
-		blur: (ie ? 'focusout' : (bUseMutation ? 'DOMFocusOut' : 'blur'))
-	},
+    Event = Y.Event,
+    plugins = Y.Env.evt.plugins,
+    ie = UA.ie,
+    bUseMutation = (UA.opera || UA.webkit),
+    eventNames = {
+        focus: (ie ? 'focusin' : (bUseMutation ? 'DOMFocusIn' : 'focus')),
+        blur: (ie ? 'focusout' : (bUseMutation ? 'DOMFocusOut' : 'blur'))
+    },
 
-	//	Only need to use capture phase for Gecko since it doesn't support 
-	//	focusin, focusout, DOMFocusIn, or DOMFocusOut
+    //  Only need to use capture phase for Gecko since it doesn't support 
+    //  focusin, focusout, DOMFocusIn, or DOMFocusOut
     CAPTURE_CONFIG = { capture: (UA.gecko ? true : false) },
 
 
-	attach = function (args, config) {
+    attach = function (args, config) {
 
-	    var a = Y.Array(args, 0, true),
+        var a = Y.Array(args, 0, true),
             el = args[2];
+
+        config.overrides = config.overrides || {};
+        config.overrides.type = args[0];
         
         if (el) {
             if (Y.DOM.isWindow(el)) {
                 config.capture = false;
             }
             else {
-		        a[0] = eventNames[a[0]];
-		    }
+                a[0] = eventNames[a[0]];
+            }
         }
 
-	    return Event._attach(a, config);
+        return Event._attach(a, config);
 
-	},
-	
-	eventAdapter = {
+    },
+    
+    eventAdapter = {
 
-		on: function () {
-			return attach(arguments, CAPTURE_CONFIG);
-		}
+        on: function () {
+            return attach(arguments, CAPTURE_CONFIG);
+        }
 
-	};
+    };
 
 
 Event._attachFocus = attach;

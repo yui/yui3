@@ -1,3 +1,11 @@
+Provides the base class for Plugins, which can be added to a PluginHost. 
+
+3.1.0
+
+* Added separate host method and host event specific subscription methods,
+  to resolve inconsistency when using doBefore/doAfter in cases where the 
+  host supported both an event and a method of the same name. 
+
 3.0.0
 
 No changes
@@ -10,8 +18,3 @@ No changes
   as opposed to protected _owner property (this.get("host"))
 
 3.0.0PR2 - Initial release
-
-Module Name: "plugin"
-Documentation: http://developer.yahoo.com/yui/3/plugin
-
-Provides the base class for Plugins, which can be added to a PluginHost. 

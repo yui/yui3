@@ -1,3 +1,12 @@
+/**
+ * Adds HTML Parser support to the base Widget class
+ *
+ * @module widget
+ * @submodule widget-htmlparser
+ * @for Widget
+ */
+
+
 var Widget = Y.Widget,
     Node = Y.Node,
     Lang = Y.Lang,
@@ -78,7 +87,7 @@ Y.mix(Widget.prototype, {
      * @return {Object} The merged configuration literal
      */
     _applyParsedConfig : function(node, cfg, parsedCfg) {
-        return (parsedCfg) ? Y.aggregate(cfg, parsedCfg, false) : cfg;
+        return (parsedCfg) ? Y.mix(cfg, parsedCfg, false) : cfg;
     },
 
     /**
@@ -86,7 +95,7 @@ Y.mix(Widget.prototype, {
      * instance, to retrieve config data values.
      *
      * @method _applyParser
-     * @private
+     * @protected
      * @param config {Object} User configuration object (will be populated with values from Node) 
      */
     _applyParser : function(config) {

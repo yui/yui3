@@ -14,19 +14,33 @@
  */
 
 var NodeList = function(nodes) {
-    if (typeof nodes === 'string') {
+    var tmp = [];
+    if (typeof nodes === 'string') { // selector query
         this._query = nodes;
         nodes = Y.Selector.query(nodes);
-    } else if (nodes.nodeType) {
+    } else if (nodes.nodeType) { // domNode
         nodes = [nodes];
-    } else {
+    } else if (nodes instanceof Y.Node) {
+        nodes = [nodes._node];
+    } else if (nodes[0] instanceof Y.Node) { // allow array of Y.Nodes
+        Y.Array.each(nodes, function(node) {
+            if (node._node) {
+                tmp.push(node._node);
+            }
+        });
+        nodes = tmp;
+    } else { // array of domNodes or domNodeList (no mixed array of Y.Node/domNodes)
         nodes = Y.Array(nodes, 0, true);
     }
 
     NodeList._instances[Y.stamp(this)] = this;
+    /**
+     * The underlying array of DOM nodes bound to the Y.NodeList instance
+     * @property _nodes
+     * @private
+     */
     this._nodes = nodes;
 };
-// end "globals"
 
 NodeList.NAME = 'NodeList';
 
@@ -79,7 +93,7 @@ NodeList.addMethod = function(name, fn, context) {
             return ret.length ? ret : this;
         };
     } else {
-        Y.log('unable to add method: ' + name, 'warn', 'Node');
+        Y.log('unable to add method: ' + name + ' to NodeList', 'warn', 'node');
     }
 };
 

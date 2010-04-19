@@ -84,9 +84,9 @@ var whitelist = {
         63277: 34, // page down
         25:     9, // SHIFT-TAB (Safari provides a different key code in
                    // this case, even though the shiftKey modifier is set)
-		63272: 46, // delete
-		63273: 36, // home
-		63275: 35  // end
+        63272: 46, // delete
+        63273: 36, // home
+        63275: 35  // end
     },
 
     /**
@@ -129,13 +129,14 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
     wrapper = wrapper || {};
 
     var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
-        x = e.pageX, y = e.pageY, c, t;
+        x = e.pageX, y = e.pageY, c, t, 
+        overrides = wrapper.overrides || {};
 
     this.altKey   = e.altKey;
     this.ctrlKey  = e.ctrlKey;
     this.metaKey  = e.metaKey;
     this.shiftKey = e.shiftKey;
-    this.type     = e.type;
+    this.type     = overrides.type || e.type;
     this.clientX  = e.clientX;
     this.clientY  = e.clientY;
 

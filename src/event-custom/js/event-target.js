@@ -106,13 +106,17 @@ var L = Y.Lang,
 
             chain: ('chain' in o) ? o.chain : Y.config.chain,
 
+            bubbling: false,
+
             defaults: {
                 context: o.context || this, 
                 host: this,
                 emitFacade: o.emitFacade,
                 fireOnce: o.fireOnce,
                 queuable: o.queuable,
+                monitored: o.monitored,
                 broadcast: o.broadcast,
+                defaultTargetOnly: o.defaulTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -123,17 +127,43 @@ var L = Y.Lang,
 ET.prototype = {
 
     /**
+     * Listen to a custom event hosted by this object one time.  
+     * This is the equivalent to <code>on</code> except the
+     * listener is immediatelly detached when it is executed.
+     * @method once
+     * @param type    {string}   The type of the event
+     * @param fn {Function} The callback
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
+     * @return the event target or a detach handle per 'chain' config
+     */
+    once: function() {
+        var handle = this.on.apply(this, arguments);
+        handle.sub.once = true;
+        return handle;
+    },
+
+    /**
      * Subscribe to a custom event hosted by this object
      * @method on 
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
      * @return the event target or a detach handle per 'chain' config
      */
-    on: function(type, fn, context, x) {
+    on: function(type, fn, context) {
 
         var parts = _parseType(type, this._yuievt.config.prefix), f, c, args, ret, ce,
             detachcategory, handle, store = Y.Env.evt.handles, after, adapt, shorttype,
             Node = Y.Node, n, domevent, isArr;
+
+        // full name, args, detachcategory, after
+        this._monitor('attach', parts[1], {
+            args: arguments, 
+            category: parts[0],
+            after: parts[2]
+        });
 
         if (L.isObject(type)) {
 
@@ -342,7 +372,8 @@ ET.prototype = {
             }
         }
 
-        ce = evts[type];
+        // ce = evts[type];
+        ce = evts[parts[1]];
         if (ce) {
             ce.detach(fn, context);
         }
@@ -433,6 +464,11 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *    <li>
      *   'stoppedFn': a function that is executed when stopPropagation is called
      *    </li>
+     *
+     *    <li>
+     *   'monitored': specifies whether or not this event should send notifications about
+     *   when the event has been attached, detached, or published.
+     *    </li>
      *    <li>
      *   'type': the event type (valid option if not provided as the first parameter to publish)
      *    </li>
@@ -446,6 +482,9 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         type = (pre) ? _getType(type, pre) : type;
 
+        this._monitor('publish', type, {
+            args: arguments
+        });
 
         if (L.isObject(type)) {
             ret = {};
@@ -479,6 +518,27 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
         return events[type];
     },
 
+    /**
+     * This is the entry point for the event monitoring system.
+     * You can monitor 'attach', 'detach', 'fire', and 'publish'.  
+     * When configured, these events generate an event.  click ->
+     * click_attach, click_detach, click_publish -- these can
+     * be subscribed to like other events to monitor the event
+     * system.  Inividual published events can have monitoring
+     * turned on or off (publish can't be turned off before it
+     * it published) by setting the events 'monitor' config.
+     *
+     * @private
+     */
+    _monitor: function(what, type, o) {
+        var monitorevt, ce = this.getEvent(type);
+        if ((this._yuievt.config.monitored && (!ce || ce.monitored)) || (ce && ce.monitored)) {
+            monitorevt = type + '_' + what;
+            // Y.log('monitoring: ' + monitorevt);
+            o.monitored = what;
+            this.fire.call(this, monitorevt, o);
+        }
+    },
 
    /**
      * Fire a custom event by name.  The callback functions will be executed
@@ -512,10 +572,15 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         var typeIncluded = L.isString(type),
             t = (typeIncluded) ? type : (type && type.type),
-            ce, ret, pre=this._yuievt.config.prefix, ce2,
+            ce, ret, pre = this._yuievt.config.prefix, ce2,
             args = (typeIncluded) ? Y.Array(arguments, 1, true) : arguments;
 
         t = (pre) ? _getType(t, pre) : t;
+
+        this._monitor('fire', t, { 
+            args: args 
+        });
+
         ce = this.getEvent(t, true);
         ce2 = this.getSibling(t, ce);
 
@@ -525,27 +590,19 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
 
         // this event has not been published or subscribed to
         if (!ce) {
-            
             if (this._yuievt.hasTargets) {
                 return this.bubble({ type: t }, args, this);
             }
 
             // otherwise there is nothing to be done
             ret = true;
-
         } else {
-
             ce.sibling = ce2;
-
             ret = ce.fire.apply(ce, args);
-
-            // clear target for next fire()
-            ce.target = null;
         }
 
         return (this._yuievt.chain) ? this : ret;
     },
-
 
     getSibling: function(type, ce) {
         var ce2;
@@ -592,6 +649,8 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      * @method after
      * @param type    {string}   The type of the event
      * @param fn {Function} The callback
+     * @param context {object} optional execution context.
+     * @param arg* {mixed} 0..n additional arguments to supply to the subscriber
      * @return the event target or a detach handle per 'chain' config
      */
     after: function(type, fn) {
@@ -733,6 +792,26 @@ Y.Global = YUI.Env.globalEvents;
  * @return the event target or a detach handle per 'chain' config
  * @for YUI
  */
+
+ /**
+  * Listen for an event one time.  Equivalent to <code>on</code>, except that
+  * the listener is immediately detached when executed.
+  * @see on
+  * @method once
+  * @param type** event type (this parameter does not apply for function events)
+  * @param fn the callback
+  * @param target** a descriptor for the target (applies to custom events only).
+  * For function events, this is the object that contains the function to
+  * execute.
+  * @param extra** 0..n Extra information a particular event may need.  These
+  * will be documented with the event.  In the case of function events, this
+  * is the name of the function to execute on the host.  In the case of
+  * delegate listeners, this is the event delegation specification.
+  * @param context optionally change the value of 'this' in the callback
+  * @param args* 0..n additional arguments to pass to the callback.
+  * @return the event target or a detach handle per 'chain' config
+  * @for YUI
+  */
 
 /**
  * after() is a unified interface for subscribing to

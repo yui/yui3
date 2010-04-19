@@ -1,0 +1,20 @@
+{
+    "console": {
+        "plugins": {
+            "console-filters": {
+                "requires": [
+                    "plugin", 
+                    "console"
+                ], 
+                "skinnable": true
+            }
+        }, 
+        "requires": [
+            "yui-log", 
+            "widget", 
+            "substitute"
+        ], 
+        "skinnable": true,
+	"lang" : ["en", "es"]
+    }
+}

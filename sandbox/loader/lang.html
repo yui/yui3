@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <title>loader language packs</title>
+        <!--
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0/build/yui/yui-debug.js"></script>
+        <script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
+        <script type="text/javascript" src="http://l.yimg.com/a/lib/yui/3.0.0/build/yui/yui-debug.js"></script>
+        <script type="text/javascript" language="javascript1.2" src="../../build/yui/yui-debug.js"></script>
+        <script type="text/javascript" src="../../build/intl/intl-load-debug.js"></script>
+        -->
+
+        <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+        <script type="text/javascript" src="../../build/loader/loader-debug.js"></script>
+
+    </head>
+    <body>
+
+        <script>
+        YUI({
+            comboBase: 'http://l.yimg.com/a/lib/yui/combo?',
+            // combine: true,
+            // filter:"raw",
+            // maxURLLength: 300,
+            // attributes: {
+            //     language: 'javascript1.2'
+            // },
+            gallery: 'gallery-2009.12.15-22',
+            fetchCSS: false,
+            // currently it expects this attribute in order to load any lang packs
+            lang: ['en-US']
+
+        // }).use('datatype', 'gallery-yql', function(Y) {
+        }).use('datatype', 'slider', function(Y) {
+
+            console.log('done');
+
+            // one way to pull an arbitrary lang pack
+            // Y.use('lang|datatype-date|ca-ES', function() { });
+
+            // it will create this module and try (and fail) to load it
+            Y.use('lang|datatype-date|ca-blah|create', function() { });
+
+            // Y.use('gallery-yql', function() { });
+
+        });
+        </script>
+
+    </body>
+</html>

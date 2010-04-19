@@ -1,5 +1,8 @@
 Browser History Utility
 
+3.1.0
+    * deprecated getQueryStringParameter
+
 3.0.0
     * Fix bug 2528198: window.onhashchange used for IE8 in IE7 mode for proper click detection.
     * Fix bug 2528051: fix bug in hash encoding/decoding

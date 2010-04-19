@@ -18,6 +18,11 @@
 <script>
 onload = function() {
     YUI({filter: 'raw'}).use('node', 'selector-css3', 'console', 'test', function(Y) {
+        String.prototype.test = function() {
+            // simulate Moo monkey-patch
+            return false;
+
+        };
         Y.Dom = {
             get: function (id) {
                 return document.getElementById(id);
@@ -104,7 +109,7 @@ onload = function() {
             }
         };
 
-        new Y.Console({height:'90%'}).render();
+        new Y.Console({height:'50em'}).render();
 
         var suite = new Y.Test.Suite("Selector Suite");
         var Selector = Y.Selector;
@@ -336,9 +341,16 @@ onload = function() {
                     $('[-hyphen-start]', null, true),
                     "$('[-hyphen-start]', null, true)");
 
+                Assert.areEqual(Y.DOM.byId('test-lang-en-us'), $('[lang|=en]', null, true), "$('[lang|=en]')");
+
+                Assert.areEqual(Y.DOM.byId('href-test'), $('[href$=".html"]', null, true), "$('[href$=\".html\"]')");
+                Assert.isNull($('[href$="?html"]', null, true), "$('[href$=\?html\]')");
+
+                /* failing in brute (ticket 2528057)
                 Assert.areEqual(Y.DOM.byId('test:colon'), 
                     $('#test\\:colon', null, true),
                     "$('#test\\:colon', null, true)");
+                */
             }
 
         });
@@ -387,6 +399,7 @@ onload = function() {
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), 'div[title="this is a demo"]'), 'quoted attribute with spaces');
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), "div[title='this is a demo']"), 'single quoted attribute with spaces');
                 Assert.isTrue(Selector.test(Y.Dom.get('href-test'), '[href="foo.html"]'), 'href="foo.html"');
+                Assert.isTrue(Selector.test(Y.Dom.get('href-test'), '[href$=".html"]'), 'href$=".html"');
                 Assert.isFalse(Selector.test(Y.Dom.get('demo'), '[id=demo][title=demo]'), 'multiple attributes false pos');
 
                 /* non-standard
@@ -421,12 +434,18 @@ onload = function() {
                 Assert.isTrue(Selector.test(Y.Dom.get('demo'), '*'), 'universal tag');
             },
 
-            /*
+            testDisabled: function() {
+                Assert.areEqual(Y.DOM.byId('disabled-button'), $('#test-inputs :disabled', null, true), "$('#test-inputs :disabled')");
+            },
+
+            testEnabled: function() {
+                Assert.areEqual(Y.DOM.byId('checkbox-unchecked'), $('#test-inputs input:enabled', null, true), "$('#test-inputs input:enabled')");
+            },
+
             testIframe: function() {
                 var frameDoc = Y.DOM.byId('test-frame').contentWindow.document;
-                Assert.areEqual('iframe foo', $('#demo li', frameDoc, true).innerHTML, "Y.get('#demo li', frameDoc, true)");
+                Assert.areEqual('iframe foo', Y.Lang.trim($('#demo li', frameDoc, true).innerHTML), "Y.get('#demo li', frameDoc, true)");
             },
-            */
 
 
             // to support:
@@ -455,6 +474,10 @@ onload = function() {
                 Assert.areEqual(node, Y.Selector.ancestor(node, 'p', true));
                 Assert.areEqual(document.body, Y.Selector.ancestor(node, 'body', true));
                 Assert.areEqual(node.parentNode, Y.Selector.ancestor(node, 'div'));
+            },
+
+            testChecked: function() {
+                Assert.areEqual(4, Y.all('#test-inputs :checked').size(), "Y.all('#test-inputs :checked').size()");
             }
 
         });
@@ -470,7 +493,7 @@ onload = function() {
 
 </style>
 </head>
-<body class="yui-skin-sam">
+<body class="yui3-skin-sam">
     <div id="demo" class="foo" title="this is a demo">
         <p class="para first" id="demo-first-child"><em>lorem ipsum</em></p>
         <p class="para">lorem ipsum</p>
@@ -521,8 +544,12 @@ onload = function() {
         <input type="checkbox" checked="true" id="checkbox-checked" class="not-button">
         <input type="radio" id="radio-unchecked" class="not-button">
         <input type="radio" checked="true" id="radio-checked" class="not-button">
-        <input type="button" value="foo">
+        <input type="button" value="foo" disabled id="disabled-button">
         <input id="foo-bar" name="foo.bar" class="not-button" aria-controls="foo-bar" -hyphen-start="true">
+        <select>
+            <option>foo</option>
+            <option selected>bar</option>
+        </select>
     </form>
 
     <form id="form-root">

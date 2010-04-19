@@ -1,9 +1,23 @@
 YUI Loader
     Processes dependencies and dynamically loads script and css for YUI and external modules.
 
+3.2.0
+  * Module requirements that are provided when a module registers itself will merge
+    with an existing requirements if loader metadata was supplied.  
+
 3.1.0
   * Added a 'patterns' property.  Modules that are not predefined will be created with the
     default values if it matches one of the patterns defined for the instance.
+  * Added module groups.  This allows for specifying the base path and the combo properties
+    for a group of modules.  The combo support now allows for multiple combo domains.
+  * Handles simultaneous bootstrapping and loading better.
+  * Added support for dynamically loading language packs along with modules that have them.
+  * Intrinsic support for loading yui3-gallery modules.
+  * Intrinsic support for loading yui2 modules via the 2in3 project.
+  * Submodule breakdown to allow use of loader without all of the YUI3 metadata.
+  * Metadata is managed per component instead of centrally.
+  * Extremely long combo urls are split into multiple requests.
+  * Loader defends itself against metadata that creates circular dependencies.
 
 3.0.0
   * Extracted from the YUI seed.  Now fetched dynamically if

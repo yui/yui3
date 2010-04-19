@@ -1,0 +1,7 @@
+{
+    "dump": {
+        "requires": [
+            "yui-base"
+        ]
+    }
+}

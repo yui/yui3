@@ -1,7 +1,7 @@
 /* Vertical menus and submenus */
 
-.yui-skin-sam .yui-menu-content, 
-.yui-skin-sam .yui-menu .yui-menu .yui-menu-content {
+.yui3-skin-sam .yui3-menu-content, 
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
 
     font-size: 93%;  /* 12px */
     line-height: 1.5;  /* 18px */
@@ -12,7 +12,7 @@
 
 }
 
-.yui-skin-sam .yui-menu .yui-menu .yui-menu-content {
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-content {
 
 	font-size: 100%;
     
@@ -21,7 +21,7 @@
 
 /* Horizontal menus */
 
-.yui-skin-sam .yui-menu-horizontal .yui-menu-content {
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-content {
 
     line-height: 2;  /* ~24px */
     *line-height: 1.9; /* For IE */
@@ -31,8 +31,8 @@
 }
 
 
-.yui-skin-sam .yui-menu ul,
-.yui-skin-sam .yui-menu ul ul {
+.yui3-skin-sam .yui3-menu ul,
+.yui3-skin-sam .yui3-menu ul ul {
 
 	margin-top: 3px;
 	padding-top: 3px;
@@ -40,7 +40,7 @@
 
 }
 
-.yui-skin-sam .yui-menu ul.first-of-type {
+.yui3-skin-sam .yui3-menu ul.first-of-type {
 
     border: 0;
 	margin: 0;
@@ -48,7 +48,7 @@
 
 }
 
-.yui-skin-sam .yui-menu-horizontal ul {
+.yui3-skin-sam .yui3-menu-horizontal ul {
 
 	padding: 0;
 	margin: 0;
@@ -57,8 +57,8 @@
 }
 
 
-.yui-skin-sam .yui-menu li,
-.yui-skin-sam .yui-menu .yui-menu li {
+.yui3-skin-sam .yui3-menu li,
+.yui3-skin-sam .yui3-menu .yui3-menu li {
 
     /*
         For and IE 6 (Strict Mode and Quirks Mode) and IE 7 (Quirks Mode only): Used to collapse 
@@ -70,26 +70,26 @@
 
 }
 
-.yui-skin-sam .yui-menu-horizontal li {
+.yui3-skin-sam .yui3-menu-horizontal li {
 
 	_border-bottom: 0;
 
 }
 
-.yui-skin-sam .yui-menubuttonnav li {
+.yui3-skin-sam .yui3-menubuttonnav li {
 
     border-right: solid 1px #ccc;
 
 }
 
-.yui-skin-sam .yui-splitbuttonnav li {
+.yui3-skin-sam .yui3-splitbuttonnav li {
 
     border-right: solid 1px #808080;
 
 }
 
-.yui-skin-sam .yui-menubuttonnav li li,
-.yui-skin-sam .yui-splitbuttonnav li li {
+.yui3-skin-sam .yui3-menubuttonnav li li,
+.yui3-skin-sam .yui3-splitbuttonnav li li {
 
 	border-right: 0;
 
@@ -99,10 +99,10 @@
 /* Menuitems and menu labels */
 
 
-.yui-skin-sam .yui-menu-label,
-.yui-skin-sam .yui-menu .yui-menu .yui-menu-label,
-.yui-skin-sam .yui-menuitem-content,
-.yui-skin-sam .yui-menu .yui-menu .yui-menuitem-content {
+.yui3-skin-sam .yui3-menu-label,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label,
+.yui3-skin-sam .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-content {
 
     padding: 0 20px;
     color: #000;
@@ -120,8 +120,8 @@
 
 }
 
-.yui-skin-sam .yui-menu-horizontal .yui-menu-label,
-.yui-skin-sam .yui-menu-horizontal .yui-menuitem-content {
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-content {
 
     padding: 0 10px;
     border-style: solid;
@@ -135,33 +135,33 @@
 
 }
 
-.yui-skin-sam .yui-menu-label,
-.yui-skin-sam .yui-menu .yui-menu .yui-menu-label {
+.yui3-skin-sam .yui3-menu-label,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label {
 
 	background: url(vertical-menu-submenu-indicator.png) right center no-repeat;
 
 }
 
-.yui-skin-sam .yui-menu-horizontal .yui-menu-label {
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label {
 
     background: url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
 
 }
 
-.yui-skin-sam .yui-menubuttonnav .yui-menu-label,
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label {
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label {
 
 	background-image: none;
 
 }
 
-.yui-skin-sam .yui-menubuttonnav .yui-menu-label {
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label {
 
     padding-right: 0;
 
 }
 
-.yui-skin-sam .yui-menubuttonnav .yui-menu-label em {
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label em {
 
 	font-style: normal;
 	padding-right: 20px;
@@ -171,13 +171,13 @@
 }
 
 
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label {
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label {
 
 	padding: 0;
 
 }
 
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label a {
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label a {
 
 	float: left;
 	width: auto;
@@ -188,7 +188,7 @@
 
 }
 
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label .yui-menu-toggle {
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label .yui3-menu-toggle {
 	
 	padding: 0;	/* Overide padding applied by the preceeding rule. */
 	border-left: solid 1px #ccc; 
@@ -202,17 +202,17 @@
 
 /* Selected menuitem */
 
-.yui-skin-sam .yui-menu-label-active,
-.yui-skin-sam .yui-menu-label-menuvisible,
-.yui-skin-sam .yui-menu .yui-menu .yui-menu-label-active,
-.yui-skin-sam .yui-menu .yui-menu .yui-menu-label-menuvisible {
+.yui3-skin-sam .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu-label-menuvisible,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {
 
 	background-color: #B3D4FF;
 
 }
 
-.yui-skin-sam .yui-menuitem-active .yui-menuitem-content,
-.yui-skin-sam .yui-menu .yui-menu .yui-menuitem-active .yui-menuitem-content {
+.yui3-skin-sam .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content {
 
 	background-image: none;
     background-color: #B3D4FF;
@@ -227,35 +227,35 @@
 
 }
 
-.yui-skin-sam .yui-menu-horizontal .yui-menu-label-active,
-.yui-skin-sam .yui-menu-horizontal .yui-menuitem-active .yui-menuitem-content,
-.yui-skin-sam .yui-menu-horizontal .yui-menu-label-menuvisible {
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menu-horizontal .yui3-menu-label-menuvisible {
 
     border-color: #7D98B8;
     background: url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -1700px;
 
 }
 
-.yui-skin-sam .yui-menubuttonnav .yui-menu-label-active,
-.yui-skin-sam .yui-menubuttonnav .yui-menuitem-active .yui-menuitem-content,
-.yui-skin-sam .yui-menubuttonnav .yui-menu-label-menuvisible,
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label-active,
-.yui-skin-sam .yui-splitbuttonnav .yui-menuitem-active .yui-menuitem-content,
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label-menuvisible {
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label-active,
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-menubuttonnav .yui3-menu-label-menuvisible,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-active,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menuitem-active .yui3-menuitem-content,
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible {
 
     border-left-width: 1px;
     margin-left: -1px;
 
 }
 
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label-menuvisible {
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible {
 
     border-color: #808080;
     background: transparent;
 
 }
 
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label-menuvisible .yui-menu-toggle {
+.yui3-skin-sam .yui3-splitbuttonnav .yui3-menu-label-menuvisible .yui3-menu-toggle {
 
     border-color: #7D98B8;
     background: url(horizontal-menu-submenu-toggle.png) left center no-repeat;

@@ -216,7 +216,8 @@ YUI.add('oop', function(Y) {
     };
 
     /**
-     * Deep obj/array copy.  Functions are cloned with Y.bind.
+     * Deep obj/array copy.  Function clones are actually
+     * wrappers around the original function.
      * Array-like objects are treated as arrays.
      * Primitives are returned untouched.  Optionally, a
      * function can be provided to handle other data types,
@@ -231,7 +232,6 @@ YUI.add('oop', function(Y) {
      * items that are deleted from the clone will result in the value
      * of the source prototype being exposed.  If operating on a non-safe
      * clone, items should be nulled out rather than deleted.
-     * @TODO review
      * @param f optional function to apply to each item in a collection;
      *          it will be executed prior to applying the value to
      *          the new object.  Return false to prevent the copy.
@@ -246,13 +246,15 @@ YUI.add('oop', function(Y) {
             return o;
         }
 
-        var o2, marked = cloned || {}, stamp;
+        var o2, marked = cloned || {}, stamp,
+            each = Y.each || Y.Object.each;
 
         switch (L.type(o)) {
             case 'date':
                 return new Date(o);
             case 'regexp':
-                return new RegExp(o.source);
+                // return new RegExp(o.source); // if we do this we need to set the flags too
+                return o;
             case 'function':
                 o2 = Y.bind(o, owner);
                 break;
@@ -276,10 +278,12 @@ YUI.add('oop', function(Y) {
 
         // #2528250 don't try to clone element properties
         if (!o.addEventListener && !o.attachEvent) {
-            Y.Object.each(o, function(v, k) {
+            each(o, function(v, k) {
                 if (!f || (f.call(c || this, v, k, this, o) !== false)) {
                     if (k !== CLONE_MARKER) {
-                        if (o[k] === o) {
+                        if (k == 'prototype') {
+                            // skip the prototype
+                        } else if (o[k] === o) {
                             this[k] = this;
                         } else {
                             this[k] = Y.clone(v, safe, f, c, owner || o, marked);
