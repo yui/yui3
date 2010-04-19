@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>history&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>history&nbsp; <span class="subtitle">3.1.1</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_history.html" title="history">history</a>
                 
@@ -217,7 +217,12 @@
     <span class="kd">function</span> <span class="nx">_updateIFrame</span><span class="p">(</span><span class="nx">fqstate</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">html</span><span class="p">,</span> <span class="nx">doc</span><span class="p">;</span>
 
-        <span class="nx">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;body&gt;&#39;</span> <span class="o">+</span> <span class="nx">fqstate</span> <span class="o">+</span> <span class="s1">&#39;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">;</span>
+        <span class="nx">html</span> <span class="o">=</span> <span class="s1">&#39;&lt;html&gt;&lt;body&gt;&#39;</span> <span class="o">+</span>
+                   <span class="nx">fqstate</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/&amp;/g</span><span class="p">,</span><span class="s1">&#39;&amp;amp;&#39;</span><span class="p">).</span>
+                           <span class="nx">replace</span><span class="p">(</span><span class="sr">/&lt;/g</span><span class="p">,</span><span class="s1">&#39;&amp;lt;&#39;</span><span class="p">).</span>
+                           <span class="nx">replace</span><span class="p">(</span><span class="sr">/&gt;/g</span><span class="p">,</span><span class="s1">&#39;&amp;gt;&#39;</span><span class="p">).</span>
+                           <span class="nx">replace</span><span class="p">(</span><span class="sr">/&quot;/g</span><span class="p">,</span><span class="s1">&#39;&amp;quot;&#39;</span><span class="p">)</span> <span class="o">+</span>
+               <span class="s1">&#39;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">;</span>
 
         <span class="k">try</span> <span class="p">{</span>
             <span class="nx">doc</span> <span class="o">=</span> <span class="nx">G</span><span class="p">.</span><span class="nx">_historyIFrame</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentWindow.document&#39;</span><span class="p">);</span>
