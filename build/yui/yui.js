@@ -74,7 +74,10 @@ if (typeof YUI === 'undefined') {
                         },
         remove        = function (el, type, fn, capture) {
                             if (el && el.removeEventListener) {
-                                el.removeEventListener(type, fn, capture);
+                                // this can throw an uncaught exception in FF
+                                try {
+                                    el.removeEventListener(type, fn, capture);
+                                } catch(ex){}
                             } else if (el && el.detachEvent) {
                                 el.detachEvent("on" + type, fn);
                             }
