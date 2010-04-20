@@ -153,7 +153,7 @@ var yConfig = {
     debug: true,
     filter: 'DEBUG',
     allowRollup: false,
-    logExclude2: {
+    logExclude: {
         'yui': true,
         'event': true,
         base: true,
