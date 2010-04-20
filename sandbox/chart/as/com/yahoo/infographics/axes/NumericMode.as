@@ -47,6 +47,16 @@ package com.yahoo.infographics.axes
 			return this.labelFunction(position);
 		}
 		
+		/**
+		 * @copy com.yahoo.infographics.axes.IAxisMode#getLabelByKey()
+		 */
+		public function getLabelByIndex(key:String, index:int):String
+		{
+			var dataCollection:Array = this._data.getDataByKey(key),
+				value:Object = dataCollection[index];
+			return this.labelFunction(value);
+		}
+		
 		public var labelFunction:Function;
 	}
 

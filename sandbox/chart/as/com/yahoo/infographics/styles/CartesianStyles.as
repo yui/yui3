@@ -98,5 +98,69 @@ package com.yahoo.infographics.styles
 		{
 			this._animationDuration = value;
 		}
+		
+		/**
+		 * @private
+		 * Storage for xAxisDataFormat
+		 */
+		private var _xAxisDataFormat:Object = {
+			func:"defaultFunction"
+		};
+
+		/**
+		 * Contains data for formatting x axis labels.
+		 *	<ul>
+		 * 		<li><code>external</code>: Indicates whether to use an external js function.</li>
+		 * 		<li><code>function</code>: String reference to the function that is to be used.</li>
+		 * 		<li><code>props</code>: hash of properties that might be used in the formatting function.</li>
+		 * 	</ul>
+		 */
+		public function get xAxisDataFormat():Object
+		{
+			return this._xAxisDataFormat;
+		}
+
+		/**
+		 * @private (setter)
+		 */
+		public function set xAxisDataFormat(value:Object):void
+		{
+			for(var i:String in value)
+			{
+				this._xAxisDataFormat[i] = value[i];
+			}
+		}
+		
+		/**
+		 * @private
+		 * Storage for xAxisDataFormat
+		 */
+		private var _yAxisDataFormat:Object = {
+			func:"defaultFunction"
+		};
+
+		/**
+		 * Contains data for formatting y axis labels.
+		 *	<ul>
+		 * 		<li><code>external</code>: Indicates whether to use an external js function.</li>
+		 * 		<li><code>function</code>: String reference to the function that is to be used.</li>
+		 * 		<li><code>props</code>: hash of properties that might be used in the formatting function.</li>
+		 * 	</ul>
+		 */
+		public function get yAxisDataFormat():Object
+		{
+			return this._yAxisDataFormat;
+		}
+
+		/**
+		 * @private (setter)
+		 */
+		public function set yAxisDataFormat(value:Object):void
+		{
+			for(var i:String in value)
+			{
+				this._yAxisDataFormat[i] = value[i];
+			}
+		}
 	}
 }

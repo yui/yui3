@@ -52,10 +52,10 @@ package
 			Skin:Skin,
 			ImageSkin:ImageSkin,
 			BorderContainer:BorderContainer,
-			Graph:function(arg:Array):Graph
+			Graph:function(collection:Array, handleEventListening:Boolean = false):Graph
 			{
-				arg = this.parseCollections(arg);
-				return new Graph(arg);
+				collection = this.parseCollections(collection);
+				return new Graph(collection, handleEventListening);
 			}
 		};
 
