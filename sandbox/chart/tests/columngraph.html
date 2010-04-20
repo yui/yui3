@@ -121,6 +121,7 @@
 								yAxisData:myleftaxis,
 								xKey:"day",
 								yKey:"expenses",
+								displayName:"Expenses",
 								styles:expensegraphstyles
 							},
 							{
@@ -129,10 +130,12 @@
 								yAxisData:myleftaxis,
 								xKey:"day",
 								yKey:"revenue",
+								displayName:"Revenue",
 								styles:revenuegraphstyles
 							}
 						]});
-
+						
+						var mydatatip = new Y.DataTip({parent:mychart, graph:mygraph});
 						
 						mychart.addBottomItem(mybottomaxis);
 						mychart.addLeftItem(myleftaxis);

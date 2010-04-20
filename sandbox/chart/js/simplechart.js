@@ -74,7 +74,7 @@
 			
 			if (this._type == "line") 
 			{
-				graph = new Y.LineGraph({parent:chart, xaxis:xaxis, yaxis:yaxis, xkey:xkey, ykey:ykey, styles:styles});
+				graph = new Y.Graph({parent:chart, seriesCollection:[{type:this._type, xAxisData:xaxis, yAxisData:yaxis, xKey:xkey, yKey:ykey, styles:styles}]});
 			}
 			chart.addBottomItem(xaxis);
 			chart.addLeftItem(yaxis);
@@ -117,7 +117,10 @@
 		_graphstyles:{
 			color:0x000000,
 			alpha:1,
-			weight:"2"
+			weight:"2",
+			marker:{
+				fillColor:0x000000
+			}
 		},
 
 		_parseConfig: function(config)

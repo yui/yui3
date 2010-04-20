@@ -218,6 +218,7 @@
 								yAxisData:myleftaxis,
 								xKey:"date",
 								yKey:"expenses",
+								displayName:"Expenses",
 								styles:expensegraphstyles,
 								hitTest:"horizontal"
 							},
@@ -227,13 +228,15 @@
 								yAxisData:myleftaxis,
 								xKey:"date",
 								yKey:"revenue",
+								displayName:"Revenue",
 								styles:revenuegraphstyles,
 								hitTest:"horizontal"
 							}
 						],
 						handleEventListening:true
 					});
-
+					
+					var datatip = new Y.DataTip({parent:mychart, graph:mygraph});
 					// Add items
 					mychart.addBottomItem(mybottomaxis);
 					mychart.addLeftItem(myleftaxis);

@@ -2,7 +2,6 @@
 function Graph (config) 
 {
 	Graph.superclass.constructor.apply(this, arguments);
-
 }
 
 Graph.NAME = "graph";
@@ -90,6 +89,7 @@ Y.extend(Graph, Y.Container,
 		if(this.get("seriesCollection"))
 		{
 			this.appswf.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
+			this.fire("graphReady", {swfowner:swfowner});
 		}
 	},
 

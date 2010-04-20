@@ -81,9 +81,9 @@ package com.yahoo.util
 			var cA:Array = constructorArguments ? constructorArguments : [];
 			var classReferenceObject:Object = this.getClass(className);
 			var instance:Object;
-			
-			cA = this.parseArgs(cA);
 
+			cA = this.parseArgs(cA);
+		
 			if(classReferenceObject is Class)
 			{
 				var classReference:Class = classReferenceObject as Class;
@@ -111,7 +111,7 @@ package com.yahoo.util
 				instance = classFunction.apply(this, cA);
 			}
 			
-			_instances[instanceId] = instance;	
+			_instances[instanceId] = instance;
 		}
 
 		/**
@@ -214,7 +214,10 @@ package com.yahoo.util
 		 */
 		public function addClasses(value:Object):void
 		{
-			for(var i:String in value) this._classHash[i] = value[i];
+			for(var i:String in value) 
+			{
+				this._classHash[i] = value[i];
+			}
 		}
 
 		/**

@@ -200,16 +200,40 @@
 					myleftaxis.addKey("expenses");
 					myrightaxis.addKey("revenue");
 
-					// Create graph
-					var myexpensegraph = new Y.LineGraph({parent:mychart, xaxis:mybottomaxis, yaxis:myleftaxis, xkey:"date", ykey:"expenses", styles:expensegraphstyles});
-					var myrevenuegraph = new Y.LineGraph({parent:mychart, xaxis:mybottomaxis, yaxis:myrightaxis, xkey:"date", ykey:"revenue", styles:revenuegraphstyles});
 					
+					// Create graph
+					var mygraph = new Y.Graph({parent:mychart, seriesCollection:[
+							{
+								type:"line",
+								xAxisData:mybottomaxis,
+								yAxisData:myleftaxis,
+								xKey:"date",
+								yKey:"expenses",
+								hitTest:"horizontal",
+								displayName:"Expenses",
+								styles:expensegraphstyles
+							},
+							{
+								type:"line",
+								xAxisData:mybottomaxis,
+								yAxisData:myrightaxis,
+								xKey:"date",
+								yKey:"revenue",
+								hitTest:"horizontal",
+								displayName:"Revenue",
+								styles:revenuegraphstyles
+							}
+						],
+						handleEventListening:true
+					});
+
+					var mydatatip = new Y.DataTip({parent:mychart, graph:mygraph});
+
 					// Add items
 					mychart.addBottomItem(mybottomaxis);
 					mychart.addLeftItem(myleftaxis);
 					mychart.addRightItem(myrightaxis);
-					mychart.addCenterItem(myexpensegraph);
-					mychart.addCenterItem(myrevenuegraph);
+					mychart.addCenterItem(mygraph);
 				});
 </script>
 <!-- END EXAMPLE CODE -->
