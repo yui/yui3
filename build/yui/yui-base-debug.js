@@ -74,7 +74,10 @@ if (typeof YUI === 'undefined') {
                         },
         remove        = function (el, type, fn, capture) {
                             if (el && el.removeEventListener) {
-                                el.removeEventListener(type, fn, capture);
+                                // this can throw an uncaught exception in FF
+                                try {
+                                    el.removeEventListener(type, fn, capture);
+                                } catch(ex){}
                             } else if (el && el.detachEvent) {
                                 el.detachEvent("on" + type, fn);
                             }
@@ -1751,7 +1754,8 @@ Y.merge = function() {
  *        2: prototype to prototype and object props (new augment)
  *        3: prototype to object
  *        4: object to prototype
- * @param merge {boolean} merge objects instead of overwriting/ignoring
+ * @param merge {boolean/int} merge objects instead of overwriting/ignoring.  A value of 2
+ * will skip array merge
  * Used by Y.aggregate
  * @return {object} the augmented object
  */
@@ -1777,20 +1781,18 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     }
 
     // Maybe don't even need this wl && wl.length check anymore??
-    var arr = merge && L.isArray(r), i, l, p;
+    var i, l, p, type;
 
     if (wl && wl.length) {
         for (i = 0, l = wl.length; i < l; ++i) {
             p = wl[i];
-            // if (p in s) {
+            type = L.type(r[p]);
             if (s.hasOwnProperty(p)) {
-                if (merge && L.isObject(r[p], true)) {
+                if (merge && type == "object") {
                     Y.mix(r[p], s[p]);
-                } else if (!arr && (ov || !(p in r))) {
+                } else if (ov || !(p in r)) {
                     r[p] = s[p];
-                } else if (arr) {
-                    r.push(s[p]);
-                }
+                }            
             }
         }
     } else {
@@ -1804,13 +1806,14 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                     Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
                 // otherwise apply the property only if overwrite
                 // is specified or the receiver doesn't have one.
-                } else if (!arr && (ov || !(i in r))) {
+                } else if (ov || !(i in r)) {
                     r[i] = s[i];
+                }
                 // if merge is specified and the receiver is an array,
                 // append the array item
-                } else if (arr) {
-                    r.push(s[i]);
-                }
+                // } else if (arr) {
+                    // r.push(s[i]);
+                // }
             }
         }
     

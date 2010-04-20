@@ -123,7 +123,8 @@
 <span class="cm"> *        2: prototype to prototype and object props (new augment)</span>
 <span class="cm"> *        3: prototype to object</span>
 <span class="cm"> *        4: object to prototype</span>
-<span class="cm"> * @param merge {boolean} merge objects instead of overwriting/ignoring</span>
+<span class="cm"> * @param merge {boolean/int} merge objects instead of overwriting/ignoring.  A value of 2</span>
+<span class="cm"> * will skip array merge</span>
 <span class="cm"> * Used by Y.aggregate</span>
 <span class="cm"> * @return {object} the augmented object</span>
 <span class="cm"> */</span>
@@ -149,20 +150,18 @@
     <span class="p">}</span>
 
     <span class="c1">// Maybe don&#39;t even need this wl &amp;&amp; wl.length check anymore??</span>
-    <span class="kd">var</span> <span class="nx">arr</span> <span class="o">=</span> <span class="nx">merge</span> <span class="o">&amp;&amp;</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">r</span><span class="p">),</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">p</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">type</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">wl</span> <span class="o">&amp;&amp;</span> <span class="nx">wl</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">wl</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">p</span> <span class="o">=</span> <span class="nx">wl</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-            <span class="c1">// if (p in s) {</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="nx">L</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">p</span><span class="p">]);</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">p</span><span class="p">))</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">merge</span> <span class="o">&amp;&amp;</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">p</span><span class="p">],</span> <span class="kc">true</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">merge</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;object&quot;</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">p</span><span class="p">],</span> <span class="nx">s</span><span class="p">[</span><span class="nx">p</span><span class="p">]);</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">arr</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="nx">p</span> <span class="k">in</span> <span class="nx">r</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="nx">p</span> <span class="k">in</span> <span class="nx">r</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">r</span><span class="p">[</span><span class="nx">p</span><span class="p">]</span> <span class="o">=</span> <span class="nx">s</span><span class="p">[</span><span class="nx">p</span><span class="p">];</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">r</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">p</span><span class="p">]);</span>
-                <span class="p">}</span>
+                <span class="p">}</span>            
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -176,13 +175,14 @@
                     <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">ov</span><span class="p">,</span> <span class="nx">wl</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span> <span class="c1">// recursive</span>
                 <span class="c1">// otherwise apply the property only if overwrite</span>
                 <span class="c1">// is specified or the receiver doesn&#39;t have one.</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">arr</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">r</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">r</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+                <span class="p">}</span>
                 <span class="c1">// if merge is specified and the receiver is an array,</span>
                 <span class="c1">// append the array item</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">arr</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">r</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-                <span class="p">}</span>
+                <span class="c1">// } else if (arr) {</span>
+                    <span class="c1">// r.push(s[i]);</span>
+                <span class="c1">// }</span>
             <span class="p">}</span>
         <span class="p">}</span>
     
@@ -250,6 +250,7 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>

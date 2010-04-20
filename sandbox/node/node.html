@@ -3,17 +3,25 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>Node</title>
+<style>
+#foo {
+    display:none;
+    padding:20px;
 
+}
+</style>
 <script type="text/javascript" src="../../build/yui/yui.js"></script>
 </head>
 
 <body>
-<div id="foo">foo</div>
+<div id="foo">
+    <div id="bar">bar</div>
+</div>
 <script type="text/javascript">
 
 
 YUI({filter:'debug'}).use('node', function(Y) {
-    console.log(Y.all('#foo').removeAttribute('id').get('id'));
+    console.log(Y.one('#bar').getStyle('display'));
 });
 
 
