@@ -293,6 +293,11 @@
             <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
         <span class="p">}</span>
 
+        <span class="c1">// @TODO cloning YUI instances doesn&#39;t currently work</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
+        <span class="p">}</span>
+
         <span class="kd">var</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">marked</span> <span class="o">=</span> <span class="nx">cloned</span> <span class="o">||</span> <span class="p">{},</span> <span class="nx">stamp</span><span class="p">,</span>
             <span class="nx">each</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">.</span><span class="nx">each</span><span class="p">;</span>
 
@@ -330,8 +335,8 @@
                     <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">!==</span> <span class="nx">CLONE_MARKER</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">k</span> <span class="o">==</span> <span class="s1">&#39;prototype&#39;</span><span class="p">)</span> <span class="p">{</span>
                             <span class="c1">// skip the prototype</span>
-                        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">===</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="k">this</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+                        <span class="c1">// } else if (o[k] === o) {</span>
+                        <span class="c1">//     this[k] = this;</span>
                         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                             <span class="k">this</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">safe</span><span class="p">,</span> <span class="nx">f</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">owner</span> <span class="o">||</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">marked</span><span class="p">);</span>
                         <span class="p">}</span>

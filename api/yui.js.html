@@ -123,7 +123,10 @@
                         <span class="p">},</span>
         <span class="nx">remove</span>        <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">capture</span><span class="p">)</span> <span class="p">{</span>
                             <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">)</span> <span class="p">{</span>
-                                <span class="nx">el</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">capture</span><span class="p">);</span>
+                                <span class="c1">// this can throw an uncaught exception in FF</span>
+                                <span class="k">try</span> <span class="p">{</span>
+                                    <span class="nx">el</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">capture</span><span class="p">);</span>
+                                <span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">ex</span><span class="p">){}</span>
                             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">el</span> <span class="o">&amp;&amp;</span> <span class="nx">el</span><span class="p">.</span><span class="nx">detachEvent</span><span class="p">)</span> <span class="p">{</span>
                                 <span class="nx">el</span><span class="p">.</span><span class="nx">detachEvent</span><span class="p">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
                             <span class="p">}</span>
