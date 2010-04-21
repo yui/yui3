@@ -1598,6 +1598,8 @@
             extendedTemplate = Y.merge(extendedTemplate, sharedEventTests);
 
             var perfTemplate = {
+                
+                name: "Performance Tests",
 
                 testTimeConstruction: function() {
                     var start, end, n = 20, t, i;
@@ -1686,13 +1688,22 @@
 
             Y.Test.Runner.clear();
 
-            Y.Test.Runner.add(new Y.Test.Case(basicTemplate));
-            Y.Test.Runner.add(new Y.Test.Case(extendedTemplate));
+            var suite = new Y.Test.Suite({name:"Attribute Unit Tests"});
 
-            Y.Test.Runner.add(new Y.Test.Case(basicTemplate));     // Running again, to make sure static attributes aren't modified
-            Y.Test.Runner.add(new Y.Test.Case(extendedTemplate));  // Running again, to make sure static attributes aren't modified
+            suite.add(new Y.Test.Case(basicTemplate));
+            suite.add(new Y.Test.Case(extendedTemplate));
+            suite.add(new Y.Test.Case(basicTemplate));
+            suite.add(new Y.Test.Case(extendedTemplate));
 
-            Y.Test.Runner.add(new Y.Test.Case(perfTemplate));
+            var perfSuite = new Y.Test.Suite({name:"Attribute Performance Tests"});
+            perfSuite.add(new Y.Test.Case(perfTemplate));
+
+            Y.Test.Runner.add(suite); // run twice, just to make sure static class state not modified
+            Y.Test.Runner.add(suite);
+
+            Y.Test.Runner.add(perfSuite);
+
+            Y.Test.Runner.setName("Attribute Tests");
 
             Y.Test.Runner.run();
 
