@@ -1692,15 +1692,14 @@
 
             suite.add(new Y.Test.Case(basicTemplate));
             suite.add(new Y.Test.Case(extendedTemplate));
+
             suite.add(new Y.Test.Case(basicTemplate));
-            suite.add(new Y.Test.Case(extendedTemplate));
+            suite.add(new Y.Test.Case(extendedTemplate));  // run twice, just to make sure static class state not modified
 
             var perfSuite = new Y.Test.Suite({name:"Attribute Performance Tests"});
             perfSuite.add(new Y.Test.Case(perfTemplate));
 
-            Y.Test.Runner.add(suite); // run twice, just to make sure static class state not modified
             Y.Test.Runner.add(suite);
-
             Y.Test.Runner.add(perfSuite);
 
             Y.Test.Runner.setName("Attribute Tests");
