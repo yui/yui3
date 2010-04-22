@@ -3,11 +3,13 @@ package com.yahoo.infographics.cartesian
 	import com.yahoo.renderers.Renderer;
 	import com.yahoo.infographics.series.*;
 	import com.yahoo.infographics.data.AxisData;
-	import flash.utils.Dictionary;
 	import flash.display.DisplayObject;
 	import com.yahoo.renderers.layout.Container;
 	import com.yahoo.renderers.layout.LayerStack;
 	import com.yahoo.renderers.Skin;
+	import flash.events.Event;
+	import com.yahoo.infographics.events.GraphEvent;
+	import flash.events.MouseEvent;
 
 	public class Graph extends Container
 	{
@@ -46,30 +48,7 @@ package com.yahoo.infographics.cartesian
 		{
 			return this._hotSpot;
 		}
-
-		/**
-		 * @private (protected)
-		 * Storage for <code>markers</code>
-		 */
-		protected var _markers:Vector.<SeriesMarker> = new Vector.<SeriesMarker>();
-
-		/**
-		 * Collection of all <code>SeriesMarker</code> instances that exist in
-		 * the graph.
-		 */
-		public function get markers():Vector.<SeriesMarker>
-		{
-			return this._markers;
-		}
-
-		/**
-		 * @private (setter)
-		 */
-		public function set markers(value:Vector.<SeriesMarker>):void
-		{
-			this._markers = value;
-		}
-
+		
 		/**
 		 * @private (protected) 
 		 * Returns type from key value.
@@ -80,50 +59,6 @@ package com.yahoo.infographics.cartesian
 			column:ColumnSeries,
 			bar:BarSeries
 		};
-
-		/**
-		 * @private
-		 * Storage for <code>xcoords</code>
-		 */
-		private var _xcoords:Dictionary = new Dictionary();
-
-		/**
-		 * Look up table for x coordinates. This <code>Dictionary</code> instance
-		 * is indexed by <code>AxisData</code> instances. Each index containers a
-		 * key indexed hash that contains a <code>Vector</code> of x coordinates. Each
-		 * horizontally aligned series will reference the <code>xcoords</code> for its
-		 * category data coordinates. Typically, multiple series will share the same 
-		 * category axis positioning data while maintaining its own value axis positioning
-		 * data. This allows the category coordinates to be calculated once for all series.
-		 */
-		//Need to test performance here. Having to lookup the data in a dictionary may offset
-		//any gain accomplished from eliminating duplicate calculations.
-		public function get xcoords():Dictionary
-		{
-			return this._xcoords;
-		}
-
-		/**
-		 * @private
-		 * Storage for <code>ycoords</code>
-		 */
-		private var _ycoords:Dictionary = new Dictionary();
-
-		/**
-		 * Look up table for y coordinates. This <code>Dictionary</code> instance
-		 * is indexed by <code>AxisData</code> instances. Each index containers a
-		 * key indexed hash that contains a <code>Vector</code> of x coordinates. Each
-		 * vertically aligned series will reference the <code>ycoords</code> for its
-		 * category data coordinates. Typically, multiple series will share the same 
-		 * category axis positioning data while maintaining its own value axis positioning
-		 * data. This allows the category coordinates to be calculated once for all series.
-		 */
-		//Need to test performance here. Having to lookup the data in a dictionary may offset
-		//any gain accomplished from eliminating duplicate calculations.
-		public function get ycoords():Dictionary
-		{
-			return this._ycoords;
-		}
 
 		/**
 		 * @private
@@ -140,20 +75,45 @@ package com.yahoo.infographics.cartesian
 		}
 
 		/**
-	     * @private (protected)
+	     * @private 
+		 * Storage for seriesCollection.
+		 */
+		private var _seriesCollection:Vector.<ISeries> = new Vector.<ISeries>();
+
+		/**
 		 * Collection of all series instances.
 		 */
-		protected var _seriesCollection:Vector.<ISeries> = new Vector.<ISeries>();
-
 		public function get seriesCollection():Vector.<ISeries>
 		{
 			return this._seriesCollection;
 		}
 
+		/**
+		 * @private (setter)
+		 */
 		public function set seriesCollection(value:Vector.<ISeries>):void
 		{
 			this._seriesCollection = value;
 		}
+
+		/**
+		 * @private 
+		 * Storage for dataTip
+		 */
+		private var _dataTip:DataTip;
+
+		/**
+		 * @private
+		 * Collection of <code>SeriesMarker</code> indexed event data.
+		 */
+		private var _eventMarkers:Array = [];
+
+		/**
+		 * @private
+		 * Number of overlays in the graph. Overlays are items that should appear above all series.
+		 * (e.g. hotSpot and DataTip)
+		 */
+		private var _overlayCount:int = 0;
 
 	//--------------------------------------
 	//  Public Methods
@@ -179,6 +139,19 @@ package com.yahoo.infographics.cartesian
 			return false;
 		}
 	
+		/**
+		 * Returns the length of a series collection by type.
+		 */
+		public function getSeriesLengthByType(value:String):int
+		{
+			var len:int = 0;
+			if(this._seriesTypes.hasOwnProperty(value))
+			{
+				len = (this._seriesTypes as Vector.<ISeries>).length;
+			}
+			return len;
+		}
+		
 	//--------------------------------------
 	//  Protected Methods
 	//--------------------------------------		
@@ -193,9 +166,11 @@ package com.yahoo.infographics.cartesian
 				this._hotSpot = new Skin();
 				this._hotSpot.setStyle("fillAlpha", 0);
 				this.addItem(this._hotSpot);
+				this._hotSpot.addEventListener(MouseEvent.MOUSE_OUT, this.hotSpotRollOutHandler);
+				this._overlayCount++;
 			}
 		}
-		
+
 		/**
 		 * @private (protected)
 		 */
@@ -210,47 +185,6 @@ package com.yahoo.infographics.cartesian
 
 		/**
 		 * @private (protected)
-		 * Adds a series to the graph.
-		 */
-		protected function setCategoryCoordsReference(series:ISeries):void
-		{
-			var categoryData:AxisData,
-				categoryKey:String,
-				categoryAxis:String = "x",
-				xcoords:Dictionary = this._xcoords,
-				ycoords:Dictionary = this._ycoords;
-			if(categoryAxis == "x")
-			{
-				categoryData = series.xAxisData as AxisData;
-				categoryKey = series.xKey;
-				if(!xcoords.hasOwnProperty(categoryData))
-				{
-					xcoords[categoryData] = {};
-				}
-				if(!xcoords[categoryData].hasOwnProperty(categoryKey))
-				{
-					xcoords[categoryData][categoryKey] = new Vector.<int>();
-				}
-				series.xcoords = xcoords[categoryData][categoryKey]; 
-			}
-			else if(categoryAxis == "y")
-			{
-				categoryData = series.yAxisData as AxisData;
-				categoryKey = series.yKey;
-				if(!ycoords.hasOwnProperty(categoryData))
-				{
-					ycoords[categoryData] = {};
-				}
-				if(!ycoords[categoryData].hasOwnProperty(categoryKey))
-				{
-					ycoords[categoryData][categoryKey] = new Vector.<int>();
-				}
-				series.ycoords = ycoords[categoryData][categoryKey]; 
-			}
-		}
-
-		/**
-		 * @private (protected)
 		 * Adds series to the graph.
 		 */
 		protected function addSeries(series:ISeries):void
@@ -261,7 +195,6 @@ package com.yahoo.infographics.cartesian
 				seriesTypes:Object = this._seriesTypes,
 				typeSeriesCollection:Vector.<ISeries>,
 				index:int;	
-			this.setCategoryCoordsReference(series);
 			if(!series.graph) series.graph = this;
 			series.graphOrder = graphSeriesLength;
 			seriesCollection.push(series);
@@ -272,8 +205,9 @@ package com.yahoo.infographics.cartesian
 			typeSeriesCollection = this._seriesTypes[type];
 			series.order = typeSeriesCollection.length;
 			typeSeriesCollection.push(series);
-			index = this.numChildren > 0 ? this.numChildren - 1 : 0;
+			index = Math.max(this.numChildren - this._overlayCount, 0);
 			this.addItem(Renderer(series), {index:index});
+			this.dispatchEvent(new GraphEvent(GraphEvent.SERIES_ADDED, series));
 		}
 
 		/**
@@ -304,14 +238,148 @@ package com.yahoo.infographics.cartesian
 			}
 		}
 		
-		public function getSeriesLengthByType(value:String):int
+		/**
+		 * @private (override)
+		 */
+		override protected function render():void
 		{
-			var len:int = 0;
-			if(this._seriesTypes.hasOwnProperty(value))
+			var i:int,
+				eventMarkers:Array = this._eventMarkers,
+				displayData:Object,
+				categoryLabel:String,
+				valueLabel:String,
+				series:ISeries,
+				seriesIndex:int,
+				yKey:String,
+				xKey:String,
+				marker:SeriesMarker,
+				len:int = eventMarkers.length;
+		
+			if(this.checkFlag("markerEvent"))
 			{
-				len = (this._seriesTypes as Vector.<ISeries>).length;
+				for(i = 0; i < len; ++i)
+				{
+					marker = eventMarkers[i] as SeriesMarker;
+					series = marker.series as ISeries;
+					xKey = series.xKey;
+					yKey = series.yKey;
+					seriesIndex = marker.index;
+					//Hack for establishing direction of chart. Probably better way to handle. (e.g. Set direction for graph and allow that to 
+					//define the direction for all other series. This will allow for vertical plot and line series)
+					if(series is BarSeries)
+					{
+						categoryLabel = series.yAxisMode.getLabelByIndex(yKey, seriesIndex);
+						valueLabel = series.xAxisMode.getLabelByIndex(xKey, seriesIndex);
+					}
+					else
+					{
+						categoryLabel = series.xAxisMode.getLabelByIndex(xKey, seriesIndex);
+						valueLabel = series.yAxisMode.getLabelByIndex(yKey, seriesIndex);
+					}
+					
+					if(!displayData)
+					{
+						displayData = {};
+					}
+
+					if(!displayData.hasOwnProperty(categoryLabel))
+					{
+						displayData[categoryLabel] = [];
+					}
+
+					(displayData[categoryLabel] as Array).push({displayName:series.displayName, 
+						valueLabel:valueLabel,
+						styles:series.getStyle("marker").styles
+						});
+				}
+				this.dispatchEvent(new GraphEvent(GraphEvent.MARKER_EVENT, displayData));
 			}
-			return len;
+			
+			super.render();
+		}
+		
+	//--------------------------------------
+	//  Private Methods
+	//--------------------------------------		
+		/**
+		 * @private
+		 */
+		private function addSeriesItem(marker:SeriesMarker):void
+		{
+			var eventMarkers:Array = this._eventMarkers,
+				markerIndex:int = eventMarkers.indexOf(marker);
+			if(markerIndex == -1)
+			{
+				eventMarkers.push(marker);
+				this.setFlag("markerEvent");
+			}
+		}
+		
+		/**
+		 * @private
+		 * Removes an <code>SeriesMarker</code> instance from the eventMarkers collection.
+		 */
+		private function removeSeriesItem(marker:SeriesMarker):void
+		{
+			var eventMarkers:Array = this._eventMarkers,
+				markerIndex:int = eventMarkers.indexOf(marker);
+			if(markerIndex > -1)
+			{
+				eventMarkers.splice(markerIndex, 1);
+				this.setFlag("markerEvent");
+			}
+		}
+
+	//--------------------------------------
+	//  Event Handlers
+	//--------------------------------------		
+		/**
+		 * Event handler for <code>SeriesMarker</code> <code>rollOver</code> events.
+		 */
+		public function markerRollOverHandler(event:Event):void
+		{
+			this.addSeriesItem(SeriesMarker(event.target));
+		}
+
+		/**
+		 * Event handler for <code>SeriesMarker</code> <code>rollOut</code> events.
+		 */
+		public function markerRollOutHandler(event:Event):void
+		{
+			this.removeSeriesItem(SeriesMarker(event.target));
+		}
+		
+		/**
+		 * Event handler for <code>SeriesMarker</code> <code>click</code> events.
+		 */
+		public function markerClickHandler(event:Event):void
+		{
+			var marker:SeriesMarker = SeriesMarker(event.target);
+			if(!this.visible)
+			{
+				this.addSeriesItem(marker);
+			}
+			else
+			{
+				this._eventMarkers.splice(this._eventMarkers.indexOf(marker), 1);
+				this.setFlag("markerEvent");
+			}
+		}
+
+		/**
+		 * Event handler for <code>SeriesMarker</code> <code>doubleClick</code> events.
+		 */
+		public function markerDoubleClickHandler(event:Event):void
+		{
+			this.markerClickHandler(event);
+		}
+
+		/**
+		 * @private
+		 */
+		private function hotSpotRollOutHandler(event:MouseEvent):void
+		{
+			this.dispatchEvent(new GraphEvent(GraphEvent.MARKER_EVENT, null));
 		}
 	}
 }

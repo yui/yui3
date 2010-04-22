@@ -8,7 +8,7 @@ package com.yahoo.infographics.series {
 	import flash.display.InteractiveObject;
 	import flash.events.MouseEvent;
 	import com.yahoo.display.*;
-	import com.yahoo.infographics.events.GraphEvent;
+	import com.yahoo.infographics.events.MarkerEvent;
 
 	public class PlotSeries extends Cartesian
 	{
@@ -205,10 +205,10 @@ package com.yahoo.infographics.series {
 			while(len > 0)
 			{
 				marker = SeriesMarker(cache.shift());
-				marker.removeEventListener(MouseEvent.ROLL_OVER, markerRollOverHandler);
-				marker.removeEventListener(MouseEvent.ROLL_OUT, markerRollOutHandler);
-				marker.removeEventListener(MouseEvent.CLICK, markerClickHandler);
-				marker.removeEventListener(MouseEvent.DOUBLE_CLICK, markerDoubleClickHandler);
+				marker.removeEventListener(MouseEvent.ROLL_OVER, this._graph.markerRollOverHandler);
+				marker.removeEventListener(MouseEvent.ROLL_OUT, this._graph.markerRollOutHandler);
+				marker.removeEventListener(MouseEvent.CLICK, this._graph.markerClickHandler);
+				marker.removeEventListener(MouseEvent.DOUBLE_CLICK, this._graph.markerDoubleClickHandler);
 				this.removeChild(marker);
 				--len;
 			}
@@ -239,10 +239,10 @@ package com.yahoo.infographics.series {
 				marker.series = this;
 				marker.skin = this._markerFactory.getSkinInstance(); 
 				InteractiveObject(marker).doubleClickEnabled = true;
-				marker.addEventListener(MouseEvent.ROLL_OVER, markerRollOverHandler, false, 0, true);
-				marker.addEventListener(MouseEvent.ROLL_OUT, markerRollOutHandler, false, 0, true);
-				marker.addEventListener(MouseEvent.CLICK, markerClickHandler, false, 0, true);
-				marker.addEventListener(MouseEvent.DOUBLE_CLICK, markerDoubleClickHandler, false, 0, true);
+				marker.addEventListener(MouseEvent.ROLL_OVER, this._graph.markerRollOverHandler, false, 0, true);
+				marker.addEventListener(MouseEvent.ROLL_OUT, this._graph.markerRollOutHandler, false, 0, true);
+				marker.addEventListener(MouseEvent.CLICK, this._graph.markerClickHandler, false, 0, true);
+				marker.addEventListener(MouseEvent.DOUBLE_CLICK, this._graph.markerDoubleClickHandler, false, 0, true);
 			}
 			this.addChild(marker);	
 			return marker;
@@ -261,10 +261,10 @@ package com.yahoo.infographics.series {
 			while(len > 0)
 			{
 				marker = SeriesMarker(cache.shift());
-				marker.removeEventListener(MouseEvent.ROLL_OVER, markerRollOverHandler);
-				marker.removeEventListener(MouseEvent.ROLL_OUT, markerRollOutHandler);
-				marker.removeEventListener(MouseEvent.CLICK, markerClickHandler);
-				marker.removeEventListener(MouseEvent.DOUBLE_CLICK, markerDoubleClickHandler);
+				marker.removeEventListener(MouseEvent.ROLL_OVER, this._graph.markerRollOverHandler);
+				marker.removeEventListener(MouseEvent.ROLL_OUT, this._graph.markerRollOutHandler);
+				marker.removeEventListener(MouseEvent.CLICK, this._graph.markerClickHandler);
+				marker.removeEventListener(MouseEvent.DOUBLE_CLICK, this._graph.markerDoubleClickHandler);
 				this.removeChild(marker);
 				--len;
 			}
@@ -284,7 +284,7 @@ package com.yahoo.infographics.series {
 				index:int = marker.index,
 				xvalue:String = this._xAxisMode.getLabelByIndex(xkey, index),
 				yvalue:String = this._yAxisMode.getLabelByIndex(ykey, index); 
-			this.dispatchEvent(new GraphEvent(GraphEvent.ITEM_ROLL_OVER, false, false, index, marker, series)); 
+			this.dispatchEvent(new MarkerEvent(MarkerEvent.ITEM_ROLL_OVER, series, index, marker)); 
 		}
 
 		/**
@@ -300,7 +300,7 @@ package com.yahoo.infographics.series {
 				index:int = marker.index,
 				xvalue:String = this._xAxisMode.getLabelByIndex(xkey, index),
 				yvalue:String = this._yAxisMode.getLabelByIndex(ykey, index); 
-			this.dispatchEvent(new GraphEvent(GraphEvent.ITEM_ROLL_OUT, false, false, index, marker, series)); 
+			this.dispatchEvent(new MarkerEvent(MarkerEvent.ITEM_ROLL_OUT, series, index, marker)); 
 		}
 		
 		/**
@@ -316,7 +316,7 @@ package com.yahoo.infographics.series {
 				index:int = marker.index,
 				xvalue:String = this._xAxisMode.getLabelByIndex(xkey, index),
 				yvalue:String = this._yAxisMode.getLabelByIndex(ykey, index); 
-			this.dispatchEvent(new GraphEvent(GraphEvent.ITEM_CLICK, false, false, index, marker, series)); 
+			this.dispatchEvent(new MarkerEvent(MarkerEvent.ITEM_CLICK, series, index, marker)); 
 		}
 		
 		/**
@@ -332,7 +332,7 @@ package com.yahoo.infographics.series {
 				index:int = marker.index,
 				xvalue:String = this._xAxisMode.getLabelByIndex(xkey, index),
 				yvalue:String = this._yAxisMode.getLabelByIndex(ykey, index); 
-			this.dispatchEvent(new GraphEvent(GraphEvent.ITEM_DOUBLE_CLICK, false, false, index, marker, series)); 
+			this.dispatchEvent(new MarkerEvent(MarkerEvent.ITEM_DOUBLE_CLICK, series, index, marker)); 
 		}
 	}
 }

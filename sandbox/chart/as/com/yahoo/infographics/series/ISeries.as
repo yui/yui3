@@ -2,9 +2,21 @@ package com.yahoo.infographics.series
 {
 	import com.yahoo.infographics.data.AxisData;
 	import com.yahoo.infographics.cartesian.Graph;
+	import com.yahoo.infographics.axes.IAxisMode;
+	import flash.events.IEventDispatcher;
+	import com.yahoo.renderers.styles.IStyle;
 
-	public interface ISeries
+	public interface ISeries extends IStyle
 	{
+		/**
+		 * Indicates the direction of the graph.
+		 *	<ul>
+		 *		<li><code>horizontal</code>:direction for column series. Default direction for line and plot series.</li>
+		 *		<li><code>vertical</code>:direction for bar series.</li>
+		 *	</ul>
+		 */
+		function get direction():String;
+
 		/**
 		 * <code>AxisData</code> instance that contains data for the x axis.
 		 */
@@ -111,6 +123,7 @@ package com.yahoo.infographics.series
 		function set graph(value:Graph):void;
 
 		/**
+		 * Zero-based index reflecting the number of series in a given graph. 
 		 */
 		function get graphOrder():int;
 
@@ -118,5 +131,25 @@ package com.yahoo.infographics.series
 		 * @private (setter)
 		 */
 		function set graphOrder(value:int):void;
+
+		/**
+		 * Algorithm for calculating x axis labels based on the axis type.
+		 */
+		function get xAxisMode():IAxisMode;
+
+		/**
+		 * Algorithm for calculating y axis labels based on the axis type.
+		 */
+		function get yAxisMode():IAxisMode;
+		
+		/**
+		 * Display name for the series.
+		 */
+		function get displayName():String;
+
+		/**
+		 * @private (setter)
+		 */
+		function set displayName(value:String):void;
 	}
 }

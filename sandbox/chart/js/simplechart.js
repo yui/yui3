@@ -32,9 +32,11 @@
 		}
 		this._parseConfig(config);
 		this._chartConfig.parent = p_oElement;
-		this.chart = new Y.Chart(this._chartConfig);
-		this.xaxis = new Y.Axis({parent:this.chart, axisType:this._xAxisProps.type, styles:this._xaxisstyles});
-		this.yaxis = new Y.Axis({parent:this.chart, axisType:this._yAxisProps.type, styles:this._yaxisstyles});
+		this.app = new Y.SWFApplication(this._chartConfig);
+		this.chart = new Y.BorderContainer({parent:this.app, styles:this._chartstyles});
+		this.app.addItem(this.chart);
+		this.xaxis = new Y.Axis({parent:this.app, axisType:this._xAxisProps.type, styles:this._xaxisstyles});
+		this.yaxis = new Y.Axis({parent:this.app, axisType:this._yAxisProps.type, styles:this._yaxisstyles});
 		this.data = {};
 		this.graph = null;
 		
@@ -66,15 +68,15 @@
 		setData: function(data /*:Object*/, xkey /*:String*/, ykey /*:String*/)
 		{
 			this.data = data;
-			var chart = this.chart, xaxis = this.xaxis, yaxis = this.yaxis, graph = this.graph, styles = this._graphstyles;
+			var chart = this.chart, app = this.app, xaxis = this.xaxis, yaxis = this.yaxis, graph = this.graph, styles = this._graphstyles;
 
-			chart.set("dataProvider", data);
+			app.set("dataProvider", data);
 			xaxis.addKey(this._xAxisProps.key);
 			yaxis.addKey(this._yAxisProps.key);
 			
 			if (this._type == "line") 
 			{
-				graph = new Y.LineGraph({parent:chart, xaxis:xaxis, yaxis:yaxis, xkey:xkey, ykey:ykey, styles:styles});
+				graph = new Y.Graph({parent:chart, seriesCollection:[{type:this._type, xAxisData:xaxis, yAxisData:yaxis, xKey:xkey, yKey:ykey, styles:styles}]});
 			}
 			chart.addBottomItem(xaxis);
 			chart.addLeftItem(yaxis);
@@ -82,16 +84,17 @@
 		},
 
 		_chartstyles:{
-			chart:{
 				padding:{
 					left:20, top:20, bottom:20, right:20
 				}
-			}, 
+
+		},
+		
+		_appstyles:{
 			background:{
 				fillColor:0xDEE2FF,
 				borderColor:0xDEE2FF
 			}
-
 		},
 
 		_xaxisstyles:{
@@ -117,7 +120,10 @@
 		_graphstyles:{
 			color:0x000000,
 			alpha:1,
-			weight:"2"
+			weight:"2",
+			marker:{
+				fillColor:0x000000
+			}
 		},
 
 		_parseConfig: function(config)
@@ -180,11 +186,11 @@
 					styles = config.styles;
 					if(styles.hasOwnProperty("chart"))
 					{
-						this._chartstyles.chart = this._parseStyles(this._chartstyles.chart, styles.chart);
+						this._chartstyles = this._parseStyles(this._chartstyles, styles.chart);
 					}
 					if(styles.hasOwnProperty("background"))
 					{
-						this._chartstyles.background = this._parseStyles(this._chartstyles.background, styles.background);
+						this._appstyles.background = this._parseStyles(this._appstyles.background, styles.background);
 					}
 					if(styles.hasOwnProperty("xaxisstyles"))
 					{
@@ -214,7 +220,7 @@
 					this._graphstyles.padding = {left:50, right:50};
 				}
 			}
-			this._chartConfig.styles = this._chartstyles;
+			this._chartConfig.styles = this._appstyles;
 		},
 
 		_chartConfig:{},
