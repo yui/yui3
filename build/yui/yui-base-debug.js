@@ -19,19 +19,24 @@ if (typeof YUI === 'undefined') {
  * @constructor
  * @global
  * @uses EventTarget
- * @param o* Up to five optional configuration objects.  This object is stored
- * in YUI.config.  See config for the list of supported properties.
+ * @param o* 0..n optional configuration objects.  these values
+ * are store in Y.config.  See config for the list of supported 
+ * properties.
  */
     /*global YUI*/
     /*global YUI_config*/
-    var YUI = function(o1, o2, o3, o4, o5) {
+    var YUI = function() {
 
         var Y = this, a = arguments, i, l = a.length,
             globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
-            return new YUI(o1, o2, o3, o4, o5);
+            Y = new YUI();
+            for (i=0; i<l; i++) {
+                Y._config(a[i]);
+            }
+            return Y; 
         } else {
             // set up the core environment
             Y._init();
