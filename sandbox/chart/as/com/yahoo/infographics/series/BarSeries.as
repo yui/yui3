@@ -12,6 +12,20 @@ package com.yahoo.infographics.series
 		}
 		
 		/**
+		 * @private 
+		 * Storage for direction
+		 */
+		private var _direction:String = "vertical";
+
+		/**
+		 * @private (override)
+		 */
+		override public function get direction():String
+		{
+			return this._direction;
+		}
+
+		/**
 		 * @private (protected)
 		 */
 		private var _type:String = "bar";
@@ -80,6 +94,7 @@ package com.yahoo.infographics.series
 			for(i = 0;i < len; ++i)
 			{
 				marker = this.getMarker();
+				marker.index = i;
 				marker.x = origin;
 				marker.y = Number(ycoords[i]) + offset;
 				marker.width = Number(xcoords[i]) - origin;

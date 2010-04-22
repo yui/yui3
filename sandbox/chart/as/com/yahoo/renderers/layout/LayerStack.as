@@ -47,6 +47,10 @@ package com.yahoo.renderers.layout
 			for(var i:int = 0; i < len; i++)
 			{
 				var item:DisplayObject = items[i] as DisplayObject;
+				if(this.childData[item].excludeFromLayout)
+				{
+					continue;
+				}
 				item.x = this._leftPadding;
 				item.y = this._topPadding;
 				item.width = wid;

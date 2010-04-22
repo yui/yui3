@@ -5,6 +5,8 @@ package com.yahoo.util
 	import flash.external.ExternalInterface;
 	import flash.utils.getDefinitionByName;
 	import com.adobe.serialization.json.JSON;
+	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 
 	public class YUIBridge extends Object
 	{
@@ -81,9 +83,9 @@ package com.yahoo.util
 			var cA:Array = constructorArguments ? constructorArguments : [];
 			var classReferenceObject:Object = this.getClass(className);
 			var instance:Object;
-			
-			cA = this.parseArgs(cA);
 
+			cA = this.parseArgs(cA);
+		
 			if(classReferenceObject is Class)
 			{
 				var classReference:Class = classReferenceObject as Class;
@@ -111,7 +113,7 @@ package com.yahoo.util
 				instance = classFunction.apply(this, cA);
 			}
 			
-			_instances[instanceId] = instance;	
+			_instances[instanceId] = instance;
 		}
 
 		/**
@@ -210,11 +212,42 @@ package com.yahoo.util
 		}
 
 		/**
+		 * Allows for js class to subscribe to an as class' event
+		 */
+		public function subscribe(instanceId:String, type:String, func:String):void
+		{
+			var yId:String = this._yId;
+			var dispatcher:IEventDispatcher = this._instances[instanceId] as IEventDispatcher;
+			var callback:Function = this.eventHandlerFactory(yId, instanceId, func);
+			dispatcher.addEventListener(type, callback);
+		}
+
+		/**
+		 * Adds a js function reference as a listener to an event dispatcher.
+		 */
+		public function eventHandlerFactory(yId:String, instanceId:String, func:String):Function
+		{
+			var handler:Function = function(event:Event):void
+			{
+				var evt:Object = {};
+				evt.type = event.type;
+				if(ExternalInterface.available)
+				{
+					ExternalInterface.call("YUI.applyTo", yId, func, [instanceId, evt]);
+				}
+			}
+			return handler;
+		}
+		
+		/**
 		 * Adds classes to the class hash
 		 */
 		public function addClasses(value:Object):void
 		{
-			for(var i:String in value) this._classHash[i] = value[i];
+			for(var i:String in value) 
+			{
+				this._classHash[i] = value[i];
+			}
 		}
 
 		/**
@@ -326,6 +359,7 @@ package com.yahoo.util
 			ExternalInterface.addCallback("exposeMethod", exposeMethod);
 			ExternalInterface.addCallback("getProperty", getProperty);
 			ExternalInterface.addCallback("setProperty", setProperty);
+			ExternalInterface.addCallback("subscribe", subscribe);
 		}
 
 		/**

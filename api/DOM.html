@@ -339,15 +339,29 @@ Used for browsers without contains support for non-HTMLElement Nodes (textNodes,
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">content</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        &lt;<span property="yui:type">String | HTMLElement</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> The content to be inserted</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">where</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        &lt;<span property="yui:type">String | HTMLElement</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> Where to insert the content; default is after lastChild</span>
+                                                        <span property="yui:description"> Where to insert the content
+If no "where" is given, content is appended to the node
+Possible values for "where"
+<dl>
+<dt>HTMLElement</dt>
+<dd>The element to insert before</dd>
+<dt>"replace"</dt>
+<dd>Replaces the existing HTML</dd>
+<dt>"before"</dt>
+<dd>Inserts before the existing HTML</dd>
+<dt>"before"</dt>
+<dd>Inserts content before the node</dd>
+<dt>"after"</dt>
+<dd>Inserts content after the node</dd>
+</dl></span>
                                                         </dd>
                                                 </dl>
 

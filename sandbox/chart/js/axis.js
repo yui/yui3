@@ -65,6 +65,8 @@ Axis.ATTRS = {
  */
 Y.extend(Axis, Y.SWFWidget, 
 {
+	_events: {},
+
 	GUID:"yuiaxis",
 
 	_axisType: "Numeric",
@@ -99,6 +101,7 @@ Y.extend(Axis, Y.SWFWidget,
 			}
 		}
 		this.appswf.createInstance(this._id, "Axis", ["$" + this._dataId]);
+		this._addSWFEventListeners();
 		this.swfReadyFlag = true;
 	},
 	

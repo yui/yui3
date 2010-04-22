@@ -3,7 +3,7 @@ package com.yahoo.infographics.series
 	import com.yahoo.renderers.Renderer;
 	import com.yahoo.infographics.styles.HistogramStyles;
 	import com.yahoo.infographics.series.ISeries;
-	import flash.display.Sprite;
+	
 	public class ColumnSeries extends PlotSeries
 	{
 		public function ColumnSeries(series:Object)
@@ -94,6 +94,7 @@ package com.yahoo.infographics.series
 			for(i = 0;i < len; ++i)
 			{
 				marker = this.getMarker();
+				marker.index = i;
 				marker.x = Number(xcoords[i]) + offset;
 				marker.y = Number(ycoords[i]);
 				marker.height = origin - marker.y;

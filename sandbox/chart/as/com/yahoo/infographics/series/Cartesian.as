@@ -38,6 +38,20 @@ package com.yahoo.infographics.series
 
 		/**
 		 * @private 
+		 * Storage for direction
+		 */
+		private var _direction:String = "horizontal";
+
+		/**
+		 * @copy com.yahoo.infographics.series.ISeries#direction
+		 */
+		public function get direction():String
+		{
+			return this._direction;
+		}
+		
+		/**
+		 * @private 
 		 * Storage for hitTest
 		 *	<ul>
 		 * 		<li><code>marker</code>: events will be dispatched if the mouse intersects the marker.</li>
@@ -336,6 +350,28 @@ package com.yahoo.infographics.series
 		}
 
 		/**
+		 * @private
+		 */
+		private var _displayName:String;
+
+		/**
+		 * @copy com.yahoo.infographics.series.ISeries#displayName
+		 */
+		public function get displayName():String
+		{
+			if(this._displayName)
+			{
+				return this._displayName;
+			}
+			return this._yKey;
+		}
+
+		public function set displayName(value:String):void
+		{
+			this._displayName = value;
+		}
+
+		/**
 		 * @private (protected)
 		 */
 		protected var _topPadding:Number = 0;
@@ -588,6 +624,10 @@ package com.yahoo.infographics.series
 			if(series.hasOwnProperty("hitTest"))
 			{
 				this._hitTest = series.hitTest;
+			}
+			if(series.hasOwnProperty("displayName"))
+			{
+				this.displayName = series.displayName;
 			}
 		}
 
