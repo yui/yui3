@@ -743,6 +743,7 @@ Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.
      * @method hasClass
+     * @for DOM
      * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to search for
      * @return {Boolean} Whether or not the element has the given class. 
@@ -755,6 +756,7 @@ Y.mix(Y.DOM, {
     /**
      * Adds a class name to a given DOM element.
      * @method addClass         
+     * @for DOM
      * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to add to the class attribute
      */
@@ -767,6 +769,7 @@ Y.mix(Y.DOM, {
     /**
      * Removes a class name from a given element.
      * @method removeClass         
+     * @for DOM
      * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to remove from the class attribute
      */
@@ -785,6 +788,7 @@ Y.mix(Y.DOM, {
      * Replace a class with another class for a given element.
      * If no oldClassName is present, the newClassName is simply added.
      * @method replaceClass  
+     * @for DOM
      * @param {HTMLElement} element The DOM element 
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
@@ -798,6 +802,7 @@ Y.mix(Y.DOM, {
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
      * @method toggleClass  
+     * @for DOM
      * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled
      * @param {Boolean} addClass optional boolean to indicate whether class
@@ -1820,6 +1825,7 @@ var TOP = 'top',
 Y.mix(DOM, {
     /**
      * Returns an Object literal containing the following about this element: (top, right, bottom, left)
+     * @for DOM
      * @method region
      * @param {HTMLElement} element The DOM element. 
      @return {Object} Object literal containing the following about this element: (top, right, bottom, left)
@@ -1843,6 +1849,7 @@ Y.mix(DOM, {
     /**
      * Find the intersect information for the passes nodes.
      * @method intersect
+     * @for DOM
      * @param {HTMLElement} element The first element 
      * @param {HTMLElement | Object} element2 The element or region to check the interect with
      * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance i.e. DragDrop)
@@ -1877,6 +1884,7 @@ Y.mix(DOM, {
     /**
      * Check if any part of this node is in the passed region
      * @method inRegion
+     * @for DOM
      * @param {Object} node2 The node to get the region from or an Object literal of the region
      * $param {Boolean} all Should all of the node be inside the region
      * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
@@ -1916,6 +1924,7 @@ Y.mix(DOM, {
     /**
      * Check if any part of this element is in the viewport
      * @method inViewportRegion
+     * @for DOM
      * @param {HTMLElement} element The DOM element. 
      * @param {Boolean} all Should all of the node be inside the region
      * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
@@ -1942,7 +1951,8 @@ Y.mix(DOM, {
     /**
      * Returns an Object literal containing the following about the visible region of viewport: (top, right, bottom, left)
      * @method viewportRegion
-     @return {Object} Object literal containing the following about the visible region of the viewport: (top, right, bottom, left)
+     * @for DOM
+     * @return {Object} Object literal containing the following about the visible region of the viewport: (top, right, bottom, left)
      */
     viewportRegion: function(node) {
         node = node || Y.config.doc.documentElement;
