@@ -1043,6 +1043,7 @@ Y.mix(Y_Node.prototype, {
     * This is not stored with the DOM node.
     * @param {string} name The name of the field to set. If no name
     * is given, name is treated as the data and overrides any existing data.
+    * @param {any} val The value to be assigned to the field.
     * @chainable
     */
     setData: function(name, val) {
