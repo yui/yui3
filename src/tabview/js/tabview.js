@@ -73,11 +73,18 @@ var _queries = Y.TabviewBase._queries,
 
     },
 
-    _setDefSelection: function() {
+    _setDefSelection: function(contentBox) {
         //  If no tab is selected, select the first tab.
-        var firstItem = this.item(0);
-        if (!this.get('selection') && firstItem) {
-            firstItem.set('selected', 1);
+        var selection = this.get('selection') || this.item(0);
+
+        this.some(function(tab) {
+            if (tab.get('selected')) {
+                selection = tab;
+                return true;
+            }
+        });
+        if (selection) {
+            selection.set('selected', 1);
         }
     },
 
@@ -117,7 +124,7 @@ var _queries = Y.TabviewBase._queries,
                     boundingBox: node,
                     contentBox: node.one(DOT + _classNames.tabLabel),
                     label: node.one(DOT + _classNames.tabLabel).get('text'),
-                    content: panelNode ? panelNode.get('innerHTML') : null
+                    panelNode: panelNode
                 });
             });
         }
