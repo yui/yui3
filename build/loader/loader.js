@@ -789,6 +789,18 @@ Y.Loader.prototype = {
 
         this.moduleInfo[name] = o;
 
+        if (!o.langPack) {
+            langs = YArray(o.lang);
+            for (j=0; j < langs.length; j++) {
+                lang = langs[j];
+                packName = this.getLangPackName(lang, name);
+                smod = this.moduleInfo[packName];
+                if (!smod) {
+                    smod = this._addLangPack(lang, o, packName);
+                }
+            }
+        }
+
 
         if (subs) {
             sup = o.supersedes || []; 
@@ -1083,7 +1095,7 @@ Y.Loader.prototype = {
      */
     _setup: function() {
         var info = this.moduleInfo, name, i, j, m, o, l, smod,
-            langs, lang, packName;
+            packName;
         for (name in info) {
             if (info.hasOwnProperty(name)) {
                 m = info[name];
@@ -1110,12 +1122,12 @@ Y.Loader.prototype = {
 
                 // Create lang pack modules
                 if (m && m.lang && m.lang.length) {
-                    langs = YArray(m.lang);
-                    for (i=0; i<langs.length; i=i+1) {
-                        lang = langs[i];
-                        packName = this.getLangPackName(lang, name);
-                        this._addLangPack(lang, m, packName);
-                    }
+                    // langs = YArray(m.lang);
+                    // for (i=0; i<langs.length; i=i+1) {
+                    //     lang = langs[i];
+                    //     packName = this.getLangPackName(lang, name);
+                    //     this._addLangPack(lang, m, packName);
+                    // }
 
                     // Setup root package if the module has lang defined, 
                     // it needs to provide a root language pack
