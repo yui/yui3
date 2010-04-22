@@ -148,7 +148,6 @@ Y.TabviewBase = TabviewBase;
 var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
     DOT = '.',
-    _isGeckoIEWin = ((Y.UA.gecko || Y.UA.ie) && navigator.userAgent.indexOf("Windows") > -1),
     getClassName = Y.ClassNameManager.getClassName,
 
     /**
@@ -188,22 +187,6 @@ var _queries = Y.TabviewBase._queries,
                 //'aria-labelledby': 
                 role: tablist
             });
-        }
-
-        //  Since the anchor's "href" attribute has been removed, the
-        //  element will not fire the click event in Firefox when the
-        //  user presses the enter key.  To fix this, dispatch the
-        //  "click" event to the anchor when the user presses the
-        //  enter key.
-     
-        if (_isGeckoIEWin) {
-            tabView.delegate('keydown', function (event) {
-                if (event.charCode === 13) {
-                    this.simulate("click");
-                }
-     
-            }, ">ul>li>a");
-     
         }
     },
 
@@ -302,7 +285,6 @@ Y.TabView = TabView;
 var Lang = Y.Lang,
     _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
-    _isGeckoIEWin = ((Y.UA.gecko || Y.UA.ie) && navigator.userAgent.indexOf("Windows") > -1),
     getClassName = Y.ClassNameManager.getClassName;
 
 /**
@@ -349,16 +331,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         anchor.get('parentNode').set('role', 'presentation');
  
  
-        //  Remove the "href" attribute from the anchor element to
-        //  prevent JAWS and NVDA from reading the value of the "href"
-        //  attribute when the anchor is focused
- 
-        if (_isGeckoIEWin) {
-            anchor.removeAttribute('href');
-        }
- 
         //  Apply the ARIA roles, states and properties to each panel
- 
         panel.setAttrs({
             role: 'tabpanel',
             'aria-labelledby': id

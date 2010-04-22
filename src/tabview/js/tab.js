@@ -1,7 +1,6 @@
 var Lang = Y.Lang,
     _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
-    _isGeckoIEWin = ((Y.UA.gecko || Y.UA.ie) && navigator.userAgent.indexOf("Windows") > -1),
     getClassName = Y.ClassNameManager.getClassName;
 
 /**
@@ -48,16 +47,7 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         anchor.get('parentNode').set('role', 'presentation');
  
  
-        //  Remove the "href" attribute from the anchor element to
-        //  prevent JAWS and NVDA from reading the value of the "href"
-        //  attribute when the anchor is focused
- 
-        if (_isGeckoIEWin) {
-            anchor.removeAttribute('href');
-        }
- 
         //  Apply the ARIA roles, states and properties to each panel
- 
         panel.setAttrs({
             role: 'tabpanel',
             'aria-labelledby': id
