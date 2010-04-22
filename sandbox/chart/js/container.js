@@ -145,6 +145,7 @@
 				this.addItem(item.item, item.props);
 			}
 			this._updateStyles();
+			this._addSWFEventListeners();
 		},
 
 		/**
@@ -188,6 +189,7 @@
 			}
 		},
 
+		_events: {},
 		/**
 		 * @private
 		 *

@@ -23,6 +23,20 @@ function SWFWidget (config)
 
 SWFWidget.NAME = "swfWidget";
 
+SWFWidget._instances = SWFWidget._instances || {};
+
+/**
+ * Handles an event from the application swf in which a listener has been
+ * registered through an instance of SWFWidget. 
+ * @method eventHandler
+ * @param swfid {String} the id of the SWF dispatching the event
+ * @param event {Object} the event being transmitted.
+ * @private
+ */
+SWFWidget.eventHandler = function (swfid, event) {
+	SWFWidget._instances[swfid]._eventHandler(event);
+};
+
 /**
  * Attribute config
  * @private
@@ -92,6 +106,7 @@ Y.extend(SWFWidget, Y.Base,
 	_createId: function()
 	{
 		this._id = Y.guid(this.GUID);
+		SWFWidget._instances[this._id] = this;
 	},
 
 	/**
@@ -214,6 +229,50 @@ Y.extend(SWFWidget, Y.Base,
 				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
+	},
+
+	_events: {},
+
+	_init: function(swfowner)
+	{
+		this.swfowner = swfowner;
+		this.appswf = swfowner.appswf;
+		this._addSWFEventListeners();
+	},
+
+	_addSWFEventListeners: function()
+	{
+		var events = this._events,
+			i;
+		for(i in events)
+		{
+			if(events.hasOwnProperty(i) && !events[i].registered)
+			{
+				events[i].registered = true;
+				this.appswf._swf._node.subscribe(this._id, i, "SWFWidget.eventHandler"); 
+		
+			}
+		}
+	},
+
+	on: function(type , fn , context , arg)
+	{
+		var events = this._events;
+		if(!this._events.hasOwnProperty(type))
+		{
+			events[type] = {type:type, args:arguments, registered:false};
+			if(this.swfowner && this.swfowner.swfReady)
+			{
+				events[type].registered = true;
+				this.appswf._swf._node.subscribe(this._id, type, "SWFWidget.eventHandler"); 
+			}
+		}
+		SWFWidget.superclass.on.apply(this, arguments);
+	},
+
+	_eventHandler: function(event)
+	{
+		this.fire(event.type, event);
 	}
 });
 
@@ -365,6 +424,7 @@ Y.SWFWidget = SWFWidget;
 				this.addItem(item.item, item.props);
 			}
 			this._updateStyles();
+			this._addSWFEventListeners();
 		},
 
 		/**
@@ -408,6 +468,7 @@ Y.SWFWidget = SWFWidget;
 			}
 		},
 
+		_events: {},
 		/**
 		 * @private
 		 *
@@ -419,238 +480,49 @@ Y.SWFWidget = SWFWidget;
 
 	Y.Container = Container;
 /**
- * Creates a BorderContainer for use in a chart application.
- *
- *
- * Note: BorderContainer is a temporary class that has been created for the purposes of observing and testing the current state of the underlying flash chart rendering engine. This file
- * will be replaced in future iterations and its api will vary significantly. 
- */
-	/**
-	 * Complex Container that allows for items to be added to the following child
-	 * containers:
-	 * 	<ul>
-	 *		<li><code>topContainer</code>: A <code>VFlowLayout</code> Container positioned at the top of the BorderContainer.</li>
-	 *		<li><code>rightContainer</code>: An <code>HFlowLayout</code> Container positioned at the right of the BorderContainer.</li>
-	 *		<li><code>bottomContainer</code>: A <code>VFlowLayout</code> Container positioned at the bottom of the BorderContainer.</li>
-	 *		<li><code>leftContainer</code>: An <code>HFlowLayout</code> Container positioned at the left of the BorderContainer.</li>
-	 *		<li><code>centerContainer</code>: A <code>LayerStack</code> Container positioned at the center of the BorderContainer.</li>
-	 * 	</ul>
-	 *
-	 * @extends Container
-	 * @class BorderContainer
-	 * @param {Object} config Configuration parameters for the Chart.
-	 */
-	function BorderContainer (config) 
-	{
-		BorderContainer.superclass.constructor.apply(this, arguments);
-	}
-
-	BorderContainer.NAME = "borderContainer";
-
-	/**
-	 * Need to refactor to augment Attribute
-	 */
-	Y.extend(BorderContainer, Y.Container,
-	{
-		/**
-		 * Constant used to generate unique id.
-		 */
-		GUID: "yuibordercontainer",
-
-		/**
-		 * Hash containing an array of child items for each child container in the 
-		 * BorderContainer. The child items are store here until the application swf
-		 * has been initalized. Upon initialization, they will be added.
-		 */
-		itemsQueue: {},
-		
-		/**
-		 * Reference to corresponding Actionscript class.
-		 */
-		AS_CLASS:"BorderContainer",
-		
-		/**
-		 * Reference to the layout strategy used for displaying child items.
-		 */
-		layout:  "LayoutStrategy",
-
-		/**
-		 * Initialized class instance after the application swf has initialized.
-		 *
-		 * @method _init
-		 * @param {Object} reference to the class that has direct communication with the application swf.
-		 * @private
-		 */
-		_init: function(swfowner)
-		{
-			var i, itemsArray;
-			this.swfowner = swfowner;
-			this.appswf = this.swfowner.appswf;
-			this.swfReadyFlag = true;
-			this._updateStyles();
-			for(i in this.itemsQueue)
-			{
-				if(this.itemsQueue.hasOwnProperty(i))
-				{
-					itemsArray = this.itemsQueue[i];
-					while(itemsArray.length > 0)
-					{
-						this.addItem(itemsArray.shift(), i);
-					}
-				}
-			}
-		},
-		
-		/**
-		 * Adds an item to the bottom Container.
-		 *
-		 * @method addBottomItem
-		 * @param {Object} item child element
-		 */
-		addBottomItem: function (item)
-		{
-			this.addItem(item, "bottom");
-		},
-		
-		/**
-		 * Adds an item to the left Container.
-		 *
-		 * @method addLeftItem
-		 * @param {Object} item child element
-		 */
-		addLeftItem: function (item) 
-		{
-			this.addItem(item, "left");
-		},
-		
-		/**
-		 * Adds an item to the top Container.
-		 *
-		 * @method addTopItem
-		 * @param {Object} item child element
-		 */
-		addTopItem: function (item)
-		{
-			this.addItem(item, "top");
-		},
-		
-		/**
-		 * Adds an item to the right Container.
-		 *
-		 * @method addRightItem
-		 * @param {Object} item child element
-		 */
-		addRightItem: function (item) 
-		{
-			this.addItem(item, "right");
-		},
-
-		/**
-		 * Adds an item to the center Container.
-		 *
-		 * @method addCenterItem
-		 * @param {Object} item child element
-		 */
-		addCenterItem: function (item)
-		{
-			this.addItem(item, "center");
-		},		
-		
-		/**
-		 * Adds children to the appropriate Container.
-		 *	<ul>
-		 *		<li>Adds an item to the specified child container if the application swf has initialized.</li>
-		 *		<li>Adds an item to the appropriate aray in the <code>itemsQueue</code> hash to be stored until the application swf 
-		 *		has been initialized.</li>
-		 *	</ul>
-		 * @method addItem
-		 * @param {Object} item child to be added
-		 * @param {String} location location of the container in which the child will be added.
-		 */
-		addItem: function (item, location)
-		{
-			var locationToUpperCase = (location.charAt(0)).toUpperCase() + location.substr(1);
-			if (this.swfReadyFlag) 
-			{
-				item._init(this.swfowner);
-				this.appswf.applyMethod(this._id, "add" + locationToUpperCase + "Item", ["$" + item._id]);
-				if (location != "center")
-				{
-					item.set("styles", {position: location});
-				}
-			}
-			else
-			{
-				if(!this.itemsQueue || !this.itemsQueue.hasOwnProperty(location))
-				{
-					this.itemsQueue[location] = [];
-				}
-				this.itemsQueue[location].push(item);
-			}
-		}
-	});
-/**
  * Create data visualizations with line graphs, histograms, and other methods.
- * @module chart
+ * @module swfApplication
  *
  *
- * Note: Chart is a temporary class that has been created for the purposes of observing and testing the current state of the underlying flash chart rendering engine. This file
+ * Note: SWFApplication is a temporary class that has been created for the purposes of observing and testing the current state of the underlying flash swfApplication rendering engine. This file
  * will be replaced in future iterations and its api will vary significantly. 
  */
 	/**
-	 * The Chart widget is a tool for creating Cartesian data visualizations.
-	 * @module chart
-	 * @title Chart
+	 * The SWFApplication widget is a tool for creating Cartesian data visualizations.
+	 * @module swfApplication
+	 * @title SWFApplication
 	 * @requires yahoo, dom, event
 	 * @namespace YAHOO.widget
 	 */
 	/**
-	 * Creates the Chart instance and contains initialization data
+	 * Creates the SWFApplication instance and contains initialization data
 	 *
-	 * @class Chart
+	 * @class SWFApplication
 	 * @extends Y.Container
 	 * @constructor
-	 * @param {Object} config Configuration parameters for the Chart.
+	 * @param {Object} config Configuration parameters for the SWFApplication.
 	 * 	<ul>
-	 * 		<li><code>parent</code>: {String} id of dom element to be used as a container for the chart swf</li>
+	 * 		<li><code>parent</code>: {String} id of dom element to be used as a container for the swfApplication swf</li>
 	 * 		<li><code>flashvar</code>:hash of key value pairs that can be passed to the swf.</li>
 	 * 		<li><code>autoLoad</code>:indicates whether the loadswf method will be automatically called on instantiation.</li>
-	 * 		<li><code>styles/code>:hash of style properties to be applied to the Chart application.</li>
+	 * 		<li><code>styles/code>:hash of style properties to be applied to the SWFApplication application.</li>
 	 * 	</ul>	
 	 */
-	function Chart ( config ) 
+	function SWFApplication ( config ) 
 	{
-		Chart.superclass.constructor.apply(this, arguments);
+		SWFApplication.superclass.constructor.apply(this, arguments);
 		this._dataId = this._id + "data";
 	}
 
-	Chart.NAME = "chart";
+	SWFApplication.NAME = "swfApplication";
 
-	Chart.ATTRS = {
+	SWFApplication.ATTRS = {
 		/**
 		 * URL used for swf
 		 */
 		swfurl:
 		{
 			value: Y.config.base + "chart/assets/cartesiancanvas.swf"
-		},
-
-		/**
-		 * Reference to the BorderContainer instance that contains graphs and axes of a cartesian chart.
-		 */
-		chartContainer: 
-		{
-			value: null
-		},
-
-		chartContainerParent:
-		{
-			value:this,
-			
-			validator: function(val)
-			{
-				return (val instanceof SWFWidget);
-			}
 		},
 
 		/**
@@ -753,7 +625,7 @@ Y.SWFWidget = SWFWidget;
 			value: null
 		},
 		/**
-		 * Reference to the dataProvider for the chart.
+		 * Reference to the dataProvider for the SWFApplication.
 		 * @private
 		 */
 		dataProvider: 
@@ -774,8 +646,9 @@ Y.SWFWidget = SWFWidget;
 		}
 	};
 	
-	Y.extend(Chart, Y.Container, 
+	Y.extend(SWFApplication, Y.Container, 
 	{
+		_events: {},
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
@@ -784,10 +657,10 @@ Y.SWFWidget = SWFWidget;
 		/**
 		 * Constant used to generate unique id.
 		 */
-		GUID: "yuichart",
+		GUID: "yuiSWFApplication",
 
 		/**
-		 * Creates swf instance and event listeners for the chart application.
+		 * Creates swf instance and event listeners for the application.
 		 */
 		loadswf: function()
 		{
@@ -797,17 +670,6 @@ Y.SWFWidget = SWFWidget;
 
 		initializer: function(cfg)
 		{
-			var parent, chartContainer = this.get("chartContainer");
-			if(!chartContainer) 
-			{
-				this.set("chartContainer", new BorderContainer({parent:this, styles:this.get("styles")[this._styleObjHash.chart]}));
-				this._styleObjHash.chart = chartContainer = this.get("chartContainer");
-			}
-			if(!chartContainer.added)
-			{
-				parent = chartContainer.get("parent");
-				parent.addItem(chartContainer);
-			}
 			if(this.get("autoLoad"))
 			{
 				this.loadswf();
@@ -838,6 +700,8 @@ Y.SWFWidget = SWFWidget;
 				this.addItem(item.item, item.props);
 			}
 			this._updateStyles();
+			this._addSWFEventListeners();
+			this.fire("appReady");
 		},
 		
 		
@@ -854,56 +718,6 @@ Y.SWFWidget = SWFWidget;
 			}
 		},
 	
-		/**
-		 * Adds an item to the top subcontainer of the chartContainer instance.
-		 *
-		 * @param {Object} item to be added to the chartContainer instance.
-		 */
-		addTopItem: function (item)
-		{
-			this.get("chartContainer").addTopItem(item);
-		},
-		
-		/**
-		 * Adds an item to the right subcontainer of the chartContainer instance.
-		 *
-		 * @param {Object} item to be added to the chartContainer instance.
-		 */
-		addRightItem: function (item) 
-		{
-			this.get("chartContainer").addRightItem(item);
-		},
-
-		/**
-		 * Adds an item to the bottom subcontainer of the chartContainer instance.
-		 *
-		 * @param {Object} item to be added to the chartContainer instance.
-		 */
-		addBottomItem: function (item)
-		{
-			this.get("chartContainer").addBottomItem(item);
-		},
-		
-		/**
-		 * Adds an item to the left subcontainer of the chartContainer instance.
-		 *
-		 * @param {Object} item to be added to the chartContainer instance.
-		 */
-		addLeftItem: function (item) 
-		{
-			this.get("chartContainer").addLeftItem(item);
-		},
-		
-		/**
-		 * Adds an item to the center subcontainer of the chartContainer instance.
-		 *
-		 * @param {Object} item to be added to the chartContainer instance.
-		 */
-		addCenterItem: function (item)
-		{
-			this.get("chartContainer").addCenterItem(item);
-		},		
-		
 		/**
 		 * Adds an item to a container instance.
 		 *
@@ -942,11 +756,186 @@ Y.SWFWidget = SWFWidget;
 			}
 		},
 
-		_styleObjHash:{background:"background", chart:"chart"}
+		_styleObjHash:{background:"background"}
 	});
 
-Y.augment(Chart, Y.EventTarget);
-Y.Chart = Chart;
+Y.augment(SWFApplication, Y.EventTarget);
+Y.SWFApplication = SWFApplication;
+/**
+ * Creates a BorderContainer for use in a chart application.
+ *
+ *
+ * Note: BorderContainer is a temporary class that has been created for the purposes of observing and testing the current state of the underlying flash chart rendering engine. This file
+ * will be replaced in future iterations and its api will vary significantly. 
+ */
+	/**
+	 * Complex Container that allows for items to be added to the following child
+	 * containers:
+	 * 	<ul>
+	 *		<li><code>topContainer</code>: A <code>VFlowLayout</code> Container positioned at the top of the BorderContainer.</li>
+	 *		<li><code>rightContainer</code>: An <code>HFlowLayout</code> Container positioned at the right of the BorderContainer.</li>
+	 *		<li><code>bottomContainer</code>: A <code>VFlowLayout</code> Container positioned at the bottom of the BorderContainer.</li>
+	 *		<li><code>leftContainer</code>: An <code>HFlowLayout</code> Container positioned at the left of the BorderContainer.</li>
+	 *		<li><code>centerContainer</code>: A <code>LayerStack</code> Container positioned at the center of the BorderContainer.</li>
+	 * 	</ul>
+	 *
+	 * @extends Container
+	 * @class BorderContainer
+	 * @param {Object} config Configuration parameters for the Chart.
+	 */
+	function BorderContainer (config) 
+	{
+		BorderContainer.superclass.constructor.apply(this, arguments);
+	}
+
+	BorderContainer.NAME = "borderContainer";
+
+	/**
+	 * Need to refactor to augment Attribute
+	 */
+	Y.extend(BorderContainer, Y.Container,
+	{
+		_events: {},
+		/**
+		 * Constant used to generate unique id.
+		 */
+		GUID: "yuibordercontainer",
+
+		/**
+		 * Hash containing an array of child items for each child container in the 
+		 * BorderContainer. The child items are store here until the application swf
+		 * has been initalized. Upon initialization, they will be added.
+		 */
+		itemsQueue: {},
+		
+		/**
+		 * Reference to corresponding Actionscript class.
+		 */
+		AS_CLASS:"BorderContainer",
+		
+		/**
+		 * Reference to the layout strategy used for displaying child items.
+		 */
+		layout:  "LayoutStrategy",
+
+		/**
+		 * Initialized class instance after the application swf has initialized.
+		 *
+		 * @method _init
+		 * @param {Object} reference to the class that has direct communication with the application swf.
+		 * @private
+		 */
+		_init: function(swfowner)
+		{
+			var i, itemsArray;
+			this.swfowner = swfowner;
+			this.appswf = this.swfowner.appswf;
+			this.swfReadyFlag = true;
+			this._updateStyles();
+			for(i in this.itemsQueue)
+			{
+				if(this.itemsQueue.hasOwnProperty(i))
+				{
+					itemsArray = this.itemsQueue[i];
+					while(itemsArray.length > 0)
+					{
+						this.addItem(itemsArray.shift(), i);
+					}
+				}
+			}
+			this._addSWFEventListeners();
+		},
+		
+		/**
+		 * Adds an item to the bottom Container.
+		 *
+		 * @method addBottomItem
+		 * @param {Object} item child element
+		 */
+		addBottomItem: function (item)
+		{
+			this.addItem(item, "bottom");
+		},
+		
+		/**
+		 * Adds an item to the left Container.
+		 *
+		 * @method addLeftItem
+		 * @param {Object} item child element
+		 */
+		addLeftItem: function (item) 
+		{
+			this.addItem(item, "left");
+		},
+		
+		/**
+		 * Adds an item to the top Container.
+		 *
+		 * @method addTopItem
+		 * @param {Object} item child element
+		 */
+		addTopItem: function (item)
+		{
+			this.addItem(item, "top");
+		},
+		
+		/**
+		 * Adds an item to the right Container.
+		 *
+		 * @method addRightItem
+		 * @param {Object} item child element
+		 */
+		addRightItem: function (item) 
+		{
+			this.addItem(item, "right");
+		},
+
+		/**
+		 * Adds an item to the center Container.
+		 *
+		 * @method addCenterItem
+		 * @param {Object} item child element
+		 */
+		addCenterItem: function (item)
+		{
+			this.addItem(item, "center");
+		},		
+		
+		/**
+		 * Adds children to the appropriate Container.
+		 *	<ul>
+		 *		<li>Adds an item to the specified child container if the application swf has initialized.</li>
+		 *		<li>Adds an item to the appropriate aray in the <code>itemsQueue</code> hash to be stored until the application swf 
+		 *		has been initialized.</li>
+		 *	</ul>
+		 * @method addItem
+		 * @param {Object} item child to be added
+		 * @param {String} location location of the container in which the child will be added.
+		 */
+		addItem: function (item, location)
+		{
+			var locationToUpperCase = (location.charAt(0)).toUpperCase() + location.substr(1);
+			if (this.swfReadyFlag) 
+			{
+				item._init(this.swfowner);
+				this.appswf.applyMethod(this._id, "add" + locationToUpperCase + "Item", ["$" + item._id]);
+				if (location != "center")
+				{
+					item.set("styles", {position: location});
+				}
+			}
+			else
+			{
+				if(!this.itemsQueue || !this.itemsQueue.hasOwnProperty(location))
+				{
+					this.itemsQueue[location] = [];
+				}
+				this.itemsQueue[location].push(item);
+			}
+		}
+	});
+
+Y.BorderContainer = BorderContainer;
 
 function Graph (config) 
 {
@@ -1008,6 +997,7 @@ Graph.ATTRS = {
  */
 Y.extend(Graph, Y.Container, 
 {
+	_events: {},
 	GUID:"yuigraph",
 
 	/**
@@ -1040,6 +1030,7 @@ Y.extend(Graph, Y.Container,
 			this.appswf.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
 			this.fire("graphReady", {swfowner:swfowner});
 		}
+		this._addSWFEventListeners();
 	},
 
 	/**
@@ -1217,6 +1208,8 @@ Axis.ATTRS = {
  */
 Y.extend(Axis, Y.SWFWidget, 
 {
+	_events: {},
+
 	GUID:"yuiaxis",
 
 	_axisType: "Numeric",
@@ -1251,6 +1244,7 @@ Y.extend(Axis, Y.SWFWidget,
 			}
 		}
 		this.appswf.createInstance(this._id, "Axis", ["$" + this._dataId]);
+		this._addSWFEventListeners();
 		this.swfReadyFlag = true;
 	},
 	
@@ -1307,9 +1301,11 @@ Y.Axis = Axis;
 		}
 		this._parseConfig(config);
 		this._chartConfig.parent = p_oElement;
-		this.chart = new Y.Chart(this._chartConfig);
-		this.xaxis = new Y.Axis({parent:this.chart, axisType:this._xAxisProps.type, styles:this._xaxisstyles});
-		this.yaxis = new Y.Axis({parent:this.chart, axisType:this._yAxisProps.type, styles:this._yaxisstyles});
+		this.app = new Y.SWFApplication(this._chartConfig);
+		this.chart = new Y.BorderContainer({parent:this.app, styles:this._chartstyles});
+		this.app.addItem(this.chart);
+		this.xaxis = new Y.Axis({parent:this.app, axisType:this._xAxisProps.type, styles:this._xaxisstyles});
+		this.yaxis = new Y.Axis({parent:this.app, axisType:this._yAxisProps.type, styles:this._yaxisstyles});
 		this.data = {};
 		this.graph = null;
 		
@@ -1341,9 +1337,9 @@ Y.Axis = Axis;
 		setData: function(data /*:Object*/, xkey /*:String*/, ykey /*:String*/)
 		{
 			this.data = data;
-			var chart = this.chart, xaxis = this.xaxis, yaxis = this.yaxis, graph = this.graph, styles = this._graphstyles;
+			var chart = this.chart, app = this.app, xaxis = this.xaxis, yaxis = this.yaxis, graph = this.graph, styles = this._graphstyles;
 
-			chart.set("dataProvider", data);
+			app.set("dataProvider", data);
 			xaxis.addKey(this._xAxisProps.key);
 			yaxis.addKey(this._yAxisProps.key);
 			
@@ -1357,16 +1353,17 @@ Y.Axis = Axis;
 		},
 
 		_chartstyles:{
-			chart:{
 				padding:{
 					left:20, top:20, bottom:20, right:20
 				}
-			}, 
+
+		},
+		
+		_appstyles:{
 			background:{
 				fillColor:0xDEE2FF,
 				borderColor:0xDEE2FF
 			}
-
 		},
 
 		_xaxisstyles:{
@@ -1458,11 +1455,11 @@ Y.Axis = Axis;
 					styles = config.styles;
 					if(styles.hasOwnProperty("chart"))
 					{
-						this._chartstyles.chart = this._parseStyles(this._chartstyles.chart, styles.chart);
+						this._chartstyles = this._parseStyles(this._chartstyles, styles.chart);
 					}
 					if(styles.hasOwnProperty("background"))
 					{
-						this._chartstyles.background = this._parseStyles(this._chartstyles.background, styles.background);
+						this._appstyles.background = this._parseStyles(this._appstyles.background, styles.background);
 					}
 					if(styles.hasOwnProperty("xaxisstyles"))
 					{
@@ -1492,7 +1489,7 @@ Y.Axis = Axis;
 					this._graphstyles.padding = {left:50, right:50};
 				}
 			}
-			this._chartConfig.styles = this._chartstyles;
+			this._chartConfig.styles = this._appstyles;
 		},
 
 		_chartConfig:{},

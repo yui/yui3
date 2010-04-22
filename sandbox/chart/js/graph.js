@@ -59,6 +59,7 @@ Graph.ATTRS = {
  */
 Y.extend(Graph, Y.Container, 
 {
+	_events: {},
 	GUID:"yuigraph",
 
 	/**
@@ -91,6 +92,7 @@ Y.extend(Graph, Y.Container,
 			this.appswf.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
 			this.fire("graphReady", {swfowner:swfowner});
 		}
+		this._addSWFEventListeners();
 	},
 
 	/**
