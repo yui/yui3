@@ -5,6 +5,7 @@
  * for other common tasks. 
  * @module dom
  * @submodule dom-base
+ * @for DOM
  *
  */
 

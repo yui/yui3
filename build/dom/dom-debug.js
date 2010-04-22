@@ -7,6 +7,7 @@ YUI.add('dom-base', function(Y) {
  * for other common tasks. 
  * @module dom
  * @submodule dom-base
+ * @for DOM
  *
  */
 
@@ -400,16 +401,17 @@ Y.DOM = {
      * If no "where" is given, content is appended to the node
      * Possible values for "where"
      * <dl>
-     * <dd>HTMLElement</dd>
-     * <dt>The element to insert before</dt>
-     * <dd>"replace"</dd>
-     * <dt>Replaces the existing HTML</dt>
-     * <dd>"before"</dd>
-     * <dt>Inserts before the existing HTML</dt>
-     * <dd>"before"</dd>
-     * <dt>Inserts content before the node</dt>
-     * <dd>"after"</dd>
-     * <dt>Inserts content after the node</dt>
+     * <dt>HTMLElement</dt>
+     * <dd>The element to insert before</dd>
+     * <dt>"replace"</dt>
+     * <dd>Replaces the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts before the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts content before the node</dd>
+     * <dt>"after"</dt>
+     * <dd>Inserts content after the node</dd>
+     * </dl>
      */
     addHTML: function(node, content, where) {
         if (typeof content === 'string') {
