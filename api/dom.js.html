@@ -54,6 +54,7 @@
 <span class="cm"> * for other common tasks. </span>
 <span class="cm"> * @module dom</span>
 <span class="cm"> * @submodule dom-base</span>
+<span class="cm"> * @for DOM</span>
 <span class="cm"> *</span>
 <span class="cm"> */</span>
 
@@ -442,8 +443,22 @@
 <span class="cm">     * Inserts content in a node at the given location </span>
 <span class="cm">     * @method addHTML</span>
 <span class="cm">     * @param {HTMLElement} node The node to insert into</span>
-<span class="cm">     * @param {String} content The content to be inserted </span>
-<span class="cm">     * @param {String} where Where to insert the content; default is after lastChild </span>
+<span class="cm">     * @param {String | HTMLElement} content The content to be inserted </span>
+<span class="cm">     * @param {String | HTMLElement} where Where to insert the content</span>
+<span class="cm">     * If no &quot;where&quot; is given, content is appended to the node</span>
+<span class="cm">     * Possible values for &quot;where&quot;</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;HTMLElement&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;The element to insert before&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;replace&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Replaces the existing HTML&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;before&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Inserts before the existing HTML&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;before&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Inserts content before the node&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;after&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Inserts content after the node&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
 <span class="cm">     */</span>
     <span class="nx">addHTML</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">content</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
@@ -797,7 +812,6 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class="selected"><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
-                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>

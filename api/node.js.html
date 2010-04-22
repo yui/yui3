@@ -945,6 +945,23 @@
 <span class="cm">     * @method insert</span>
 <span class="cm">     * @param {String | Y.Node | HTMLElement} content The content to insert </span>
 <span class="cm">     * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.</span>
+<span class="cm">     * Possible &quot;where&quot; arguments</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;Y.Node&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;The Node to insert before&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;HTMLElement&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;The element to insert before&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;Int&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;The index of the child element to insert before&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;replace&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Replaces the existing HTML&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;before&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Inserts before the existing HTML&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;before&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Inserts content before the node&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;after&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Inserts content after the node&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
     <span class="nx">insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
@@ -1073,6 +1090,7 @@
 <span class="cm">    * This is not stored with the DOM node.</span>
 <span class="cm">    * @param {string} name The name of the field to set. If no name</span>
 <span class="cm">    * is given, name is treated as the data and overrides any existing data.</span>
+<span class="cm">    * @param {any} val The value to be assigned to the field.</span>
 <span class="cm">    * @chainable</span>
 <span class="cm">    */</span>
     <span class="nx">setData</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
@@ -1140,7 +1158,6 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
-                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>

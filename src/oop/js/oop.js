@@ -259,8 +259,9 @@
                 // return new RegExp(o.source); // if we do this we need to set the flags too
                 return o;
             case 'function':
-                o2 = Y.bind(o, owner);
-                break;
+                // o2 = Y.bind(o, owner);
+                // break;
+                return o;
             case 'array':
                 o2 = [];
                 break;

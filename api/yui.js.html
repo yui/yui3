@@ -68,19 +68,24 @@
 <span class="cm"> * @constructor</span>
 <span class="cm"> * @global</span>
 <span class="cm"> * @uses EventTarget</span>
-<span class="cm"> * @param o* Up to five optional configuration objects.  This object is stored</span>
-<span class="cm"> * in YUI.config.  See config for the list of supported properties.</span>
+<span class="cm"> * @param o* 0..n optional configuration objects.  these values</span>
+<span class="cm"> * are store in Y.config.  See config for the list of supported </span>
+<span class="cm"> * properties.</span>
 <span class="cm"> */</span>
     <span class="cm">/*global YUI*/</span>
     <span class="cm">/*global YUI_config*/</span>
-    <span class="kd">var</span> <span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
         <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
             <span class="nx">globalConfig</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
 
         <span class="c1">// Allow instantiation without the new operator</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">(</span><span class="nx">o1</span><span class="p">,</span> <span class="nx">o2</span><span class="p">,</span> <span class="nx">o3</span><span class="p">,</span> <span class="nx">o4</span><span class="p">,</span> <span class="nx">o5</span><span class="p">);</span>
+            <span class="nx">Y</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">();</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span> 
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="c1">// set up the core environment</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_init</span><span class="p">();</span>
@@ -1245,7 +1250,6 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
-                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
