@@ -797,6 +797,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
                 Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
                 "Y.one('#test-insert-html').setContent(" + content + ")");
 
+            content = 0;
+            Y.one('#test-insert-html').setContent(content);
+            Assert.areEqual('0',
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(" + content + ")");
+
         },
 
         test_insert: function() {

@@ -420,7 +420,7 @@ Y.DOM = {
         var nodeParent = node.parentNode,
             newNode;
             
-        if (content) {
+        if (content !== undefined && content !== null) {
             if (content.nodeType) { // domNode
                 newNode = content;
             } else { // create from string and cache
