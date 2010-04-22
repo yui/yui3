@@ -896,6 +896,23 @@ Y.mix(Y_Node.prototype, {
      * @method insert
      * @param {String | Y.Node | HTMLElement} content The content to insert 
      * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
+     * Possible "where" arguments
+     * <dl>
+     * <dt>Y.Node</dt>
+     * <dd>The Node to insert before</dd>
+     * <dt>HTMLElement</dt>
+     * <dd>The element to insert before</dd>
+     * <dt>Int</dt>
+     * <dd>The index of the child element to insert before</dd>
+     * <dt>"replace"</dt>
+     * <dd>Replaces the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts before the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts content before the node</dd>
+     * <dt>"after"</dt>
+     * <dd>Inserts content after the node</dd>
+     * </dl>
      * @chainable
      */
     insert: function(content, where) {

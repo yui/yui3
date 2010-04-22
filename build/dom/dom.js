@@ -394,8 +394,21 @@ Y.DOM = {
      * Inserts content in a node at the given location 
      * @method addHTML
      * @param {HTMLElement} node The node to insert into
-     * @param {String} content The content to be inserted 
-     * @param {String} where Where to insert the content; default is after lastChild 
+     * @param {String | HTMLElement} content The content to be inserted 
+     * @param {String | HTMLElement} where Where to insert the content
+     * If no "where" is given, content is appended to the node
+     * Possible values for "where"
+     * <dl>
+     * <dd>HTMLElement</dd>
+     * <dt>The element to insert before</dt>
+     * <dd>"replace"</dd>
+     * <dt>Replaces the existing HTML</dt>
+     * <dd>"before"</dd>
+     * <dt>Inserts before the existing HTML</dt>
+     * <dd>"before"</dd>
+     * <dt>Inserts content before the node</dt>
+     * <dd>"after"</dd>
+     * <dt>Inserts content after the node</dt>
      */
     addHTML: function(node, content, where) {
         if (typeof content === 'string') {
