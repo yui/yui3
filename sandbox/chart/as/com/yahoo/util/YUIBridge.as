@@ -203,38 +203,39 @@ package com.yahoo.util
 		/**
 		 * Dispatches events to the host DOM
 		 */
-		public function sendEvent (evt:Object) : void 
+		public function sendEvent (evt:Object, id:String = null) : void 
 		{
+			if(!id)
+			{
+				id = this._swfID;
+			}
 			if (ExternalInterface.available) 
 			{
-				ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [_swfID, evt]);
+				ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [id, evt]);
 			}
 		}
 
 		/**
 		 * Allows for js class to subscribe to an as class' event
 		 */
-		public function subscribe(instanceId:String, type:String, func:String):void
+		public function subscribe(type:String, instanceId:String):void
 		{
-			var yId:String = this._yId;
-			var dispatcher:IEventDispatcher = this._instances[instanceId] as IEventDispatcher;
-			var callback:Function = this.eventHandlerFactory(yId, instanceId, func);
+			var dispatcher:IEventDispatcher = this._instances[instanceId] as IEventDispatcher,
+				callback:Function = this.eventHandlerFactory.call(this, instanceId);
 			dispatcher.addEventListener(type, callback);
 		}
 
 		/**
 		 * Adds a js function reference as a listener to an event dispatcher.
 		 */
-		public function eventHandlerFactory(yId:String, instanceId:String, func:String):Function
+		public function eventHandlerFactory(instanceId:String):Function
 		{
-			var handler:Function = function(event:Event):void
+			var scope:Object = this,
+				handler:Function = function(event:Event):void
 			{
 				var evt:Object = {};
 				evt.type = event.type;
-				if(ExternalInterface.available)
-				{
-					ExternalInterface.call("YUI.applyTo", yId, func, [instanceId, evt]);
-				}
+				scope.sendEvent(evt, instanceId);
 			}
 			return handler;
 		}

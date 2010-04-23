@@ -201,7 +201,20 @@ SWF.prototype =
 			this._swf._node.setProperty(instanceId, propertyName, propertyValue);
 		}
 	},
-	
+
+	onFlash: function(type, instance)
+	{
+		var id = instance.get("id");
+		if(!SWF._instances.hasOwnProperty(id))
+		{
+			SWF._instances[id] = instance;
+		}
+		if(this._swf._node["subscribe"])
+		{
+			this._swf._node.subscribe(type, id);
+		}
+	},
+
 	/**
 	 * Public accessor to the unique name of the SWF instance.
 	 *

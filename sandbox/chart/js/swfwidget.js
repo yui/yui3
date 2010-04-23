@@ -19,6 +19,9 @@ function SWFWidget (config)
 	SWFWidget.superclass.constructor.apply(this, arguments);
 }
 
+/**
+ *
+ */
 SWFWidget.NAME = "swfWidget";
 
 SWFWidget._instances = SWFWidget._instances || {};
@@ -91,6 +94,14 @@ SWFWidget.ATTRS = {
 		{
 			return Y.Lang.isObject(val);
 		}
+	},
+
+	id: 
+	{
+		getter: function()
+		{
+			return this._id;
+		}
 	}
 };
 
@@ -104,7 +115,6 @@ Y.extend(SWFWidget, Y.Base,
 	_createId: function()
 	{
 		this._id = Y.guid(this.GUID);
-		SWFWidget._instances[this._id] = this;
 	},
 
 	/**
@@ -238,36 +248,46 @@ Y.extend(SWFWidget, Y.Base,
 		this._addSWFEventListeners();
 	},
 
+	/**
+	 * @private
+	 * Registers event listeners from the _events queue.
+	 */
 	_addSWFEventListeners: function()
 	{
 		var events = this._events,
-			i;
-		for(i in events)
+			type;
+		for(type in events)
 		{
-			if(events.hasOwnProperty(i) && !events[i].registered)
+			if(events.hasOwnProperty(type) && !events[type].registered)
 			{
-				events[i].registered = true;
-				this.appswf._swf._node.subscribe(this._id, i, "SWFWidget.eventHandler"); 
-		
+				events[type].registered = true;
+				this.appswf.onFlash(type, this);
 			}
 		}
 	},
 
+	/**
+	 * @private (override)
+	 */
 	on: function(type , fn , context , arg)
 	{
 		var events = this._events;
 		if(!this._events.hasOwnProperty(type))
 		{
 			events[type] = {type:type, args:arguments, registered:false};
-			if(this.swfowner && this.swfowner.swfReady)
+			if(this.swfowner && this.swfowner.swfReady && this._id)
 			{
 				events[type].registered = true;
-				this.appswf._swf._node.subscribe(this._id, type, "SWFWidget.eventHandler"); 
+				this.appswf.onFlash(type, this);
 			}
 		}
 		SWFWidget.superclass.on.apply(this, arguments);
 	},
-
+	
+	/**
+	 * @private
+	 * Dispatches events from flash.
+	 */
 	_eventHandler: function(event)
 	{
 		this.fire(event.type, event);
