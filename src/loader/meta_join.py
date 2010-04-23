@@ -2,7 +2,12 @@
 # -*- coding: utf-8 -*-
 # vim: et sw=4 ts=4
 
-import os, simplejson, codecs
+try:
+   import json as simplejson
+except:
+   import simplejson
+
+import os, codecs
 
 class MetaJoin(object):
 
