@@ -41,20 +41,20 @@ Y.extend(History, Y.HistoryBase, {
     _init: function (initialState) {
         this.constructor.superclass._init.apply(this, arguments);
 
-        // Subscribe to our synthetic hashchange event (defined below) to handle
+        // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
     },
 
     // -- Protected Methods ----------------------------------------------------
-    _handleChanges: function (changes, silent) {
+    _storeState: function (newState, silent) {
         var constructor = this.constructor;
+
+        constructor.superclass._storeState.apply(this, arguments);
 
         // Update the location hash with the changes.
         constructor[silent ? 'replaceHash' : 'setHash'](
-                constructor.createHash(changes.newState));
-
-        constructor.superclass._handleChanges.apply(this, arguments);
+                constructor.createHash(newState));
     },
 
     // -- Protected Event Handlers ---------------------------------------------

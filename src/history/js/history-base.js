@@ -5,7 +5,7 @@
  * <p>
  * The history-base module uses a simple object to store state. To integrate
  * state management with browser history and allow the back/forward buttons to
- * navigate between states, use history-hash or history-html5.
+ * navigate between states, use history-hash.
  * </p>
  *
  * @module history
@@ -225,7 +225,7 @@ Y.mix(HistoryBase.prototype, {
      */
     _handleChanges: function (changes, silent) {
         if (silent) {
-            this._storeState(changes.newState);
+            this._storeState(changes.newState, true);
         } else {
             // Fire the global change event.
             this.fire(EVT_CHANGE, {
@@ -302,9 +302,11 @@ Y.mix(HistoryBase.prototype, {
      *
      * @method _storeState
      * @param {Object} newState new state to store
+     * @param {Boolean} silent (optional) if <em>true</em>, the state change
+     *   should be silent
      * @protected
      */
-    _storeState: function (newState) {
+    _storeState: function (newState, silent) {
         GlobalEnv._state = newState || {};
     },
 
