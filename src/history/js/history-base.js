@@ -132,15 +132,26 @@ Y.mix(HistoryBase.prototype, {
     // -- Public Methods -------------------------------------------------------
 
     /**
-     * Adds a state entry with new values for the specified parameters. Any
-     * parameters with a <code>null</code> or <code>undefined</code> value will
-     * be removed from the state; all others will be merged into it.
+     * Adds a state entry with new values for the specified key or keys. Any key
+     * with a <code>null</code> or <code>undefined</code> value will be removed
+     * from the state; all others will be merged into it.
      *
      * @method add
-     * @param {Object} state object hash of key/value pairs
+     * @param {Object|String} state object hash of key/value string pairs, or
+     *   the name of a single key
+     * @param {String|null} value (optional) if <em>state</em> is the name of a
+     *   single key, <em>value</em> will become its new value
      * @chainable
      */
-    add: function (state) {
+    add: function (state, value) {
+        var key;
+
+        if (Lang.isString(state)) {
+            key        = state;
+            state      = {};
+            state[key] = value;
+        }
+
         this._resolveChanges(Y.merge(GlobalEnv._state, state));
         return this;
     },
@@ -171,10 +182,21 @@ Y.mix(HistoryBase.prototype, {
      * are generated.
      *
      * @method replace
-     * @param {Object} state object hash of key/value pairs
+     * @param {Object|String} state object hash of key/value string pairs, or
+     *   the name of a single key
+     * @param {String|null} value (optional) if <em>state</em> is the name of a
+     *   single key, <em>value</em> will become its new value
      * @chainable
      */
-    replace: function (state) {
+    replace: function (state, value) {
+        var key;
+
+        if (Lang.isString(state)) {
+            key        = state;
+            state      = {};
+            state[key] = value;
+        }
+
         this._resolveChanges(Y.merge(GlobalEnv._state, state), true);
         return this;
     },
