@@ -31,7 +31,7 @@ function Parent(config) {
     * after a child is added.
     * </p>
     *
-    * @event childAdded
+    * @event addChild
     * @preventable _defAddChildFn
     * @param {EventFacade} e The Event Facade
     */
@@ -54,7 +54,7 @@ function Parent(config) {
     * after a child is removed.
     * </p>
     *
-    * @event childRemoved
+    * @event removeChild
     * @preventable _defRemoveChildFn
     * @param {EventFacade} e The Event Facade
     */
@@ -448,9 +448,8 @@ Parent.prototype = {
         
     },
 
-
     /**
-     * Default childAdded handler
+     * Default addChild handler
      *
      * @method _defAddChildFn
      * @protected
@@ -490,7 +489,7 @@ Parent.prototype = {
 
 
     /**
-     * Default childRemoved handler
+     * Default removeChild handler
      *
      * @method _defRemoveChildFn
      * @protected
