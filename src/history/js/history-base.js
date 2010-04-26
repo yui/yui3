@@ -301,7 +301,8 @@ Y.mix(HistoryBase.prototype, {
         // keys that have been added/changed, since they obviously haven't been
         // removed. Need to profile to see if it's actually worth it.
         Obj.each(prevState, function (prevVal, key) {
-            if (!Obj.owns(newState, key)) {
+            if (!Obj.owns(newState, key) || newState[key] === null) {
+                delete newState[key];
                 removed[key] = prevVal;
                 isChanged = true;
             }
