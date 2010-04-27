@@ -7,7 +7,7 @@ YUI.add('history-base', function(Y) {
  * <p>
  * The history-base module uses a simple object to store state. To integrate
  * state management with browser history and allow the back/forward buttons to
- * navigate between states, use history-hash or history-html5.
+ * navigate between states, use history-hash.
  * </p>
  *
  * @module history
@@ -26,9 +26,16 @@ YUI.add('history-base', function(Y) {
  *
  * @class HistoryBase
  * @uses EventTarget
- * @param {Object} initialState (optional) initial state in the form of an
- *   object hash of key/value pairs
  * @constructor
+ * @param {Object} config (optional) configuration object, which may contain
+ *   zero or more of the following properties:
+ *
+ * <dl>
+ *   <dt>initialState (Object)</dt>
+ *   <dd>
+ *     Initial state to set, as an object hash of key/value pairs.
+ *   </dd>
+ * </dl>
  */
 
 var Lang       = Y.Lang,
@@ -38,7 +45,7 @@ var Lang       = Y.Lang,
     EVT_CHANGE = 'change',
     NAME       = 'historyBase',
 
-HistoryBase = function (initialState) {
+HistoryBase = function (config) {
     this._init.apply(this, arguments);
 };
 
@@ -72,11 +79,12 @@ Y.mix(HistoryBase.prototype, {
      * constructor.
      *
      * @method _init
-     * @param {Object} initialState (optional) initial state in the form of an
-     *   object hash of key/value pairs
+     * @param {Object} config configuration object
      * @protected
      */
-    _init: function (initialState) {
+    _init: function (config) {
+        var initialState = config && config.initialState;
+
         /**
          * Fired when the state changes. To be notified of all state changes
          * regardless of the History or YUI instance that generated them,
@@ -134,15 +142,26 @@ Y.mix(HistoryBase.prototype, {
     // -- Public Methods -------------------------------------------------------
 
     /**
-     * Adds a state entry with new values for the specified parameters. Any
-     * parameters with a <code>null</code> or <code>undefined</code> value will
-     * be removed from the state; all others will be merged into it.
+     * Adds a state entry with new values for the specified key or keys. Any key
+     * with a <code>null</code> or <code>undefined</code> value will be removed
+     * from the state; all others will be merged into it.
      *
      * @method add
-     * @param {Object} state object hash of key/value pairs
+     * @param {Object|String} state object hash of key/value string pairs, or
+     *   the name of a single key
+     * @param {String|null} value (optional) if <em>state</em> is the name of a
+     *   single key, <em>value</em> will become its new value
      * @chainable
      */
-    add: function (state) {
+    add: function (state, value) {
+        var key;
+
+        if (Lang.isString(state)) {
+            key        = state;
+            state      = {};
+            state[key] = value;
+        }
+
         this._resolveChanges(Y.merge(GlobalEnv._state, state));
         return this;
     },
@@ -173,10 +192,21 @@ Y.mix(HistoryBase.prototype, {
      * are generated.
      *
      * @method replace
-     * @param {Object} state object hash of key/value pairs
+     * @param {Object|String} state object hash of key/value string pairs, or
+     *   the name of a single key
+     * @param {String|null} value (optional) if <em>state</em> is the name of a
+     *   single key, <em>value</em> will become its new value
      * @chainable
      */
-    replace: function (state) {
+    replace: function (state, value) {
+        var key;
+
+        if (Lang.isString(state)) {
+            key        = state;
+            state      = {};
+            state[key] = value;
+        }
+
         this._resolveChanges(Y.merge(GlobalEnv._state, state), true);
         return this;
     },
@@ -227,7 +257,7 @@ Y.mix(HistoryBase.prototype, {
      */
     _handleChanges: function (changes, silent) {
         if (silent) {
-            this._storeState(changes.newState);
+            this._storeState(changes.newState, true);
         } else {
             // Fire the global change event.
             this.fire(EVT_CHANGE, {
@@ -281,7 +311,8 @@ Y.mix(HistoryBase.prototype, {
         // keys that have been added/changed, since they obviously haven't been
         // removed. Need to profile to see if it's actually worth it.
         Obj.each(prevState, function (prevVal, key) {
-            if (!Obj.owns(newState, key)) {
+            if (!Obj.owns(newState, key) || newState[key] === null) {
+                delete newState[key];
                 removed[key] = prevVal;
                 isChanged = true;
             }
@@ -304,9 +335,11 @@ Y.mix(HistoryBase.prototype, {
      *
      * @method _storeState
      * @param {Object} newState new state to store
+     * @param {Boolean} silent (optional) if <em>true</em>, the state change
+     *   should be silent
      * @protected
      */
-    _storeState: function (newState) {
+    _storeState: function (newState, silent) {
         GlobalEnv._state = newState || {};
     },
 
@@ -338,8 +371,6 @@ YUI.add('history-hash', function(Y) {
 /**
  * @class History
  * @extends HistoryBase
- * @param {Object} initialState (optional) initial state in the form of an
- *   object hash of key/value pairs
  * @constructor
  */
 
@@ -364,29 +395,39 @@ var Lang      = Y.Lang,
     nativeHashChange = !Lang.isUndefined(win.onhashchange) &&
             (Lang.isUndefined(docMode) || docMode > 7),
 
-History = function (initialState) {
-    History.superclass.constructor.call(this, initialState);
+History = function (config) {
+    History.superclass.constructor.apply(this, arguments);
 };
 
 Y.extend(History, Y.HistoryBase, {
     // -- Initialization -------------------------------------------------------
-    _init: function (initialState) {
-        this.constructor.superclass._init.apply(this, arguments);
+    _init: function (config) {
+        // Use the bookmarked state as the initialState if no initialState was
+        // specified.
+        config = config || {};
+        config.initialState = config.initialState ||
+                this.constructor.parseHash();
 
-        // Subscribe to our synthetic hashchange event (defined below) to handle
+        // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
+
+        this.constructor.superclass._init.call(this, config);
     },
 
     // -- Protected Methods ----------------------------------------------------
-    _handleChanges: function (changes, silent) {
+    _storeState: function (newState, silent) {
         var constructor = this.constructor;
 
-        // Update the location hash with the changes.
-        constructor[silent ? 'replaceHash' : 'setHash'](
-                constructor.createHash(changes.newState));
+        constructor.superclass._storeState.apply(this, arguments);
 
-        constructor.superclass._handleChanges.apply(this, arguments);
+        // Update the location hash with the changes, but only if the new hash
+        // actually differs from the current hash (this avoids creating multiple
+        // history entries for a single state).
+        if (constructor.getHash() !== constructor.createHash(newState)) {
+            constructor[silent ? 'replaceHash' : 'setHash'](
+                    constructor.createHash(newState));
+        }
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -397,8 +438,8 @@ Y.extend(History, Y.HistoryBase, {
      * @method _afterHashChange
      * @protected
      */
-    _afterHashChange: function () {
-        this._resolveChanges(this.constructor.parseHash());
+    _afterHashChange: function (e) {
+        this._resolveChanges(this.constructor.parseHash(e.newHash));
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
@@ -442,15 +483,16 @@ Y.extend(History, Y.HistoryBase, {
      * @static
      */
     createHash: function (params) {
-        var hash = [];
+        var encode = History.encode,
+            hash   = [];
 
         Obj.each(params, function (value, key) {
             if (Lang.isValue(value)) {
-                hash.push(History.encode(key) + '=' + History.encode(value));
+                hash.push(encode(key) + '=' + encode(value));
             }
         });
 
-        return '#' + hash.join('&');
+        return hash.join('&');
     },
 
     /**
@@ -480,7 +522,7 @@ Y.extend(History, Y.HistoryBase, {
     },
 
     /**
-     * Gets the current location hash.
+     * Gets the current location hash, minus the preceding '#' character.
      *
      * @method getHash
      * @return {String} current location hash
@@ -490,10 +532,10 @@ Y.extend(History, Y.HistoryBase, {
         // Gecko's window.location.hash returns a decoded string and we want all
         // encoding untouched, so we need to get the hash value from
         // window.location.href instead.
-        var matches = /#.*$/.exec(location.href);
-        return matches && matches[0] ? matches[0] : '';
+        var matches = /#(.*)$/.exec(location.href);
+        return matches && matches[1] ? matches[1] : '';
     } : function () {
-        return location.hash;
+        return location.hash.substr(1);
     }),
 
     /**
@@ -525,14 +567,16 @@ Y.extend(History, Y.HistoryBase, {
     },
 
     /**
-     * Replaces the browser's current location hash with the specified hash,
-     * without creating a new browser history entry.
+     * Replaces the browser's current location hash with the specified hash
+     * and removes all forward navigation states, without creating a new browser
+     * history entry.
      *
      * @method replaceHash
      * @param {String} hash new location hash
      * @static
      */
     replaceHash: function (hash) {
+        Y.log('replaceHash: ' + hash, 'info', 'history-base');
         location.replace(hash.indexOf('#') === 0 ? hash : '#' + hash);
     },
 
@@ -544,6 +588,7 @@ Y.extend(History, Y.HistoryBase, {
      * @static
      */
     setHash: function (hash) {
+        Y.log('setHash: ' + hash, 'info', 'history-base');
         location.hash = hash;
     }
 });
@@ -605,6 +650,17 @@ if (nativeHashChange) {
     // Begin polling for location hash changes if there's not already a global
     // poll running.
     if (!GlobalEnv._hashPoll) {
+        if (Y.UA.webkit && !Y.UA.chrome) {
+            // Attach a noop unload handler to disable Safari's back/forward
+            // cache. This works around a nasty Safari bug when the back button
+            // is used to return from a page on another domain, but results in
+            // slightly worse performance. This bug is not present in Chrome.
+            //
+            // Current as of Safari 4.0.5 (6531.22.7).
+            // See: https://bugs.webkit.org/show_bug.cgi?id=34679
+            Y.on('unload', function () {}, win);
+        }
+
         GlobalEnv._hashPoll = Y.later(config.pollInterval || 50, null, function () {
             var newHash = History.getHash(),
                 newUrl;

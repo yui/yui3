@@ -8,8 +8,6 @@ YUI.add('history-hash', function(Y) {
 /**
  * @class History
  * @extends HistoryBase
- * @param {Object} initialState (optional) initial state in the form of an
- *   object hash of key/value pairs
  * @constructor
  */
 
@@ -34,29 +32,39 @@ var Lang      = Y.Lang,
     nativeHashChange = !Lang.isUndefined(win.onhashchange) &&
             (Lang.isUndefined(docMode) || docMode > 7),
 
-History = function (initialState) {
-    History.superclass.constructor.call(this, initialState);
+History = function (config) {
+    History.superclass.constructor.apply(this, arguments);
 };
 
 Y.extend(History, Y.HistoryBase, {
     // -- Initialization -------------------------------------------------------
-    _init: function (initialState) {
-        this.constructor.superclass._init.apply(this, arguments);
+    _init: function (config) {
+        // Use the bookmarked state as the initialState if no initialState was
+        // specified.
+        config = config || {};
+        config.initialState = config.initialState ||
+                this.constructor.parseHash();
 
-        // Subscribe to our synthetic hashchange event (defined below) to handle
+        // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
+
+        this.constructor.superclass._init.call(this, config);
     },
 
     // -- Protected Methods ----------------------------------------------------
-    _handleChanges: function (changes, silent) {
+    _storeState: function (newState, silent) {
         var constructor = this.constructor;
 
-        // Update the location hash with the changes.
-        constructor[silent ? 'replaceHash' : 'setHash'](
-                constructor.createHash(changes.newState));
+        constructor.superclass._storeState.apply(this, arguments);
 
-        constructor.superclass._handleChanges.apply(this, arguments);
+        // Update the location hash with the changes, but only if the new hash
+        // actually differs from the current hash (this avoids creating multiple
+        // history entries for a single state).
+        if (constructor.getHash() !== constructor.createHash(newState)) {
+            constructor[silent ? 'replaceHash' : 'setHash'](
+                    constructor.createHash(newState));
+        }
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -67,8 +75,8 @@ Y.extend(History, Y.HistoryBase, {
      * @method _afterHashChange
      * @protected
      */
-    _afterHashChange: function () {
-        this._resolveChanges(this.constructor.parseHash());
+    _afterHashChange: function (e) {
+        this._resolveChanges(this.constructor.parseHash(e.newHash));
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
@@ -112,15 +120,16 @@ Y.extend(History, Y.HistoryBase, {
      * @static
      */
     createHash: function (params) {
-        var hash = [];
+        var encode = History.encode,
+            hash   = [];
 
         Obj.each(params, function (value, key) {
             if (Lang.isValue(value)) {
-                hash.push(History.encode(key) + '=' + History.encode(value));
+                hash.push(encode(key) + '=' + encode(value));
             }
         });
 
-        return '#' + hash.join('&');
+        return hash.join('&');
     },
 
     /**
@@ -150,7 +159,7 @@ Y.extend(History, Y.HistoryBase, {
     },
 
     /**
-     * Gets the current location hash.
+     * Gets the current location hash, minus the preceding '#' character.
      *
      * @method getHash
      * @return {String} current location hash
@@ -160,10 +169,10 @@ Y.extend(History, Y.HistoryBase, {
         // Gecko's window.location.hash returns a decoded string and we want all
         // encoding untouched, so we need to get the hash value from
         // window.location.href instead.
-        var matches = /#.*$/.exec(location.href);
-        return matches && matches[0] ? matches[0] : '';
+        var matches = /#(.*)$/.exec(location.href);
+        return matches && matches[1] ? matches[1] : '';
     } : function () {
-        return location.hash;
+        return location.hash.substr(1);
     }),
 
     /**
@@ -195,8 +204,9 @@ Y.extend(History, Y.HistoryBase, {
     },
 
     /**
-     * Replaces the browser's current location hash with the specified hash,
-     * without creating a new browser history entry.
+     * Replaces the browser's current location hash with the specified hash
+     * and removes all forward navigation states, without creating a new browser
+     * history entry.
      *
      * @method replaceHash
      * @param {String} hash new location hash
@@ -275,6 +285,17 @@ if (nativeHashChange) {
     // Begin polling for location hash changes if there's not already a global
     // poll running.
     if (!GlobalEnv._hashPoll) {
+        if (Y.UA.webkit && !Y.UA.chrome) {
+            // Attach a noop unload handler to disable Safari's back/forward
+            // cache. This works around a nasty Safari bug when the back button
+            // is used to return from a page on another domain, but results in
+            // slightly worse performance. This bug is not present in Chrome.
+            //
+            // Current as of Safari 4.0.5 (6531.22.7).
+            // See: https://bugs.webkit.org/show_bug.cgi?id=34679
+            Y.on('unload', function () {}, win);
+        }
+
         GlobalEnv._hashPoll = Y.later(config.pollInterval || 50, null, function () {
             var newHash = History.getHash(),
                 newUrl;

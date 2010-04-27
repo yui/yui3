@@ -7,7 +7,7 @@ YUI.add('history-base', function(Y) {
  * <p>
  * The history-base module uses a simple object to store state. To integrate
  * state management with browser history and allow the back/forward buttons to
- * navigate between states, use history-hash or history-html5.
+ * navigate between states, use history-hash.
  * </p>
  *
  * @module history
@@ -26,9 +26,16 @@ YUI.add('history-base', function(Y) {
  *
  * @class HistoryBase
  * @uses EventTarget
- * @param {Object} initialState (optional) initial state in the form of an
- *   object hash of key/value pairs
  * @constructor
+ * @param {Object} config (optional) configuration object, which may contain
+ *   zero or more of the following properties:
+ *
+ * <dl>
+ *   <dt>initialState (Object)</dt>
+ *   <dd>
+ *     Initial state to set, as an object hash of key/value pairs.
+ *   </dd>
+ * </dl>
  */
 
 var Lang       = Y.Lang,
@@ -38,7 +45,7 @@ var Lang       = Y.Lang,
     EVT_CHANGE = 'change',
     NAME       = 'historyBase',
 
-HistoryBase = function (initialState) {
+HistoryBase = function (config) {
     this._init.apply(this, arguments);
 };
 
@@ -72,11 +79,12 @@ Y.mix(HistoryBase.prototype, {
      * constructor.
      *
      * @method _init
-     * @param {Object} initialState (optional) initial state in the form of an
-     *   object hash of key/value pairs
+     * @param {Object} config configuration object
      * @protected
      */
-    _init: function (initialState) {
+    _init: function (config) {
+        var initialState = config && config.initialState;
+
         /**
          * Fired when the state changes. To be notified of all state changes
          * regardless of the History or YUI instance that generated them,
@@ -134,15 +142,26 @@ Y.mix(HistoryBase.prototype, {
     // -- Public Methods -------------------------------------------------------
 
     /**
-     * Adds a state entry with new values for the specified parameters. Any
-     * parameters with a <code>null</code> or <code>undefined</code> value will
-     * be removed from the state; all others will be merged into it.
+     * Adds a state entry with new values for the specified key or keys. Any key
+     * with a <code>null</code> or <code>undefined</code> value will be removed
+     * from the state; all others will be merged into it.
      *
      * @method add
-     * @param {Object} state object hash of key/value pairs
+     * @param {Object|String} state object hash of key/value string pairs, or
+     *   the name of a single key
+     * @param {String|null} value (optional) if <em>state</em> is the name of a
+     *   single key, <em>value</em> will become its new value
      * @chainable
      */
-    add: function (state) {
+    add: function (state, value) {
+        var key;
+
+        if (Lang.isString(state)) {
+            key        = state;
+            state      = {};
+            state[key] = value;
+        }
+
         this._resolveChanges(Y.merge(GlobalEnv._state, state));
         return this;
     },
@@ -173,10 +192,21 @@ Y.mix(HistoryBase.prototype, {
      * are generated.
      *
      * @method replace
-     * @param {Object} state object hash of key/value pairs
+     * @param {Object|String} state object hash of key/value string pairs, or
+     *   the name of a single key
+     * @param {String|null} value (optional) if <em>state</em> is the name of a
+     *   single key, <em>value</em> will become its new value
      * @chainable
      */
-    replace: function (state) {
+    replace: function (state, value) {
+        var key;
+
+        if (Lang.isString(state)) {
+            key        = state;
+            state      = {};
+            state[key] = value;
+        }
+
         this._resolveChanges(Y.merge(GlobalEnv._state, state), true);
         return this;
     },
@@ -227,7 +257,7 @@ Y.mix(HistoryBase.prototype, {
      */
     _handleChanges: function (changes, silent) {
         if (silent) {
-            this._storeState(changes.newState);
+            this._storeState(changes.newState, true);
         } else {
             // Fire the global change event.
             this.fire(EVT_CHANGE, {
@@ -281,7 +311,8 @@ Y.mix(HistoryBase.prototype, {
         // keys that have been added/changed, since they obviously haven't been
         // removed. Need to profile to see if it's actually worth it.
         Obj.each(prevState, function (prevVal, key) {
-            if (!Obj.owns(newState, key)) {
+            if (!Obj.owns(newState, key) || newState[key] === null) {
+                delete newState[key];
                 removed[key] = prevVal;
                 isChanged = true;
             }
@@ -304,9 +335,11 @@ Y.mix(HistoryBase.prototype, {
      *
      * @method _storeState
      * @param {Object} newState new state to store
+     * @param {Boolean} silent (optional) if <em>true</em>, the state change
+     *   should be silent
      * @protected
      */
-    _storeState: function (newState) {
+    _storeState: function (newState, silent) {
         GlobalEnv._state = newState || {};
     },
 
