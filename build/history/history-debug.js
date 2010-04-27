@@ -364,11 +364,21 @@ Y.HistoryBase = HistoryBase;
 YUI.add('history-hash', function(Y) {
 
 /**
+ * The history-hash module adds the History class, which provides browser
+ * history management functionality backed by <code>window.location.hash</code>.
+ * This allows the browser's back and forward buttons to be used to navigate
+ * between states.
+ *
  * @module history
  * @submodule history-hash
  */
 
 /**
+ * The History class provides browser history management backed by
+ * <code>window.location.hash</code>, as well as convenience methods for working
+ * with the location hash and a synthetic <code>hashchange</code> event that
+ * normalizes differences across browsers.
+ *
  * @class History
  * @extends HistoryBase
  * @constructor

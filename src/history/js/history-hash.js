@@ -1,11 +1,19 @@
 /**
- * History hash module
+ * The history-hash module adds the History class, which provides browser
+ * history management functionality backed by <code>window.location.hash</code>.
+ * This allows the browser's back and forward buttons to be used to navigate
+ * between states.
+ *
  * @module history
  * @submodule history-hash
  */
 
 /**
- * History class
+ * The History class provides browser history management backed by
+ * <code>window.location.hash</code>, as well as convenience methods for working
+ * with the location hash and a synthetic <code>hashchange</code> event that
+ * normalizes differences across browsers.
+ *
  * @class History
  * @extends HistoryBase
  * @constructor
