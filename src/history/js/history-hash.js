@@ -6,8 +6,6 @@
 /**
  * @class History
  * @extends HistoryBase
- * @param {Object} initialState (optional) initial state in the form of an
- *   object hash of key/value pairs
  * @constructor
  */
 
@@ -32,18 +30,24 @@ var Lang      = Y.Lang,
     nativeHashChange = !Lang.isUndefined(win.onhashchange) &&
             (Lang.isUndefined(docMode) || docMode > 7),
 
-History = function (initialState) {
-    History.superclass.constructor.call(this, initialState);
+History = function (config) {
+    History.superclass.constructor.apply(this, arguments);
 };
 
 Y.extend(History, Y.HistoryBase, {
     // -- Initialization -------------------------------------------------------
-    _init: function (initialState) {
-        this.constructor.superclass._init.apply(this, arguments);
+    _init: function (config) {
+        // Use the bookmarked state as the initialState if no initialState was
+        // specified.
+        config = config || {};
+        config.initialState = config.initialState ||
+                this.constructor.parseHash();
 
         // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
+
+        this.constructor.superclass._init.call(this, config);
     },
 
     // -- Protected Methods ----------------------------------------------------

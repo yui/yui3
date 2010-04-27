@@ -24,9 +24,16 @@
  *
  * @class HistoryBase
  * @uses EventTarget
- * @param {Object} initialState (optional) initial state in the form of an
- *   object hash of key/value pairs
  * @constructor
+ * @param {Object} config (optional) configuration object, which may contain
+ *   zero or more of the following properties:
+ *
+ * <dl>
+ *   <dt>initialState (Object)</dt>
+ *   <dd>
+ *     Initial state to set, as an object hash of key/value pairs.
+ *   </dd>
+ * </dl>
  */
 
 var Lang       = Y.Lang,
@@ -36,7 +43,7 @@ var Lang       = Y.Lang,
     EVT_CHANGE = 'change',
     NAME       = 'historyBase',
 
-HistoryBase = function (initialState) {
+HistoryBase = function (config) {
     this._init.apply(this, arguments);
 };
 
@@ -70,11 +77,12 @@ Y.mix(HistoryBase.prototype, {
      * constructor.
      *
      * @method _init
-     * @param {Object} initialState (optional) initial state in the form of an
-     *   object hash of key/value pairs
+     * @param {Object} config configuration object
      * @protected
      */
-    _init: function (initialState) {
+    _init: function (config) {
+        var initialState = config && config.initialState;
+
         /**
          * Fired when the state changes. To be notified of all state changes
          * regardless of the History or YUI instance that generated them,
