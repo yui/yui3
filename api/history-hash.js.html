@@ -48,13 +48,21 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * History hash module</span>
+<span class="cm"> * The history-hash module adds the History class, which provides browser</span>
+<span class="cm"> * history management functionality backed by &lt;code&gt;window.location.hash&lt;/code&gt;.</span>
+<span class="cm"> * This allows the browser&#39;s back and forward buttons to be used to navigate</span>
+<span class="cm"> * between states.</span>
+<span class="cm"> *</span>
 <span class="cm"> * @module history</span>
 <span class="cm"> * @submodule history-hash</span>
 <span class="cm"> */</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * History class</span>
+<span class="cm"> * The History class provides browser history management backed by</span>
+<span class="cm"> * &lt;code&gt;window.location.hash&lt;/code&gt;, as well as convenience methods for working</span>
+<span class="cm"> * with the location hash and a synthetic &lt;code&gt;hashchange&lt;/code&gt; event that</span>
+<span class="cm"> * normalizes differences across browsers.</span>
+<span class="cm"> *</span>
 <span class="cm"> * @class History</span>
 <span class="cm"> * @extends HistoryBase</span>
 <span class="cm"> * @constructor</span>
@@ -421,7 +429,6 @@
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
-                                <li class=""><a href="module_state-base.html" title="state-base">state-base</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_swf.html" title="swf">swf</a></li>
@@ -455,7 +462,6 @@
                         <ul class="content">        
                                 <li class=""><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
                                 <li class="selected"><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
-                                <li class=""><a href="history-lite.js.html" title="history-lite.js">history-lite.js</a></li>
                         </ul>
                     </div>
 
