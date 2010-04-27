@@ -1,6 +1,6 @@
 Browser History Utility
 
-3.2.0
+3.1.1
     * Fixed bug 2528792: HTML characters were not properly escaped before being
       inserted into an iframe in IE6/7, which had the potential to be used as an
       XSS vector.
