@@ -285,6 +285,17 @@ if (nativeHashChange) {
     // Begin polling for location hash changes if there's not already a global
     // poll running.
     if (!GlobalEnv._hashPoll) {
+        if (Y.UA.webkit && !Y.UA.chrome) {
+            // Attach a noop unload handler to disable Safari's back/forward
+            // cache. This works around a nasty Safari bug when the back button
+            // is used to return from a page on another domain, but results in
+            // slightly worse performance. This bug is not present in Chrome.
+            //
+            // Current as of Safari 4.0.5 (6531.22.7).
+            // See: https://bugs.webkit.org/show_bug.cgi?id=34679
+            Y.on('unload', function () {}, win);
+        }
+
         GlobalEnv._hashPoll = Y.later(config.pollInterval || 50, null, function () {
             var newHash = History.getHash(),
                 newUrl;
