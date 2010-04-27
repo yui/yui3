@@ -1,9 +1,11 @@
 /**
+ * History hash module
  * @module history
  * @submodule history-hash
  */
 
 /**
+ * History class
  * @class History
  * @extends HistoryBase
  * @constructor
