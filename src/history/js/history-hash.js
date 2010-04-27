@@ -56,9 +56,13 @@ Y.extend(History, Y.HistoryBase, {
 
         constructor.superclass._storeState.apply(this, arguments);
 
-        // Update the location hash with the changes.
-        constructor[silent ? 'replaceHash' : 'setHash'](
-                constructor.createHash(newState));
+        // Update the location hash with the changes, but only if the new hash
+        // actually differs from the current hash (this avoids creating multiple
+        // history entries for a single state).
+        if (constructor.getHash() !== constructor.createHash(newState)) {
+            constructor[silent ? 'replaceHash' : 'setHash'](
+                    constructor.createHash(newState));
+        }
     },
 
     // -- Protected Event Handlers ---------------------------------------------
@@ -69,8 +73,8 @@ Y.extend(History, Y.HistoryBase, {
      * @method _afterHashChange
      * @protected
      */
-    _afterHashChange: function () {
-        this._resolveChanges(this.constructor.parseHash());
+    _afterHashChange: function (e) {
+        this._resolveChanges(this.constructor.parseHash(e.newHash));
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
@@ -114,15 +118,16 @@ Y.extend(History, Y.HistoryBase, {
      * @static
      */
     createHash: function (params) {
-        var hash = [];
+        var encode = History.encode,
+            hash   = [];
 
         Obj.each(params, function (value, key) {
             if (Lang.isValue(value)) {
-                hash.push(History.encode(key) + '=' + History.encode(value));
+                hash.push(encode(key) + '=' + encode(value));
             }
         });
 
-        return '#' + hash.join('&');
+        return hash.join('&');
     },
 
     /**
@@ -152,7 +157,7 @@ Y.extend(History, Y.HistoryBase, {
     },
 
     /**
-     * Gets the current location hash.
+     * Gets the current location hash, minus the preceding '#' character.
      *
      * @method getHash
      * @return {String} current location hash
@@ -162,10 +167,10 @@ Y.extend(History, Y.HistoryBase, {
         // Gecko's window.location.hash returns a decoded string and we want all
         // encoding untouched, so we need to get the hash value from
         // window.location.href instead.
-        var matches = /#.*$/.exec(location.href);
-        return matches && matches[0] ? matches[0] : '';
+        var matches = /#(.*)$/.exec(location.href);
+        return matches && matches[1] ? matches[1] : '';
     } : function () {
-        return location.hash;
+        return location.hash.substr(1);
     }),
 
     /**
@@ -197,14 +202,16 @@ Y.extend(History, Y.HistoryBase, {
     },
 
     /**
-     * Replaces the browser's current location hash with the specified hash,
-     * without creating a new browser history entry.
+     * Replaces the browser's current location hash with the specified hash
+     * and removes all forward navigation states, without creating a new browser
+     * history entry.
      *
      * @method replaceHash
      * @param {String} hash new location hash
      * @static
      */
     replaceHash: function (hash) {
+        Y.log('replaceHash: ' + hash, 'info', 'history-base');
         location.replace(hash.indexOf('#') === 0 ? hash : '#' + hash);
     },
 
@@ -216,6 +223,7 @@ Y.extend(History, Y.HistoryBase, {
      * @static
      */
     setHash: function (hash) {
+        Y.log('setHash: ' + hash, 'info', 'history-base');
         location.hash = hash;
     }
 });
