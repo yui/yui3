@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: attribute  State   (YUI Library)</title>
+	<title>API: state-base  State   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -16,9 +16,9 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>attribute&nbsp; <span class="subtitle">3.1.0</span></h3>
+        <h3>state-base&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
-            &gt; <a href="./module_attribute.html" title="attribute">attribute</a>
+            &gt; <a href="./module_state-base.html" title="state-base">state-base</a>
                  &gt; State 
                 
         <form onsubmit="return false">
@@ -46,7 +46,7 @@
                     <h2>
                         
 
-                        
+                        <code>static</code>
                         
                             Class <b property="yui:name">State</b>
                         <span class="extends">
@@ -87,6 +87,21 @@ improving performance when the number of items is likely to be large.
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
+                                    <div class="protected" rel="yui:property" resource="#property__REGEX_QUERY">
+                                    <h4><a name="property__REGEX_QUERY" property="yui:name">_REGEX_QUERY</a>
+                                        - <code>protected static <span property="yui:type">RegExp</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            Regular expression used to parse hash/query strings.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:property" resource="#property_data">
                                     <h4><a name="property_data" property="yui:name">data</a>
                                         - <code><span property="yui:type">object</span></code>
@@ -94,6 +109,21 @@ improving performance when the number of items is likely to be large.
                                     <div class="detail">
                                         <div class="description" property="yui:description">
                                             Hash of attributes
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_NAME">
+                                    <h4><a name="property_NAME" property="yui:name">NAME</a>
+                                        - <code>static <span property="yui:type">String</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            The name of this component.
                                         </div>
                                     </div>
      
@@ -111,13 +141,281 @@ improving performance when the number of items is likely to be large.
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="protected" rel="yui:method" resource="#method__afterHashChange">
+                                    <h4>
+                                        <a name="method__afterHashChange">_afterHashChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">_afterHashChange</strong>
+                                           (
+                                                
+                                                        
+                                                         newHash
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Handles changes to the location hash and fires the history-lite:change
+event if necessary.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">newHash</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> new hash value</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__createHash">
+                                    <h4>
+                                        <a name="method__createHash">_createHash</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        String
+                                            <strong property="yui:name">_createHash</strong>
+                                           (
+                                                
+                                                        
+                                                         params
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Creates a hash string from the specified object hash of name/value
+parameter pairs.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">params</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> name/value parameter pairs</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">hash string</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__decode">
+                                    <h4>
+                                        <a name="method__decode">_decode</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        String
+                                            <strong property="yui:name">_decode</strong>
+                                           (
+                                                
+                                                        
+                                                         string
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Wrapper around <code>decodeURIComponent()</code> that also converts +
+chars into spaces.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">string</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> string to decode</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">decoded string</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private" rel="yui:method" resource="#method__defChangeFn">
+                                    <h4>
+                                        <a name="method__defChangeFn">_defChangeFn</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">_defChangeFn</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Default handler for the history-lite:change event. Stores the new hash
+for later comparison and event triggering.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">e</span>
+                                                        &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> event object for history change events</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getHash">
+                                    <h4>
+                                        <a name="method__getHash">_getHash</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        String
+                                            <strong property="yui:name">_getHash</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Gets the current URL hash.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setHash">
+                                    <h4>
+                                        <a name="method__setHash">_setHash</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">_setHash</strong>
+                                           (
+                                                
+                                                        
+                                                         hash
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets the browser's location hash to the specified string.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">hash</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_add">
                                     <h4>
                                         <a name="method_add">add</a></h4>
                                     <div class="detail" >
                                         <code>
                                         
-                                        
+                                         static 
                                         
                                         void
                                             <strong property="yui:name">add</strong>
@@ -235,7 +533,7 @@ improving performance when the number of items is likely to be large.
                                     <div class="detail" >
                                         <code>
                                         
-                                        
+                                         static 
                                         
                                         Any
                                             <strong property="yui:name">get</strong>
@@ -333,6 +631,51 @@ item's property/value pairs.
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">An object with property/value pairs for the item.</dd>
                                                 </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_parseQuery">
+                                    <h4>
+                                        <a name="method_parseQuery">parseQuery</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Object
+                                            <strong property="yui:name">parseQuery</strong>
+                                           (
+                                                
+                                                        
+                                                         query
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Parses a query string or hash string into an object hash of name/value
+parameter pairs.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">query</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> query string or hash string</span>
+                                                        </dd>
+                                                </dl>
+
 
 
              
@@ -456,6 +799,76 @@ item's property/value pairs.
                     </div>
 
                     <div rel="yui:events" resource="#events">
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:event" resource="#event_historyLite:change">
+                                    <h4>
+                                        <a name="event_historyLite:change">historyLite:change</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">historyLite:change</strong>
+
+                                            (
+                                                
+                                                        
+                                                         Event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fired when the history state changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">Event</span>
+                                                                &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> facade with the following additional
+properties:
+<dl>
+<dt>changed</dt>
+<dd>
+name:value pairs of history parameters that have been added or
+changed
+</dd>
+<dt>newVal</dt>
+<dd>
+name:value pairs of all history parameters after the change
+</dd>
+<dt>prevVal</dt>
+<dd>
+name:value pairs of all history parameters before the change
+</dd>
+<dt>removed</dt>
+<dd>
+name:value pairs of history parameters that have been removed
+(values are the old values)
+</dd>
+</dl></span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
                     </div>
@@ -475,7 +888,7 @@ item's property/value pairs.
                                 <li class=""><a href="module_align-plugin.html" title="align-plugin">align-plugin</a></li>
                                 <li class=""><a href="module_anim.html" title="anim">anim</a></li>
                                 <li class=""><a href="module_async-queue.html" title="async-queue">async-queue</a></li>
-                                <li class="selected"><a href="module_attribute.html" title="attribute">attribute</a></li>
+                                <li class=""><a href="module_attribute.html" title="attribute">attribute</a></li>
                                 <li class=""><a href="module_base.html" title="base">base</a></li>
                                 <li class=""><a href="module_cache.html" title="cache">cache</a></li>
                                 <li class=""><a href="module_classnamemanager.html" title="classnamemanager">classnamemanager</a></li>
@@ -511,6 +924,7 @@ item's property/value pairs.
                                 <li class=""><a href="module_shim-plugin.html" title="shim-plugin">shim-plugin</a></li>
                                 <li class=""><a href="module_slider.html" title="slider">slider</a></li>
                                 <li class=""><a href="module_sortable.html" title="sortable">sortable</a></li>
+                                <li class="selected"><a href="module_state-base.html" title="state-base">state-base</a></li>
                                 <li class=""><a href="module_stylesheet.html" title="stylesheet">stylesheet</a></li>
                                 <li class=""><a href="module_substitute.html" title="substitute">substitute</a></li>
                                 <li class=""><a href="module_swf.html" title="swf">swf</a></li>
@@ -534,39 +948,45 @@ item's property/value pairs.
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Attribute.html" title="Attribute">Attribute</a></li>
                                 <li class="selected"><a href="State.html" title="State">State</a></li>
                         </ul>
                     </div>
 
-                    <div id="fileList" class="module">
-                        <h4>Files</h4>
-                        <ul class="content">        
-                                <li class=""><a href="Attribute.js.html" title="Attribute.js">Attribute.js</a></li>
-                                <li class=""><a href="ComplexAttribute.js.html" title="ComplexAttribute.js">ComplexAttribute.js</a></li>
-                                <li class=""><a href="State.js.html" title="State.js">State.js</a></li>
-                        </ul>
-                    </div>
 
                     <div id="propertyList" class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class="protected"><a href="#property__REGEX_QUERY" title="_REGEX_QUERY">_REGEX_QUERY</a></li>
                                 <li class=""><a href="#property_data" title="data">data</a></li>
+                                <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
                         </ul>
                     </div>
 
                     <div id="methodsList" class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class="protected"><a href="#method__afterHashChange" title="_afterHashChange">_afterHashChange</a></li>
+                                <li class="protected"><a href="#method__createHash" title="_createHash">_createHash</a></li>
+                                <li class="protected"><a href="#method__decode" title="_decode">_decode</a></li>
+                                <li class="private"><a href="#method__defChangeFn" title="_defChangeFn">_defChangeFn</a></li>
+                                <li class="protected"><a href="#method__getHash" title="_getHash">_getHash</a></li>
+                                <li class="protected"><a href="#method__setHash" title="_setHash">_setHash</a></li>
                                 <li class=""><a href="#method_add" title="add">add</a></li>
                                 <li class=""><a href="#method_addAll" title="addAll">addAll</a></li>
                                 <li class=""><a href="#method_get" title="get">get</a></li>
                                 <li class=""><a href="#method_getAll" title="getAll">getAll</a></li>
+                                <li class=""><a href="#method_parseQuery" title="parseQuery">parseQuery</a></li>
                                 <li class=""><a href="#method_remove" title="remove">remove</a></li>
                                 <li class=""><a href="#method_removeAll" title="removeAll">removeAll</a></li>
                         </ul>
                     </div>
 
+                    <div id="eventsList" class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#event_historyLite:change" title="historyLite:change">historyLite:change</a></li>
+                        </ul>
+                    </div>
 
 
             </div>
@@ -579,7 +999,7 @@ item's property/value pairs.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "State", "name": "addAll", "url": "State.html#method_addAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttr", "url": "Attribute.html#method_addAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addAttrs", "url": "Attribute.html#method__addAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "addAttrs", "url": "Attribute.html#method_addAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_addLazyAttr", "url": "Attribute.html#method__addLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "attrAdded", "url": "Attribute.html#method_attrAdded", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "Attribute._ATTR_CFG", "url": "Attribute.html#property_Attribute._ATTR_CFG", "type": "property"}, {"access": "", "host": "Attribute", "name": "Attribute.INVALID_VALUE", "url": "Attribute.html#property_Attribute.INVALID_VALUE", "type": "property"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "private", "host": "Attribute", "name": "_defAttrChangeFn", "url": "Attribute.html#method__defAttrChangeFn", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_fireAttrChange", "url": "Attribute.html#method__fireAttrChange", "type": "method"}, {"access": "", "host": "Attribute", "name": "get", "url": "Attribute.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "getAll", "url": "State.html#method_getAll", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_getAttr", "url": "Attribute.html#method__getAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getAttrInitVal", "url": "Attribute.html#method__getAttrInitVal", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_getAttrs", "url": "Attribute.html#method__getAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "getAttrs", "url": "Attribute.html#method_getAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_getStateVal", "url": "Attribute.html#method__getStateVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_isLazyAttr", "url": "Attribute.html#method__isLazyAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "modifyAttr", "url": "Attribute.html#method_modifyAttr", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_normAttrVals", "url": "Attribute.html#method__normAttrVals", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_protectAttrs", "url": "Attribute.html#method__protectAttrs", "type": "method"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "State", "name": "removeAll", "url": "State.html#method_removeAll", "type": "method"}, {"access": "", "host": "Attribute", "name": "removeAttr", "url": "Attribute.html#method_removeAttr", "type": "method"}, {"access": "", "host": "Attribute", "name": "reset", "url": "Attribute.html#method_reset", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_set", "url": "Attribute.html#method__set", "type": "method"}, {"access": "", "host": "Attribute", "name": "set", "url": "Attribute.html#method_set", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttr", "url": "Attribute.html#method__setAttr", "type": "method"}, {"access": "protected", "host": "Attribute", "name": "_setAttrs", "url": "Attribute.html#method__setAttrs", "type": "method"}, {"access": "", "host": "Attribute", "name": "setAttrs", "url": "Attribute.html#method_setAttrs", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setAttrVal", "url": "Attribute.html#method__setAttrVal", "type": "method"}, {"access": "private", "host": "Attribute", "name": "_setStateVal", "url": "Attribute.html#method__setStateVal", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "State", "name": "add", "url": "State.html#method_add", "type": "method"}, {"access": "", "host": "State", "name": "addAll", "url": "State.html#method_addAll", "type": "method"}, {"access": "protected", "host": "State", "name": "_afterHashChange", "url": "State.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "State", "name": "_createHash", "url": "State.html#method__createHash", "type": "method"}, {"access": "", "host": "State", "name": "data", "url": "State.html#property_data", "type": "property"}, {"access": "protected", "host": "State", "name": "_decode", "url": "State.html#method__decode", "type": "method"}, {"access": "private", "host": "State", "name": "_defChangeFn", "url": "State.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "State", "name": "get", "url": "State.html#method_get", "type": "method"}, {"access": "", "host": "State", "name": "getAll", "url": "State.html#method_getAll", "type": "method"}, {"access": "protected", "host": "State", "name": "_getHash", "url": "State.html#method__getHash", "type": "method"}, {"access": "", "host": "State", "name": "historyLite:change", "url": "State.html#event_historyLite:change", "type": "event"}, {"access": "", "host": "State", "name": "NAME", "url": "State.html#property_NAME", "type": "property"}, {"access": "", "host": "State", "name": "parseQuery", "url": "State.html#method_parseQuery", "type": "method"}, {"access": "protected", "host": "State", "name": "_REGEX_QUERY", "url": "State.html#property__REGEX_QUERY", "type": "property"}, {"access": "", "host": "State", "name": "remove", "url": "State.html#method_remove", "type": "method"}, {"access": "", "host": "State", "name": "removeAll", "url": "State.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "State", "name": "_setHash", "url": "State.html#method__setHash", "type": "method"}];
 </script>
 </body>
 </html>
