@@ -21,9 +21,5 @@
             "history-base",
             "history-hash"
         ]
-    },
-
-    "history-html5": {
-        "requires": ["history-base"]
     }
 }
