@@ -627,7 +627,7 @@
                 if (h[p]) {
                     // Configuration headers will supersede io preset headers,
                     // if headers match.
-                    break;
+                    continue;
                 }
                 else {
                     h[p] = _headers[p];
