@@ -39,7 +39,7 @@ Y.extend(Graphics, Y.Base, {
 				api = new Y.CanvasAPI(config);
 			break;
 			case "vml" :
-			//	api = new VMLAPI(config);
+				api = new Y.VMLAPI(config);
 			break;
 		}
 		return api;

@@ -81,7 +81,7 @@ Y.extend(CanvasAPI, Y.Base, {
 		obj.startAngle *= (Math.PI/180);
 		obj.endAngle *= (Math.PI/180);
 		ctx.beginPath();
-		ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+		ctx.arc(x + radius, y + radius, radius, startAngle, endAngle, anticlockwise);
 		if(sc)
 		{
 			ctx.lineWidth = lw;
