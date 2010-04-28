@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Node</title>
+<script type="text/javascript" src="../../build/yui/yui.js"></script>
+<script type="text/javascript" src="attr-core.js"></script>
+<script type="text/javascript" src="canvas.js"></script>
+<script type="text/javascript" src="canvas-vml.js"></script>
+<style>
+v\:shape {
+    behavior:url(#default#VML);
+    display:inline-block;
+    zoom:1;
+}
+
+canvas {
+}
+
+#demo, #demo2 {
+    display: inline;
+    zoom:1;
+}
+
+.yui3-dd-dragging {
+    -webkit-transform: rotate(360deg);
+    -webkit-transition: -webkit-transform 250ms ease-in-out;
+}
+</style>
+</head>
+
+<body>
+<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v">
+<div id="demo">
+</div>
+
+<div id="demo2">
+</div>
+<script type="text/javascript">
+
+
+YUI({filter:'raw'}).use('anim-base', 'dd-drag', 'canvas-vml', function(Y) {
+    for (var i = 0, shape; i < 100; ++i) {
+        shape = new Y.Canvas().draw('#demo')
+            .setAttrs({
+                height: '200',
+                width: '200',
+                coordSize: '200 200',
+                fillColor: 'blue',
+                strokeWeight: 2,
+                strokeColor: 'red'
+            })
+            .beginPath()
+            .moveTo(2, 2)
+            .lineTo([2, 198], [198, 2])
+            .closePath()
+            .fill()
+            .stroke();
+    }
+});
+
+</script>
+</body>
+</html>
+
