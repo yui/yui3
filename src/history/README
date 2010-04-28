@@ -1,11 +1,13 @@
-Browser History Utility
+History Manager
+    Provides browser history management functionality using a simple
+    add/get/replace paradigm. 
 
-3.1.0
-    * deprecated getQueryStringParameter
+    The following modules are available:
+        history         - Rollup of history-base and history-hash.
+        history-base    - Generic history management API (but no storage layer).
+        history-hash    - History management using window.location.hash.
+        history-hash-ie - Improves history-hash's IE6/7 support using the iframe
+                          history hack.
 
-3.0.0
-    * Fix bug 2528198: window.onhashchange used for IE8 in IE7 mode for proper click detection.
-    * Fix bug 2528051: fix bug in hash encoding/decoding
-
-3.0.0b1
+3.2.0
     * Initial release.

@@ -18,6 +18,9 @@ The YUI Global
         Array
         Core
 
+3.1.1
+* Removed limit on the number of config objects you can supply to the constructor
+
 3.1.0
 * YUI will attempt to fetch newly discovered dependencies after a module is dynamically loaded.
 * The document element (HTML) is now stamped with a class name (yui-js-enabled) indicating that JS is enabled allowing for the creation of JS-aware CSS style rules for Progressive Enhancement.

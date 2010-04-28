@@ -82,15 +82,17 @@
 			<div id="testdiv" style="height:600px;width:900px">
 				This content will be replaced by an instance of a Flash player.
 			</div>
-		<script>
+			<div id="output"></div>
+			<script>
 
-			YUI().use('node', 'json', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
+				YUI().use('node', 'json', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
 				{
 					// Create application level styles
 					var chartstyles = {
-						chart:{
-							padding:{left:20, top:20, bottom:10, right:20}
-						},
+						padding:{left:20, top:20, bottom:10, right:20}
+					};
+
+					var appstyles = { 
 						background:{
 							fillColor:0x000000,
 							borderColor:0xff0000,
@@ -185,10 +187,17 @@
 						weight:"2",
 						showMarkers:true
 					}
-					
+
+					var myapp = new Y.SWFApplication({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:appstyles});
+					myapp.set("dataProvider", mydata);
+
 					// Create chart and set dataProvider
-					var mychart = new Y.Chart({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
-					mychart.set("dataProvider", mydata);
+					var mychart = new Y.BorderContainer({parent:myapp, styles:chartstyles});
+					myapp.addItem(mychart);
+
+					mychart.on("renderComplete", Y.bind(function(e){
+						document.getElementById("output").innerHTML += "<br/>Graphs drawn.";
+					}, this));
 					
 					// Create axes
 					var mybottomaxis = new Y.Axis({parent:mychart, axisType:"Time", styles:bottomaxisstyles});
@@ -200,16 +209,40 @@
 					myleftaxis.addKey("expenses");
 					myrightaxis.addKey("revenue");
 
-					// Create graph
-					var myexpensegraph = new Y.LineGraph({parent:mychart, xaxis:mybottomaxis, yaxis:myleftaxis, xkey:"date", ykey:"expenses", styles:expensegraphstyles});
-					var myrevenuegraph = new Y.LineGraph({parent:mychart, xaxis:mybottomaxis, yaxis:myrightaxis, xkey:"date", ykey:"revenue", styles:revenuegraphstyles});
 					
+					// Create graph
+					var mygraph = new Y.Graph({parent:mychart, seriesCollection:[
+							{
+								type:"line",
+								xAxisData:mybottomaxis,
+								yAxisData:myleftaxis,
+								xKey:"date",
+								yKey:"expenses",
+								hitTest:"horizontal",
+								displayName:"Expenses",
+								styles:expensegraphstyles
+							},
+							{
+								type:"line",
+								xAxisData:mybottomaxis,
+								yAxisData:myrightaxis,
+								xKey:"date",
+								yKey:"revenue",
+								hitTest:"horizontal",
+								displayName:"Revenue",
+								styles:revenuegraphstyles
+							}
+						],
+						handleEventListening:true
+					});
+
+					var mydatatip = new Y.DataTip({parent:myapp, graph:mygraph});
+
 					// Add items
 					mychart.addBottomItem(mybottomaxis);
 					mychart.addLeftItem(myleftaxis);
 					mychart.addRightItem(myrightaxis);
-					mychart.addCenterItem(myexpensegraph);
-					mychart.addCenterItem(myrevenuegraph);
+					mychart.addCenterItem(mygraph);
 				});
 </script>
 <!-- END EXAMPLE CODE -->

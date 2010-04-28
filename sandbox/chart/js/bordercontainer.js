@@ -32,6 +32,7 @@
 	 */
 	Y.extend(BorderContainer, Y.Container,
 	{
+		_events: {},
 		/**
 		 * Constant used to generate unique id.
 		 */
@@ -79,6 +80,7 @@
 					}
 				}
 			}
+			this._addSWFEventListeners();
 		},
 		
 		/**
@@ -169,3 +171,5 @@
 			}
 		}
 	});
+
+Y.BorderContainer = BorderContainer;

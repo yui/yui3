@@ -175,4 +175,13 @@ Y.Node.importMethod(Y.DOM, [
  * @param {string} name The attribute name 
  * @return {string} The attribute value 
  */
+
+/**
+ * Allows for removing attributes on DOM nodes..
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method removeAttribute
+ * @see Node
+ * @for NodeList
+ * @param {string} name The attribute to remove 
+ */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'removeAttribute']);

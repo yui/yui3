@@ -47,6 +47,10 @@ package com.yahoo.infographics.styles
 				drawSkinFunction:function(props:Object, styles:Object):void
 				{
 					this.graphics.beginFill(styles.fillColor);
+					if(styles.borderWidth > 0)
+					{
+						this.graphics.lineStyle(styles.borderWidth, styles.borderColor, styles.borderAlpha, true); 
+					}
 					this.graphics.drawEllipse(0, 0, props.width, props.height);
 					this.graphics.endFill();
 				}

@@ -7,7 +7,6 @@
 var _queries = Y.TabviewBase._queries,
     _classNames = Y.TabviewBase._classNames,
     DOT = '.',
-    _isGeckoIEWin = ((Y.UA.gecko || Y.UA.ie) && navigator.userAgent.indexOf("Windows") > -1),
     getClassName = Y.ClassNameManager.getClassName,
 
     /**
@@ -47,22 +46,6 @@ var _queries = Y.TabviewBase._queries,
                 //'aria-labelledby': 
                 role: tablist
             });
-        }
-
-        //  Since the anchor's "href" attribute has been removed, the
-        //  element will not fire the click event in Firefox when the
-        //  user presses the enter key.  To fix this, dispatch the
-        //  "click" event to the anchor when the user presses the
-        //  enter key.
-     
-        if (_isGeckoIEWin) {
-            tabView.delegate('keydown', function (event) {
-                if (event.charCode === 13) {
-                    this.simulate("click");
-                }
-     
-            }, ">ul>li>a");
-     
         }
     },
 

@@ -244,6 +244,11 @@
             return o;
         }
 
+        // @TODO cloning YUI instances doesn't currently work
+        if (o instanceof YUI) {
+            return o;
+        }
+
         var o2, marked = cloned || {}, stamp,
             each = Y.each || Y.Object.each;
 
@@ -254,8 +259,9 @@
                 // return new RegExp(o.source); // if we do this we need to set the flags too
                 return o;
             case 'function':
-                o2 = Y.bind(o, owner);
-                break;
+                // o2 = Y.bind(o, owner);
+                // break;
+                return o;
             case 'array':
                 o2 = [];
                 break;
@@ -281,8 +287,8 @@
                     if (k !== CLONE_MARKER) {
                         if (k == 'prototype') {
                             // skip the prototype
-                        } else if (o[k] === o) {
-                            this[k] = this;
+                        // } else if (o[k] === o) {
+                        //     this[k] = this;
                         } else {
                             this[k] = Y.clone(v, safe, f, c, owner || o, marked);
                         }

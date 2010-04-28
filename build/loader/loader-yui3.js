@@ -148,6 +148,12 @@ YUI.Env[Y.version].modules = {
             "yui-base"
         ]
     }, 
+    "createlink-base": {
+        "path": "editor/createlink-base-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
     "cssbase": {
         "after": [
             "cssreset", 
@@ -561,6 +567,33 @@ YUI.Env[Y.version].modules = {
             "yui-base"
         ]
     }, 
+    "editor": {
+        "requires": [
+            "base", 
+            "node"
+        ]
+    }, 
+    "editor-base": {
+        "path": "editor/editor-base-min.js", 
+        "requires": [
+            "base", 
+            "frame", 
+            "node", 
+            "exec-command"
+        ]
+    }, 
+    "editor-lists": {
+        "path": "editor/editor-lists-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
+    "editor-tab": {
+        "path": "editor/editor-tab-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
     "event": {
         "expound": "node-base", 
         "plugins": {
@@ -629,9 +662,49 @@ YUI.Env[Y.version].modules = {
             "event-base"
         ]
     }, 
+    "exec-command": {
+        "path": "editor/exec-command-min.js", 
+        "requires": [
+            "frame"
+        ]
+    }, 
+    "frame": {
+        "path": "editor/frame-min.js", 
+        "requires": [
+            "base", 
+            "node", 
+            "selector-css3", 
+            "substitute"
+        ]
+    }, 
     "history": {
+        "submodules": {
+            "history-base": {
+                "requires": [
+                    "event-custom-complex"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
+                ]
+            }, 
+            "history-hash": {
+                "requires": [
+                    "event-synthetic", 
+                    "history-base", 
+                    "yui-later"
+                ]
+            }
+        }
+    }, 
+    "history-deprecated": {
         "requires": [
             "node"
+        ]
+    }, 
+    "history-hash-ie": {
+        "requires": [
+            "history-base", 
+            "history-hash"
         ]
     }, 
     "imageloader": {
@@ -861,6 +934,12 @@ YUI.Env[Y.version].modules = {
         "path": "async-queue/async-queue-min.js", 
         "requires": [
             "event-custom"
+        ]
+    }, 
+    "selection": {
+        "path": "editor/selection-min.js", 
+        "requires": [
+            "node"
         ]
     }, 
     "slider": {

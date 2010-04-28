@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>YUI Library Examples: Attribute: Custom Getters, Setters and Validators</title>
+    <title>YUI Library Examples: Attribute: Custom Getters, Setters and Validators</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    	<link rel="stylesheet" type="text/css" href="../../assets/yui.css" >
+        <link rel="stylesheet" type="text/css" href="../../assets/yui.css" >
 
 <style>
     /*Supplemental CSS for the YUI distribution*/
@@ -85,54 +85,54 @@
 <body id="yahoo-com" class=" yui-skin-sam">
 <div id="custom-doc" class="yui-t2">
 <div id="hd">
-	<div id="ygunav">
-		<p>
+    <div id="ygunav">
+        <p>
             <em>
-                <a href="http://developer.yahoo.com/yui/3/">YUI 3.x Home</a> <i> - </i>	
+                <a href="http://developer.yahoo.com/yui/3/">YUI 3.x Home</a> <i> - </i> 
             </em>
-		</p>
-		<form action="http://search.yahoo.com/search" id="sitesearchform">
+        </p>
+        <form action="http://search.yahoo.com/search" id="sitesearchform">
             <input name="vs" type="hidden" value="developer.yahoo.com">
             <input name="vs" type="hidden" value="yuiblog.com">
-		    <div id="sitesearch">
-		    	<label for="searchinput">Site Search (YDN &amp; YUIBlog): </label>
-			    <input type="text" id="searchinput" name="p">
-			    <input type="submit" value="Search" id="searchsubmit" class="ygbt">
-		    </div>
-		</form>
+            <div id="sitesearch">
+                <label for="searchinput">Site Search (YDN &amp; YUIBlog): </label>
+                <input type="text" id="searchinput" name="p">
+                <input type="submit" value="Search" id="searchsubmit" class="ygbt">
+            </div>
+        </form>
     </div>
-	<div id="ygma"><a href="../../"><img src="../../assets/logo.gif"  border="0" width="200" height="93"></a></div>
-	<div id="pagetitle"><h1>YUI Library Examples: Attribute: Custom Getters, Setters and Validators</h1></div>
+    <div id="ygma"><a href="../../"><img src="../../assets/logo.gif"  border="0" width="200" height="93"></a></div>
+    <div id="pagetitle"><h1>YUI Library Examples: Attribute: Custom Getters, Setters and Validators</h1></div>
 </div>
 <div id="bd">
 
-	<div id="bar-note"><p><strong>Note:</strong> This is YUI 3.x. Looking for <a href="http://developer.yahoo.com/yui/">YUI 2.x</a>?</p></div>
+    <div id="bar-note"><p><strong>Note:</strong> This is YUI 3.x. Looking for <a href="http://developer.yahoo.com/yui/">YUI 2.x</a>?</p></div>
 
-	<div id="yui-main">
-		<div class="yui-b">
-		  <div class="yui-ge">
-			  <div class="yui-u first example" id="main">
+    <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-ge">
+              <div class="yui-u first example" id="main">
 
-	<h2>Attribute: Custom Getters, Setters and Validators</h2>
+    <h2>Attribute: Custom Getters, Setters and Validators</h2>
 
-	<div id="example" class="promo">
-	<p>
-	The <a href="attribute-basic.html">Basic Configuration</a> example shows how we can add attributes to a host class, and set up default values for them using the attribute configuration object. This example explores how you can configure <code>set</code>, <code>get</code> and <code>validator</code> functions for individual attributes, which can be used to modify or normalize attribute values during get and set invocations, and prevent invalid values from being stored. 
+    <div id="example" class="promo">
+    <p>
+    The <a href="attribute-basic.html">Basic Configuration</a> example shows how we can add attributes to a host class, and set up default values for them using the attribute configuration object. This example explores how you can configure <code>set</code>, <code>get</code> and <code>validator</code> functions for individual attributes, which can be used to modify or normalize attribute values during get and set invocations, and prevent invalid values from being stored. 
 
 
-	</p>	
+    </p>    
 
-	<div class="module example-container ">
-			<div class="hd exampleHd">
-			<p class="newWindowButton yui-skin-sam">
+    <div class="module example-container ">
+            <div class="hd exampleHd">
+            <p class="newWindowButton yui-skin-sam">
                 <a href="attribute-getset_clean.html" target="_blank">View example in new window.</a>
             </p>
-		</div>		<div id="example-canvas" class="bd">
+        </div>      <div id="example-canvas" class="bd">
 
-		
-	<!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
-	
-	<div id="attrs" class="attrs">
+        
+    <!--BEGIN SOURCE CODE FOR EXAMPLE =============================== -->
+    
+    <div id="attrs" class="attrs">
     <div class="header">Enter new values and click the "Set" buttons</div>
     <div class="body">
         <ul class="hints">
@@ -417,64 +417,64 @@ YUI({base:"../../build/", timeout: 10000, filter:"raw"}).use("node", "attribute"
     getAll();
 });
 </script>
-	
-	<!--END SOURCE CODE FOR EXAMPLE =============================== -->
-	
-		
-		</div>
-	</div>			
-	</div>
-		
-	<h3>Get, Set And Validator Functions</h3>
+    
+    <!--END SOURCE CODE FOR EXAMPLE =============================== -->
+    
+        
+        </div>
+    </div>          
+    </div>
+        
+    <h3>Get, Set And Validator Functions</h3>
 
 
-				<div class="yui-u sidebar">
-					
-				
-					<div id="examples" class="mod box4">
+                <div class="yui-u sidebar">
+                    
+                
+                    <div id="examples" class="mod box4">
                         <div class="hd">
-						<h4>
+                        <h4>
     Attribute Examples:</h4>
                         </div>
-						<div class="bd">
-							<ul>
-								<li><a href='../attribute/attribute-basic.html'>Basic Configuration</a></li><li><a href='../attribute/attribute-event.html'>Change Events</a></li><li class='selected'><a href='../attribute/attribute-getset.html'>Custom Getters, Setters and Validators</a></li><li><a href='../attribute/attribute-rw.html'>readOnly and writeOnce Configuration</a></li>							</ul>
-						</div>
-					</div>
-					
-					<div class="mod box4">
+                        <div class="bd">
+                            <ul>
+                                <li><a href='../attribute/attribute-basic.html'>Basic Configuration</a></li><li><a href='../attribute/attribute-event.html'>Change Events</a></li><li class='selected'><a href='../attribute/attribute-getset.html'>Custom Getters, Setters and Validators</a></li><li><a href='../attribute/attribute-rw.html'>readOnly and writeOnce Configuration</a></li>                           </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mod box4">
                         <div class="hd">
-						<h4>More Attribute Resources:</h4>
+                        <h4>More Attribute Resources:</h4>
                         </div>
                         <div class="bd">
-						<ul>
-							<!-- <li><a href="http://developer.yahoo.com/yui/attribute/">User's Guide</a> (external)</li> -->
-						<li><a href="../../api/module_attribute.html">API Documentation</a></li>
+                        <ul>
+                            <!-- <li><a href="http://developer.yahoo.com/yui/attribute/">User's Guide</a> (external)</li> -->
+                        <li><a href="../../api/module_attribute.html">API Documentation</a></li>
 </ul>
                         </div>
-					</div>
-			  </div>
-		</div>
-		
-		</div>
-	</div>
+                    </div>
+              </div>
+        </div>
+        
+        </div>
+    </div>
 
 
 <div class="yui-b toc3" id="tocWrapper">
 <!-- TABLE OF CONTENTS -->
 <div id="toc">
-	
+    
 </div>
 </div>
-	</div><!--closes bd-->
+    </div><!--closes bd-->
 
-	<div id="ft">
+    <div id="ft">
         <p class="first">Copyright &copy; 2009 Yahoo! Inc. All rights reserved.</p>
         <p><a href="http://privacy.yahoo.com/privacy/us/devel/index.html">Privacy Policy</a> - 
             <a href="http://docs.yahoo.com/info/terms/">Terms of Service</a> - 
             <a href="http://docs.yahoo.com/info/copyright/copyright.html">Copyright Policy</a> - 
             <a href="http://careers.yahoo.com/">Job Openings</a></p>
-	</div>
+    </div>
 </div>
 </body>
 </html>

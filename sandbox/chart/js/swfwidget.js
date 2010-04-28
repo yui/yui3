@@ -21,6 +21,20 @@ function SWFWidget (config)
 
 SWFWidget.NAME = "swfWidget";
 
+SWFWidget._instances = SWFWidget._instances || {};
+
+/**
+ * Handles an event from the application swf in which a listener has been
+ * registered through an instance of SWFWidget. 
+ * @method eventHandler
+ * @param swfid {String} the id of the SWF dispatching the event
+ * @param event {Object} the event being transmitted.
+ * @private
+ */
+SWFWidget.eventHandler = function (swfid, event) {
+	SWFWidget._instances[swfid]._eventHandler(event);
+};
+
 /**
  * Attribute config
  * @private
@@ -90,6 +104,7 @@ Y.extend(SWFWidget, Y.Base,
 	_createId: function()
 	{
 		this._id = Y.guid(this.GUID);
+		SWFWidget._instances[this._id] = this;
 	},
 
 	/**
@@ -212,6 +227,50 @@ Y.extend(SWFWidget, Y.Base,
 				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
+	},
+
+	_events: {},
+
+	_init: function(swfowner)
+	{
+		this.swfowner = swfowner;
+		this.appswf = swfowner.appswf;
+		this._addSWFEventListeners();
+	},
+
+	_addSWFEventListeners: function()
+	{
+		var events = this._events,
+			i;
+		for(i in events)
+		{
+			if(events.hasOwnProperty(i) && !events[i].registered)
+			{
+				events[i].registered = true;
+				this.appswf._swf._node.subscribe(this._id, i, "SWFWidget.eventHandler"); 
+		
+			}
+		}
+	},
+
+	on: function(type , fn , context , arg)
+	{
+		var events = this._events;
+		if(!this._events.hasOwnProperty(type))
+		{
+			events[type] = {type:type, args:arguments, registered:false};
+			if(this.swfowner && this.swfowner.swfReady)
+			{
+				events[type].registered = true;
+				this.appswf._swf._node.subscribe(this._id, type, "SWFWidget.eventHandler"); 
+			}
+		}
+		SWFWidget.superclass.on.apply(this, arguments);
+	},
+
+	_eventHandler: function(event)
+	{
+		this.fire(event.type, event);
 	}
 });
 

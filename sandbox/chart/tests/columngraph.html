@@ -25,17 +25,18 @@
 
 				YUI().use('json', 'node', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
 					{
-
 					// Create application level styles
-					var chartstyles = {
-						chart:{
-							padding:{left:20, top:20, bottom:10, right:20}
-						},
+					var appstyles = {
 						background:{
 							fillColor:0x000000,
 							borderColor:0xff0000,
 							borderWidth:2
 						}
+					};
+
+					// Create chart styles
+					var chartstyles = {
+						padding:{left:20, top:20, bottom:10, right:20}
 					};
 
 					// Create bottom axis styles
@@ -107,8 +108,12 @@
 						]
 					};					
 
-						var mychart = new Y.Chart({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:chartstyles});
-						mychart.set("dataProvider", mydata.data);
+					var myapp = new Y.SWFApplication({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:appstyles});
+					myapp.set("dataProvider", mydata.data);
+
+					var mychart = new Y.BorderContainer({parent:myapp, styles:chartstyles});
+					myapp.addItem(mychart);
+				
 						var myleftaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:leftaxisstyles});
 						var mybottomaxis = new Y.Axis({parent:mychart, axisType:"Category", styles:bottomaxisstyles});
 						myleftaxis.addKey("expenses");
@@ -121,6 +126,7 @@
 								yAxisData:myleftaxis,
 								xKey:"day",
 								yKey:"expenses",
+								displayName:"Expenses",
 								styles:expensegraphstyles
 							},
 							{
@@ -129,10 +135,12 @@
 								yAxisData:myleftaxis,
 								xKey:"day",
 								yKey:"revenue",
+								displayName:"Revenue",
 								styles:revenuegraphstyles
 							}
 						]});
-
+						
+						var mydatatip = new Y.DataTip({parent:mychart, graph:mygraph});
 						
 						mychart.addBottomItem(mybottomaxis);
 						mychart.addLeftItem(myleftaxis);

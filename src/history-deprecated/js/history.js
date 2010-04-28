@@ -10,7 +10,8 @@
  * &lt;iframe id="yui-history-iframe" src="path-to-real-asset-in-same-domain"&gt;&lt;/iframe&gt;
  * &lt;input id="yui-history-field" type="hidden"&gt;
  *
- * @module history
+ * @module history-deprecated
+ * @deprecated Please use the new "history" module instead.
  */
 
 /**

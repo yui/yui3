@@ -30,9 +30,7 @@ package com.yahoo.infographics.axes
 		 */
 		public function getLabelByIndex(key:String, index:int):String
 		{
-			var dataCollection:Array = this._data.getDataByKey(key),
-				value:Object = dataCollection[index];
-			return this.labelFunction[this.props.func](value);
+			return this.labelFunction[this.props.func](this._data.data[index]);
 		}
 		
 		/**
