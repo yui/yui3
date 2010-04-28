@@ -186,6 +186,17 @@ Y.extend(History, Y.HistoryBase, {
     }),
 
     /**
+     * Gets the current bookmarkable URL.
+     *
+     * @method getUrl
+     * @return {String} current bookmarkable URL
+     * @static
+     */
+    getUrl: function () {
+        return location.href;
+    },
+
+    /**
      * Parses a location hash string into an object of key/value parameter
      * pairs. If <em>hash</em> is not specified, the current location hash will
      * be used.
@@ -223,7 +234,7 @@ Y.extend(History, Y.HistoryBase, {
      * @static
      */
     replaceHash: function (hash) {
-        Y.log('replaceHash: ' + hash, 'info', 'history-base');
+        Y.log('replaceHash: ' + hash, 'info', 'history');
         location.replace(hash.indexOf('#') === 0 ? hash : '#' + hash);
     },
 
@@ -235,7 +246,7 @@ Y.extend(History, Y.HistoryBase, {
      * @static
      */
     setHash: function (hash) {
-        Y.log('setHash: ' + hash, 'info', 'history-base');
+        Y.log('setHash: ' + hash, 'info', 'history');
         location.hash = hash;
     }
 });
@@ -271,13 +282,13 @@ Y.Event.define('hashchange', {
 });
 
 oldHash = History.getHash();
-oldUrl  = location.href;
+oldUrl  = History.getUrl();
 
 if (nativeHashChange) {
     // Wrap the browser's native hashchange event.
     Y.Event.attach('hashchange', function (e) {
         var newHash = History.getHash(),
-            newUrl  = location.href;
+            newUrl  = History.getUrl();
 
         Obj.each(hashNotifiers, function (notifier) {
             // TODO: would there be any benefit to making this an overridable
@@ -313,7 +324,7 @@ if (nativeHashChange) {
                 newUrl;
 
             if (oldHash !== newHash) {
-                newUrl = location.href;
+                newUrl = History.getUrl();
 
                 Obj.each(hashNotifiers, function (notifier) {
                     notifier.fire({

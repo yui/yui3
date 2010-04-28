@@ -6,8 +6,7 @@ History Manager
         history         - Rollup of history-base and history-hash.
         history-base    - Generic history management API (but no storage layer).
         history-hash    - History management using window.location.hash.
-        history-hash-ie - Improves history-hash's IE6/7 support using the iframe
-                          history hack.
+        history-hash-ie - Adds IE6/7 back/forward support using an iframe hack.
 
 3.2.0
     * Initial release.

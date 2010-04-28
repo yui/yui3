@@ -675,9 +675,6 @@
             "history-base": {
                 "requires": [
                     "event-custom-complex"
-                ], 
-                "supersedes": [
-                    "history-deprecated"
                 ]
             }, 
             "history-hash": {
@@ -685,6 +682,16 @@
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
+                ]
+            }, 
+            "history-hash-ie": {
+                "requires": [
+                    "history-base", 
+                    "history-hash", 
+                    "node-base"
                 ]
             }
         }
@@ -692,12 +699,6 @@
     "history-deprecated": {
         "requires": [
             "node"
-        ]
-    }, 
-    "history-hash-ie": {
-        "requires": [
-            "history-base", 
-            "history-hash"
         ]
     }, 
     "imageloader": {
