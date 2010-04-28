@@ -23,7 +23,7 @@ var Y = YUI({
 
     new Y.Console({
         style: 'block',
-        width: 'inherit',
+        width: Y.UA.ie ? '100%' : 'inherit',
 
         entryTemplate:
             '<div class="{entry_class} {cat_class} {src_class}">' +
