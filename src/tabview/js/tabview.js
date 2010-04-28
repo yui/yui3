@@ -23,20 +23,12 @@ var _queries = Y.TabviewBase._queries,
         this.get('contentBox').focusManager.refresh();
     },
 
-    _defPanelNodeValueFn: function() {
-        var panel = this.get('panelNode');
-        
-        if (!panel) {
-            panel = this.get('contentBox')
-                .appendChild(Y.Node.create(TabView.PANEL_TEMPLATE));
-        }
-        return panel;
+    _defListNodeValueFn: function() {
+        return Y.Node.create(TabView.LIST_TEMPLATE);
     },
 
-    _defListNodeValueFn: function() {
-        var list = this.get('listNode')|| this.get('contentBox')
-                .appendChild(Y.Node.create(TabView.LIST_TEMPLATE));
-        return list;
+    _defPanelNodeValueFn: function() {
+        return Y.Node.create(TabView.PANEL_TEMPLATE);
     },
 
     _afterChildRemoved: function(e) { // update the selected tab when removed
@@ -84,8 +76,24 @@ var _queries = Y.TabviewBase._queries,
     
     renderUI: function() {
         var contentBox = this.get('contentBox'); 
+        this._renderList(contentBox);
+        this._renderPanel(contentBox);
         this._childrenContainer = this.get('listNode');
         this._renderTabs(contentBox);
+    },
+
+    _renderList: function(contentBox) {
+        var node = this.get('listNode');
+        if (!node.inDoc()) {
+            contentBox.append(node);
+        }
+    },
+
+    _renderPanel: function(contentBox) {
+        var node = this.get('panelNode');
+        if (!node.inDoc()) {
+            contentBox.append(node);
+        }
     },
 
     _setDefSelection: function(contentBox) {
