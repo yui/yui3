@@ -20,6 +20,16 @@ Y.extend(Canvas, Y.Base, {
         return this;
     },
 
+	circle: function(x, y, r, start, end, anticlockwise) {
+		x = x || 0;
+        y = y || 0;
+        r = r;
+        anticlockwise = anticlockwise || false;
+
+		this._canvas.getContext('2d').arc(x, y, r, start, end, anticlockwise);
+        return this;
+	},
+
     closePath: function() {
         this._canvas.getContext('2d').closePath();
         return this;

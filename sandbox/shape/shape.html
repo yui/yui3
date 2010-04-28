@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
+<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
 <title>Node</title>
 <script type="text/javascript" src="../../build/yui/yui.js"></script>
 <script type="text/javascript" src="canvas.js"></script>
@@ -21,7 +21,9 @@ canvas {
     zoom:1;
 }
 
-#demo2 {
+.yui3-dd-dragging {
+    -webkit-transform: rotate(360deg);
+    -webkit-transition: -webkit-transform 250ms ease-in-out;
 }
 </style>
 </head>
@@ -35,7 +37,7 @@ canvas {
 <script type="text/javascript">
 
 
-YUI({filter:'raw'}).use('dd-drag', 'canvas-vml', function(Y) {
+YUI({filter:'raw'}).use('anim-base', 'dd-drag', 'canvas-vml', function(Y) {
     var shape = new Y.Canvas({
         height: '200',
         width: '200',
@@ -47,6 +49,15 @@ YUI({filter:'raw'}).use('dd-drag', 'canvas-vml', function(Y) {
 
     shape.draw('#demo');
 
+    shape.setAttrs({
+        height: '200',
+        width: '200',
+        coordSize: '200 200',
+        fillColor: 'blue',
+        strokeWeight: 2,
+        strokeColor: 'red'
+    });
+
     shape.beginPath()
         .moveTo(2, 2)
         .lineTo([2, 198], [198, 2])
@@ -54,10 +65,14 @@ YUI({filter:'raw'}).use('dd-drag', 'canvas-vml', function(Y) {
         .fill()
         .stroke();
 
+    shape.beginPath()
+        .circle(98, 98, 20, 0, 360)
+        .fill()
+        .stroke();
+
     var shape2 = new Y.Canvas({
         height: '200',
         width: '200',
-        //path: 'm 1,1 l 1,200, 200,200, 200,1 x e',
         fillColor: 'blue',
         strokeWeight: 2,
         strokeColor: 'red'
@@ -73,7 +88,11 @@ YUI({filter:'raw'}).use('dd-drag', 'canvas-vml', function(Y) {
         .fill()
         .stroke();
 
-console.log(shape2._canvas);
+    shape2.set('fillColor', 'blue');
+    shape2.set('strokeColor', 'red');
+    shape2.set('strokeWeight', '2');
+    shape2.set('coordSize', '200 200');
+
     var handlers = {
         // TODO: find more efficient event that gives deltaXY (drag:start not preventable)
         drag: function(e) {
@@ -89,6 +108,13 @@ console.log(shape2._canvas);
         }
     },
 
+    anim = new Y.Anim({
+        node: shape._canvas,
+        to: {
+            rotation: 180
+        }
+    }),
+
     dd = new Y.DD.Drag({
         node: shape._canvas,
         on: handlers
@@ -98,12 +124,11 @@ console.log(shape2._canvas);
         node: shape2._canvas,
         on: handlers
     });
+
+    anim.run();
 });
 
-
 </script>
-
-
 </body>
 </html>
 

@@ -17,6 +17,10 @@ Y.extend(VMLCanvas, Y.Canvas, {
         return this;
     },
 
+	circle: function(x, y, r, start, end, anticlockwise) {
+        return this;
+	},
+
     closePath: function() {
         this._path += ' x e';
         this.set('path', this._path);
@@ -85,13 +89,14 @@ VMLCanvas.ATTRS.strokeWeight = null;
 Y.VMLCanvas = VMLCanvas;
 
 if (Y.UA.ie) {
+/*
     Y.config.doc.namespaces.add(
         'v', // vml namespace
-        null,
-        '#default#VML' // required for IE8
-    );
+        'urn:schemas-microsoft-com:vml'
+    ).doImport('#default#VML');
+*/
 
-    Y.Canvas.ATTRS = {}; // TODO: why cant just override per ATTR?
+    Y.Canvas.ATTRS = null; // TODO: why cant just override per ATTR?
     Y.Canvas = VMLCanvas;
 }
 
