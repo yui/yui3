@@ -71,20 +71,21 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
     },
 
     _renderPanel: function() {
-        this.get('parent').get('contentBox')
-            .one(_queries.tabviewPanel).appendChild(this.get('panelNode'));
+        this.get('parent').get('panelNode')
+            .appendChild(this.get('panelNode'));
     },
 
     _add: function() {
-        var parentNode = this.get('parent').get('contentBox'),
-            list = parentNode.one(_queries.tabviewList),
-            tabviewPanel = parentNode.one(_queries.tabviewPanel);
+        var parent = this.get('parent').get('contentBox'),
+            list = parent.get('listNode'),
+            panel = parent.get('panelNode');
+
         if (list) {
             list.appendChild(this.get('boundingBox'));
         }
 
-        if (tabviewPanel) {
-            tabviewPanel.appendChild(this.get('panelNode'));
+        if (panel) {
+            panel.appendChild(this.get('panelNode'));
         }
     },
     
@@ -118,16 +119,27 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
         return content;
     },
 
+    // find panel by ID mapping from label href
     _defPanelNodeValueFn: function() {
         var id,
             href = this.get('contentBox').get('href') || '',
+            parent = this.get('parent'),
+            hashIndex = href.indexOf('#'),
             panel;
 
+        href = href.substr(hashIndex);
+
         if (href.charAt(0) === '#') {
-            id = href.substr(1); 
-            panel = Y.one(href);
+            id = href.substr(1);
+            panel = Y.one(href).addClass(_classNames.tabPanel);
         } else {
             id = Y.guid();
+        }
+
+        // use the one found by id, or else try matching indices
+        if (parent) {
+            panel = panel ||
+                parent.get('panelNode').get('children').item(this.get('index'));
         }
 
         if (!panel) {
@@ -170,6 +182,13 @@ Y.Tab = Y.Base.create('tab', Y.Widget, [Y.WidgetChild], {
          * @type Y.Node
          */
         panelNode: {
+            setter: function(node) {
+                node = Y.one(node);
+                if (node) {
+                    node.addClass(_classNames.tabPanel);
+                }
+                return node;
+            },
             valueFn: '_defPanelNodeValueFn'
         },
         

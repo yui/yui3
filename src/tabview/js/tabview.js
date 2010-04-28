@@ -23,6 +23,22 @@ var _queries = Y.TabviewBase._queries,
         this.get('contentBox').focusManager.refresh();
     },
 
+    _defPanelNodeValueFn: function() {
+        var panel = this.get('panelNode');
+        
+        if (!panel) {
+            panel = this.get('contentBox')
+                .appendChild(Y.Node.create(TabView.PANEL_TEMPLATE));
+        }
+        return panel;
+    },
+
+    _defListNodeValueFn: function() {
+        var list = this.get('listNode')|| this.get('contentBox')
+                .appendChild(Y.Node.create(TabView.LIST_TEMPLATE));
+        return list;
+    },
+
     _afterChildRemoved: function(e) { // update the selected tab when removed
         var i = e.index,
             selection = this.get('selection');
@@ -53,6 +69,7 @@ var _queries = Y.TabviewBase._queries,
         //  Use the Node Focus Manager to add keyboard support:
         //  Pressing the left and right arrow keys will move focus
         //  among each of the tabs.
+
         this.get('contentBox').plug(Y.Plugin.NodeFocusManager, {
                         descendants: DOT + _classNames.tabLabel,
                         keys: { next: 'down:39', // Right arrow
@@ -60,17 +77,15 @@ var _queries = Y.TabviewBase._queries,
                         circular: true
                     });
 
+        this.after('render', this._setDefSelection);
         this.after('addChild', this._afterChildAdded);
         this.after('removeChild', this._afterChildRemoved);
     },
     
     renderUI: function() {
         var contentBox = this.get('contentBox'); 
-        this._renderListBox(contentBox);
-        this._renderPanelBox(contentBox);
+        this._childrenContainer = this.get('listNode');
         this._renderTabs(contentBox);
-        this._setDefSelection(contentBox);
-
     },
 
     _setDefSelection: function(contentBox) {
@@ -84,33 +99,16 @@ var _queries = Y.TabviewBase._queries,
             }
         });
         if (selection) {
+            // TODO: why both needed? (via widgetParent/Child)?
+            this.set('selection', selection);
             selection.set('selected', 1);
-        }
-    },
-
-    _renderListBox: function(contentBox) {
-        var list = contentBox.one(_queries.tabviewList);
-        if (!list) {
-            list = contentBox.appendChild(Y.Node.create(TabView.LIST_TEMPLATE));
-        } else {
-            list.addClass(_classNames.tabviewList);
-        }
-
-        this._childrenContainer = list;
-    },
-
-    _renderPanelBox: function(contentBox) {
-        var panel = contentBox.one(_queries.tabviewPanel);
-        if (!panel) {
-            contentBox.append(TabView.PANEL_TEMPLATE);
-        } else {
-            panel.addClass(_classNames.tabviewPanel);
         }
     },
 
     _renderTabs: function(contentBox) {
         var tabs = contentBox.all(_queries.tab),
-            panels = contentBox.all(_queries.tabPanel),
+            panelNode = this.get('panelNode'),
+            panels = (panelNode) ? this.get('panelNode').get('children') : null,
             tabview = this;
 
         if (tabs) { // add classNames and fill in Tab fields from markup when possible
@@ -119,7 +117,7 @@ var _queries = Y.TabviewBase._queries,
             contentBox.all(_queries.tabPanel).addClass(_classNames.tabPanel);
 
             tabs.each(function(node, i) {
-                var panelNode = panels.item(i);
+                var panelNode = (panels) ? panels.item(i) : null;
                 tabview.add({
                     boundingBox: node,
                     contentBox: node.one(DOT + _classNames.tabLabel),
@@ -128,7 +126,6 @@ var _queries = Y.TabviewBase._queries,
                 });
             });
         }
-
     }
 }, {
 
@@ -140,10 +137,39 @@ var _queries = Y.TabviewBase._queries,
             value: 'Tab'
         },
 
+        listNode: {
+            setter: function(node) {
+                node = Y.one(node);
+                if (node) {
+                    node.addClass(_classNames.tabviewList);
+                }
+                return node;
+            },
+
+            valueFn: '_defListNodeValueFn'
+        },
+
+        panelNode: {
+            setter: function(node) {
+                node = Y.one(node);
+                if (node) {
+                    node.addClass(_classNames.tabviewPanel);
+                }
+                return node;
+            },
+
+            valueFn: '_defPanelNodeValueFn'
+        },
+
         tabIndex: {
             value: null
             //validator: '_validTabIndex'
         }
+    },
+
+    HTML_PARSER: {
+        listNode: _queries.tabviewList,
+        panelNode: _queries.tabviewPanel
     }
 });
 
