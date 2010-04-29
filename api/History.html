@@ -225,6 +225,61 @@ chars into spaces.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__updateIframe">
+                                    <h4>
+                                        <a name="method__updateIframe">_updateIframe</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                         static 
+                                        
+                                        void
+                                            <strong property="yui:name">_updateIframe</strong>
+                                           (
+                                                
+                                                        
+                                                         hash
+                                                    
+                                                
+                                                        , 
+                                                         replace
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Updates the history iframe with the specified hash.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">hash</span>
+                                                        &lt;<span property="yui:type">String</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> location hash</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">replace</span>
+                                                        &lt;<span property="yui:type">Boolean</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> (optional) if <code>true</code>, the current
+history state will be replaced without adding a new history entry</span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_createHash">
                                     <h4>
                                         <a name="method_createHash">createHash</a></h4>
@@ -356,6 +411,43 @@ pairs.
                                                             String
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">current location hash</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_getUrl">
+                                    <h4>
+                                        <a name="method_getUrl">getUrl</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        String
+                                            <strong property="yui:name">getUrl</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Gets the current bookmarkable URL.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                            String
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">current bookmarkable URL</dd>
                                                 </dl>
 
 
@@ -718,6 +810,7 @@ history entry.
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
+                                <li class=""><a href="history-hash-ie.js.html" title="history-hash-ie.js">history-hash-ie.js</a></li>
                                 <li class=""><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
                         </ul>
                     </div>
@@ -735,9 +828,11 @@ history entry.
                         <ul class="content">        
                                 <li class="protected"><a href="#method__afterHashChange" title="_afterHashChange">_afterHashChange</a></li>
                                 <li class=""><a href="#method__decode" title="_decode">_decode</a></li>
+                                <li class="protected"><a href="#method__updateIframe" title="_updateIframe">_updateIframe</a></li>
                                 <li class=""><a href="#method_createHash" title="createHash">createHash</a></li>
                                 <li class=""><a href="#method_encode" title="encode">encode</a></li>
                                 <li class=""><a href="#method_getHash" title="getHash">getHash</a></li>
+                                <li class=""><a href="#method_getUrl" title="getUrl">getUrl</a></li>
                                 <li class=""><a href="#method_parseHash" title="parseHash">parseHash</a></li>
                                 <li class=""><a href="#method_replaceHash" title="replaceHash">replaceHash</a></li>
                                 <li class=""><a href="#method_setHash" title="setHash">setHash</a></li>
@@ -756,7 +851,7 @@ history entry.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "_decode", "url": "History.html#method__decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_handleChanges", "url": "HistoryBase.html#method__handleChanges", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "_decode", "url": "History.html#method__decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "", "host": "History", "name": "getUrl", "url": "History.html#method_getUrl", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_handleChanges", "url": "HistoryBase.html#method__handleChanges", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "History", "name": "_updateIframe", "url": "History.html#method__updateIframe", "type": "method"}];
 </script>
 </body>
 </html>

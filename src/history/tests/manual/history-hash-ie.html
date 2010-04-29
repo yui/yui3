@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>history-hash test</title>
+    <title>history-hash-ie test</title>
     <link rel="stylesheet" href="../assets/test.css">
     <style>
         #critters {
@@ -20,12 +20,14 @@
         #photos img {
             margin-right: 10px;
             max-height: 200px;
+            _height: 200px;
+            _width: auto;
         }
     </style>
 </head>
 <body class="yui3-skin-sam">
 
-<h1>history-hash test</h1>
+<h1>history-hash-ie test</h1>
 
 <form>
     <ul id="critters">
@@ -36,7 +38,7 @@
 </form>
 
 <p>
-<a href="http://www.yahoo.com">Yahoo!</a>
+<a href="http://realultimatepower.net/">Ninjas!</a>
 </p>
 
 <div id="photos"></div>
@@ -50,22 +52,7 @@ var Y = YUI({
         history: 'debug'
     },
     useBrowserConsole: false
-}).use('console-filters', 'event-delegate', 'history', 'json-stringify', function (Y) {
-    new Y.Console({
-        style: 'block',
-        width: Y.UA.ie ? '100%' : 'inherit',
-
-        entryTemplate:
-            '<div class="{entry_class} {cat_class} {src_class}">' +
-                '<pre class="{entry_content_class}">{message}</pre>' +
-            '</div>',
-
-        after: {
-            render: function () {
-                this.get('contentBox').insertBefore(this._foot, this._body);
-            }
-        }
-    }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
+}).use('console-filters', 'event-delegate', 'history-hash-ie', 'json-stringify', function (Y) {
 
     var history    = new Y.History(),
         bookmarked = history.get(),
@@ -104,9 +91,30 @@ var Y = YUI({
         history.add(node.get('id'), node.get('checked') ? '1' : null);
     }, 'input');
 
+    if (!Y.UA.ie || Y.UA.ie > 7) {
+        Y.log("Not using the IE iframe hack since this isn't IE 6/7.")
+    }
+
     // Refresh with the bookmarked state, if any.
     Y.log('Bookmarked state: ' + Y.JSON.stringify(bookmarked));
     refresh(bookmarked);
+
+    new Y.Console({
+        style: 'block',
+        width: Y.UA.ie ? '100%' : 'inherit',
+    
+        entryTemplate:
+            '<div class="{entry_class} {cat_class} {src_class}">' +
+                '<pre class="{entry_content_class}">{message}</pre>' +
+            '</div>',
+    
+        after: {
+            render: function () {
+                this.get('contentBox').insertBefore(this._foot, this._body);
+            }
+        }
+    }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
+
 });
 </script>
 

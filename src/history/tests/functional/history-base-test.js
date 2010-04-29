@@ -22,8 +22,8 @@ Y.HistoryBaseTest = new Y.Test.Case({
         Y.ObjectAssert.ownsNoKeys(state);
     },
 
-    'Constructor should accept an object hash as the initial state': function () {
-        var history = new Y.HistoryBase({foo: 'bar'});
+    'Constructor should accept a config object containing an initial state': function () {
+        var history = new Y.HistoryBase({initialState: {foo: 'bar'}});
         Y.Assert.areSame(history.get().foo, 'bar');
     },
 

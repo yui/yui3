@@ -233,6 +233,17 @@
     <span class="p">}),</span>
 
     <span class="cm">/**</span>
+<span class="cm">     * Gets the current bookmarkable URL.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method getUrl</span>
+<span class="cm">     * @return {String} current bookmarkable URL</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">getUrl</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="cm">/**</span>
 <span class="cm">     * Parses a location hash string into an object of key/value parameter</span>
 <span class="cm">     * pairs. If &lt;em&gt;hash&lt;/em&gt; is not specified, the current location hash will</span>
 <span class="cm">     * be used.</span>
@@ -270,7 +281,7 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">replaceHash</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;replaceHash: &#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history-base&#39;</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;replaceHash: &#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
         <span class="nx">location</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">hash</span> <span class="o">:</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">);</span>
     <span class="p">},</span>
 
@@ -282,7 +293,7 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">setHash</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;setHash: &#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history-base&#39;</span><span class="p">);</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;setHash: &#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
         <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">});</span>
@@ -318,13 +329,13 @@
 <span class="p">});</span>
 
 <span class="nx">oldHash</span> <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">getHash</span><span class="p">();</span>
-<span class="nx">oldUrl</span>  <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
+<span class="nx">oldUrl</span>  <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">();</span>
 
 <span class="k">if</span> <span class="p">(</span><span class="nx">nativeHashChange</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Wrap the browser&#39;s native hashchange event.</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">attach</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">getHash</span><span class="p">(),</span>
-            <span class="nx">newUrl</span>  <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
+            <span class="nx">newUrl</span>  <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">();</span>
 
         <span class="nx">Obj</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hashNotifiers</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// TODO: would there be any benefit to making this an overridable</span>
@@ -360,7 +371,7 @@
                 <span class="nx">newUrl</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="nx">oldHash</span> <span class="o">!==</span> <span class="nx">newHash</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">newUrl</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
+                <span class="nx">newUrl</span> <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">();</span>
 
                 <span class="nx">Obj</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">hashNotifiers</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">notifier</span><span class="p">.</span><span class="nx">fire</span><span class="p">({</span>
@@ -461,6 +472,7 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
+                                <li class=""><a href="history-hash-ie.js.html" title="history-hash-ie.js">history-hash-ie.js</a></li>
                                 <li class="selected"><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
                         </ul>
                     </div>
@@ -479,7 +491,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "_decode", "url": "History.html#method__decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_handleChanges", "url": "HistoryBase.html#method__handleChanges", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "_decode", "url": "History.html#method__decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "", "host": "History", "name": "getUrl", "url": "History.html#method_getUrl", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_handleChanges", "url": "HistoryBase.html#method__handleChanges", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "History", "name": "_updateIframe", "url": "History.html#method__updateIframe", "type": "method"}];
 </script>
 </body>
 </html>
