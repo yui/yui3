@@ -2725,9 +2725,7 @@ Y.Get = function() {
         //     q.attributes.charset = charset;
         // }
 
-        setTimeout(function() {
-            _next(id);
-        }, 0);
+        _next(id);
 
         return {
             tId: id
