@@ -49,7 +49,7 @@ HistoryBase = function (config) {
     this._init.apply(this, arguments);
 };
 
-Y.augment(HistoryBase, Y.Event.Target, null, null, {
+Y.augment(HistoryBase, Y.EventTarget, null, null, {
     emitFacade : true,
     prefix     : 'history',
     preventable: false,
