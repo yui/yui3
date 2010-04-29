@@ -682,9 +682,6 @@
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
-                ], 
-                "supersedes": [
-                    "history-deprecated"
                 ]
             }, 
             "history-hash-ie": {

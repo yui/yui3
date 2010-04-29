@@ -689,9 +689,6 @@ YUI.Env[Y.version].modules = {
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
-                ], 
-                "supersedes": [
-                    "history-deprecated"
                 ]
             }, 
             "history-hash-ie": {
