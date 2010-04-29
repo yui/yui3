@@ -217,24 +217,10 @@ var _queries = Y.TabviewBase._queries,
     
     renderUI: function() {
         var contentBox = this.get('contentBox'); 
-        this._renderList(contentBox);
-        this._renderPanel(contentBox);
+        this._renderListBox(contentBox);
+        this._renderPanelBox(contentBox);
         this._childrenContainer = this.get('listNode');
         this._renderTabs(contentBox);
-    },
-
-    _renderList: function(contentBox) {
-        var node = this.get('listNode');
-        if (!node.inDoc()) {
-            contentBox.append(node);
-        }
-    },
-
-    _renderPanel: function(contentBox) {
-        var node = this.get('panelNode');
-        if (!node.inDoc()) {
-            contentBox.append(node);
-        }
     },
 
     _setDefSelection: function(contentBox) {
@@ -251,6 +237,20 @@ var _queries = Y.TabviewBase._queries,
             // TODO: why both needed? (via widgetParent/Child)?
             this.set('selection', selection);
             selection.set('selected', 1);
+        }
+    },
+
+    _renderListBox: function(contentBox) {
+        var node = this.get('listNode');
+        if (!node.inDoc()) {
+            contentBox.append(node);
+        }
+    },
+
+    _renderPanelBox: function(contentBox) {
+        var node = this.get('panelNode');
+        if (!node.inDoc()) {
+            contentBox.append(node);
         }
     },
 
