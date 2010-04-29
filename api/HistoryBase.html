@@ -79,10 +79,6 @@
                         The HistoryBase class provides basic state management functionality backed by
 an object. History state is shared globally among all instances and
 subclass instances of HistoryBase.
-<p>
-If provided, the optional <em>initialState</em> object will be merged with
-the current global state.
-</p>
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -110,7 +106,8 @@ zero or more of the following properties:
 <dl>
 <dt>initialState (Object)</dt>
 <dd>
-Initial state to set, as an object hash of key/value pairs.
+Initial state to set, as an object hash of key/value pairs. This will be
+merged into the current global state.
 </dd>
 </dl></span>
                                                 </dd>
@@ -229,8 +226,8 @@ Initial state to set, as an object hash of key/value pairs.
                                                         <code><span property="yui:name">value</span>
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> object hash containing <em>newVal</em> and
-<em>prevVal</em> properties for the changed item</span>
+                                                        <span property="yui:description"> object hash containing <i>newVal</i> and
+<i>prevVal</i> properties for the changed item</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">key</span>
@@ -328,9 +325,9 @@ Initial state to set, as an object hash of key/value pairs.
                                         
                                         <div class="description" property="yui:description">
                                             Called by _resolveChanges() when the state has changed. This method takes
-care of actually firing the history:change event if <em>silent</em> is
-<code>false</code>, or storing the new state if <em>silent</em> is
-<code>true</code>.
+care of actually firing the <code>history:change event</code> if
+<i>silent</i> is <code>false</code>, or storing the new state if
+<i>silent</i> is <code>true</code>.
                                         </div>
 
                                         <div class="description">
@@ -347,7 +344,7 @@ care of actually firing the history:change event if <em>silent</em> is
                                                         <code><span property="yui:name">silent</span>
                                                         &lt;<span property="yui:type">Boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> (optional) if <em>true</em>, no change events
+                                                        <span property="yui:description"> (optional) if <code>true</code>, no change events
 will be fired</span>
                                                         </dd>
                                                 </dl>
@@ -430,7 +427,7 @@ constructor.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Resolves the changes (if any) between <em>newState</em> and the current
+                                            Resolves the changes (if any) between <i>newState</i> and the current
 state and fires appropriate events if things have changed.
                                         </div>
 
@@ -506,7 +503,7 @@ fired properly.
                                                         <code><span property="yui:name">silent</span>
                                                         &lt;<span property="yui:type">Boolean</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> (optional) if <em>true</em>, the state change
+                                                        <span property="yui:description"> (optional) if <code>true</code>, the state change
 should be silent</span>
                                                         </dd>
                                                 </dl>
@@ -533,7 +530,7 @@ should be silent</span>
                                            (
                                                 
                                                         
-                                                         state
+                                                         state|key
                                                     
                                                 
                                                         , 
@@ -546,7 +543,7 @@ should be silent</span>
                                         <div class="description" property="yui:description">
                                             Adds a state entry with new values for the specified key or keys. Any key
 with a <code>null</code> or <code>undefined</code> value will be removed
-from the state; all others will be merged into it.
+from the current state; all others will be merged into it.
                                         </div>
 
                                         <div class="description">
@@ -554,18 +551,18 @@ from the state; all others will be merged into it.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">state</span>
+                                                        <code><span property="yui:name">state|key</span>
                                                         &lt;<span property="yui:type">Object|String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> object hash of key/value string pairs, or
-the name of a single key</span>
+                                                        <span property="yui:description"> object hash of key/value string pairs,
+or the name of a single key</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">value</span>
                                                         &lt;<span property="yui:type">String|null</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> (optional) if <em>state</em> is the name of a
-single key, <em>value</em> will become its new value</span>
+                                                        <span property="yui:description"> (optional) if <i>state</i> is the name of a
+single key, <i>value</i> will become its new value</span>
                                                         </dd>
                                                 </dl>
 
@@ -601,9 +598,9 @@ single key, <em>value</em> will become its new value</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Returns the current value of the state parameter specified by
-<em>key</em>, or an object hash of key/value pairs for all current state
-parameters if no key is specified.
+                                            Returns the current value of the state parameter specified by <i>key</i>,
+or an object hash of key/value pairs for all current state parameters if
+no key is specified.
                                         </div>
 
                                         <div class="description">
@@ -648,7 +645,7 @@ object hash of key/value pairs for all current state parameters</dd>
                                            (
                                                 
                                                         
-                                                         state
+                                                         state|key
                                                     
                                                 
                                                         , 
@@ -669,18 +666,18 @@ are generated.
                                                 <dl rel="yui:parameters">
                                                     <dt>Parameters:</dt>
                                                         <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">state</span>
+                                                        <code><span property="yui:name">state|key</span>
                                                         &lt;<span property="yui:type">Object|String</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> object hash of key/value string pairs, or
-the name of a single key</span>
+                                                        <span property="yui:description"> object hash of key/value string pairs,
+or the name of a single key</span>
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">value</span>
                                                         &lt;<span property="yui:type">String|null</span>&gt;
                                                         </code>
-                                                        <span property="yui:description"> (optional) if <em>state</em> is the name of a
-single key, <em>value</em> will become its new value</span>
+                                                        <span property="yui:description"> (optional) if <i>state</i> is the name of a
+single key, <i>value</i> will become its new value</span>
                                                         </dd>
                                                 </dl>
 
@@ -794,9 +791,9 @@ single key, <em>value</em> will become its new value</span>
                                         <div class="description" property="yui:description">
                                             Fired when the state changes. To be notified of all state changes
 regardless of the History or YUI instance that generated them,
-subscribe to this event on Y.Global. If you would rather be notified
-only about changes generated by this specific History instance,
-subscribe to this event on the instance.
+subscribe to this event on <code>Y.Global</code>. If you would rather
+be notified only about changes generated by this specific History
+instance, subscribe to this event on the instance.
                                         </div>
 
                                         <div class="description">

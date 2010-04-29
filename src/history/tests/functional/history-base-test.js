@@ -1,6 +1,6 @@
 YUI.add('history-base-test', function (Y) {
 
-Y.HistoryBaseTest = new Y.Test.Case({
+Y.Test.Runner.add(new Y.Test.Case({
     name: 'history-base',
 
     setUp: function () {
@@ -126,6 +126,6 @@ Y.HistoryBaseTest = new Y.Test.Case({
 
         Y.Mock.verify(handler);
     }
-});
+}));
 
 }, '@VERSION@', {requires:['test', 'history-base']});
