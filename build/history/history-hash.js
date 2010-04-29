@@ -93,11 +93,11 @@ Y.extend(History, Y.HistoryBase, {
     NAME: 'history',
 
     /**
-     * Whether or not this browser supports the window.onhashchange event
-     * natively. Note that even if this is <code>true</code>, you may still want
-     * to use History's synthetic hashchange event since it normalizes
-     * implementation differences and fixes spec violations across various
-     * browsers.
+     * Whether or not this browser supports the <code>window.onhashchange</code>
+     * event natively. Note that even if this is <code>true</code>, you may
+     * still want to use History's synthetic <code>hashchange</code> event since
+     * it normalizes implementation differences and fixes spec violations across
+     * various browsers.
      *
      * @property nativeHashChange
      * @type Boolean
@@ -146,7 +146,7 @@ Y.extend(History, Y.HistoryBase, {
      * Wrapper around <code>decodeURIComponent()</code> that also converts +
      * chars into spaces.
      *
-     * @method _decode
+     * @method decode
      * @param {String} string string to decode
      * @return {String} decoded string
      * @static
@@ -169,7 +169,8 @@ Y.extend(History, Y.HistoryBase, {
     },
 
     /**
-     * Gets the current location hash, minus the preceding '#' character.
+     * Gets the raw (not decoded) current location hash, minus the preceding '#'
+     * character.
      *
      * @method getHash
      * @return {String} current location hash
@@ -198,7 +199,7 @@ Y.extend(History, Y.HistoryBase, {
 
     /**
      * Parses a location hash string into an object of key/value parameter
-     * pairs. If <em>hash</em> is not specified, the current location hash will
+     * pairs. If <i>hash</i> is not specified, the current location hash will
      * be used.
      *
      * @method parseHash
