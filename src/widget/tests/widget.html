@@ -44,13 +44,13 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
 
         name : "getSkinName",
     
-        "testGetSkinNameNotRendered" : function () {
+        "getSkinName should return null if not rendered" : function () {
             var w = new Y.Widget();
     
             Y.Assert.isNull( w.getSkinName() );
         },
     
-        "testGetSkinNameFromBB": function () {
+        "getSkinName should return name from BB if available": function () {
             var bb = Y.Node.create( '<div class="yui3-skin-foo"><div></div></div>' ),
                 cb = bb.one( 'div' ),
                 w = new Y.Widget( {
@@ -61,7 +61,7 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
             Y.Assert.areEqual( "foo", w.getSkinName() );
         },
     
-        "testGetSkinNameFromBody": function () {
+        "getSkinName should return name from body or null": function () {
             var w = new Y.Widget().render(),
                 body = Y.one( 'body' );
     
@@ -73,8 +73,8 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
     
             body.addClass( "yui3-skin-sam" );
         },
-
-        "testGetSkinNameFromAncestor": function () {
+    
+        "getSkinName should return name from ancestor if both ancestor and body are classed": function () {
             var w = new Y.Widget().render( '#testbed' ),
                 body = Y.one( 'body' );
     
@@ -104,12 +104,7 @@ YUI({useBrowserConsole:false}).use('test', 'widget', 'console', function (Y) {
             } catch(e) {
                 Y.Assert.fail("w.destroy() on an unrendered widget threw an exception" + e);
             }
-        }
-    }));
-        
-    suite.add(new Y.Test.Case({
-        
-        name:"clone",
+        },
         
         testWidgetClone : function() {
             var a = new Y.Widget();

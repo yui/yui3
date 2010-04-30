@@ -33,7 +33,6 @@
     </style>
 
     <script type="text/javascript">
-
         YUI({useBrowserConsole:false}).use("dump", "attribute-complex", "base", "console", "test", function(Y) {
 
             function areObjectsReallyEqual(o1, o2) {
@@ -1598,6 +1597,8 @@
             extendedTemplate = Y.merge(extendedTemplate, sharedEventTests);
 
             var perfTemplate = {
+                
+                name: "Performance Tests",
 
                 testTimeConstruction: function() {
                     var start, end, n = 20, t, i;
@@ -1670,34 +1671,53 @@
                 }
             }
 
-            //create the console
-            new Y.Console({
-                width:"100%",
-                height:"95%",
-                id:"console",
-                verbose : false,
-                printTimeout: 0,
-                newestOnTop : false,
-                entryTemplate: '<pre class="{entry_class} {cat_class} {src_class}">'+
-                        '<span class="{entry_cat_class}">{label}</span>'+
-                        '<span class="{entry_content_class}">{message}</span>'+
-                '</pre>'
-            }).render();
+            var suite = new Y.Test.Suite({name:"Attribute Unit Tests"});
 
-            Y.Test.Runner.clear();
+            suite.add(new Y.Test.Case(basicTemplate));
+            suite.add(new Y.Test.Case(extendedTemplate));
 
-            Y.Test.Runner.add(new Y.Test.Case(basicTemplate));
-            Y.Test.Runner.add(new Y.Test.Case(extendedTemplate));
+            suite.add(new Y.Test.Case(basicTemplate));
+            suite.add(new Y.Test.Case(extendedTemplate));  // run twice, just to make sure static class state not modified
 
-            Y.Test.Runner.add(new Y.Test.Case(basicTemplate));     // Running again, to make sure static attributes aren't modified
-            Y.Test.Runner.add(new Y.Test.Case(extendedTemplate));  // Running again, to make sure static attributes aren't modified
-
-            Y.Test.Runner.add(new Y.Test.Case(perfTemplate));
-
+            Y.Test.Runner.add(suite);
+            Y.Test.Runner.setName("Attribute Tests");
+            Y.Test.Runner.disableLogging();
             Y.Test.Runner.run();
 
+            var console;
+
+            Y.one("#btnRun").set("disabled", false).on("click", function() {
+
+                if (!console) {
+
+                    //create the console
+                    console = new Y.Console({
+                        width:"100%",
+                        height:"95%",
+                        id:"console",
+                        verbose : false,
+                        printTimeout: 0,
+                        newestOnTop : false,
+                        entryTemplate: '<pre class="{entry_class} {cat_class} {src_class}">'+
+                                '<span class="{entry_cat_class}">{label}</span>'+
+                                '<span class="{entry_content_class}">{message}</span>'+
+                        '</pre>',
+                        render:true
+                    });
+
+                    var perfSuite = new Y.Test.Suite({name:"Attribute Performance Tests"});
+                    perfSuite.add(new Y.Test.Case(perfTemplate));
+
+                    Y.Test.Runner.add(perfSuite);
+                }
+
+                Y.Test.Runner.enableLogging();
+                Y.Test.Runner.run();
+            });
         });
     </script>
 </head>
-<body class="yui3-skin-sam"></body>
+<body class="yui3-skin-sam">
+    <p><input type="button" value="Run Tests" id="btnRun" disabled=true></p>
+</body>
 </html>
