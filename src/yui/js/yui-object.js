@@ -29,6 +29,7 @@ var O = Y.Object,
 
 owns = function(o, k) {
     return o && o.hasOwnProperty && o.hasOwnProperty(k);
+    // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
 UNDEFINED = undefined,

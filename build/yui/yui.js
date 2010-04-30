@@ -5,6 +5,7 @@
  * @submodule yui-base
  */
 
+
 if (typeof YUI === 'undefined') {
 
 /**
@@ -27,15 +28,23 @@ if (typeof YUI === 'undefined') {
     /*global YUI_config*/
     var YUI = function() {
 
-        var Y = this, a = arguments, i, l = a.length,
+        var Y = this, a = arguments, i, l = a.length, proto, prop,
             globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
             Y = new YUI();
+
             for (i=0; i<l; i++) {
                 Y._config(a[i]);
             }
+
+            for (prop in proto) {
+                if (proto.hasOwnProperty(prop)) {
+                    Y[prop] = proto[prop];
+                }
+            }
+
             return Y; 
         } else {
             // set up the core environment
@@ -54,7 +63,7 @@ if (typeof YUI === 'undefined') {
 }
 
 (function() {
-    var p, prop,
+    var proto, prop,
         VERSION       = '@VERSION@', 
         BASE          = 'http://yui.yahooapis.com/',
         DOC_LABEL     = 'yui3-js-enabled',
@@ -109,7 +118,7 @@ if (VERSION.indexOf('@') > -1) {
     VERSION = '3.0.0'; // dev time hack for cdn test
 }
         
-YUI.prototype = {
+proto = {
     _config: function(o) {
         o = o || {};
         var attr,
@@ -119,20 +128,26 @@ YUI.prototype = {
             mods   = config.modules,
             groups = config.groups;
         for (name in o) {
-            attr = o[name];
-            if (mods && name == 'modules') {
-                for (detail in attr) {
-                    mods[detail] = attr[detail];
+            if (o.hasOwnProperty(name)) {
+                attr = o[name];
+                if (mods && name == 'modules') {
+                    for (detail in attr) {
+                        if (attr.hasOwnProperty(detail)) {
+                            mods[detail] = attr[detail];
+                        }
+                    }
+                } else if (groups && name == 'groups') {
+                    for (detail in attr) {
+                        if (attr.hasOwnProperty(detail)) {
+                            groups[detail] = attr[detail];
+                        }
+                    }
+                } else if (name == 'win') {
+                    config[name] = attr.contentWindow || attr;
+                    config.doc = config[name].document;
+                } else {
+                    config[name] = attr;
                 }
-            } else if (groups && name == 'groups') {
-                for (detail in attr) {
-                    groups[detail] = attr[detail];
-                }
-            } else if (name == 'win') {
-                config[name] = attr.contentWindow || attr;
-                config.doc = config[name].document;
-            } else {
-                config[name] = attr;
             }
         }
     },
@@ -143,15 +158,16 @@ YUI.prototype = {
      */
     _init: function() {
         var filter,
-            Y     = this, 
-            G_ENV = YUI.Env,
-            Env   = Y.Env;
+            Y       = this, 
+            G_ENV   = YUI.Env,
+            Env     = Y.Env;
 
         Y.version = VERSION;
 
         if (!Env) {
             Y.Env = {
-                mods:         {},
+                mods:         {}, // flat module map
+                versions:     {}, // version module map
                 base:         BASE,
                 cdn:          BASE + VERSION + '/build/',
                 bootstrapped: false,
@@ -319,13 +335,17 @@ YUI.prototype = {
      */
     add: function(name, fn, version, details) {
         details = details || {};
+        var env = YUI.Env,
+            mod  = {
+                name: name, 
+                fn: fn,
+                version: version,
+                details: details
+            };
 
-        YUI.Env.mods[name] = {
-            name: name, 
-            fn: fn,
-            version: version,
-            details: details
-        };
+        env.mods[name] = mod;
+        env.versions[version] = env.versions[version] || {};
+        env.versions[version][name] = mod;
 
         return this;
     },
@@ -480,7 +500,7 @@ YUI.prototype = {
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
-                    Y.Array.each(data, process);
+                    YArray.each(data, process);
                     redo = missing.length;
                     if (redo) {
                         if (missing.sort().join() == origMissing.sort().join()) {
@@ -698,17 +718,13 @@ YUI.prototype = {
     }
 };
 
-// Give the YUI global the same properties as an instance.
-// This makes it so that the YUI global can be used like the YAHOO
-// global was used prior to 3.x.  More importantly, the YUI global
-// provides global metadata, so env needs to be configured.
-// @TODO review
-
-    p = YUI.prototype;
+    YUI.prototype = proto;
 
     // inheritance utilities are not available yet
-    for (prop in p) {
-        YUI[prop] = p[prop];
+    for (prop in proto) {
+        if (proto.hasOwnProperty(prop)) {
+            YUI[prop] = proto[prop];
+        }
     }
 
     // set up the environment
@@ -1874,6 +1890,7 @@ var O = Y.Object,
 
 owns = function(o, k) {
     return o && o.hasOwnProperty && o.hasOwnProperty(k);
+    // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
 UNDEFINED = undefined,
