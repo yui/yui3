@@ -6,5 +6,9 @@
         <url>widget/tests/widget.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
+
+        <!-- History -->
+        <url>history/tests/functional/history-base.html</url>
+        <url>history/tests/functional/history-hash.html</url>
     </tests>
 </yuitest>
