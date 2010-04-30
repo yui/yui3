@@ -78,6 +78,7 @@
 
 <span class="nx">owns</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">k</span><span class="p">);</span>
+    <span class="c1">// return Object.prototype.hasOwnProperty.call(o, k);</span>
 <span class="p">},</span>
 
 <span class="nx">UNDEFINED</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">,</span>
