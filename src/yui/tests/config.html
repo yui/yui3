@@ -39,7 +39,7 @@
                 Y.Assert.areEqual('debug', Y.config.filter);
                 Y.Assert.isObject(Y.config.logExclude);
                 Y.Assert.isTrue(Y.config.gconfig);
-                YUI().use('*', function(Y2) {
+                YUI().use('node', function(Y2) {
                     Y.Assert.isUndefined(Y2.config.logExclude);
                     Y.Assert.isUndefined(Y2.config.filter);
                     Y.Assert.isTrue(Y2.config.gconfig);
