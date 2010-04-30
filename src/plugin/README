@@ -1,5 +1,9 @@
 Provides the base class for Plugins, which can be added to a PluginHost. 
 
+3.1.1
+
+No changes
+
 3.1.0
 
 * Added separate host method and host event specific subscription methods,

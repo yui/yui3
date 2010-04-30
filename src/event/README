@@ -1,6 +1,9 @@
 YUI Event Utility
     DOM event utilities
 
+3.1.1
+    - fired fireOnce listeners are executed synchronously
+	
 3.1.0
     - Removed deprecated 'delegate' custom event.  As of 3.1 use the delegate method on a Node instance or Y instance.
     - Updated the event-focus submodule so that the specialized focus and blur events that enable the focus and blur events to bubble do not apply when adding focus and blur events to the window object.
