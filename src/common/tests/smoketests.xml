@@ -6,7 +6,7 @@
         <url>widget/tests/widget.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
-        <url>event-custom/tests/customevent.html</url>
+        <!-- Commenting temporarily. YUITest.TestRunner.getResults() returns null <url>event-custom/tests/customevent.html</url> -->
         <url>event/tests/dom.html</url>
         <url>event/tests/delegate.html</url>
         <url>event/tests/event-synthetic.html</url>
