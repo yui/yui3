@@ -7,13 +7,7 @@ var Obj = Y.Object,
     waitTime = 100;
 
 Y.Test.Runner.add(new Y.Test.Case({
-    name: 'history-hash',
-
-    _should: {
-        ignore: {
-            'hashchange should expose appropriate properties on its event facade': !Y.History.nativeHashChange
-        }
-    },
+    name: 'HistoryHash',
 
     setUp: function () {
         location.hash = '';
@@ -84,43 +78,6 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.History.setHash(hash);
         Y.Assert.areSame(hash, Y.History.getHash());
-    },
-
-    // -- hashchange Event -----------------------------------------------------
-    'hashchange should fire when location.hash changes': function () {
-        Y.once('hashchange', Y.bind(function (e) {
-            this.resume();
-        }, this), win);
-
-        location.hash = '#foo=' + Y.guid();
-
-        this.wait(waitTime);
-    },
-
-    // This test is ignored in browsers without native hashchange, since it can
-    // fail depending on the timing of other tests that change the hash.
-    'hashchange should expose appropriate properties on its event facade': function () {
-        var oldHash = Y.History.getHash();
-            oldUrl  = location.href;
-
-        Y.once('hashchange', Y.bind(function (e) {
-            this.resume(function () {
-                Y.Assert.isObject(e);
-
-                Y.Array.each(['oldHash', 'oldUrl', 'newHash', 'newUrl'], function (prop) {
-                    Y.assert(Obj.owns(e, prop), "Event facade doesn't have the expected " + prop + " property.");
-                });
-
-                Y.Assert.areSame(oldHash, e.oldHash);
-                Y.Assert.areSame(oldUrl, e.oldUrl);
-                Y.Assert.areSame(Y.History.getHash(), e.newHash);
-                Y.Assert.areSame(location.href, e.newUrl);
-            });
-        }, this), win);
-
-        location.hash = '#foo=' + Y.guid();
-
-        this.wait(waitTime);
     },
 
     // -- Instance Methods -----------------------------------------------------

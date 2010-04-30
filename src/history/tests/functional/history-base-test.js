@@ -1,7 +1,7 @@
 YUI.add('history-base-test', function (Y) {
 
 Y.Test.Runner.add(new Y.Test.Case({
-    name: 'history-base',
+    name: 'HistoryBase',
 
     setUp: function () {
         YUI.Env.History._state = {};
