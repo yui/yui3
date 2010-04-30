@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<yuitest>
+    <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <url>attribute/tests/attribute.html</url>
+        <url>intl/tests/intl.html</url>
+        <url>widget/tests/widget.html</url>
+        <url>pluginhost/tests/plugins.html</url>
+        <url>classnamemanager/tests/classnamemanager.html</url>
+    </tests>
+</yuitest>
