@@ -52,7 +52,12 @@ package com.yahoo.util
 		 * @private
 		 */
 		private var _swfID:String;
-		
+
+		/**
+		 * @private
+		 */
+        private var _appname:String;
+
 		/**
 		 * @private
 		 */
@@ -207,11 +212,11 @@ package com.yahoo.util
 		{
 			if(!id)
 			{
-				id = this._swfID;
+				id = this._appname || this._swfID;
 			}
 			if (ExternalInterface.available) 
 			{
-				ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [id, evt]);
+                ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [id, evt]);
 			}
 		}
 
@@ -348,11 +353,12 @@ package com.yahoo.util
 		{
 			if(this._stage.loaderInfo.parameters) this._flashvars = this._stage.loaderInfo.parameters;
 
-			if (this._flashvars.hasOwnProperty("yId") && this._flashvars.hasOwnProperty("YUIBridgeCallback") && this._flashvars.hasOwnProperty("YUISwfId") && ExternalInterface.available) 
+			if (this._flashvars.hasOwnProperty("yId") && this._flashvars.hasOwnProperty("YUIBridgeCallback") && ExternalInterface.available) 
 			{
 				_jsHandler = this._flashvars["YUIBridgeCallback"];
 				_swfID = this._flashvars["YUISwfId"];
 				_yId = this._flashvars["yId"];
+                _appname = this._flashvars["appname"];
 			}
 			
 			ExternalInterface.addCallback("createInstance", createInstance);

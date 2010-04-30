@@ -18,6 +18,7 @@ YUI.add('chart', function(Y) {
 function SWFWidget (config)
 {
 	this._createId();
+	Y.SWF._instances[this._id] = this;
 	SWFWidget.superclass.constructor.apply(this, arguments);
 }
 
@@ -45,13 +46,44 @@ SWFWidget.eventHandler = function (swfid, event) {
  * @private
  */
 SWFWidget.ATTRS = {
-	/**
+    /**
+     * Reference to the application class
+     */
+    app: {
+        getter: function()
+        {
+            return this._app;
+        },
+        setter: function(val)
+        {
+            this._app = val;
+            return val;
+        }
+    },
+
+    /**
 	 * Parent element for the SWFWidget instance.
 	 */
 	parent:{
-		lazyAdd:false,
+        lazyAdd:false,
 		
-		value:null
+        getter: function()
+        {
+            return this._parent;
+        },
+
+        setter: function(val)
+        {
+            this._parent = val;
+            if(val instanceof Y.SWFApplication)
+            {
+                this.set("app", val);
+            }
+            else if(val instanceof Y.SWFWidget)
+            {
+                this.set("app", val.get("app"));
+            }
+        }   
 	},
 
 	/**
@@ -109,6 +141,18 @@ SWFWidget.ATTRS = {
 
 Y.extend(SWFWidget, Y.Base,
 {
+    /**
+     * @private
+     * Storage for parent
+     */
+    _parent: null,
+
+    /**
+     * @private
+     * Storage for app
+     */
+    _app: null,
+
 	/**
 	 * Creates unique id for class instance.
 	 *
@@ -236,7 +280,7 @@ Y.extend(SWFWidget, Y.Base,
 		{
 			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
 			{
-				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
+				this.get("app").applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
 	},
@@ -244,9 +288,7 @@ Y.extend(SWFWidget, Y.Base,
 	_events: {},
 
 	_init: function(swfowner)
-	{
-		this.swfowner = swfowner;
-		this.appswf = swfowner.appswf;
+    {
 		this._addSWFEventListeners();
 	},
 
@@ -263,7 +305,7 @@ Y.extend(SWFWidget, Y.Base,
 			if(events.hasOwnProperty(type) && !events[type].registered)
 			{
 				events[type].registered = true;
-				this.appswf.onFlash(type, this);
+				this.get("app").onFlash(type, this);
 			}
 		}
 	},
@@ -280,7 +322,7 @@ Y.extend(SWFWidget, Y.Base,
 			if(this.swfowner && this.swfowner.swfReady && this._id)
 			{
 				events[type].registered = true;
-				this.appswf.onFlash(type, this);
+				this.get("app").onFlash(type, this);
 			}
 		}
 		SWFWidget.superclass.on.apply(this, arguments);
@@ -531,13 +573,24 @@ Y.SWFWidget = SWFWidget;
 	function SWFApplication ( config ) 
 	{
 		SWFApplication.superclass.constructor.apply(this, arguments);
-		this._dataId = this._id + "data";
+        this._dataId = this._id + "data";
 	}
 
 	SWFApplication.NAME = "swfApplication";
 
 	SWFApplication.ATTRS = {
-		/**
+        app: {
+            setter:function(val)
+            {
+            },
+
+            getter:function()
+            {
+                return this;
+            }
+        },
+        
+        /**
 		 * URL used for swf
 		 */
 		swfurl:
@@ -579,8 +632,8 @@ Y.SWFWidget = SWFWidget;
 		 */
 		flashvars:
 		{
-			value: {appname:this._id},
-
+			value: {appname:this._id, YUIBridgeCallback:"SWF.eventHandler"},
+    
 			lazyAdd:false,
 
 			setOnce: true,
@@ -668,7 +721,33 @@ Y.SWFWidget = SWFWidget;
 	
 	Y.extend(SWFApplication, Y.Container, 
 	{
-		_events: {},
+        /**
+         * @private
+         * Propagates a specific event from Flash to JS.
+         * @method _eventHandler
+         * @param event {Object} The event to be propagated from Flash.
+         */
+        _eventHandler: function(event)
+        {
+            if (event.type == "swfReady") 
+            {
+                this.node = event.node = this.swf._swf._node;
+                this.appswf = event.appswf = this;
+                this._init(event);
+                //this.publish("swfReady", {fireOnce:true});
+                //this.fire("swfReady", event);
+            }
+            else if(event.type == "log")
+            {
+                Y.log(event.message, event.category, this.toString());
+            }
+            else
+            {
+                this.fire(event.type, event);
+            } 
+        },
+		
+        _events: {},
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
@@ -684,8 +763,7 @@ Y.SWFWidget = SWFWidget;
 		 */
 		loadswf: function()
 		{
-			this.appswf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"));
-			this.appswf.on ("swfReady", this._init, this);
+            this.swf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"), this);
 		},
 
 		initializer: function(cfg)
@@ -732,9 +810,9 @@ Y.SWFWidget = SWFWidget;
 		 */
 		_initDataProvider: function() 
 		{
-			if(this.appswf && this.swfReadyFlag) 
+			if(this.swfReadyFlag) 
 			{
-				this.appswf.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
+				this.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
 			}
 		},
 	
@@ -770,11 +848,75 @@ Y.SWFWidget = SWFWidget;
 		 */
 		_setAutoRender: function()
 		{
-			if(this.appswf) 
+			if(this.swfReadyFlag) 
 			{
-				this.appswf.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
+				this.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
 			}
 		},
+	/**
+	 * Calls a specific function exposed by the SWF's
+	 * ExternalInterface.
+	 * @method callSWF
+	 * @param func {String} the name of the function to call
+	 * @param args {Object} the set of arguments to pass to the function.
+	 */
+	
+	callSWF: function (func, args)
+	{
+		if (!args) { 
+			  args= []; 
+		};	
+		if (this.node[func]) {
+		return(this.node[func].apply(this.node, args));
+	    } else {
+		return null;
+	    }
+	},
+	
+	createInstance: function (instanceId, className, args) {
+        if (!args) {args = []};
+		if (this.node["createInstance"]) {
+			this.node.createInstance(instanceId, className, args);
+		}
+	},
+	
+	applyMethod: function (instanceId, methodName, args) {
+		if (!args) {args = []};
+		if (this.node["applyMethod"]) {
+			this.node.applyMethod(instanceId, methodName, args);
+		}
+	},
+	
+	exposeMethod: function (instanceId, methodName, exposedName) {
+		if (this.node["exposeMethod"]) {
+			this.node.exposeMethod(instanceId, methodName, exposedName);
+		}
+	},
+	
+	getProperty: function (instanceId, propertyName) {
+		if (this.node["getProperty"]) {
+			this.node.getProperty(instanceId, propertyName);
+		}
+	},
+	
+	setProperty: function (instanceId, propertyName, propertyValue) {
+		if (this.node["setProperty"]) {
+			this.node.setProperty(instanceId, propertyName, propertyValue);
+		}
+	},
+
+	onFlash: function(type, instance)
+	{
+		var id = instance.get("id");
+		if(!Y.SWF._instances.hasOwnProperty(id))
+		{
+			Y.SWF._instances[id] = instance;
+		}
+		if(this.node["subscribe"])
+		{
+			this.node.subscribe(type, id);
+		}
+	},
 
 		_styleObjHash:{background:"background"}
 	});

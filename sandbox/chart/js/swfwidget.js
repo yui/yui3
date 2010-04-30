@@ -16,6 +16,7 @@
 function SWFWidget (config)
 {
 	this._createId();
+	Y.SWF._instances[this._id] = this;
 	SWFWidget.superclass.constructor.apply(this, arguments);
 }
 
@@ -43,13 +44,44 @@ SWFWidget.eventHandler = function (swfid, event) {
  * @private
  */
 SWFWidget.ATTRS = {
-	/**
+    /**
+     * Reference to the application class
+     */
+    app: {
+        getter: function()
+        {
+            return this._app;
+        },
+        setter: function(val)
+        {
+            this._app = val;
+            return val;
+        }
+    },
+
+    /**
 	 * Parent element for the SWFWidget instance.
 	 */
 	parent:{
-		lazyAdd:false,
+        lazyAdd:false,
 		
-		value:null
+        getter: function()
+        {
+            return this._parent;
+        },
+
+        setter: function(val)
+        {
+            this._parent = val;
+            if(val instanceof Y.SWFApplication)
+            {
+                this.set("app", val);
+            }
+            else if(val instanceof Y.SWFWidget)
+            {
+                this.set("app", val.get("app"));
+            }
+        }   
 	},
 
 	/**
@@ -107,6 +139,18 @@ SWFWidget.ATTRS = {
 
 Y.extend(SWFWidget, Y.Base,
 {
+    /**
+     * @private
+     * Storage for parent
+     */
+    _parent: null,
+
+    /**
+     * @private
+     * Storage for app
+     */
+    _app: null,
+
 	/**
 	 * Creates unique id for class instance.
 	 *
@@ -234,7 +278,7 @@ Y.extend(SWFWidget, Y.Base,
 		{
 			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
 			{
-				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
+				this.get("app").applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
 	},
@@ -242,9 +286,7 @@ Y.extend(SWFWidget, Y.Base,
 	_events: {},
 
 	_init: function(swfowner)
-	{
-		this.swfowner = swfowner;
-		this.appswf = swfowner.appswf;
+    {
 		this._addSWFEventListeners();
 	},
 
@@ -261,7 +303,7 @@ Y.extend(SWFWidget, Y.Base,
 			if(events.hasOwnProperty(type) && !events[type].registered)
 			{
 				events[type].registered = true;
-				this.appswf.onFlash(type, this);
+				this.get("app").onFlash(type, this);
 			}
 		}
 	},
@@ -278,7 +320,7 @@ Y.extend(SWFWidget, Y.Base,
 			if(this.swfowner && this.swfowner.swfReady && this._id)
 			{
 				events[type].registered = true;
-				this.appswf.onFlash(type, this);
+				this.get("app").onFlash(type, this);
 			}
 		}
 		SWFWidget.superclass.on.apply(this, arguments);

@@ -15,7 +15,6 @@
 		FLASH_TYPE = "application/x-shockwave-flash",
 		FLASH_VER = "10.0.22",
 		EXPRESS_INSTALL_URL = "http://fpdownload.macromedia.com/pub/flashplayer/update/current/swf/autoUpdater.swf?" + Math.random(),
-		EVENT_HANDLER = "SWF.eventHandler",
 		possibleAttributes = {align:"", allowFullScreen:"", allowNetworking:"", allowScriptAccess:"", base:"", bgcolor:"", menu:"", name:"", quality:"", salign:"", scale:"", tabindex:"", wmode:""};
 		
 		/**
@@ -39,7 +38,7 @@
 		 *        to be passed to the SWF.
 		 */
 				
-function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/ ) {
+function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/, p_oApp) {
 	
 	
 	this._id = Y.guid("yuiswf");
@@ -56,9 +55,10 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 	var flashURL = (shouldExpressInstall)?EXPRESS_INSTALL_URL:swfURL;
 	var objstring = '<object ';
 	var w, h;
-	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id + "&YUIBridgeCallback=" + EVENT_HANDLER;
+	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id;
 	
 	Y.SWF._instances[_id] = this;
+    Y.SWF._instances[p_oApp.get("id")] = p_oApp;
     if (oElement && (isFlashVersionRight || shouldExpressInstall) && flashURL) {
 				objstring += 'id="' + _id + '" '; 
 				if (uA.ie) {
@@ -131,88 +131,11 @@ SWF.prototype =
 	 * @method _eventHandler
 	 * @param event {Object} The event to be propagated from Flash.
 	 */
-	
 	_eventHandler: function(event)
 	{
-		if (event.type == "swfReady") 
-		{
-			this.publish("swfReady", {fireOnce:true});
-	     	this.fire("swfReady", event);
-        }
-		else if(event.type == "log")
-		{
-			Y.log(event.message, event.category, this.toString());
-		}
-        else
-		{
-			this.fire(event.type, event);
-        } 
+        this.fire(event.type, event);
 	},
 		
-	/**
-	 * Calls a specific function exposed by the SWF's
-	 * ExternalInterface.
-	 * @method callSWF
-	 * @param func {String} the name of the function to call
-	 * @param args {Object} the set of arguments to pass to the function.
-	 */
-	
-	callSWF: function (func, args)
-	{
-		if (!args) { 
-			  args= []; 
-		};	
-		if (this._swf._node[func]) {
-		return(this._swf._node[func].apply(this._swf._node, args));
-	    } else {
-		return null;
-	    }
-	},
-	
-	createInstance: function (instanceId, className, args) {
-		if (!args) {args = []};
-		if (this._swf._node["createInstance"]) {
-			this._swf._node.createInstance(instanceId, className, args);
-		}
-	},
-	
-	applyMethod: function (instanceId, methodName, args) {
-		if (!args) {args = []};
-		if (this._swf._node["applyMethod"]) {
-			this._swf._node.applyMethod(instanceId, methodName, args);
-		}
-	},
-	
-	exposeMethod: function (instanceId, methodName, exposedName) {
-		if (this._swf._node["exposeMethod"]) {
-			this._swf._node.exposeMethod(instanceId, methodName, exposedName);
-		}
-	},
-	
-	getProperty: function (instanceId, propertyName) {
-		if (this._swf._node["getProperty"]) {
-			this._swf._node.getProperty(instanceId, propertyName);
-		}
-	},
-	
-	setProperty: function (instanceId, propertyName, propertyValue) {
-		if (this._swf._node["setProperty"]) {
-			this._swf._node.setProperty(instanceId, propertyName, propertyValue);
-		}
-	},
-
-	onFlash: function(type, instance)
-	{
-		var id = instance.get("id");
-		if(!SWF._instances.hasOwnProperty(id))
-		{
-			SWF._instances[id] = instance;
-		}
-		if(this._swf._node["subscribe"])
-		{
-			this._swf._node.subscribe(type, id);
-		}
-	},
 
 	/**
 	 * Public accessor to the unique name of the SWF instance.

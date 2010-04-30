@@ -30,13 +30,24 @@
 	function SWFApplication ( config ) 
 	{
 		SWFApplication.superclass.constructor.apply(this, arguments);
-		this._dataId = this._id + "data";
+        this._dataId = this._id + "data";
 	}
 
 	SWFApplication.NAME = "swfApplication";
 
 	SWFApplication.ATTRS = {
-		/**
+        app: {
+            setter:function(val)
+            {
+            },
+
+            getter:function()
+            {
+                return this;
+            }
+        },
+        
+        /**
 		 * URL used for swf
 		 */
 		swfurl:
@@ -78,8 +89,8 @@
 		 */
 		flashvars:
 		{
-			value: {appname:this._id},
-
+			value: {appname:this._id, YUIBridgeCallback:"SWF.eventHandler"},
+    
 			lazyAdd:false,
 
 			setOnce: true,
@@ -167,7 +178,33 @@
 	
 	Y.extend(SWFApplication, Y.Container, 
 	{
-		_events: {},
+        /**
+         * @private
+         * Propagates a specific event from Flash to JS.
+         * @method _eventHandler
+         * @param event {Object} The event to be propagated from Flash.
+         */
+        _eventHandler: function(event)
+        {
+            if (event.type == "swfReady") 
+            {
+                this.node = event.node = this.swf._swf._node;
+                this.appswf = event.appswf = this;
+                this._init(event);
+                //this.publish("swfReady", {fireOnce:true});
+                //this.fire("swfReady", event);
+            }
+            else if(event.type == "log")
+            {
+                Y.log(event.message, event.category, this.toString());
+            }
+            else
+            {
+                this.fire(event.type, event);
+            } 
+        },
+		
+        _events: {},
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
@@ -183,8 +220,7 @@
 		 */
 		loadswf: function()
 		{
-			this.appswf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"));
-			this.appswf.on ("swfReady", this._init, this);
+            this.swf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"), this);
 		},
 
 		initializer: function(cfg)
@@ -231,9 +267,9 @@
 		 */
 		_initDataProvider: function() 
 		{
-			if(this.appswf && this.swfReadyFlag) 
+			if(this.swfReadyFlag) 
 			{
-				this.appswf.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
+				this.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
 			}
 		},
 	
@@ -269,11 +305,75 @@
 		 */
 		_setAutoRender: function()
 		{
-			if(this.appswf) 
+			if(this.swfReadyFlag) 
 			{
-				this.appswf.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
+				this.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
 			}
 		},
+	/**
+	 * Calls a specific function exposed by the SWF's
+	 * ExternalInterface.
+	 * @method callSWF
+	 * @param func {String} the name of the function to call
+	 * @param args {Object} the set of arguments to pass to the function.
+	 */
+	
+	callSWF: function (func, args)
+	{
+		if (!args) { 
+			  args= []; 
+		};	
+		if (this.node[func]) {
+		return(this.node[func].apply(this.node, args));
+	    } else {
+		return null;
+	    }
+	},
+	
+	createInstance: function (instanceId, className, args) {
+        if (!args) {args = []};
+		if (this.node["createInstance"]) {
+			this.node.createInstance(instanceId, className, args);
+		}
+	},
+	
+	applyMethod: function (instanceId, methodName, args) {
+		if (!args) {args = []};
+		if (this.node["applyMethod"]) {
+			this.node.applyMethod(instanceId, methodName, args);
+		}
+	},
+	
+	exposeMethod: function (instanceId, methodName, exposedName) {
+		if (this.node["exposeMethod"]) {
+			this.node.exposeMethod(instanceId, methodName, exposedName);
+		}
+	},
+	
+	getProperty: function (instanceId, propertyName) {
+		if (this.node["getProperty"]) {
+			this.node.getProperty(instanceId, propertyName);
+		}
+	},
+	
+	setProperty: function (instanceId, propertyName, propertyValue) {
+		if (this.node["setProperty"]) {
+			this.node.setProperty(instanceId, propertyName, propertyValue);
+		}
+	},
+
+	onFlash: function(type, instance)
+	{
+		var id = instance.get("id");
+		if(!Y.SWF._instances.hasOwnProperty(id))
+		{
+			Y.SWF._instances[id] = instance;
+		}
+		if(this.node["subscribe"])
+		{
+			this.node.subscribe(type, id);
+		}
+	},
 
 		_styleObjHash:{background:"background"}
 	});
