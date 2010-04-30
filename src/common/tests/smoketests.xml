@@ -2,7 +2,13 @@
 <yuitest>
     <tests base="@TEST_ARTIFACTS_BASE@" timeout="500000">
         <url>attribute/tests/attribute.html</url>
+        <url>cache/tests/cache.html</url>
         <url>classnamemanager/tests/classnamemanager.html</url>
+        <url>dataschema/tests/dataschema.html</url>
+        <url>datasource/tests/datasource.html</url>
+        <url>datatype/tests/date.html</url>
+        <url>datatype/tests/number.html</url>
+        <url>datatype/tests/xml.html</url>
         <url>intl/tests/intl.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>widget/tests/widget.html</url>
