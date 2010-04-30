@@ -2,7 +2,7 @@ YUI Event Utility
     DOM event utilities
 
 3.1.1
-    - fired fireOnce listeners are executed synchronously
+    - No changes 
 	
 3.1.0
     - Removed deprecated 'delegate' custom event.  As of 3.1 use the delegate method on a Node instance or Y instance.

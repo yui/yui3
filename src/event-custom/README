@@ -2,7 +2,7 @@ YUI Custom Events
     Custom event system
 
 3.1.1
-    - No changes 
+    - Fired fireOnce listeners are executed synchronously.  Fixes #2528758.
 
 3.1.0
     - Wildcard prefix subscriptions supported: 
