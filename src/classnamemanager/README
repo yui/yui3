@@ -1,3 +1,7 @@
+3.0.1
+
+* No change
+
 3.1.0
 
 * IMPORTANT: Changed default prefix to "yui3-" to avoid collisions with yui2 code,
