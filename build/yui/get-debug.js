@@ -382,15 +382,13 @@ Y.Get = function() {
                       (type === "script") ? true : false;
 
         q.attributes = q.attributes || {};
-        // q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
-        var charset = opts.charset || q.attributes.charset;
-        if (charset) {
-            q.attributes.charset = charset;
-        }
+        q.attributes.charset = opts.charset || q.attributes.charset || 'utf-8';
+        // var charset = opts.charset || q.attributes.charset;
+        // if (charset) {
+        //     q.attributes.charset = charset;
+        // }
 
-        setTimeout(function() {
-            _next(id);
-        }, 0);
+        _next(id);
 
         return {
             tId: id

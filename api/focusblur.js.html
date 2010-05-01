@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
+        <h3>event&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
@@ -58,23 +58,23 @@
 <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
 <span class="kd">var</span> <span class="nx">UA</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">,</span>
-	<span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span>
-	<span class="nx">plugins</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">,</span>
-	<span class="nx">ie</span> <span class="o">=</span> <span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">,</span>
-	<span class="nx">bUseMutation</span> <span class="o">=</span> <span class="p">(</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span> <span class="o">||</span> <span class="nx">UA</span><span class="p">.</span><span class="nx">webkit</span><span class="p">),</span>
-	<span class="nx">eventNames</span> <span class="o">=</span> <span class="p">{</span>
-		<span class="nx">focus</span><span class="o">:</span> <span class="p">(</span><span class="nx">ie</span> <span class="o">?</span> <span class="s1">&#39;focusin&#39;</span> <span class="o">:</span> <span class="p">(</span><span class="nx">bUseMutation</span> <span class="o">?</span> <span class="s1">&#39;DOMFocusIn&#39;</span> <span class="o">:</span> <span class="s1">&#39;focus&#39;</span><span class="p">)),</span>
-		<span class="nx">blur</span><span class="o">:</span> <span class="p">(</span><span class="nx">ie</span> <span class="o">?</span> <span class="s1">&#39;focusout&#39;</span> <span class="o">:</span> <span class="p">(</span><span class="nx">bUseMutation</span> <span class="o">?</span> <span class="s1">&#39;DOMFocusOut&#39;</span> <span class="o">:</span> <span class="s1">&#39;blur&#39;</span><span class="p">))</span>
-	<span class="p">},</span>
+    <span class="nx">Event</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span>
+    <span class="nx">plugins</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">,</span>
+    <span class="nx">ie</span> <span class="o">=</span> <span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">,</span>
+    <span class="nx">bUseMutation</span> <span class="o">=</span> <span class="p">(</span><span class="nx">UA</span><span class="p">.</span><span class="nx">opera</span> <span class="o">||</span> <span class="nx">UA</span><span class="p">.</span><span class="nx">webkit</span><span class="p">),</span>
+    <span class="nx">eventNames</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">focus</span><span class="o">:</span> <span class="p">(</span><span class="nx">ie</span> <span class="o">?</span> <span class="s1">&#39;focusin&#39;</span> <span class="o">:</span> <span class="p">(</span><span class="nx">bUseMutation</span> <span class="o">?</span> <span class="s1">&#39;DOMFocusIn&#39;</span> <span class="o">:</span> <span class="s1">&#39;focus&#39;</span><span class="p">)),</span>
+        <span class="nx">blur</span><span class="o">:</span> <span class="p">(</span><span class="nx">ie</span> <span class="o">?</span> <span class="s1">&#39;focusout&#39;</span> <span class="o">:</span> <span class="p">(</span><span class="nx">bUseMutation</span> <span class="o">?</span> <span class="s1">&#39;DOMFocusOut&#39;</span> <span class="o">:</span> <span class="s1">&#39;blur&#39;</span><span class="p">))</span>
+    <span class="p">},</span>
 
-	<span class="c1">//	Only need to use capture phase for Gecko since it doesn&#39;t support </span>
-	<span class="c1">//	focusin, focusout, DOMFocusIn, or DOMFocusOut</span>
+    <span class="c1">//  Only need to use capture phase for Gecko since it doesn&#39;t support </span>
+    <span class="c1">//  focusin, focusout, DOMFocusIn, or DOMFocusOut</span>
     <span class="nx">CAPTURE_CONFIG</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">capture</span><span class="o">:</span> <span class="p">(</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="p">)</span> <span class="p">},</span>
 
 
-	<span class="nx">attach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">attach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
 
-	    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
+        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">),</span>
             <span class="nx">el</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
 
         <span class="nx">config</span><span class="p">.</span><span class="nx">overrides</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">overrides</span> <span class="o">||</span> <span class="p">{};</span>
@@ -85,21 +85,21 @@
                 <span class="nx">config</span><span class="p">.</span><span class="nx">capture</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">else</span> <span class="p">{</span>
-		        <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">eventNames</span><span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]];</span>
-		    <span class="p">}</span>
+                <span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nx">eventNames</span><span class="p">[</span><span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]];</span>
+            <span class="p">}</span>
         <span class="p">}</span>
 
-	    <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">Event</span><span class="p">.</span><span class="nx">_attach</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
 
-	<span class="p">},</span>
-	
-	<span class="nx">eventAdapter</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">},</span>
+    
+    <span class="nx">eventAdapter</span> <span class="o">=</span> <span class="p">{</span>
 
-		<span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-			<span class="k">return</span> <span class="nx">attach</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CAPTURE_CONFIG</span><span class="p">);</span>
-		<span class="p">}</span>
+        <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">attach</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="nx">CAPTURE_CONFIG</span><span class="p">);</span>
+        <span class="p">}</span>
 
-	<span class="p">};</span>
+    <span class="p">};</span>
 
 
 <span class="nx">Event</span><span class="p">.</span><span class="nx">_attachFocus</span> <span class="o">=</span> <span class="nx">attach</span><span class="p">;</span>

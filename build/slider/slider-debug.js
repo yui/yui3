@@ -14,7 +14,7 @@ var INVALID_VALUE = Y.Attribute.INVALID_VALUE;
  * Create a slider to represent an input control capable of representing a
  * series of intermediate states based on the position of the slider's thumb.
  * These states are typically aligned to a value algorithm whereby the thumb
- * position corresponds to a given value. Sliders may be aligned vertically or
+ * position corresponds to a given value. Sliders may be oriented vertically or
  * horizontally, based on the <code>axis</code> configuration.
  *
  * @class SliderBase
@@ -63,19 +63,24 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
         this._key = {
             dim    : ( this.axis === 'y' ) ? 'height' : 'width',
             minEdge: ( this.axis === 'y' ) ? 'top'    : 'left',
-            maxEdge: ( this.axis === 'y' ) ? 'bottom' : 'right'
+            maxEdge: ( this.axis === 'y' ) ? 'bottom' : 'right',
+            xyIndex: ( this.axis === 'y' ) ? 1 : 0
         };
 
         /**
          * Signals that the thumb has moved.  Payload includes the thumb's
-         * <code>drag:align</code>.
+         * pixel offset from the top/left edge of the rail, and if triggered by
+         * dragging the thumb, the <code>drag:drag</code> event.
          *
          * @event thumbMove
          * @param event {Event} The event object for the thumbMove with the
          *                      following extra properties:
          *  <dl>
+         *      <dt>offset</dt>
+         *          <dd>Pixel offset from top/left of the slider to the new
+         *          thumb position</dd>
          *      <dt>ddEvent</dt>
-         *          <dd><code>drag:align</code> event from the thumb</dd>
+         *          <dd><code>drag:drag</code> event from the thumb</dd>
          *  </dl>
          */
         this.publish( 'thumbMove', {
@@ -217,8 +222,8 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
                 'drag:start': Y.bind( this._onDragStart, this )
             },
             after  : {
-                'drag:align': Y.bind( this._afterAlign,   this ),
-                'drag:end'  : Y.bind( this._afterDragEnd, this )
+                'drag:drag': Y.bind( this._afterDrag,    this ),
+                'drag:end' : Y.bind( this._afterDragEnd, this )
             }
         } );
 
@@ -235,6 +240,23 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
      * @protected
      */
     _bindValueLogic: function () {},
+
+    /**
+     * Moves the thumb to pixel offset position along the rail.
+     *
+     * @method _uiMoveThumb
+     * @param offset {Number} the pixel offset to set as left or top style
+     * @protected
+     */
+    _uiMoveThumb: function ( offset ) {
+        if ( this.thumb ) {
+            this.thumb.setStyle( this._key.minEdge, offset + 'px' );
+
+            Y.log("Setting thumb " + this._key.minEdge + " to " + offset + "px","info","slider");
+
+            this.fire( 'thumbMove', { offset: offset } );
+        }
+    },
 
     /**
      * Dispatches the <code>slideStart</code> event.
@@ -262,12 +284,19 @@ Y.SliderBase = Y.extend( SliderBase, Y.Widget, {
     /**
      * Dispatches the <code>thumbMove</code> event.
      *
-     * @method _afterAlign
-     * @param e {Event} the <code>drag:align</code> event from the thumb
+     * @method _afterDrag
+     * @param e {Event} the <code>drag:drag</code> event from the thumb
      * @protected
      */
-    _afterAlign: function ( e ) {
-        this.fire( 'thumbMove', { ddEvent: e } );
+    _afterDrag: function ( e ) {
+        var thumbXY = e.info.xy[ this._key.xyIndex ],
+            railXY  = e.target.con._regionCache[ this._key.minEdge ];
+
+        Y.log("Thumb position: " + thumbXY + ", Rail position: " + railXY, "info", "slider");
+        this.fire( 'thumbMove', {
+            offset : (thumbXY - railXY),
+            ddEvent: e
+        } );
     },
 
     /**
@@ -563,15 +592,6 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
 
     // Prototype properties and methods that will be added onto host class
     prototype: {
-        /**
-         * Cached X or Y offset for the rail to avoid extraneous
-         * <code>getXY()</code> calls during run time calculation.
-         *
-         * @property _offsetXY
-         * @type {Number}
-         * @protected
-         */
-        _offsetXY: null,
 
         /**
          * Factor used to translate value -&gt; position -&gt; value.
@@ -583,27 +603,13 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         _factor: 1,
 
         /**
-         * Attach event listeners to keep the UI in sync with the min/max/value
-         * attributes and thumb position.
+         * Stub for construction logic.  Override if extending this class and
+         * you need to set something up during the initializer phase.
          *
          * @method _initSliderValueRange
          * @protected
          */
-        _initSliderValueRange: function () {
-            this._key = this._key || {};
-
-            Y.mix( this._key, ( this.axis === 'y' ) ?
-                {
-                    minEdge : 'top',
-                    maxEdge : 'bottom',
-                    xyIndex : 1
-                } :
-                {
-                    minEdge : 'left',
-                    maxEdge : 'right',
-                    xyIndex : 0
-                } );
-        },
+        _initSliderValueRange: function () {},
 
         /**
          * Override of stub method in SliderBase that is called at the end of
@@ -630,40 +636,35 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _syncThumbPosition: function () {
-            this._cacheRailOffset();
-
             this._calculateFactor();
 
             this._setPosition( this.get( VALUE ) );
         },
 
         /**
-         * Captures the current top left of the rail to avoid excessive DOM
-         * lookups at run time.
-         *
-         * @method _cacheRailOffset
-         * @protected
-         */
-        _cacheRailOffset: function () {
-            var region = this._dd.con.getRegion();
-            this._offsetXY = region[ this._key.minEdge ];
-        },
-
-        /**
          * Calculates and caches
-         * (range between max and min) / (rail width or height)
+         * (range between max and min) / (rail length)
          * for fast runtime calculation of position -&gt; value.
          *
          * @method _calculateFactor
          * @protected
          */
         _calculateFactor: function () {
-            var region = this._dd.con.getRegion( true );
+            var length    = this.get( 'length' ),
+                thumbSize = this.thumb.getStyle( this._key.dim ),
+                min       = this.get( MIN ),
+                max       = this.get( MAX );
 
-            // e.g. ( max - min ) / ( constrain.right - constrain.left )
-            this._factor =
-                ( this.get( MAX ) - this.get( MIN ) ) /
-                ( region[ this._key.maxEdge ] - region[ this._key.minEdge ] );
+            // The default thumb width is based on Sam skin's thumb dimension.
+            // This attempts to allow for rendering off-DOM, then attaching
+            // without the need to call syncUI().  It is still recommended
+            // to call syncUI() in these cases though, just to be sure.
+            length = parseFloat( length, 10 ) || 150;
+            thumbSize = parseFloat( thumbSize, 10 ) || 15;
+
+            this._factor = ( max - min ) / ( length - thumbSize );
+
+            Y.log("Calculating factor(~" + this._factor.toFixed(3) + " = (max(" + max + ") - min(" + min + ")) / (length(" + length + ") - thumb size(" + thumbSize + "))","info","slider");
         },
 
         /**
@@ -676,50 +677,53 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          */
         _defThumbMoveFn: function ( e ) {
             var previous = this.get( VALUE ),
-                position = this._dd.actXY[ this._key.xyIndex ],
-                value    = this._offsetToValue( position );
+                value    = this._offsetToValue( e.offset );
 
-            // Can't just do this.set( VALUE, this._offsetToValue( value ) )
+            // This test avoids duplication of this.set(..) if the origin
+            // of this thumbMove is from slider.set('value',x);
+            // slider.set() -> afterValueChange -> uiMoveThumb ->
+            // fire(thumbMove) -> _defThumbMoveFn -> this.set()
             if ( previous !== value ) {
-                this.set( VALUE, value, { ddEvent: e.ddEvent } );
+                this.set( VALUE, value, { positioned: true } );
             }
         },
 
         /**
          * <p>Converts a pixel position into a value.  Calculates current
-         * position minus xy offsets of the rail multiplied by the
+         * thumb offset from the leading edge of the rail multiplied by the
          * ratio of <code>(max - min) / (constraining dim)</code>.</p>
          *
          * <p>Override this if you want to use a different value mapping
          * algorithm.</p>
          *
          * @method _offsetToValue
-         * @param { Number } X or Y pixel position
-         * @return { mixed } Value corresponding to the provided pixel position
+         * @param offset { Number } X or Y pixel offset
+         * @return { mixed } Value corresponding to the provided pixel offset
          * @protected
          */
-        _offsetToValue: function ( xy ) {
-            xy -= this._offsetXY;
+        _offsetToValue: function ( offset ) {
 
-            var value = round( xy * this._factor ) + this.get( MIN );
+            var value = round( offset * this._factor ) + this.get( MIN );
 
-            return this._nearestValue( value );
+            Y.log("Offset: " + offset + " => Value: " + value, "info", "slider");
+            return round( this._nearestValue( value ) );
         },
 
         /**
-         * Converts a value into a positional pixel value for use in positioning
+         * Converts a value into a pixel offset for use in positioning
          * the thumb according to the reverse of the
          * <code>_offsetToValue( xy )</code> operation.
          *
          * @method _valueToOffset
          * @param val { Number } The value to map to pixel X or Y position
-         * @return { Array } <code>[ <em>X</em>px, <em>Y</em>px ] positional values
+         * @return { Number } The pixel offset 
          * @protected
          */
         _valueToOffset: function ( value ) {
-            value -= this.get( MIN );
+            var offset = round( ( value - this.get( MIN ) ) / this._factor );
 
-            return round( value / this._factor ) + this._offsetXY;
+            Y.log("Value: " + value + " => Offset: " + offset, "info", "slider");
+            return offset;
         },
 
         /**
@@ -806,7 +810,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _afterValueChange: function ( e ) {
-            if ( !e.ddEvent ) {
+            if ( !e.positioned ) {
+                Y.log("Positioning thumb after set('value',x)","info","slider");
                 this._setPosition( e.newVal );
             }
         },
@@ -818,18 +823,7 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @protected
          */
         _setPosition: function ( value ) {
-            var thumb = this._dd;
-
-            // Drag element hasn't been setup yet
-            if ( !thumb.deltaXY ) {
-                thumb.actXY = thumb.get( 'dragNode' ).getXY();
-                thumb._setStartPosition( thumb.actXY );
-            }
-
-            thumb.actXY[ this._key.xyIndex ] = this._valueToOffset( value );
-
-            thumb._alignNode( thumb.actXY );
-            //thumb._moveNode();
+            this._uiMoveThumb( this._valueToOffset( value ) );
         },
 
         /**
@@ -859,18 +853,17 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
         },
 
         /**
-         * Validates new values assigned to <code>value</code> attribute.
-         * Numbers between the configured <code>min</code> and <code>max</code>
-         * are acceptable.
+         * Restricts new values assigned to <code>value</code> attribute to be
+         * between the configured <code>min</code> and <code>max</code>.
+         * Rounds to nearest integer value.
          *
-         * @method _validateNewValue
-         * @param value { mixed } Value assigned to <code>value</code> attribute
-         * @return { Boolean } True if value is a number between the configured
-         *                     <code>min</code> and <code>max</code>.
+         * @method _setNewValue
+         * @param value { Number } Value assigned to <code>value</code> attribute
+         * @return { Number } Normalized and constrained value
          * @protected
          */
-        _validateNewValue: function ( value ) {
-            return ( value === this._nearestValue( value ) );
+        _setNewValue: function ( value ) {
+            return round( this._nearestValue( value ) );
         },
 
         /**
@@ -951,8 +944,8 @@ Y.SliderValueRange = Y.mix( SliderValueRange, {
          * @default (inferred from current thumb position)
          */
         value: {
-            value    : 0,
-            validator: '_validateNewValue'
+            value : 0,
+            setter: '_setNewValue'
         }
     }
 }, true );
@@ -1066,21 +1059,33 @@ Y.ClickableRail = Y.mix( ClickableRail, {
 
             // Logic that determines which thumb should be used is abstracted
             // to someday support multi-thumb sliders
-            var thumb = this._resolveThumb( e ),
+            var dd     = this._resolveThumb( e ),
+                i      = this._key.xyIndex,
+                length = parseFloat( this.get( 'length' ), 10 ),
+                thumb,
+                thumbSize,
                 xy;
                 
-            if ( thumb ) {
+            if ( dd ) {
+                thumb = dd.get( 'dragNode' );
+                thumbSize = parseFloat( thumb.getStyle( this._key.dim ), 10);
 
-                if ( !thumb.startXY ) {
-                    thumb._setStartPosition( thumb.getXY() );
-                }
+                // Step 1. Allow for aligning to thumb center or edge, etc
+                xy = this._getThumbDestination( e, thumb );
 
-                xy = this._getThumbDestination( e, thumb.get( 'dragNode' ) );
+                // Step 2. Remove page offsets to give just top/left style val
+                xy = xy[ i ] - this.rail.getXY()[i];
 
-                thumb._alignNode( xy );
+                // Step 3. Constrain within the rail in case of attempt to
+                // center the thumb when clicking on the end of the rail
+                xy = Math.min(
+                        Math.max( xy, 0 ),
+                        ( length - thumbSize ) );
+
+                this._uiMoveThumb( xy );
 
                 // Delegate to DD's natural behavior
-                thumb._handleMouseDownEvent( e );
+                dd._handleMouseDownEvent( e );
             }
         },
 

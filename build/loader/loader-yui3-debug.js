@@ -148,6 +148,12 @@ YUI.Env[Y.version].modules = {
             "yui-base"
         ]
     }, 
+    "createlink-base": {
+        "path": "editor/createlink-base-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
     "cssbase": {
         "after": [
             "cssreset", 
@@ -299,6 +305,37 @@ YUI.Env[Y.version].modules = {
                     "datasource-local", 
                     "plugin", 
                     "dataschema-xml"
+                ]
+            }
+        }
+    }, 
+    "datatable": {
+        "submodules": {
+            "column": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "columnset": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "datatable-base": {
+                "requires": [
+                    "columnset", 
+                    "rowset", 
+                    "widget"
+                ]
+            }, 
+            "row": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "rowset": {
+                "requires": [
+                    "base"
                 ]
             }
         }
@@ -530,6 +567,33 @@ YUI.Env[Y.version].modules = {
             "yui-base"
         ]
     }, 
+    "editor": {
+        "requires": [
+            "base", 
+            "node"
+        ]
+    }, 
+    "editor-base": {
+        "path": "editor/editor-base-min.js", 
+        "requires": [
+            "base", 
+            "frame", 
+            "node", 
+            "exec-command"
+        ]
+    }, 
+    "editor-lists": {
+        "path": "editor/editor-lists-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
+    "editor-tab": {
+        "path": "editor/editor-tab-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
     "event": {
         "expound": "node-base", 
         "plugins": {
@@ -598,7 +662,45 @@ YUI.Env[Y.version].modules = {
             "event-base"
         ]
     }, 
+    "exec-command": {
+        "path": "editor/exec-command-min.js", 
+        "requires": [
+            "frame"
+        ]
+    }, 
+    "frame": {
+        "path": "editor/frame-min.js", 
+        "requires": [
+            "base", 
+            "node", 
+            "selector-css3", 
+            "substitute"
+        ]
+    }, 
     "history": {
+        "submodules": {
+            "history-base": {
+                "requires": [
+                    "event-custom-complex"
+                ]
+            }, 
+            "history-hash": {
+                "requires": [
+                    "event-synthetic", 
+                    "history-base", 
+                    "yui-later"
+                ]
+            }, 
+            "history-hash-ie": {
+                "requires": [
+                    "history-base", 
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }
+    }, 
+    "history-deprecated": {
         "requires": [
             "node"
         ]
@@ -619,9 +721,11 @@ YUI.Env[Y.version].modules = {
     "io": {
         "submodules": {
             "io-base": {
-                "requires": [
-                    "event-custom-base", 
+                "optional": [
                     "querystring-stringify-simple"
+                ], 
+                "requires": [
+                    "event-custom-base"
                 ]
             }, 
             "io-form": {
@@ -671,12 +775,12 @@ YUI.Env[Y.version].modules = {
         ], 
         "submodules": {
             "loader-base": {}, 
-            "rollup": {
+            "loader-rollup": {
                 "requires": [
                     "loader-base"
                 ]
             }, 
-            "yui3": {
+            "loader-yui3": {
                 "requires": [
                     "loader-base"
                 ]
@@ -808,13 +912,13 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "querystring-parse-simple": {
-        "path": "querystring/querystring-parse-simple.js", 
+        "path": "querystring/querystring-parse-simple-min.js", 
         "requires": [
             "yui-base"
         ]
     }, 
     "querystring-stringify-simple": {
-        "path": "querystring/querystring-stringify-simple.js", 
+        "path": "querystring/querystring-stringify-simple-min.js", 
         "requires": [
             "yui-base"
         ]
@@ -828,6 +932,12 @@ YUI.Env[Y.version].modules = {
         "path": "async-queue/async-queue-min.js", 
         "requires": [
             "event-custom"
+        ]
+    }, 
+    "selection": {
+        "path": "editor/selection-min.js", 
+        "requires": [
+            "node"
         ]
     }, 
     "slider": {
@@ -888,8 +998,7 @@ YUI.Env[Y.version].modules = {
         "plugins": {
             "tabview-plugin": {
                 "requires": [
-                    "tabview-base", 
-                    "node-focusmanager"
+                    "tabview-base"
                 ], 
                 "skinnable": true
             }
@@ -905,6 +1014,7 @@ YUI.Env[Y.version].modules = {
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-focusmanager", 
                     "classnamemanager"
                 ]
             }
@@ -918,6 +1028,15 @@ YUI.Env[Y.version].modules = {
             "event-simulate"
         ], 
         "skinnable": true
+    }, 
+    "value-change": {
+        "optional": [
+            "event-custom-complex"
+        ], 
+        "requires": [
+            "node-base", 
+            "event-focus"
+        ]
     }, 
     "widget": {
         "plugins": {

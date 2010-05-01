@@ -762,6 +762,15 @@ Y.extend(Widget, Y.Base, {
         return (this.CONTENT_TEMPLATE === null) ? this.get(BOUNDING_BOX) : this._setBox(null, node, this.CONTENT_TEMPLATE);
     },
 
+    /**
+     * Returns the default value for the contentBox attribute. 
+     *
+     * For the Widget class, this will be the srcNode if provided, otherwise null (resulting in
+     * a new contentBox node instance being created)
+     *
+     * @method _defaultCB
+     * @protected
+     */
     _defaultCB : function(node) {
         return this.get(SRC_NODE) || null;
     },
@@ -1280,16 +1289,14 @@ Y.extend(Widget, Y.Base, {
             queue = this._uiEvtsInitQueue || {};
 
         if (sType && !queue[sType]) {
-
             Y.log("Deferring creation of " + type + " delegate until render.", "info", "widget");
+
+            this._uiEvtsInitQueue = queue[sType] = 1;
 
             this.after(RENDER, function() { 
                 this._createUIEvent(sType);
                 delete this._uiEvtsInitQueue[sType];
             });
-            
-            this._uiEvtsInitQueue = queue[sType] = 1;
-
         }
     },
 
@@ -1420,7 +1427,7 @@ Y.mix(Widget.prototype, {
      * @return {Object} The merged configuration literal
      */
     _applyParsedConfig : function(node, cfg, parsedCfg) {
-        return (parsedCfg) ? Y.aggregate(cfg, parsedCfg, false) : cfg;
+        return (parsedCfg) ? Y.mix(cfg, parsedCfg, false) : cfg;
     },
 
     /**

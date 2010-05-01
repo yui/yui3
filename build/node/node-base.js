@@ -352,15 +352,6 @@ Y_Node.ATTRS = {
         }
     },
 
-     // IE: elements collection is also FORM node which trips up scrubVal.
-     // preconverting to NodeList
-     // TODO: break out for IE only
-    'elements': {
-        getter: function() {
-            return Y.all(this._node.elements);
-        }
-    },
-
     /**
      * Returns a NodeList instance of all HTMLElement children.
      * @readOnly
@@ -397,23 +388,23 @@ Y_Node.ATTRS = {
             return val;
         }
     },
-
-    /**
-     * A generic attribute for storing arbitrary data
-     * on a Node instance.  Data is stored internally,
-     * not on the DOM element itself.
+    
+    
+    /*
+     * Flat data store for off-DOM usage 
      * @config data
      * @type any
+     * @deprecated Use getData/setData
      */
     data: {
-        getter: function() {
-            return this._data;
+        getter: function() { 
+            return this._dataVal; 
         },
-
-        setter: function(val) {
-            this._data = val;
+        setter: function(val) { 
+            this._dataVal = val;
             return val;
-        }
+        },
+        value: null
     }
 };
 
@@ -900,6 +891,23 @@ Y.mix(Y_Node.prototype, {
      * @method insert
      * @param {String | Y.Node | HTMLElement} content The content to insert 
      * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
+     * Possible "where" arguments
+     * <dl>
+     * <dt>Y.Node</dt>
+     * <dd>The Node to insert before</dd>
+     * <dt>HTMLElement</dt>
+     * <dd>The element to insert before</dd>
+     * <dt>Int</dt>
+     * <dd>The index of the child element to insert before</dd>
+     * <dt>"replace"</dt>
+     * <dd>Replaces the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts before the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts content before the node</dd>
+     * <dt>"after"</dt>
+     * <dd>Inserts content after the node</dd>
+     * </dl>
      * @chainable
      */
     insert: function(content, where) {
@@ -961,7 +969,7 @@ Y.mix(Y_Node.prototype, {
             if (content._node) { // map to DOMNode
                 content = content._node;
             } else if (content._nodes) { // convert DOMNodeList to documentFragment
-                content = Y_DOM._nl2Frag(content._nodes);
+                content = Y_DOM._nl2frag(content._nodes);
             }
 
         }
@@ -977,7 +985,7 @@ Y.mix(Y_Node.prototype, {
     * @param {Node} otherNode The node to swap with
      * @chainable
     */
-    swap: document.documentElement.swapNode ? 
+    swap: Y.config.doc.documentElement.swapNode ? 
         function(otherNode) {
             this._node.swapNode(Y_Node.getDOMNode(otherNode));
         } :
@@ -998,6 +1006,65 @@ Y.mix(Y_Node.prototype, {
             return this;
         },
 
+
+    /**
+    * @method getData
+    * @description Retrieves arbitrary data stored on a Node instance.
+    * This is not stored with the DOM node.
+    * @param {string} name Optional name of the data field to retrieve.
+    * If no name is given, all data is returned.
+    * @return {any | Object} Whatever is stored at the given field,
+    * or an object hash of all fields.
+    */
+    getData: function(name) {
+        var ret;
+        this._data = this._data || {};
+        if (arguments.length) {
+            ret = this._data[name];
+        } else {
+            ret = this._data;
+        }
+
+        return ret;
+        
+    },
+
+    /**
+    * @method setData
+    * @description Stores arbitrary data on a Node instance.
+    * This is not stored with the DOM node.
+    * @param {string} name The name of the field to set. If no name
+    * is given, name is treated as the data and overrides any existing data.
+    * @param {any} val The value to be assigned to the field.
+    * @chainable
+    */
+    setData: function(name, val) {
+        this._data = this._data || {};
+        if (arguments.length > 1) {
+            this._data[name] = val;
+        } else {
+            this._data = name;
+        }
+       
+       return this;
+    },
+
+    /**
+    * @method clearData
+    * @description Clears stored data. 
+    * @param {string} name The name of the field to clear. If no name
+    * is given, all data is cleared..
+    * @chainable
+    */
+    clearData: function(name) {
+        if (arguments.length) {
+            delete this._data[name];
+        } else {
+            this._data = {};
+        }
+
+        return this;
+    },
 
     hasMethod: function(method) {
         var node = this._node;
@@ -1655,6 +1722,15 @@ Y.Node.importMethod(Y.DOM, [
  * @param {string} name The attribute name 
  * @return {string} The attribute value 
  */
+
+/**
+ * Allows for removing attributes on DOM nodes..
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method removeAttribute
+ * @see Node
+ * @for NodeList
+ * @param {string} name The attribute to remove 
+ */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'removeAttribute']);
 (function(Y) {
     var methods = [
@@ -1748,8 +1824,13 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'remo
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
-if (!document.documentElement.hasAttribute) { // IE < 8
+if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
+        if (attr === 'value') {
+            if (this.get('value') !== "") { // IE < 8 fails to populate specified when set in HTML
+                return true;
+            }
+        }
         return !!(this._node.attributes[attr] &&
                 this._node.attributes[attr].specified);
     };
@@ -1781,6 +1862,16 @@ Y.Node.ATTRS.type = {
 
     _bypassProxy: true // don't update DOM when using with Attribute
 };
+
+if (Y.config.doc.createElement('form').elements.nodeType) {
+    // IE: elements collection is also FORM node which trips up scrubVal.
+    Y.Node.ATTRS.elements = {
+            getter: function() {
+                return this.all('input, textarea, button, select');
+            }
+    };
+}
+
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});

@@ -1,6 +1,8 @@
 /*Stub for future compatibility*/
-YUITest = {
-    Runner: YAHOO.tool.TestRunner,
-    ResultsFormat: YAHOO.tool.TestFormat,
-    CoverageFormat: YAHOO.tool.CoverageFormat
-};
+if (typeof YUITest == "undefined" || !YUITest) {
+    YUITest = {
+        TestRunner: Y.Test.Runner,
+        ResultsFormat: Y.Test.Format,
+        CoverageFormat: Y.Coverage.Format
+    };
+}

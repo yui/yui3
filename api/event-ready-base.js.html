@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>event&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
+        <h3>event&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
@@ -63,8 +63,8 @@
     <span class="nx">GLOBAL_ENV</span>   <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span> 
     <span class="nx">config</span>       <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span> 
     <span class="nx">doc</span>          <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span> 
-    <span class="nx">docElement</span>   <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span> 
-    <span class="nx">doScrollCap</span>  <span class="o">=</span> <span class="nx">docElement</span><span class="p">.</span><span class="nx">doScroll</span><span class="p">,</span>
+    <span class="nx">docElement</span>   <span class="o">=</span> <span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">,</span> 
+    <span class="nx">doScrollCap</span>  <span class="o">=</span> <span class="nx">docElement</span> <span class="o">&amp;&amp;</span> <span class="nx">docElement</span><span class="p">.</span><span class="nx">doScroll</span><span class="p">,</span>
     <span class="nx">add</span>          <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">add</span><span class="p">,</span>
     <span class="nx">remove</span>       <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">remove</span><span class="p">,</span>
     <span class="nx">targetEvent</span>  <span class="o">=</span> <span class="p">(</span><span class="nx">doScrollCap</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;onreadystatechange&#39;</span> <span class="o">:</span> <span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span>

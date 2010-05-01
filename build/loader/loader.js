@@ -11,7 +11,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.03.24-20-12',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.04.28-20-33',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '1',
@@ -20,7 +20,7 @@ var VERSION         = Y.version,
     COMBO_BASE      = CDN_BASE + 'combo?',
     META =          { version:   VERSION,
                       root:      ROOT,
-                      base:      Y.Env,
+                      base:      Y.Env.base,
                       comboBase: COMBO_BASE,
                       skin:      { defaultSkin: 'sam',
                                    base:        'assets/skins/',
@@ -496,7 +496,7 @@ Y.Loader = function(o) {
     }
 
     for (i in onPage) {
-        if (!self.moduleInfo[i] && onPage[i].details) {
+        if (onPage[i].details) {
             self.addModule(onPage[i].details, i);
         }
     }
@@ -744,7 +744,7 @@ Y.Loader.prototype = {
      * @method addModule
      * @param o An object containing the module data
      * @param name the module name (optional), required if not in the module data
-     * @return {boolean} true if the module was added, false if 
+     * @return the module definition or null if 
      * the object passed in did not provide all required attributes
      */
     addModule: function(o, name) {
@@ -752,7 +752,7 @@ Y.Loader.prototype = {
         o.name = name;
 
         if (!o || !o.name) {
-            return false;
+            return null;
         }
 
         if (!o.type) {
@@ -766,12 +766,42 @@ Y.Loader.prototype = {
         o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
         o.requires = o.requires || [];
 
-        this.moduleInfo[name] = o;
-
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname;
+            overrides, skinname, existing = this.moduleInfo[name], newr;
+
+        // Adding a module again merges requirements to pick up new
+        // requirements when the module arrives.  We allow this only
+        // once to prevent redundant checks when an application calls
+        // use() many times.
+        if (existing && !existing.reparsed) {
+            for (i=0; i<o.requires.length; i++) {
+                newr = o.requires[i];
+                if (YArray.indexOf(existing.requires, newr) == -1) {
+                    existing.requires.push(newr);
+                    delete existing.expanded;
+                }
+            }
+            existing.reparsed = true;
+            return existing;
+        }
+
+        this.moduleInfo[name] = o;
+
+        if (!o.langPack) {
+            langs = YArray(o.lang);
+            for (j=0; j < langs.length; j++) {
+                lang = langs[j];
+                packName = this.getLangPackName(lang, name);
+                smod = this.moduleInfo[packName];
+                if (!smod) {
+                    smod = this._addLangPack(lang, o, packName);
+                }
+            }
+        }
+
+
         if (subs) {
             sup = o.supersedes || []; 
             l   = 0;
@@ -787,7 +817,6 @@ Y.Loader.prototype = {
                     if (s.supersedes) {
                         sup = sup.concat(s.supersedes);
                     }
-
 
                     smod = this.addModule(s, i);
                     sup.push(i);
@@ -910,23 +939,13 @@ Y.Loader.prototype = {
             r    = mod.requires, 
             o    = mod.optional, 
             intl = mod.lang || mod.intl,
-            info = this.moduleInfo;
+            info = this.moduleInfo,
+            hash = {};
 
         for (i=0; i<r.length; i++) {
-            d.push(r[i]);
-            m = this.getModule(r[i]);
-            add = this.getRequires(m);
-            intl = intl || YArray.indexOf(add, 'intl') > -1;
-            for (j=0; j<add.length; j++) {
-                d.push(add[j]);
-            }
-        }
-
-        // get the requirements from superseded modules, if any
-        r=mod.supersedes;
-        if (r) {
-            for (i=0; i<r.length; i++) {
+            if (!hash[r[i]]) {
                 d.push(r[i]);
+                hash[r[i]] = true;
                 m = this.getModule(r[i]);
                 add = this.getRequires(m);
                 intl = intl || YArray.indexOf(add, 'intl') > -1;
@@ -936,13 +955,33 @@ Y.Loader.prototype = {
             }
         }
 
+        // get the requirements from superseded modules, if any
+        r=mod.supersedes;
+        if (r) {
+            for (i=0; i<r.length; i++) {
+                if (!hash[r[i]]) {
+                    d.push(r[i]);
+                    hash[r[i]] = true;
+                    m = this.getModule(r[i]);
+                    add = this.getRequires(m);
+                    intl = intl || YArray.indexOf(add, 'intl') > -1;
+                    for (j=0; j<add.length; j++) {
+                        d.push(add[j]);
+                    }
+                }
+            }
+        }
+
         if (o && this.loadOptional) {
             for (i=0; i<o.length; i++) {
-                d.push(o[i]);
-                add = this.getRequires(info[o[i]]);
-                intl = intl || YArray.indexOf(add, 'intl') > -1;
-                for (j=0; j<add.length; j++) {
-                    d.push(add[j]);
+                if (!hash[o[i]]) {
+                    d.push(o[i]);
+                    hash[o[i]] = true;
+                    add = this.getRequires(info[o[i]]);
+                    intl = intl || YArray.indexOf(add, 'intl') > -1;
+                    for (j=0; j<add.length; j++) {
+                        d.push(add[j]);
+                    }
                 }
             }
         }
@@ -1021,15 +1060,16 @@ Y.Loader.prototype = {
     },
 
     _addLangPack: function(lang, m, packName) {
-        var name = m.name, packPath = _path((m.pkg || name), packName, JS, true);
+        var name = m.name, 
+            packPath = _path((m.pkg || name), packName, JS, true),
+            existing = this.moduleInfo[packName];
 
-        // if (name.indexOf('lang/') === 0) {
-        //     return null;
-        // }
+        if (existing) {
+            return existing;
+        }
 
         this.addModule({
             path: packPath,
-            // requires: ['intl'], // happens in getRequires
             intl: true,
             langPack: true,
             ext: m.ext,
@@ -1055,7 +1095,7 @@ Y.Loader.prototype = {
      */
     _setup: function() {
         var info = this.moduleInfo, name, i, j, m, o, l, smod,
-            langs, lang, packName;
+            packName;
         for (name in info) {
             if (info.hasOwnProperty(name)) {
                 m = info[name];
@@ -1082,12 +1122,12 @@ Y.Loader.prototype = {
 
                 // Create lang pack modules
                 if (m && m.lang && m.lang.length) {
-                    langs = YArray(m.lang);
-                    for (i=0; i<langs.length; i=i+1) {
-                        lang = langs[i];
-                        packName = this.getLangPackName(lang, name);
-                        this._addLangPack(lang, m, packName);
-                    }
+                    // langs = YArray(m.lang);
+                    // for (i=0; i<langs.length; i=i+1) {
+                    //     lang = langs[i];
+                    //     packName = this.getLangPackName(lang, name);
+                    //     this._addLangPack(lang, m, packName);
+                    // }
 
                     // Setup root package if the module has lang defined, 
                     // it needs to provide a root language pack
@@ -1310,7 +1350,7 @@ Y.Loader.prototype = {
         // create an indexed list
         var s = YObject.keys(this.required), 
             info = this.moduleInfo, 
-            loaded = this.loaded,
+            // loaded = this.loaded,
             done = {},
             p=0, l, a, b, j, k, moved, doneKey,
 
@@ -1320,7 +1360,8 @@ Y.Loader.prototype = {
 
                 var m = info[mod1], i, r, after, other = info[mod2], s;
 
-                if (loaded[mod2] || !m || !other) {
+                // if (loaded[mod2] || !m || !other) {
+                if (!m || !other) {
                     return false;
                 }
 
@@ -1372,6 +1413,7 @@ Y.Loader.prototype = {
                 // find a requirement for the current item
                 for (k=j+1; k<l; k=k+1) {
                     doneKey = a + s[k];
+
                     if (!done[doneKey] && requires(a, s[k])) {
 
                         // extract the dependency so we can move it up
@@ -2042,6 +2084,12 @@ YUI.Env[Y.version].modules = {
             "yui-base"
         ]
     }, 
+    "createlink-base": {
+        "path": "editor/createlink-base-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
     "cssbase": {
         "after": [
             "cssreset", 
@@ -2193,6 +2241,37 @@ YUI.Env[Y.version].modules = {
                     "datasource-local", 
                     "plugin", 
                     "dataschema-xml"
+                ]
+            }
+        }
+    }, 
+    "datatable": {
+        "submodules": {
+            "column": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "columnset": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "datatable-base": {
+                "requires": [
+                    "columnset", 
+                    "rowset", 
+                    "widget"
+                ]
+            }, 
+            "row": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "rowset": {
+                "requires": [
+                    "base"
                 ]
             }
         }
@@ -2424,6 +2503,33 @@ YUI.Env[Y.version].modules = {
             "yui-base"
         ]
     }, 
+    "editor": {
+        "requires": [
+            "base", 
+            "node"
+        ]
+    }, 
+    "editor-base": {
+        "path": "editor/editor-base-min.js", 
+        "requires": [
+            "base", 
+            "frame", 
+            "node", 
+            "exec-command"
+        ]
+    }, 
+    "editor-lists": {
+        "path": "editor/editor-lists-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
+    "editor-tab": {
+        "path": "editor/editor-tab-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
     "event": {
         "expound": "node-base", 
         "plugins": {
@@ -2492,7 +2598,45 @@ YUI.Env[Y.version].modules = {
             "event-base"
         ]
     }, 
+    "exec-command": {
+        "path": "editor/exec-command-min.js", 
+        "requires": [
+            "frame"
+        ]
+    }, 
+    "frame": {
+        "path": "editor/frame-min.js", 
+        "requires": [
+            "base", 
+            "node", 
+            "selector-css3", 
+            "substitute"
+        ]
+    }, 
     "history": {
+        "submodules": {
+            "history-base": {
+                "requires": [
+                    "event-custom-complex"
+                ]
+            }, 
+            "history-hash": {
+                "requires": [
+                    "event-synthetic", 
+                    "history-base", 
+                    "yui-later"
+                ]
+            }, 
+            "history-hash-ie": {
+                "requires": [
+                    "history-base", 
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }
+    }, 
+    "history-deprecated": {
         "requires": [
             "node"
         ]
@@ -2513,9 +2657,11 @@ YUI.Env[Y.version].modules = {
     "io": {
         "submodules": {
             "io-base": {
-                "requires": [
-                    "event-custom-base", 
+                "optional": [
                     "querystring-stringify-simple"
+                ], 
+                "requires": [
+                    "event-custom-base"
                 ]
             }, 
             "io-form": {
@@ -2565,12 +2711,12 @@ YUI.Env[Y.version].modules = {
         ], 
         "submodules": {
             "loader-base": {}, 
-            "rollup": {
+            "loader-rollup": {
                 "requires": [
                     "loader-base"
                 ]
             }, 
-            "yui3": {
+            "loader-yui3": {
                 "requires": [
                     "loader-base"
                 ]
@@ -2702,13 +2848,13 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "querystring-parse-simple": {
-        "path": "querystring/querystring-parse-simple.js", 
+        "path": "querystring/querystring-parse-simple-min.js", 
         "requires": [
             "yui-base"
         ]
     }, 
     "querystring-stringify-simple": {
-        "path": "querystring/querystring-stringify-simple.js", 
+        "path": "querystring/querystring-stringify-simple-min.js", 
         "requires": [
             "yui-base"
         ]
@@ -2722,6 +2868,12 @@ YUI.Env[Y.version].modules = {
         "path": "async-queue/async-queue-min.js", 
         "requires": [
             "event-custom"
+        ]
+    }, 
+    "selection": {
+        "path": "editor/selection-min.js", 
+        "requires": [
+            "node"
         ]
     }, 
     "slider": {
@@ -2782,8 +2934,7 @@ YUI.Env[Y.version].modules = {
         "plugins": {
             "tabview-plugin": {
                 "requires": [
-                    "tabview-base", 
-                    "node-focusmanager"
+                    "tabview-base"
                 ], 
                 "skinnable": true
             }
@@ -2799,6 +2950,7 @@ YUI.Env[Y.version].modules = {
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-focusmanager", 
                     "classnamemanager"
                 ]
             }
@@ -2812,6 +2964,15 @@ YUI.Env[Y.version].modules = {
             "event-simulate"
         ], 
         "skinnable": true
+    }, 
+    "value-change": {
+        "optional": [
+            "event-custom-complex"
+        ], 
+        "requires": [
+            "node-base", 
+            "event-focus"
+        ]
     }, 
     "widget": {
         "plugins": {

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>widget-parent&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
+        <h3>widget-parent&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_widget-parent.html" title="widget-parent">widget-parent</a>
                  &gt; WidgetParent 
@@ -467,7 +467,7 @@ used to create an instance of a Widget.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Default childAdded handler
+                                            Default addChild handler
                                         </div>
 
                                         <div class="description">
@@ -533,7 +533,7 @@ which the child will be inserted.</span>
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Default childRemoved handler
+                                            Default removeChild handler
                                         </div>
 
                                         <div class="description">
@@ -1206,15 +1206,15 @@ Y.ArrayList instance.</dd>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:event" resource="#event_childAdded">
+                                    <div class="" rel="yui:event" resource="#event_addChild">
                                     <h4>
-                                        <a name="event_childAdded">childAdded</a></h4>
+                                        <a name="event_addChild">addChild</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong property="yui:name">childAdded</strong>
+                                            <strong property="yui:name">addChild</strong>
 
                                             (
                                                 
@@ -1257,63 +1257,6 @@ after a child is added.
 
                                             <div class="preventable">
                                                 <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defAddChildFn.
-                                            </div>        
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:event" resource="#event_childRemoved">
-                                    <h4>
-                                        <a name="event_childRemoved">childRemoved</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong property="yui:name">childRemoved</strong>
-
-                                            (
-                                                
-                                                        
-                                                         e
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Fires when a child Widget is removed.  The event object will have a 
-'child' property that returns a reference to the child Widget, as well 
-as an 'index' property that returns a reference child's ordinal position.
-<p>
-Subscribers to the "on" moment of this event, will be notified 
-before a child is removed.
-</p>
-<p>
-Subscribers to the "after" moment of this event, will be notified
-after a child is removed.
-</p>
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                            <code><span property="yui:name">e</span>
-                                                                &lt;<span property="yui:type">EventFacade</span>&gt;
-                                                            </code>
-                                                            <span property="yui:description"> The Event Facade</span>
-                                                        </dd>
-                                                        
-                                                </dl>
-
-                                            <div class="preventable">
-                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defRemoveChildFn.
                                             </div>        
 
                                         </div>
@@ -1403,6 +1346,63 @@ after a child is removed.
                                                         
                                                 </dl>
 
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_removeChild">
+                                    <h4>
+                                        <a name="event_removeChild">removeChild</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">removeChild</strong>
+
+                                            (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Fires when a child Widget is removed.  The event object will have a 
+'child' property that returns a reference to the child Widget, as well 
+as an 'index' property that returns a reference child's ordinal position.
+<p>
+Subscribers to the "on" moment of this event, will be notified 
+before a child is removed.
+</p>
+<p>
+Subscribers to the "after" moment of this event, will be notified
+after a child is removed.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">e</span>
+                                                                &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> The Event Facade</span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+                                            <div class="preventable">
+                                                <strong>Preventable:</strong> This event is preventable by method e.preventDefault().  The default function executed by this event is _defRemoveChildFn.
+                                            </div>        
 
                                         </div>
 
@@ -1656,10 +1656,10 @@ children.  If no children are selected, will return null.
                         <h4>Events</h4>
                         <ul class="content">        
                                 <li class=""><a href="#event_activeDescendantChange" title="activeDescendantChange">activeDescendantChange</a></li>
-                                <li class=""><a href="#event_childAdded" title="childAdded">childAdded</a></li>
-                                <li class=""><a href="#event_childRemoved" title="childRemoved">childRemoved</a></li>
+                                <li class=""><a href="#event_addChild" title="addChild">addChild</a></li>
                                 <li class=""><a href="#event_defaultChildTypeChange" title="defaultChildTypeChange">defaultChildTypeChange</a></li>
                                 <li class=""><a href="#event_multipleChange" title="multipleChange">multipleChange</a></li>
+                                <li class=""><a href="#event_removeChild" title="removeChild">removeChild</a></li>
                                 <li class=""><a href="#event_selectionChange" title="selectionChange">selectionChange</a></li>
                         </ul>
                     </div>
@@ -1684,7 +1684,7 @@ children.  If no children are selected, will return null.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeDescendant", "url": "WidgetParent.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeDescendantChange", "url": "WidgetParent.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_add", "url": "WidgetParent.html#method__add", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterActiveDescendantChange", "url": "WidgetParent.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterDestroyChild", "url": "WidgetParent.html#method__afterDestroyChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_bindUIParent", "url": "WidgetParent.html#method__bindUIParent", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "childAdded", "url": "WidgetParent.html#event_childAdded", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "childRemoved", "url": "WidgetParent.html#event_childRemoved", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_childrenContainer", "url": "WidgetParent.html#property__childrenContainer", "type": "property"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defAddChildFn", "url": "WidgetParent.html#method__defAddChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defRemoveChildFn", "url": "WidgetParent.html#method__defRemoveChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "deselectAll", "url": "WidgetParent.html#method_deselectAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_destroyChildren", "url": "WidgetParent.html#method__destroyChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_renderChildren", "url": "WidgetParent.html#method__renderChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectAll", "url": "WidgetParent.html#method_selectAll", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectChild", "url": "WidgetParent.html#method_selectChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiAddChild", "url": "WidgetParent.html#method__uiAddChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiRemoveChild", "url": "WidgetParent.html#method__uiRemoveChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveDescendant", "url": "WidgetParent.html#method__updateActiveDescendant", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "WidgetParent", "name": "activeDescendant", "url": "WidgetParent.html#config_activeDescendant", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "activeDescendantChange", "url": "WidgetParent.html#event_activeDescendantChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_add", "url": "WidgetParent.html#method__add", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "add", "url": "WidgetParent.html#method_add", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "addChild", "url": "WidgetParent.html#event_addChild", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_afterActiveDescendantChange", "url": "WidgetParent.html#method__afterActiveDescendantChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterDestroyChild", "url": "WidgetParent.html#method__afterDestroyChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterParentSelectedChange", "url": "WidgetParent.html#method__afterParentSelectedChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_afterSelectionChange", "url": "WidgetParent.html#method__afterSelectionChange", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_bindUIParent", "url": "WidgetParent.html#method__bindUIParent", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_childrenContainer", "url": "WidgetParent.html#property__childrenContainer", "type": "property"}, {"access": "protected", "host": "WidgetParent", "name": "_createChild", "url": "WidgetParent.html#method__createChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_defAddChildFn", "url": "WidgetParent.html#method__defAddChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "defaultChildType", "url": "WidgetParent.html#config_defaultChildType", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "defaultChildTypeChange", "url": "WidgetParent.html#event_defaultChildTypeChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_defRemoveChildFn", "url": "WidgetParent.html#method__defRemoveChildFn", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "deselectAll", "url": "WidgetParent.html#method_deselectAll", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_destroyChildren", "url": "WidgetParent.html#method__destroyChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "multiple", "url": "WidgetParent.html#config_multiple", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "multipleChange", "url": "WidgetParent.html#event_multipleChange", "type": "event"}, {"access": "", "host": "WidgetParent", "name": "remove", "url": "WidgetParent.html#method_remove", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeAll", "url": "WidgetParent.html#method_removeAll", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "removeChild", "url": "WidgetParent.html#event_removeChild", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_renderChildren", "url": "WidgetParent.html#method__renderChildren", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectAll", "url": "WidgetParent.html#method_selectAll", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selectChild", "url": "WidgetParent.html#method_selectChild", "type": "method"}, {"access": "", "host": "WidgetParent", "name": "selection", "url": "WidgetParent.html#config_selection", "type": "config"}, {"access": "", "host": "WidgetParent", "name": "selectionChange", "url": "WidgetParent.html#event_selectionChange", "type": "event"}, {"access": "protected", "host": "WidgetParent", "name": "_setSelection", "url": "WidgetParent.html#method__setSelection", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiAddChild", "url": "WidgetParent.html#method__uiAddChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_uiRemoveChild", "url": "WidgetParent.html#method__uiRemoveChild", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateActiveDescendant", "url": "WidgetParent.html#method__updateActiveDescendant", "type": "method"}, {"access": "protected", "host": "WidgetParent", "name": "_updateSelection", "url": "WidgetParent.html#method__updateSelection", "type": "method"}];
 </script>
 </body>
 </html>

@@ -385,6 +385,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             node.insertBefore(Y.Node.create('foo'), node.get('firstChild'));
             Assert.areEqual('foobar', node.get('innerHTML'), "node.get('innerHTML')");
             Assert.areEqual('foobar', node.get('text'), "node.get('text')");
+
+            // test setContent with NodeList
+            html = '<div>foo</div>';
+            node.setContent(Y.all(Y.Node.create(html)));
+            Assert.areEqual(html, node.get('innerHTML'), "node.setContent(Y.all(Y.Node.create(html)))");
+
         },
 
         test_setter: function() {
@@ -791,23 +797,29 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
                 Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
                 "Y.one('#test-insert-html').setContent(" + content + ")");
 
+            content = 0;
+            Y.one('#test-insert-html').setContent(content);
+            Assert.areEqual('0',
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(" + content + ")");
+
         },
 
         test_insert: function() {
             var node = Y.one('#test-insert-html'),
                 html = '<strong>foo</strong>',
-                content = node.get('innerHTML');
+                content = node.get('innerHTML').toLowerCase();
 
             node.insert(html);
-            Assert.areEqual(node._node.innerHTML,
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
                 content + html,
                 "node.insert('" + html + "')");
 
             html = '<em>bar</em>';
-            content = node.get('innerHTML');
+            content = node.get('innerHTML').toLowerCase();
 
             node.insert(html, 0);
-            Assert.areEqual(node._node.innerHTML,
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
                 html + content,
                 "node.insert(" + html + ", 0)");
 
@@ -818,36 +830,36 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
                 "node.insert(" + html + ", 1)");
 
             html = '';
-            content = node.get('innerHTML');
+            content = node.get('innerHTML').toLowerCase();
 
             node.insert(html);
-            Assert.areEqual(node._node.innerHTML,
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
                 content,
                 "node.insert(" + html + ")");
 
             html = null;
-            content = node.get('innerHTML');
+            content = node.get('innerHTML').toLowerCase();
 
             node.insert(html);
-            Assert.areEqual(node._node.innerHTML,
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
                 content,
                 "node.insert(" + html + ")");
 
             // test fragment insertion
 
             html = '<a>bar</a><h2>foo</h2>';
-            content = node.get('innerHTML');
+            content = node.get('innerHTML').toLowerCase();
 
             node.insert(html);
-            Assert.areEqual(node._node.innerHTML,
-                content + html,
+            Assert.areEqual(Y.Lang.trim(node._node.innerHTML.toLowerCase()),
+                Y.Lang.trim(content + html).toLowerCase(),
                 "node.insert(" + html + ")");
 
             html = '<label>foo</label><input>';
-            content = node.get('innerHTML');
+            content = node.get('innerHTML').toLowerCase();
 
             node.insert(html, 0);
-            Assert.areEqual(node._node.innerHTML,
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
                 html + content,
                 "node.insert(" + html + ", 0)");
 
@@ -877,18 +889,18 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
         test_inject: function() {
             var node = Y.one('#test-insert-html'),
                 html = '<strong>foo</strong>',
-                content = node.get('innerHTML');
+                content = node.get('innerHTML').toLowerCase();
 
             node.prepend(html);
-            Assert.areEqual(node._node.innerHTML,
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
                 html + content,
                 "node.prepend('" + html + "')");
 
             html = '<em>bar</em>';
-            content = node.get('innerHTML');
+            content = node.get('innerHTML').toLowerCase();
 
             node.append(html);
-            Assert.areEqual(node._node.innerHTML,
+            Assert.areEqual(node._node.innerHTML.toLowerCase(),
                 content + html,
                 "node.append('" + html + "')");
         },
@@ -897,6 +909,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             // text
             Assert.isTrue(Y.one('input[name=test-text-value]').hasAttribute('value'),
                 'input[name=test-text-value].hasAttribute("value")');
+
             Assert.isFalse(Y.one('input[name=test-text-novalue]').hasAttribute('value'),
                 'input[name=test-text-novalue].hasAttribute("value")');
 
@@ -1122,6 +1135,37 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             nodes.item(1).swap(nodes.item(2));
             Assert.areEqual(elements[1], nodes.item(1)._node);
             Assert.areEqual(elements[2], nodes.item(2)._node);
+        },
+
+        test_data: function() {
+            var node = Y.one('body');
+
+            // deprecated usage
+            node.set('data', 'foo');
+            Assert.areEqual('foo', node.get('data'),
+                "node.set('data', 'foo')");
+
+            node.setData('foo', 'foo');
+            Assert.areEqual('foo', node.getData('foo'),
+                "node.setData('foo', 'foo')");
+
+            node.setData({'bar': 'bar', 'baz': 'baz'});
+            Assert.areEqual('bar', node.getData('bar'),
+                "node.setData({'bar': 'bar', 'baz': 'baz'})");
+
+            Assert.areEqual('baz', node.getData('baz'),
+                "node.setData({'bar': 'bar', 'baz': 'baz'})");
+
+            node.clearData('bar');
+            Assert.areEqual(undefined, node.getData('bar'),
+                "node.clearData('bar')");
+
+            Assert.areEqual('baz', node.getData('baz'),
+                "node.clearData('bar')");
+
+            node.clearData();
+            Assert.areEqual(undefined, node.getData('baz'),
+                "node.clearData()");
         }
     })); 
 

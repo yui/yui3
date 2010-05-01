@@ -11,6 +11,9 @@ body {
 <title>use('yui2-') and then get dependencies</title>
 <script src="../../build/yui/yui-debug.js" type="text/javascript" charset="utf-8"></script>                                                                   
 <script type="text/javascript" charset="utf-8">                                                                                                                 
+
+(function() {
+
 YUI({
 
     // When pulling from the CDN, you can choose a YUI2 distribution.
@@ -72,6 +75,10 @@ YUI({
      
     YAHOO.log("When you begin interacting with the example at left, you'll see log messages appear here.", "info", "example");
 });
+
+
+}());
+
 </script>     
 <style> 
 #container {background-color:#00CCFF; border:1px dotted black; padding:1em; cursor:pointer;}

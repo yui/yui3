@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>loader&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
+        <h3>loader&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_loader.html" title="loader">loader</a>
                 
@@ -195,6 +195,12 @@
             <span class="s2">&quot;yui-base&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;createlink-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;editor/createlink-base-min.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;editor-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;cssbase&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;cssreset&quot;</span><span class="p">,</span> 
@@ -346,6 +352,37 @@
                     <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;plugin&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;dataschema-xml&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;datatable&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;column&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;columnset&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;datatable-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;columnset&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;rowset&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;widget&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;row&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;rowset&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -577,6 +614,33 @@
             <span class="s2">&quot;yui-base&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;editor&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;editor-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;editor/editor-base-min.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;frame&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;exec-command&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;editor-lists&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;editor/editor-lists-min.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;editor-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;editor-tab&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;editor/editor-tab-min.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;editor-base&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;event&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;expound&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -645,7 +709,45 @@
             <span class="s2">&quot;event-base&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;exec-command&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;editor/exec-command-min.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;frame&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;frame&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;editor/frame-min.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;selector-css3&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;substitute&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;history&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;history-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-custom-complex&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;history-hash&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-synthetic&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;yui-later&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;history-hash-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;history-hash&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;history-deprecated&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;node&quot;</span>
         <span class="p">]</span>
@@ -666,9 +768,11 @@
     <span class="s2">&quot;io&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;io-base&quot;</span><span class="o">:</span> <span class="p">{</span>
-                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;event-custom-base&quot;</span><span class="p">,</span> 
+                <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;querystring-stringify-simple&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-custom-base&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;io-form&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -718,12 +822,12 @@
         <span class="p">],</span> 
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;loader-base&quot;</span><span class="o">:</span> <span class="p">{},</span> 
-            <span class="s2">&quot;rollup&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;loader-rollup&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;loader-base&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
-            <span class="s2">&quot;yui3&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;loader-yui3&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;loader-base&quot;</span>
                 <span class="p">]</span>
@@ -855,13 +959,13 @@
         <span class="p">}</span>
     <span class="p">},</span> 
     <span class="s2">&quot;querystring-parse-simple&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;querystring/querystring-parse-simple.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;querystring/querystring-parse-simple-min.js&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;yui-base&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;querystring-stringify-simple&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;querystring/querystring-stringify-simple.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;querystring/querystring-stringify-simple-min.js&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;yui-base&quot;</span>
         <span class="p">]</span>
@@ -875,6 +979,12 @@
         <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;async-queue/async-queue-min.js&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;event-custom&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;selection&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;editor/selection-min.js&quot;</span><span class="p">,</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;node&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;slider&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -935,8 +1045,7 @@
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;tabview-plugin&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;tabview-base&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;node-focusmanager&quot;</span>
+                    <span class="s2">&quot;tabview-base&quot;</span>
                 <span class="p">],</span> 
                 <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
             <span class="p">}</span>
@@ -952,6 +1061,7 @@
             <span class="s2">&quot;tabview-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;node-event-delegate&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-focusmanager&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;classnamemanager&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
@@ -965,6 +1075,15 @@
             <span class="s2">&quot;event-simulate&quot;</span>
         <span class="p">],</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;value-change&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;event-custom-complex&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-focus&quot;</span>
+        <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;widget&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>

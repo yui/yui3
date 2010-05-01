@@ -141,6 +141,12 @@
             "yui-base"
         ]
     }, 
+    "createlink-base": {
+        "path": "editor/createlink-base-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
     "cssbase": {
         "after": [
             "cssreset", 
@@ -292,6 +298,37 @@
                     "datasource-local", 
                     "plugin", 
                     "dataschema-xml"
+                ]
+            }
+        }
+    }, 
+    "datatable": {
+        "submodules": {
+            "column": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "columnset": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "datatable-base": {
+                "requires": [
+                    "columnset", 
+                    "rowset", 
+                    "widget"
+                ]
+            }, 
+            "row": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "rowset": {
+                "requires": [
+                    "base"
                 ]
             }
         }
@@ -523,6 +560,33 @@
             "yui-base"
         ]
     }, 
+    "editor": {
+        "requires": [
+            "base", 
+            "node"
+        ]
+    }, 
+    "editor-base": {
+        "path": "editor/editor-base-min.js", 
+        "requires": [
+            "base", 
+            "frame", 
+            "node", 
+            "exec-command"
+        ]
+    }, 
+    "editor-lists": {
+        "path": "editor/editor-lists-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
+    "editor-tab": {
+        "path": "editor/editor-tab-min.js", 
+        "requires": [
+            "editor-base"
+        ]
+    }, 
     "event": {
         "expound": "node-base", 
         "plugins": {
@@ -591,7 +655,45 @@
             "event-base"
         ]
     }, 
+    "exec-command": {
+        "path": "editor/exec-command-min.js", 
+        "requires": [
+            "frame"
+        ]
+    }, 
+    "frame": {
+        "path": "editor/frame-min.js", 
+        "requires": [
+            "base", 
+            "node", 
+            "selector-css3", 
+            "substitute"
+        ]
+    }, 
     "history": {
+        "submodules": {
+            "history-base": {
+                "requires": [
+                    "event-custom-complex"
+                ]
+            }, 
+            "history-hash": {
+                "requires": [
+                    "event-synthetic", 
+                    "history-base", 
+                    "yui-later"
+                ]
+            }, 
+            "history-hash-ie": {
+                "requires": [
+                    "history-base", 
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }
+    }, 
+    "history-deprecated": {
         "requires": [
             "node"
         ]
@@ -612,9 +714,11 @@
     "io": {
         "submodules": {
             "io-base": {
-                "requires": [
-                    "event-custom-base", 
+                "optional": [
                     "querystring-stringify-simple"
+                ], 
+                "requires": [
+                    "event-custom-base"
                 ]
             }, 
             "io-form": {
@@ -664,12 +768,12 @@
         ], 
         "submodules": {
             "loader-base": {}, 
-            "rollup": {
+            "loader-rollup": {
                 "requires": [
                     "loader-base"
                 ]
             }, 
-            "yui3": {
+            "loader-yui3": {
                 "requires": [
                     "loader-base"
                 ]
@@ -801,13 +905,13 @@
         }
     }, 
     "querystring-parse-simple": {
-        "path": "querystring/querystring-parse-simple.js", 
+        "path": "querystring/querystring-parse-simple-min.js", 
         "requires": [
             "yui-base"
         ]
     }, 
     "querystring-stringify-simple": {
-        "path": "querystring/querystring-stringify-simple.js", 
+        "path": "querystring/querystring-stringify-simple-min.js", 
         "requires": [
             "yui-base"
         ]
@@ -821,6 +925,12 @@
         "path": "async-queue/async-queue-min.js", 
         "requires": [
             "event-custom"
+        ]
+    }, 
+    "selection": {
+        "path": "editor/selection-min.js", 
+        "requires": [
+            "node"
         ]
     }, 
     "slider": {
@@ -881,8 +991,7 @@
         "plugins": {
             "tabview-plugin": {
                 "requires": [
-                    "tabview-base", 
-                    "node-focusmanager"
+                    "tabview-base"
                 ], 
                 "skinnable": true
             }
@@ -898,6 +1007,7 @@
             "tabview-base": {
                 "requires": [
                     "node-event-delegate", 
+                    "node-focusmanager", 
                     "classnamemanager"
                 ]
             }
@@ -911,6 +1021,15 @@
             "event-simulate"
         ], 
         "skinnable": true
+    }, 
+    "value-change": {
+        "optional": [
+            "event-custom-complex"
+        ], 
+        "requires": [
+            "node-base", 
+            "event-focus"
+        ]
     }, 
     "widget": {
         "plugins": {

@@ -16,7 +16,7 @@
 <div id="doc3" class="yui-t2">
 	<div id="hd">
         <h1><a href="http://developer.yahoo.com/yui/" title="Yahoo! UI Library">Yahoo! UI Library</a></h1>
-        <h3>test&nbsp; <span class="subtitle">3.1.0pr3</span></h3>
+        <h3>test&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_test.html" title="test">test</a>
                 
@@ -48,11 +48,13 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/*Stub for future compatibility*/</span>
-<span class="nx">YUITest</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">Runner</span><span class="o">:</span> <span class="nx">YAHOO</span><span class="p">.</span><span class="nx">tool</span><span class="p">.</span><span class="nx">TestRunner</span><span class="p">,</span>
-    <span class="nx">ResultsFormat</span><span class="o">:</span> <span class="nx">YAHOO</span><span class="p">.</span><span class="nx">tool</span><span class="p">.</span><span class="nx">TestFormat</span><span class="p">,</span>
-    <span class="nx">CoverageFormat</span><span class="o">:</span> <span class="nx">YAHOO</span><span class="p">.</span><span class="nx">tool</span><span class="p">.</span><span class="nx">CoverageFormat</span>
-<span class="p">};</span>
+<span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUITest</span> <span class="o">==</span> <span class="s2">&quot;undefined&quot;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">YUITest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">YUITest</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">TestRunner</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Runner</span><span class="p">,</span>
+        <span class="nx">ResultsFormat</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Test</span><span class="p">.</span><span class="nx">Format</span><span class="p">,</span>
+        <span class="nx">CoverageFormat</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Coverage</span><span class="p">.</span><span class="nx">Format</span>
+    <span class="p">};</span>
+<span class="p">}</span>
 </pre></div>
 
                     </div>
