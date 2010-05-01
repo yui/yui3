@@ -87,20 +87,18 @@ Y.extend(Axis, Y.SWFWidget,
 	 * @method _axisInit
 	 * @param swfowner {Object} The class with a direct reference to the application swf. 
 	 */
-	_init: function(swfowner)
+	_init: function()
 	{
-		this.swfowner = swfowner;
-		this.appswf = this.swfowner.appswf;
-		this.appswf.createInstance(this._dataId, this.get("axisType") + "Data", ["$" + this.swfowner._dataId]);
+		this.get("app").createInstance(this._dataId, this.get("axisType") + "Data", ["$" + this.get("app")._dataId]);
 		var i, keys = this.get("keys");
 		for (i in keys) 
 		{
 			if(keys.hasOwnProperty(i))
 			{
-				this.appswf.applyMethod(this._dataId, "addKey", [keys[i]]);
+				this.get("app").applyMethod(this._dataId, "addKey", [keys[i]]);
 			}
 		}
-		this.appswf.createInstance(this._id, "Axis", ["$" + this._dataId]);
+		this.get("app").createInstance(this._id, "Axis", ["$" + this._dataId]);
 		this._addSWFEventListeners();
 		this.swfReadyFlag = true;
 	},
@@ -114,9 +112,9 @@ Y.extend(Axis, Y.SWFWidget,
 	addKey: function(key) 
 	{
 		this.get("keys").push(key);
-		if(this.appswf)
+		if(this.get("app"))
 		{
-			this.appswf.applyMethod("$" + this._dataId, "addKey", [key]);
+			this.get("app").applyMethod("$" + this._dataId, "addKey", [key]);
 		}
 	}
 });

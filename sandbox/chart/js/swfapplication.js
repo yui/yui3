@@ -122,14 +122,16 @@
 				return Y.Lang.isObject(val);
 			}
 		},
-		/**
+
+        /**
 		 * Indicates whether or not to call the loadswf method upon instantiation.
 		 */
 		autoLoad: 
 		{
 			value: true
 		},
-		/**
+		
+        /**
 		 * Indicates whether the swf draws automatically.
 		 *
 		 * @private
@@ -145,7 +147,8 @@
 				return this.setAutoRender(val);
 			}
 		},
-		/**
+		
+        /**
 		 * Id used to insantiate a ChartDataProvider in the flash application.
 		 *
 		 * @private
@@ -154,7 +157,8 @@
 		{
 			value: null
 		},
-		/**
+		
+        /**
 		 * Reference to the dataProvider for the SWFApplication.
 		 * @private
 		 */
@@ -190,7 +194,8 @@
             {
                 this.node = event.node = this.swf._swf._node;
                 this.appswf = event.appswf = this;
-                this._init(event);
+                this._init();
+                this._subscribe();
                 //this.publish("swfReady", {fireOnce:true});
                 //this.fire("swfReady", event);
             }
@@ -205,7 +210,8 @@
         },
 		
         _events: {},
-		/**
+		
+        /**
 		 * Reference to corresponding Actionscript class.
 		 */
 		AS_CLASS: "CartesianCanvas",
@@ -234,7 +240,7 @@
 		/**
 		 * Event handler for the swfReady event.
 		 */
-		_init: function(event)
+		_init: function()
 		{
 			var i, item, len;
 			this._setAutoRender();
@@ -284,7 +290,7 @@
 			Container.prototype.addItem.apply(this, arguments);
 			if(this.swfReadyFlag && item._init)
 			{
-				item._init(this);
+				item._init();
 			}
 		},
 
@@ -310,70 +316,96 @@
 				this.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
 			}
 		},
-	/**
-	 * Calls a specific function exposed by the SWF's
-	 * ExternalInterface.
-	 * @method callSWF
-	 * @param func {String} the name of the function to call
-	 * @param args {Object} the set of arguments to pass to the function.
-	 */
-	
-	callSWF: function (func, args)
-	{
-		if (!args) { 
-			  args= []; 
-		};	
-		if (this.node[func]) {
-		return(this.node[func].apply(this.node, args));
-	    } else {
-		return null;
-	    }
-	},
-	
-	createInstance: function (instanceId, className, args) {
-        if (!args) {args = []};
-		if (this.node["createInstance"]) {
-			this.node.createInstance(instanceId, className, args);
-		}
-	},
-	
-	applyMethod: function (instanceId, methodName, args) {
-		if (!args) {args = []};
-		if (this.node["applyMethod"]) {
-			this.node.applyMethod(instanceId, methodName, args);
-		}
-	},
-	
-	exposeMethod: function (instanceId, methodName, exposedName) {
-		if (this.node["exposeMethod"]) {
-			this.node.exposeMethod(instanceId, methodName, exposedName);
-		}
-	},
-	
-	getProperty: function (instanceId, propertyName) {
-		if (this.node["getProperty"]) {
-			this.node.getProperty(instanceId, propertyName);
-		}
-	},
-	
-	setProperty: function (instanceId, propertyName, propertyValue) {
-		if (this.node["setProperty"]) {
-			this.node.setProperty(instanceId, propertyName, propertyValue);
-		}
-	},
+        
+        /**
+         * Calls a specific function exposed by the SWF's
+         * ExternalInterface.
+         * @method callSWF
+         * @param func {String} the name of the function to call
+         * @param args {Object} the set of arguments to pass to the function.
+         */
+        
+        callSWF: function (func, args)
+        {
+            if (!args) { 
+                  args= []; 
+            };	
+            if (this.node && this.node[func]) {
+            return(this.node[func].apply(this.node, args));
+            } else {
+            return null;
+            }
+        },
+        
+        createInstance: function (instanceId, className, args) {
+            if (!args) {args = []};
+            if (this.node && this.node["createInstance"]) {
+                this.node.createInstance(instanceId, className, args);
+            }
+        },
+        
+        applyMethod: function (instanceId, methodName, args) {
+            if (!args) {args = []};
+            if (this.node && this.node["applyMethod"]) {
+                this.node.applyMethod(instanceId, methodName, args);
+            }
+        },
+        
+        exposeMethod: function (instanceId, methodName, exposedName) {
+            if (this.node && this.node["exposeMethod"]) {
+                this.node.exposeMethod(instanceId, methodName, exposedName);
+            }
+        },
+        
+        getProperty: function (instanceId, propertyName) {
+            if (this.node && this.node["getProperty"]) {
+                this.node.getProperty(instanceId, propertyName);
+            }
+        },
+        
+        setProperty: function (instanceId, propertyName, propertyValue) {
+            if (this.node && this.node["setProperty"]) {
+                this.node.setProperty(instanceId, propertyName, propertyValue);
+            }
+        },
 
-	onFlash: function(type, instance)
-	{
-		var id = instance.get("id");
-		if(!Y.SWF._instances.hasOwnProperty(id))
-		{
-			Y.SWF._instances[id] = instance;
-		}
-		if(this.node["subscribe"])
-		{
-			this.node.subscribe(type, id);
-		}
-	},
+        onFlash: function(type, instance)
+        {
+            var id = instance.get("id");
+            if(!Y.SWF._instances.hasOwnProperty(id))
+            {
+                Y.SWF._instances[id] = instance;
+            }
+            if(this.node && this.node["subscribe"])
+            {
+                this.node.subscribe(type, id);
+            }
+            else
+            {
+                this._subscriptions.push({instance: instance, args:[type, id]});
+            }
+        },
+
+        _subscriptions: [],
+
+        _subscribe: function()
+        {
+            var q = this._subscriptions,
+                l = q.length,
+                item,
+                inst;
+            while(l > 0)
+            {
+                item = q.shift();
+                inst = item.instance;
+                if(!Y.SWF._instances[inst])
+                {
+                    Y.SWF._instances[inst];
+                }
+                this.node.subscribe.apply(this.node, item.args);
+                l--;
+            }
+        },
 
 		_styleObjHash:{background:"background"}
 	});

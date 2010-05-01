@@ -76,11 +76,9 @@ Y.extend(DataTip, Y.Container,
 	 */
 	_initDataTip: function(swfowner)
 	{
-		this.swfowner = swfowner;
 		this.swfReady = true;
-		this.appswf = this.swfowner.appswf;
-		this.appswf.createInstance(this._id, "DataTip", ["$" + this.get("graph")._id]);
-		this.appswf.applyMethod(this.get("parent")._id, "addItem", ["$" + this._id, {excludeFromLayout:true}]);
+		this.get("app").createInstance(this._id, "DataTip", ["$" + this.get("graph")._id]);
+		this.get("app").applyMethod(this.get("parent")._id, "addItem", ["$" + this._id, {excludeFromLayout:true}]);
 	}
 });
 

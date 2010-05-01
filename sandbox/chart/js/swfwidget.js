@@ -16,7 +16,6 @@
 function SWFWidget (config)
 {
 	this._createId();
-	Y.SWF._instances[this._id] = this;
 	SWFWidget.superclass.constructor.apply(this, arguments);
 }
 
@@ -285,7 +284,7 @@ Y.extend(SWFWidget, Y.Base,
 
 	_events: {},
 
-	_init: function(swfowner)
+	_init: function()
     {
 		this._addSWFEventListeners();
 	},
@@ -317,7 +316,7 @@ Y.extend(SWFWidget, Y.Base,
 		if(!this._events.hasOwnProperty(type))
 		{
 			events[type] = {type:type, args:arguments, registered:false};
-			if(this.swfowner && this.swfowner.swfReady && this._id)
+			if(this.get("app") && this._id)
 			{
 				events[type].registered = true;
 				this.get("app").onFlash(type, this);

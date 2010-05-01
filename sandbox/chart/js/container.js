@@ -128,11 +128,9 @@
 		 * Initializes Container properties.
 		 * @method _init
 		 */
-		_init: function(swfowner)
+		_init: function()
 		{
 			var i, item, len;
-			this.swfowner = swfowner;
-			this.appswf = swfowner.appswf;
 			this._addBackground();
 			len = this._items.length;
 			if(len < 1) 
@@ -155,8 +153,8 @@
 		 */
 		_addBackground:function()
 		{
-			this.appswf.createInstance("background", "Skin");
-			this.appswf.applyMethod(this._id, "addItem", ["$background", {index:0}]);
+			this.get("app").createInstance("background", "Skin");
+			this.get("app").applyMethod(this._id, "addItem", ["$background", {index:0}]);
 			this._styleObjHash.background = "background";
 		},
 
@@ -171,13 +169,13 @@
 			if(this.swfReadyFlag)
 			{
 				var args = item.swfarguments && typeof item.swfarguments == "array" ? item.args : [];
-				this.appswf.createInstance(item._id, item.get("className"), args); 
+				this.get("app").createInstance(item._id, item.get("className"), args); 
 				args =  ["$" + item._id]; 
 				if(props)
 				{
 					args.push(props);
 				}
-				this.appswf.applyMethod(this._id, "addItem", args);
+				this.get("app").applyMethod(this._id, "addItem", args);
 			}
 			else
 			{

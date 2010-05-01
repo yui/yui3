@@ -62,11 +62,9 @@
 		 * @param {Object} reference to the class that has direct communication with the application swf.
 		 * @private
 		 */
-		_init: function(swfowner)
+		_init: function()
 		{
 			var i, itemsArray;
-			this.swfowner = swfowner;
-			this.appswf = this.swfowner.appswf;
 			this.swfReadyFlag = true;
 			this._updateStyles();
 			for(i in this.itemsQueue)
@@ -155,7 +153,7 @@
 			if (this.swfReadyFlag) 
 			{
 				item._init(this.swfowner);
-				this.appswf.applyMethod(this._id, "add" + locationToUpperCase + "Item", ["$" + item._id]);
+				this.get("app").applyMethod(this._id, "add" + locationToUpperCase + "Item", ["$" + item._id]);
 				if (location != "center")
 				{
 					item.set("styles", {position: location});

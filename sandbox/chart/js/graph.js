@@ -83,14 +83,12 @@ Y.extend(Graph, Y.Container,
 	 * @method _init
 	 * @param swfowner {Object} Class instance with direct access to the application swf.
 	 */
-	_init: function(swfowner)
+	_init: function()
 	{
-		this.swfowner = swfowner;
-		this.appswf = this.swfowner.appswf;
 		if(this.get("seriesCollection"))
 		{
-			this.appswf.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
-			this.fire("graphReady", {swfowner:swfowner});
+			this.get("app").createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
+			this.fire("graphReady", {swfowner:this.get("app")});
 		}
 		this._addSWFEventListeners();
 	},
