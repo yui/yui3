@@ -77,7 +77,7 @@ Y.extend(Graphics, Y.Base, {
     /** 
      *Draws a curve using the current line style from the current drawing position to (anchorX, anchorY) and using the control point that (controlX, controlY) specifies.
      */
-    curveTo: function(controlX, controlY, anchorX, anchorY)
+    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y)
     {
 		var eng = this.get("engine");
         return eng.curveTo.apply(eng, arguments);
@@ -326,6 +326,24 @@ CanvasAPI.ATTRS = {
         {
             return Y.Lang.isNumber(val);
         }
+    },
+
+    fillType: {
+        getter: function()
+        {
+            return this._fillType;
+        },
+
+        setter: function(val)
+        {
+            this._fillType = val;
+            return val;
+        },
+
+        validator: function(val)
+        {
+            return (val === "solid" || val === "linear" || val === "radial");
+        }
     }
 };
 
@@ -340,9 +358,23 @@ Y.extend(CanvasAPI, Y.Base, {
 		parent.appendChild(this._canvas);
 	},
 
+    /**
+     * @private
+     * Storage for canvas
+     */
 	_canvas: null,
 
+    /**
+     * @private
+     * Storage for context
+     */
 	_context: null,
+
+    /**
+     * @private
+     * Storage for fillType
+     */
+    fillType: "solid",
 
     /**
      * @private
@@ -391,8 +423,11 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     beginFill: function(color, alpha)
     {
+        var ctx = this.get("context");
         this.set("fillColor", color);
         this.set("fillAlpha", alpha);
+        ctx.beginPath();
+        ctx.fillStyle = color;
     },
 	
     /** 
@@ -407,15 +442,20 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     clear: function()
     {
-    },
+        this.set("fillColor", null);
+        this.set("lineColor", null);
+        this.set("lineWidth", 1);
+        this.set("fillAlpha", 1);
+        this.set("lineAlpha", 1);
+   },
 	
     /** 
      *Draws a curve using the current line style from the current drawing position to (anchorX, anchorY) and using the control point that (controlX, controlY) specifies.
      */
-    curveTo: function(controlX, controlY, anchorX, anchorY)
+    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y)
     {
-		var eng = this.get("engine");
-        //***return eng.curveTo.apply(eng, arguments);
+        var ctx = this.get("context");
+        ctx.bezierCurveTo(arguments);
     },
 
     /** 
@@ -432,19 +472,7 @@ Y.extend(CanvasAPI, Y.Base, {
 			ctx = this.get("context");
 		startAngle *= (Math.PI/180);
 		endAngle *= (Math.PI/180);
-		ctx.beginPath();
-		ctx.arc(x + radius, y + radius, radius, startAngle, endAngle, anticlockwise);
-		if(sc)
-		{
-			ctx.lineWidth = lw;
-			ctx.strokeStyle = sc;
-			//ctx.stroke();
-		}
-		if(fc)
-		{
-			ctx.fillStyle = fc;
-			//ctx.fill();
-		}
+        ctx.arc(x + radius, y + radius, radius, startAngle, endAngle, anticlockwise);
 	},
 
     /** 
@@ -465,13 +493,10 @@ Y.extend(CanvasAPI, Y.Base, {
 			ctx = this.get("context");
 			if(fc)
 			{
-				ctx.fillStyle = fc;
 				ctx.fillRect(x, y, w, h);
 			}
 			if(sc)
 			{
-				ctx.strokeStyle = sc;
-				ctx.lineWidth = lw;
 				ctx.strokeRect(x, y, w, h);
 			}
 	},
@@ -479,8 +504,21 @@ Y.extend(CanvasAPI, Y.Base, {
     /** 
      *Draws a rounded rectangle.
      */
-    drawRoundRect: function(x, y, width, height, ellipseWidth, ellipseHeight)
+    drawRoundRect: function(x, y, w, h, ew, eh)
     {
+		var lw = this.get("lineWidth"),
+			fc = this.get("fillColor"),
+			sc = this.get("lineColor"),
+			ctx = this.get("context");
+			ctx.moveTo(x, y + eh);
+            ctx.lineTo(x, y + h - eh);
+            ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
+            ctx.lineTo(x + w - ew, y + h);
+            ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
+            ctx.lineTo(x + w, y + eh);
+            ctx.quadraticCurveTo(x + w, y, x + w - ew, y);
+            ctx.lineTo(x + ew, y);
+            ctx.quadraticCurveTo(x, y, x, y + eh);
     },
         
     /** 
@@ -495,7 +533,7 @@ Y.extend(CanvasAPI, Y.Base, {
 		}
 		if(this.get("fillColor"))
 		{
-			ctx.fill();
+            ctx.fill();
 		}
     },
 
@@ -511,9 +549,12 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit)
     {
+        var ctx = this.get("context");
         this.set("lineWidth", thickness);
         this.set("lineColor", color);
         this.set("lineAlpha", alpha);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = thickness;
     },
     
     /** 
@@ -521,6 +562,10 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     lineTo: function(x, y)
     {
+        var ctx = this.get("context");
+        ctx.lineTo(x, y);
+        this.set("x", x);
+        this.set("y", y);
     },
     
     /** 
@@ -528,6 +573,8 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     moveTo: function(x, y)
     {
+        var ctx = this.get("context");
+        ctx.moveTo(x, y);
         this.set("x", x);
         this.set("y", y);
     }
@@ -771,7 +818,7 @@ Y.extend(VMLAPI, Y.Base, {
     /** 
      *Draws a curve using the current line style from the current drawing position to (anchorX, anchorY) and using the control point that (controlX, controlY) specifies.
      */
-    curveTo: function(controlX, controlY, anchorX, anchorY)
+    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y)
     {
     },
 

@@ -235,7 +235,7 @@ Y.extend(VMLAPI, Y.Base, {
     /** 
      *Draws a curve using the current line style from the current drawing position to (anchorX, anchorY) and using the control point that (controlX, controlY) specifies.
      */
-    curveTo: function(controlX, controlY, anchorX, anchorY)
+    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y)
     {
     },
 

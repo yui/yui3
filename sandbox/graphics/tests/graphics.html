@@ -15,24 +15,39 @@
 <body>
 	<div>
 		<h1>Chart with Multiple Axes</h1>
-			<div id="appdiv" style="width:800px;height:400px;background-color:#ffffff;border:2px solid #ff0000"></div>
-		<div id="output"></div>
+			<div id="appdiv" style="width:800px;height:800px;background-color:#ffffff;border:2px solid #ff0000"></div>
+		<div style="float:right" id="output"></div>
 		<script>
 			YUI({}).use('node', 'json', 'event-custom', 'base', 'graphics', function (Y)
 			{
                 var uA = Y.UA,
                     engine = uA.ie ? "vml" : "canvas",
                     graphics = new Y.Graphics({parent:"appdiv", engine:engine});	
-				graphics.lineStyle(12, "#0000ff", 1);
+				
+                graphics.lineStyle(12, "#0000ff", 1);
                 graphics.beginFill("#ff0000", 1);
                 graphics.drawRectangle(40, 40, 400, 300);
                 graphics.endFill();
+                graphics.clear();
 				
+                graphics.lineStyle(12, "#0000ff", 1);
+                graphics.beginFill("#ff0000", 1);
+                graphics.drawRoundRect(40, 450, 400, 300, 10, 10);
+                graphics.endFill();
+                graphics.clear();
+
                 graphics.lineStyle(8, "#ff0000", 1);
                 graphics.beginFill("#0000ff", 1);
                 graphics.drawCircle(450, 40, 100);
                 graphics.endFill();
-			});
+                
+                graphics.clear();
+                graphics.lineStyle(3, "#000000", 1);
+                graphics.beginFill("#000000", 1);
+                graphics.moveTo(11, 33);
+                graphics.lineTo(330, 200);
+                graphics.endFill();
+            });
 		</script>
 	</div>
 </body>
