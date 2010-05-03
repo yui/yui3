@@ -64,21 +64,7 @@
 		 */
 		_init: function()
 		{
-			var i, itemsArray;
-			this.swfReadyFlag = true;
 			this._updateStyles();
-			for(i in this.itemsQueue)
-			{
-				if(this.itemsQueue.hasOwnProperty(i))
-				{
-					itemsArray = this.itemsQueue[i];
-					while(itemsArray.length > 0)
-					{
-						this.addItem(itemsArray.shift(), i);
-					}
-				}
-			}
-			this._addSWFEventListeners();
 		},
 		
 		/**
@@ -150,23 +136,15 @@
 		addItem: function (item, location)
 		{
 			var locationToUpperCase = (location.charAt(0)).toUpperCase() + location.substr(1);
-			if (this.swfReadyFlag) 
-			{
-				item._init(this.swfowner);
-				this.get("app").applyMethod(this._id, "add" + locationToUpperCase + "Item", ["$" + item._id]);
-				if (location != "center")
-				{
-					item.set("styles", {position: location});
-				}
-			}
-			else
-			{
-				if(!this.itemsQueue || !this.itemsQueue.hasOwnProperty(location))
-				{
-					this.itemsQueue[location] = [];
-				}
-				this.itemsQueue[location].push(item);
-			}
+            if(item._init)
+            {
+                item._init();
+            }
+            this.applyMethod(this.get("id"), "add" + locationToUpperCase + "Item", ["$" + item.get("id")]);
+            if (location != "center")
+            {
+                item.set("styles", {position: location});
+            }
 		}
 	});
 

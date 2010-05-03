@@ -66,7 +66,7 @@
 		 */
 		_init: function()
 		{
-			this.get("app").createInstance(this._id, 
+			this.createInstance(this._id, 
 				"LineSeries", 
 				[
 					{

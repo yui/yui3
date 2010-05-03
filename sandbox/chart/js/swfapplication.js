@@ -30,7 +30,6 @@
 	function SWFApplication ( config ) 
 	{
 		SWFApplication.superclass.constructor.apply(this, arguments);
-        this._dataId = this._id + "data";
 	}
 
 	SWFApplication.NAME = "swfApplication";
@@ -195,9 +194,9 @@
                 this.node = event.node = this.swf._swf._node;
                 this.appswf = event.appswf = this;
                 this._init();
-                this._subscribe();
-                //this.publish("swfReady", {fireOnce:true});
-                //this.fire("swfReady", event);
+                this._clearMethodQueue();
+                this.publish("swfReady", {fireOnce:true});
+                this.fire("swfReady", event);
             }
             else if(event.type == "log")
             {
@@ -208,8 +207,6 @@
                 this.fire(event.type, event);
             } 
         },
-		
-        _events: {},
 		
         /**
 		 * Reference to corresponding Actionscript class.
@@ -231,6 +228,7 @@
 
 		initializer: function(cfg)
 		{
+            this._dataId = this._id + "data";
 			if(this.get("autoLoad"))
 			{
 				this.loadswf();
@@ -242,7 +240,6 @@
 		 */
 		_init: function()
 		{
-			var i, item, len;
 			this._setAutoRender();
 			this.swfReadyFlag = true;
 			if(this._dataProvider)
@@ -250,18 +247,7 @@
 				this._initDataProvider();
 			}
 			this._addBackground();
-			len = this._items.length;
-			if(len < 1)
-			{
-				return;
-			}
-			for(i = 0; i < len; i++)
-			{
-				item = this._items[i];
-				this.addItem(item.item, item.props);
-			}
 			this._updateStyles();
-			this._addSWFEventListeners();
 			this.fire("appReady");
 		},
 		
@@ -273,11 +259,11 @@
 		 */
 		_initDataProvider: function() 
 		{
-			if(this.swfReadyFlag) 
-			{
-				this.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
-			}
-		},
+            if(this.swfReadyFlag)
+            {
+                this.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
+		    }
+        },
 	
 		/**
 		 * Adds an item to a container instance.
@@ -288,10 +274,7 @@
 		addItem: function(item, props)
 		{
 			Container.prototype.addItem.apply(this, arguments);
-			if(this.swfReadyFlag && item._init)
-			{
-				item._init();
-			}
+			item._init();
 		},
 
 		/**
@@ -327,82 +310,116 @@
         
         callSWF: function (func, args)
         {
-            if (!args) { 
+            if (!args) 
+            { 
                   args= []; 
-            };	
-            if (this.node && this.node[func]) {
-            return(this.node[func].apply(this.node, args));
-            } else {
-            return null;
+            }	
+            if (this.node && this.node[func]) 
+            {
+                return(this.node[func].apply(this.node, args));
+            } 
+            else 
+            {
+                this._methodQueue.push({func:this.callSWF, args:arguments});
             }
         },
         
-        createInstance: function (instanceId, className, args) {
-            if (!args) {args = []};
-            if (this.node && this.node["createInstance"]) {
+        createInstance: function (instanceId, className, args) 
+        {
+            if (!args) 
+            {
+                args = [];
+            }
+            if (this.node && this.node.createInstance) 
+            {
                 this.node.createInstance(instanceId, className, args);
             }
+            else
+            {
+                this._methodQueue.push({func:this.createInstance, args:arguments});
+            }
         },
         
-        applyMethod: function (instanceId, methodName, args) {
-            if (!args) {args = []};
-            if (this.node && this.node["applyMethod"]) {
+        applyMethod: function (instanceId, methodName, args) 
+        {
+            if (!args) 
+            {
+                args = [];
+            }
+            if (this.node && this.node.applyMethod) 
+            {
                 this.node.applyMethod(instanceId, methodName, args);
             }
+            else
+            {
+                this._methodQueue.push({func:this.applyMethod, args:arguments});
+            }
         },
         
-        exposeMethod: function (instanceId, methodName, exposedName) {
-            if (this.node && this.node["exposeMethod"]) {
+        exposeMethod: function (instanceId, methodName, exposedName) 
+        {
+            if (this.node && this.node.exposeMethod) 
+            {
                 this.node.exposeMethod(instanceId, methodName, exposedName);
             }
-        },
-        
-        getProperty: function (instanceId, propertyName) {
-            if (this.node && this.node["getProperty"]) {
-                this.node.getProperty(instanceId, propertyName);
+            else
+            {
+                this._methodQueue.push({func:this.exposeMethod, args:arguments});
             }
         },
         
-        setProperty: function (instanceId, propertyName, propertyValue) {
-            if (this.node && this.node["setProperty"]) {
+        getProperty: function (instanceId, propertyName) 
+        {
+            if (this.node && this.node.getProperty) 
+            {
+                this.node.getProperty(instanceId, propertyName);
+            }
+            else
+            {
+                this._methodQueue.push({func:this.getProperty, args:arguments});
+            }
+        },
+        
+        setProperty: function (instanceId, propertyName, propertyValue) 
+        {
+            if (this.node && this.node.setProperty) 
+            {
                 this.node.setProperty(instanceId, propertyName, propertyValue);
+            }
+            else
+            {
+                this._methodQueue.push({func:this.setProperty, args:arguments});
             }
         },
 
         onFlash: function(type, instance)
         {
-            var id = instance.get("id");
-            if(!Y.SWF._instances.hasOwnProperty(id))
+            if(this.node && this.node.subscribe)
             {
-                Y.SWF._instances[id] = instance;
-            }
-            if(this.node && this.node["subscribe"])
-            {
+                var id = instance.get("id");
+                if(!Y.SWF._instances.hasOwnProperty(id))
+                {
+                    Y.SWF._instances[id] = instance;
+                }
                 this.node.subscribe(type, id);
             }
             else
             {
-                this._subscriptions.push({instance: instance, args:[type, id]});
+                this._methodQueue.push({func:this.onFlash, args:arguments});
             }
         },
 
-        _subscriptions: [],
+        _methodQueue: [],
 
-        _subscribe: function()
+        _clearMethodQueue: function()
         {
-            var q = this._subscriptions,
+            var q = this._methodQueue,
                 l = q.length,
-                item,
-                inst;
+                item;
             while(l > 0)
             {
                 item = q.shift();
-                inst = item.instance;
-                if(!Y.SWF._instances[inst])
-                {
-                    Y.SWF._instances[inst];
-                }
-                this.node.subscribe.apply(this.node, item.args);
+                item.func.apply(this, item.args);
                 l--;
             }
         },

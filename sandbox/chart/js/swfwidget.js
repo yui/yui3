@@ -20,25 +20,6 @@ function SWFWidget (config)
 }
 
 /**
- *
- */
-SWFWidget.NAME = "swfWidget";
-
-SWFWidget._instances = SWFWidget._instances || {};
-
-/**
- * Handles an event from the application swf in which a listener has been
- * registered through an instance of SWFWidget. 
- * @method eventHandler
- * @param swfid {String} the id of the SWF dispatching the event
- * @param event {Object} the event being transmitted.
- * @private
- */
-SWFWidget.eventHandler = function (swfid, event) {
-	SWFWidget._instances[swfid]._eventHandler(event);
-};
-
-/**
  * Attribute config
  * @private
  */
@@ -90,6 +71,7 @@ SWFWidget.ATTRS = {
 	{
 		value:false
 	},
+
 	/**
 	 * Reference to corresponding Actionscript class.
 	 */
@@ -102,6 +84,7 @@ SWFWidget.ATTRS = {
 			return this.AS_CLASS;
 		}
 	},
+
 	/**
 	 * Hash of style properties for class
 	 */
@@ -114,10 +97,7 @@ SWFWidget.ATTRS = {
 		setter: function(val)
 		{
 			val = this._setStyles(val);
-			if(this.swfReadyFlag)
-			{
-				this._updateStyles();
-			}
+            this._updateStyles();
 			return val;
 		},
 		
@@ -127,6 +107,9 @@ SWFWidget.ATTRS = {
 		}
 	},
 
+    /**
+     * Id for instance
+     */
 	id: 
 	{
 		getter: function()
@@ -277,34 +260,9 @@ Y.extend(SWFWidget, Y.Base,
 		{
 			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
 			{
-				this.get("app").applyMethod(key, "setStyles", [styles[key]]);
+				this.applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
-	},
-
-	_events: {},
-
-	_init: function()
-    {
-		this._addSWFEventListeners();
-	},
-
-	/**
-	 * @private
-	 * Registers event listeners from the _events queue.
-	 */
-	_addSWFEventListeners: function()
-	{
-		var events = this._events,
-			type;
-		for(type in events)
-		{
-			if(events.hasOwnProperty(type) && !events[type].registered)
-			{
-				events[type].registered = true;
-				this.get("app").onFlash(type, this);
-			}
-		}
 	},
 
 	/**
@@ -312,17 +270,8 @@ Y.extend(SWFWidget, Y.Base,
 	 */
 	on: function(type , fn , context , arg)
 	{
-		var events = this._events;
-		if(!this._events.hasOwnProperty(type))
-		{
-			events[type] = {type:type, args:arguments, registered:false};
-			if(this.get("app") && this._id)
-			{
-				events[type].registered = true;
-				this.get("app").onFlash(type, this);
-			}
-		}
-		SWFWidget.superclass.on.apply(this, arguments);
+        this.get("app").onFlash.apply(this.get("app"), [type, this]);
+        SWFWidget.superclass.on.apply(this, arguments);
 	},
 	
 	/**
@@ -332,7 +281,55 @@ Y.extend(SWFWidget, Y.Base,
 	_eventHandler: function(event)
 	{
 		this.fire(event.type, event);
-	}
+	},
+    
+    /**
+     * Calls a method on the SWF
+     */
+    callSWF: function (func, args)
+    {
+        this.get("app").callSWF(arguments);
+    },
+
+    /**
+     * Creates a class instance on the SWF.
+     */
+    createInstance: function(instanceId, className, args)
+    {
+        this.get("app").createInstance(instanceId, className, args);
+    },
+    
+    /**
+     * Calls a method on an Actionscript class instance.
+     */
+    applyMethod: function (instanceId, methodName, args)
+    {
+        this.get("app").applyMethod(instanceId, methodName, args);
+    },
+
+    /**
+     * Exposes a method on an Actionscript class instance.
+     */
+    exposeMethod: function (instanceId, methodName, exposedName) 
+    {
+        this.get("app").exposeMethod(arguments);
+    },
+
+    /**
+     * Returns the value of a property on an Actionscript class instance.
+     */
+    getProperty: function (instanceId, propertyName) 
+    {
+        this.get("app").getProperty(arguments);
+    },
+
+    /**
+     * Sets the value of a property on an Actionscript class instance.
+     */
+    setProperty: function (instanceId, propertyName, propertyValue)
+    {
+        this.get("app").setProperty(arguments);
+    }
 });
 
 Y.SWFWidget = SWFWidget;
