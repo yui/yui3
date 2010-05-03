@@ -40,7 +40,7 @@ YUI.add('swf', function(Y) {
 		 *        to be passed to the SWF.
 		 */
 				
-function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/, p_oApp) {
+function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Object*/) {
 	
 	
 	this._id = Y.guid("yuiswf");
@@ -60,7 +60,6 @@ function SWF (p_oElement /*:String*/, swfURL /*:String*/, p_oAttributes /*:Objec
 	var flashvarstring = "yId=" + Y.id + "&YUISwfId=" + _id;
 	
 	Y.SWF._instances[_id] = this;
-    Y.SWF._instances[p_oApp.get("id")] = p_oApp;
     if (oElement && (isFlashVersionRight || shouldExpressInstall) && flashURL) {
 				objstring += 'id="' + _id + '" '; 
 				if (uA.ie) {

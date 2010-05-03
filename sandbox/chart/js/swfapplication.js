@@ -29,7 +29,7 @@
 	 */
 	function SWFApplication ( config ) 
 	{
-		SWFApplication.superclass.constructor.apply(this, arguments);
+        SWFApplication.superclass.constructor.apply(this, arguments);
 	}
 
 	SWFApplication.NAME = "swfApplication";
@@ -185,6 +185,19 @@
 	{
         /**
          * @private
+         */
+        _createId: function()
+        {
+            Y.SWFWidget.prototype._createId.apply(this, arguments);
+            if(Y.SWF._instances)
+            {
+                Y.SWF._instance = {};
+            }
+            Y.SWF._instances[this._id] = this;
+        },  
+
+        /**
+         * @private
          * Propagates a specific event from Flash to JS.
          * @method _eventHandler
          * @param event {Object} The event to be propagated from Flash.
@@ -225,7 +238,7 @@
 		 */
 		loadswf: function()
 		{
-            this.swf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"), this);
+            this.swf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"));
 		},
 
 		initializer: function(cfg)
