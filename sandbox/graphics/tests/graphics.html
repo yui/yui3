@@ -23,8 +23,15 @@
                 var uA = Y.UA,
                     engine = uA.ie ? "vml" : "canvas",
                     graphics = new Y.Graphics({parent:"appdiv", engine:engine});	
-				graphics.rectangle({width:400, height:300, x:40, y:40, fillColor:"#ff0000", strokeColor:"#0000ff", lineWidth:12});
-				graphics.circle({x:450, y:40, radius:100, startAngle:0, endAngle:360, strokeColor:"#ff0000", fillColor:"#0000ff", lineWidth:8});
+				graphics.lineStyle(12, "#0000ff", 1);
+                graphics.beginFill("#ff0000", 1);
+                graphics.drawRectangle(40, 40, 400, 300);
+                graphics.endFill();
+				
+                graphics.lineStyle(8, "#ff0000", 1);
+                graphics.beginFill("#0000ff", 1);
+                graphics.drawCircle(450, 40, 100);
+                graphics.endFill();
 			});
 		</script>
 	</div>
