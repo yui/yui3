@@ -1994,7 +1994,7 @@ O.owns = owns;
 /**
  * Executes a function on each item. The function
  * receives the value, the key, and the object
- * as paramters (in that order).
+ * as parameters (in that order).
  * @method each
  * @static
  * @param o the object to iterate
