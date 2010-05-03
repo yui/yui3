@@ -92,8 +92,6 @@ SWFWidget.ATTRS = {
 	{
 		value: {},
 
-		lazyAdd: false,
-
 		setter: function(val)
 		{
 			val = this._setStyles(val);
@@ -256,11 +254,11 @@ Y.extend(SWFWidget, Y.Base,
 	{
 		var styleHash = this._styleObjHash,
 		styles = this.get("styles");
-		Y.Object.each(styles, function(value, key, styles)
+        Y.Object.each(styles, function(value, key, styles)
 		{
 			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
 			{
-				this.applyMethod(key, "setStyles", [styles[key]]);
+                this.applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
 	},

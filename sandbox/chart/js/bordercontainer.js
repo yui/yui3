@@ -32,19 +32,11 @@
 	 */
 	Y.extend(BorderContainer, Y.Container,
 	{
-		_events: {},
 		/**
 		 * Constant used to generate unique id.
 		 */
 		GUID: "yuibordercontainer",
 
-		/**
-		 * Hash containing an array of child items for each child container in the 
-		 * BorderContainer. The child items are store here until the application swf
-		 * has been initalized. Upon initialization, they will be added.
-		 */
-		itemsQueue: {},
-		
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
@@ -136,10 +128,6 @@
 		addItem: function (item, location)
 		{
 			var locationToUpperCase = (location.charAt(0)).toUpperCase() + location.substr(1);
-            if(item._init)
-            {
-                item._init();
-            }
             this.applyMethod(this.get("id"), "add" + locationToUpperCase + "Item", ["$" + item.get("id")]);
             if (location != "center")
             {

@@ -167,15 +167,17 @@
 
 			setter: function(val)
 			{
-				this._dataProvider = Y.JSON.stringify(val);
-				this._initDataProvider();
+				this._dataProvider = val;				
+                if(val)
+                {
+                    this.createInstance(this._dataId, "ChartDataProvider", [Y.JSON.stringify(val)]);		
+                }
 			},
 
 			getter: function()
 			{
-				return Y.JSON.parse(this._dataProvider);
+                return this._dataProvider;
 			}
-
 		}
 	};
 	
@@ -240,31 +242,11 @@
 		 */
 		_init: function()
 		{
-			this._setAutoRender();
-			this.swfReadyFlag = true;
-			if(this._dataProvider)
-			{
-				this._initDataProvider();
-			}
 			this._addBackground();
 			this._updateStyles();
-			this.fire("appReady");
+            this.fire("appReady");
 		},
 		
-		
-		/**
-		 * Instantiates a DataProvider in the flash application.
-		 *
-		 * @private
-		 */
-		_initDataProvider: function() 
-		{
-            if(this.swfReadyFlag)
-            {
-                this.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
-		    }
-        },
-	
 		/**
 		 * Adds an item to a container instance.
 		 *
@@ -274,7 +256,7 @@
 		addItem: function(item, props)
 		{
 			Container.prototype.addItem.apply(this, arguments);
-			item._init();
+	    	item._init();
 		},
 
 		/**
@@ -285,21 +267,10 @@
 			if(value != this._autoRender) 
 			{
 				this._autoRender = value;
-				this._setAutoRender();
+                this.setProperty(this._id, "autoRender", this._autoRender);
 			}
 		},
 
-		/**
-		 * Updates the autoRender property of the application swf.
-		 */
-		_setAutoRender: function()
-		{
-			if(this.swfReadyFlag) 
-			{
-				this.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
-			}
-		},
-        
         /**
          * Calls a specific function exposed by the SWF's
          * ExternalInterface.

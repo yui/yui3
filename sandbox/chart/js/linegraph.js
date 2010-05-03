@@ -64,7 +64,7 @@
 		 * @method _init
 		 * @param swfowner {Object} Class instance with direct access to the application swf.
 		 */
-		_init: function()
+		initializer: function(cfg)
 		{
 			this.createInstance(this._id, 
 				"LineSeries", 

@@ -94,8 +94,6 @@ SWFWidget.ATTRS = {
 	{
 		value: {},
 
-		lazyAdd: false,
-
 		setter: function(val)
 		{
 			val = this._setStyles(val);
@@ -258,11 +256,11 @@ Y.extend(SWFWidget, Y.Base,
 	{
 		var styleHash = this._styleObjHash,
 		styles = this.get("styles");
-		Y.Object.each(styles, function(value, key, styles)
+        Y.Object.each(styles, function(value, key, styles)
 		{
 			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
 			{
-				this.applyMethod(key, "setStyles", [styles[key]]);
+                this.applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
 	},
@@ -685,15 +683,17 @@ Y.SWFWidget = SWFWidget;
 
 			setter: function(val)
 			{
-				this._dataProvider = Y.JSON.stringify(val);
-				this._initDataProvider();
+				this._dataProvider = val;				
+                if(val)
+                {
+                    this.createInstance(this._dataId, "ChartDataProvider", [Y.JSON.stringify(val)]);		
+                }
 			},
 
 			getter: function()
 			{
-				return Y.JSON.parse(this._dataProvider);
+                return this._dataProvider;
 			}
-
 		}
 	};
 	
@@ -757,31 +757,11 @@ Y.SWFWidget = SWFWidget;
 		 */
 		_init: function()
 		{
-			this._setAutoRender();
-			this.swfReadyFlag = true;
-			if(this._dataProvider)
-			{
-				this._initDataProvider();
-			}
 			this._addBackground();
 			this._updateStyles();
-			this.fire("appReady");
+            this.fire("appReady");
 		},
 		
-		
-		/**
-		 * Instantiates a DataProvider in the flash application.
-		 *
-		 * @private
-		 */
-		_initDataProvider: function() 
-		{
-            if(this.swfReadyFlag)
-            {
-                this.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
-		    }
-        },
-	
 		/**
 		 * Adds an item to a container instance.
 		 *
@@ -791,7 +771,7 @@ Y.SWFWidget = SWFWidget;
 		addItem: function(item, props)
 		{
 			Container.prototype.addItem.apply(this, arguments);
-			item._init();
+	    	item._init();
 		},
 
 		/**
@@ -802,21 +782,10 @@ Y.SWFWidget = SWFWidget;
 			if(value != this._autoRender) 
 			{
 				this._autoRender = value;
-				this._setAutoRender();
+                this.setProperty(this._id, "autoRender", this._autoRender);
 			}
 		},
 
-		/**
-		 * Updates the autoRender property of the application swf.
-		 */
-		_setAutoRender: function()
-		{
-			if(this.swfReadyFlag) 
-			{
-				this.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
-			}
-		},
-        
         /**
          * Calls a specific function exposed by the SWF's
          * ExternalInterface.
@@ -980,19 +949,11 @@ Y.SWFApplication = SWFApplication;
 	 */
 	Y.extend(BorderContainer, Y.Container,
 	{
-		_events: {},
 		/**
 		 * Constant used to generate unique id.
 		 */
 		GUID: "yuibordercontainer",
 
-		/**
-		 * Hash containing an array of child items for each child container in the 
-		 * BorderContainer. The child items are store here until the application swf
-		 * has been initalized. Upon initialization, they will be added.
-		 */
-		itemsQueue: {},
-		
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
@@ -1084,10 +1045,6 @@ Y.SWFApplication = SWFApplication;
 		addItem: function (item, location)
 		{
 			var locationToUpperCase = (location.charAt(0)).toUpperCase() + location.substr(1);
-            if(item._init)
-            {
-                item._init();
-            }
             this.applyMethod(this.get("id"), "add" + locationToUpperCase + "Item", ["$" + item.get("id")]);
             if (location != "center")
             {
@@ -1264,7 +1221,7 @@ Y.Graph = Graph;
 		 * @method _init
 		 * @param swfowner {Object} Class instance with direct access to the application swf.
 		 */
-		_init: function()
+		initializer: function(cfg)
 		{
 			this.createInstance(this._id, 
 				"LineSeries", 
