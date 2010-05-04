@@ -722,7 +722,7 @@ Y.Loader.prototype = {
 
         this.moduleInfo[name] = o;
 
-        if (!o.langPack) {
+        if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
             for (j=0; j < langs.length; j++) {
                 lang = langs[j];
