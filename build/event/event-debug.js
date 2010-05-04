@@ -73,9 +73,7 @@ YUI.add('event-base', function(Y) {
 var GLOBAL_ENV = YUI.Env,
     
     yready = function() {
-        setTimeout(function() {
-            Y.fire('domready');
-        }, 0);
+        Y.fire('domready');
     };
 
 /**
@@ -100,7 +98,8 @@ var GLOBAL_ENV = YUI.Env,
  * @for YUI
  */
 Y.publish('domready', {
-    fireOnce: true
+    fireOnce: true,
+    async: true
 });
 
 if (GLOBAL_ENV.DOMReady) {
