@@ -37,7 +37,8 @@ YUI({
 
             var loader = new Y.Loader({
                 require: ['dd', 'widget', 'io'],
-                force: ["yui", "yui-base", "get", "yui-log", "yui-later", "loader"],
+                // force: ["yui", "yui-base", "get", "yui-log", "yui-later", "loader"],
+                ignoreRegistered: true,
                 allowRollup: true, 
                 filter: 'min',
                 loadOptional: false,
