@@ -57,7 +57,7 @@ Y.extend(Graphics, Y.Base, {
     /** 
      *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
-    beginGradientFill: function(type, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod, focalPointRatio)
+    beginGradientFill: function(type, colors, alphas, ratios, rotation, matrix, spreadMethod, interpolationMethod, focalPointRatio)
     {
 		var eng = this.get("engine");
         return eng.beginGradientFill.apply(eng, arguments);

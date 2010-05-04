@@ -59,7 +59,7 @@ Y.extend(Graphics, Y.Base, {
     /** 
      *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
-    beginGradientFill: function(type, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod, focalPointRatio)
+    beginGradientFill: function(type, colors, alphas, ratios, rotation, matrix, spreadMethod, interpolationMethod, focalPointRatio)
     {
 		var eng = this.get("engine");
         return eng.beginGradientFill.apply(eng, arguments);
@@ -177,7 +177,10 @@ function CanvasAPI(config)
 CanvasAPI.NAME = "canvasAPI";
 
 CanvasAPI.ATTRS = {
-	parent: {
+    /**
+     * Parent for the the Graphics instance.
+     */
+    parent: {
 		getter: function()
 		{
 			return this._parent;
@@ -197,6 +200,9 @@ CanvasAPI.ATTRS = {
 		}
 	},
 
+    /**
+     * Reference to the canvas object.
+     */
 	canvas: {
 		getter: function() {
 			if(!this._canvas)
@@ -207,6 +213,9 @@ CanvasAPI.ATTRS = {
 		}
 	},
 
+    /**
+     * Context of the canvas object.
+     */
 	context: {
 		getter: function() {
 			if(!this._context)
@@ -217,6 +226,9 @@ CanvasAPI.ATTRS = {
 		}
 	},
 
+    /**
+     * x coordinate
+     */
     x: {
         getter: function()
         {
@@ -235,6 +247,9 @@ CanvasAPI.ATTRS = {
         }
     },
 
+    /**
+     * y coordinate
+     */
     y: {
         getter: function()
         {
@@ -253,6 +268,9 @@ CanvasAPI.ATTRS = {
         }
     },
 
+    /**
+     * Color to be used for solid fills.
+     */
     fillColor: {
         getter: function()
         {
@@ -266,6 +284,9 @@ CanvasAPI.ATTRS = {
         }
     },
 
+    /**
+     * Colors to be used for gradient fills.
+     */
     fillAlpha: {
         getter: function()
         {
@@ -279,6 +300,9 @@ CanvasAPI.ATTRS = {
         }
     },
 
+    /**
+     * Color to be used for solid lines.
+     */
     lineColor: {
         getter: function()
         {
@@ -292,6 +316,9 @@ CanvasAPI.ATTRS = {
         }
     },
 
+    /**
+     * Width of a line
+     */
     lineWidth: {
         getter: function()
         {
@@ -310,6 +337,9 @@ CanvasAPI.ATTRS = {
         }
     },
 
+    /**
+     * Alpha value for line.
+     */
     lineAlpha: {
         getter: function()
         {
@@ -328,6 +358,14 @@ CanvasAPI.ATTRS = {
         }
     },
 
+    /**
+     * Type of fill to use.
+     *  <ul>
+     *      <li><code>solid</code>: single color</li>
+     *      <li><code>linear</code>: linear gradient</li>
+     *      <li><code>radial</code>: radial gradient</li>
+     *  </ul>
+     */
     fillType: {
         getter: function()
         {
@@ -344,11 +382,78 @@ CanvasAPI.ATTRS = {
         {
             return (val === "solid" || val === "linear" || val === "radial");
         }
+    },
+
+    /**
+     * Colors to be used for a gradient fill.
+     */
+    fillColors: {
+        getter: function()
+        {
+            return this._fillColors;
+        },
+
+        setter: function(val)
+        {
+            this._fillColors = val;
+            return val;
+        },
+
+        validator: function(val)
+        {   
+            return Y.Lang.isArray(val);
+        }
+    },
+
+    /**
+     * Ratios to be used for each color in a gradient.
+     */
+    fillRatios: {
+        getter: function()
+        {
+            return this._fillRatios;
+        },
+
+        setter: function(val)
+        {
+            this._fillRatios = val;
+            return val;
+        },
+
+        validator: function(val)
+        {   
+            return Y.Lang.isArray(val);
+        }
+    },
+
+    /**
+     * Direction in which to rotate a gradient fill. (0 represents a left to right)
+     */
+    fillRotation: {
+        getter: function()
+        {
+            return this._fillRotation;
+        },
+
+        setter: function(val)
+        {
+            this._fillRotation = val;
+            return val;
+        },
+
+        validator: function(val)
+        {   
+            return Y.Lang.isNumber(val);
+        }
     }
 };
 
 Y.extend(CanvasAPI, Y.Base, {
-	_setCanvas: function()
+	/**
+     * @private
+     * Sets the canvas for the graphics instance.
+     */
+    _setCanvas: function()
 	{
 		var parent = this.get("parent");
 		this._canvas = document.createElement("canvas");
@@ -374,7 +479,7 @@ Y.extend(CanvasAPI, Y.Base, {
      * @private
      * Storage for fillType
      */
-    fillType: "solid",
+    _fillType: "solid",
 
     /**
      * @private
@@ -418,6 +523,24 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     _lineAlpha: 1,
 
+    /**
+     * @private
+     * Storage for fillColors.
+     */
+    _fillColors: [],
+
+    /**
+     * @private
+     * Storage for fillRatios.
+     */
+    _fillRatios: null, 
+
+    /**
+     * @private
+     * Storage
+     */
+    _fillRotation: 0,
+
     /** 
      *Specifies a simple one-color fill that subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) use when drawing.
      */
@@ -426,6 +549,7 @@ Y.extend(CanvasAPI, Y.Base, {
         var ctx = this.get("context");
         this.set("fillColor", color);
         this.set("fillAlpha", alpha);
+        this.set("type", "solid");
         ctx.beginPath();
         ctx.fillStyle = color;
     },
@@ -433,8 +557,12 @@ Y.extend(CanvasAPI, Y.Base, {
     /** 
      *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
-    beginGradientFill: function(type, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod, focalPointRatio)
+    beginGradientFill: function(type, colors, alphas, ratios, rotation, matrix, spreadMethod, interpolationMethod, focalPointRatio)
     {
+        this.set("fillType", type);
+        this.set("fillColors", colors);
+        this.set("fillRatios", ratios);
+        this.set("fillRotation", rotation);
     },
 
     /** 
@@ -466,12 +594,12 @@ Y.extend(CanvasAPI, Y.Base, {
 		var startAngle = 0,
 			endAngle = 360,
 			anticlockwise = false,
-			sc = this.get("lineColor"),
-			lw = this.get("lineWidth"),
-			fc = this.get("fillColor"),
 			ctx = this.get("context");
-		startAngle *= (Math.PI/180);
+		this.set("x", x);
+        this.set("y", y);
+        startAngle *= (Math.PI/180);
 		endAngle *= (Math.PI/180);
+        ctx.fillStyle = this._getFill(radius * 2, radius * 2);
         ctx.arc(x + radius, y + radius, radius, startAngle, endAngle, anticlockwise);
 	},
 
@@ -487,11 +615,11 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     drawRectangle: function(x, y, w, h)
 	{
-		var lw = this.get("lineWidth"),
-			fc = this.get("fillColor"),
+		var fc = this.get("fillColor"),
 			sc = this.get("lineColor"),
 			ctx = this.get("context");
-			if(fc)
+            ctx.fillStyle = this._getFill(w, h);	
+            if(fc || this.get("fillColors"))
 			{
 				ctx.fillRect(x, y, w, h);
 			}
@@ -506,10 +634,8 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     drawRoundRect: function(x, y, w, h, ew, eh)
     {
-		var lw = this.get("lineWidth"),
-			fc = this.get("fillColor"),
-			sc = this.get("lineColor"),
-			ctx = this.get("context");
+		var ctx = this.get("context");
+            ctx.fillStyle = this._getFill(w, h);	
 			ctx.moveTo(x, y + eh);
             ctx.lineTo(x, y + h - eh);
             ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
@@ -535,6 +661,7 @@ Y.extend(CanvasAPI, Y.Base, {
 		{
             ctx.fill();
 		}
+        ctx.closePath();
     },
 
     /** 
@@ -577,6 +704,127 @@ Y.extend(CanvasAPI, Y.Base, {
         ctx.moveTo(x, y);
         this.set("x", x);
         this.set("y", y);
+    },
+
+    /**
+     * @private
+     */
+    _getFill: function(w, h)
+    {
+        var type = this.get("fillType");
+        if(type === "solid")
+        {
+            return this.get("fillColor");
+        }
+        if(type === "linear")
+        {
+            return this._getLinearGradient(w, h, "fill");
+        }
+        return this._getRadialGradient(w, h, "fill");
+    },
+
+    /**
+     * @private
+     */
+    _getLineFill: function(w, h)
+    {
+        var type = this.get("lineType");
+        if(type === "solid")
+        {
+            return this.get("lineColor");
+        }
+        if(type === "linear")
+        {
+            return this._getLinearGradient(w, h, "line");
+        }
+        return this._getRadialGradient(w, h, "line");
+    },
+
+    /**
+     * @private
+     */
+    _getLinearGradient: function(w, h, type)
+    {
+        var colors = this.get(type + "Colors"),
+            ratios = this.get(type + "Ratios"),
+            i,
+            l,
+            x = this.get("x"),
+            y = this.get("y"),
+            color,
+            ratio,
+            def,
+            ctx = this.get("context"),
+            r = this.get(type + "Rotation"),
+            grad;
+        //temporary hack for rotation. 
+        switch(r)
+        {
+            case 45:
+                grad = ctx.createLinearGradient(x, y, x + w, y + h); 
+            break;
+            case 90:
+                grad = ctx.createLinearGradient(x, y, x, y + h); 
+            break;
+            case 135:
+                grad = ctx.createLinearGradient(x + w, y, x, y + h); 
+            break;
+            case 180:
+                grad = ctx.createLinearGradient(x + w, y, x, y); 
+            break;
+            case 225:
+                grad = ctx.createLinearGradient(x + w, y + h, x, y); 
+            break;
+            case 270:
+                grad = ctx.createLinearGradient(x, y + h, x, y); 
+            break;
+            case 315:
+                grad = ctx.createLinearGradient(x, y + h, x + w, y); 
+            break;
+            default:
+                grad = ctx.createLinearGradient(x, y, x + w, y); 
+            break;
+
+        }
+        l = colors.length;
+        def = 0;
+        for(i = 0; i < l; ++i)
+        {
+            color = colors[i];
+            ratio = ratios[i] || def;
+            grad.addColorStop(ratio, color);
+            def = (i + 1) / l;
+        }
+        return grad;
+    },
+
+    /**
+     * @private
+     */
+    _getRadialGradient: function(w, h, type)
+    {
+        var colors = this.get(type + "Colors"),
+            ratios = this.get(type + "Ratios"),
+            i,
+            l,
+            x = this.get("x"),
+            y = this.get("y"),
+            color,
+            ratio,
+            def,
+            grad,
+            ctx = this.get("context");
+        grad = ctx.createRadialGradient(x + w/2, y + w/2, w/2, x + w, y + h, w/2);
+        l = colors.length;
+        def = 0;
+        for(i = 0; i < l; ++i)
+        {
+            color = colors[i];
+            ratio = ratios[i] || def;
+            grad.addColorStop(ratio, color);
+            def = (i + 1) / l;
+        }
+        return grad;
     }
 });
 
