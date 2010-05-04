@@ -798,7 +798,6 @@ Y.Loader.prototype = {
                 packName = this.getLangPackName(lang, name);
                 smod = this.moduleInfo[packName];
                 if (!smod) {
-                    console.log('lang: ' + packName)
                     smod = this._addLangPack(lang, o, packName);
                 }
             }
