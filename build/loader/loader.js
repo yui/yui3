@@ -789,13 +789,14 @@ Y.Loader.prototype = {
 
         this.moduleInfo[name] = o;
 
-        if (!o.langPack) {
+        if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
             for (j=0; j < langs.length; j++) {
                 lang = langs[j];
                 packName = this.getLangPackName(lang, name);
                 smod = this.moduleInfo[packName];
                 if (!smod) {
+                    console.log('lang: ' + packName)
                     smod = this._addLangPack(lang, o, packName);
                 }
             }
