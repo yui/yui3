@@ -678,6 +678,29 @@ YUI.Env[Y.version].modules = {
         ]
     }, 
     "history": {
+        "submodules": {
+            "history-base": {
+                "requires": [
+                    "event-custom-complex"
+                ]
+            }, 
+            "history-hash": {
+                "requires": [
+                    "event-synthetic", 
+                    "history-base", 
+                    "yui-later"
+                ]
+            }, 
+            "history-hash-ie": {
+                "requires": [
+                    "history-base", 
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }
+    }, 
+    "history-deprecated": {
         "requires": [
             "node"
         ]

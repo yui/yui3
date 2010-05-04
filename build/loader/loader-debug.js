@@ -11,10 +11,10 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.04.08-12-35',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.04.28-20-33',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
-    TNT_VERSION     = CONFIG[TNT] || '2',
+    TNT_VERSION     = CONFIG[TNT] || '1',
     YUI2_VERSION    = CONFIG.yui2 || '2.8.0',
     YUI2_ROOT       = TNT + '.' + TNT_VERSION + '/' + YUI2_VERSION + BUILD,
     COMBO_BASE      = CDN_BASE + 'combo?',
@@ -2644,6 +2644,29 @@ YUI.Env[Y.version].modules = {
         ]
     }, 
     "history": {
+        "submodules": {
+            "history-base": {
+                "requires": [
+                    "event-custom-complex"
+                ]
+            }, 
+            "history-hash": {
+                "requires": [
+                    "event-synthetic", 
+                    "history-base", 
+                    "yui-later"
+                ]
+            }, 
+            "history-hash-ie": {
+                "requires": [
+                    "history-base", 
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }
+    }, 
+    "history-deprecated": {
         "requires": [
             "node"
         ]
