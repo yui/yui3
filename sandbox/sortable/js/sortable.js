@@ -111,6 +111,10 @@ YUI.add('sortable', function(Y) {
             if (e.drag.get(NODE) == e.drop.get(NODE)) {
                 return;
             }
+            // is drop a child of drag?
+            if (e.drag.get(NODE).contains(e.drop.get(NODE))) {
+                return;
+            }
 
             switch (this.get('moveType').toLowerCase()) {
                 case 'insert':
