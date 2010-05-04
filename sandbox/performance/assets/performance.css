@@ -51,8 +51,20 @@ body {
 .yui3-perf-results .test {}
 
 .yui3-perf-results .calls,
-.yui3-perf-results .avg,
 .yui3-perf-results .max,
-.yui3-perf-results .min {
+.yui3-perf-results .mean,
+.yui3-perf-results .median,
+.yui3-perf-results .mediandev,
+.yui3-perf-results .min,
+.yui3-perf-results .stdev {
     text-align: right;
+}
+
+.yui3-perf-results td.mediandev,
+.yui3-perf-results td.stdev {
+    color: #666;
+}
+
+.yui3-perf-results td.median {
+    font-weight: bold;
 }

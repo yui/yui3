@@ -7,11 +7,9 @@ var Profiler   = Y.Profiler,
 
     iterations = Y.UA.ie && Y.UA.ie < 9 ? 20 : 40,
     poll,
-    results    = {},
 
-// Object hash mapping test names to test objects. A test object is itself a
-// hash, which may have the following properties. Only the "test" property is
-// required.
+// Object hash mapping test names to test objects. A test object may have the
+// following properties, of which only the "test" property is required:
 //
 // bootstrap (Array):
 //   Array of YUI modules that should be bootstrapped before the test is
@@ -91,11 +89,14 @@ Perf = {
             '<table class="yui3-perf-results">' +
                 '<thead>' +
                     '<tr>' +
-                        '<th>Test</th>' +
-                        '<th>Calls</th>' +
-                        '<th>Avg</th>' +
-                        '<th>Max</th>' +
-                        '<th>Min</th>' +
+                        '<th class="test">Test</th>' +
+                        '<th class="calls">Calls</th>' +
+                        '<th class="mean">Mean</th>' +
+                        '<th class="median">Median</th>' +
+                        '<th class="max">Max</th>' +
+                        '<th class="min">Min</th>' +
+                        '<th class="mediandev"><abbr title="Median Absolute Deviation">Med. Dev.</abbr></th>' +
+                        '<th class="stdev"><abbr title="Standard Deviation">Std. Dev.</abbr></th>' +
                     '</tr>' +
                 '</thead>' +
                 '<tfoot></tfoot>' +
@@ -106,17 +107,22 @@ Perf = {
         tbody = table.one('tbody');
 
         Y.Object.each(report, function (results, name) {
-            Y.Array.each(['avg', 'max', 'min'], function (key) {
-                results[key] = results[key].toFixed(1);
+            results = Y.merge(results, analyze(results.points));
+
+            Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
+                results[key] = results[key].toFixed(2);
             });
 
             tbody.append(Y.substitute(
                 '<tr>' +
                     '<td class="test">{name}</td>' +
                     '<td class="calls">{calls}</td>' +
-                    '<td class="avg">{avg}</td>' +
+                    '<td class="mean">{mean}</td>' +
+                    '<td class="median">{median}</td>' +
                     '<td class="max">{max}</td>' +
                     '<td class="min">{min}</td>' +
+                    '<td class="mediandev">±{mediandev}</td>' +
+                    '<td class="stdev">±{stdev}</td>' +
                 '</tr>',
                 Y.merge(results, {name:name})
             ));
@@ -190,8 +196,39 @@ Perf = {
     }
 },
 
-// Bootstraps the specified modules to ensure that module load times won't
-// pollute our profiling data.
+// Returns an object hash containing the mean, median, sample variance,
+// sample standard deviation, and median absolute deviation of the values in the
+// specified array.
+analyze = function (set) {
+    var i,
+        len = set.length,
+        mean,
+        sum = 0,
+        variance;
+
+    // Find the sum.
+    for (i = len; i--; sum += set[i]); // no block
+
+    // And the mean.
+    mean = sum / len;
+
+    // And the sum of the squared differences of each value from the mean.
+    for (i = len, sum = 0; i--; sum += Math.pow(set[i] - mean, 2)); // no block
+
+    // And finally the sample variance and standard deviation.
+    variance = sum / (len - 1);
+
+    return {
+        mean     : mean,
+        median   : median(set),
+        mediandev: medianDeviation(set),
+        variance : variance,
+        stdev    : Math.sqrt(variance)
+    };
+},
+
+// Bootstraps the specified modules and their dependencies to ensure that module
+// load times won't pollute our profiling data.
 bootstrap = function (args) {
     var loaded = false;
 
@@ -204,6 +241,44 @@ bootstrap = function (args) {
     YUI().use.apply(YUI, args);
 
     while (!loaded) {}
+},
+
+// Returns the median of the values in the specified array. This implementation
+// is naïve and does a full sort before finding the median; if we ever start
+// working with very large arrays, this should be rewritten to use a linear
+// selection algorithm.
+median = function (set) {
+    var len    = set.length,
+        sorted = [].concat(set), // copy
+        middle;
+
+    if (!len) {
+        return null;
+    }
+
+    sorted.sort(function (a, b) {
+      return a > b;
+    });
+
+    if (len % 2) { // odd number of items
+        return sorted[Math.floor(len / 2)];
+    } else { // even number of items
+        middle = sorted.splice(len / 2 - 1, 2);
+        return (middle[0] + middle[1]) / 2;
+    }
+},
+
+// Returns the median absolute deviation of the values in the specified array.
+medianDeviation = function (set) {
+    var deviations = [],
+        i,
+        setMedian  = median(set);
+
+    // Find the absolute deviations from the median of the set.
+    for (i = set.length; i--; deviations.push(Math.abs(set[i] - setMedian))); // no block
+
+    // The median of the deviations is the median absolute deviation.
+    return median(deviations);
 };
 
 Y.Performance = Perf;
