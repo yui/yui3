@@ -1,57 +1,48 @@
 {
-    "frame": {
-        "path": "editor/frame-min.js",
-        "requires": [
-            "base",
-            "node",
-            "selector-css3",
-            "substitute"
-        ]
-    },
     "editor": {
-        "requires": [
-            "base",
-            "node"
-        ]
-    },
-    "editor-base": {
-        "path": "editor/editor-base-min.js",
-        "requires": [
-            "base",
-            "frame",
-            "node",
-            "exec-command"
-        ]
-    },
-    "selection": {
-        "path": "editor/selection-min.js",
-        "requires": [
-            "node"
-        ]
-    },
-    "exec-command": {
-        "path": "editor/exec-command-min.js",
-        "requires": [
-            "frame"
-        ]
-    },
-    "editor-lists": {
-        "path": "editor/editor-lists-min.js",
-        "requires": [
-            "editor-base"
-        ]
-    },
-    "editor-tab": {
-        "path": "editor/editor-tab-min.js",
-        "requires": [
-            "editor-base"
-        ]
-    },
-    "createlink-base": {
-        "path": "editor/createlink-base-min.js",
-        "requires": [
-            "editor-base"
-        ]
+        "submodules": {
+            "frame": {
+                "requires": [
+                    "base",
+                    "node",
+                    "selector-css3",
+                    "substitute"
+                ]
+            },
+            "editor-base": {
+                "requires": [
+                    "base",
+                    "frame",
+                    "node",
+                    "exec-command"
+                ]
+            },
+            "selection": {
+                "requires": [
+                    "node"
+                ]
+            },
+            "exec-command": {
+                "requires": [
+                    "frame"
+                ]
+            },
+            "editor-lists": {
+                "requires": [
+                    "editor-base"
+                ]
+            },
+            "editor-tab": {
+                "requires": [
+                    "editor-base"
+                ]
+            },
+            "createlink-base": {
+                "requires": [
+                    "editor-base"
+                ]
+            }
+        }
     }
 }
 
