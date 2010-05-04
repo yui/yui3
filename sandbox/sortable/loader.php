@@ -94,13 +94,13 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('sortable', function(Y) {
+YUI(yConfig).use('sortable', 'dd', function(Y) {
     console.log(Y);
     
     //Y.DD.DDM._debugShim = true;
 
     var sel = new Y.Sortable({
-        cont: '#one',
+        container: '#one',
         nodes: '.item',
         opacity: '.5',
         moveType: 'copy'
@@ -114,7 +114,7 @@ YUI(yConfig).use('sortable', function(Y) {
     
 
     var sel2 = new Y.Sortable({
-        cont: '#two',
+        container: '#two',
         nodes: '.item',
         moveType: 'copy'
     });
@@ -130,7 +130,7 @@ YUI(yConfig).use('sortable', function(Y) {
     
 
     var sel3 = new Y.Sortable({
-        cont: '#three',
+        container: '#three',
         nodes: '.item',
         moveType: 'move'
     });
