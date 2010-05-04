@@ -281,7 +281,7 @@ CanvasAPI.ATTRS = {
 };
 
 Y.extend(CanvasAPI, Y.Base, {
-	/**
+    /**
      * @private
      * Sets the canvas for the graphics instance.
      */
@@ -381,7 +381,7 @@ Y.extend(CanvasAPI, Y.Base, {
         var ctx = this.get("context");
         this.set("fillColor", color);
         this.set("fillAlpha", alpha);
-        this.set("type", "solid");
+        this.set("fillType", "solid");
         ctx.beginPath();
         ctx.fillStyle = color;
     },
@@ -395,6 +395,8 @@ Y.extend(CanvasAPI, Y.Base, {
         this.set("fillColors", colors);
         this.set("fillRatios", ratios);
         this.set("fillRotation", rotation);
+        var ctx = this.get("context");
+        ctx.beginPath();
     },
 
     /** 
@@ -431,6 +433,7 @@ Y.extend(CanvasAPI, Y.Base, {
         this.set("y", y);
         startAngle *= (Math.PI/180);
 		endAngle *= (Math.PI/180);
+        ctx.beginPath();
         ctx.fillStyle = this._getFill(radius * 2, radius * 2);
         ctx.arc(x + radius, y + radius, radius, startAngle, endAngle, anticlockwise);
 	},
@@ -447,18 +450,19 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     drawRectangle: function(x, y, w, h)
 	{
-		var fc = this.get("fillColor"),
+        var fc = this.get("fillColor"),
 			sc = this.get("lineColor"),
-			ctx = this.get("context");
-            ctx.fillStyle = this._getFill(w, h);	
-            if(fc || this.get("fillColors"))
-			{
-				ctx.fillRect(x, y, w, h);
-			}
-			if(sc)
-			{
-				ctx.strokeRect(x, y, w, h);
-			}
+            ctx = this.get("context");
+        ctx.beginPath();
+        ctx.fillStyle = this._getFill(w, h);	
+        if(fc || this.get("fillColors"))
+        {
+            ctx.fillRect(x, y, w, h);
+        }
+        if(sc)
+        {
+            ctx.strokeRect(x, y, w, h);
+        }
 	},
 	
     /** 
@@ -467,8 +471,9 @@ Y.extend(CanvasAPI, Y.Base, {
     drawRoundRect: function(x, y, w, h, ew, eh)
     {
 		var ctx = this.get("context");
+            ctx.beginPath();
             ctx.fillStyle = this._getFill(w, h);	
-			ctx.moveTo(x, y + eh);
+            ctx.moveTo(x, y + eh);
             ctx.lineTo(x, y + h - eh);
             ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
             ctx.lineTo(x + w - ew, y + h);
@@ -489,7 +494,7 @@ Y.extend(CanvasAPI, Y.Base, {
 		{
 			ctx.stroke();
 		}
-		if(this.get("fillColor"))
+		if(this.get("fillColor") || this.get("fillColors"))
 		{
             ctx.fill();
 		}
@@ -593,28 +598,28 @@ Y.extend(CanvasAPI, Y.Base, {
         switch(r)
         {
             case 45:
-                grad = ctx.createLinearGradient(x, y, x + w, y + h); 
+                grad = ctx.createLinearGradient(x + w, y + h, x, y); 
             break;
             case 90:
-                grad = ctx.createLinearGradient(x, y, x, y + h); 
+                grad = ctx.createLinearGradient(x + w, y, x, y); 
             break;
             case 135:
                 grad = ctx.createLinearGradient(x + w, y, x, y + h); 
             break;
             case 180:
-                grad = ctx.createLinearGradient(x + w, y, x, y); 
+                grad = ctx.createLinearGradient(x, y, x, y + h); 
             break;
             case 225:
-                grad = ctx.createLinearGradient(x + w, y + h, x, y); 
+                grad = ctx.createLinearGradient(x, y, x + w, y + h); 
             break;
             case 270:
-                grad = ctx.createLinearGradient(x, y + h, x, y); 
+                grad = ctx.createLinearGradient(x, y, x + w, y); 
             break;
             case 315:
                 grad = ctx.createLinearGradient(x, y + h, x + w, y); 
             break;
             default:
-                grad = ctx.createLinearGradient(x, y, x + w, y); 
+                grad = ctx.createLinearGradient(x, y + h, x, y); 
             break;
 
         }

@@ -449,7 +449,7 @@ CanvasAPI.ATTRS = {
 };
 
 Y.extend(CanvasAPI, Y.Base, {
-	/**
+    /**
      * @private
      * Sets the canvas for the graphics instance.
      */
@@ -549,7 +549,7 @@ Y.extend(CanvasAPI, Y.Base, {
         var ctx = this.get("context");
         this.set("fillColor", color);
         this.set("fillAlpha", alpha);
-        this.set("type", "solid");
+        this.set("fillType", "solid");
         ctx.beginPath();
         ctx.fillStyle = color;
     },
@@ -563,6 +563,8 @@ Y.extend(CanvasAPI, Y.Base, {
         this.set("fillColors", colors);
         this.set("fillRatios", ratios);
         this.set("fillRotation", rotation);
+        var ctx = this.get("context");
+        ctx.beginPath();
     },
 
     /** 
@@ -599,6 +601,7 @@ Y.extend(CanvasAPI, Y.Base, {
         this.set("y", y);
         startAngle *= (Math.PI/180);
 		endAngle *= (Math.PI/180);
+        ctx.beginPath();
         ctx.fillStyle = this._getFill(radius * 2, radius * 2);
         ctx.arc(x + radius, y + radius, radius, startAngle, endAngle, anticlockwise);
 	},
@@ -615,18 +618,19 @@ Y.extend(CanvasAPI, Y.Base, {
      */
     drawRectangle: function(x, y, w, h)
 	{
-		var fc = this.get("fillColor"),
+        var fc = this.get("fillColor"),
 			sc = this.get("lineColor"),
-			ctx = this.get("context");
-            ctx.fillStyle = this._getFill(w, h);	
-            if(fc || this.get("fillColors"))
-			{
-				ctx.fillRect(x, y, w, h);
-			}
-			if(sc)
-			{
-				ctx.strokeRect(x, y, w, h);
-			}
+            ctx = this.get("context");
+        ctx.beginPath();
+        ctx.fillStyle = this._getFill(w, h);	
+        if(fc || this.get("fillColors"))
+        {
+            ctx.fillRect(x, y, w, h);
+        }
+        if(sc)
+        {
+            ctx.strokeRect(x, y, w, h);
+        }
 	},
 	
     /** 
@@ -635,8 +639,9 @@ Y.extend(CanvasAPI, Y.Base, {
     drawRoundRect: function(x, y, w, h, ew, eh)
     {
 		var ctx = this.get("context");
+            ctx.beginPath();
             ctx.fillStyle = this._getFill(w, h);	
-			ctx.moveTo(x, y + eh);
+            ctx.moveTo(x, y + eh);
             ctx.lineTo(x, y + h - eh);
             ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
             ctx.lineTo(x + w - ew, y + h);
@@ -657,7 +662,7 @@ Y.extend(CanvasAPI, Y.Base, {
 		{
 			ctx.stroke();
 		}
-		if(this.get("fillColor"))
+		if(this.get("fillColor") || this.get("fillColors"))
 		{
             ctx.fill();
 		}
@@ -761,28 +766,28 @@ Y.extend(CanvasAPI, Y.Base, {
         switch(r)
         {
             case 45:
-                grad = ctx.createLinearGradient(x, y, x + w, y + h); 
+                grad = ctx.createLinearGradient(x + w, y + h, x, y); 
             break;
             case 90:
-                grad = ctx.createLinearGradient(x, y, x, y + h); 
+                grad = ctx.createLinearGradient(x + w, y, x, y); 
             break;
             case 135:
                 grad = ctx.createLinearGradient(x + w, y, x, y + h); 
             break;
             case 180:
-                grad = ctx.createLinearGradient(x + w, y, x, y); 
+                grad = ctx.createLinearGradient(x, y, x, y + h); 
             break;
             case 225:
-                grad = ctx.createLinearGradient(x + w, y + h, x, y); 
+                grad = ctx.createLinearGradient(x, y, x + w, y + h); 
             break;
             case 270:
-                grad = ctx.createLinearGradient(x, y + h, x, y); 
+                grad = ctx.createLinearGradient(x, y, x + w, y); 
             break;
             case 315:
                 grad = ctx.createLinearGradient(x, y + h, x + w, y); 
             break;
             default:
-                grad = ctx.createLinearGradient(x, y, x + w, y); 
+                grad = ctx.createLinearGradient(x, y + h, x, y); 
             break;
 
         }
@@ -979,11 +984,53 @@ VMLAPI.ATTRS = {
         {
             return Y.Lang.isNumber(val);
         }
+    },
+
+    fillType: {
+        getter: function()
+        {
+            return this._fillType;
+        },
+
+        setter: function(val)
+        {
+            this._fillType = val;
+            return val;
+        },
+        
+        validator:function(val)
+        {
+            return Y.Lang.isString(val);
+        }
+
+    },
+
+    fillProps: {
+        getter: function()
+        {
+            return this._fillProps;
+        },
+
+        setter: function(val)
+        {
+            this._fillProps = val;
+            return val;
+        },
+
+        validator: function(val)
+        {
+            return Y.Lang.isObject(val);
+        }
+
     }
 };
 
 Y.extend(VMLAPI, Y.Base, {
-	_canvas: null,
+	_fillType: "solid",
+
+    _fillProps: null,
+    
+    _canvas: null,
 
 	_setCanvas: function()
 	{
@@ -1052,8 +1099,21 @@ Y.extend(VMLAPI, Y.Base, {
     /** 
      *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
-    beginGradientFill: function(type, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod, focalPointRatio)
+    beginGradientFill: function(type, colors, alphas, ratios, rotation, matrix, spreadMethod, interpolationMethod, focalPointRatio)
     {
+        var fill = {},
+            i = 1,
+            len = colors.length;
+        fill.type = "linear" ? "gradient" : "GradientRadial";
+        fill.color = colors[0];
+        for(;i < len; ++i)
+        {
+            fill["color" + (i + 1)] = colors[i];
+        }
+        fill.angle = rotation;
+        this.set("fillProps", fill);
+        this.set("fillType", type);
+
     },
 
     /** 
@@ -1079,15 +1139,34 @@ Y.extend(VMLAPI, Y.Base, {
 			sc = this.get("lineColor"),
 			lw = this.get("lineWidth"),
 			fc = this.get("fillColor"),
+            fill,
+            fillProps,
+            i,
             circ = document.createElement("v:oval");
-            circ.setAttribute("strokeweight", lw + "px");
-            circ.setAttribute("strokecolor", sc);
-            circ.style.left = x + "px";
-            circ.style.top = y + "px";
-            circ.style.width = diameter + "px";
-            circ.style.height = diameter + "px";
+        circ.setAttribute("strokeweight", lw + "px");
+        circ.setAttribute("strokecolor", sc);
+        circ.style.left = x + "px";
+        circ.style.top = y + "px";
+        circ.style.width = diameter + "px";
+        circ.style.height = diameter + "px";
+        if(this.get("fillType") === "solid")
+        {
             circ.fillcolor = fc;
-            this.get("canvas").appendChild(circ);
+        }
+        else
+        {
+            fillProps = this.get("fillProps");
+            fill = document.createElement("v:fill");
+            for(i in fillProps)
+            {
+                if(fillProps.hasOwnProperty(i))
+                {
+                    fill[i] = fillProps[i];
+                }
+            }
+            circ.appendChild(fill);
+        }
+        this.get("canvas").appendChild(circ);
 	},
 
     /** 
@@ -1105,13 +1184,32 @@ Y.extend(VMLAPI, Y.Base, {
 		var lw = this.get("lineWidth"),
 			fc = this.get("fillColor"),
 			sc = this.get("lineColor"),
-            rect = document.createElement("v:rect");
+            rect = document.createElement("v:rect"),
+            fill,
+            fillProps,
+            i;
         rect.setAttribute("strokeweight", lw + "px");
         rect.style.width = w + "px";
         rect.style.height = h + "px";
         rect.style.top = y;
         rect.style.left = x;
-        rect.fillcolor = fc;
+        if(this.get("fillType") === "solid")
+        {
+            rect.fillColor = fc;
+        }
+        else
+        {
+            fillProps = this.get("fillProps");
+            fill = document.createElement("v:fill");
+            for(i in fillProps)
+            {
+                if(fillProps.hasOwnProperty(i))
+                {
+                    fill[i] = fillProps[i];
+                }
+            }
+            rect.appendChild(fill);
+        }
         rect.strokecolor = sc;
         this.get("canvas").appendChild(rect);
 	},
@@ -1119,8 +1217,42 @@ Y.extend(VMLAPI, Y.Base, {
     /** 
      *Draws a rounded rectangle.
      */
-    drawRoundRect: function(x, y, w, h, ellipseWidth, ellipseHeight)
+    drawRoundRect: function(x, y, w, h, ew, eh)
     {
+		var lw = this.get("lineWidth"),
+			fc = this.get("fillColor"),
+			sc = this.get("lineColor"),
+            rect = document.createElement("v:roundrect"),
+            len = Math.min(w/2, h/2),
+            pct = Math.round((ew/len)*100),
+            fill,
+            fillProps,
+            i;
+        rect.setAttribute("strokeweight", lw + "px");
+        rect.arcsize = pct + "%";
+        rect.style.width = w + "px";
+        rect.style.height = h + "px";
+        rect.style.top = y;
+        rect.style.left = x;
+        if(this.get("fillType") === "solid")
+        {
+            rect.fillColor = fc;
+        }
+        else
+        {
+            fillProps = this.get("fillProps");
+            fill = document.createElement("v:fill");
+            for(i in fillProps)
+            {
+                if(fillProps.hasOwnProperty(i))
+                {
+                    fill[i] = fillProps[i];
+                }
+            }
+            rect.appendChild(fill);
+        }
+        rect.strokecolor = sc;
+        this.get("canvas").appendChild(rect);
     },
         
     /** 
@@ -1128,6 +1260,7 @@ Y.extend(VMLAPI, Y.Base, {
      */
     endFill: function()
     {
+
     },
 
     /** 

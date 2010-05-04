@@ -25,20 +25,21 @@
                     graphics = new Y.Graphics({parent:"appdiv", engine:engine});	
 				
                 graphics.lineStyle(12, "#0000ff", 1);
-                graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1], 270);
+                graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1], 315);
                 graphics.drawRectangle(40, 40, 400, 300);
                 graphics.endFill();
                 graphics.clear();
-				
+                
                 graphics.lineStyle(12, "#0000ff", 1);
-                graphics.beginFill("#ff0000", 1);
+                //graphics.beginFill("#ff0000", 1);
+                graphics.beginGradientFill("linear", ["#ffeecc", "#ffff00"], [], [0, 1], 315);
                 graphics.drawRoundRect(40, 450, 400, 300, 10, 10);
                 graphics.endFill();
                 graphics.clear();
 
                 graphics.lineStyle(8, "#ff0000", 1);
-                graphics.beginFill("#0000ff", 1);
-                graphics.beginGradientFill("radial", ["#ff0000", "#ffff00"], [], [0, .8], 0);
+                //graphics.beginFill("#0000ff", 1);
+                graphics.beginGradientFill("radial", ["#00ffff", "#ee63ff"], [], [0, .8], 0);
                 graphics.drawCircle(450, 40, 100);
                 graphics.endFill();
                 
@@ -49,6 +50,7 @@
                 graphics.lineTo(330, 200);
                 graphics.endFill();
             });
+
 		</script>
 	</div>
 </body>
