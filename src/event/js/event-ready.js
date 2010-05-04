@@ -8,7 +8,9 @@
 var GLOBAL_ENV = YUI.Env,
     
     yready = function() {
-        Y.fire('domready');
+        setTimeout(function() {
+            Y.fire('domready');
+        }, 0);
     };
 
 /**
