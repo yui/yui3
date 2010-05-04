@@ -476,7 +476,7 @@
     <span class="p">}</span>
 
     <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">onPage</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">onPage</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">details</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">((</span><span class="o">!</span><span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">self</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="nx">onPage</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">details</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">self</span><span class="p">.</span><span class="nx">addModule</span><span class="p">(</span><span class="nx">onPage</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">details</span><span class="p">,</span> <span class="nx">i</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -730,6 +730,8 @@
 <span class="cm">     * the object passed in did not provide all required attributes</span>
 <span class="cm">     */</span>
     <span class="nx">addModule</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+
+
         <span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">||</span> <span class="nx">o</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
         <span class="nx">o</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
 
@@ -751,23 +753,24 @@
         <span class="c1">// Handle submodule logic</span>
         <span class="kd">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">submodules</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">sup</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">smod</span><span class="p">,</span> <span class="nx">plugins</span><span class="p">,</span> <span class="nx">plug</span><span class="p">,</span>
             <span class="nx">j</span><span class="p">,</span> <span class="nx">langs</span><span class="p">,</span> <span class="nx">packName</span><span class="p">,</span> <span class="nx">supName</span><span class="p">,</span> <span class="nx">flatSup</span><span class="p">,</span> <span class="nx">flatLang</span><span class="p">,</span> <span class="nx">lang</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span>
-            <span class="nx">overrides</span><span class="p">,</span> <span class="nx">skinname</span><span class="p">,</span> <span class="nx">existing</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">],</span> <span class="nx">newr</span><span class="p">;</span>
+            <span class="nx">overrides</span><span class="p">,</span> <span class="nx">skinname</span><span class="p">;</span>
+            <span class="c1">// , existing = this.moduleInfo[name], newr;</span>
 
         <span class="c1">// Adding a module again merges requirements to pick up new</span>
         <span class="c1">// requirements when the module arrives.  We allow this only</span>
         <span class="c1">// once to prevent redundant checks when an application calls</span>
         <span class="c1">// use() many times.</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">existing</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">existing</span><span class="p">.</span><span class="nx">reparsed</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">o</span><span class="p">.</span><span class="nx">requires</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">newr</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">requires</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">YArray</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">existing</span><span class="p">.</span><span class="nx">requires</span><span class="p">,</span> <span class="nx">newr</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">existing</span><span class="p">.</span><span class="nx">requires</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">newr</span><span class="p">);</span>
-                    <span class="k">delete</span> <span class="nx">existing</span><span class="p">.</span><span class="nx">expanded</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="nx">existing</span><span class="p">.</span><span class="nx">reparsed</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-            <span class="k">return</span> <span class="nx">existing</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="c1">// if (existing &amp;&amp; !existing.reparsed) {</span>
+        <span class="c1">//     for (i=0; i&lt;o.requires.length; i++) {</span>
+        <span class="c1">//         newr = o.requires[i];</span>
+        <span class="c1">//         if (YArray.indexOf(existing.requires, newr) == -1) {</span>
+        <span class="c1">//             existing.requires.push(newr);</span>
+        <span class="c1">//             delete existing.expanded;</span>
+        <span class="c1">//         }</span>
+        <span class="c1">//     }</span>
+        <span class="c1">//     existing.reparsed = true;</span>
+        <span class="c1">//     return existing;</span>
+        <span class="c1">// }</span>
 
         <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
 
@@ -791,6 +794,8 @@
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">subs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
                     <span class="nx">s</span> <span class="o">=</span> <span class="nx">subs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+                    <span class="c1">// console.log(&#39;submodule: &#39; + i);</span>
 
                     <span class="nx">s</span><span class="p">.</span><span class="nx">path</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">path</span> <span class="o">||</span> <span class="nx">_path</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">o</span><span class="p">.</span><span class="nx">type</span><span class="p">);</span>
                     <span class="nx">s</span><span class="p">.</span><span class="nx">pkg</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
