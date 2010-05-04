@@ -3895,10 +3895,12 @@ YUI.add('dd-delegate', function(Y) {
         */
         _afterDragEnd: function(e) {
             Y.DD.DDM._noShim = this._shimState;
+
             this.set('lastNode', this.dd.get('node'));
             this.get('lastNode').removeClass(Y.DD.DDM.CSS_PREFIX + '-dragging');
             this.dd._unprep();
             this.dd.set('node', _tmpNode);
+            this.dd._fixIEMouseUp();
         },
         /**
         * @private
@@ -3909,6 +3911,7 @@ YUI.add('dd-delegate', function(Y) {
         _delMouseDown: function(e) {
             var tar = e.currentTarget,
                 dd = this.dd;
+
             if (tar.test(this.get(NODES)) && !tar.test(this.get('invalid'))) {
                 this._shimState = Y.DD.DDM._noShim;
                 Y.DD.DDM._noShim = true;
@@ -4055,7 +4058,7 @@ YUI.add('dd-delegate', function(Y) {
             * @type String
             */        
             invalid: {
-                value: ''
+                value: 'input, select, button, a, textarea'
             },
             /**
             * @attribute lastNode
