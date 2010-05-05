@@ -11,7 +11,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.04.28-20-33',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.05.05-19-39',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '1',
@@ -496,7 +496,7 @@ Y.Loader = function(o) {
     }
 
     for (i in onPage) {
-        if (onPage[i].details) {
+        if ((!(i in self.moduleInfo)) && onPage[i].details) {
             self.addModule(onPage[i].details, i);
         }
     }
@@ -748,6 +748,8 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes
      */
     addModule: function(o, name) {
+
+
         name = name || o.name;
         o.name = name;
 
@@ -769,27 +771,28 @@ Y.Loader.prototype = {
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname, existing = this.moduleInfo[name], newr;
+            overrides, skinname;
+            // , existing = this.moduleInfo[name], newr;
 
         // Adding a module again merges requirements to pick up new
         // requirements when the module arrives.  We allow this only
         // once to prevent redundant checks when an application calls
         // use() many times.
-        if (existing && !existing.reparsed) {
-            for (i=0; i<o.requires.length; i++) {
-                newr = o.requires[i];
-                if (YArray.indexOf(existing.requires, newr) == -1) {
-                    existing.requires.push(newr);
-                    delete existing.expanded;
-                }
-            }
-            existing.reparsed = true;
-            return existing;
-        }
+        // if (existing && !existing.reparsed) {
+        //     for (i=0; i<o.requires.length; i++) {
+        //         newr = o.requires[i];
+        //         if (YArray.indexOf(existing.requires, newr) == -1) {
+        //             existing.requires.push(newr);
+        //             delete existing.expanded;
+        //         }
+        //     }
+        //     existing.reparsed = true;
+        //     return existing;
+        // }
 
         this.moduleInfo[name] = o;
 
-        if (!o.langPack) {
+        if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
             for (j=0; j < langs.length; j++) {
                 lang = langs[j];
@@ -809,6 +812,8 @@ Y.Loader.prototype = {
             for (i in subs) {
                 if (subs.hasOwnProperty(i)) {
                     s = subs[i];
+
+                    // console.log('submodule: ' + i);
 
                     s.path = s.path || _path(name, i, o.type);
                     s.pkg = name;
@@ -2084,12 +2089,6 @@ YUI.Env[Y.version].modules = {
             "yui-base"
         ]
     }, 
-    "createlink-base": {
-        "path": "editor/createlink-base-min.js", 
-        "requires": [
-            "editor-base"
-        ]
-    }, 
     "cssbase": {
         "after": [
             "cssreset", 
@@ -2504,31 +2503,49 @@ YUI.Env[Y.version].modules = {
         ]
     }, 
     "editor": {
-        "requires": [
-            "base", 
-            "node"
-        ]
-    }, 
-    "editor-base": {
-        "path": "editor/editor-base-min.js", 
-        "requires": [
-            "base", 
-            "frame", 
-            "node", 
-            "exec-command"
-        ]
-    }, 
-    "editor-lists": {
-        "path": "editor/editor-lists-min.js", 
-        "requires": [
-            "editor-base"
-        ]
-    }, 
-    "editor-tab": {
-        "path": "editor/editor-tab-min.js", 
-        "requires": [
-            "editor-base"
-        ]
+        "submodules": {
+            "createlink-base": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "editor-base": {
+                "requires": [
+                    "base", 
+                    "frame", 
+                    "node", 
+                    "exec-command"
+                ]
+            }, 
+            "editor-lists": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "editor-tab": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "exec-command": {
+                "requires": [
+                    "frame"
+                ]
+            }, 
+            "frame": {
+                "requires": [
+                    "base", 
+                    "node", 
+                    "selector-css3", 
+                    "substitute"
+                ]
+            }, 
+            "selection": {
+                "requires": [
+                    "node"
+                ]
+            }
+        }
     }, 
     "event": {
         "expound": "node-base", 
@@ -2596,21 +2613,6 @@ YUI.Env[Y.version].modules = {
     "event-simulate": {
         "requires": [
             "event-base"
-        ]
-    }, 
-    "exec-command": {
-        "path": "editor/exec-command-min.js", 
-        "requires": [
-            "frame"
-        ]
-    }, 
-    "frame": {
-        "path": "editor/frame-min.js", 
-        "requires": [
-            "base", 
-            "node", 
-            "selector-css3", 
-            "substitute"
         ]
     }, 
     "history": {
@@ -2868,12 +2870,6 @@ YUI.Env[Y.version].modules = {
         "path": "async-queue/async-queue-min.js", 
         "requires": [
             "event-custom"
-        ]
-    }, 
-    "selection": {
-        "path": "editor/selection-min.js", 
-        "requires": [
-            "node"
         ]
     }, 
     "slider": {

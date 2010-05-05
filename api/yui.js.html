@@ -54,6 +54,7 @@
 <span class="cm"> * @submodule yui-base</span>
 <span class="cm"> */</span>
 
+
 <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="p">{</span>
 
 <span class="cm">/**</span>
@@ -76,15 +77,23 @@
     <span class="cm">/*global YUI_config*/</span>
     <span class="kd">var</span> <span class="nx">YUI</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
 
-        <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span>
             <span class="nx">globalConfig</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">YUI_config</span> <span class="o">!==</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">YUI_config</span><span class="p">;</span>
 
         <span class="c1">// Allow instantiation without the new operator</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">Y</span> <span class="k">instanceof</span> <span class="nx">YUI</span><span class="p">))</span> <span class="p">{</span>
             <span class="nx">Y</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">YUI</span><span class="p">();</span>
+
             <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">Y</span><span class="p">.</span><span class="nx">_config</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
             <span class="p">}</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">proto</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">proto</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">Y</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">proto</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
             <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span> 
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="c1">// set up the core environment</span>
@@ -103,7 +112,7 @@
 <span class="p">}</span>
 
 <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span>
+    <span class="kd">var</span> <span class="nx">proto</span><span class="p">,</span> <span class="nx">prop</span><span class="p">,</span>
         <span class="nx">VERSION</span>       <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="p">,</span> 
         <span class="nx">BASE</span>          <span class="o">=</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span><span class="p">,</span>
         <span class="nx">DOC_LABEL</span>     <span class="o">=</span> <span class="s1">&#39;yui3-js-enabled&#39;</span><span class="p">,</span>
@@ -158,7 +167,7 @@
     <span class="nx">VERSION</span> <span class="o">=</span> <span class="s1">&#39;3.0.0&#39;</span><span class="p">;</span> <span class="c1">// dev time hack for cdn test</span>
 <span class="p">}</span>
         
-<span class="nx">YUI</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+<span class="nx">proto</span> <span class="o">=</span> <span class="p">{</span>
     <span class="nx">_config</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="p">{};</span>
         <span class="kd">var</span> <span class="nx">attr</span><span class="p">,</span>
@@ -168,20 +177,26 @@
             <span class="nx">mods</span>   <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">modules</span><span class="p">,</span>
             <span class="nx">groups</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">groups</span><span class="p">;</span>
         <span class="k">for</span> <span class="p">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">attr</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">mods</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;modules&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">detail</span> <span class="k">in</span> <span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">mods</span><span class="p">[</span><span class="nx">detail</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">[</span><span class="nx">detail</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">name</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">attr</span> <span class="o">=</span> <span class="nx">o</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">mods</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;modules&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">detail</span> <span class="k">in</span> <span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">detail</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">mods</span><span class="p">[</span><span class="nx">detail</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">[</span><span class="nx">detail</span><span class="p">];</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">groups</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;groups&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">detail</span> <span class="k">in</span> <span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">attr</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">detail</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">groups</span><span class="p">[</span><span class="nx">detail</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">[</span><span class="nx">detail</span><span class="p">];</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;win&#39;</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">contentWindow</span> <span class="o">||</span> <span class="nx">attr</span><span class="p">;</span>
+                    <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span> <span class="o">=</span> <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nb">document</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">;</span>
                 <span class="p">}</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">groups</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;groups&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">detail</span> <span class="k">in</span> <span class="nx">attr</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">groups</span><span class="p">[</span><span class="nx">detail</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">[</span><span class="nx">detail</span><span class="p">];</span>
-                <span class="p">}</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;win&#39;</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">.</span><span class="nx">contentWindow</span> <span class="o">||</span> <span class="nx">attr</span><span class="p">;</span>
-                <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span> <span class="o">=</span> <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nb">document</span><span class="p">;</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">config</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span>
@@ -192,15 +207,16 @@
 <span class="cm">     */</span>
     <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">filter</span><span class="p">,</span>
-            <span class="nx">Y</span>     <span class="o">=</span> <span class="k">this</span><span class="p">,</span> 
-            <span class="nx">G_ENV</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
-            <span class="nx">Env</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">;</span>
+            <span class="nx">Y</span>       <span class="o">=</span> <span class="k">this</span><span class="p">,</span> 
+            <span class="nx">G_ENV</span>   <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
+            <span class="nx">Env</span>     <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">;</span>
 
         <span class="nx">Y</span><span class="p">.</span><span class="nx">version</span> <span class="o">=</span> <span class="nx">VERSION</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Env</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">mods</span><span class="o">:</span>         <span class="p">{},</span>
+                <span class="nx">mods</span><span class="o">:</span>         <span class="p">{},</span> <span class="c1">// flat module map</span>
+                <span class="nx">versions</span><span class="o">:</span>     <span class="p">{},</span> <span class="c1">// version module map</span>
                 <span class="nx">base</span><span class="o">:</span>         <span class="nx">BASE</span><span class="p">,</span>
                 <span class="nx">cdn</span><span class="o">:</span>          <span class="nx">BASE</span> <span class="o">+</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="p">,</span>
                 <span class="nx">bootstrapped</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
@@ -370,13 +386,17 @@
 <span class="cm">     */</span>
     <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">version</span><span class="p">,</span> <span class="nx">details</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">details</span> <span class="o">=</span> <span class="nx">details</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="kd">var</span> <span class="nx">env</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">,</span>
+            <span class="nx">mod</span>  <span class="o">=</span> <span class="p">{</span>
+                <span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span> 
+                <span class="nx">fn</span><span class="o">:</span> <span class="nx">fn</span><span class="p">,</span>
+                <span class="nx">version</span><span class="o">:</span> <span class="nx">version</span><span class="p">,</span>
+                <span class="nx">details</span><span class="o">:</span> <span class="nx">details</span>
+            <span class="p">};</span>
 
-        <span class="nx">YUI</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">mods</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="nx">name</span><span class="o">:</span> <span class="nx">name</span><span class="p">,</span> 
-            <span class="nx">fn</span><span class="o">:</span> <span class="nx">fn</span><span class="p">,</span>
-            <span class="nx">version</span><span class="o">:</span> <span class="nx">version</span><span class="p">,</span>
-            <span class="nx">details</span><span class="o">:</span> <span class="nx">details</span>
-        <span class="p">};</span>
+        <span class="nx">env</span><span class="p">.</span><span class="nx">mods</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
+        <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">]</span> <span class="o">=</span> <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="nx">env</span><span class="p">.</span><span class="nx">versions</span><span class="p">[</span><span class="nx">version</span><span class="p">][</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">mod</span><span class="p">;</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">},</span>
@@ -532,7 +552,7 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">origMissing</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">concat</span><span class="p">();</span>
                     <span class="nx">missing</span> <span class="o">=</span> <span class="p">[];</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">process</span><span class="p">);</span>
+                    <span class="nx">YArray</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">process</span><span class="p">);</span>
                     <span class="nx">redo</span> <span class="o">=</span> <span class="nx">missing</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
                     <span class="k">if</span> <span class="p">(</span><span class="nx">redo</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="nx">missing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">()</span> <span class="o">==</span> <span class="nx">origMissing</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">())</span> <span class="p">{</span>
@@ -763,17 +783,13 @@
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="c1">// Give the YUI global the same properties as an instance.</span>
-<span class="c1">// This makes it so that the YUI global can be used like the YAHOO</span>
-<span class="c1">// global was used prior to 3.x.  More importantly, the YUI global</span>
-<span class="c1">// provides global metadata, so env needs to be configured.</span>
-<span class="c1">// @TODO review</span>
-
-    <span class="nx">p</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+    <span class="nx">YUI</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">proto</span><span class="p">;</span>
 
     <span class="c1">// inheritance utilities are not available yet</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">YUI</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">p</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">proto</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">proto</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">prop</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">YUI</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">proto</span><span class="p">[</span><span class="nx">prop</span><span class="p">];</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="c1">// set up the environment</span>

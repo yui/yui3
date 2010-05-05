@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<yuitest>
+    <tests base="@TEST_ARTIFACTS_BASE@" timeout="120000">
+        <url>attribute/tests/attribute.html</url>
+        <url>cache/tests/cache.html</url>
+        <url>classnamemanager/tests/classnamemanager.html</url>
+        <url>dataschema/tests/dataschema.html</url>
+        <url>datasource/tests/datasource.html</url>
+        <url>datatype/tests/date.html</url>
+        <url>datatype/tests/number.html</url>
+        <url>datatype/tests/xml.html</url>
+        <url>dump/tests/dump.html</url>
+    	<url>event-custom/tests/customevent.html</url>
+        <url>event/tests/dom.html</url>
+        <url>event/tests/delegate.html</url>
+        <url>event/tests/event-synthetic.html</url>
+        <url>history/tests/functional/history-base.html</url>
+        <url>history/tests/functional/history-hash.html</url>
+        <url>intl/tests/intl.html</url>
+        <url>pluginhost/tests/plugins.html</url>
+        <url>widget/tests/widget.html</url>
+        <url>yui/tests/config.html</url>
+        <url>yui/tests/core.html</url>
+        <url>yui/tests/lang.html</url>
+        <url>yui/tests/namespace.html</url>
+        <url>yui/tests/object.html</url>
+        <!--
+        <url>oop/tests/oop.html</url>
+        <url>yui/tests/array.html</url>
+        <url>substitute/tests/substitute.html</url>
+        -->
+    </tests>
+</yuitest>

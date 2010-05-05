@@ -45,7 +45,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         }
 
         #demo li.disabled {
-            opacity: .5;
+            font-style: italic;
         }
 	</style>
 </head>
@@ -60,6 +60,7 @@ foreach (range(1, $count) as $k) {
 }
 ?>
 </ul>
+<input id="IcantSelectAfterDnD" type="text" />
 </div>
 
 <div id="drop">Drop Here..</div>
