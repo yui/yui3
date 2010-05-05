@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>YUI 3 Performance</title>
+    <link rel="stylesheet" href="assets/performance.css">
+</head>
+<body>
+
+<h1>YUI 3 Performance</h1>
+
+<p>
+    <button id="start">Start Tests</button>
+</p>
+
+<div id="results">
+    <p>
+    Click the button to gather results.
+    </p>
+</div>
+
+<div id="container"></div>
+
+<script src="../../build/yui/yui.js"></script>
+<script src="js/performance.js"></script>
+<script>
+var Y = YUI({filter: 'raw'}).use('event-base', 'performance', function (Y) {
+    Y.on('click', function () {
+        Y.one('#results').addClass('loading').setContent('');
+        Y.Performance.start();
+    }, '#start');
+});
+</script>
+
+</body>
+</html>
