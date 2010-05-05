@@ -115,7 +115,7 @@ YUI.add('sortable', function(Y) {
             if (e.drag.get(NODE).contains(e.drop.get(NODE))) {
                 return;
             }
-            var same = false, dir, oldNode, newNode, dropsort,
+            var same = false, dir, oldNode, newNode, dropsort, dropNode,
                 moveType = this.get('moveType').toLowerCase();
 
             if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
@@ -124,7 +124,12 @@ YUI.add('sortable', function(Y) {
             switch (moveType) {
                 case 'insert':
                     dir = ((this._up) ? 'before' : 'after');
-                    e.drop.get(NODE).insert(e.drag.get(NODE), dir);
+                    dropNode = e.drop.get(NODE);
+                    if (dropNode.test(this.get(CONT))) {
+                        dropNode.append(e.drag.get(NODE));
+                    } else {
+                        dropNode.insert(e.drag.get(NODE), dir);
+                    }
                     break;
                 case 'swap':
                     Y.DD.DDM.swapNode(e.drag, e.drop);
