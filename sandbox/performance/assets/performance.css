@@ -48,8 +48,6 @@ body {
 .yui3-perf-results tfoot tr { background: #efefef; }
 
 /* Column-specific styles */
-.yui3-perf-results .test {}
-
 .yui3-perf-results .calls,
 .yui3-perf-results .max,
 .yui3-perf-results .mean,
@@ -60,11 +58,11 @@ body {
     text-align: right;
 }
 
+.yui3-perf-results td.test img { float: right; }
+
 .yui3-perf-results td.mediandev,
 .yui3-perf-results td.stdev {
     color: #666;
 }
 
-.yui3-perf-results td.median {
-    font-weight: bold;
-}
+.yui3-perf-results td.median { font-weight: bold; }

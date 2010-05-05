@@ -2,212 +2,47 @@
 // before its results should be trusted against anything other than themselves.
 YUI.add('performance', function (Y) {
 
-var Profiler   = Y.Profiler,
+var Node       = Y.Node,
+    Obj        = Y.Object,
+    Perf,
+
     isFunction = Y.Lang.isFunction,
 
-    iterations = Y.UA.ie && Y.UA.ie < 9 ? 20 : 40,
+    // iterations = Y.UA.ie && Y.UA.ie < 9 ? 20 : 40,
     poll,
 
-// Object hash mapping test names to test objects. A test object may have the
-// following properties, of which only the "test" property is required:
-//
-// bootstrap (Array):
-//   Array of YUI modules that should be bootstrapped before the test is
-//   executed.
-//
-// setup (Function):
-//   Setup function to execute before each iteration of the test.
-//
-// teardown (Function):
-//   Teardown function to execute after each iteration of the test.
-//
-// test (Function):
-//   The test itself, each iteration of which will be profiled. In order to make
-//   async execution testable, the test function needs to set this.done = true
-//   when it's completely finished; until this happens, the next test cannot
-//   run and the profile timer will keep ticking.
-//
-PerfTests = {
-    "YUI().use()": {
-        test: function () {
-            var that = this;
-            YUI().use(function (Y) {
-                that.done = true;
-            });
-        }
-    },
+    CHART_URL  = 'http://chart.apis.google.com/chart?';
 
-    "YUI().use('anim', 'io', 'json', 'node')": {
-        bootstrap: ['anim', 'io', 'json', 'node'],
-
-        test: function () {
-            var that = this;
-            YUI().use('anim', 'io', 'json', 'node', function (Y) {
-                that.done = true;
-            });
-        }
-    },
-
-    "TabView with 3 tabs": {
-        bootstrap: ['tabview'],
-
-        teardown: function () {
-            Y.one('#container').get('children').remove();
-        },
-
-        test: function () {
-            var that = this;
-            YUI().use('tabview', function(Y) {
-                var tabview = new Y.TabView({
-                    children: [{
-                        label: 'foo',
-                        content: '<p>foo content</p>'
-                    }, {
-                        label: 'bar',
-                        content: '<p>bar content</p>'
-                    }, {
-                        label: 'baz',
-                        content: '<p>baz content</p>'
-                    }]
-                });
-
-                tabview.render('#container');
-                that.done = true;
-            });
-        }
-    }
-},
-
-Perf = {
-    render: function (parent) {
-        var report = Profiler.getFullReport(),
-            table,
-            tbody;
-
-        parent = Y.one(parent);
-        table  = Y.Node.create(
-            '<table class="yui3-perf-results">' +
-                '<thead>' +
-                    '<tr>' +
-                        '<th class="test">Test</th>' +
-                        '<th class="calls">Calls</th>' +
-                        '<th class="mean">Mean</th>' +
-                        '<th class="median">Median</th>' +
-                        '<th class="max">Max</th>' +
-                        '<th class="min">Min</th>' +
-                        '<th class="mediandev"><abbr title="Median Absolute Deviation">Med. Dev.</abbr></th>' +
-                        '<th class="stdev"><abbr title="Standard Deviation">Std. Dev.</abbr></th>' +
-                    '</tr>' +
-                '</thead>' +
-                '<tfoot></tfoot>' +
-                '<tbody></tbody>' +
-            '</table>'
-        );
-
-        tbody = table.one('tbody');
-
-        Y.Object.each(report, function (results, name) {
-            results = Y.merge(results, analyze(results.points));
-
-            Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
-                results[key] = results[key].toFixed(2);
-            });
-
-            tbody.append(Y.substitute(
-                '<tr>' +
-                    '<td class="test">{name}</td>' +
-                    '<td class="calls">{calls}</td>' +
-                    '<td class="mean">{mean}</td>' +
-                    '<td class="median">{median}</td>' +
-                    '<td class="max">{max}</td>' +
-                    '<td class="min">{min}</td>' +
-                    '<td class="mediandev">±{mediandev}</td>' +
-                    '<td class="stdev">±{stdev}</td>' +
-                '</tr>',
-                Y.merge(results, {name:name})
-            ));
-        });
-
-        parent.removeClass('loading').setContent('').append(table);
-    },
-
-    start: function () {
-        var active,
-            queue = [],
-            runTest;
-
-        Profiler.clear();
-
-        // Queue up as many iterations of each test as are desired.
-        Y.Object.each(PerfTests, function (test, name) {
-            var i = iterations;
-
-            while (i--) {
-                queue.push({name: name, test: test});
-            }
-        });
-
-        // Processes a single test that has been shifted off the queue.
-        runTest = function () {
-            active.test.done = false;
-
-            if (active.test.setup) {
-                active.test.setup.call(active.test);
-            }
-
-            // Profiling is started here and ended in the poll function below
-            // when the test function indicates its own completion.
-            Profiler.start(active.name);
-            active.test.test.call(active.test);
-        };
-
-        // This poll function monitors test status and takes care of shifting
-        // the next test off the queue when the active test finishes. In good
-        // browsers, we use a 0ms interval to ensure that the poll runs as often
-        // as possible; in IE, we have to use a 1ms interval or the poll won't
-        // actually execute.
-        //
-        // This is a compromise between profiling accuracy and the ability to
-        // reliably test async operations.
-        poll = Y.later(Y.UA.ie ? 1 : 0, null, function () {
-            if (!active || active.test.done) {
-                if (active && active.test.done) {
-                    Profiler.stop(active.name);
-
-                    if (active.test.teardown) {
-                        active.test.teardown.call(active.test);
-                    }
-                }
-
-                active = queue.shift();
-
-                if (active) {
-                    if (active.test.bootstrap) {
-                        bootstrap.call(window, active.test.bootstrap);
-                    }
-
-                    runTest();
-                } else {
-                    poll.cancel();
-                    Perf.render('#results');
-                }
-            }
-        }, null, true);
-    }
-},
+// -- Private Methods ----------------------------------------------------------
 
 // Returns an object hash containing the mean, median, sample variance,
 // sample standard deviation, and median absolute deviation of the values in the
 // specified array.
-analyze = function (set) {
+function analyze(set) {
     var i,
         len = set.length,
+        max,
         mean,
+        min,
         sum = 0,
+        value,
         variance;
 
-    // Find the sum.
-    for (i = len; i--; sum += set[i]); // no block
+    // Find the sum, max, and min.
+    i = len;
+
+    while (i--) {
+        value = set[i];
+        sum += value;
+
+        if (!max || value > max) {
+            max = value;
+        }
+
+        if (!min || value < min) {
+            min = value;
+        }
+    }
 
     // And the mean.
     mean = sum / len;
@@ -219,35 +54,34 @@ analyze = function (set) {
     variance = sum / (len - 1);
 
     return {
+        max      : max,
         mean     : mean,
         median   : median(set),
         mediandev: medianDeviation(set),
+        min      : min,
         variance : variance,
         stdev    : Math.sqrt(variance)
     };
-},
+}
 
-// Bootstraps the specified modules and their dependencies to ensure that module
-// load times won't pollute our profiling data.
-bootstrap = function (args) {
-    var loaded = false;
+// Creates a query string based on the specified object of name/value params.
+function createQueryString(params) {
+    var _params = [];
 
-    args = [].concat(args || []); // ensure copy, not reference
-
-    args.push(function (Y) {
-        loaded = true;
+    Y.Object.each(params, function (value, key) {
+        if (Y.Lang.isValue(value)) {
+            _params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+        }
     });
 
-    YUI().use.apply(YUI, args);
-
-    while (!loaded) {}
-},
+    return _params.join('&amp;');
+}
 
 // Returns the median of the values in the specified array. This implementation
 // is naïve and does a full sort before finding the median; if we ever start
 // working with very large arrays, this should be rewritten to use a linear
 // selection algorithm.
-median = function (set) {
+function median(set) {
     var len    = set.length,
         sorted = [].concat(set), // copy
         middle;
@@ -266,23 +100,192 @@ median = function (set) {
         middle = sorted.splice(len / 2 - 1, 2);
         return (middle[0] + middle[1]) / 2;
     }
-},
+}
 
 // Returns the median absolute deviation of the values in the specified array.
-medianDeviation = function (set) {
+function medianDeviation(set) {
     var deviations = [],
-        i,
+        i          = set.length,
         setMedian  = median(set);
 
     // Find the absolute deviations from the median of the set.
-    for (i = set.length; i--; deviations.push(Math.abs(set[i] - setMedian))); // no block
+    while (i--) {
+        deviations.push(Math.abs(set[i] - setMedian));
+    }
 
     // The median of the deviations is the median absolute deviation.
     return median(deviations);
+}
+
+Perf = Y.Performance = {
+    // -- Protected Properties -------------------------------------------------
+    _tests: {},
+    _results: {},
+
+    // -- Public Methods -------------------------------------------------------
+    addTests: function (tests) {
+        // Give each test a unique id and add it to _tests.
+        Obj.each(tests, function (test, name) {
+            Perf._tests[name] = test;
+            Perf._tests[name]._id = Y.guid('perf-');
+        });
+    },
+
+    render: function (parent) {
+        var table,
+            tbody;
+
+        parent = Y.one(parent);
+        table  = Y.Node.create(
+            '<table class="yui3-perf-results">' +
+                '<thead>' +
+                    '<tr>' +
+                        '<th class="test">Test</th>' +
+                        '<th class="calls">Calls</th>' +
+                        '<th class="mean">Mean</th>' +
+                        '<th class="median">Median</th>' +
+                        '<th class="mediandev"><abbr title="Median Absolute Deviation">Med. Dev.</abbr></th>' +
+                        '<th class="stdev"><abbr title="Standard Deviation">Std. Dev.</abbr></th>' +
+                        '<th class="max">Max</th>' +
+                        '<th class="min">Min</th>' +
+                    '</tr>' +
+                '</thead>' +
+                '<tfoot></tfoot>' +
+                '<tbody></tbody>' +
+            '</table>'
+        );
+
+        tbody = table.one('tbody');
+
+        Y.Object.each(Perf._results, function (results, name) {
+            var chartParams = {
+                    cht: 'ls',
+                    chd: 't:' + results.points.join(','),
+                    chf: 'bg,s,00000000', // transparent background
+                    chs: '100x20'
+                };
+
+            results = Y.merge(results, analyze(results.points), {name: name});
+
+            Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
+                results[key] = results[key].toFixed(2);
+            });
+
+            tbody.append(Y.substitute(
+                '<tr>' +
+                    '<td class="test">{name} <img src="{chartUrl}" alt="Sparkline chart illustrating execution times."></td>' +
+                    '<td class="calls">{calls}</td>' +
+                    '<td class="mean">{mean}</td>' +
+                    '<td class="median">{median}</td>' +
+                    '<td class="mediandev">±{mediandev}</td>' +
+                    '<td class="stdev">±{stdev}</td>' +
+                    '<td class="max">{max}</td>' +
+                    '<td class="min">{min}</td>' +
+                '</tr>',
+                Y.merge(results, {chartUrl: CHART_URL + createQueryString(chartParams)})
+            ));
+        });
+
+        parent.removeClass('loading').setContent('').append(table);
+    },
+
+    start: function () {
+        var active,
+            queue     = [],
+            runTest,
+            sandboxes = [];
+
+        Perf._results = {};
+
+        // Queue up as many iterations of each test as are desired.
+        Obj.each(Perf._tests, function (test, name) {
+            var i = test.iterations || 1,
+                prevTest,
+                sandbox;
+
+            while (i--) {
+                // Use one sandbox per test, regardless of iterations, unless
+                // the useStrictSandbox option is true.
+                if (!test.useStrictSandbox && prevTest && prevTest.name === name) {
+                    sandbox = prevTest.sandbox;
+                } else {
+                    sandboxes.push(sandbox = new Y.Sandbox({bootstrapYUI: !test.noBootstrap}));
+
+                    if (test.preload) {
+                        sandbox.preload(test.preload);
+                    }
+                }
+
+                queue.push(prevTest = {
+                    name   : name,
+                    sandbox: sandbox,
+                    test   : test
+                });
+            }
+        });
+
+        // Processes a single test that has been shifted off the queue.
+        runTest = function () {
+            var activeTest = active.test;
+
+            if (isFunction(activeTest.setup)) {
+                active.sandbox.run(activeTest.setup);
+            }
+
+            active.sandbox.profile(activeTest.test);
+        };
+
+        // This poll function monitors test status and takes care of shifting
+        // the next test off the queue when the active test finishes. In good
+        // browsers, we use a 0ms interval to ensure that the poll runs as often
+        // as possible; in IE, we have to use a 1ms interval or the poll won't
+        // actually execute.
+        //
+        // This is a compromise between profiling accuracy and the ability to
+        // reliably test async operations.
+        poll = Y.later(Y.UA.ie ? 1 : 1, null, function () {
+            var results = Perf._results;
+
+            if (active) {
+                if (active.sandbox.getEnvValue('endTime')) {
+                    if (isFunction(active.test.teardown)) {
+                        active.sandbox.run(active.test.teardown);
+                    }
+
+                    results[active.name] = results[active.name] || {
+                        calls : 0,
+                        points: []
+                    };
+
+                    results[active.name].calls += 1;
+                    results[active.name].points.push(
+                            active.sandbox.getEnvValue('endTime') - active.sandbox.getEnvValue('startTime'));
+
+                    active = null;
+                }
+            }
+
+            if (!active) {
+                active = queue.shift();
+
+                if (active) {
+                    runTest();
+                } else {
+                    // Queue is empty.
+                    poll.cancel();
+
+                    Y.Array.each(sandboxes, function (sandbox) {
+                        sandbox.destroy();
+                    });
+
+                    sandboxes = [];
+                    Perf.render('#results');
+                }
+            }
+        }, null, true);
+    }
 };
 
-Y.Performance = Perf;
-
 }, '1.0.0', {
-    requires: ['later', 'node', 'profiler', 'substitute']
+    requires: ['later', 'node', 'sandbox', 'substitute']
 });

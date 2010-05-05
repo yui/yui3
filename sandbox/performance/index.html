@@ -21,10 +21,17 @@
 
 <div id="container"></div>
 
-<script src="../../build/yui/yui.js"></script>
+<script src="../../build/yui/yui-min.js"></script>
+<script src="js/sandbox.js"></script>
 <script src="js/performance.js"></script>
+<script src="tests/instantiation.js"></script>
 <script>
-var Y = YUI({filter: 'raw'}).use('event-base', 'performance', function (Y) {
+// var Y = YUI().use('sandbox', function (Y) {
+//     foo = new Y.Sandbox();
+//     foo.run('alert(YUI);');
+// });
+
+var Y = YUI().use('event-base', 'performance', 'perf-instantiation', function (Y) {
     Y.on('click', function () {
         Y.one('#results').addClass('loading').setContent('');
         Y.Performance.start();
