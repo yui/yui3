@@ -15,17 +15,22 @@ VMLGraphics.prototype = {
         this._fillColor = '#000000';
         this._strokeColor = '#000000';
         this._strokeWeight = 0;
+
         this._path = '';
-        this._shapes = [];
+
         this._width = 0;
         this._height = 0;
         this._x = 0;
         this._y = 0;
+
+        this._fill = 0;
         this._stroke = 0;
     },
 
     _createGraphics: function() {
-        return Y.config.doc.createElement('v:group');
+        var group = Y.config.doc.createElement('v:group');
+        group.style.position = 'relative';
+        return group;
     },
 
     beginBitmapFill: function() {
@@ -36,6 +41,7 @@ VMLGraphics.prototype = {
     beginFill: function(color, alpha) {
         if (color) {
             this._fillColor = color;
+            this._fill = 1;
         }
 
         if (alpha) {
@@ -45,8 +51,18 @@ VMLGraphics.prototype = {
         return this;
     },
 
-    beginGradientFill: function() {
-        Y.log('gradientFill not implemented', 'warn', 'graphics-vml');
+    beginGradientFill: function(type, colors, alphas, ratios, rotation) {
+        var fill = {},
+            i = 1,
+            len = colors.length;
+
+        fill.type = "linear" ? "gradient" : "GradientRadial";
+        fill.color = colors[0];
+        for(;i < len; ++i) {
+            fill["color" + (i + 1)] = colors[i];
+        }
+        fill.angle = rotation;
+        this._fillProps = fill;
         return this;
     },
 
@@ -100,22 +116,40 @@ VMLGraphics.prototype = {
     endFill: function() {
         var shape = Y.config.doc.createElement('v:shape'),
             w = this._width,
-            h = this._height;
+            h = this._height,
+            fillProps = this._fillProps,
+            prop,
+            fill;
 
         this._path += ' x e';
 
         shape.style.position = 'absolute';
         shape.path = this._path;
-        shape.fillColor = this._fillColor;
+
+        if (this._fill) {
+            shape.fillColor = this._fillColor;
+        }
 
         if (this._stroke) {
             shape.strokeColor = this._strokeColor;
             shape.strokeWeight = this._strokeWeight;
         }
+
         shape.style.width = w + 'px';
         shape.style.height = h + 'px';
         shape.coordSize = w + ', ' + h;
 
+        if (fillProps) {
+            fill = document.createElement('v:fill');
+
+            for (prop in fillProps) {
+                if(fillProps.hasOwnProperty(prop)) {
+                    fill[prop] = fillProps[prop];
+                }
+            }
+
+            shape.appendChild(fill);
+        }
         this._vml.appendChild(shape);
         this._initProps();
         return this;

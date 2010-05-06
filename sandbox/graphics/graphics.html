@@ -59,8 +59,9 @@ YUI({filter:'raw'}).use('graphics-canvas', 'graphics-vml', function(Y) {
     graphics.drawRect(40, 40, 400, 300);
     graphics.endFill();
 
-    graphics.beginFill('red');
-    graphics.drawRect(460, 40, 400, 300);
+    //graphics.beginFill('red');
+    graphics.beginGradientFill("linear", ["#ffeecc", "#ffff00"], [], [0, 1], 315);
+    graphics.drawRect(460, 40, 100, 200);
     graphics.endFill();
     
     /*
