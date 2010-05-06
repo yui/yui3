@@ -34,38 +34,14 @@ Sandbox.prototype = {
 
     destroy: function () {
         delete GlobalEnv[this.id];
-        this._iframe.parentNode.removeChild(this._iframe);
+
+        if (this._iframe && this._iframe.parentNode) {
+            this._iframe.parentNode.removeChild(this._iframe);
+        }
     },
 
     getEnvValue: function (key) {
         return GlobalEnv[this.id][key];
-    },
-
-    preload: function (urls) {
-        var i, 
-            ie        = !!Y.UA.ie,
-            iframeDoc = this._iframe.contentWindow.document,
-            len,
-            obj;
-
-        urls = Lang.isArray(urls) ? urls : [urls];
-
-        // Based on a technique described by Stoyan Stefanov:
-        // http://www.phpied.com/preload-cssjavascript-without-execution/
-        for (i = 0, len = urls.length; i < len; ++i) {
-            if (ie) {
-                this.run('new Image().src = "' + urls[i] + '";');
-                continue;
-            }
-
-            obj = iframeDoc.createElement('object');
-
-            obj.data   = urls[i];
-            obj.width  = 0;
-            obj.height = 0;
-
-            iframeDoc.body.appendChild(obj);
-        }
     },
 
     profile: function (script) {
