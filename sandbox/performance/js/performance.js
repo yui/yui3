@@ -7,8 +7,6 @@ var Node       = Y.Node,
     Perf,
 
     isFunction = Y.Lang.isFunction,
-
-    // iterations = Y.UA.ie && Y.UA.ie < 9 ? 20 : 40,
     poll,
 
     CHART_URL  = 'http://chart.apis.google.com/chart?';
@@ -21,9 +19,9 @@ var Node       = Y.Node,
 function analyze(set) {
     var i,
         len = set.length,
-        max,
+        max = null,
         mean,
-        min,
+        min = null,
         sum = 0,
         value,
         variance;
@@ -35,11 +33,11 @@ function analyze(set) {
         value = set[i];
         sum += value;
 
-        if (!max || value > max) {
+        if (max === null || value > max) {
             max = value;
         }
 
-        if (!min || value < min) {
+        if (min === null || value < min) {
             min = value;
         }
     }
@@ -117,6 +115,33 @@ function medianDeviation(set) {
     return median(deviations);
 }
 
+function xhrGet(url) {
+    if (typeof XMLHttpRequest === 'undefined') {
+        window.XMLHttpRequest = function () {
+            try {
+                return new ActiveXObject('Msxml2.XMLHTTP.6.0');
+            } catch (ex) {}
+
+            try {
+                return new ActiveXObject('Msxml2.XMLHTTP.3.0');
+            } catch (ex) {}
+
+            try {
+                return new ActiveXObject('Msxml2.XMLHTTP');
+            } catch (ex) {}
+
+            Y.error('This browser does not support XMLHttpRequest.');
+        };
+    }
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.open('GET', url, false);
+    xhr.send(null);
+
+    return xhr.status === 200 ? xhr.responseText : null;
+}
+
 Perf = Y.Performance = {
     // -- Protected Properties -------------------------------------------------
     _tests: {},
@@ -145,7 +170,7 @@ Perf = Y.Performance = {
                         '<th class="mean">Mean</th>' +
                         '<th class="median">Median</th>' +
                         '<th class="mediandev"><abbr title="Median Absolute Deviation">Med. Dev.</abbr></th>' +
-                        '<th class="stdev"><abbr title="Standard Deviation">Std. Dev.</abbr></th>' +
+                        '<th class="stdev"><abbr title="Sample Standard Deviation">Std. Dev.</abbr></th>' +
                         '<th class="max">Max</th>' +
                         '<th class="min">Min</th>' +
                     '</tr>' +
@@ -203,6 +228,10 @@ Perf = Y.Performance = {
                 prevTest,
                 sandbox;
 
+            if (test.warmup) {
+                i += 1;
+            }
+
             while (i--) {
                 // Use one sandbox per test, regardless of iterations, unless
                 // the useStrictSandbox option is true.
@@ -210,16 +239,14 @@ Perf = Y.Performance = {
                     sandbox = prevTest.sandbox;
                 } else {
                     sandboxes.push(sandbox = new Y.Sandbox({bootstrapYUI: !test.noBootstrap}));
-
-                    if (test.preload) {
-                        sandbox.preload(test.preload);
-                    }
+                    sandbox.setEnvValue('xhrGet', xhrGet);
                 }
 
                 queue.push(prevTest = {
                     name   : name,
                     sandbox: sandbox,
-                    test   : test
+                    test   : test,
+                    warmup : test.warmup && !(test.warmup = false) // intentional assignment, sets warmup to false for future iterations
                 });
             }
         });
@@ -236,14 +263,11 @@ Perf = Y.Performance = {
         };
 
         // This poll function monitors test status and takes care of shifting
-        // the next test off the queue when the active test finishes. In good
-        // browsers, we use a 0ms interval to ensure that the poll runs as often
-        // as possible; in IE, we have to use a 1ms interval or the poll won't
-        // actually execute.
+        // the next test off the queue when the active test finishes. 
         //
-        // This is a compromise between profiling accuracy and the ability to
-        // reliably test async operations.
-        poll = Y.later(Y.UA.ie ? 1 : 1, null, function () {
+        // Since test timing is actually done inside the test sandbox, this poll
+        // doesn't influence the test results.
+        poll = Y.later(15, null, function () {
             var results = Perf._results;
 
             if (active) {
@@ -252,14 +276,20 @@ Perf = Y.Performance = {
                         active.sandbox.run(active.test.teardown);
                     }
 
-                    results[active.name] = results[active.name] || {
-                        calls : 0,
-                        points: []
-                    };
+                    if (!active.warmup) {
+                        results[active.name] = results[active.name] || {
+                            calls : 0,
+                            points: []
+                        };
 
-                    results[active.name].calls += 1;
-                    results[active.name].points.push(
-                            active.sandbox.getEnvValue('endTime') - active.sandbox.getEnvValue('startTime'));
+                        results[active.name].calls += 1;
+                        results[active.name].points.push(
+                                active.sandbox.getEnvValue('endTime') - active.sandbox.getEnvValue('startTime'));
+                    }
+
+                    if (active.test.useStrictSandbox) {
+                        active.sandbox.destroy();
+                    }
 
                     active = null;
                 }

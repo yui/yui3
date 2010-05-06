@@ -17,37 +17,24 @@ YUI.add('perf-instantiation', function (Y) {
 //
 Y.Performance.addTests({
 
-/*
     "yui-min.js parse/execution time": {
         iterations: 10,
 
         // Don't bootstrap YUI by default.
         noBootstrap: true,
 
-        // // Preload yui-min.js, but don't execute it.
-        // preload: [
-        //     '../../build/yui/yui-min.js'
-        // ],
-
         // Run each iteration in a new sandbox.
         useStrictSandbox: true,
 
         setup: function () {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '../../build/yui/yui-min.js', false);
-            xhr.send(null);
-
-            if (xhr.status == 200) {
-                window.yuiScript = xhr.responseText;
-            }
+            window.yuiScript = sandbox.xhrGet('../../build/yui/yui-min.js');
         },
 
         test: function () {
             eval(yuiScript);
+            profileStop();
         }
     },
-*/
-
 
     "YUI().use()": {
         iterations: Y.UA.ie ? 20 : 40,
@@ -59,11 +46,12 @@ Y.Performance.addTests({
         }
     },
 
-    "YUI().use('anim', 'io', 'json', 'node')": {
+    "YUI().use('anim', 'event', 'io', 'json', 'node')": {
         iterations: Y.UA.ie ? 20 : 40,
+        warmup: true,
 
         test: function () {
-            YUI().use('anim', 'io', 'json', 'node', function (Y) {
+            YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
                 profileStop();
             });
         }
@@ -71,6 +59,16 @@ Y.Performance.addTests({
 
     "TabView with 3 tabs": {
         iterations: Y.UA.ie ? 20 : 40,
+        warmup: true,
+
+        setup: function () {
+            window.tabViewContainer = document.body.appendChild(
+                    document.createElement('div'));
+        },
+
+        teardown: function () {
+            document.body.removeChild(window.tabViewContainer);
+        },
 
         test: function () {
             YUI().use('tabview', function(Y) {
@@ -87,7 +85,7 @@ Y.Performance.addTests({
                     }]
                 });
 
-                tabview.render();
+                tabview.render(window.tabViewContainer);
                 profileStop();
             });
         }
