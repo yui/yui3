@@ -57,7 +57,7 @@ Y.Performance.addTests({
 
         test: function () {
             eval(yuiScript);
-            profileStop();
+            done();
         }
     },
 
@@ -79,7 +79,7 @@ Y.Performance.addTests({
 
         test: function () {
             eval(yuiScript);
-            profileStop();
+            done();
         }
     },
 
@@ -88,7 +88,7 @@ Y.Performance.addTests({
 
         test: function () {
             YUI().use(function (Y) {
-                profileStop();
+                done();
             });
         }
     },
@@ -99,7 +99,7 @@ Y.Performance.addTests({
 
         test: function () {
             YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
-                profileStop();
+                done();
             });
         }
     },
@@ -133,7 +133,7 @@ Y.Performance.addTests({
                 });
 
                 tabview.render(window.tabViewContainer);
-                profileStop();
+                done();
             });
         }
     }

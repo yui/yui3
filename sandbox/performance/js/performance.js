@@ -201,6 +201,34 @@ Perf = Y.Performance = {
         ));
     },
 
+    // Executes tests as many times as possible within 1 second rather than
+    // timing multiple iterations. Currently doesn't work in Firefox.
+    startTimed: function () {
+        var results = {};
+
+        this.clear();
+        this._table && this._table.addClass('running');
+
+        Obj.each(Perf._tests, function (test, name) {
+            var sandbox = new Y.Sandbox({bootstrapYUI: !test.noBootstrap});
+
+            sandbox.setEnvValue('xhrGet', xhrGet);
+
+            if (isFunction(test.setup)) {
+                if (sandbox.run(test.setup) === false) {
+                    // Setup function returned false, so abort the test.
+                    Y.log('Test "' + name + '" failed.', 'warn', 'performance');
+                    return;
+                }
+            }
+
+            results[name] = sandbox.count(test.test, test.duration || 1000);
+            sandbox.destroy();
+        });
+
+        console.log(results);
+    },
+
     start: function () {
         var active,
             queue     = [],

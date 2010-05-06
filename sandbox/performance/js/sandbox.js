@@ -34,6 +34,24 @@ Sandbox.prototype = {
         delete env.profileStop;
     },
 
+    count: function (script, duration) {
+        var env       = GlobalEnv[this.id],
+            iframeWin = this._iframe.contentWindow,
+            now,
+            run       = env.run,
+            start;
+
+        script = this._getCountedScript(script);
+        start = now = new Date().getTime();
+
+        while (now - start < duration) {
+            run(script);
+            now = new Date().getTime();
+        }
+
+        return env.runs || 0;
+    },
+
     destroy: function () {
         delete GlobalEnv[this.id];
 
@@ -127,8 +145,14 @@ Sandbox.prototype = {
         this._iframe = iframe;
     },
 
+    _getCountedScript: function (script) {
+        return 'done = function () { sandbox.runs += 1; };' +
+               'sandbox.runs = sandbox.runs || 0;' +
+               this._getScript(script);
+    },
+
     _getProfiledScript: function (script) {
-        return 'profileStop = function () { sandbox.endTime = new Date().getTime(); };' +
+        return 'done = function () { sandbox.endTime = new Date().getTime(); };' +
                'sandbox.startTime=new Date().getTime();' +
                this._getScript(script);
     },
