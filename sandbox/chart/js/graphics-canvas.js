@@ -324,6 +324,10 @@ Graphic.prototype = {
     lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
         color = color || '#000000';
         var context = this._context;
+        if(this._stroke)
+        {
+            context.stroke();
+        }
         context.lineWidth = thickness;
 
         if (thickness) {

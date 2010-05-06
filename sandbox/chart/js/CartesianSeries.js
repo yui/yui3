@@ -189,7 +189,16 @@ CartesianSeries.ATTRS = {
 			return value;
 		}
 	},
-	/**
+    
+    /**
+     * Determines which axis property will define the bounds of the series.
+     *  <ul>
+     *      <li><code>data</code>: Maximum and minimum values are determined by the values of the datasource.</li>
+     *      <li><code>axis</code>: Maximum and minimum values are determined by the <code>Axis</code> setting.</li>
+     *  </ul>
+     */
+
+    /**
 	 * The graphic in which the line series will be rendered.
 	 */
 	graphic: {
@@ -367,15 +376,25 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			yData = this.get("yAxis").getDataByKey(yKey),
 			dataLength = xData.length, 	
 			midY = dataHeight/2,
-			i;
-		for (i = 0; i < dataLength; ++i) 
+			areaMin = leftPadding,
+            areaMax = Math.round(0.5 + (((xMax - xMin) * xScaleFactor) + leftPadding)),
+            i;
+        for (i = 0; i < dataLength; ++i) 
 		{
 			nextX = Math.round(0.5 + (((xData[i] - xMin) * xScaleFactor) + leftPadding));
 			nextY = Math.round(0.5 +((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
-			xcoords.push(nextX);
-			ycoords.push(nextY);
-		}
-		this.set("xcoords", xcoords);
+            if(nextX > areaMax)
+            {
+                break;
+            }
+            if(nextX > areaMin)
+            {
+                xcoords.push(nextX);
+			    ycoords.push(nextY);
+		    }
+        }
+        
+        this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
 	},
 
@@ -396,8 +415,8 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			styleChange = this.checkStyleFlags(),
 			graphic = this.get("graphic"),
             parent = this.get("parent"),
-			w = parseInt(parent.style.width, 10),
-			h = parseInt(parent.style.height, 10),
+			w = parent.offsetWidth,
+            h = parent.offsetHeight,
 			xAxis = this.get("xAxis"),
 			yAxis = this.get("yAxis");
 

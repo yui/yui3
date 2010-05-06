@@ -323,6 +323,10 @@ Graphic.prototype = {
     lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
         color = color || '#000000';
         var context = this._context;
+        if(this._stroke)
+        {
+            context.stroke();
+        }
         context.lineWidth = thickness;
 
         if (thickness) {
@@ -1190,6 +1194,39 @@ function TimeAxis(config)
 
 TimeAxis.NAME = "timeAxis";
 
+TimeAxis.ATTRS = 
+{
+    maximum: {
+		getter: function ()
+		{
+			if(this._autoMax) 
+			{
+				return this._dataMaximum;
+			}
+			return this._setMaximum;
+		},
+		setter: function (value)
+		{
+			this._setMaximum = this._getNumber(value);
+		}
+    },
+
+    minimum: {
+		getter: function ()
+		{
+			if(this._autoMin) 
+			{
+				return this._dataMinimum;
+			}
+			return this._setMinimum;
+		},
+		setter: function (value)
+		{
+			this._setMinimum = this._getNumber(value);
+		}
+    }
+};
+
 Y.extend(TimeAxis, Y.BaseAxis, {
 	/**
 	 * @private
@@ -1226,7 +1263,21 @@ Y.extend(TimeAxis, Y.BaseAxis, {
 		}
 		this._keys[key] = arr;
 		this._data = this._data.concat(arr);
-	}
+	},
+
+    _getNumber: function(val)
+    {
+        if(Y.Lang.isDate(val))
+        {
+            val = val.valueOf();
+        }
+        else if(!Y.Lang.isNumber(val))
+        {
+            val = new Date(val.toString()).valueOf();
+        }
+
+        return val;
+    }
 
 });
 
@@ -1295,7 +1346,8 @@ Y.CategoryAxis = CategoryAxis;
 		
 function Renderer(config)
 {
-	Renderer.superclass.constructor.apply(this, arguments);
+	this._createId();
+    Renderer.superclass.constructor.apply(this, arguments);
 }
 
 Renderer.NAME = "renderer";
@@ -1395,7 +1447,17 @@ Renderer.ATTRS = {
 };
 
 Y.extend(Renderer, Y.Base, {
-	_width: 0,
+	/**
+	 * Creates unique id for class instance.
+	 *
+	 * @private
+	 */
+	_createId: function()
+	{
+		this._id = Y.guid(this.GUID);
+	},
+	
+    _width: 0,
 
 	_height: 0,
 
@@ -1797,7 +1859,16 @@ CartesianSeries.ATTRS = {
 			return value;
 		}
 	},
-	/**
+    
+    /**
+     * Determines which axis property will define the bounds of the series.
+     *  <ul>
+     *      <li><code>data</code>: Maximum and minimum values are determined by the values of the datasource.</li>
+     *      <li><code>axis</code>: Maximum and minimum values are determined by the <code>Axis</code> setting.</li>
+     *  </ul>
+     */
+
+    /**
 	 * The graphic in which the line series will be rendered.
 	 */
 	graphic: {
@@ -1975,15 +2046,25 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			yData = this.get("yAxis").getDataByKey(yKey),
 			dataLength = xData.length, 	
 			midY = dataHeight/2,
-			i;
-		for (i = 0; i < dataLength; ++i) 
+			areaMin = leftPadding,
+            areaMax = Math.round(0.5 + (((xMax - xMin) * xScaleFactor) + leftPadding)),
+            i;
+        for (i = 0; i < dataLength; ++i) 
 		{
 			nextX = Math.round(0.5 + (((xData[i] - xMin) * xScaleFactor) + leftPadding));
 			nextY = Math.round(0.5 +((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
-			xcoords.push(nextX);
-			ycoords.push(nextY);
-		}
-		this.set("xcoords", xcoords);
+            if(nextX > areaMax)
+            {
+                break;
+            }
+            if(nextX > areaMin)
+            {
+                xcoords.push(nextX);
+			    ycoords.push(nextY);
+		    }
+        }
+        
+        this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
 	},
 
@@ -2004,8 +2085,8 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			styleChange = this.checkStyleFlags(),
 			graphic = this.get("graphic"),
             parent = this.get("parent"),
-			w = parseInt(parent.style.width, 10),
-			h = parseInt(parent.style.height, 10),
+			w = parent.offsetWidth,
+            h = parent.offsetHeight,
 			xAxis = this.get("xAxis"),
 			yAxis = this.get("yAxis");
 
@@ -2235,6 +2316,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			lastX = lastValidX = nextX;
 			lastY = lastValidY = nextY;
 		}
+        graphic.lineStyle(0);
         graphic.lineTo(lastX, ht);
         graphic.lineTo(0, ht);
         graphic.lineTo(0, ycoords[0]);
