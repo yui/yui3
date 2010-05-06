@@ -13,27 +13,17 @@
     <button id="start">Start Tests</button>
 </p>
 
-<div id="results">
-    <p>
-    Click the button to gather results.
-    </p>
-</div>
-
-<div id="container"></div>
+<div id="results"></div>
 
 <script src="../../build/yui/yui-min.js"></script>
 <script src="js/sandbox.js"></script>
 <script src="js/performance.js"></script>
 <script src="tests/instantiation.js"></script>
 <script>
-// var Y = YUI().use('sandbox', function (Y) {
-//     foo = new Y.Sandbox();
-//     foo.run('alert(YUI);');
-// });
-
 var Y = YUI().use('event-base', 'performance', 'perf-instantiation', function (Y) {
+    Y.Performance.render('#results');
+
     Y.on('click', function () {
-        Y.one('#results').addClass('loading').setContent('');
         Y.Performance.start();
     }, '#start');
 });

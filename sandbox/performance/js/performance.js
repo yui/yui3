@@ -156,12 +156,17 @@ Perf = Y.Performance = {
         });
     },
 
-    render: function (parent) {
-        var table,
-            tbody;
+    clear: function () {
+        Perf._results = {};
 
-        parent = Y.one(parent);
-        table  = Y.Node.create(
+        if (this._table) {
+            this._table.one('tbody').get('children').remove();
+        }
+    },
+
+    render: function (parent) {
+        parent = Y.one(parent || Y.config.doc.body);
+        parent.append(this._table = Y.Node.create(
             '<table class="yui3-perf-results">' +
                 '<thead>' +
                     '<tr>' +
@@ -175,43 +180,40 @@ Perf = Y.Performance = {
                         '<th class="min">Min</th>' +
                     '</tr>' +
                 '</thead>' +
-                '<tfoot></tfoot>' +
-                '<tbody></tbody>' +
+                '<tfoot><tr><td colspan="8"></td></tr></tfoot>' +
+                '<tbody>' +
+                    '<tr>' +
+                        '<td colspan="8">' +
+                            '<p>Click the button to gather results.</p>' +
+                        '</td>' +
+                    '</tr>' +
+                '</tbody>' +
             '</table>'
-        );
+        ));
+    },
 
-        tbody = table.one('tbody');
+    _renderTestResult: function (result) {
+        var chartParams = {
+                cht: 'ls',
+                chd: 't:' + result.points.join(','),
+                chf: 'bg,s,00000000', // transparent background
+                chs: '100x20'
+            };
 
-        Y.Object.each(Perf._results, function (results, name) {
-            var chartParams = {
-                    cht: 'ls',
-                    chd: 't:' + results.points.join(','),
-                    chf: 'bg,s,00000000', // transparent background
-                    chs: '100x20'
-                };
+        this._table.one('tbody').append(Y.substitute(
+            '<tr>' +
+                '<td class="test">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></td>' +
+                '<td class="calls">{calls}</td>' +
+                '<td class="mean">{mean}</td>' +
+                '<td class="median">{median}</td>' +
+                '<td class="mediandev">±{mediandev}</td>' +
+                '<td class="stdev">±{stdev}</td>' +
+                '<td class="max">{max}</td>' +
+                '<td class="min">{min}</td>' +
+            '</tr>',
 
-            results = Y.merge(results, analyze(results.points), {name: name});
-
-            Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
-                results[key] = results[key].toFixed(2);
-            });
-
-            tbody.append(Y.substitute(
-                '<tr>' +
-                    '<td class="test">{name} <img src="{chartUrl}" alt="Sparkline chart illustrating execution times."></td>' +
-                    '<td class="calls">{calls}</td>' +
-                    '<td class="mean">{mean}</td>' +
-                    '<td class="median">{median}</td>' +
-                    '<td class="mediandev">±{mediandev}</td>' +
-                    '<td class="stdev">±{stdev}</td>' +
-                    '<td class="max">{max}</td>' +
-                    '<td class="min">{min}</td>' +
-                '</tr>',
-                Y.merge(results, {chartUrl: CHART_URL + createQueryString(chartParams)})
-            ));
-        });
-
-        parent.removeClass('loading').setContent('').append(table);
+            Y.merge(result, {chartUrl: CHART_URL + createQueryString(chartParams)})
+        ));
     },
 
     start: function () {
@@ -220,7 +222,8 @@ Perf = Y.Performance = {
             runTest,
             sandboxes = [];
 
-        Perf._results = {};
+        this.clear();
+        this._table && this._table.addClass('running');
 
         // Queue up as many iterations of each test as are desired.
         Obj.each(Perf._tests, function (test, name) {
@@ -267,8 +270,9 @@ Perf = Y.Performance = {
         //
         // Since test timing is actually done inside the test sandbox, this poll
         // doesn't influence the test results.
-        poll = Y.later(15, null, function () {
-            var results = Perf._results;
+        poll = Y.later(15, this, function () {
+            var results = Perf._results,
+                result;
 
             if (active) {
                 if (active.sandbox.getEnvValue('endTime')) {
@@ -277,14 +281,26 @@ Perf = Y.Performance = {
                     }
 
                     if (!active.warmup) {
-                        results[active.name] = results[active.name] || {
+                        result = results[active.name] || {
                             calls : 0,
+                            name  : active.name,
                             points: []
                         };
 
-                        results[active.name].calls += 1;
-                        results[active.name].points.push(
-                                active.sandbox.getEnvValue('endTime') - active.sandbox.getEnvValue('startTime'));
+                        result.calls += 1;
+                        result.points.push(active.sandbox.getEnvValue('endTime') - active.sandbox.getEnvValue('startTime'));
+
+                        if (result.calls === active.test.iterations) {
+                            result = Y.merge(result, analyze(result.points));
+
+                            Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
+                                result[key] = result[key].toFixed(2);
+                            });
+
+                            this._renderTestResult(result);
+                        }
+
+                        results[active.name] = result;
                     }
 
                     if (active.test.useStrictSandbox) {
@@ -309,7 +325,7 @@ Perf = Y.Performance = {
                     });
 
                     sandboxes = [];
-                    Perf.render('#results');
+                    this._table && this._table.removeClass('running');
                 }
             }
         }, null, true);
