@@ -32,21 +32,21 @@ Graphic.prototype = {
         dummy.style.height = 0;
         dummy.style.width = 0;
         dummy.style.overflow = 'hidden';
-        Y.config.doc.documentElement.appendChild(dummy);
+        return Y.config.doc.documentElement.appendChild(dummy);
     },
 
     _createGraphic: function(config) {
         var graphic = Y.config.doc.createElement('canvas');
 
         // no size until drawn on
-        graphic.width = 600;
-        graphic.height = 600;
+        graphic.width = 800;
+        graphic.height = 800;
         return graphic;
     },
 
     _2RGB: function(val) {
-        this._dummy.color = val;
-        return Y.config.win.getComputedStyle(this._dummy, '').color;
+        this._dummy.style.background = val;
+        return this._dummy.style.backgroundColor;
     },
 
     beginBitmapFill: function(bitmap, matrix, repeat) {
@@ -71,6 +71,7 @@ Graphic.prototype = {
             }
 
             this._fillType = 'solid';
+            this._fillColor = color;
         }
 
         return this;
@@ -84,6 +85,7 @@ Graphic.prototype = {
         this._fillColors = colors;
         this._fillRatios = ratios;
         this._fillRotation = rotation;
+
         this._context.beginPath();
         return this;
     },
@@ -126,13 +128,14 @@ Graphic.prototype = {
 
         this._x = 0;
         this._y = 0;
+
         this._fillType = null;
         this._stroke = null;
     },
 
     clear: function() {
         this._initProps();
-        this._canvas.width = this._canvas.width;
+        this._canvas.width = this._canvas.width; // updating size clears canvas
         return this;
     },
 
@@ -165,8 +168,7 @@ Graphic.prototype = {
             .lineTo(x + w, y)
             .lineTo(x + w, y + h)
             .lineTo(x, y + h)
-            .lineTo(x, y)
-        var context = this._context;
+            .lineTo(x, y);
 
         this._trackPos(x, y);
         this._trackSize(w, h);
@@ -391,5 +393,9 @@ Graphic.prototype = {
     }
 };
 
-Y.Graphic = Graphic;
+if (!Y.Graphic) {
+    Y.log('using canvas');
+    Y.Graphic = Graphic;
+}
+
 }, '@VERSION@');
