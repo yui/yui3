@@ -4,6 +4,13 @@
             "dd-delegate", 
             "dd-drop-plugin", 
             "dd-proxy"
-        ]
+        ],
+        "submodules": {
+            "sortable-scroll": {
+                "requires": [
+                    "dd-scroll"
+                ]
+            }
+        }
     }
 }
