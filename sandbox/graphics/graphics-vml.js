@@ -52,16 +52,18 @@ VMLGraphics.prototype = {
     },
 
     beginGradientFill: function(type, colors, alphas, ratios, rotation) {
-        var fill = {},
-            i = 1,
-            len = colors.length;
+        var i = 1,
+            len = colors.length,
+            fill = {
+                type: (type === "linear") ? "gradient" : "GradientRadial",
+                color: colors[0],
+                angle: rotation
+            };
 
-        fill.type = "linear" ? "gradient" : "GradientRadial";
-        fill.color = colors[0];
         for(;i < len; ++i) {
             fill["color" + (i + 1)] = colors[i];
         }
-        fill.angle = rotation;
+
         this._fillProps = fill;
         return this;
     },
@@ -176,6 +178,8 @@ VMLGraphics.prototype = {
         this._path += ' l ';
         for (i = 0, len = args.length; i < len; ++i) {
             this._path += ' ' + args[i][0] + ', ' + args[i][1];
+
+            this._trackSize.apply(this, args[i]);
         }
 
         return this;

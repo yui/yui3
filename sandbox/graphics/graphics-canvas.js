@@ -5,24 +5,22 @@ var Graphic = function(config) {
 
 Graphic.prototype = {
     initializer: function(config) {
+        this._dummy = this._createDummy();
         this._canvas = this._createGraphic();
         this._context = this._canvas.getContext('2d');
         this._initProps();
-        this._dummy = this._createDummy();
     },
 
     _reHex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
 
     _2RGBA: function(val, alpha) {
         alpha = (alpha !== undefined) ? alpha : 1;
-
         if (this._reHex.exec(val)) {
             val = 'rgba(' + [
                 parseInt(RegExp.$1, 16),
                 parseInt(RegExp.$2, 16),
                 parseInt(RegExp.$3, 16)
             ].join(',') + ',' + alpha + ')';
-
         }
         return val;
     },
@@ -32,15 +30,16 @@ Graphic.prototype = {
         dummy.style.height = 0;
         dummy.style.width = 0;
         dummy.style.overflow = 'hidden';
-        return Y.config.doc.documentElement.appendChild(dummy);
+        Y.config.doc.documentElement.appendChild(dummy);
+        return dummy;
     },
 
     _createGraphic: function(config) {
         var graphic = Y.config.doc.createElement('canvas');
 
         // no size until drawn on
-        graphic.width = 800;
-        graphic.height = 800;
+        graphic.width = 600;
+        graphic.height = 600;
         return graphic;
     },
 
@@ -63,15 +62,15 @@ Graphic.prototype = {
     beginFill: function(color, alpha) {
         var context = this._context;
         context.beginPath();
-        
         if (color) {
-            color = this._2RGB(color);
             if (alpha) {
-                color = this._2RGBA(color, alpha);
+               color = this._2RGBA(color, alpha);
+            } else {
+                color = this._2RGB(color);
             }
 
-            this._fillType = 'solid';
             this._fillColor = color;
+            this._fillType = 'solid';
         }
 
         return this;
@@ -85,7 +84,6 @@ Graphic.prototype = {
         this._fillColors = colors;
         this._fillRatios = ratios;
         this._fillRotation = rotation;
-
         this._context.beginPath();
         return this;
     },
@@ -128,14 +126,13 @@ Graphic.prototype = {
 
         this._x = 0;
         this._y = 0;
-
         this._fillType = null;
         this._stroke = null;
     },
 
     clear: function() {
         this._initProps();
-        this._canvas.width = this._canvas.width; // updating size clears canvas
+        this._canvas.width = this._canvas.width;
         return this;
     },
 
@@ -164,11 +161,8 @@ Graphic.prototype = {
 	},
 
     drawRect: function(x, y, w, h) {
-        this.moveTo(x, y)
-            .lineTo(x + w, y)
-            .lineTo(x + w, y + h)
-            .lineTo(x, y + h)
-            .lineTo(x, y);
+        this.moveTo(x, y).lineTo(x + w, y).lineTo(x + w, y + h).lineTo(x, y + h).lineTo(x, y);
+        var context = this._context;
 
         this._trackPos(x, y);
         this._trackSize(w, h);
@@ -213,7 +207,6 @@ Graphic.prototype = {
                 fill = this._fillColor;
                 break;
         }
-
         return fill;
     },
 
@@ -319,7 +312,7 @@ Graphic.prototype = {
         if (this._stroke) {
             context.stroke();
         }
-
+        
         this._initProps();
         return this;
     },
@@ -332,6 +325,10 @@ Graphic.prototype = {
     lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
         color = color || '#000000';
         var context = this._context;
+        if(this._stroke)
+        {
+            context.stroke();
+        }
         context.lineWidth = thickness;
 
         if (thickness) {
@@ -366,7 +363,6 @@ Graphic.prototype = {
             width = this._width,
             height = this._height,
             i, len;
-
         if (typeof point1 === 'string' || typeof point1 === 'number') {
             args = [[point1, point2]];
         }
@@ -389,13 +385,11 @@ Graphic.prototype = {
     render: function(node) {
         node = node || Y.config.doc.body;
         node.appendChild(this._canvas);
+        this._canvas.width = node.offsetWidth;
+        this._canvas.height = node.offsetWidth;
         return this;
     }
 };
 
-if (!Y.Graphic) {
-    Y.log('using canvas');
-    Y.Graphic = Graphic;
-}
-
+Y.Graphic = Graphic;
 }, '@VERSION@');
