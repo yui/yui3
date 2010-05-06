@@ -2,7 +2,7 @@
 <html>
 <xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />
 <head>
-<title>Node</title>
+<title>Graphics</title>
 <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
 <script type="text/javascript" src="graphics-canvas.js"></script>
 <script type="text/javascript" src="graphics-vml.js"></script>
@@ -63,6 +63,10 @@ YUI({filter:'raw'}).use('graphics-vml', 'graphics-canvas', function(Y) {
             .lineTo(10, 110)
             .lineTo(10, 10)
             .drawRect(120, 10, 100, 100)
+            .endFill();
+
+        graphic.beginFill('#00ffff')
+            .drawRect(120, 120, 100, 100)
             .endFill();
 
 
