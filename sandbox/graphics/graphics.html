@@ -54,14 +54,9 @@ YUI({filter:'raw'}).use('graphics-canvas', 'graphics-vml', function(Y) {
 
     //bitmap.onload = function() {
     graphics.lineStyle(12, "#0000ff", 1);
-    //graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1], 315);
-    graphics.beginFill('#ccc');
-    graphics.drawRect(40, 40, 400, 300);
-    graphics.endFill();
-
-    //graphics.beginFill('red');
+    //graphics.beginFill("#ff0000", 1);
     graphics.beginGradientFill("linear", ["#ffeecc", "#ffff00"], [], [0, 1], 315);
-    graphics.drawRect(460, 40, 100, 200);
+    graphics.drawRect(40, 450, 400, 300, 10, 10);
     graphics.endFill();
     
     /*

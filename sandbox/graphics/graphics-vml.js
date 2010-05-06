@@ -133,6 +133,8 @@ VMLGraphics.prototype = {
         if (this._stroke) {
             shape.strokeColor = this._strokeColor;
             shape.strokeWeight = this._strokeWeight;
+        } else {
+            shape.stroked = false;
         }
 
         shape.style.width = w + 'px';
