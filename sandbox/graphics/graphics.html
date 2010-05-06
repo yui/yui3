@@ -14,7 +14,7 @@ v\:shape {
 }
 
 canvas {
-    background:red;
+    border:5px solid red;
 }
 
 #demo, #demo2 {
@@ -40,8 +40,8 @@ canvas {
 <script type="text/javascript">
 
 
-YUI({filter:'raw'}).use('graphics-vml', 'graphics-canvas', function(Y) {
-    var graphic = new Y.Graphic(),
+YUI({filter:'raw'}).use('graphics-canvas', 'graphics-vml', function(Y) {
+    var graphics = new Y.Graphic({width: 800, height: 600}),
         buttonHandlers = {
             clear: function() {
                 graphic.clear();
@@ -50,43 +50,79 @@ YUI({filter:'raw'}).use('graphics-vml', 'graphics-canvas', function(Y) {
 
         bitmap = document.getElementById('test-bitmap');
 
-    graphic.render(document.getElementById('demo'));
+    graphics.render(document.getElementById('demo'));
 
-    bitmap.onload = function() {
+    //bitmap.onload = function() {
+    graphics.lineStyle(12, "#0000ff", 1);
+    //graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1], 315);
+    graphics.beginFill('#ccc');
+    graphics.drawRect(40, 40, 400, 300);
+    graphics.endFill();
 
-        //graphic.beginFill('#fff', 0.75)
-        graphic.beginGradientFill("linear", ["#00ffff", "#ee63ff"], [], [0, .8], 0)
-            .moveTo(10, 10)
-            .lineStyle(3, 'blue', 0.25)
-            .lineTo(110, 10)
-            .lineTo(110, 110)
-            .lineTo(10, 110)
-            .lineTo(10, 10)
-            .drawRect(120, 10, 100, 100)
-            .endFill();
+    graphics.beginFill('red');
+    graphics.drawRect(460, 40, 400, 300);
+    graphics.endFill();
+    
+    /*
+    graphics.lineStyle(12, "#0000ff", 1);
+    //graphics.beginFill("#ff0000", 1);
+    graphics.beginGradientFill("linear", ["#ffeecc", "#ffff00"], [], [0, 1], 315);
+    graphics.drawRoundRect(40, 450, 400, 300, 10, 10);
+    graphics.endFill();
 
-        graphic.beginFill('#00ffff')
-            .drawRect(120, 120, 100, 100)
-            .endFill();
+    graphics.lineStyle(8, "#ff0000", 1);
+    //graphics.beginFill("#0000ff", 1);
+    graphics.beginGradientFill("radial", ["#00ffff", "#ee63ff"], [], [0, .8], 0);
+    graphics.drawCircle(450, 40, 100);
+    graphics.endFill();
+    
+    graphics.lineStyle(3, "#000000", 1);
+    graphics.beginFill("#000000", 1);
+    graphics.moveTo(11, 33);
+    graphics.lineTo(330, 200);
+    graphics.endFill();
+
+    graphics.beginFill("#dcdcdc", 1);
+    graphics.drawCircle(400, 200, 100);
+    graphics.endFill();
+    */
+
+    /*
+    graphic.lineStyle(12, "#0000ff", 1);
+    graphic.beginGradientFill("linear", ["#ffeecc", "#ffff00"], [], [0, 1], 315);
+    graphic.drawRoundRect(40, 450, 400, 300, 10, 10)
+        .endFill();
+    graphic.beginGradientFill("linear", ["#00ffff", "#ee63ff"], [], [0, .8], 0)
+        .moveTo(10, 10)
+        .lineStyle(3, 'blue', 0.25)
+        .lineTo(110, 10)
+        .lineTo(110, 110)
+        .lineTo(10, 110)
+        .lineTo(10, 10)
+        .drawRect(120, 10, 100, 100)
+        .endFill();
 
 
-        graphic.beginGradientFill("radial", ["#00ffff", "#ee63ff"], [], [0, .8], 0)
-            .lineStyle(5, 'green', 0.75)
-            .drawCircle(230, 10, 50)
-            .drawCircle(430, 10, 50)
-            .endFill();
+    graphic.beginGradientFill("radial", ["#00ffff", "#ee63ff"], [], [0, .8], 0)
+        .lineStyle(5, 'green', 0.75)
+        .drawCircle(230, 10, 50)
+        .beginFill('#00ffff')
+        .drawCircle(430, 10, 50)
+        .endFill();
 
 
-        document.getElementById('buttons').onclick = function(e) {
-            e = e || window.event;
-            var target = e.target || e.srcElement,
-                id = target.id;
+    document.getElementById('buttons').onclick = function(e) {
+        e = e || window.event;
+        var target = e.target || e.srcElement,
+            id = target.id;
 
-            if (buttonHandlers[id]) {
-                buttonHandlers[id].call(target, e); 
-            }
-        };
+        if (buttonHandlers[id]) {
+            buttonHandlers[id].call(target, e); 
+        }
     };
+
+    */
+    //};
 });
 
 </script>

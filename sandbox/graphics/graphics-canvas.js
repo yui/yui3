@@ -39,8 +39,8 @@ Graphic.prototype = {
         var graphic = Y.config.doc.createElement('canvas');
 
         // no size until drawn on
-        graphic.width = 600;
-        graphic.height = 600;
+        graphic.width = 800;
+        graphic.height = 800;
         return graphic;
     },
 
@@ -85,6 +85,7 @@ Graphic.prototype = {
         this._fillColors = colors;
         this._fillRatios = ratios;
         this._fillRotation = rotation;
+
         this._context.beginPath();
         return this;
     },
@@ -127,13 +128,14 @@ Graphic.prototype = {
 
         this._x = 0;
         this._y = 0;
+
         this._fillType = null;
         this._stroke = null;
     },
 
     clear: function() {
         this._initProps();
-        this._canvas.width = this._canvas.width;
+        this._canvas.width = this._canvas.width; // updating size clears canvas
         return this;
     },
 
@@ -166,8 +168,7 @@ Graphic.prototype = {
             .lineTo(x + w, y)
             .lineTo(x + w, y + h)
             .lineTo(x, y + h)
-            .lineTo(x, y)
-        var context = this._context;
+            .lineTo(x, y);
 
         this._trackPos(x, y);
         this._trackSize(w, h);
@@ -392,5 +393,9 @@ Graphic.prototype = {
     }
 };
 
-Y.Graphic = Graphic;
+if (!Y.Graphic) {
+    Y.log('using canvas');
+    Y.Graphic = Graphic;
+}
+
 }, '@VERSION@');
