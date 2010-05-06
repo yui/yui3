@@ -50,7 +50,8 @@ Y.Performance.addTests({
             if (yuiJS && loaderJS) {
                 window.yuiScript = yuiJS + "\n" + loaderJS;
             } else {
-                throw new Error('Failed to load yui-min.js and/or loader-min.js.');
+                sandbox.log('Failed to load yui-min.js and/or loader-min.js.', 'warn', 'sandbox');
+                return false;
             }
         },
 
@@ -71,7 +72,8 @@ Y.Performance.addTests({
             if (yuiLoaderJS) {
                 window.yuiScript = yuiLoaderJS;
             } else {
-                throw new Error('Failed to load yuiloder-dom-event.js.');
+                sandbox.log('Failed to load yuiloder-dom-event.js.', 'warn', 'sandbox');
+                return false;
             }
         },
 

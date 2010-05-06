@@ -5,6 +5,7 @@ body {
 }
 
 #container { display: none; }
+.hidden { display: none; }
 
 /* -- Results Table --------------------------------------------------------- */
 .yui3-perf-results {

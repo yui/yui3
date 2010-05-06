@@ -46,9 +46,14 @@ function analyze(set) {
     mean = sum / len;
 
     // And the sum of the squared differences of each value from the mean.
-    for (i = len, sum = 0; i--; sum += Math.pow(set[i] - mean, 2)); // no block
+    i   = len;
+    sum = 0;
 
-    // And finally the sample variance and standard deviation.
+    while (i--) {
+        sum += Math.pow(set[i] - mean, 2);
+    }
+
+    // And finally the sample variance and sample standard deviation.
     variance = sum / (len - 1);
 
     return {
@@ -136,8 +141,12 @@ function xhrGet(url) {
 
     var xhr = new XMLHttpRequest();
 
-    xhr.open('GET', url, false);
-    xhr.send(null);
+    try {
+        xhr.open('GET', url, false);
+        xhr.send(null);
+    } catch (ex) {
+        Y.log("XMLHttpRequest failed. Make sure you're running these tests on an HTTP server, not the filesystem.", 'warn', 'performance');
+    }
 
     return xhr.status === 200 ? xhr.responseText : null;
 }
@@ -192,30 +201,6 @@ Perf = Y.Performance = {
         ));
     },
 
-    _renderTestResult: function (result) {
-        var chartParams = {
-                cht: 'ls',
-                chd: 't:' + result.points.join(','),
-                chf: 'bg,s,00000000', // transparent background
-                chs: '100x20'
-            };
-
-        this._table.one('tbody').append(Y.substitute(
-            '<tr>' +
-                '<td class="test">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></td>' +
-                '<td class="calls">{calls}</td>' +
-                '<td class="mean">{mean}</td>' +
-                '<td class="median">{median}</td>' +
-                '<td class="mediandev">±{mediandev}</td>' +
-                '<td class="stdev">±{stdev}</td>' +
-                '<td class="max">{max}</td>' +
-                '<td class="min">{min}</td>' +
-            '</tr>',
-
-            Y.merge(result, {chartUrl: CHART_URL + createQueryString(chartParams)})
-        ));
-    },
-
     start: function () {
         var active,
             queue     = [],
@@ -259,7 +244,12 @@ Perf = Y.Performance = {
             var activeTest = active.test;
 
             if (isFunction(activeTest.setup)) {
-                active.sandbox.run(activeTest.setup);
+                if (active.sandbox.run(activeTest.setup) === false) {
+                    // Setup function returned false, so abort the test.
+                    Y.log('Test "' + active.name + '" failed.', 'warn', 'performance');
+                    active = null;
+                    return;
+                }
             }
 
             active.sandbox.profile(activeTest.test);
@@ -329,6 +319,31 @@ Perf = Y.Performance = {
                 }
             }
         }, null, true);
+    },
+
+    // -- Protected Methods ----------------------------------------------------
+    _renderTestResult: function (result) {
+        var chartParams = {
+                cht: 'ls',
+                chd: 't:' + result.points.join(','),
+                chf: 'bg,s,00000000', // transparent background
+                chs: '100x20'
+            };
+
+        this._table.one('tbody').append(Y.substitute(
+            '<tr>' +
+                '<td class="test">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></td>' +
+                '<td class="calls">{calls}</td>' +
+                '<td class="mean">{mean}</td>' +
+                '<td class="median">{median}</td>' +
+                '<td class="mediandev">±{mediandev}</td>' +
+                '<td class="stdev">±{stdev}</td>' +
+                '<td class="max">{max}</td>' +
+                '<td class="min">{min}</td>' +
+            '</tr>',
+
+            Y.merge(result, {chartUrl: CHART_URL + createQueryString(chartParams)})
+        ));
     }
 };
 

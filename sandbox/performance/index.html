@@ -15,12 +15,20 @@
 
 <div id="results"></div>
 
+<p class="firefox hidden">
+    <strong>Firefox users:</strong> For accurate results, disable Firebug.
+</p>
+
 <script src="../../build/yui/yui-min.js"></script>
 <script src="js/sandbox.js"></script>
 <script src="js/performance.js"></script>
 <script src="tests/instantiation.js"></script>
 <script>
 var Y = YUI().use('event-base', 'performance', 'perf-instantiation', function (Y) {
+    if (Y.UA.gecko) {
+        Y.all('.firefox').removeClass('hidden');
+    }
+
     Y.Performance.render('#results');
 
     Y.on('click', function () {

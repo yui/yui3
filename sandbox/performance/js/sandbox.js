@@ -12,7 +12,9 @@ Sandbox = function (config) {
     this.id     = Y.guid('sandbox-');
     this.config = Y.merge(this.config, config || {});
 
-    GlobalEnv[this.id] = {};
+    GlobalEnv[this.id] = {
+        log: function () { Y.log.apply(this, arguments); }
+    };
 
     this._createIframe();
 };
@@ -49,32 +51,32 @@ Sandbox.prototype = {
             iframeWin = this._iframe.contentWindow,
             run       = env.run;
 
-        if (!env.loaded) {
-            setTimeout(Y.bind(function () {
-                this.profile.call(this, script);
-            }, this), 15);
-
-            return;
-        }
+        // if (!env.loaded) {
+        //     setTimeout(Y.bind(function () {
+        //         this.profile.call(this, script);
+        //     }, this), 15);
+        // 
+        //     return;
+        // }
 
         this.clearProfile();
 
         script = this._getProfiledScript(script);
-        run.call(iframeWin, script);
+        return run.call(iframeWin, script);
     },
 
     run: function (script) {
         var env = GlobalEnv[this.id];
 
-        if (!env.loaded) {
-            setTimeout(Y.bind(function () {
-                this.run.call(this, script);
-            }, this), 15);
+        // if (!env.loaded) {
+        //     setTimeout(Y.bind(function () {
+        //         this.run.call(this, script);
+        //     }, this), 15);
+        // 
+        //     return;
+        // }
 
-            return;
-        }
-
-        env.run.call(this._iframe.contentWindow, this._getScript(script));
+        return env.run.call(this._iframe.contentWindow, this._getScript(script));
     },
 
     setEnvValue: function (key, value) {
