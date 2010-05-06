@@ -119,9 +119,9 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
-        graphic.moveTo (lastX, lastY);
         graphic.lineStyle(styles.weight, styles.color);
         graphic.beginFill(styles.color, 0.5);
+        graphic.moveTo (lastX, lastY);
         for(i = 1; i < len; i = ++i)
 		{
 			nextX = xcoords[i];

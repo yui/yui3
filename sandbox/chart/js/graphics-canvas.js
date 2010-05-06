@@ -302,6 +302,7 @@ Graphic.prototype = {
             }
         }
 
+        context.closePath();
 
         if (this._fillType) {
             context.fill();
@@ -311,7 +312,6 @@ Graphic.prototype = {
             context.stroke();
         }
         
-        context.closePath();
         this._initProps();
         return this;
     },
@@ -384,8 +384,8 @@ Graphic.prototype = {
     render: function(node) {
         node = node || Y.config.doc.body;
         node.appendChild(this._canvas);
-        this._canvas.width = parseInt(node.style.width, 10) || node.width;
-        this._canvas.height = parseInt(node.style.height, 10) || node.height;
+        this._canvas.width = node.offsetWidth;
+        this._canvas.height = node.offsetHeight;
         return this;
     }
 };

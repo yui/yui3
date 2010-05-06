@@ -355,9 +355,9 @@ Y.extend(CartesianSeries, Y.Renderer, {
 		var nextX, nextY,
             parent = this.get("parent"),
 			graphic = this.get("graphic"),
-			w = parseInt(parent.style.width, 10),
-			h = parseInt(parent.style.height, 10),
-			padding = this.get("styles").padding,
+			w = parent.offsetWidth,
+            h = parent.offsetHeight,
+            padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
 			dataWidth = w - (leftPadding + padding.right),
@@ -393,7 +393,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			    ycoords.push(nextY);
 		    }
         }
-        
         this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
 	},

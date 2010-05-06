@@ -304,6 +304,7 @@ Graphic.prototype = {
             }
         }
 
+        context.closePath();
 
         if (this._fillType) {
             context.fill();
@@ -313,7 +314,6 @@ Graphic.prototype = {
             context.stroke();
         }
         
-        context.closePath();
         this._initProps();
         return this;
     },
@@ -386,8 +386,8 @@ Graphic.prototype = {
     render: function(node) {
         node = node || Y.config.doc.body;
         node.appendChild(this._canvas);
-        this._canvas.width = parseInt(node.style.width, 10) || node.width;
-        this._canvas.height = parseInt(node.style.height, 10) || node.height;
+        this._canvas.width = node.offsetWidth;
+        this._canvas.height = node.offsetHeight;
         return this;
     }
 };
@@ -2031,9 +2031,9 @@ Y.extend(CartesianSeries, Y.Renderer, {
 		var nextX, nextY,
             parent = this.get("parent"),
 			graphic = this.get("graphic"),
-			w = parseInt(parent.style.width, 10),
-			h = parseInt(parent.style.height, 10),
-			padding = this.get("styles").padding,
+			w = parent.offsetWidth,
+            h = parent.offsetHeight,
+            padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
 			dataWidth = w - (leftPadding + padding.right),
@@ -2069,7 +2069,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			    ycoords.push(nextY);
 		    }
         }
-        
         this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
 	},
@@ -2275,9 +2274,9 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
-        graphic.moveTo (lastX, lastY);
         graphic.lineStyle(styles.weight, styles.color);
         graphic.beginFill(styles.color, 0.5);
+        graphic.moveTo (lastX, lastY);
         for(i = 1; i < len; i = ++i)
 		{
 			nextX = xcoords[i];
