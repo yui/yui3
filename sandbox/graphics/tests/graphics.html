@@ -20,30 +20,23 @@
 		<script>
 			YUI({}).use('node', 'json', 'event-custom', 'base', 'graphics', function (Y)
 			{
-                var uA = Y.UA,
-                    engine = uA.ie ? "vml" : "canvas",
-                    graphics = new Y.Graphics({parent:"appdiv", engine:engine});	
+                graphics = new Y.Graphics({parent:"appdiv"});	
 				
                 graphics.lineStyle(12, "#0000ff", 1);
                 graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1], 315);
                 graphics.drawRectangle(40, 40, 400, 300);
                 graphics.endFill();
-                graphics.clear();
                 
                 graphics.lineStyle(12, "#0000ff", 1);
-                //graphics.beginFill("#ff0000", 1);
                 graphics.beginGradientFill("linear", ["#ffeecc", "#ffff00"], [], [0, 1], 315);
                 graphics.drawRoundRect(40, 450, 400, 300, 10, 10);
                 graphics.endFill();
-                graphics.clear();
 
                 graphics.lineStyle(8, "#ff0000", 1);
-                //graphics.beginFill("#0000ff", 1);
                 graphics.beginGradientFill("radial", ["#00ffff", "#ee63ff"], [], [0, .8], 0);
                 graphics.drawCircle(450, 40, 100);
                 graphics.endFill();
                 
-                graphics.clear();
                 graphics.lineStyle(3, "#000000", 1);
                 graphics.beginFill("#000000", 1);
                 graphics.moveTo(11, 33);

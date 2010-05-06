@@ -3,8 +3,11 @@
  */
 function Graphics(config)
 {
+    var uA = Y.UA,
+        engine = uA.ie ? "vml" : "canvas";
 	this._config = config;
-	Graphics.superclass.constructor.apply(this, arguments);
+    this._config.engine = engine;
+	Graphics.superclass.constructor.apply(this, [this._config]);
 }
 
 Graphics.NAME = "graphics";
@@ -33,7 +36,7 @@ Y.extend(Graphics, Y.Base, {
 	{
 		var api,
 			config = this._config;
-		switch(val)
+    switch(val)
 		{
 			case "canvas" :
 				api = new Y.CanvasAPI(config);

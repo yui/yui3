@@ -24,10 +24,7 @@ CartesianSeries.ATTRS = {
 			{
 				this._parent = value;
 			}
-			this._canvas = document.createElement("canvas");
-			this._canvas.width = parseInt(this._parent.style.width, 10) || this._parent.width;
-			this._canvas.height = parseInt(this._parent.style.height, 10) || this._parent.height;
-			this._parent.appendChild(this._canvas);
+            this._setCanvas();
 			return this._parent;
 		}
 	},
@@ -193,23 +190,29 @@ CartesianSeries.ATTRS = {
 		}
 	},
 	/**
-	 * The canvas in which the line series will be rendered.
+	 * The graphic in which the line series will be rendered.
 	 */
-	canvas: {
+	graphic: {
 		getter: function()
 		{
-			return this._canvas;
+			return this._graphic;
 		},
 		setter: function(value)
 		{
-			this._canvas = value;
+			this._graphic = value;
 			return value;
 		}
 	}
 };
 
 Y.extend(CartesianSeries, Y.Renderer, {
-	_parent: null,
+	_setCanvas: function()
+    {
+        this._graphic = new Y.Graphic();
+        this._graphic.render(this.get("parent"));
+    },
+
+    _parent: null,
 
 	_styles: {
 		padding:{
@@ -223,7 +226,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	/**
 	 * @private
 	 */
-	_canvas: null,
+	_graphic: null,
 	
 	/**
 	 * @private (protected)
@@ -341,9 +344,10 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	setAreaData: function()
 	{
 		var nextX, nextY,
-			canvas = this.get("canvas"),
-			w = canvas.width,
-			h = canvas.height,
+            parent = this.get("parent"),
+			graphic = this.get("graphic"),
+			w = parseInt(parent.style.width, 10),
+			h = parseInt(parent.style.height, 10),
 			padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
@@ -386,17 +390,17 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 * @private (override)
 	 */
 	render: function()
-	{
+    {
 		var dataChange = this.checkDataFlags(),
 			resize = this.checkResizeFlags(),
 			styleChange = this.checkStyleFlags(),
-			canvas = this.get("canvas"),
-			context = canvas.getContext("2d"),
-			w = canvas.width,
-			h = canvas.height,
+			graphic = this.get("graphic"),
+            parent = this.get("parent"),
+			w = parseInt(parent.style.width, 10),
+			h = parseInt(parent.style.height, 10),
 			xAxis = this.get("xAxis"),
 			yAxis = this.get("yAxis");
-	
+
 		if(dataChange)
 		{
 			this._xMin = xAxis.minimum;
@@ -405,7 +409,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			this._yMax = yAxis.maximum;
 		}
 		
-		if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))
+        if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))
 		{
 			this.setAreaData();
 			if(this.get("xcoords") && this.get("ycoords")) 
