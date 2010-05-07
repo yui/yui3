@@ -11,12 +11,18 @@
 
 <p>
     <button id="start">Start Tests</button>
+    <button id="stop">Stop Tests</button>
 </p>
 
 <div id="results"></div>
 
 <p class="firefox hidden">
     <strong>Firefox users:</strong> For accurate results, disable Firebug.
+</p>
+
+<p class="ie hidden">
+    <strong>IE users:</strong> Due to limitations in the resolution of the
+    Windows timer APIs that IE uses, times in IE have an error range of ±15ms.
 </p>
 
 <script src="../../build/yui/yui-min.js"></script>
@@ -27,6 +33,8 @@
 var Y = YUI().use('event-base', 'performance', 'perf-instantiation', function (Y) {
     if (Y.UA.gecko) {
         Y.all('.firefox').removeClass('hidden');
+    } else if (Y.UA.ie) {
+        Y.all('.ie').removeClass('hidden');
     }
 
     Y.Performance.render('#results');
@@ -34,6 +42,10 @@ var Y = YUI().use('event-base', 'performance', 'perf-instantiation', function (Y
     Y.on('click', function () {
         Y.Performance.start();
     }, '#start');
+
+    Y.on('click', function () {
+        Y.Performance.stop();
+    }, '#stop');
 });
 </script>
 

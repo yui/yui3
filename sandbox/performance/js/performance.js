@@ -7,9 +7,9 @@ var Node       = Y.Node,
     Perf,
 
     isFunction = Y.Lang.isFunction,
-    poll,
 
-    CHART_URL  = 'http://chart.apis.google.com/chart?';
+    CHART_URL        = 'http://chart.apis.google.com/chart?',
+    DEFAULT_DURATION = 1000; // default duration for time-based tests
 
 // -- Private Methods ----------------------------------------------------------
 
@@ -122,7 +122,7 @@ function medianDeviation(set) {
 
 function xhrGet(url) {
     if (typeof XMLHttpRequest === 'undefined') {
-        window.XMLHttpRequest = function () {
+        Y.config.win.XMLHttpRequest = function () {
             try {
                 return new ActiveXObject('Msxml2.XMLHTTP.6.0');
             } catch (ex) {}
@@ -152,9 +152,16 @@ function xhrGet(url) {
 }
 
 Perf = Y.Performance = {
+    // -- Public Constants -----------------------------------------------------
+    MODE_ITERATION: 1,
+    MODE_TIME     : 2, // not yet fully-baked
+
     // -- Protected Properties -------------------------------------------------
-    _tests: {},
-    _results: {},
+    _mode     : 1,
+    _queue    : [],
+    _results  : {},
+    _sandboxes: [],
+    _tests    : {},
 
     // -- Public Methods -------------------------------------------------------
     addTests: function (tests) {
@@ -168,14 +175,14 @@ Perf = Y.Performance = {
     clear: function () {
         Perf._results = {};
 
-        if (this._table) {
-            this._table.one('tbody').get('children').remove();
+        if (Perf._table) {
+            Perf._table.one('tbody').get('children').remove();
         }
     },
 
     render: function (parent) {
         parent = Y.one(parent || Y.config.doc.body);
-        parent.append(this._table = Y.Node.create(
+        parent.append(Perf._table = Y.Node.create(
             '<table class="yui3-perf-results">' +
                 '<thead>' +
                     '<tr>' +
@@ -201,155 +208,67 @@ Perf = Y.Performance = {
         ));
     },
 
-    // Executes tests as many times as possible within 1 second rather than
-    // timing multiple iterations. Currently doesn't work in Firefox.
-    startTimed: function () {
-        var results = {};
+    start: function () {
+        if (Perf._queue.length) {
+            Y.log('Performance tests are already running.', 'warn', 'performance');
+            return;
+        }
 
-        this.clear();
-        this._table && this._table.addClass('running');
+        Perf.clear();
 
-        Obj.each(Perf._tests, function (test, name) {
-            var sandbox = new Y.Sandbox({bootstrapYUI: !test.noBootstrap});
+        if (Perf._table) {
+            Perf._table.addClass('running');
+        }
 
-            sandbox.setEnvValue('xhrGet', xhrGet);
-
-            if (isFunction(test.setup)) {
-                if (sandbox.run(test.setup) === false) {
-                    // Setup function returned false, so abort the test.
-                    Y.log('Test "' + name + '" failed.', 'warn', 'performance');
-                    return;
-                }
-            }
-
-            results[name] = sandbox.count(test.test, test.duration || 1000);
-            sandbox.destroy();
-        });
-
-        console.log(results);
+        Obj.each(Perf._tests, Perf._queueTest);
+        this._runNextTest();
     },
 
-    start: function () {
-        var active,
-            queue     = [],
-            runTest,
-            sandboxes = [];
-
-        this.clear();
-        this._table && this._table.addClass('running');
-
-        // Queue up as many iterations of each test as are desired.
-        Obj.each(Perf._tests, function (test, name) {
-            var i = test.iterations || 1,
-                prevTest,
-                sandbox;
-
-            if (test.warmup) {
-                i += 1;
-            }
-
-            while (i--) {
-                // Use one sandbox per test, regardless of iterations, unless
-                // the useStrictSandbox option is true.
-                if (!test.useStrictSandbox && prevTest && prevTest.name === name) {
-                    sandbox = prevTest.sandbox;
-                } else {
-                    sandboxes.push(sandbox = new Y.Sandbox({bootstrapYUI: !test.noBootstrap}));
-                    sandbox.setEnvValue('xhrGet', xhrGet);
-                }
-
-                queue.push(prevTest = {
-                    name   : name,
-                    sandbox: sandbox,
-                    test   : test,
-                    warmup : test.warmup && !(test.warmup = false) // intentional assignment, sets warmup to false for future iterations
-                });
-            }
-        });
-
-        // Processes a single test that has been shifted off the queue.
-        runTest = function () {
-            var activeTest = active.test;
-
-            if (isFunction(activeTest.setup)) {
-                if (active.sandbox.run(activeTest.setup) === false) {
-                    // Setup function returned false, so abort the test.
-                    Y.log('Test "' + active.name + '" failed.', 'warn', 'performance');
-                    active = null;
-                    return;
-                }
-            }
-
-            active.sandbox.profile(activeTest.test);
-        };
-
-        // This poll function monitors test status and takes care of shifting
-        // the next test off the queue when the active test finishes. 
-        //
-        // Since test timing is actually done inside the test sandbox, this poll
-        // doesn't influence the test results.
-        poll = Y.later(15, this, function () {
-            var results = Perf._results,
-                result;
-
-            if (active) {
-                if (active.sandbox.getEnvValue('endTime')) {
-                    if (isFunction(active.test.teardown)) {
-                        active.sandbox.run(active.test.teardown);
-                    }
-
-                    if (!active.warmup) {
-                        result = results[active.name] || {
-                            calls : 0,
-                            name  : active.name,
-                            points: []
-                        };
-
-                        result.calls += 1;
-                        result.points.push(active.sandbox.getEnvValue('endTime') - active.sandbox.getEnvValue('startTime'));
-
-                        if (result.calls === active.test.iterations) {
-                            result = Y.merge(result, analyze(result.points));
-
-                            Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
-                                result[key] = result[key].toFixed(2);
-                            });
-
-                            this._renderTestResult(result);
-                        }
-
-                        results[active.name] = result;
-                    }
-
-                    if (active.test.useStrictSandbox) {
-                        active.sandbox.destroy();
-                    }
-
-                    active = null;
-                }
-            }
-
-            if (!active) {
-                active = queue.shift();
-
-                if (active) {
-                    runTest();
-                } else {
-                    // Queue is empty.
-                    poll.cancel();
-
-                    Y.Array.each(sandboxes, function (sandbox) {
-                        sandbox.destroy();
-                    });
-
-                    sandboxes = [];
-                    this._table && this._table.removeClass('running');
-                }
-            }
-        }, null, true);
+    stop: function () {
+        Perf._queue = [];
     },
 
     // -- Protected Methods ----------------------------------------------------
+    _finish: function () {
+        var sandbox;
+
+        while (sandbox = Perf._sandboxes.pop()) { // assignment
+            sandbox.destroy();
+        }
+
+        if (Perf._table) {
+            Perf._table.removeClass('running');
+        }
+    },
+
+    _queueTest: function (test, name) {
+        var i = Perf._mode === Perf.MODE_ITERATION ? test.iterations || 1 : 1,
+            sandbox;
+
+        if (test.warmup) {
+            i += 1;
+        }
+
+        while (i--) {
+            // Use one sandbox for all iterations of a given test unless the
+            // useStrictSandbox option is true.
+            if (test.useStrictSandbox || !sandbox) {
+                Perf._sandboxes.push(sandbox = new Y.Sandbox({
+                    bootstrapYUI: test.bootstrapYUI
+                }));
+
+                sandbox.setEnvValue('xhrGet', xhrGet);
+            }
+
+            Perf._queue.push({
+                name   : name,
+                sandbox: sandbox,
+                test   : test,
+                warmup : test.warmup && !(test.warmup = false) // intentional assignment, sets warmup to false for future iterations
+            });
+        }
+    },
+
     _renderTestResult: function (result) {
         var chartParams = {
                 cht: 'ls',
@@ -358,7 +277,7 @@ Perf = Y.Performance = {
                 chs: '100x20'
             };
 
-        this._table.one('tbody').append(Y.substitute(
+        Perf._table.one('tbody').append(Y.substitute(
             '<tr>' +
                 '<td class="test">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></td>' +
                 '<td class="calls">{calls}</td>' +
@@ -372,9 +291,119 @@ Perf = Y.Performance = {
 
             Y.merge(result, {chartUrl: CHART_URL + createQueryString(chartParams)})
         ));
+    },
+
+    _runNextTest: function () {
+        var iteration = Perf._queue.shift(),
+            test      = iteration && iteration.test;
+
+        if (!iteration) {
+            Perf._finish();
+            return;
+        }
+
+        iteration.sandbox.on('ready', function () {
+            var count;
+
+            if (isFunction(test.setup)) {
+                if (iteration.sandbox.run(test.setup) === false) {
+                    // Setup function returned false, so abort the test.
+                    Y.log('Test "' + iteration.name + '" failed.', 'warn', 'performance');
+                    Perf._runNextTest();
+                    return;
+                }
+            }
+
+            if (Perf._mode === Perf.MODE_ITERATION) {
+                iteration.sandbox.profile(test.test, function (profileData) {
+                    Perf._onIterationComplete(iteration, profileData);
+                });
+            } else if (Perf._mode === Perf.MODE_TIME) {
+                setTimeout(function () {
+                    count = iteration.sandbox.count(test.test,
+                                test.duration || DEFAULT_DURATION);
+
+                    Perf._onTimeComplete(iteration, count);
+                }, 100);
+            }
+        });
+    },
+
+    // -- Protected Callbacks --------------------------------------------------
+    _onIterationComplete: function (iteration, profileData) {
+        var result,
+            test = iteration.test;
+
+        if (isFunction(test.teardown)) {
+            iteration.sandbox.run(test.teardown);
+        }
+
+        if (!iteration.warmup) {
+            result = Perf._results[iteration.name] || {
+                calls : 0,
+                name  : iteration.name,
+                points: []
+            };
+
+            result.calls += 1;
+            result.points.push(profileData.duration);
+
+            if (result.calls === iteration.test.iterations) {
+                result = Y.merge(result, analyze(result.points));
+
+                Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
+                    result[key] = result[key].toFixed(2);
+                });
+
+                Perf._renderTestResult(result);
+            }
+
+            Perf._results[iteration.name] = result;
+        }
+
+        if (test.useStrictSandbox) {
+            iteration.sandbox.destroy();
+        }
+
+        Perf._runNextTest();
+    },
+
+    _onTimeComplete: function (iteration, count) {
+        var mean,
+            result,
+            test = iteration.test;
+
+        if (isFunction(test.teardown)) {
+            iteration.sandbox.run(test.teardown);
+        }
+
+        if (!iteration.warmup) {
+            mean = ((test.duration || DEFAULT_DURATION) / count).toFixed(2);
+
+            result = Perf._results[iteration.name] = {
+                calls : count,
+                max      : mean,
+                mean     : mean,
+                median   : mean,
+                mediandev: 0.00,
+                min      : mean,
+                name     : iteration.name,
+                points   : [mean],
+                stdev    : 0.00,
+                variance : 0.00
+            };
+
+            Perf._renderTestResult(result);
+        }
+
+        if (test.useStrictSandbox) {
+            iteration.sandbox.destroy();
+        }
+
+        Perf._runNextTest();
     }
 };
 
-}, '1.0.0', {
-    requires: ['later', 'node', 'sandbox', 'substitute']
+}, '@VERSION@', {
+    requires: ['gallery-sandbox', 'later', 'node', 'substitute']
 });
