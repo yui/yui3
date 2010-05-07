@@ -287,7 +287,7 @@
                 var smallChart = Y.one("#small-chart");
                 var smallChartText = Y.one("#small-chart-text");
                 var slider = Y.one("#slider");
-
+                var sliderWidth = 40;
                 Y.one("body").on("touchmove", function(event) {
                     event.preventDefault();
                 });
@@ -306,6 +306,7 @@
                         var minVal = slider.get("region").left;
                         var maxVal = minVal + width;
                         var len = document.getElementById("small-chart").offsetWidth;
+                        sliderWidth = width;
                         timeaxis.updateMinByPosition(minVal, len);
                         timeaxis.updateMaxByPosition(maxVal, len);
                 });
@@ -387,7 +388,7 @@
                         
                         var target = e.currentTarget,
                             minVal = target.get("node").get("region").left,
-                            maxVal = minVal + 40,
+                            maxVal = minVal + sliderWidth, //target.get("node").get("offsetWidth"),
                             len = document.getElementById("small-chart").offsetWidth;
                         timeaxis.updateMinByPosition(minVal, len);
                         timeaxis.updateMaxByPosition(maxVal, len);
