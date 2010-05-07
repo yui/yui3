@@ -509,7 +509,10 @@ if (Y.UA.ie) {
  */
 function BaseAxis (config)
 {
-	BaseAxis.superclass.constructor.apply(this, arguments);
+    this._createId();
+    this._keys = {};
+    this._data = [];
+    BaseAxis.superclass.constructor.apply(this, arguments);
 }
 
 BaseAxis.NAME = "baseAxis";
@@ -603,7 +606,8 @@ BaseAxis.ATTRS = {
 			{
 				//remove listeners
 			}
-			this._dataProvider = value;
+            value = Y.merge(value);
+			this._dataProvider = {data:value.data.concat()};
 			this._dataClone = this._dataProvider.data.concat();
 			return value;
 		},
@@ -627,7 +631,7 @@ BaseAxis.ATTRS = {
 	maximum: {
 		getter: function ()
 		{
-			if(this._autoMax) 
+			if(this._autoMax || !this._setMaximum) 
 			{
 				return this._dataMaximum;
 			}
@@ -656,12 +660,17 @@ BaseAxis.ATTRS = {
 	minimum: {
 		getter: function ()
 		{
-			if(this._autoMin) 
+			if(this._autoMin || !this._setMinimum) 
 			{
 				return this._dataMinimum;
 			}
 			return this._setMinimum;
-		}
+		},
+        setter: function(val)
+        {
+            this._setMinimum = val;
+            return val;
+        }
 	},
 
 	/**
@@ -717,6 +726,15 @@ BaseAxis.ATTRS = {
 
 Y.extend(BaseAxis, Y.Base,
 {
+	/**
+	 * Creates unique id for class instance.
+	 *
+	 * @private
+	 */
+	_createId: function()
+	{
+		this._id = Y.guid(this.GUID);
+	},
 	/**
 	 * @private
 	 * Storaga for roundingUnit
@@ -777,12 +795,12 @@ Y.extend(BaseAxis, Y.Base,
 	 * @private
 	 * Storage for data
 	 */
-	_data: [],
+	_data: null,
 	/**
 	 * @private
 	 * Storage for keys
 	 */
-	_keys: {},
+	_keys: null,
 
 	/**
 	 * @private
@@ -1014,7 +1032,7 @@ Y.extend(BaseAxis, Y.Base,
 		event.keysAdded = keysAdded;
 		event.keysRemoved = keysRemoved;
 		this.fire("axisUpdate", event);
-	}
+    }
 });
 Y.BaseAxis = BaseAxis;
 
@@ -1199,9 +1217,9 @@ TimeAxis.ATTRS =
     maximum: {
 		getter: function ()
 		{
-			if(this._autoMax) 
+			if(this._autoMax || this._setMaximum === null) 
 			{
-				return this._dataMaximum;
+                return this._getNumber(this._dataMaximum);
 			}
 			return this._setMaximum;
 		},
@@ -1214,7 +1232,7 @@ TimeAxis.ATTRS =
     minimum: {
 		getter: function ()
 		{
-			if(this._autoMin) 
+			if(this._autoMin || this._setMinimum === null) 
 			{
 				return this._dataMinimum;
 			}
@@ -1223,7 +1241,8 @@ TimeAxis.ATTRS =
 		setter: function (value)
 		{
 			this._setMinimum = this._getNumber(value);
-		}
+            this.fire("dataChange");
+        }
     }
 };
 
@@ -1277,8 +1296,19 @@ Y.extend(TimeAxis, Y.BaseAxis, {
         }
 
         return val;
-    }
+    },
 
+    calculateAndUpdateMinimum:function(event)
+    {
+        var target = event.currentTarget,
+            range = this._dataMaximum - this._dataMinimum,
+            val = target.get("value"),
+            len = parseInt(target.get("length"), 10),
+            scaleFactor = len / range,
+            pos = (val/len) * range;
+            pos += this._dataMinimum;
+        this.set("minimum", pos);
+    }
 });
 
 Y.TimeAxis = TimeAxis;
@@ -1787,7 +1817,7 @@ CartesianSeries.ATTRS = {
 			this._xAxis = value;			
 			this._xAxis.on("axisReady", Y.bind(this.xAxisChangeHandler, this));
 			//this.xAxis.addEventListener(DataEvent.NEW_DATA, this.xAxisChangeHandler);
-			//this.xAxis.addEventListener(DataEvent.DATA_CHANGE, this.xAxisChangeHandler);
+			this._xAxis.on("dataChange", Y.bind(this.xAxisChangeHandler, this));
 			this.setFlag("axisDataChange");
 			return value;
 		},
@@ -1914,9 +1944,9 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 */
 	xAxisChangeHandler: function(event)
 	{
-		if(this.get("xKey")) 
+        if(this.get("xKey")) 
 		{
-			this.setFlag("axisDataChange");
+            this.setFlag("axisDataChange");
 		}
 		if(this.get("yKey")) 
 		{
@@ -2051,17 +2081,18 @@ Y.extend(CartesianSeries, Y.Renderer, {
             i;
         for (i = 0; i < dataLength; ++i) 
 		{
-			nextX = Math.round(0.5 + (((xData[i] - xMin) * xScaleFactor) + leftPadding));
-			nextY = Math.round(0.5 +((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
-            if(nextX > areaMax)
+			if(xData[i] > xMax)
             {
                 break;
             }
-            if(nextX > areaMin)
+            if(xData[i] < xMin)
             {
-                xcoords.push(nextX);
-			    ycoords.push(nextY);
-		    }
+                continue;
+            }
+            nextX = Math.round(0.5 + (((xData[i] - xMin) * xScaleFactor) + leftPadding));
+			nextY = Math.round(0.5 +((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
+            xcoords.push(nextX);
+            ycoords.push(nextY);
         }
         this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
@@ -2268,6 +2299,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
 			graphic = this.get("graphic");
+        graphic.clear();
         graphic.lineStyle(styles.weight, styles.color);
         graphic.beginFill(styles.color, 0.5);
         graphic.moveTo (lastX, lastY);

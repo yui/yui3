@@ -117,7 +117,7 @@ CartesianSeries.ATTRS = {
 			this._xAxis = value;			
 			this._xAxis.on("axisReady", Y.bind(this.xAxisChangeHandler, this));
 			//this.xAxis.addEventListener(DataEvent.NEW_DATA, this.xAxisChangeHandler);
-			//this.xAxis.addEventListener(DataEvent.DATA_CHANGE, this.xAxisChangeHandler);
+			this._xAxis.on("dataChange", Y.bind(this.xAxisChangeHandler, this));
 			this.setFlag("axisDataChange");
 			return value;
 		},
@@ -244,9 +244,9 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 */
 	xAxisChangeHandler: function(event)
 	{
-		if(this.get("xKey")) 
+        if(this.get("xKey")) 
 		{
-			this.setFlag("axisDataChange");
+            this.setFlag("axisDataChange");
 		}
 		if(this.get("yKey")) 
 		{
@@ -381,17 +381,18 @@ Y.extend(CartesianSeries, Y.Renderer, {
             i;
         for (i = 0; i < dataLength; ++i) 
 		{
-			nextX = Math.round(0.5 + (((xData[i] - xMin) * xScaleFactor) + leftPadding));
-			nextY = Math.round(0.5 +((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
-            if(nextX > areaMax)
+			if(xData[i] > xMax)
             {
                 break;
             }
-            if(nextX > areaMin)
+            if(xData[i] < xMin)
             {
-                xcoords.push(nextX);
-			    ycoords.push(nextY);
-		    }
+                continue;
+            }
+            nextX = Math.round(0.5 + (((xData[i] - xMin) * xScaleFactor) + leftPadding));
+			nextY = Math.round(0.5 +((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
+            xcoords.push(nextX);
+            ycoords.push(nextY);
         }
         this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);

@@ -10,9 +10,9 @@ TimeAxis.ATTRS =
     maximum: {
 		getter: function ()
 		{
-			if(this._autoMax) 
+			if(this._autoMax || this._setMaximum === null) 
 			{
-				return this._dataMaximum;
+                return this._getNumber(this._dataMaximum);
 			}
 			return this._setMaximum;
 		},
@@ -25,7 +25,7 @@ TimeAxis.ATTRS =
     minimum: {
 		getter: function ()
 		{
-			if(this._autoMin) 
+			if(this._autoMin || this._setMinimum === null) 
 			{
 				return this._dataMinimum;
 			}
@@ -34,7 +34,8 @@ TimeAxis.ATTRS =
 		setter: function (value)
 		{
 			this._setMinimum = this._getNumber(value);
-		}
+            this.fire("dataChange");
+        }
     }
 };
 
@@ -88,8 +89,19 @@ Y.extend(TimeAxis, Y.BaseAxis, {
         }
 
         return val;
-    }
+    },
 
+    calculateAndUpdateMinimum:function(event)
+    {
+        var target = event.currentTarget,
+            range = this._dataMaximum - this._dataMinimum,
+            val = target.get("value"),
+            len = parseInt(target.get("length"), 10),
+            scaleFactor = len / range,
+            pos = (val/len) * range;
+            pos += this._dataMinimum;
+        this.set("minimum", pos);
+    }
 });
 
 Y.TimeAxis = TimeAxis;
