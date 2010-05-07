@@ -303,6 +303,11 @@
                         slider.setStyle("width", (width + 5*Math.pow(scale,2)) + "px");
                     }
                     slider.setStyle("marginLeft", "-" + slider.get("offsetWidth")/2 + "px");
+                        var minVal = slider.get("region").left;
+                        var maxVal = minVal + width;
+                        var len = document.getElementById("small-chart").offsetWidth;
+                        timeaxis.updateMinByPosition(minVal, len);
+                        timeaxis.updateMaxByPosition(maxVal, len);
                 });
 
                 var dd = new Y.DD.Drag({
@@ -389,6 +394,7 @@
                     }
                    
                     dd.on("drag", Y.bind(calculateAndUpdateMinAndMax, this)); 
+                    
                 });
 </script>
 <!-- END EXAMPLE CODE -->
