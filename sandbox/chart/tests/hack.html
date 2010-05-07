@@ -159,27 +159,91 @@
 				return month;
 			}
 		</script>
-<div>
 <div id="charts-app">
 	<div id="left-column">
 		<div id="stock-info">Stock Info</div>
         <div id="chart"></div>
-		<div id="big-chart">Big Chart</div>
+		<div id="big-chart"></div>
 		<div id="small-chart"><div id="slider"></div><div id="small-chart-text">Small Chart</div></div>	
 </div>
 	<div id="right-column">
 		<div id="search-box">Search Box</div>
 		<div id="search-results">Search Results</div>
 	</div>
-</div>
-            <br/>
-            <div id="slidergraph" style="width:800px;height:150px;background-color:#ffffff;border2px solid #5577AF"></div>
-            <div style="height:30px" id="sliderdiv"></div>
-            <div id="output"></div>
 		<script>
 
-			YUI({filter:"debug"}).use('node', 'json', 'event-custom', 'base', 'slider', 'graphic', 'infographics', function (Y)
+			YUI({filter:"debug"}).use('node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphic', 'infographics', function (Y)
 				{
+        var TOUCH = Y.UA.webkit && Y.UA.mobile, 
+            EVT_MAP;
+
+        if (TOUCH) {
+            // Node Hack - Add touch event support
+            Y.mix(Y.Node.DOM_EVENTS, { gesturechange:1, touchstart:1, touchmove:1, touchend:1} );
+
+            // Event Hack - Add custom properties to event facade
+            Y._DOMEventFacade = Y.DOMEventFacade;
+            Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
+                var e = new Y._DOMEventFacade(ev, currentTarget, wrapper);
+                if (ev.touches) {
+                    e.touches = [];
+                    if (ev.touches[0]) {
+                        e.touches[0] = new Y.DOMEventFacade(ev.touches[0], currentTarget, wrapper);
+                    }
+                    if (ev.touches[1]) {
+                        e.touches[1] = new Y.DOMEventFacade(ev.touches[1], currentTarget, wrapper);
+                    }
+                }
+                e.scale = ev.scale;
+                return e;
+            };
+        }
+
+        var smallChart = Y.one("#small-chart");
+        var smallChartText = Y.one("#small-chart-text");
+        var slider = Y.one("#slider");
+
+        Y.one("body").on("touchmove", function(event) {
+            event.preventDefault();
+        });
+
+        smallChart.on("gesturechange", function(event) {
+
+            var scale = event.scale;
+            var width = slider.get("offsetWidth");
+
+            if (scale < 1) {
+                slider.setStyle("width", (width - 5/Math.pow(scale,2)) + "px");
+            } else {
+                slider.setStyle("width", (width + 5*Math.pow(scale,2)) + "px");
+            }
+
+            slider.setStyle("marginLeft", "-" + slider.get("offsetWidth")/2 + "px");
+        });
+
+        var dd = new Y.DD.Drag({
+            useShim:false,
+            node: slider,
+            clickPixelThresh:1,
+            clickTimeThresh:100
+        }).plug(Y.Plugin.DDConstrained, {
+            constrain2node: smallChart
+        });
+
+        if (TOUCH) {
+            // DD Hack - Use mouse move to kick of move programmatically
+            dd.get('node').on('touchmove', function(event) {
+                if(event.touches.length == 1) {
+                   if (!dd.get('dragging')) {
+                       dd.fire('drag:mouseDown', { ev: event.touches[0] });
+                       dd._ev_md = event.touches[0];
+                   } else {
+                       Y.DD.DDM._move.apply(Y.DD.DDM, [event.touches[0]]);
+                   }
+                   event.preventDefault();
+                }
+            });
+        }
 					// Create data 
 					var mydata = getData();
 
@@ -198,28 +262,21 @@
 						weight:"2",
 						showMarkers:false
 					};
-					var dataProvider = {data:mydata};
+                    var dataProvider = {data:mydata};
                     var dp2 = {data:mydata.concat()};
                     var timeaxis = new Y.TimeAxis({dataProvider:dataProvider});
 					timeaxis.addKey("date");
 					timeaxis.set("autoMax", false);
                     timeaxis.set("autoMin", false);
+                    
                     var slidertimeaxis = new Y.TimeAxis({dataProvider:dataProvider});
 					slidertimeaxis.addKey("date");
                     var numericaxis = new Y.NumericAxis({dataProvider:dataProvider});
 					numericaxis.addKey("revenue");
-					var slidergraph = new Y.LineSeries({parent:"slidergraph", xAxis:slidertimeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
 					
-					var linegraph = new Y.LineSeries({parent:"big-chart", xAxis:timeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
+                    var linegraph = new Y.LineSeries({parent:"big-chart", xAxis:timeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
 					
-
-                    var slider = new Y.Slider({
-                        length: "800px",
-                        render:"#sliderdiv",
-                        min:0,
-                        max:800
-                    });
-
+                    var slidergraph = new Y.LineSeries({parent:"small-chart", xAxis:slidertimeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
                     function calculateAndUpdateMin(e)
                     {
                         var target = e.currentTarget,
@@ -236,8 +293,6 @@
                         timeaxis.updateMaxByPosition(val, len);
                     }
                     
-                    slider.after("slideEnd", Y.bind(calculateAndUpdateMin, this));
-                    slider.after("railMouseDown", Y.bind(calculateAndUpdateMin, this));
                 });
 </script>
 <!-- END EXAMPLE CODE -->

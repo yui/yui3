@@ -2285,7 +2285,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			return;
 		}
 		var	parentDiv = this.get("parent"),
-            ht = parseInt(parentDiv.style.height, 10),
+            ht = parentDiv.offsetHeight,
             xcoords = this._xcoords,
 			ycoords = this._ycoords,
 			len = xcoords.length,
