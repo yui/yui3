@@ -396,7 +396,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
         }
         this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
-	},
+    },
 
 	/**
 	 * @private
@@ -422,10 +422,10 @@ Y.extend(CartesianSeries, Y.Renderer, {
 
 		if(dataChange)
 		{
-			this._xMin = xAxis.minimum;
-			this._xMax = xAxis.maximum;
-			this._yMin = yAxis.minimum;
-			this._yMax = yAxis.maximum;
+			this._xMin = xAxis.get("minimum");
+			this._xMax = xAxis.get("maximum");
+			this._yMin = yAxis.get("minimum");
+			this._yMax = yAxis.get("maximum");
 		}
 		
         if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))

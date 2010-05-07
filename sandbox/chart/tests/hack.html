@@ -1,15 +1,21 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Y! Finance</title>
+	<meta name="author" content="Allen Rabinovich">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
 <style>
-/*Supplemental CSS for the YUI distribution*/
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
     html, body {
 		width:100%;
 		height:100%;
-	}
+        overflow:hidden;
+        margin:0;
+		background-color:#000;
+    }
 	#charts-app {
 		width:100%;
 		height:100%;
@@ -29,13 +35,17 @@
 		float:left;
 		background-color:#ddd;
 		text-align:center;
+		background-image:url('http://www.mysteryhunt.ws/ipadcharts/rightback.png');
+		backround-repeat:repeat-y;
 	}
 	
 	#stock-info {
+		position:relative;
 		width:100%;
 		height:15%;
 		display:block;
-		background-color:#bbb;
+		background-image:url('http://www.mysteryhunt.ws/ipadcharts/top-bck.png');
+		background-repeat:repeat-x;
 		padding:auto;
 	}
 	
@@ -44,6 +54,8 @@
 		height:70%;
 		display:block;
 		background-color:#ccc;
+		background-image:url('http://www.mysteryhunt.ws/ipadcharts/paperback.jpg');
+		background-repeat:no-repeat;
 	}
 	
 	#small-chart {
@@ -51,36 +63,75 @@
 		width:100%;
 		height:15%;
 		background-color:#f00;
+		background-image:url('http://www.mysteryhunt.ws/ipadcharts/bottomback.png');
+		background-repeat:repeat-x;
 	}
 	
 	#search-box {
 		width:100%;
 		height:10%;
 		display:block;
-		background-color:#0f0;
+		background-image:url('http://www.mysteryhunt.ws/ipadcharts/rightback.png');
+		background-repeat:repeat-y;
 	}
 	
 	#search-results {
 		width:100%;
 		height:90%;
 		display:block;
-		background-color:#ddd;
+		text-align:center;
+		background-image:url('http://www.mysteryhunt.ws/ipadcharts/rightback.png');
+		background-repeat:repeat-y;
 	}
 	
 	#slider {
 		position:absolute;
 		left:50%;
 		margin-left:-10px;
-		width:20px;
-		min-width:20px;
+		width:40px;
+		min-width:40px;
 		height:100%;
-		background-color:rgba(100,100,100,0.7);
+		background-color:rgba(255,255,255,0.3);
 		max-width:100%;
+	}
+	
+	.sidestocksel {
+		-webkit-border-radius:10px;
+		background-image:url('http://www.mysteryhunt.ws/ipadcharts/bottomback.png');
+		background-repeat:repeat-x;
+		width:90%;
+		height:6%;
+		font-family:Georgia;
+		font-size:25px;
+		color:#fff;
+		text-align:center;
+		margin-left:10px;
+		margin-top:10px;
+	}
+	
+	
+	.sidestock {
+		-webkit-border-radius:10px;
+		background-image:url('http://www.mysteryhunt.ws/ipadcharts/top-bck.png');
+		background-repeat:repeat-x;
+		width:90%;
+		height:6%;
+		font-family:Georgia;
+		font-size:25px;
+		color:#fff;
+		text-align:center;
+		margin-left:10px;
+		margin-top:10px;
+	}
+	
+	.ticker {
+		text-align:center; 
+		display:inline-block; 
+		margin:20px 0 0 20px;
 	}
 </style>
 <!-- BEGIN EXAMPLE CODE -->
-	<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script>
     <script type="text/javascript" src="../build/infographics/infographics.js"></script>
 		
 </head>		
@@ -95,7 +146,7 @@
 			var mydate = new Date();
 			var diff = mydate.valueOf() - starttime;
 			message += ": " + diff;
-			document.getElementById("output").innerHTML += "<br/>" + message;
+			document.getElementById("search-box").innerHTML += "<br/>" + message;
 		}
 			var getData = function()
 			{
@@ -161,89 +212,122 @@
 		</script>
 <div id="charts-app">
 	<div id="left-column">
-		<div id="stock-info">Stock Info</div>
+<div id="stock-info">
+			<div id="logo" style="position:absolute;top:50%;left:10px;margin-top:-19px;">	
+				<img src="http://www.mysteryhunt.ws/ipadcharts/yahoologo.png" />
+			</div>	
+			<div id="stockstuff" style="margin-left:250px;">
+
+				<div class="ticker">
+					<span id="ticker" style="display:block;color:#38991D;font-size:35px;font-family:'Georgia';">YHOO</span>
+					<span id="company-name" style="display:block;color:#fff;font-size:10px;font-family:'Helvetica Neue', Helvetica, Arial;">Yahoo! Inc.</span>
+				</div>
+				<div class="ticker">
+					<span id="open" style="position:relative;top:-5px;display:block;color:#38991D;font-size:35px;font-family:'Georgia';">15.77</span>
+					<span id="textopen" style="display:block;color:#fff;font-size:10px;font-family:'Helvetica Neue', Helvetica, Arial;">open</span>
+
+				</div>
+				<div class="ticker">
+					<span id="high" style="position:relative;top:-5px;display:block;color:#38991D;font-size:35px;font-family:'Georgia';">15.95</span>
+					<span id="texthigh" style="display:block;color:#fff;font-size:10px;font-family:'Helvetica Neue', Helvetica, Arial;">high</span>
+				</div>
+				<div class="ticker">
+					<span id="low" style="position:relative;top:-5px;display:block;color:#38991D;font-size:35px;font-family:'Georgia';">15.31</span>
+
+					<span id="textlow" style="display:block;color:#fff;font-size:10px;font-family:'Helvetica Neue', Helvetica, Arial;">low</span>
+				</div>
+			</div>
+
+		</div>
         <div id="chart"></div>
 		<div id="big-chart"></div>
-		<div id="small-chart"><div id="slider"></div><div id="small-chart-text">Small Chart</div></div>	
+		<div id="small-chart"><div id="slider"></div></div>	
 </div>
 	<div id="right-column">
-		<div id="search-box">Search Box</div>
-		<div id="search-results">Search Results</div>
+		<div id="search-box">
+			<input type="text" size="15" style="font-size:20px;border-style:solid;height:12px;-webkit-border-radius:10px;margin-top:10px;"/>
+		</div>
+		<div id="search-results">
+		<div id="stock1" class="sidestocksel"><div style="position:relative;top:3px;">YHOO</div></div>
+		<div id="stock2" class="sidestock"><div style="position:relative;top:3px;">AAPL</div></div>
+		<div id="stock3" class="sidestock"><div style="position:relative;top:3px;">MSFT</div></div>
+
+		<div id="stock3" class="sidestock"><div style="position:relative;top:3px;">ADBE</div></div>
+		</div>
 	</div>
 		<script>
 
-			YUI({filter:"debug"}).use('node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphic', 'infographics', function (Y)
-				{
-        var TOUCH = Y.UA.webkit && Y.UA.mobile, 
-            EVT_MAP;
+			YUI({}).use('node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphic', 'infographics', function (Y)
+            {
+                var TOUCH = Y.UA.webkit && Y.UA.mobile, 
+                    EVT_MAP;
 
-        if (TOUCH) {
-            // Node Hack - Add touch event support
-            Y.mix(Y.Node.DOM_EVENTS, { gesturechange:1, touchstart:1, touchmove:1, touchend:1} );
+                if (TOUCH) {
+                    // Node Hack - Add touch event support
+                    Y.mix(Y.Node.DOM_EVENTS, { gesturechange:1, touchstart:1, touchmove:1, touchend:1} );
 
-            // Event Hack - Add custom properties to event facade
-            Y._DOMEventFacade = Y.DOMEventFacade;
-            Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
-                var e = new Y._DOMEventFacade(ev, currentTarget, wrapper);
-                if (ev.touches) {
-                    e.touches = [];
-                    if (ev.touches[0]) {
-                        e.touches[0] = new Y.DOMEventFacade(ev.touches[0], currentTarget, wrapper);
-                    }
-                    if (ev.touches[1]) {
-                        e.touches[1] = new Y.DOMEventFacade(ev.touches[1], currentTarget, wrapper);
-                    }
+                    // Event Hack - Add custom properties to event facade
+                    Y._DOMEventFacade = Y.DOMEventFacade;
+                    Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
+                        var e = new Y._DOMEventFacade(ev, currentTarget, wrapper);
+                        if (ev.touches) {
+                            e.touches = [];
+                            if (ev.touches[0]) {
+                                e.touches[0] = new Y.DOMEventFacade(ev.touches[0], currentTarget, wrapper);
+                            }
+                            if (ev.touches[1]) {
+                                e.touches[1] = new Y.DOMEventFacade(ev.touches[1], currentTarget, wrapper);
+                            }
+                        }
+                        e.scale = ev.scale;
+                        return e;
+                    };
                 }
-                e.scale = ev.scale;
-                return e;
-            };
-        }
 
-        var smallChart = Y.one("#small-chart");
-        var smallChartText = Y.one("#small-chart-text");
-        var slider = Y.one("#slider");
+                var smallChart = Y.one("#small-chart");
+                var smallChartText = Y.one("#small-chart-text");
+                var slider = Y.one("#slider");
 
-        Y.one("body").on("touchmove", function(event) {
-            event.preventDefault();
-        });
+                Y.one("body").on("touchmove", function(event) {
+                    event.preventDefault();
+                });
 
-        smallChart.on("gesturechange", function(event) {
+                smallChart.on("gesturechange", function(event) {
 
-            var scale = event.scale;
-            var width = slider.get("offsetWidth");
+                    var scale = event.scale;
+                    var width = slider.get("offsetWidth");
 
-            if (scale < 1) {
-                slider.setStyle("width", (width - 5/Math.pow(scale,2)) + "px");
-            } else {
-                slider.setStyle("width", (width + 5*Math.pow(scale,2)) + "px");
-            }
+                    if (scale < 1) {
+                        slider.setStyle("width", (width - 5/Math.pow(scale,2)) + "px");
+                    } else {
+                        slider.setStyle("width", (width + 5*Math.pow(scale,2)) + "px");
+                    }
+                    slider.setStyle("marginLeft", "-" + slider.get("offsetWidth")/2 + "px");
+                });
 
-            slider.setStyle("marginLeft", "-" + slider.get("offsetWidth")/2 + "px");
-        });
+                var dd = new Y.DD.Drag({
+                    useShim:false,
+                    node: slider,
+                    clickPixelThresh:1,
+                    clickTimeThresh:100
+                }).plug(Y.Plugin.DDConstrained, {
+                    constrain2node: smallChart
+                });
 
-        var dd = new Y.DD.Drag({
-            useShim:false,
-            node: slider,
-            clickPixelThresh:1,
-            clickTimeThresh:100
-        }).plug(Y.Plugin.DDConstrained, {
-            constrain2node: smallChart
-        });
-
-        if (TOUCH) {
-            // DD Hack - Use mouse move to kick of move programmatically
-            dd.get('node').on('touchmove', function(event) {
-                if(event.touches.length == 1) {
-                   if (!dd.get('dragging')) {
-                       dd.fire('drag:mouseDown', { ev: event.touches[0] });
-                       dd._ev_md = event.touches[0];
-                   } else {
-                       Y.DD.DDM._move.apply(Y.DD.DDM, [event.touches[0]]);
-                   }
-                   event.preventDefault();
+                if (TOUCH) {
+                    // DD Hack - Use mouse move to kick of move programmatically
+                    dd.get('node').on('touchmove', function(event) {
+                        if(event.touches.length == 1) {
+                           if (!dd.get('dragging')) {
+                               dd.fire('drag:mouseDown', { ev: event.touches[0] });
+                               dd._ev_md = event.touches[0];
+                           } else {
+                               Y.DD.DDM._move.apply(Y.DD.DDM, [event.touches[0]]);
+                           }
+                           event.preventDefault();
+                        }
+                    });
                 }
-            });
-        }
 					// Create data 
 					var mydata = getData();
 
@@ -292,7 +376,19 @@
                             len = parseInt(target.get("length"), 10);
                         timeaxis.updateMaxByPosition(val, len);
                     }
-                    
+                   
+                    function calculateAndUpdateMinAndMax(e)
+                    {
+                        
+                        var target = e.currentTarget,
+                            minVal = target.get("node").get("region").left,
+                            maxVal = minVal + 40,
+                            len = document.getElementById("small-chart").offsetWidth;
+                        timeaxis.updateMinByPosition(minVal, len);
+                        timeaxis.updateMaxByPosition(maxVal, len);
+                    }
+                   
+                    dd.on("drag", Y.bind(calculateAndUpdateMinAndMax, this)); 
                 });
 </script>
 <!-- END EXAMPLE CODE -->

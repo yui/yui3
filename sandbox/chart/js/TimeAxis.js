@@ -19,6 +19,7 @@ TimeAxis.ATTRS =
 		setter: function (value)
 		{
 			this._setMaximum = this._getNumber(value);
+            this.fire("dataChange");
 		}
     },
 
@@ -107,6 +108,21 @@ Y.extend(TimeAxis, Y.BaseAxis, {
             pos = (val/len) * range;
             pos += this._dataMinimum;
         this.set("minimum", pos);
+    },
+
+    updateMinAndMaxByPosition: function(minVal, maxVal, len)
+    {
+        var range = this._dataMaximum - this._dataMinimum,
+            scaleFactor = len / range,
+            min = minVal / len,
+            max = maxVal / len;
+        min += this._dataMinimum;
+        max += this._dataMaximum;
+        //this.set("minimum", min);
+        //this.set("maximum", max);
+        this._setMaximum = this._getNumber(max);
+        this._setMinimum = this._getNumber(min);
+        this.fire("dataChange");
     }
 });
 
