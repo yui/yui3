@@ -1304,12 +1304,18 @@ Y.extend(TimeAxis, Y.BaseAxis, {
         return val;
     },
 
-    calculateAndUpdateMinimum:function(event)
+    updateMaxByPosition:function(val, len)
     {
-        var target = event.currentTarget,
-            range = this._dataMaximum - this._dataMinimum,
-            val = target.get("value"),
-            len = parseInt(target.get("length"), 10),
+        var range = this._dataMaximum - this._dataMinimum,
+            scaleFactor = len / range,
+            pos = (val/len) * range;
+            pos += this._dataMinimum;
+        this.set("maximum", pos);
+    },
+
+    updateMinByPosition:function(val, len)
+    {
+        var range = this._dataMaximum - this._dataMinimum,
             scaleFactor = len / range,
             pos = (val/len) * range;
             pos += this._dataMinimum;
