@@ -105,6 +105,79 @@ Y.Performance.addTests({
         }
     },
 
+    "jQuery 1.4.2": {
+        duration: 500,
+        iterations: 10,
+        useStrictSandbox: true,
+
+        preloadUrls: {
+            jquery: 'http://code.jquery.com/jquery-1.4.2.min.js'
+        },
+
+        setup: function () {
+            // Make sure the JS was preloaded successfully.
+            if (!sandbox.preload.jquery) {
+                sandbox.log('Failed to load jquery.', 'warn', 'sandbox');
+                return false;
+            }
+        },
+
+        test: function () {
+            eval(sandbox.preload.jquery);
+            done();
+        }
+    },
+
+    "YUI 3.1.1 jQueryish package w/ explicit dependencies": {
+        duration: 500,
+        iterations: 10,
+        useStrictSandbox: true,
+
+        preloadUrls: {
+            yui: 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-base-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/yui/yui-later-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/dom/dom-min.js&3.1.1/build/event/event-min.js&3.1.1/build/pluginhost/pluginhost-min.js&3.1.1/build/node/node-min.js&3.1.1/build/attribute/attribute-base-min.js&3.1.1/build/base/base-base-min.js&3.1.1/build/anim/anim-min.js&3.1.1/build/querystring/querystring-stringify-simple-min.js&3.1.1/build/queue-promote/queue-promote-min.js&3.1.1/build/datatype/datatype-xml-min.js&3.1.1/build/io/io-min.js&3.1.1/build/json/json-min.js&3.1.1/build/yui/get-min.js&3.1.1/build/loader/loader-min.js'
+        },
+
+        setup: function () {
+            // Make sure the JS was preloaded successfully.
+            if (!sandbox.preload.yui) {
+                sandbox.log('Failed to load YUI JS.', 'warn', 'sandbox');
+                return false;
+            }
+        },
+
+        test: function () {
+            eval(sandbox.preload.yui);
+            YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
+                done();
+            });
+        }
+    },
+
+    "YUI 3.1.1 jQueryish package w/ YUI().use('*')" : {
+        duration: 500,
+        iterations: 10,
+        useStrictSandbox: true,
+
+        preloadUrls: {
+            yui: 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-base-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/yui/yui-later-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/dom/dom-min.js&3.1.1/build/event/event-min.js&3.1.1/build/pluginhost/pluginhost-min.js&3.1.1/build/node/node-min.js&3.1.1/build/attribute/attribute-base-min.js&3.1.1/build/base/base-base-min.js&3.1.1/build/anim/anim-min.js&3.1.1/build/querystring/querystring-stringify-simple-min.js&3.1.1/build/queue-promote/queue-promote-min.js&3.1.1/build/datatype/datatype-xml-min.js&3.1.1/build/io/io-min.js&3.1.1/build/json/json-min.js&3.1.1/build/yui/get-min.js&3.1.1/build/loader/loader-min.js'
+        },
+
+        setup: function () {
+            // Make sure the JS was preloaded successfully.
+            if (!sandbox.preload.yui) {
+                sandbox.log('Failed to load YUI JS.', 'warn', 'sandbox');
+                return false;
+            }
+        },
+
+        test: function () {
+            eval(sandbox.preload.yui);
+            YUI().use('*', function (Y) {
+                done();
+            });
+        }
+    },
+
     "YUI().use()": {
         bootstrapYUI: true,
         duration: 500,
@@ -117,18 +190,18 @@ Y.Performance.addTests({
         }
     },
 
-    "YUI().use('anim', 'event', 'io', 'json', 'node')": {
-        bootstrapYUI: true,
-        duration: 1000,
-        iterations: 40,
-        warmup: true,
-
-        test: function () {
-            YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
-                done();
-            });
-        }
-    },
+    // "YUI().use('anim', 'event', 'io', 'json', 'node')": {
+    //     bootstrapYUI: true,
+    //     duration: 1000,
+    //     iterations: 40,
+    //     warmup: true,
+    // 
+    //     test: function () {
+    //         YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
+    //             done();
+    //         });
+    //     }
+    // },
 
     "TabView with 3 tabs": {
         bootstrapYUI: true,

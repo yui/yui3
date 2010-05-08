@@ -7,9 +7,12 @@ var Node       = Y.Node,
     Perf,
 
     isFunction = Y.Lang.isFunction,
+    yqlCache   = {},
+    yqlQueue   = {},
 
-    CHART_URL        = 'http://chart.apis.google.com/chart?',
-    DEFAULT_DURATION = 1000; // default duration for time-based tests
+    CHART_URL         = 'http://chart.apis.google.com/chart?',
+    DEFAULT_DURATION  = 1000, // default duration for time-based tests
+    YQL_XDR_DATATABLE = 'http://pieisgood.org/test/yui/yui3/sandbox/performance/assets/xdr.xml';
 
 // -- Private Methods ----------------------------------------------------------
 
@@ -80,6 +83,13 @@ function createQueryString(params) {
     return _params.join('&amp;');
 }
 
+function htmlentities(string) {
+    return string.replace(/&/g, '&amp;').
+                  replace(/</g, '&lt;').
+                  replace(/>/g, '&gt;').
+                  replace(/"/g, '&quot;');
+}
+
 // Returns the median of the values in the specified array. This implementation
 // is naïve and does a full sort before finding the median; if we ever start
 // working with very large arrays, this should be rewritten to use a linear
@@ -118,6 +128,31 @@ function medianDeviation(set) {
 
     // The median of the deviations is the median absolute deviation.
     return median(deviations);
+}
+
+// Cross-domain request proxied via YQL. Allows us to preload external JS
+// resources and have full control over when they're parsed and executed.
+function xdrGet(url, callback) {
+    if (yqlCache[url]) {
+        callback.call(Y.config.win, yqlCache[url]);
+    } else if (yqlQueue[url]) {
+        yqlQueue[url].push(callback);
+    } else {
+        yqlQueue[url] = [callback];
+
+        new Y.yql("use '" + YQL_XDR_DATATABLE + "'; select * from xdr where url = '" + url + "'", function (result) {
+            var callback;
+
+            result = result.query.results.result;
+            yqlCache[url] = result;
+
+            while (callback = yqlQueue[url].shift()) {
+                callback.call(Y.config.win, result);
+            }
+
+            delete yqlQueue[url];
+        });
+    }
 }
 
 function xhrGet(url) {
@@ -206,6 +241,8 @@ Perf = Y.Performance = {
                 '</tbody>' +
             '</table>'
         ));
+
+        Perf._table.delegate('click', Perf._onTestClick, 'tbody tr.test');
     },
 
     start: function () {
@@ -243,21 +280,42 @@ Perf = Y.Performance = {
 
     _queueTest: function (test, name) {
         var i = Perf._mode === Perf.MODE_ITERATION ? test.iterations || 1 : 1,
+            push,
             sandbox;
 
         if (test.warmup) {
             i += 1;
         }
 
-        while (i--) {
+        push = function () {
+            // Yeah, I know, this is wanton closure abuse. Deal with it.
+            var poll,
+                preload = {};
+
             // Use one sandbox for all iterations of a given test unless the
             // useStrictSandbox option is true.
             if (test.useStrictSandbox || !sandbox) {
                 Perf._sandboxes.push(sandbox = new Y.Sandbox({
-                    bootstrapYUI: test.bootstrapYUI
+                    bootstrapYUI: test.bootstrapYUI,
+                    waitFor     : test.preloadUrls && 'preload'
                 }));
 
                 sandbox.setEnvValue('xhrGet', xhrGet);
+
+                if (test.preloadUrls) {
+                    Y.Object.each(test.preloadUrls, function (url, key) {
+                        xdrGet(url, function (result) {
+                            preload[key] = result.response.body;
+                        });
+                    });
+
+                    poll = Y.later(Y.config.pollInterval || 15, this, function (sandbox) { // note the local sandbox reference being passed in
+                        if (Y.Object.size(preload) === Y.Object.size(test.preloadUrls)) {
+                            poll.cancel();
+                            sandbox.setEnvValue('preload', preload);
+                        }
+                    }, sandbox, true);
+                }
             }
 
             Perf._queue.push({
@@ -266,10 +324,14 @@ Perf = Y.Performance = {
                 test   : test,
                 warmup : test.warmup && !(test.warmup = false) // intentional assignment, sets warmup to false for future iterations
             });
+        };
+
+        while (i--) {
+            push();
         }
     },
 
-    _renderTestResult: function (result) {
+    _renderTestResult: function (result, test) {
         var chartParams = {
                 cht: 'ls',
                 chd: 't:' + result.points.join(','),
@@ -278,7 +340,7 @@ Perf = Y.Performance = {
             };
 
         Perf._table.one('tbody').append(Y.substitute(
-            '<tr>' +
+            '<tr class="test">' +
                 '<td class="test">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></td>' +
                 '<td class="calls">{calls}</td>' +
                 '<td class="mean">{mean}</td>' +
@@ -287,6 +349,13 @@ Perf = Y.Performance = {
                 '<td class="stdev">±{stdev}</td>' +
                 '<td class="max">{max}</td>' +
                 '<td class="min">{min}</td>' +
+            '</tr>' +
+            '<tr class="code hidden">' +
+                '<td colspan="8">' +
+                    '<pre><code>' +
+                        htmlentities(test.test.toString()) +
+                    '</code></pre>' +
+                '</td>' +
             '</tr>',
 
             Y.merge(result, {chartUrl: CHART_URL + createQueryString(chartParams)})
@@ -329,7 +398,7 @@ Perf = Y.Performance = {
         });
     },
 
-    // -- Protected Callbacks --------------------------------------------------
+    // -- Protected Callbacks & Event Handlers ---------------------------------
     _onIterationComplete: function (iteration, profileData) {
         var result,
             test = iteration.test;
@@ -355,7 +424,7 @@ Perf = Y.Performance = {
                     result[key] = result[key].toFixed(2);
                 });
 
-                Perf._renderTestResult(result);
+                Perf._renderTestResult(result, test);
             }
 
             Perf._results[iteration.name] = result;
@@ -366,6 +435,12 @@ Perf = Y.Performance = {
         }
 
         Perf._runNextTest();
+    },
+
+    _onTestClick: function (e) {
+        var code = e.currentTarget.next('tr.code');
+
+        code.toggleClass('hidden');
     },
 
     _onTimeComplete: function (iteration, count) {
@@ -393,7 +468,7 @@ Perf = Y.Performance = {
                 variance : 0.00
             };
 
-            Perf._renderTestResult(result);
+            Perf._renderTestResult(result, test);
         }
 
         if (test.useStrictSandbox) {
@@ -405,5 +480,5 @@ Perf = Y.Performance = {
 };
 
 }, '@VERSION@', {
-    requires: ['gallery-sandbox', 'later', 'node', 'substitute']
+    requires: ['gallery-sandbox', 'gallery-yql', 'later', 'node', 'substitute']
 });
