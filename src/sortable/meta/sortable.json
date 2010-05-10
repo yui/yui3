@@ -5,7 +5,7 @@
             "dd-drop-plugin", 
             "dd-proxy"
         ],
-        "submodules": {
+        "plugins": {
             "sortable-scroll": {
                 "requires": [
                     "dd-scroll"

@@ -203,7 +203,7 @@
         */
         plug: function(cls, config) {
             //I don't like this.. Not at all, need to discuss with the team
-            if (cls.NAME.substring(0, 4).toLowerCase() === 'sort') {
+            if (cls && cls.NAME.substring(0, 4).toLowerCase() === 'sort') {
                 this.constructor.superclass.plug.call(this, cls, config);
             } else {
                 this.delegate.dd.plug(cls, config);
