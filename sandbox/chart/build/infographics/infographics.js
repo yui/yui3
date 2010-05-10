@@ -1,5 +1,499 @@
 YUI.add('infographics', function(Y) {
 
+var Graphic = function(config) {
+    this.initializer.apply(this, arguments);
+};
+
+Graphic.prototype = {
+    initializer: function(config) {
+        this._dummy = this._createDummy();
+        this._canvas = this._createGraphic();
+        this._context = this._canvas.getContext('2d');
+        this._initProps();
+    },
+
+    _reHex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
+
+    _2RGBA: function(val, alpha) {
+        alpha = (alpha !== undefined) ? alpha : 1;
+        if (this._reHex.exec(val)) {
+            val = 'rgba(' + [
+                parseInt(RegExp.$1, 16),
+                parseInt(RegExp.$2, 16),
+                parseInt(RegExp.$3, 16)
+            ].join(',') + ',' + alpha + ')';
+        }
+        return val;
+    },
+
+    _createDummy: function() {
+        var dummy = Y.config.doc.createElement('div');
+        dummy.style.height = 0;
+        dummy.style.width = 0;
+        dummy.style.overflow = 'hidden';
+        Y.config.doc.documentElement.appendChild(dummy);
+        return dummy;
+    },
+
+    _createGraphic: function(config) {
+        var graphic = Y.config.doc.createElement('canvas');
+
+        // no size until drawn on
+        graphic.width = 600;
+        graphic.height = 600;
+        return graphic;
+    },
+
+    _2RGB: function(val) {
+        this._dummy.style.background = val;
+        return this._dummy.style.backgroundColor;
+    },
+
+    beginBitmapFill: function(bitmap, matrix, repeat) {
+    /*
+        repeat = (repeat === false) ? 'no-repeat' : 'repeat';
+        var context = this._context;
+        this._fillType =  'bitmap';
+        context.fillStyle = context.createPattern(bitmap, repeat);
+    */
+        return this;
+    },
+
+    beginFill: function(color, alpha) {
+        var context = this._context;
+        context.beginPath();
+        if (color) {
+            if (alpha) {
+               color = this._2RGBA(color, alpha);
+            } else {
+                color = this._2RGB(color);
+            }
+
+            this._fillColor = color;
+            this._fillType = 'solid';
+        }
+
+        return this;
+    },
+
+    /** 
+     *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
+     */
+    beginGradientFill: function(type, colors, alphas, ratios, rotation) {
+        this._fillType =  type;
+        this._fillColors = colors;
+        this._fillRatios = ratios;
+        this._fillRotation = rotation;
+        this._context.beginPath();
+        return this;
+    },
+
+    _trackSize: function(w, h) {
+        if (w > this._width) {
+            this._width = w;
+        }
+        if (h > this._height) {
+            this._height = w;
+        }
+    },
+
+    _trackPos: function(x, y) {
+        if (x > this._x) {
+            this._x = x;
+        }
+        if (y > this._y) {
+            this._y = y;
+        }
+    },
+    
+    _initProps: function() {
+        var canvas = this._canvas,
+            context = this._context;
+        
+        context.fillStyle = 'rgba(0, 0, 0, 1)'; // use transparent when no fill
+        context.lineWidth = 1;
+        //context.lineCap = 'butt';
+        context.lineJoin = 'miter';
+        context.miterLimit = 3;
+        context.strokeStyle = 'rgba(0, 0, 0, 1)';
+
+        // canvas is sized dynamically based on drawing shape
+        //canvas.width = 0;
+        //canvas.height = 0;
+
+        this._width = 0;
+        this._height = 0;
+
+        this._x = 0;
+        this._y = 0;
+        this._fillType = null;
+        this._stroke = null;
+    },
+
+    clear: function() {
+        this._initProps();
+        this._canvas.width = this._canvas.width;
+        return this;
+    },
+
+    curveTo: function(controlX, controlY, anchorX, anchorY) {
+        this._context.quadraticCurveTo(controlX, controlY, anchorX, anchorY);
+
+        return this;
+    },
+
+	drawCircle: function(x, y, radius) {
+        var context = this._context,
+            startAngle = 0 * Math.PI / 180,
+            endAngle = 360 * Math.PI / 180,
+            anticlockwise = false;
+
+        this._trackPos(x, y);
+        this._trackSize(radius * 2, radius * 2);
+
+        context.arc(x + radius, y + radius, radius, startAngle, endAngle, anticlockwise);
+        return this;
+	},
+
+	drawEllipse: function(x, y, r, start, end, anticlockwise) {
+        return this;
+	},
+
+    drawRect: function(x, y, w, h) {
+        this.moveTo(x, y).lineTo(x + w, y).lineTo(x + w, y + h).lineTo(x, y + h).lineTo(x, y);
+        var context = this._context;
+
+        this._trackPos(x, y);
+        this._trackSize(w, h);
+
+        return this;
+    },
+
+    drawRoundRect: function(x, y, w, h, ew, eh) {
+        var ctx = this._context;
+        ctx.moveTo(x, y + eh);
+        ctx.lineTo(x, y + h - eh);
+        ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
+        ctx.lineTo(x + w - ew, y + h);
+        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
+        ctx.lineTo(x + w, y + eh);
+        ctx.quadraticCurveTo(x + w, y, x + w - ew, y);
+        ctx.lineTo(x + ew, y);
+        ctx.quadraticCurveTo(x, y, x, y + eh);
+
+        this._trackPos(x, y);
+        this._trackSize(w, h);
+
+        return this;
+    },
+
+    _getFill: function() {
+        var type = this._fillType,
+            w = this._width,
+            h = this._height,
+            fill;
+
+        switch (type) {
+            case 'linear': 
+                fill = this._getLinearGradient(w, h, 'fill');
+                break;
+
+            case 'radial': 
+                fill = this._getRadialGradient(w, h, 'fill');
+                break;
+
+            case 'solid': 
+                fill = this._fillColor;
+                break;
+        }
+        return fill;
+    },
+
+    _getLinearGradient: function(w, h, type) {
+        var prop = '_' + type,
+            colors = this[prop + 'Colors'],
+            ratios = this[prop + 'Ratios'],
+            x = this._x,
+            y = this._y,
+            ctx = this._context,
+            r = this[prop + 'Rotation'],
+            i,
+            l,
+            color,
+            ratio,
+            def,
+            grad;
+        //temporary hack for rotation. 
+        switch(r) {
+            case 45:
+                grad = ctx.createLinearGradient(x + w, y + h, x, y); 
+            break;
+            case 90:
+                grad = ctx.createLinearGradient(x + w, y, x, y); 
+            break;
+            case 135:
+                grad = ctx.createLinearGradient(x + w, y, x, y + h); 
+            break;
+            case 180:
+                grad = ctx.createLinearGradient(x, y, x, y + h); 
+            break;
+            case 225:
+                grad = ctx.createLinearGradient(x, y, x + w, y + h); 
+            break;
+            case 270:
+                grad = ctx.createLinearGradient(x, y, x + w, y); 
+            break;
+            case 315:
+                grad = ctx.createLinearGradient(x, y + h, x + w, y); 
+            break;
+            default:
+                grad = ctx.createLinearGradient(x, y + h, x, y); 
+            break;
+
+        }
+        l = colors.length;
+        def = 0;
+        for(i = 0; i < l; ++i)
+        {
+            color = colors[i];
+            ratio = ratios[i] || def;
+            grad.addColorStop(ratio, color);
+            def = (i + 1) / l;
+        }
+
+        return grad;
+    },
+
+    _getRadialGradient: function(w, h, type) {
+        var prop = '_' + type,
+            colors = this[prop + "Colors"],
+            ratios = this[prop + "Ratios"],
+            i,
+            l,
+            x = this._x,
+            y = this._y,
+            color,
+            ratio,
+            def,
+            grad,
+            ctx = this._context;
+
+        grad = ctx.createRadialGradient(x + w/2, y + w/2, w/2, x + w, y + h, w/2);
+        l = colors.length;
+        def = 0;
+        for(i = 0; i < l; ++i) {
+            color = colors[i];
+            ratio = ratios[i] || def;
+            grad.addColorStop(ratio, color);
+            def = (i + 1) / l;
+        }
+        return grad;
+    },
+
+    endFill: function() {
+        var canvas = this._canvas,
+            context = this._context,
+            fill;
+
+        if (this._fillType) {
+            fill = this._getFill();
+            if (fill) {
+                context.fillStyle = fill;
+            }
+        }
+
+        context.closePath();
+
+        if (this._fillType) {
+            context.fill();
+        }
+
+        if (this._stroke) {
+            context.stroke();
+        }
+        
+        this._initProps();
+        return this;
+    },
+
+    lineGradientStyle: function() {
+        return this;
+    },
+
+    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
+        color = color || '#000000';
+        var context = this._context;
+        if(this._stroke)
+        {
+            context.stroke();
+        }
+        context.lineWidth = thickness;
+
+        if (thickness) {
+            this._stroke = 1;
+        } else {
+            this._stroke = 0;
+        }
+
+        if (color) {
+            context.strokeStyle = color;
+
+            if (alpha) {
+                context.strokeStyle = this._2RGBA(context.strokeStyle, alpha);
+            }
+        }
+
+
+        if (caps === 'butt') {
+            caps = 'none';
+        }
+
+        if (context.lineCap) { // FF errors when trying to set
+            //context.lineCap = caps;
+        }
+        return this;
+    },
+
+    lineTo: function(point1, point2, etc) {
+        var args = arguments, 
+            canvas = this._canvas,
+            context = this._context,
+            width = this._width,
+            height = this._height,
+            i, len;
+        if (typeof point1 === 'string' || typeof point1 === 'number') {
+            args = [[point1, point2]];
+        }
+
+        for (i = 0, len = args.length; i < len; ++i) {
+            context.lineTo(args[i][0], args[i][1]);
+
+            this._trackSize.apply(this, args[i]);
+        }
+
+        return this;
+    },
+
+    moveTo: function(x, y) {
+        this._context.moveTo(x, y);
+        this._trackPos(x, y);
+        return this;
+    },
+
+    render: function(node) {
+        node = node || Y.config.doc.body;
+        node.appendChild(this._canvas);
+        this._canvas.width = node.offsetWidth;
+        this._canvas.height = node.offsetHeight;
+        return this;
+    }
+};
+
+Y.Graphic = Graphic;
+
+var VMLGraphics = function(config) {
+    this.initializer.apply(this, arguments);
+};
+
+VMLGraphics.prototype = {
+    initializer: function(config) {
+        this._vml = this._createGraphics;
+    },
+
+    _createGraphics: function() {
+        return Y.config.doc.createElement('v:shape');
+    },
+
+    beginBitmapFill: function() {
+        return this;
+    },
+
+    beginFill: function(color, alpha) {
+        if (color) {
+            this.set('fillColor', color);
+        }
+
+        if (alpha) {
+        }
+
+        return this;
+    },
+
+    beginGradientFill: function() {
+        return this;
+    },
+
+    clear: function() {
+        this._path = '';
+        return this;
+    },
+
+    curveTo: function(controlX, controlY, anchorX, anchorY) {
+        return this;
+    },
+
+	drawCircle: function(x, y, r, start, end, anticlockwise) {
+        return this;
+	},
+
+	drawRect: function(x, y, r, start, end, anticlockwise) {
+        return this;
+	},
+
+	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
+        return this;
+	},
+
+    endFill: function() {
+        this._path += ' x e';
+        this.set('path', this._path);
+        return this;
+    },
+
+    lineGradientStyle: function() {
+        return this;
+    },
+
+    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
+        this._vml.strokeWeight = thickness;
+        this._vml.strokeColor = color;
+        return this;
+    },
+
+    lineTo: function(point1, point2, etc) {
+        var args = arguments,
+            len,
+            i;
+        if (typeof point1 === 'string' || typeof point1 === 'number') {
+            args = [[point1, point2]];
+        }
+        this._path += ' l ';
+        for (i = 0, len = args.length; i < len; ++i) {
+            this._path += ' ' + args[i][0] + ' ' + args[i][1];
+        }
+
+        return this;
+    },
+
+    moveTo: function(x, y) {
+        this._path += ' m ' + x + ' ' + y;
+        return this;
+    },
+
+    _path: null
+};
+
+if (Y.UA.ie) {
+/*
+    Y.config.doc.namespaces.add(
+        'v', // vml namespace
+        'urn:schemas-microsoft-com:vml'
+    ).doImport('#default#VML');
+*/
+
+    Y.Graphics = VMLGraphics;
+}
+
 /**
  * BaseAxis is the base class for observable baseAxis classes.
  */
@@ -15,7 +509,10 @@ YUI.add('infographics', function(Y) {
  */
 function BaseAxis (config)
 {
-	BaseAxis.superclass.constructor.apply(this, arguments);
+    this._createId();
+    this._keys = {};
+    this._data = [];
+    BaseAxis.superclass.constructor.apply(this, arguments);
 }
 
 BaseAxis.NAME = "baseAxis";
@@ -109,7 +606,8 @@ BaseAxis.ATTRS = {
 			{
 				//remove listeners
 			}
-			this._dataProvider = value;
+            value = Y.merge(value);
+			this._dataProvider = {data:value.data.concat()};
 			this._dataClone = this._dataProvider.data.concat();
 			return value;
 		},
@@ -133,7 +631,7 @@ BaseAxis.ATTRS = {
 	maximum: {
 		getter: function ()
 		{
-			if(this._autoMax) 
+			if(this._autoMax || !this._setMaximum) 
 			{
 				return this._dataMaximum;
 			}
@@ -162,12 +660,17 @@ BaseAxis.ATTRS = {
 	minimum: {
 		getter: function ()
 		{
-			if(this._autoMin) 
+			if(this._autoMin || !this._setMinimum) 
 			{
 				return this._dataMinimum;
 			}
 			return this._setMinimum;
-		}
+		},
+        setter: function(val)
+        {
+            this._setMinimum = val;
+            return val;
+        }
 	},
 
 	/**
@@ -223,6 +726,15 @@ BaseAxis.ATTRS = {
 
 Y.extend(BaseAxis, Y.Base,
 {
+	/**
+	 * Creates unique id for class instance.
+	 *
+	 * @private
+	 */
+	_createId: function()
+	{
+		this._id = Y.guid(this.GUID);
+	},
 	/**
 	 * @private
 	 * Storaga for roundingUnit
@@ -283,12 +795,12 @@ Y.extend(BaseAxis, Y.Base,
 	 * @private
 	 * Storage for data
 	 */
-	_data: [],
+	_data: null,
 	/**
 	 * @private
 	 * Storage for keys
 	 */
-	_keys: {},
+	_keys: null,
 
 	/**
 	 * @private
@@ -520,7 +1032,7 @@ Y.extend(BaseAxis, Y.Base,
 		event.keysAdded = keysAdded;
 		event.keysRemoved = keysRemoved;
 		this.fire("axisUpdate", event);
-	}
+    }
 });
 Y.BaseAxis = BaseAxis;
 
@@ -700,6 +1212,41 @@ function TimeAxis(config)
 
 TimeAxis.NAME = "timeAxis";
 
+TimeAxis.ATTRS = 
+{
+    maximum: {
+		getter: function ()
+		{
+			if(this._autoMax || this._setMaximum === null) 
+			{
+                return this._getNumber(this._dataMaximum);
+			}
+			return this._setMaximum;
+		},
+		setter: function (value)
+		{
+			this._setMaximum = this._getNumber(value);
+            this.fire("dataChange");
+		}
+    },
+
+    minimum: {
+		getter: function ()
+		{
+			if(this._autoMin || this._setMinimum === null) 
+			{
+				return this._dataMinimum;
+			}
+			return this._setMinimum;
+		},
+		setter: function (value)
+		{
+			this._setMinimum = this._getNumber(value);
+            this.fire("dataChange");
+        }
+    }
+};
+
 Y.extend(TimeAxis, Y.BaseAxis, {
 	/**
 	 * @private
@@ -736,8 +1283,54 @@ Y.extend(TimeAxis, Y.BaseAxis, {
 		}
 		this._keys[key] = arr;
 		this._data = this._data.concat(arr);
-	}
+	},
 
+    _getNumber: function(val)
+    {
+        if(Y.Lang.isDate(val))
+        {
+            val = val.valueOf();
+        }
+        else if(!Y.Lang.isNumber(val))
+        {
+            val = new Date(val.toString()).valueOf();
+        }
+
+        return val;
+    },
+
+    updateMaxByPosition:function(val, len)
+    {
+        var range = this._dataMaximum - this._dataMinimum,
+            scaleFactor = len / range,
+            pos = (val/len) * range;
+            pos += this._dataMinimum;
+        this.set("maximum", pos);
+    },
+
+    updateMinByPosition:function(val, len)
+    {
+        var range = this._dataMaximum - this._dataMinimum,
+            scaleFactor = len / range,
+            pos = (val/len) * range;
+            pos += this._dataMinimum;
+        this.set("minimum", pos);
+    },
+
+    updateMinAndMaxByPosition: function(minVal, maxVal, len)
+    {
+        var range = this._dataMaximum - this._dataMinimum,
+            scaleFactor = len / range,
+            min = minVal / len,
+            max = maxVal / len;
+        min += this._dataMinimum;
+        max += this._dataMaximum;
+        //this.set("minimum", min);
+        //this.set("maximum", max);
+        this._setMaximum = this._getNumber(max);
+        this._setMinimum = this._getNumber(min);
+        this.fire("dataChange");
+    }
 });
 
 Y.TimeAxis = TimeAxis;
@@ -805,7 +1398,8 @@ Y.CategoryAxis = CategoryAxis;
 		
 function Renderer(config)
 {
-	Renderer.superclass.constructor.apply(this, arguments);
+	this._createId();
+    Renderer.superclass.constructor.apply(this, arguments);
 }
 
 Renderer.NAME = "renderer";
@@ -905,7 +1499,17 @@ Renderer.ATTRS = {
 };
 
 Y.extend(Renderer, Y.Base, {
-	_width: 0,
+	/**
+	 * Creates unique id for class instance.
+	 *
+	 * @private
+	 */
+	_createId: function()
+	{
+		this._id = Y.guid(this.GUID);
+	},
+	
+    _width: 0,
 
 	_height: 0,
 
@@ -1142,10 +1746,7 @@ CartesianSeries.ATTRS = {
 			{
 				this._parent = value;
 			}
-			this._canvas = document.createElement("canvas");
-			this._canvas.width = parseInt(this._parent.style.width, 10) || this._parent.width;
-			this._canvas.height = parseInt(this._parent.style.height, 10) || this._parent.height;
-			this._parent.appendChild(this._canvas);
+            this._setCanvas();
 			return this._parent;
 		}
 	},
@@ -1238,7 +1839,7 @@ CartesianSeries.ATTRS = {
 			this._xAxis = value;			
 			this._xAxis.on("axisReady", Y.bind(this.xAxisChangeHandler, this));
 			//this.xAxis.addEventListener(DataEvent.NEW_DATA, this.xAxisChangeHandler);
-			//this.xAxis.addEventListener(DataEvent.DATA_CHANGE, this.xAxisChangeHandler);
+			this._xAxis.on("dataChange", Y.bind(this.xAxisChangeHandler, this));
 			this.setFlag("axisDataChange");
 			return value;
 		},
@@ -1310,24 +1911,39 @@ CartesianSeries.ATTRS = {
 			return value;
 		}
 	},
-	/**
-	 * The canvas in which the line series will be rendered.
+    
+    /**
+     * Determines which axis property will define the bounds of the series.
+     *  <ul>
+     *      <li><code>data</code>: Maximum and minimum values are determined by the values of the datasource.</li>
+     *      <li><code>axis</code>: Maximum and minimum values are determined by the <code>Axis</code> setting.</li>
+     *  </ul>
+     */
+
+    /**
+	 * The graphic in which the line series will be rendered.
 	 */
-	canvas: {
+	graphic: {
 		getter: function()
 		{
-			return this._canvas;
+			return this._graphic;
 		},
 		setter: function(value)
 		{
-			this._canvas = value;
+			this._graphic = value;
 			return value;
 		}
 	}
 };
 
 Y.extend(CartesianSeries, Y.Renderer, {
-	_parent: null,
+	_setCanvas: function()
+    {
+        this._graphic = new Y.Graphic();
+        this._graphic.render(this.get("parent"));
+    },
+
+    _parent: null,
 
 	_styles: {
 		padding:{
@@ -1341,7 +1957,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	/**
 	 * @private
 	 */
-	_canvas: null,
+	_graphic: null,
 	
 	/**
 	 * @private (protected)
@@ -1350,9 +1966,9 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 */
 	xAxisChangeHandler: function(event)
 	{
-		if(this.get("xKey")) 
+        if(this.get("xKey")) 
 		{
-			this.setFlag("axisDataChange");
+            this.setFlag("axisDataChange");
 		}
 		if(this.get("yKey")) 
 		{
@@ -1459,10 +2075,11 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	setAreaData: function()
 	{
 		var nextX, nextY,
-			canvas = this.get("canvas"),
-			w = canvas.width,
-			h = canvas.height,
-			padding = this.get("styles").padding,
+            parent = this.get("parent"),
+			graphic = this.get("graphic"),
+			w = parent.offsetWidth,
+            h = parent.offsetHeight,
+            padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
 			dataWidth = w - (leftPadding + padding.right),
@@ -1481,17 +2098,27 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			yData = this.get("yAxis").getDataByKey(yKey),
 			dataLength = xData.length, 	
 			midY = dataHeight/2,
-			i;
-		for (i = 0; i < dataLength; ++i) 
+			areaMin = leftPadding,
+            areaMax = Math.round(0.5 + (((xMax - xMin) * xScaleFactor) + leftPadding)),
+            i;
+        for (i = 0; i < dataLength; ++i) 
 		{
-			nextX = Math.round(0.5 + (((xData[i] - xMin) * xScaleFactor) + leftPadding));
+			if(xData[i] > xMax)
+            {
+                break;
+            }
+            if(xData[i] < xMin)
+            {
+                continue;
+            }
+            nextX = Math.round(0.5 + (((xData[i] - xMin) * xScaleFactor) + leftPadding));
 			nextY = Math.round(0.5 +((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
-			xcoords.push(nextX);
-			ycoords.push(nextY);
-		}
-		this.set("xcoords", xcoords);
+            xcoords.push(nextX);
+            ycoords.push(nextY);
+        }
+        this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
-	},
+    },
 
 	/**
 	 * @private
@@ -1504,26 +2131,26 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 * @private (override)
 	 */
 	render: function()
-	{
+    {
 		var dataChange = this.checkDataFlags(),
 			resize = this.checkResizeFlags(),
 			styleChange = this.checkStyleFlags(),
-			canvas = this.get("canvas"),
-			context = canvas.getContext("2d"),
-			w = canvas.width,
-			h = canvas.height,
+			graphic = this.get("graphic"),
+            parent = this.get("parent"),
+			w = parent.offsetWidth,
+            h = parent.offsetHeight,
 			xAxis = this.get("xAxis"),
 			yAxis = this.get("yAxis");
-	
+
 		if(dataChange)
 		{
-			this._xMin = xAxis.minimum;
-			this._xMax = xAxis.maximum;
-			this._yMin = yAxis.minimum;
-			this._yMax = yAxis.maximum;
+			this._xMin = xAxis.get("minimum");
+			this._xMax = xAxis.get("maximum");
+			this._yMin = yAxis.get("minimum");
+			this._yMax = yAxis.get("maximum");
 		}
 		
-		if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))
+        if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))
 		{
 			this.setAreaData();
 			if(this.get("xcoords") && this.get("ycoords")) 
@@ -1673,13 +2300,15 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-		var	xcoords = this._xcoords,
+		var	parentDiv = this.get("parent"),
+            ht = parentDiv.offsetHeight,
+            xcoords = this._xcoords,
 			ycoords = this._ycoords,
 			len = xcoords.length,
-			lastValidX,
-			lastValidY,
 			lastX = xcoords[0],
 			lastY = ycoords[0],
+			lastValidX = lastX,
+			lastValidY = lastY,
 			nextX,
 			nextY,
 			i,
@@ -1691,14 +2320,12 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			discontinuousType = styles.discontinuousType,
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
-			canvas = this.get("canvas"),
-			context = canvas.getContext("2d");
-		lastValidX = lastX;
-		lastValidY = lastY;
-		context.lineWidth = styles.weight;
-		context.strokeStyle = styles.color;
-		context.moveTo (lastX, lastY);
-		for(i = 1; i < len; i = ++i)
+			graphic = this.get("graphic");
+        graphic.clear();
+        graphic.lineStyle(styles.weight, styles.color);
+        graphic.beginFill(styles.color, 0.5);
+        graphic.moveTo (lastX, lastY);
+        for(i = 1; i < len; i = ++i)
 		{
 			nextX = xcoords[i];
 			nextY = ycoords[i];
@@ -1710,9 +2337,9 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			}
 			if(lastValidX == lastX)
 			{
-				if(lineType != "dashed")
+                if(lineType != "dashed")
 				{
-					context.lineTo(nextX, nextY);
+                    graphic.lineTo(nextX, nextY);
 				}
 				else
 				{
@@ -1723,7 +2350,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			}
 			else if(!connectDiscontinuousPoints)
 			{
-				context.moveTo(nextX, nextY);
+				graphic.moveTo(nextX, nextY);
 			}
 			else
 			{
@@ -1735,14 +2362,18 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 				}
 				else
 				{
-					context.lineTo(nextX, nextY);
+                    graphic.lineTo(nextX, nextY);
 				}
 			}
 		
 			lastX = lastValidX = nextX;
 			lastY = lastValidY = nextY;
 		}
-		context.stroke();
+        graphic.lineStyle(0);
+        graphic.lineTo(lastX, ht);
+        graphic.lineTo(0, ht);
+        graphic.lineTo(0, ycoords[0]);
+        graphic.endFill();
 	},
 
 	drawMarkers: function()
@@ -1772,32 +2403,31 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			xCurrent = xStart,
 			yCurrent = yStart,
 			i,
-			canvas = this.get("canvas"),
-			context = canvas.getContext("2d");
+			graphic = this.get("graphic"),
 		xDelta = Math.cos(radians) * segmentLength;
 		yDelta = Math.sin(radians) * segmentLength;
 		
 		for(i = 0; i < segmentCount; ++i)
 		{
-			context.moveTo(xCurrent, yCurrent);
-			context.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+			graphic.moveTo(xCurrent, yCurrent);
+			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
 			xCurrent += xDelta;
 			yCurrent += yDelta;
 		}
 		
-		context.moveTo(xCurrent, yCurrent);
+		graphic.moveTo(xCurrent, yCurrent);
 		delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
 		
 		if(delta > dashSize)
 		{
-			context.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
 		}
 		else if(delta > 0)
 		{
-			context.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
+			graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
 		}
 		
-		context.moveTo(xEnd, yEnd);
+		graphic.moveTo(xEnd, yEnd);
 	}
 });
 

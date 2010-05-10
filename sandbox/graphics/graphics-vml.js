@@ -6,8 +6,11 @@ var VMLGraphics = function(config) {
 
 VMLGraphics.prototype = {
     initializer: function(config) {
+        config = config || {};
+        var w = config.width || 0,
+            h = config.height || 0;
         this._vml = this._createGraphics();
-        this.setSize(config.width || 0, config.height || 0);
+        this.setSize(w, h);
         this._initProps();
     },
 
