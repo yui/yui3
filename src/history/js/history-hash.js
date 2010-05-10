@@ -265,10 +265,61 @@ Y.extend(History, HistoryBase, {
 // -- Synthetic hashchange Event -----------------------------------------------
 hashNotifiers = YUI.namespace('Env.History._hashNotifiers');
 
-// Synthetic hashchange event to normalize hashchange differences across
-// browsers, and to provide hashchange for browsers that don't natively support
-// it.
-// TODO: how to document this?
+// TODO: YUIDoc currently doesn't provide a good way to document synthetic DOM
+// events. For now, we're just documenting the hashchange event on the YUI
+// object, which is about the best we can do until enhancements are made to
+// YUIDoc.
+
+/**
+ * <p>
+ * Synthetic <code>window.onhashchange</code> event that normalizes differences
+ * across browsers and provides support for browsers that don't natively support
+ * <code>onhashchange</code>.
+ * </p>
+ *
+ * <p>
+ * This event is provided by the <code>history-hash</code> module.
+ * </p>
+ *
+ * <p>
+ * <strong>Usage example:</strong>
+ * </p>
+ *
+ * <code><pre>
+ * YUI().use('history-hash', function (Y) {
+ * &nbsp;&nbsp;Y.on('hashchange', function (e) {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Handle hashchange events on the current window.
+ * &nbsp;&nbsp;}, Y.config.win);
+ * });
+ * </pre></code>
+ *
+ * @event hashchange
+ * @param {EventFacade} e Event facade with the following additional
+ *   properties:
+ *
+ * <dl>
+ *   <dt>oldHash</dt>
+ *   <dd>
+ *     Previous hash fragment value before the change.
+ *   </dd>
+ *
+ *   <dt>oldUrl</dt>
+ *   <dd>
+ *     Previous URL (including the hash fragment) before the change.
+ *   </dd>
+ *
+ *   <dt>newHash</dt>
+ *   <dd>
+ *     New hash fragment value after the change.
+ *   </dd>
+ *
+ *   <dt>newUrl</dt>
+ *   <dd>
+ *     New URL (including the hash fragment) after the change.
+ *   </dd>
+ * </dl>
+ * @for YUI
+ */
 Y.Event.define('hashchange', {
     on: function (node, subscriber, notifier) {
         // Ignore this subscriber if the node is anything other than the
