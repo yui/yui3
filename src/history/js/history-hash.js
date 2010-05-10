@@ -19,18 +19,21 @@
  * @constructor
  */
 
-var Lang      = Y.Lang,
-    Obj       = Y.Object,
-    GlobalEnv = YUI.namespace('Env.History'),
+var HistoryBase    = Y.HistoryBase,
+    Lang           = Y.Lang,
+    Obj            = Y.Object,
+    GlobalEnv      = YUI.namespace('Env.History'),
 
-    config          = Y.config,
-    doc             = config.doc,
-    docMode         = doc.documentMode,
+    SRC_HASH       = 'hash',
+
+    config         = Y.config,
+    doc            = config.doc,
+    docMode        = doc.documentMode,
     hashNotifiers,
     oldHash,
     oldUrl,
-    win             = config.win,
-    location        = win.location,
+    win            = config.win,
+    location       = win.location,
 
     // IE8 supports the hashchange event, but only in IE8 Standards
     // Mode. However, IE8 in IE7 compatibility mode still defines the
@@ -44,7 +47,7 @@ History = function () {
     History.superclass.constructor.apply(this, arguments);
 };
 
-Y.extend(History, Y.HistoryBase, {
+Y.extend(History, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
         // Use the bookmarked state as the initialState if no initialState was
@@ -60,15 +63,16 @@ Y.extend(History, Y.HistoryBase, {
     },
 
     // -- Protected Methods ----------------------------------------------------
-    _storeState: function (newState, silent) {
+    _storeState: function (src, newState) {
+        var newHash = History.createHash(newState);
+
         History.superclass._storeState.apply(this, arguments);
 
         // Update the location hash with the changes, but only if the new hash
         // actually differs from the current hash (this avoids creating multiple
         // history entries for a single state).
-        if (History.getHash() !== History.createHash(newState)) {
-            History[silent ? 'replaceHash' : 'setHash'](
-                    History.createHash(newState));
+        if (History.getHash() !== newHash) {
+            History[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
         }
     },
 
@@ -81,11 +85,22 @@ Y.extend(History, Y.HistoryBase, {
      * @protected
      */
     _afterHashChange: function (e) {
-        this._resolveChanges(History.parseHash(e.newHash));
+        this._resolveChanges(SRC_HASH, History.parseHash(e.newHash));
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
     NAME: 'history',
+
+    /**
+     * Constant used to identify state changes originating from
+     * <code>hashchange</code> events.
+     *
+     * @property SRC_HASH
+     * @type String
+     * @static
+     * @final
+     */
+    SRC_HASH: SRC_HASH,
 
     /**
      * Whether or not this browser supports the <code>window.onhashchange</code>
