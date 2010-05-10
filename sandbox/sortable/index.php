@@ -159,9 +159,9 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     Y.one('#add').on('click', function(e) {
         var node, one = Y.one('#one'), two = Y.one('#two'), three = Y.one('#three');
         for (var i = 1; i < count + 1; i++) {
-            node = Y.Node.create('<li class="item">(' + inc + ':1) ' + i + '</li>');
+            node = Y.Node.create('<li class="item list-item1">(' + inc + ':1) ' + i + '</li>');
             one.append(node);
-            two.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':2) ' + i));
+            two.append(node.cloneNode(true).set('innerHTML', '<strong>[|]</strong> (' + inc + ':2) ' + i).addClass('list-item2').removeClass('list-item1'));
             //three.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':3) ' + i));
         }
         inc++;
