@@ -270,7 +270,7 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">_noShim</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">clearCache</span><span class="p">();</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">targets</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">v</span><span class="p">.</span><span class="nx">_activateShim</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="p">[]);</span>
+                <span class="nx">v</span><span class="p">.</span><span class="nx">_activateShim</span><span class="p">([]);</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;noShim&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">this</span><span class="p">.</span><span class="nx">_noShim</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
                 <span class="p">}</span>
@@ -347,7 +347,7 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">activeDrop</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
             <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">targets</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">v</span><span class="p">.</span><span class="nx">_deactivateShim</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="p">[]);</span>
+                <span class="nx">v</span><span class="p">.</span><span class="nx">_deactivateShim</span><span class="p">([]);</span>
             <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
         <span class="p">},</span>
         <span class="cm">/**</span>

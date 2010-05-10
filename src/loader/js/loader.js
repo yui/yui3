@@ -427,7 +427,7 @@ Y.Loader = function(o) {
     }
 
     for (i in onPage) {
-        if (onPage[i].details) {
+        if ((!(i in self.moduleInfo)) && onPage[i].details) {
             self.addModule(onPage[i].details, i);
         }
     }
@@ -681,6 +681,8 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes
      */
     addModule: function(o, name) {
+
+
         name = name || o.name;
         o.name = name;
 
@@ -702,27 +704,28 @@ Y.Loader.prototype = {
         // Handle submodule logic
         var subs = o.submodules, i, l, sup, s, smod, plugins, plug,
             j, langs, packName, supName, flatSup, flatLang, lang, ret,
-            overrides, skinname, existing = this.moduleInfo[name], newr;
+            overrides, skinname;
+            // , existing = this.moduleInfo[name], newr;
 
         // Adding a module again merges requirements to pick up new
         // requirements when the module arrives.  We allow this only
         // once to prevent redundant checks when an application calls
         // use() many times.
-        if (existing && !existing.reparsed) {
-            for (i=0; i<o.requires.length; i++) {
-                newr = o.requires[i];
-                if (YArray.indexOf(existing.requires, newr) == -1) {
-                    existing.requires.push(newr);
-                    delete existing.expanded;
-                }
-            }
-            existing.reparsed = true;
-            return existing;
-        }
+        // if (existing && !existing.reparsed) {
+        //     for (i=0; i<o.requires.length; i++) {
+        //         newr = o.requires[i];
+        //         if (YArray.indexOf(existing.requires, newr) == -1) {
+        //             existing.requires.push(newr);
+        //             delete existing.expanded;
+        //         }
+        //     }
+        //     existing.reparsed = true;
+        //     return existing;
+        // }
 
         this.moduleInfo[name] = o;
 
-        if (!o.langPack) {
+        if (!o.langPack && o.lang) {
             langs = YArray(o.lang);
             for (j=0; j < langs.length; j++) {
                 lang = langs[j];
@@ -742,6 +745,8 @@ Y.Loader.prototype = {
             for (i in subs) {
                 if (subs.hasOwnProperty(i)) {
                     s = subs[i];
+
+                    // console.log('submodule: ' + i);
 
                     s.path = s.path || _path(name, i, o.type);
                     s.pkg = name;

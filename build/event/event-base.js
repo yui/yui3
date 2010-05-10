@@ -98,7 +98,8 @@ var GLOBAL_ENV = YUI.Env,
  * @for YUI
  */
 Y.publish('domready', {
-    fireOnce: true
+    fireOnce: true,
+    async: true
 });
 
 if (GLOBAL_ENV.DOMReady) {

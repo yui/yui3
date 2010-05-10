@@ -224,7 +224,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             this._noShim = true;
             this.clearCache();
             Y.each(this.targets, function(v, k) {
-                v._activateShim.apply(v, []);
+                v._activateShim([]);
                 if (v.get('noShim') == true) {
                     this._noShim = false;
                 }
@@ -301,7 +301,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             this.activeDrop = null;
 
             Y.each(this.targets, function(v, k) {
-                v._deactivateShim.apply(v, []);
+                v._deactivateShim([]);
             }, this);
         },
         /**

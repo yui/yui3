@@ -224,6 +224,15 @@
 <span class="cm"> * @param {string} name The attribute name </span>
 <span class="cm"> * @return {string} The attribute value </span>
 <span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Allows for removing attributes on DOM nodes..</span>
+<span class="cm"> * This passes through to the DOM node, allowing for custom attributes.</span>
+<span class="cm"> * @method removeAttribute</span>
+<span class="cm"> * @see Node</span>
+<span class="cm"> * @for NodeList</span>
+<span class="cm"> * @param {string} name The attribute to remove </span>
+<span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;getAttribute&#39;</span><span class="p">,</span> <span class="s1">&#39;setAttribute&#39;</span><span class="p">,</span> <span class="s1">&#39;removeAttribute&#39;</span><span class="p">]);</span>
 </pre></div>
 

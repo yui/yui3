@@ -166,7 +166,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
 
-    window.Y = Y; // export Y global for Selenium
     new Y.Console({node: '#yui-log', height: '50em' }).render('#yui-log');
 
     var byId = function(id) {
@@ -797,6 +796,12 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
                 Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
                 "Y.one('#test-insert-html').setContent(" + content + ")");
 
+            content = 0;
+            Y.one('#test-insert-html').setContent(content);
+            Assert.areEqual('0',
+                Y.DOM.byId('test-insert-html').innerHTML.toLowerCase(),
+                "Y.one('#test-insert-html').setContent(" + content + ")");
+
         },
 
         test_insert: function() {
@@ -1036,8 +1041,9 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
 
             Assert.areEqual('test-xy', doc.one('#test-xy').get('id'), 'doc.one("#test-xy")');
             Assert.isNull(doc.one('fake-id'), 'doc.one("#fake-id")');
-            Assert.areEqual(document.documentElement.scrollHeight, mask.offsetHeight, 'get("height")');
-            Assert.areEqual(document.documentElement.scrollWidth, mask.offsetWidth, 'get("width")');
+
+            Assert.areEqual(document.documentElement.offsetHeight, mask.offsetHeight, 'get("height")');
+            Assert.areEqual(document.documentElement.offsetWidth, mask.offsetWidth, 'get("width")');
             mask.className = '';
         },
 
@@ -1167,9 +1173,9 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
 
     // allow window scroll event to happen post-onload
     Y.on('load', function() {
-        setTimeout(function() {
+//        setTimeout(function() {
             Y.Test.Runner.run();
-        }, 1);
+//        }, 1);
     }, window);
 });
 </script>

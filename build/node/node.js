@@ -1110,7 +1110,6 @@ var NodeList = function(nodes) {
         nodes = Y.Array(nodes, 0, true);
     }
 
-    NodeList._instances[Y.stamp(this)] = this;
     /**
      * The underlying array of DOM nodes bound to the Y.NodeList instance
      * @property _nodes
@@ -1132,8 +1131,6 @@ NodeList.NAME = 'NodeList';
 NodeList.getDOMNodes = function(nodeList) {
     return nodeList._nodes;
 };
-
-NodeList._instances = [];
 
 NodeList.each = function(instance, fn, context) {
     var nodes = instance._nodes;
@@ -1331,7 +1328,6 @@ Y.mix(NodeList.prototype, {
     },
 
     destructor: function() {
-        delete NodeList._instances[this[UID]];
     },
 
     /**
@@ -1721,6 +1717,15 @@ Y.Node.importMethod(Y.DOM, [
  * @for NodeList
  * @param {string} name The attribute name 
  * @return {string} The attribute value 
+ */
+
+/**
+ * Allows for removing attributes on DOM nodes..
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method removeAttribute
+ * @see Node
+ * @for NodeList
+ * @param {string} name The attribute to remove 
  */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'removeAttribute']);
 (function(Y) {
