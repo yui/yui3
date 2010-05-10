@@ -128,7 +128,7 @@ Y.mix(HistoryBase.prototype, {
          */
         this.publish(EVT_CHANGE, {
             broadcast: 2,
-            defaultFn: Y.bind(this._defChangeFn, this)
+            defaultFn: this._defChangeFn
         });
 
         // If initialState was provided and is a simple object, merge it into
