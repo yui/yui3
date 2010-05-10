@@ -9,6 +9,8 @@
         <url>datatype/tests/date.html</url>
         <url>datatype/tests/number.html</url>
         <url>datatype/tests/xml.html</url>
+        <url>dom/tests/dom.html</url>
+        <url>dom/tests/selector.html</url>
         <url>dump/tests/dump.html</url>
     	<url>event-custom/tests/customevent.html</url>
         <url>event/tests/dom.html</url>
@@ -17,6 +19,7 @@
         <url>history/tests/functional/history-base.html</url>
         <url>history/tests/functional/history-hash.html</url>
         <url>intl/tests/intl.html</url>
+        <url>node/tests/node.html</url>
         <url>pluginhost/tests/plugins.html</url>
         <url>widget/tests/widget.html</url>
         <url>yui/tests/config.html</url>
