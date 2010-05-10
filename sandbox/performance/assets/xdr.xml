@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+  <meta>
+    <sampleQuery>select * from {table} where url = 'http://example.com/'</sampleQuery>
+  </meta>
+  <bindings>
+    <select itemPath="" produces="XML">
+      <urls>
+        <url></url>
+      </urls>
+      <inputs>
+        <key id="url" type="xs:string" paramType="variable" required="true" />
+      </inputs>
+      <execute><![CDATA[
+        var remoteRequest  = y.rest(url),
+            remoteResponse = remoteRequest.get();
+
+            response.object = {
+              request: {
+                headers: remoteRequest.headers,
+                method : 'GET'
+              },
+
+              response: {
+                body   : remoteResponse.response,
+                headers: remoteResponse.headers,
+                status : remoteResponse.status
+              }
+            };
+      ]]></execute>
+    </select>
+  </bindings>
+</table>

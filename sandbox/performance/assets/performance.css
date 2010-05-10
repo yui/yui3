@@ -51,8 +51,9 @@ body {
     padding: 3px 5px;
 }
 
+.yui3-perf-results tr.test { cursor: pointer; }
+.yui3-perf-results tr.test:hover { background: #f5f5f5; }
 .yui3-perf-results tr:last-child td { border: 0; }
-.yui3-perf-results tbody tr:hover { background: #f5f5f5; }
 
 /* Column-specific styles */
 .yui3-perf-results .calls,
@@ -74,3 +75,10 @@ body {
 }
 
 .yui3-perf-results td.median { font-weight: bold; }
+
+/* Code expando */
+.yui3-perf-results tr.code pre {
+    border-left: 4px solid #dfdfdf;
+    line-height: 1.2;
+    padding: 0 0 0 7px;
+}

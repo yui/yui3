@@ -1,5 +1,5 @@
 <?php
-$count = (($_GET['count']) ? $_GET['count'] : 10);
+$count = (($_GET['count']) ? $_GET['count'] : 30);
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
@@ -13,13 +13,14 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 
         #demo {
             border: 1px solid black;
-            height: 700px;
+            height: 400px;
         }
         #demo ul {
             border: 1px solid blue;
             width: 200px;
             float: left;
-            min-height: 100px;
+            height: 200px;
+            overflow: auto;
         }
         #demo .item {
             border: 2px solid black;
@@ -53,8 +54,6 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 	</style>
 </head>
 <body class="yui-skin-sam">
-<input type="button" value="Add <?php echo($count); ?> More Items" id="add"><br>
-
 <div id="demo">
 <ul id="one">
 <?php
@@ -66,13 +65,29 @@ foreach (range(1, $count) as $k) {
 <ul id="two">
 <?php
 foreach (range(1, $count) as $k) {
-    echo('  <li class="item list-item2"><strong>[|]</strong> '.$k.'</li>'."\n");
+    echo('  <li class="item list-item2">'.$k.'</li>'."\n");
+}
+?>
+</ul>
+<ul id="three">
+<?php
+foreach (range(1, $count) as $k) {
+    echo('  <li class="item list-item3">'.$k.'</li>'."\n");
 }
 ?>
 </ul>
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/attribute/attribute-base-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/event-custom/event-custom-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/dom/dom-screen-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
 
 <script type="text/javascript" src="../dd/js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
@@ -87,6 +102,7 @@ foreach (range(1, $count) as $k) {
 <script type="text/javascript" src="../dd/js/delegate.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript" src="js/sortable.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="js/sortable-scroll.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
@@ -104,8 +120,8 @@ var yConfig = {
     debug: false
 };
 
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-constrain', 'dd-drop-plugin', 'event-mouseenter', 'sortable', 'yui-throttle', function(Y) {
-    //console.log(Y);
+YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-scroll', 'dd-drop', 'dd-delegate', 'dd-constrain', 'dd-drop-plugin', 'event-mouseenter', 'sortable', 'sortable-scroll', function(Y) {
+    console.log(Y);
     
     //Y.DD.DDM._debugShim = true;
 
@@ -113,13 +129,14 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
         container: '#one',
         nodes: '.item',
         opacity: '.5',
-        moveType: 'move',
+        moveType: 'copy',
         invalid: '.disabled',
         opacityNode: 'currentNode'
     });
     sel.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'
     });
+    sel.plug(Y.Plugin.SortableScroll);
 
     //console.log('sel: ', sel.get('id'));
 
@@ -128,47 +145,32 @@ YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-drop', 'dd-delegate', 'dd-
     var sel2 = new Y.Sortable({
         container: '#two',
         nodes: '.item',
-        moveType: 'insert',
-        handles: ['strong']
+        moveType: 'copy'
     });
     sel2.plug(Y.Plugin.DDConstrained, {
         constrain2node: '#demo'
     });
+    sel2.plug(Y.Plugin.SortableScroll);
+
     //console.log('sel2: ', sel2.get('id'));
 
     //sel2.bindTo(sel);
     //sel2.bindWith(sel);
 
     sel.join(sel2, 'outer');
-
-    //sel.destroy();
-
-    /*
-    console.log(Y.DD.DDM.getDelegate(Y.one('#three')));
-    console.log(Y.DD.DDM.getDelegate('#one'));
-    console.log(Y.DD.DDM.getDelegate('#two'));
-
-    console.log(Y.Sortable.getSortable(Y.one('#three')));
-    console.log(Y.Sortable.getSortable('#one'));
-    console.log(Y.Sortable.getSortable('#two'));
-    */
-
-    var count = <?php echo($count); ?>,
-        inc = 1;
     
-    Y.one('#add').on('click', function(e) {
-        var node, one = Y.one('#one'), two = Y.one('#two'), three = Y.one('#three');
-        for (var i = 1; i < count + 1; i++) {
-            node = Y.Node.create('<li class="item list-item1">(' + inc + ':1) ' + i + '</li>');
-            one.append(node);
-            two.append(node.cloneNode(true).set('innerHTML', '<strong>[|]</strong> (' + inc + ':2) ' + i).addClass('list-item2').removeClass('list-item1'));
-            //three.append(node.cloneNode(true).set('innerHTML', '(' + inc + ':3) ' + i));
-        }
-        inc++;
-        sel.sync();
-        sel2.sync();
-        //sel3.sync();
+
+    var sel3 = new Y.Sortable({
+        container: '#three',
+        nodes: '.item',
+        moveType: 'move'
     });
+    sel3.plug(Y.Plugin.DDConstrained, {
+        constrain2node: '#demo'
+    });
+    sel3.plug(Y.Plugin.SortableScroll);
+    //console.log('sel3: ', sel3.get('id'));
+    sel3.join(sel);
 
 });
 

@@ -32,6 +32,15 @@ YUI.add('gallery-sandbox', function (Y) {
  *     If <code>true</code>, YUI3 Core and Loader will automatically be
  *     bootstrapped into the sandbox.
  *   </dd>
+ *
+ *   <dt><strong>waitFor (String)</strong></dt>
+ *   <dd>
+ *     If set, this sandbox's <code>ready</code> event will not fire until a
+ *     property with the specified name appears on the shared sandbox
+ *     environment object. This allows you to initialize the sandbox environment
+ *     by performing asynchronous operations (such as making an Ajax request for
+ *     some data) if necessary.
+ *   </dd>
  * </dl>
  *
  * @class Sandbox
@@ -67,6 +76,7 @@ Sandbox = function (config) {
     };
 
     this._createIframe();
+    this._pollReady();
 };
 
 Y.augment(Sandbox, Y.EventTarget);
@@ -80,9 +90,7 @@ Y.mix(Sandbox.prototype, {
      * @property config
      * @type Object
      */
-    config: {
-        bootstrapYUI: false
-    },
+    config: {},
 
     // -- Public Methods -------------------------------------------------------
 
@@ -301,8 +309,7 @@ Y.mix(Sandbox.prototype, {
     // -- Protected Methods ----------------------------------------------------
     _createIframe: function () {
         var iframe    = body.appendChild(Y.DOM.create('<iframe id="' + this._id + '" style="display:none"/>')),
-            iframeDoc = iframe.contentWindow.document,
-            poll;
+            iframeDoc = iframe.contentWindow.document;
 
         // Based on a technique described by Dean Edwards:
         // http://dean.edwards.name/weblog/2006/11/sandbox/
@@ -336,13 +343,6 @@ Y.mix(Sandbox.prototype, {
         iframeDoc.close();
 
         this._iframe = iframe;
-
-        poll = Y.later(config.pollInterval || 15, this, function () {
-            if (this.getEnvValue('ready') === true) {
-                poll.cancel();
-                this.fire(EVT_READY);
-            }
-        }, null, true);
     },
 
     _getCountedScript: function (script, guid) {
@@ -366,6 +366,18 @@ Y.mix(Sandbox.prototype, {
                    'var done = function () { sandbox["' + guid + '"] = true; };' +
                    (isFunction(script) ? '(' + script.toString() + '());' : script) +
                '}());';
+    },
+
+    _pollReady: function () {
+        var waitFor = this.config.waitFor,
+            poll    = Y.later(config.pollInterval || 15, this, function () {
+                if (this.getEnvValue('ready') === true &&
+                        (!waitFor || !Y.Lang.isUndefined(this.getEnvValue(waitFor)))) {
+
+                    poll.cancel();
+                    this.fire(EVT_READY);
+                }
+            }, null, true);
     }
 }, true);
 
