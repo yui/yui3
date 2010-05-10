@@ -1,3 +1,7 @@
+*** 3.1.1 ***
+
+* Fixed ticket #2528739 : Synchronous IO requests broken in IE
+
 *** 3.1.0 ***
 
 * Implemented enhancement 2528181.  YUI io now supports synchronous transactions

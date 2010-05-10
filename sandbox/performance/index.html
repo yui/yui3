@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>YUI 3 Performance</title>
+    <link rel="stylesheet" href="assets/performance.css">
+</head>
+<body>
+
+<h1>YUI 3 Performance</h1>
+
+<p>
+    <button id="start">Start Tests</button>
+    <button id="stop">Stop Tests</button>
+</p>
+
+<div id="results"></div>
+
+<p class="firefox hidden">
+    <strong>Firefox users:</strong> For accurate results, disable Firebug.
+</p>
+
+<p class="ie hidden">
+    <strong>IE users:</strong> Due to limitations in the resolution of the
+    Windows timer APIs that IE uses, times in IE have an error range of ±15ms.
+</p>
+
+<script src="../../build/yui/yui-min.js"></script>
+<script src="js/sandbox.js"></script>
+<script src="js/performance.js"></script>
+<script src="tests/instantiation.js"></script>
+<script>
+var Y = YUI().use('event-base', 'performance', 'perf-instantiation', function (Y) {
+    if (Y.UA.gecko) {
+        Y.all('.firefox').removeClass('hidden');
+    } else if (Y.UA.ie) {
+        Y.all('.ie').removeClass('hidden');
+    }
+
+    Y.Performance.render('#results');
+
+    Y.on('click', function () {
+        Y.Performance.start();
+    }, '#start');
+
+    Y.on('click', function () {
+        Y.Performance.stop();
+    }, '#stop');
+});
+</script>
+
+</body>
+</html>

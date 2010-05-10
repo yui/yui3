@@ -1,3 +1,7 @@
+
+version 3.1.1 
+- no change
+
 version 3.1.0
 - firing resume event
 - added finish arg for stop()
