@@ -45,7 +45,7 @@ var Lang       = Y.Lang,
     EVT_CHANGE = 'change',
     NAME       = 'historyBase',
 
-HistoryBase = function (config) {
+HistoryBase = function () {
     this._init.apply(this, arguments);
 };
 

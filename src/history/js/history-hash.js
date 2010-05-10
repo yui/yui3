@@ -40,7 +40,7 @@ var Lang      = Y.Lang,
     nativeHashChange = !Lang.isUndefined(win.onhashchange) &&
             (Lang.isUndefined(docMode) || docMode > 7),
 
-History = function (config) {
+History = function () {
     History.superclass.constructor.apply(this, arguments);
 };
 
