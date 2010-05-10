@@ -93,7 +93,7 @@ Y.mix(HistoryBase.prototype, {
          * instance, subscribe to this event on the instance.
          *
          * @event history:change
-         * @param {EventFacade} Event facade with the following additional
+         * @param {EventFacade} e Event facade with the following additional
          *   properties:
          *
          * <dl>
@@ -223,7 +223,40 @@ Y.mix(HistoryBase.prototype, {
      * @protected
      */
     _fireChangeEvent: function (value, key) {
-        // TODO: how to document this?
+        /**
+         * <p>
+         * Dynamic event fired when an individual history item is added or
+         * changed. The name of this event depends on the name of the key that
+         * changed. To listen to change events for a key named "foo", subscribe
+         * to the <code>fooChange</code> event; for a key named "bar", subscribe
+         * to <code>barChange</code>, etc.
+         * </p>
+         *
+         * <p>
+         * Key-specific events are only fired for instance-level changes; that
+         * is, changes that were made via the same History instance on which the
+         * event is subscribed. To be notified of changes made by other History
+         * instances, subscribe to the global <code>history:change</code> event.
+         * </p>
+         *
+         * @event [key]Change
+         * @param {EventFacade} e Event facade with the following additional
+         *   properties:
+         *
+         * <dl>
+         *   <dt>newVal</dt>
+         *   <dd>
+         *     The new value of the item after the change.
+         *   </dd>
+         *
+         *   <dt>prevVal</dt>
+         *   <dd>
+         *     The previous value of the item before the change, or
+         *     <code>undefined</code> if the item was just added and has no
+         *     previous value.
+         *   </dd>
+         * </dl>
+         */
         this.fire(key + 'Change', {
             newVal : value.newVal,
             prevVal: value.prevVal
@@ -239,7 +272,33 @@ Y.mix(HistoryBase.prototype, {
      * @protected
      */
     _fireRemoveEvent: function (value, key) {
-        // TODO: how to document this?
+        /**
+         * <p>
+         * Dynamic event fired when an individual history item is removed. The
+         * name of this event depends on the name of the key that was removed.
+         * To listen to remove events for a key named "foo", subscribe to the
+         * <code>fooRemove</code> event; for a key named "bar", subscribe to
+         * <code>barRemove</code>, etc.
+         * </p>
+         *
+         * <p>
+         * Key-specific events are only fired for instance-level changes; that
+         * is, changes that were made via the same History instance on which the
+         * event is subscribed. To be notified of changes made by other History
+         * instances, subscribe to the global <code>history:change</code> event.
+         * </p>
+         *
+         * @event [key]Remove
+         * @param {EventFacade} e Event facade with the following additional
+         *   properties:
+         *
+         * <dl>
+         *   <dt>prevVal</dt>
+         *   <dd>
+         *     The value of the item before it was removed.
+         *   </dd>
+         * </dl>
+         */
         this.fire(key + 'Remove', {prevVal: value});
     },
 
