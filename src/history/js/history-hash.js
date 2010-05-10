@@ -50,28 +50,25 @@ Y.extend(History, Y.HistoryBase, {
         // Use the bookmarked state as the initialState if no initialState was
         // specified.
         config = config || {};
-        config.initialState = config.initialState ||
-                this.constructor.parseHash();
+        config.initialState = config.initialState || History.parseHash();
 
         // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
 
-        this.constructor.superclass._init.call(this, config);
+        History.superclass._init.call(this, config);
     },
 
     // -- Protected Methods ----------------------------------------------------
     _storeState: function (newState, silent) {
-        var constructor = this.constructor;
-
-        constructor.superclass._storeState.apply(this, arguments);
+        History.superclass._storeState.apply(this, arguments);
 
         // Update the location hash with the changes, but only if the new hash
         // actually differs from the current hash (this avoids creating multiple
         // history entries for a single state).
-        if (constructor.getHash() !== constructor.createHash(newState)) {
-            constructor[silent ? 'replaceHash' : 'setHash'](
-                    constructor.createHash(newState));
+        if (History.getHash() !== History.createHash(newState)) {
+            History[silent ? 'replaceHash' : 'setHash'](
+                    History.createHash(newState));
         }
     },
 
@@ -84,7 +81,7 @@ Y.extend(History, Y.HistoryBase, {
      * @protected
      */
     _afterHashChange: function (e) {
-        this._resolveChanges(this.constructor.parseHash(e.newHash));
+        this._resolveChanges(History.parseHash(e.newHash));
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
