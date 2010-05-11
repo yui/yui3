@@ -161,7 +161,7 @@ button {
 
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
@@ -388,7 +388,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
             // test setContent with NodeList
             html = '<div>foo</div>';
             node.setContent(Y.all(Y.Node.create(html)));
-            Assert.areEqual(html, node.get('innerHTML'), "node.setContent(Y.all(Y.Node.create(html)))");
+            Assert.areEqual(html, node.get('innerHTML').toLowerCase(), "node.setContent(Y.all(Y.Node.create(html)))");
 
         },
 

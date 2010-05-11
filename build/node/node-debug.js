@@ -1076,7 +1076,7 @@ Y.mix(Y_Node.prototype, {
 
     hasMethod: function(method) {
         var node = this._node;
-        return (node && node[method] && (typeof node[method] === 'function'));
+        return !!(node && method in node && node[method].apply);
     }
 }, true);
 
@@ -2318,5 +2318,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false, requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
+YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate']});
 

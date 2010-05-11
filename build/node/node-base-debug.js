@@ -1076,7 +1076,7 @@ Y.mix(Y_Node.prototype, {
 
     hasMethod: function(method) {
         var node = this._node;
-        return (node && node[method] && (typeof node[method] === 'function'));
+        return !!(node && method in node && node[method].apply);
     }
 }, true);
 
