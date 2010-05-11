@@ -87,14 +87,16 @@
 <span class="cm"> * &lt;/dl&gt;</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">Lang</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
-    <span class="nx">Obj</span>        <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
-    <span class="nx">GlobalEnv</span>  <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.History&#39;</span><span class="p">),</span>
+<span class="kd">var</span> <span class="nx">Lang</span>        <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">Obj</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
+    <span class="nx">GlobalEnv</span>   <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.History&#39;</span><span class="p">),</span>
 
-    <span class="nx">EVT_CHANGE</span> <span class="o">=</span> <span class="s1">&#39;change&#39;</span><span class="p">,</span>
-    <span class="nx">NAME</span>       <span class="o">=</span> <span class="s1">&#39;historyBase&#39;</span><span class="p">,</span>
+    <span class="nx">EVT_CHANGE</span>  <span class="o">=</span> <span class="s1">&#39;change&#39;</span><span class="p">,</span>
+    <span class="nx">NAME</span>        <span class="o">=</span> <span class="s1">&#39;historyBase&#39;</span><span class="p">,</span>
+    <span class="nx">SRC_ADD</span>     <span class="o">=</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span>
+    <span class="nx">SRC_REPLACE</span> <span class="o">=</span> <span class="s1">&#39;replace&#39;</span><span class="p">,</span>
 
-<span class="nx">HistoryBase</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">HistoryBase</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">};</span>
 
@@ -120,6 +122,28 @@
 <span class="cm"> */</span>
 <span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">NAME</span><span class="p">;</span>
 
+<span class="cm">/**</span>
+<span class="cm"> * Constant used to identify state changes originating from the</span>
+<span class="cm"> * &lt;code&gt;add()&lt;/code&gt; method.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property SRC_ADD</span>
+<span class="cm"> * @type String</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @final</span>
+<span class="cm"> */</span>
+<span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">SRC_ADD</span> <span class="o">=</span> <span class="nx">SRC_ADD</span><span class="p">;</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Constant used to identify state changes originating from the</span>
+<span class="cm"> * &lt;code&gt;replace()&lt;/code&gt; method.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @property SRC_REPLACE</span>
+<span class="cm"> * @type String</span>
+<span class="cm"> * @static</span>
+<span class="cm"> * @final</span>
+<span class="cm"> */</span>
+<span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">SRC_REPLACE</span> <span class="o">=</span> <span class="nx">SRC_REPLACE</span><span class="p">;</span>
+
 <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
     <span class="c1">// -- Initialization -------------------------------------------------------</span>
 
@@ -142,7 +166,7 @@
 <span class="cm">         * instance, subscribe to this event on the instance.</span>
 <span class="cm">         *</span>
 <span class="cm">         * @event history:change</span>
-<span class="cm">         * @param {EventFacade} Event facade with the following additional</span>
+<span class="cm">         * @param {EventFacade} e Event facade with the following additional</span>
 <span class="cm">         *   properties:</span>
 <span class="cm">         *</span>
 <span class="cm">         * &lt;dl&gt;</span>
@@ -173,11 +197,17 @@
 <span class="cm">         *     Object hash of key/value pairs of state items that have been</span>
 <span class="cm">         *     removed. Values are the old values prior to removal.</span>
 <span class="cm">         *   &lt;/dd&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         *   &lt;dt&gt;src&lt;/dt&gt;</span>
+<span class="cm">         *   &lt;dd&gt;</span>
+<span class="cm">         *     The source of the event. This can be used to selectively ignore</span>
+<span class="cm">         *     events generated by certain sources.</span>
+<span class="cm">         *   &lt;/dd&gt;</span>
 <span class="cm">         * &lt;/dl&gt;</span>
 <span class="cm">         */</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">EVT_CHANGE</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">broadcast</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="nx">defaultFn</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_defChangeFn</span><span class="p">,</span> <span class="k">this</span><span class="p">)</span>
+            <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_defChangeFn</span>
         <span class="p">});</span>
 
         <span class="c1">// If initialState was provided and is a simple object, merge it into</span>
@@ -203,16 +233,7 @@
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
     <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">key</span><span class="p">;</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">state</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">key</span>        <span class="o">=</span> <span class="nx">state</span><span class="p">;</span>
-            <span class="nx">state</span>      <span class="o">=</span> <span class="p">{};</span>
-            <span class="nx">state</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span><span class="p">,</span> <span class="nx">state</span><span class="p">));</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_change</span><span class="p">(</span><span class="nx">SRC_ADD</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -231,7 +252,7 @@
         <span class="k">if</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">Obj</span><span class="p">.</span><span class="nx">owns</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="o">?</span> <span class="nx">state</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({},</span> <span class="nx">state</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">({},</span> <span class="nx">state</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span> <span class="c1">// Fast shallow clone.</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -248,6 +269,26 @@
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
     <span class="nx">replace</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_change</span><span class="p">(</span><span class="nx">SRC_REPLACE</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Changes the state. This method provides a common implementation shared by</span>
+<span class="cm">     * add() and replace().</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _change</span>
+<span class="cm">     * @param {String} src source of the change, for inclusion in event facades</span>
+<span class="cm">     *   to facilitate filtering</span>
+<span class="cm">     * @param {Object|String} state|key object hash of key/value string pairs,</span>
+<span class="cm">     *   or the name of a single key</span>
+<span class="cm">     * @param {String|null} value (optional) if &lt;i&gt;state&lt;/i&gt; is the name of a</span>
+<span class="cm">     *   single key, &lt;i&gt;value&lt;/i&gt; will become its new value</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     * @chainable</span>
+<span class="cm">     */</span>
+    <span class="nx">_change</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">key</span><span class="p">;</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">state</span><span class="p">))</span> <span class="p">{</span>
@@ -256,26 +297,96 @@
             <span class="nx">state</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span><span class="p">,</span> <span class="nx">state</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span><span class="p">,</span> <span class="nx">state</span><span class="p">));</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">},</span>
 
-    <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Called by _resolveChanges() when the state has changed. This method takes</span>
+<span class="cm">     * care of actually firing the necessary events.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @method _fireEvents</span>
+<span class="cm">     * @param {String} src source of the changes, for inclusion in event facades</span>
+<span class="cm">     *   to facilitate filtering</span>
+<span class="cm">     * @param {Object} changes resolved changes</span>
+<span class="cm">     * @protected</span>
+<span class="cm">     */</span>
+    <span class="nx">_fireEvents</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">changes</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Fire the global change event.</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EVT_CHANGE</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">changed</span><span class="o">:</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">changed</span><span class="p">,</span>
+            <span class="nx">newVal</span> <span class="o">:</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">newState</span><span class="p">,</span>
+            <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">prevState</span><span class="p">,</span>
+            <span class="nx">removed</span><span class="o">:</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">removed</span><span class="p">,</span>
+            <span class="nx">src</span>    <span class="o">:</span> <span class="nx">src</span>
+        <span class="p">});</span>
+
+        <span class="c1">// Fire change/remove events for individual items.</span>
+        <span class="nx">Obj</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">changes</span><span class="p">.</span><span class="nx">changed</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fireChangeEvent</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+
+        <span class="nx">Obj</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">changes</span><span class="p">.</span><span class="nx">removed</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fireRemoveEvent</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+    <span class="p">},</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Fires a dynamic &quot;[key]Change&quot; event.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _fireChangeEvent</span>
+<span class="cm">     * @param {String} src source of the change, for inclusion in event facades</span>
+<span class="cm">     *   to facilitate filtering</span>
+<span class="cm">     * @param {String} key key of the item that was changed</span>
 <span class="cm">     * @param {Object} value object hash containing &lt;i&gt;newVal&lt;/i&gt; and</span>
 <span class="cm">     *   &lt;i&gt;prevVal&lt;/i&gt; properties for the changed item</span>
-<span class="cm">     * @param {String} key key of the item that was changed</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_fireChangeEvent</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// TODO: how to document this?</span>
+    <span class="nx">_fireChangeEvent</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * Dynamic event fired when an individual history item is added or</span>
+<span class="cm">         * changed. The name of this event depends on the name of the key that</span>
+<span class="cm">         * changed. To listen to change events for a key named &quot;foo&quot;, subscribe</span>
+<span class="cm">         * to the &lt;code&gt;fooChange&lt;/code&gt; event; for a key named &quot;bar&quot;, subscribe</span>
+<span class="cm">         * to &lt;code&gt;barChange&lt;/code&gt;, etc.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * Key-specific events are only fired for instance-level changes; that</span>
+<span class="cm">         * is, changes that were made via the same History instance on which the</span>
+<span class="cm">         * event is subscribed. To be notified of changes made by other History</span>
+<span class="cm">         * instances, subscribe to the global &lt;code&gt;history:change&lt;/code&gt; event.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @event [key]Change</span>
+<span class="cm">         * @param {EventFacade} e Event facade with the following additional</span>
+<span class="cm">         *   properties:</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         *   &lt;dt&gt;newVal&lt;/dt&gt;</span>
+<span class="cm">         *   &lt;dd&gt;</span>
+<span class="cm">         *     The new value of the item after the change.</span>
+<span class="cm">         *   &lt;/dd&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         *   &lt;dt&gt;prevVal&lt;/dt&gt;</span>
+<span class="cm">         *   &lt;dd&gt;</span>
+<span class="cm">         *     The previous value of the item before the change, or</span>
+<span class="cm">         *     &lt;code&gt;undefined&lt;/code&gt; if the item was just added and has no</span>
+<span class="cm">         *     previous value.</span>
+<span class="cm">         *   &lt;/dd&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         *   &lt;dt&gt;src&lt;/dt&gt;</span>
+<span class="cm">         *   &lt;dd&gt;</span>
+<span class="cm">         *     The source of the event. This can be used to selectively ignore</span>
+<span class="cm">         *     events generated by certain sources.</span>
+<span class="cm">         *   &lt;/dd&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         */</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;Change&#39;</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">newVal</span> <span class="o">:</span> <span class="nx">value</span><span class="p">.</span><span class="nx">newVal</span><span class="p">,</span>
-            <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">value</span><span class="p">.</span><span class="nx">prevVal</span>
+            <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">value</span><span class="p">.</span><span class="nx">prevVal</span><span class="p">,</span>
+            <span class="nx">src</span>    <span class="o">:</span> <span class="nx">src</span>
         <span class="p">});</span>
     <span class="p">},</span>
 
@@ -283,43 +394,50 @@
 <span class="cm">     * Fires a dynamic &quot;[key]Remove&quot; event.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _fireRemoveEvent</span>
-<span class="cm">     * @param {mixed} value value of the item prior to its removal</span>
+<span class="cm">     * @param {String} src source of the change, for inclusion in event facades</span>
+<span class="cm">     *   to facilitate filtering</span>
 <span class="cm">     * @param {String} key key of the item that was removed</span>
+<span class="cm">     * @param {mixed} value value of the item prior to its removal</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_fireRemoveEvent</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// TODO: how to document this?</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;Remove&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">prevVal</span><span class="o">:</span> <span class="nx">value</span><span class="p">});</span>
-    <span class="p">},</span>
-
-    <span class="cm">/**</span>
-<span class="cm">     * Called by _resolveChanges() when the state has changed. This method takes</span>
-<span class="cm">     * care of actually firing the &lt;code&gt;history:change event&lt;/code&gt; if</span>
-<span class="cm">     * &lt;i&gt;silent&lt;/i&gt; is &lt;code&gt;false&lt;/code&gt;, or storing the new state if</span>
-<span class="cm">     * &lt;i&gt;silent&lt;/i&gt; is &lt;code&gt;true&lt;/code&gt;.</span>
-<span class="cm">     *</span>
-<span class="cm">     * @method _handleChanges</span>
-<span class="cm">     * @param {Object} changes resolved changes</span>
-<span class="cm">     * @param {Boolean} silent (optional) if &lt;code&gt;true&lt;/code&gt;, no change events</span>
-<span class="cm">     *   will be fired</span>
-<span class="cm">     * @protected</span>
-<span class="cm">     */</span>
-    <span class="nx">_handleChanges</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">changes</span><span class="p">,</span> <span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_storeState</span><span class="p">(</span><span class="nx">changes</span><span class="p">.</span><span class="nx">newState</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="c1">// Fire the global change event.</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EVT_CHANGE</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">changed</span><span class="o">:</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">changed</span><span class="p">,</span>
-                <span class="nx">newVal</span> <span class="o">:</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">newState</span><span class="p">,</span>
-                <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">prevState</span><span class="p">,</span>
-                <span class="nx">removed</span><span class="o">:</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">removed</span>
-            <span class="p">});</span>
-
-            <span class="c1">// Fire change/remove events for individual items.</span>
-            <span class="nx">Obj</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">changes</span><span class="p">.</span><span class="nx">changed</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fireChangeEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
-            <span class="nx">Obj</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">changes</span><span class="p">.</span><span class="nx">removed</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_fireRemoveEvent</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
-        <span class="p">}</span>
+    <span class="nx">_fireRemoveEvent</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * Dynamic event fired when an individual history item is removed. The</span>
+<span class="cm">         * name of this event depends on the name of the key that was removed.</span>
+<span class="cm">         * To listen to remove events for a key named &quot;foo&quot;, subscribe to the</span>
+<span class="cm">         * &lt;code&gt;fooRemove&lt;/code&gt; event; for a key named &quot;bar&quot;, subscribe to</span>
+<span class="cm">         * &lt;code&gt;barRemove&lt;/code&gt;, etc.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;p&gt;</span>
+<span class="cm">         * Key-specific events are only fired for instance-level changes; that</span>
+<span class="cm">         * is, changes that were made via the same History instance on which the</span>
+<span class="cm">         * event is subscribed. To be notified of changes made by other History</span>
+<span class="cm">         * instances, subscribe to the global &lt;code&gt;history:change&lt;/code&gt; event.</span>
+<span class="cm">         * &lt;/p&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         * @event [key]Remove</span>
+<span class="cm">         * @param {EventFacade} e Event facade with the following additional</span>
+<span class="cm">         *   properties:</span>
+<span class="cm">         *</span>
+<span class="cm">         * &lt;dl&gt;</span>
+<span class="cm">         *   &lt;dt&gt;prevVal&lt;/dt&gt;</span>
+<span class="cm">         *   &lt;dd&gt;</span>
+<span class="cm">         *     The value of the item before it was removed.</span>
+<span class="cm">         *   &lt;/dd&gt;</span>
+<span class="cm">         *</span>
+<span class="cm">         *   &lt;dt&gt;src&lt;/dt&gt;</span>
+<span class="cm">         *   &lt;dd&gt;</span>
+<span class="cm">         *     The source of the event. This can be used to selectively ignore</span>
+<span class="cm">         *     events generated by certain sources.</span>
+<span class="cm">         *   &lt;/dd&gt;</span>
+<span class="cm">         * &lt;/dl&gt;</span>
+<span class="cm">         */</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">key</span> <span class="o">+</span> <span class="s1">&#39;Remove&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">value</span><span class="p">,</span>
+            <span class="nx">src</span>    <span class="o">:</span> <span class="nx">src</span>
+        <span class="p">});</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -327,13 +445,13 @@
 <span class="cm">     * state and fires appropriate events if things have changed.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _resolveChanges</span>
+<span class="cm">     * @param {String} src source of the changes, for inclusion in event facades</span>
+<span class="cm">     *   to facilitate filtering</span>
 <span class="cm">     * @param {Object} newState object hash of key/value pairs representing the</span>
 <span class="cm">     *   new state</span>
-<span class="cm">     * @param {Boolean} silent (optional) if &lt;code&gt;true&lt;/code&gt;, no change events</span>
-<span class="cm">     *   will be fired</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_resolveChanges</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">newState</span><span class="p">,</span> <span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_resolveChanges</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">newState</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">changed</span>   <span class="o">=</span> <span class="p">{},</span>
             <span class="nx">isChanged</span><span class="p">,</span>
             <span class="nx">prevState</span> <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span><span class="p">,</span>
@@ -368,12 +486,12 @@
         <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">isChanged</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_handleChanges</span><span class="p">({</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_fireEvents</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="p">{</span>
                 <span class="nx">changed</span>  <span class="o">:</span> <span class="nx">changed</span><span class="p">,</span>
                 <span class="nx">newState</span> <span class="o">:</span> <span class="nx">newState</span><span class="p">,</span>
                 <span class="nx">prevState</span><span class="o">:</span> <span class="nx">prevState</span><span class="p">,</span>
                 <span class="nx">removed</span>  <span class="o">:</span> <span class="nx">removed</span>
-            <span class="p">},</span> <span class="nx">silent</span><span class="p">);</span>
+            <span class="p">});</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -383,26 +501,27 @@
 <span class="cm">     * fired properly.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _storeState</span>
+<span class="cm">     * @param {String} src source of the changes, for inclusion in event facades</span>
+<span class="cm">     *   to facilitate filtering</span>
 <span class="cm">     * @param {Object} newState new state to store</span>
-<span class="cm">     * @param {Boolean} silent (optional) if &lt;code&gt;true&lt;/code&gt;, the state change</span>
-<span class="cm">     *   should be silent</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_storeState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">newState</span><span class="p">,</span> <span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_storeState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">newState</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Note: the src param isn&#39;t used here, but it is used by subclasses.</span>
         <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span> <span class="o">=</span> <span class="nx">newState</span> <span class="o">||</span> <span class="p">{};</span>
     <span class="p">},</span>
 
     <span class="c1">// -- Protected Event Handlers ---------------------------------------------</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Default change event handler.</span>
+<span class="cm">     * Default &lt;code&gt;history:change&lt;/code&gt; event handler.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _defChangeFn</span>
 <span class="cm">     * @param {EventFacade} e state change event facade</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_defChangeFn</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_storeState</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_storeState</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">src</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">newVal</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">},</span> <span class="kc">true</span><span class="p">);</span>
 
@@ -508,7 +627,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "decode", "url": "History.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "", "host": "History", "name": "getUrl", "url": "History.html#method_getUrl", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_handleChanges", "url": "HistoryBase.html#method__handleChanges", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "History", "name": "_updateIframe", "url": "History.html#method__updateIframe", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "decode", "url": "History.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "", "host": "History", "name": "getUrl", "url": "History.html#method_getUrl", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "History", "name": "SRC_HASH", "url": "History.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "History", "name": "_updateIframe", "url": "History.html#method__updateIframe", "type": "method"}];
 </script>
 </body>
 </html>
