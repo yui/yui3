@@ -96,8 +96,9 @@ is available.
                                                     <code><span property="yui:name">o*</span>
                                                     &lt;<span property="yui:type">object</span>&gt;
                                                     </code>
-                                                    <span property="yui:description"> Up to five optional configuration objects.  This object is stored
-in YUI.config.  See config for the list of supported properties.</span>
+                                                    <span property="yui:description"> 0..n optional configuration objects.  these values
+are store in Y.config.  See config for the list of supported 
+properties.</span>
                                                 </dd>
                                         </dl>
                                     
@@ -316,60 +317,6 @@ config.  The YUI component build tool does this for you.</span>
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the YUI instance</dd>
                                                 </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_addClass">
-                                    <h4>
-                                        <a name="method_addClass">addClass</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">addClass</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         className
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Adds a class name to a given DOM element.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The DOM element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">className</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the class name to add to the class attribute</span>
-                                                        </dd>
-                                                </dl>
-
 
 
              
@@ -867,271 +814,6 @@ and throwFail is specified, this error will be re-thrown.</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_hasClass">
-                                    <h4>
-                                        <a name="method_hasClass">hasClass</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean
-                                            <strong property="yui:name">hasClass</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         className
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Determines whether a DOM element has the given className.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The DOM element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">className</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the class name to search for</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Whether or not the element has the given class.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_inRegion">
-                                    <h4>
-                                        <a name="method_inRegion">inRegion</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean
-                                            <strong property="yui:name">inRegion</strong>
-                                           (
-                                                
-                                                        
-                                                         all
-                                                    
-                                                
-                                                        , 
-                                                         altRegion
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Check if any part of this node is in the passed region
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">all</span>
-                                                        &lt;<span property="yui:type">Object} node2 The node to get the region from or an Object literal of the region
-$param {Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Should all of the node be inside the region</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">altRegion</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">True if in region, false if not.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_intersect">
-                                    <h4>
-                                        <a name="method_intersect">intersect</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Object
-                                            <strong property="yui:name">intersect</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         element2
-                                                    
-                                                
-                                                        , 
-                                                         altRegion
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Find the intersect information for the passes nodes.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The first element</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element2</span>
-                                                        &lt;<span property="yui:type">HTMLElement | Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The element or region to check the interect with</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">altRegion</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> An object literal containing the region for the first element if we already have the data (for performance i.e. DragDrop)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_inViewportRegion">
-                                    <h4>
-                                        <a name="method_inViewportRegion">inViewportRegion</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean
-                                            <strong property="yui:name">inViewportRegion</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         all
-                                                    
-                                                
-                                                        , 
-                                                         altRegion
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Check if any part of this element is in the viewport
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The DOM element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">all</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> Should all of the node be inside the region</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">altRegion</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Boolean
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">True if in region, false if not.</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_later">
                                     <h4>
                                         <a name="method_later">later</a></h4>
@@ -1552,9 +1234,10 @@ default(0): object to object
                                                         </dd>
                                                         <dd rel="yui:parameter">
                                                         <code><span property="yui:name">merge</span>
-                                                        &lt;<span property="yui:type">boolean</span>&gt;
+                                                        &lt;<span property="yui:type">boolean/int</span>&gt;
                                                         </code>
-                                                        <span property="yui:description">  merge objects instead of overwriting/ignoring
+                                                        <span property="yui:description">  merge objects instead of overwriting/ignoring.  A value of 2
+will skip array merge
 Used by Y.aggregate</span>
                                                         </dd>
                                                 </dl>
@@ -1903,176 +1586,6 @@ delegate listeners, this is the event delegation specification.</span>
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_region">
-                                    <h4>
-                                        <a name="method_region">region</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Object
-                                            <strong property="yui:name">region</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns an Object literal containing the following about this element: (top, right, bottom, left)
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The DOM element.</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Object literal containing the following about this element: (top, right, bottom, left)</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_removeClass">
-                                    <h4>
-                                        <a name="method_removeClass">removeClass</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">removeClass</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         className
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Removes a class name from a given element.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The DOM element.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">className</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the class name to remove from the class attribute</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_replaceClass">
-                                    <h4>
-                                        <a name="method_replaceClass">replaceClass</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">replaceClass</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         oldClassName
-                                                    
-                                                
-                                                        , 
-                                                         newClassName
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Replace a class with another class for a given element.
-If no oldClassName is present, the newClassName is simply added.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The DOM element</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">oldClassName</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the class name to be replaced</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">newClassName</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the class name that will be replacing the old class name</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_simulate">
                                     <h4>
                                         <a name="method_simulate">simulate</a></h4>
@@ -2263,71 +1776,6 @@ globally with Y.config.throttleTime or by call. Passing a -1 will disable the th
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_toggleClass">
-                                    <h4>
-                                        <a name="method_toggleClass">toggleClass</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">toggleClass</strong>
-                                           (
-                                                
-                                                        
-                                                         element
-                                                    
-                                                
-                                                        , 
-                                                         className
-                                                    
-                                                
-                                                        , 
-                                                         addClass
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            If the className exists on the node it is removed, if it doesn't exist it is added.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">element</span>
-                                                        &lt;<span property="yui:type">HTMLElement</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> The DOM element</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">className</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> the class name to be toggled</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">addClass</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> optional boolean to indicate whether class
-should be added or removed regardless of current state</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="" rel="yui:method" resource="#method_use">
                                     <h4>
                                         <a name="method_use">use</a></h4>
@@ -2406,43 +1854,6 @@ YUI().use('yui2-datatable', function(Y) &#123;&#125);
                                                             YUI
                                                     </code></dt>
                                                     <dd property="yui:returnInfo">the YUI instance</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_viewportRegion">
-                                    <h4>
-                                        <a name="method_viewportRegion">viewportRegion</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                        
-                                        
-                                        Object
-                                            <strong property="yui:name">viewportRegion</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Returns an Object literal containing the following about the visible region of viewport: (top, right, bottom, left)
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">Object literal containing the following about the visible region of the viewport: (top, right, bottom, left)</dd>
                                                 </dl>
 
 
@@ -2920,6 +2331,86 @@ the event propagates in a way that enables event delegation.
                                                                 &lt;<span property="yui:type">object</span>&gt;
                                                             </code>
                                                             <span property="yui:description"> 0..n additional arguments to provide to the listener.</span>
+                                                        </dd>
+                                                        
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:event" resource="#event_hashchange">
+                                    <h4>
+                                        <a name="event_hashchange">hashchange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">hashchange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            <p>
+Synthetic <code>window.onhashchange</code> event that normalizes differences
+across browsers and provides support for browsers that don't natively support
+<code>onhashchange</code>.
+</p>
+<p>
+This event is provided by the <code>history-hash</code> module.
+</p>
+<p>
+<strong>Usage example:</strong>
+</p>
+<code><pre>
+YUI().use('history-hash', function (Y) {
+&nbsp;&nbsp;Y.on('hashchange', function (e) {
+&nbsp;&nbsp;&nbsp;&nbsp;// Handle hashchange events on the current window.
+&nbsp;&nbsp;}, Y.config.win);
+});
+</pre></code>
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                            <code><span property="yui:name">e</span>
+                                                                &lt;<span property="yui:type">EventFacade</span>&gt;
+                                                            </code>
+                                                            <span property="yui:description"> Event facade with the following additional
+properties:
+<dl>
+<dt>oldHash</dt>
+<dd>
+Previous hash fragment value before the change.
+</dd>
+<dt>oldUrl</dt>
+<dd>
+Previous URL (including the hash fragment) before the change.
+</dd>
+<dt>newHash</dt>
+<dd>
+New hash fragment value after the change.
+</dd>
+<dt>newUrl</dt>
+<dd>
+New URL (including the hash fragment) after the change.
+</dd>
+</dl></span>
                                                         </dd>
                                                         
                                                 </dl>
@@ -3527,17 +3018,12 @@ behavior in other browsers.
                                 <li class="private"><a href="#method__init" title="_init">_init</a></li>
                                 <li class="private"><a href="#method__setup" title="_setup">_setup</a></li>
                                 <li class=""><a href="#method_add" title="add">add</a></li>
-                                <li class=""><a href="#method_addClass" title="addClass">addClass</a></li>
                                 <li class=""><a href="#method_after" title="after">after</a></li>
                                 <li class=""><a href="#method_applyTo" title="applyTo">applyTo</a></li>
                                 <li class=""><a href="#method_cached" title="cached">cached</a></li>
                                 <li class=""><a href="#method_delegate" title="delegate">delegate</a></li>
                                 <li class=""><a href="#method_error" title="error">error</a></li>
                                 <li class=""><a href="#method_guid" title="guid">guid</a></li>
-                                <li class=""><a href="#method_hasClass" title="hasClass">hasClass</a></li>
-                                <li class=""><a href="#method_inRegion" title="inRegion">inRegion</a></li>
-                                <li class=""><a href="#method_intersect" title="intersect">intersect</a></li>
-                                <li class=""><a href="#method_inViewportRegion" title="inViewportRegion">inViewportRegion</a></li>
                                 <li class=""><a href="#method_later" title="later">later</a></li>
                                 <li class=""><a href="#method_log" title="log">log</a></li>
                                 <li class=""><a href="#method_merge" title="merge">merge</a></li>
@@ -3546,15 +3032,10 @@ behavior in other browsers.
                                 <li class=""><a href="#method_namespace" title="namespace">namespace</a></li>
                                 <li class=""><a href="#method_on" title="on">on</a></li>
                                 <li class=""><a href="#method_once" title="once">once</a></li>
-                                <li class=""><a href="#method_region" title="region">region</a></li>
-                                <li class=""><a href="#method_removeClass" title="removeClass">removeClass</a></li>
-                                <li class=""><a href="#method_replaceClass" title="replaceClass">replaceClass</a></li>
                                 <li class=""><a href="#method_simulate" title="simulate">simulate</a></li>
                                 <li class=""><a href="#method_stamp" title="stamp">stamp</a></li>
                                 <li class=""><a href="#method_throttle" title="throttle">throttle</a></li>
-                                <li class=""><a href="#method_toggleClass" title="toggleClass">toggleClass</a></li>
                                 <li class=""><a href="#method_use" title="use">use</a></li>
-                                <li class=""><a href="#method_viewportRegion" title="viewportRegion">viewportRegion</a></li>
                         </ul>
                     </div>
 
@@ -3566,6 +3047,7 @@ behavior in other browsers.
                                 <li class=""><a href="#event_contentready" title="contentready">contentready</a></li>
                                 <li class=""><a href="#event_domready" title="domready">domready</a></li>
                                 <li class=""><a href="#event_focus" title="focus">focus</a></li>
+                                <li class=""><a href="#event_hashchange" title="hashchange">hashchange</a></li>
                                 <li class=""><a href="#event_key" title="key">key</a></li>
                                 <li class=""><a href="#event_mouseenter" title="mouseenter">mouseenter</a></li>
                                 <li class=""><a href="#event_mouseleave" title="mouseleave">mouseleave</a></li>
@@ -3586,7 +3068,7 @@ behavior in other browsers.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Array", "name": "()", "url": "Array.html#method_()", "type": "method"}, {"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "Get", "name": "abort", "url": "Get.html#method_abort", "type": "method"}, {"access": "", "host": "Intl", "name": "add", "url": "Intl.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "addClass", "url": "YUI.html#method_addClass", "type": "method"}, {"access": "", "host": "YUI", "name": "after", "url": "YUI.html#method_after", "type": "method"}, {"access": "", "host": "UA", "name": "air", "url": "UA.html#property_air", "type": "property"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "private", "host": "YUI", "name": "_attach", "url": "YUI.html#method__attach", "type": "method"}, {"access": "private", "host": "Get", "name": "_autoPurge", "url": "Get.html#method__autoPurge", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "UA", "name": "caja", "url": "UA.html#property_caja", "type": "property"}, {"access": "", "host": "UA", "name": "chrome", "url": "UA.html#property_chrome", "type": "property"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "Get", "name": "css", "url": "Get.html#method_css", "type": "method"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#method_delegate", "type": "method"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "Array", "name": "each", "url": "Array.html#method_each", "type": "method"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "private", "host": "Get", "name": "_end", "url": "Get.html#method__end", "type": "method"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "private", "host": "Get", "name": "_finalize", "url": "Get.html#method__finalize", "type": "method"}, {"access": "private", "host": "Get", "name": "_finish", "url": "Get.html#method__finish", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "UA", "name": "gecko", "url": "UA.html#property_gecko", "type": "property"}, {"access": "", "host": "Intl", "name": "get", "url": "Intl.html#method_get", "type": "method"}, {"access": "", "host": "Intl", "name": "getAvailableLangs", "url": "Intl.html#method_getAvailableLangs", "type": "method"}, {"access": "", "host": "Intl", "name": "getLang", "url": "Intl.html#method_getLang", "type": "method"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "Global", "url": "YUI.html#property_Global", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "YUI", "name": "hasClass", "url": "YUI.html#method_hasClass", "type": "method"}, {"access": "", "host": "Array", "name": "hash", "url": "Array.html#method_hash", "type": "method"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "", "host": "UA", "name": "ie", "url": "UA.html#property_ie", "type": "property"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "", "host": "Array", "name": "indexOf", "url": "Array.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "YUI", "name": "inRegion", "url": "YUI.html#method_inRegion", "type": "method"}, {"access": "", "host": "YUI", "name": "intersect", "url": "YUI.html#method_intersect", "type": "method"}, {"access": "", "host": "Intl", "name": "intl:langChange", "url": "Intl.html#event_intl:langChange", "type": "event"}, {"access": "", "host": "YUI", "name": "inViewportRegion", "url": "YUI.html#method_inViewportRegion", "type": "method"}, {"access": "", "host": "Lang", "name": "isArray", "url": "Lang.html#method_isArray", "type": "method"}, {"access": "", "host": "Lang", "name": "isBoolean", "url": "Lang.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Lang", "name": "isDate", "url": "Lang.html#method_isDate", "type": "method"}, {"access": "", "host": "Lang", "name": "isFunction", "url": "Lang.html#method_isFunction", "type": "method"}, {"access": "", "host": "Lang", "name": "isNull", "url": "Lang.html#method_isNull", "type": "method"}, {"access": "", "host": "Lang", "name": "isNumber", "url": "Lang.html#method_isNumber", "type": "method"}, {"access": "", "host": "Lang", "name": "isObject", "url": "Lang.html#method_isObject", "type": "method"}, {"access": "", "host": "Lang", "name": "isString", "url": "Lang.html#method_isString", "type": "method"}, {"access": "", "host": "Lang", "name": "isUndefined", "url": "Lang.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Lang", "name": "isValue", "url": "Lang.html#method_isValue", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "Queue", "name": "last", "url": "Queue.html#method_last", "type": "method"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "private", "host": "Get", "name": "_linkNode", "url": "Get.html#method__linkNode", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "Intl", "name": "lookupBestLang", "url": "Intl.html#method_lookupBestLang", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "UA", "name": "mobile", "url": "UA.html#property_mobile", "type": "property"}, {"access": "private", "host": "Intl", "name": "_mod", "url": "Intl.html#method__mod", "type": "method"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "mousewheel", "url": "YUI.html#event_mousewheel", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "private", "host": "Get", "name": "_next", "url": "Get.html#method__next", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "private", "host": "Get", "name": "_node", "url": "Get.html#method__node", "type": "method"}, {"access": "", "host": "Array", "name": "numericSort", "url": "Array.html#method_numericSort", "type": "method"}, {"access": "", "host": "YUI", "name": "on", "url": "YUI.html#method_on", "type": "method"}, {"access": "", "host": "YUI", "name": "once", "url": "YUI.html#method_once", "type": "method"}, {"access": "", "host": "UA", "name": "opera", "url": "UA.html#property_opera", "type": "property"}, {"access": "", "host": "UA", "name": "os", "url": "UA.html#property_os", "type": "property"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "private", "host": "Get", "name": "_purge", "url": "Get.html#method__purge", "type": "method"}, {"access": "private", "host": "Get", "name": "PURGE_THRESH", "url": "Get.html#property_PURGE_THRESH", "type": "property"}, {"access": "private", "host": "Get", "name": "purging", "url": "Get.html#property_purging", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "private", "host": "Get", "name": "qidx", "url": "Get.html#property_qidx", "type": "property"}, {"access": "private", "host": "Get", "name": "queue", "url": "Get.html#method_queue", "type": "method"}, {"access": "private", "host": "Get", "name": "queues", "url": "Get.html#property_queues", "type": "property"}, {"access": "", "host": "YUI", "name": "region", "url": "YUI.html#method_region", "type": "method"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "", "host": "YUI", "name": "removeClass", "url": "YUI.html#method_removeClass", "type": "method"}, {"access": "", "host": "YUI", "name": "replaceClass", "url": "YUI.html#method_replaceClass", "type": "method"}, {"access": "private", "host": "Get", "name": "_returnData", "url": "Get.html#method__returnData", "type": "method"}, {"access": "", "host": "Get", "name": "script", "url": "Get.html#method_script", "type": "method"}, {"access": "private", "host": "Get", "name": "_scriptNode", "url": "Get.html#method__scriptNode", "type": "method"}, {"access": "", "host": "UA", "name": "secure", "url": "UA.html#property_secure", "type": "property"}, {"access": "", "host": "Intl", "name": "setLang", "url": "Intl.html#method_setLang", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "Array", "name": "some", "url": "Array.html#method_some", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "Array", "name": "test", "url": "Array.html#method_test", "type": "method"}, {"access": "", "host": "YUI", "name": "throttle", "url": "YUI.html#method_throttle", "type": "method"}, {"access": "private", "host": "Get", "name": "_timeout", "url": "Get.html#method__timeout", "type": "method"}, {"access": "", "host": "YUI", "name": "toggleClass", "url": "YUI.html#method_toggleClass", "type": "method"}, {"access": "private", "host": "Get", "name": "_track", "url": "Get.html#method__track", "type": "method"}, {"access": "", "host": "Lang", "name": "trim", "url": "Lang.html#method_trim", "type": "method"}, {"access": "", "host": "Lang", "name": "type", "url": "Lang.html#method_type", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "YUI", "name": "valueChange", "url": "YUI.html#event_valueChange", "type": "event"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}, {"access": "", "host": "YUI", "name": "viewportRegion", "url": "YUI.html#method_viewportRegion", "type": "method"}, {"access": "", "host": "UA", "name": "webkit", "url": "UA.html#property_webkit", "type": "property"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Array", "name": "()", "url": "Array.html#method_()", "type": "method"}, {"access": "", "host": "Object", "name": "()", "url": "Object.html#method_()", "type": "method"}, {"access": "", "host": "Get", "name": "abort", "url": "Get.html#method_abort", "type": "method"}, {"access": "", "host": "Intl", "name": "add", "url": "Intl.html#method_add", "type": "method"}, {"access": "", "host": "Queue", "name": "add", "url": "Queue.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "add", "url": "YUI.html#method_add", "type": "method"}, {"access": "", "host": "YUI", "name": "after", "url": "YUI.html#method_after", "type": "method"}, {"access": "", "host": "UA", "name": "air", "url": "UA.html#property_air", "type": "property"}, {"access": "", "host": "YUI", "name": "applyTo", "url": "YUI.html#method_applyTo", "type": "method"}, {"access": "private", "host": "YUI", "name": "_attach", "url": "YUI.html#method__attach", "type": "method"}, {"access": "private", "host": "Get", "name": "_autoPurge", "url": "Get.html#method__autoPurge", "type": "method"}, {"access": "", "host": "YUI", "name": "available", "url": "YUI.html#event_available", "type": "event"}, {"access": "", "host": "YUI", "name": "blur", "url": "YUI.html#event_blur", "type": "event"}, {"access": "", "host": "YUI", "name": "cached", "url": "YUI.html#method_cached", "type": "method"}, {"access": "", "host": "UA", "name": "caja", "url": "UA.html#property_caja", "type": "property"}, {"access": "", "host": "UA", "name": "chrome", "url": "UA.html#property_chrome", "type": "property"}, {"access": "", "host": "YUI", "name": "contentready", "url": "YUI.html#event_contentready", "type": "event"}, {"access": "", "host": "Get", "name": "css", "url": "Get.html#method_css", "type": "method"}, {"access": "", "host": "YUI", "name": "delegate", "url": "YUI.html#method_delegate", "type": "method"}, {"access": "", "host": "YUI", "name": "domready", "url": "YUI.html#event_domready", "type": "event"}, {"access": "", "host": "Array", "name": "each", "url": "Array.html#method_each", "type": "method"}, {"access": "", "host": "Object", "name": "each", "url": "Object.html#method_each", "type": "method"}, {"access": "private", "host": "Get", "name": "_end", "url": "Get.html#method__end", "type": "method"}, {"access": "", "host": "YUI", "name": "error", "url": "YUI.html#method_error", "type": "method"}, {"access": "private", "host": "Object", "name": "_extract", "url": "Object.html#method__extract", "type": "method"}, {"access": "private", "host": "Get", "name": "_finalize", "url": "Get.html#method__finalize", "type": "method"}, {"access": "private", "host": "Get", "name": "_finish", "url": "Get.html#method__finish", "type": "method"}, {"access": "", "host": "YUI", "name": "focus", "url": "YUI.html#event_focus", "type": "event"}, {"access": "", "host": "UA", "name": "gecko", "url": "UA.html#property_gecko", "type": "property"}, {"access": "", "host": "Intl", "name": "get", "url": "Intl.html#method_get", "type": "method"}, {"access": "", "host": "Intl", "name": "getAvailableLangs", "url": "Intl.html#method_getAvailableLangs", "type": "method"}, {"access": "", "host": "Intl", "name": "getLang", "url": "Intl.html#method_getLang", "type": "method"}, {"access": "", "host": "Object", "name": "getValue", "url": "Object.html#method_getValue", "type": "method"}, {"access": "", "host": "YUI", "name": "Global", "url": "YUI.html#property_Global", "type": "property"}, {"access": "", "host": "YUI", "name": "guid", "url": "YUI.html#method_guid", "type": "method"}, {"access": "", "host": "Array", "name": "hash", "url": "Array.html#method_hash", "type": "method"}, {"access": "", "host": "YUI", "name": "hashchange", "url": "YUI.html#event_hashchange", "type": "event"}, {"access": "", "host": "Object", "name": "hasKey", "url": "Object.html#method_hasKey", "type": "method"}, {"access": "", "host": "Object", "name": "hasValue", "url": "Object.html#method_hasValue", "type": "method"}, {"access": "", "host": "UA", "name": "ie", "url": "UA.html#property_ie", "type": "property"}, {"access": "", "host": "Queue", "name": "indexOf", "url": "Queue.html#method_indexOf", "type": "method"}, {"access": "", "host": "Array", "name": "indexOf", "url": "Array.html#method_indexOf", "type": "method"}, {"access": "protected", "host": "Queue", "name": "_init", "url": "Queue.html#method__init", "type": "method"}, {"access": "private", "host": "YUI", "name": "_init", "url": "YUI.html#method__init", "type": "method"}, {"access": "", "host": "Intl", "name": "intl:langChange", "url": "Intl.html#event_intl:langChange", "type": "event"}, {"access": "", "host": "Lang", "name": "isArray", "url": "Lang.html#method_isArray", "type": "method"}, {"access": "", "host": "Lang", "name": "isBoolean", "url": "Lang.html#method_isBoolean", "type": "method"}, {"access": "", "host": "Lang", "name": "isDate", "url": "Lang.html#method_isDate", "type": "method"}, {"access": "", "host": "Lang", "name": "isFunction", "url": "Lang.html#method_isFunction", "type": "method"}, {"access": "", "host": "Lang", "name": "isNull", "url": "Lang.html#method_isNull", "type": "method"}, {"access": "", "host": "Lang", "name": "isNumber", "url": "Lang.html#method_isNumber", "type": "method"}, {"access": "", "host": "Lang", "name": "isObject", "url": "Lang.html#method_isObject", "type": "method"}, {"access": "", "host": "Lang", "name": "isString", "url": "Lang.html#method_isString", "type": "method"}, {"access": "", "host": "Lang", "name": "isUndefined", "url": "Lang.html#method_isUndefined", "type": "method"}, {"access": "", "host": "Lang", "name": "isValue", "url": "Lang.html#method_isValue", "type": "method"}, {"access": "", "host": "YUI", "name": "key", "url": "YUI.html#event_key", "type": "event"}, {"access": "", "host": "Object", "name": "keys", "url": "Object.html#method_keys", "type": "method"}, {"access": "", "host": "Queue", "name": "last", "url": "Queue.html#method_last", "type": "method"}, {"access": "", "host": "YUI", "name": "later", "url": "YUI.html#method_later", "type": "method"}, {"access": "private", "host": "Get", "name": "_linkNode", "url": "Get.html#method__linkNode", "type": "method"}, {"access": "", "host": "YUI", "name": "log", "url": "YUI.html#method_log", "type": "method"}, {"access": "", "host": "Intl", "name": "lookupBestLang", "url": "Intl.html#method_lookupBestLang", "type": "method"}, {"access": "", "host": "YUI", "name": "merge", "url": "YUI.html#method_merge", "type": "method"}, {"access": "", "host": "YUI", "name": "message", "url": "YUI.html#method_message", "type": "method"}, {"access": "", "host": "YUI", "name": "mix", "url": "YUI.html#method_mix", "type": "method"}, {"access": "", "host": "UA", "name": "mobile", "url": "UA.html#property_mobile", "type": "property"}, {"access": "private", "host": "Intl", "name": "_mod", "url": "Intl.html#method__mod", "type": "method"}, {"access": "", "host": "YUI", "name": "mouseenter", "url": "YUI.html#event_mouseenter", "type": "event"}, {"access": "", "host": "YUI", "name": "mouseleave", "url": "YUI.html#event_mouseleave", "type": "event"}, {"access": "", "host": "YUI", "name": "mousewheel", "url": "YUI.html#event_mousewheel", "type": "event"}, {"access": "", "host": "YUI", "name": "namespace", "url": "YUI.html#method_namespace", "type": "method"}, {"access": "private", "host": "Get", "name": "_next", "url": "Get.html#method__next", "type": "method"}, {"access": "", "host": "Queue", "name": "next", "url": "Queue.html#method_next", "type": "method"}, {"access": "private", "host": "Get", "name": "_node", "url": "Get.html#method__node", "type": "method"}, {"access": "", "host": "Array", "name": "numericSort", "url": "Array.html#method_numericSort", "type": "method"}, {"access": "", "host": "YUI", "name": "on", "url": "YUI.html#method_on", "type": "method"}, {"access": "", "host": "YUI", "name": "once", "url": "YUI.html#method_once", "type": "method"}, {"access": "", "host": "UA", "name": "opera", "url": "UA.html#property_opera", "type": "property"}, {"access": "", "host": "UA", "name": "os", "url": "UA.html#property_os", "type": "property"}, {"access": "", "host": "Object", "name": "owns", "url": "Object.html#method_owns", "type": "method"}, {"access": "", "host": "Queue", "name": "promote", "url": "Queue.html#method_promote", "type": "method"}, {"access": "private", "host": "Get", "name": "_purge", "url": "Get.html#method__purge", "type": "method"}, {"access": "private", "host": "Get", "name": "PURGE_THRESH", "url": "Get.html#property_PURGE_THRESH", "type": "property"}, {"access": "private", "host": "Get", "name": "purging", "url": "Get.html#property_purging", "type": "property"}, {"access": "protected", "host": "Queue", "name": "_q", "url": "Queue.html#property__q", "type": "property"}, {"access": "private", "host": "Get", "name": "qidx", "url": "Get.html#property_qidx", "type": "property"}, {"access": "private", "host": "Get", "name": "queue", "url": "Get.html#method_queue", "type": "method"}, {"access": "private", "host": "Get", "name": "queues", "url": "Get.html#property_queues", "type": "property"}, {"access": "", "host": "Queue", "name": "remove", "url": "Queue.html#method_remove", "type": "method"}, {"access": "private", "host": "Get", "name": "_returnData", "url": "Get.html#method__returnData", "type": "method"}, {"access": "", "host": "Get", "name": "script", "url": "Get.html#method_script", "type": "method"}, {"access": "private", "host": "Get", "name": "_scriptNode", "url": "Get.html#method__scriptNode", "type": "method"}, {"access": "", "host": "UA", "name": "secure", "url": "UA.html#property_secure", "type": "property"}, {"access": "", "host": "Intl", "name": "setLang", "url": "Intl.html#method_setLang", "type": "method"}, {"access": "private", "host": "YUI", "name": "_setup", "url": "YUI.html#method__setup", "type": "method"}, {"access": "", "host": "Object", "name": "setValue", "url": "Object.html#method_setValue", "type": "method"}, {"access": "", "host": "YUI", "name": "simulate", "url": "YUI.html#method_simulate", "type": "method"}, {"access": "", "host": "Queue", "name": "size", "url": "Queue.html#method_size", "type": "method"}, {"access": "", "host": "Object", "name": "size", "url": "Object.html#method_size", "type": "method"}, {"access": "", "host": "Array", "name": "some", "url": "Array.html#method_some", "type": "method"}, {"access": "", "host": "YUI", "name": "stamp", "url": "YUI.html#method_stamp", "type": "method"}, {"access": "", "host": "Array", "name": "test", "url": "Array.html#method_test", "type": "method"}, {"access": "", "host": "YUI", "name": "throttle", "url": "YUI.html#method_throttle", "type": "method"}, {"access": "private", "host": "Get", "name": "_timeout", "url": "Get.html#method__timeout", "type": "method"}, {"access": "private", "host": "Get", "name": "_track", "url": "Get.html#method__track", "type": "method"}, {"access": "", "host": "Lang", "name": "trim", "url": "Lang.html#method_trim", "type": "method"}, {"access": "", "host": "Lang", "name": "type", "url": "Lang.html#method_type", "type": "method"}, {"access": "", "host": "YUI", "name": "use", "url": "YUI.html#method_use", "type": "method"}, {"access": "", "host": "YUI", "name": "valueChange", "url": "YUI.html#event_valueChange", "type": "event"}, {"access": "", "host": "Object", "name": "values", "url": "Object.html#method_values", "type": "method"}, {"access": "", "host": "UA", "name": "webkit", "url": "UA.html#property_webkit", "type": "property"}, {"access": "", "host": "YUI", "name": "windowresize", "url": "YUI.html#event_windowresize", "type": "event"}];
 </script>
 </body>
 </html>

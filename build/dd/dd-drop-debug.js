@@ -352,9 +352,10 @@ YUI.add('dd-drop', function(Y) {
                 node.addClass(DDM.CSS_PREFIX + '-drop-active-valid');
                 DDM._addValid(this);
                 this.overTarget = false;
-                if (this.get('useShim')) {
-                    this.sizeShim();
+                if (!this.get('useShim')) {
+                    this.shim = this.get(NODE);
                 }
+                this.sizeShim();
             } else {
                 DDM._removeValid(this);
                 node.removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
@@ -372,7 +373,8 @@ YUI.add('dd-drop', function(Y) {
             if (this.get(NODE) === DDM.activeDrag.get(NODE)) {
                 return false;
             }
-            if (this.get('lock') || !this.get('useShim')) {
+            //if (this.get('lock') || !this.get('useShim')) {
+            if (this.get('lock')) {
                 return false;
             }
             if (!this.shim) {
@@ -407,14 +409,16 @@ YUI.add('dd-drop', function(Y) {
 
             }
             
-            //Set the style on the shim
-            this.shim.setStyles({
-                height: nh + 'px',
-                width: nw + 'px',
-                top: xy[1] + 'px',
-                left: xy[0] + 'px'
-            });
-            
+            if (this.get('useShim')) {
+                //Set the style on the shim
+                this.shim.setStyles({
+                    height: nh + 'px',
+                    width: nw + 'px',
+                    top: xy[1] + 'px',
+                    left: xy[0] + 'px'
+                });
+            }
+
             //Create the region to be used by intersect when a drag node is over us.
             this.region = {
                 '0': xy[0], 
@@ -542,4 +546,4 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-drop', 'dd-drag']});
+}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});

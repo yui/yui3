@@ -25,8 +25,6 @@
 function Axis (config) 
 {
 	Axis.superclass.constructor.apply(this, arguments);
-	this._dataId = this._id + "data";
-
 }
 
 Axis.NAME = "axis";
@@ -65,42 +63,34 @@ Axis.ATTRS = {
  */
 Y.extend(Axis, Y.SWFWidget, 
 {
+    /**
+     * @private
+     */
+    initializer: function(cfg)
+    {
+        this._dataId = this._id + "data";
+        this.createInstance(this._dataId, this.get("axisType") + "Data", ["$" + this.get("app")._dataId]);
+        this.createInstance(this._id, "Axis", ["$" + this._dataId]);
+    },
+
 	GUID:"yuiaxis",
 
+    /**
+     * @private
+     * Storage for axisType
+     */
 	_axisType: "Numeric",
 
+    /**
+     * @private 
+     * Storage for keys
+     */
 	_keys: [],
-
-	swfReadyFlag:false,
-
 
 	/**
 	 * Reference to corresponding Actionscript class.
 	 */
 	AS_CLASS:  "Axis",
-	
-	/**
-	 * @private
-	 * Called when the Axis is initialized
-	 * @method _axisInit
-	 * @param swfowner {Object} The class with a direct reference to the application swf. 
-	 */
-	_init: function(swfowner)
-	{
-		this.swfowner = swfowner;
-		this.appswf = this.swfowner.appswf;
-		this.appswf.createInstance(this._dataId, this.get("axisType") + "Data", ["$" + this.swfowner._dataId]);
-		var i, keys = this.get("keys");
-		for (i in keys) 
-		{
-			if(keys.hasOwnProperty(i))
-			{
-				this.appswf.applyMethod(this._dataId, "addKey", [keys[i]]);
-			}
-		}
-		this.appswf.createInstance(this._id, "Axis", ["$" + this._dataId]);
-		this.swfReadyFlag = true;
-	},
 	
 	/**
 	 * Uses key to lookup and extract specified data from a data source.
@@ -111,10 +101,7 @@ Y.extend(Axis, Y.SWFWidget,
 	addKey: function(key) 
 	{
 		this.get("keys").push(key);
-		if(this.appswf)
-		{
-			this.appswf.applyMethod("$" + this._dataId, "addKey", [key]);
-		}
+        this.applyMethod(this._dataId, "addKey", [key]);
 	}
 });
 

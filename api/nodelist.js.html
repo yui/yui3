@@ -82,7 +82,6 @@
         <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="nx">NodeList</span><span class="p">.</span><span class="nx">_instances</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
     <span class="cm">/**</span>
 <span class="cm">     * The underlying array of DOM nodes bound to the Y.NodeList instance</span>
 <span class="cm">     * @property _nodes</span>
@@ -104,8 +103,6 @@
 <span class="nx">NodeList</span><span class="p">.</span><span class="nx">getDOMNodes</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">nodeList</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">nodeList</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">;</span>
 <span class="p">};</span>
-
-<span class="nx">NodeList</span><span class="p">.</span><span class="nx">_instances</span> <span class="o">=</span> <span class="p">[];</span>
 
 <span class="nx">NodeList</span><span class="p">.</span><span class="nx">each</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">instance</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">;</span>
@@ -305,7 +302,6 @@
     <span class="p">},</span>
 
     <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">delete</span> <span class="nx">NodeList</span><span class="p">.</span><span class="nx">_instances</span><span class="p">[</span><span class="k">this</span><span class="p">[</span><span class="nx">UID</span><span class="p">]];</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -451,12 +447,6 @@
 <span class="cm">      * @see Node.remove</span>
 <span class="cm">      */</span>
     <span class="s1">&#39;remove&#39;</span><span class="p">,</span>
-
-    <span class="cm">/** Called on each Node instance</span>
-<span class="cm">      * @method removeAttribute</span>
-<span class="cm">      * @see Node.removeAttribute</span>
-<span class="cm">      */</span>
-    <span class="s1">&#39;removeAttribute&#39;</span><span class="p">,</span>
 
     <span class="cm">/** Called on each Node instance</span>
 <span class="cm">      * @method set</span>

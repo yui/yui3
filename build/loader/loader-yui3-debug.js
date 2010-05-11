@@ -561,6 +561,51 @@ YUI.Env[Y.version].modules = {
             "yui-base"
         ]
     }, 
+    "editor": {
+        "submodules": {
+            "createlink-base": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "editor-base": {
+                "requires": [
+                    "base", 
+                    "frame", 
+                    "node", 
+                    "exec-command"
+                ]
+            }, 
+            "editor-lists": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "editor-tab": {
+                "requires": [
+                    "editor-base"
+                ]
+            }, 
+            "exec-command": {
+                "requires": [
+                    "frame"
+                ]
+            }, 
+            "frame": {
+                "requires": [
+                    "base", 
+                    "node", 
+                    "selector-css3", 
+                    "substitute"
+                ]
+            }, 
+            "selection": {
+                "requires": [
+                    "node"
+                ]
+            }
+        }
+    }, 
     "event": {
         "expound": "node-base", 
         "plugins": {
@@ -630,6 +675,29 @@ YUI.Env[Y.version].modules = {
         ]
     }, 
     "history": {
+        "submodules": {
+            "history-base": {
+                "requires": [
+                    "event-custom-complex"
+                ]
+            }, 
+            "history-hash": {
+                "requires": [
+                    "event-synthetic", 
+                    "history-base", 
+                    "yui-later"
+                ]
+            }, 
+            "history-hash-ie": {
+                "requires": [
+                    "history-base", 
+                    "history-hash", 
+                    "node-base"
+                ]
+            }
+        }
+    }, 
+    "history-deprecated": {
         "requires": [
             "node"
         ]
@@ -951,6 +1019,15 @@ YUI.Env[Y.version].modules = {
             "event-simulate"
         ], 
         "skinnable": true
+    }, 
+    "value-change": {
+        "optional": [
+            "event-custom-complex"
+        ], 
+        "requires": [
+            "node-base", 
+            "event-focus"
+        ]
     }, 
     "widget": {
         "plugins": {

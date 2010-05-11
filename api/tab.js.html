@@ -50,7 +50,6 @@
                         <div class="highlight"><pre><span class="kd">var</span> <span class="nx">Lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
     <span class="nx">_queries</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">TabviewBase</span><span class="p">.</span><span class="nx">_queries</span><span class="p">,</span>
     <span class="nx">_classNames</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">TabviewBase</span><span class="p">.</span><span class="nx">_classNames</span><span class="p">,</span>
-    <span class="nx">_isGeckoIEWin</span> <span class="o">=</span> <span class="p">((</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">userAgent</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;Windows&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
     <span class="nx">getClassName</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">ClassNameManager</span><span class="p">.</span><span class="nx">getClassName</span><span class="p">;</span>
 
 <span class="cm">/**</span>
@@ -97,16 +96,7 @@
         <span class="nx">anchor</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parentNode&#39;</span><span class="p">).</span><span class="nx">set</span><span class="p">(</span><span class="s1">&#39;role&#39;</span><span class="p">,</span> <span class="s1">&#39;presentation&#39;</span><span class="p">);</span>
  
  
-        <span class="c1">//  Remove the &quot;href&quot; attribute from the anchor element to</span>
-        <span class="c1">//  prevent JAWS and NVDA from reading the value of the &quot;href&quot;</span>
-        <span class="c1">//  attribute when the anchor is focused</span>
- 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">_isGeckoIEWin</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">anchor</span><span class="p">.</span><span class="nx">removeAttribute</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">);</span>
-        <span class="p">}</span>
- 
         <span class="c1">//  Apply the ARIA roles, states and properties to each panel</span>
- 
         <span class="nx">panel</span><span class="p">.</span><span class="nx">setAttrs</span><span class="p">({</span>
             <span class="nx">role</span><span class="o">:</span> <span class="s1">&#39;tabpanel&#39;</span><span class="p">,</span>
             <span class="s1">&#39;aria-labelledby&#39;</span><span class="o">:</span> <span class="nx">id</span>
@@ -130,20 +120,21 @@
     <span class="p">},</span>
 
     <span class="nx">_renderPanel</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">)</span>
-            <span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewPanel</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">)</span>
+            <span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">));</span>
     <span class="p">},</span>
 
     <span class="nx">_add</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">parentNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">),</span>
-            <span class="nx">list</span> <span class="o">=</span> <span class="nx">parentNode</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewList</span><span class="p">),</span>
-            <span class="nx">tabviewPanel</span> <span class="o">=</span> <span class="nx">parentNode</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">_queries</span><span class="p">.</span><span class="nx">tabviewPanel</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">),</span>
+            <span class="nx">list</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;listNode&#39;</span><span class="p">),</span>
+            <span class="nx">panel</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">);</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">list</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">list</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;boundingBox&#39;</span><span class="p">));</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">tabviewPanel</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">tabviewPanel</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">));</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">panel</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">panel</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">));</span>
         <span class="p">}</span>
     <span class="p">},</span>
     
@@ -177,16 +168,27 @@
         <span class="k">return</span> <span class="nx">content</span><span class="p">;</span>
     <span class="p">},</span>
 
+    <span class="c1">// find panel by ID mapping from label href</span>
     <span class="nx">_defPanelNodeValueFn</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">id</span><span class="p">,</span>
             <span class="nx">href</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;contentBox&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="nx">parent</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">),</span>
+            <span class="nx">hashIndex</span> <span class="o">=</span> <span class="nx">href</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">),</span>
             <span class="nx">panel</span><span class="p">;</span>
 
+        <span class="nx">href</span> <span class="o">=</span> <span class="nx">href</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">hashIndex</span><span class="p">);</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="nx">href</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">id</span> <span class="o">=</span> <span class="nx">href</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> 
-            <span class="nx">panel</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">href</span><span class="p">);</span>
+            <span class="nx">id</span> <span class="o">=</span> <span class="nx">href</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="nx">panel</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">href</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabPanel</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="c1">// use the one found by id, or else try matching indices</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">panel</span> <span class="o">=</span> <span class="nx">panel</span> <span class="o">||</span>
+                <span class="nx">parent</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;panelNode&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;children&#39;</span><span class="p">).</span><span class="nx">item</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">));</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">panel</span><span class="p">)</span> <span class="p">{</span>
@@ -229,6 +231,13 @@
 <span class="cm">         * @type Y.Node</span>
 <span class="cm">         */</span>
         <span class="nx">panelNode</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">setter</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">node</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">_classNames</span><span class="p">.</span><span class="nx">tabPanel</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
+            <span class="p">},</span>
             <span class="nx">valueFn</span><span class="o">:</span> <span class="s1">&#39;_defPanelNodeValueFn&#39;</span>
         <span class="p">},</span>
         

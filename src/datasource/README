@@ -1,3 +1,6 @@
+3.1.1
+    * No changes.
+
 3.1.0
     * DataSource's sendRequest() argument signature has changed in a
       non-backward-compatible way. It now accepts a single object containing

@@ -1,12 +1,8 @@
 package com.yahoo.infographics.series
 {
-	import com.yahoo.infographics.data.AxisData;
-	import flash.display.DisplayObject;
 	import com.yahoo.renderers.Renderer;
-	import com.yahoo.util.InstanceFactory;
 	import com.yahoo.infographics.styles.HistogramStyles;
 	import com.yahoo.infographics.series.ISeries;
-	import flash.display.Sprite;
 
 	public class BarSeries extends ColumnSeries
 	{
@@ -15,6 +11,20 @@ package com.yahoo.infographics.series
 			super(series);
 		}
 		
+		/**
+		 * @private 
+		 * Storage for direction
+		 */
+		private var _direction:String = "vertical";
+
+		/**
+		 * @private (override)
+		 */
+		override public function get direction():String
+		{
+			return this._direction;
+		}
+
 		/**
 		 * @private (protected)
 		 */
@@ -46,14 +56,14 @@ package com.yahoo.infographics.series
 				ycoords:Vector.<int> = this._ycoords,
 				len:int = xcoords.length,
 				i:int,
-				marker:Sprite,
+				marker:SeriesMarker,
 				seriesCollection:Vector.<ISeries> = this._graph.seriesTypes[this._type] as Vector.<ISeries>,
 				seriesLen:int = seriesCollection.length,
 				seriesHeight:Number = 0,
 				totalHeight:Number = 0,
 				offset:Number = 0,
 				ratio:Number,
-				markerHeight:Number = this.getStyle("marker").props.width,
+				markerHeight:Number = this.getStyle("marker").props.height,
 				renderer:Renderer,
 				leftPadding:Number = this._leftPadding,
 				dataWidth:Number = this.width - (leftPadding + this._rightPadding),
@@ -84,11 +94,10 @@ package com.yahoo.infographics.series
 			for(i = 0;i < len; ++i)
 			{
 				marker = this.getMarker();
+				marker.index = i;
 				marker.x = origin;
 				marker.y = Number(ycoords[i]) + offset;
-				this._markerFactory.properties.width = Number(xcoords[i]) - origin;
-				this._markerFactory.properties.height = markerHeight;
-				this._markerFactory.restoreInstance(marker);
+				marker.width = Number(xcoords[i]) - origin;
 				this._markers.push(marker);
 			}
 			this.clearMarkerCache();

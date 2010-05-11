@@ -33,7 +33,6 @@ var NodeList = function(nodes) {
         nodes = Y.Array(nodes, 0, true);
     }
 
-    NodeList._instances[Y.stamp(this)] = this;
     /**
      * The underlying array of DOM nodes bound to the Y.NodeList instance
      * @property _nodes
@@ -55,8 +54,6 @@ NodeList.NAME = 'NodeList';
 NodeList.getDOMNodes = function(nodeList) {
     return nodeList._nodes;
 };
-
-NodeList._instances = [];
 
 NodeList.each = function(instance, fn, context) {
     var nodes = instance._nodes;
@@ -256,7 +253,6 @@ Y.mix(NodeList.prototype, {
     },
 
     destructor: function() {
-        delete NodeList._instances[this[UID]];
     },
 
     /**
@@ -402,12 +398,6 @@ NodeList.importMethod(Y.Node.prototype, [
       * @see Node.remove
       */
     'remove',
-
-    /** Called on each Node instance
-      * @method removeAttribute
-      * @see Node.removeAttribute
-      */
-    'removeAttribute',
 
     /** Called on each Node instance
       * @method set

@@ -110,29 +110,42 @@
             if (e.drag.get(NODE) == e.drop.get(NODE)) {
                 return;
             }
+            // is drop a child of drag?
+            if (e.drag.get(NODE).contains(e.drop.get(NODE))) {
+                return;
+            }
+            var same = false, dir, oldNode, newNode, dropsort, dropNode,
+                moveType = this.get('moveType').toLowerCase();
 
-            switch (this.get('moveType').toLowerCase()) {
+            if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
+                same = true;
+            }
+            switch (moveType) {
                 case 'insert':
-                    var dir = ((this._up) ? 'before' : 'after');
-                    e.drop.get(NODE).insert(e.drag.get(NODE), dir);
+                    dir = ((this._up) ? 'before' : 'after');
+                    dropNode = e.drop.get(NODE);
+                    if (dropNode.test(this.get(CONT))) {
+                        dropNode.append(e.drag.get(NODE));
+                    } else {
+                        dropNode.insert(e.drag.get(NODE), dir);
+                    }
                     break;
                 case 'swap':
                     Y.DD.DDM.swapNode(e.drag, e.drop);
                     break;
                 case 'move':
                 case 'copy':
-                    var dropsort = Y.Sortable.getSortable(e.drop.get(NODE).get(PARENT_NODE)),
-                        oldNode, newNode;
+                    dropsort = Y.Sortable.getSortable(e.drop.get(NODE).get(PARENT_NODE));
 
                     if (!dropsort) {
-                        Y.log('No delegate parent found', 'error');
+                        Y.log('No delegate parent found', 'error', 'sortable');
                         return;
                     }
                     
                     Y.DD.DDM.getDrop(e.drag.get(NODE)).addToGroup(dropsort.get(ID));
 
                     //Same List
-                    if (e.drag.get(NODE).get(PARENT_NODE).contains(e.drop.get(NODE))) {
+                    if (same) {
                         Y.DD.DDM.swapNode(e.drag, e.drop);
                     } else {
                         if (this.get('moveType') == 'copy') {
@@ -152,6 +165,9 @@
                     }
                     break;
             }
+
+            this.fire(moveType, { same: same, drag: e.drag, drop: e.drop });
+            this.fire('moved', { same: same, drag: e.drag, drop: e.drop });
         },
         /**
         * @private
@@ -186,7 +202,12 @@
         * @chainable
         */
         plug: function(cls, config) {
-            this.delegate.dd.plug(cls, config);
+            //I don't like this.. Not at all, need to discuss with the team
+            if (cls && cls.NAME.substring(0, 4).toLowerCase() === 'sort') {
+                this.constructor.superclass.plug.call(this, cls, config);
+            } else {
+                this.delegate.dd.plug(cls, config);
+            }
             return this;
         },
         /**
@@ -355,7 +376,7 @@
         getSortable: function(node) {
             var s = null;
             node = Y.one(node);
-            Y.each(Sortable._sortables, function(v) {
+            Y.each(Y.Sortable._sortables, function(v) {
                 if (node.test(v.get(CONT))) {
                     s = v;
                 }
@@ -369,7 +390,7 @@
         * @description Register a Sortable instance with the singleton to allow lookups later.
         */
         reg: function(s) {
-            Sortable._sortables.push(s);
+            Y.Sortable._sortables.push(s);
         },
         /**
         * @static
@@ -378,9 +399,9 @@
         * @description Unregister a Sortable instance with the singleton.
         */
         unreg: function(s) {
-            Y.each(Sortable._sortables, function(v, k) {
+            Y.each(Y.Sortable._sortables, function(v, k) {
                 if (v === s) {
-                    Sortable._sortables[k] = null;
+                    Y.Sortable._sortables[k] = null;
                     delete Sortable._sortables[k];
                 }
             });
@@ -388,4 +409,60 @@
     });
 
     Y.Sortable = Sortable;
+
+    /**
+    * @event copy
+    * @description A sortable node was moved.
+    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * <dl>
+    * <dt>same</dt><dd>Moved to the same list.</dd>
+    * <dt>drag</dt><dd>The Drag Object</dd>
+    * <dt>drop</dt><dd>The Drop Object</dd>
+    * </dl>
+    * @type {Event.Custom}
+    *
+    *
+    * @event move
+    * @description A sortable node was moved.
+    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * <dl>
+    * <dt>same</dt><dd>Moved to the same list.</dd>
+    * <dt>drag</dt><dd>The Drag Object</dd>
+    * <dt>drop</dt><dd>The Drop Object</dd>
+    * </dl>
+    * @type {Event.Custom}
+    *
+    *
+    * @event insert
+    * @description A sortable node was moved.
+    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * <dl>
+    * <dt>same</dt><dd>Moved to the same list.</dd>
+    * <dt>drag</dt><dd>The Drag Object</dd>
+    * <dt>drop</dt><dd>The Drop Object</dd>
+    * </dl>
+    * @type {Event.Custom}
+    *
+    *
+    * @event swap
+    * @description A sortable node was moved.
+    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * <dl>
+    * <dt>same</dt><dd>Moved to the same list.</dd>
+    * <dt>drag</dt><dd>The Drag Object</dd>
+    * <dt>drop</dt><dd>The Drop Object</dd>
+    * </dl>
+    * @type {Event.Custom}
+    *
+    *
+    * @event moved
+    * @description A sortable node was moved.
+    * @param {Event.Facade} event An Event Facade object with the following specific property added:
+    * <dl>
+    * <dt>same</dt><dd>Moved to the same list.</dd>
+    * <dt>drag</dt><dd>The Drag Object</dd>
+    * <dt>drop</dt><dd>The Drop Object</dd>
+    * </dl>
+    * @type {Event.Custom}
+    */
 

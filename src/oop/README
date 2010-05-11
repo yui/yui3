@@ -1,6 +1,9 @@
 YUI OOP Utilities
     Provides inheritance and object modification utilities
 
+3.1.1
+  * clone passes functions through
+
 3.1.0
   * Added Y.some().
   * Improved iterators over native objects and YUI list object.

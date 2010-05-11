@@ -401,15 +401,6 @@
         <span class="p">}</span>
     <span class="p">},</span>
 
-     <span class="c1">// IE: elements collection is also FORM node which trips up scrubVal.</span>
-     <span class="c1">// preconverting to NodeList</span>
-     <span class="c1">// TODO: break out for IE only</span>
-    <span class="s1">&#39;elements&#39;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="nx">getter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">elements</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-
     <span class="cm">/**</span>
 <span class="cm">     * Returns a NodeList instance of all HTMLElement children.</span>
 <span class="cm">     * @readOnly</span>
@@ -954,6 +945,23 @@
 <span class="cm">     * @method insert</span>
 <span class="cm">     * @param {String | Y.Node | HTMLElement} content The content to insert </span>
 <span class="cm">     * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.</span>
+<span class="cm">     * Possible &quot;where&quot; arguments</span>
+<span class="cm">     * &lt;dl&gt;</span>
+<span class="cm">     * &lt;dt&gt;Y.Node&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;The Node to insert before&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;HTMLElement&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;The element to insert before&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;Int&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;The index of the child element to insert before&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;replace&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Replaces the existing HTML&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;before&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Inserts before the existing HTML&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;before&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Inserts content before the node&lt;/dd&gt;</span>
+<span class="cm">     * &lt;dt&gt;&quot;after&quot;&lt;/dt&gt;</span>
+<span class="cm">     * &lt;dd&gt;Inserts content after the node&lt;/dd&gt;</span>
+<span class="cm">     * &lt;/dl&gt;</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
     <span class="nx">insert</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
@@ -1016,7 +1024,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// map to DOMNode</span>
                 <span class="nx">content</span> <span class="o">=</span> <span class="nx">content</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
             <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// convert DOMNodeList to documentFragment</span>
-                <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2Frag</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">);</span>
+                <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y_DOM</span><span class="p">.</span><span class="nx">_nl2frag</span><span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">_nodes</span><span class="p">);</span>
             <span class="p">}</span>
 
         <span class="p">}</span>
@@ -1032,7 +1040,7 @@
 <span class="cm">    * @param {Node} otherNode The node to swap with</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">    */</span>
-    <span class="nx">swap</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">swapNode</span> <span class="o">?</span> 
+    <span class="nx">swap</span><span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">swapNode</span> <span class="o">?</span> 
         <span class="kd">function</span><span class="p">(</span><span class="nx">otherNode</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">.</span><span class="nx">swapNode</span><span class="p">(</span><span class="nx">Y_Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">otherNode</span><span class="p">));</span>
         <span class="p">}</span> <span class="o">:</span>
@@ -1082,6 +1090,7 @@
 <span class="cm">    * This is not stored with the DOM node.</span>
 <span class="cm">    * @param {string} name The name of the field to set. If no name</span>
 <span class="cm">    * is given, name is treated as the data and overrides any existing data.</span>
+<span class="cm">    * @param {any} val The value to be assigned to the field.</span>
 <span class="cm">    * @chainable</span>
 <span class="cm">    */</span>
     <span class="nx">setData</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>

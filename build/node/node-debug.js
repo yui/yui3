@@ -898,6 +898,23 @@ Y.mix(Y_Node.prototype, {
      * @method insert
      * @param {String | Y.Node | HTMLElement} content The content to insert 
      * @param {Int | Y.Node | HTMLElement | String} where The position to insert at.
+     * Possible "where" arguments
+     * <dl>
+     * <dt>Y.Node</dt>
+     * <dd>The Node to insert before</dd>
+     * <dt>HTMLElement</dt>
+     * <dd>The element to insert before</dd>
+     * <dt>Int</dt>
+     * <dd>The index of the child element to insert before</dd>
+     * <dt>"replace"</dt>
+     * <dd>Replaces the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts before the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts content before the node</dd>
+     * <dt>"after"</dt>
+     * <dd>Inserts content after the node</dd>
+     * </dl>
      * @chainable
      */
     insert: function(content, where) {
@@ -960,7 +977,7 @@ Y.mix(Y_Node.prototype, {
             if (content._node) { // map to DOMNode
                 content = content._node;
             } else if (content._nodes) { // convert DOMNodeList to documentFragment
-                content = Y_DOM._nl2Frag(content._nodes);
+                content = Y_DOM._nl2frag(content._nodes);
             }
 
         }
@@ -1026,6 +1043,7 @@ Y.mix(Y_Node.prototype, {
     * This is not stored with the DOM node.
     * @param {string} name The name of the field to set. If no name
     * is given, name is treated as the data and overrides any existing data.
+    * @param {any} val The value to be assigned to the field.
     * @chainable
     */
     setData: function(name, val) {
@@ -1100,7 +1118,6 @@ var NodeList = function(nodes) {
         nodes = Y.Array(nodes, 0, true);
     }
 
-    NodeList._instances[Y.stamp(this)] = this;
     /**
      * The underlying array of DOM nodes bound to the Y.NodeList instance
      * @property _nodes
@@ -1122,8 +1139,6 @@ NodeList.NAME = 'NodeList';
 NodeList.getDOMNodes = function(nodeList) {
     return nodeList._nodes;
 };
-
-NodeList._instances = [];
 
 NodeList.each = function(instance, fn, context) {
     var nodes = instance._nodes;
@@ -1323,7 +1338,6 @@ Y.mix(NodeList.prototype, {
     },
 
     destructor: function() {
-        delete NodeList._instances[this[UID]];
     },
 
     /**
@@ -1469,12 +1483,6 @@ NodeList.importMethod(Y.Node.prototype, [
       * @see Node.remove
       */
     'remove',
-
-    /** Called on each Node instance
-      * @method removeAttribute
-      * @see Node.removeAttribute
-      */
-    'removeAttribute',
 
     /** Called on each Node instance
       * @method set
@@ -1658,6 +1666,7 @@ Y.Array.each([
      'select'
 ], function(method) {
     Y.Node.prototype[method] = function(arg1, arg2, arg3) {
+    Y.log('adding: ' + method, 'info', 'node');
         var ret = this.invoke(method, arg1, arg2, arg3);
         return ret;
     };
@@ -1713,6 +1722,15 @@ Y.Node.importMethod(Y.DOM, [
  * @for NodeList
  * @param {string} name The attribute name 
  * @return {string} The attribute value 
+ */
+
+/**
+ * Allows for removing attributes on DOM nodes.
+ * This passes through to the DOM node, allowing for custom attributes.
+ * @method removeAttribute
+ * @see Node
+ * @for NodeList
+ * @param {string} name The attribute to remove 
  */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'removeAttribute']);
 (function(Y) {

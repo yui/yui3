@@ -6,7 +6,7 @@ package
 	import com.yahoo.renderers.layout.*;
 	import com.yahoo.infographics.data.*;
 	import com.yahoo.infographics.series.*;
-	import com.yahoo.infographics.cartesian.Graph;
+	import com.yahoo.infographics.cartesian.*;
 	import com.yahoo.infographics.axes.*;
 	import com.yahoo.infographics.styles.*;
 	import com.yahoo.util.YUIBridge;
@@ -31,6 +31,7 @@ package
 		 */
 		private var _compiledClasses:Object =
 		{
+			DataTip:DataTip as Class,
 			ChartDataProvider:ChartDataProvider,
 			NumericData:NumericData,
 			CategoryData:CategoryData,
@@ -52,10 +53,10 @@ package
 			Skin:Skin,
 			ImageSkin:ImageSkin,
 			BorderContainer:BorderContainer,
-			Graph:function(arg:Array):Graph
+			Graph:function(collection:Array, handleEventListening:Boolean = false):Graph
 			{
-				arg = this.parseCollections(arg);
-				return new Graph(arg);
+				collection = this.parseCollections(collection);
+				return new Graph(collection, handleEventListening);
 			}
 		};
 

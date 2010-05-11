@@ -216,7 +216,7 @@
             if (con) {
                 if (con instanceof Y.Node) {
                     if (!this._regionCache) {
-                        Y.on('resize', Y.bind(this._cacheRegion, this), window);
+                        Y.on('resize', Y.bind(this._cacheRegion, this), Y.config.win);
                         this._cacheRegion();
                     }
                     region = Y.clone(this._regionCache);

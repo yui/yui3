@@ -2,7 +2,8 @@
 function Graph (config) 
 {
 	Graph.superclass.constructor.apply(this, arguments);
-
+    this.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
+    this.fire("graphReady", {swfowner:this.get("app")});
 }
 
 Graph.NAME = "graph";
@@ -34,6 +35,24 @@ Graph.ATTRS = {
 		{
 			this._seriesCollection = this._convertReferences(val);
 		}
+	},
+
+	handleEventListening: {
+		validator: function(val)
+		{
+			return Y.Lang.isBoolean(val);
+		},
+
+		getter: function()
+		{
+			return this._handleEventListening;
+		},
+
+		setter: function(val)
+		{
+			this._handleEventListening = val;
+			return val;
+		}
 	}
 };
 
@@ -45,28 +64,18 @@ Y.extend(Graph, Y.Container,
 	GUID:"yuigraph",
 
 	/**
+	 * @private
+	 * Indicates whether the Graph will act as a delegate for
+	 * mouse events.
+	 */
+	_handleEventListening: false,
+
+	/**
 	 * Reference to corresponding Actionscript class.
 	 */
 	AS_CLASS: "Graph",
 
 	_seriesCollection:null,
-	/**
-	 * @private
-	 * Called by the class instance containing the application swf after the swf
-	 * has been initialized.
-	 *
-	 * @method _init
-	 * @param swfowner {Object} Class instance with direct access to the application swf.
-	 */
-	_init: function(swfowner)
-	{
-		this.swfowner = swfowner;
-		this.appswf = this.swfowner.appswf;
-		if(this.get("seriesCollection"))
-		{
-			this.appswf.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection"))]);
-		}
-	},
 
 	/**
 	 * Converts references of AS class wrappers to string references to used with 

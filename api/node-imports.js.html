@@ -168,6 +168,7 @@
      <span class="s1">&#39;select&#39;</span>
 <span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;adding: &#39;</span> <span class="o">+</span> <span class="nx">method</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">);</span>
         <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">arg1</span><span class="p">,</span> <span class="nx">arg2</span><span class="p">,</span> <span class="nx">arg3</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
     <span class="p">};</span>
@@ -223,6 +224,15 @@
 <span class="cm"> * @for NodeList</span>
 <span class="cm"> * @param {string} name The attribute name </span>
 <span class="cm"> * @return {string} The attribute value </span>
+<span class="cm"> */</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * Allows for removing attributes on DOM nodes.</span>
+<span class="cm"> * This passes through to the DOM node, allowing for custom attributes.</span>
+<span class="cm"> * @method removeAttribute</span>
+<span class="cm"> * @see Node</span>
+<span class="cm"> * @for NodeList</span>
+<span class="cm"> * @param {string} name The attribute to remove </span>
 <span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">NodeList</span><span class="p">.</span><span class="nx">importMethod</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;getAttribute&#39;</span><span class="p">,</span> <span class="s1">&#39;setAttribute&#39;</span><span class="p">,</span> <span class="s1">&#39;removeAttribute&#39;</span><span class="p">]);</span>
 </pre></div>

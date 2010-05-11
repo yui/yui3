@@ -6,6 +6,9 @@ The Querystring Utility
         querystring-parse     - Parse valid querystring into JavaScript objects
         querystring-stringify - Serialize JavaScript objects into valid query strings
 
+3.1.1
+    No changes
+
 3.1.0
     Initial release
 

@@ -5,6 +5,7 @@
  * @submodule yui-base
  */
 
+
 if (typeof YUI === 'undefined') {
 
 /**
@@ -19,19 +20,32 @@ if (typeof YUI === 'undefined') {
  * @constructor
  * @global
  * @uses EventTarget
- * @param o* Up to five optional configuration objects.  This object is stored
- * in YUI.config.  See config for the list of supported properties.
+ * @param o* 0..n optional configuration objects.  these values
+ * are store in Y.config.  See config for the list of supported 
+ * properties.
  */
     /*global YUI*/
     /*global YUI_config*/
-    var YUI = function(o1, o2, o3, o4, o5) {
+    var YUI = function() {
 
-        var Y = this, a = arguments, i, l = a.length,
+        var Y = this, a = arguments, i, l = a.length, proto, prop,
             globalConfig = (typeof YUI_config !== 'undefined') && YUI_config;
 
         // Allow instantiation without the new operator
         if (!(Y instanceof YUI)) {
-            return new YUI(o1, o2, o3, o4, o5);
+            Y = new YUI();
+
+            for (i=0; i<l; i++) {
+                Y._config(a[i]);
+            }
+
+            for (prop in proto) {
+                if (proto.hasOwnProperty(prop)) {
+                    Y[prop] = proto[prop];
+                }
+            }
+
+            return Y; 
         } else {
             // set up the core environment
             Y._init();
@@ -49,7 +63,7 @@ if (typeof YUI === 'undefined') {
 }
 
 (function() {
-    var p, prop,
+    var proto, prop,
         VERSION       = '@VERSION@', 
         BASE          = 'http://yui.yahooapis.com/',
         DOC_LABEL     = 'yui3-js-enabled',
@@ -74,7 +88,10 @@ if (typeof YUI === 'undefined') {
                         },
         remove        = function (el, type, fn, capture) {
                             if (el && el.removeEventListener) {
-                                el.removeEventListener(type, fn, capture);
+                                // this can throw an uncaught exception in FF
+                                try {
+                                    el.removeEventListener(type, fn, capture);
+                                } catch(ex){}
                             } else if (el && el.detachEvent) {
                                 el.detachEvent("on" + type, fn);
                             }
@@ -101,7 +118,7 @@ if (VERSION.indexOf('@') > -1) {
     VERSION = '3.0.0'; // dev time hack for cdn test
 }
         
-YUI.prototype = {
+proto = {
     _config: function(o) {
         o = o || {};
         var attr,
@@ -111,20 +128,26 @@ YUI.prototype = {
             mods   = config.modules,
             groups = config.groups;
         for (name in o) {
-            attr = o[name];
-            if (mods && name == 'modules') {
-                for (detail in attr) {
-                    mods[detail] = attr[detail];
+            if (o.hasOwnProperty(name)) {
+                attr = o[name];
+                if (mods && name == 'modules') {
+                    for (detail in attr) {
+                        if (attr.hasOwnProperty(detail)) {
+                            mods[detail] = attr[detail];
+                        }
+                    }
+                } else if (groups && name == 'groups') {
+                    for (detail in attr) {
+                        if (attr.hasOwnProperty(detail)) {
+                            groups[detail] = attr[detail];
+                        }
+                    }
+                } else if (name == 'win') {
+                    config[name] = attr.contentWindow || attr;
+                    config.doc = config[name].document;
+                } else {
+                    config[name] = attr;
                 }
-            } else if (groups && name == 'groups') {
-                for (detail in attr) {
-                    groups[detail] = attr[detail];
-                }
-            } else if (name == 'win') {
-                config[name] = attr.contentWindow || attr;
-                config.doc = config[name].document;
-            } else {
-                config[name] = attr;
             }
         }
     },
@@ -135,15 +158,16 @@ YUI.prototype = {
      */
     _init: function() {
         var filter,
-            Y     = this, 
-            G_ENV = YUI.Env,
-            Env   = Y.Env;
+            Y       = this, 
+            G_ENV   = YUI.Env,
+            Env     = Y.Env;
 
         Y.version = VERSION;
 
         if (!Env) {
             Y.Env = {
-                mods:         {},
+                mods:         {}, // flat module map
+                versions:     {}, // version module map
                 base:         BASE,
                 cdn:          BASE + VERSION + '/build/',
                 bootstrapped: false,
@@ -313,13 +337,17 @@ YUI.prototype = {
      */
     add: function(name, fn, version, details) {
         details = details || {};
+        var env = YUI.Env,
+            mod  = {
+                name: name, 
+                fn: fn,
+                version: version,
+                details: details
+            };
 
-        YUI.Env.mods[name] = {
-            name: name, 
-            fn: fn,
-            version: version,
-            details: details
-        };
+        env.mods[name] = mod;
+        env.versions[version] = env.versions[version] || {};
+        env.versions[version][name] = mod;
 
         return this;
     },
@@ -346,7 +374,7 @@ YUI.prototype = {
                 req        = details.requires; 
                 use        = details.use;
 
-                if (req) {
+                if (req && req.length) {
                     this._attach(this.Array(req));
                 }
 
@@ -356,7 +384,7 @@ YUI.prototype = {
                     mod.fn(this, name);
                 }
 
-                if (use) {
+                if (use && use.length) {
                     this._attach(this.Array(use));
                 }
             }
@@ -475,7 +503,7 @@ YUI.prototype = {
                 if (data) {
                     origMissing = missing.concat();
                     missing = [];
-                    Y.Array.each(data, process);
+                    YArray.each(data, process);
                     redo = missing.length;
                     if (redo) {
                         if (missing.sort().join() == origMissing.sort().join()) {
@@ -706,17 +734,13 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
     }
 };
 
-// Give the YUI global the same properties as an instance.
-// This makes it so that the YUI global can be used like the YAHOO
-// global was used prior to 3.x.  More importantly, the YUI global
-// provides global metadata, so env needs to be configured.
-// @TODO review
-
-    p = YUI.prototype;
+    YUI.prototype = proto;
 
     // inheritance utilities are not available yet
-    for (prop in p) {
-        YUI[prop] = p[prop];
+    for (prop in proto) {
+        if (proto.hasOwnProperty(prop)) {
+            YUI[prop] = proto[prop];
+        }
     }
 
     // set up the environment
@@ -1751,7 +1775,8 @@ Y.merge = function() {
  *        2: prototype to prototype and object props (new augment)
  *        3: prototype to object
  *        4: object to prototype
- * @param merge {boolean} merge objects instead of overwriting/ignoring
+ * @param merge {boolean/int} merge objects instead of overwriting/ignoring.  A value of 2
+ * will skip array merge
  * Used by Y.aggregate
  * @return {object} the augmented object
  */
@@ -1777,20 +1802,18 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
     }
 
     // Maybe don't even need this wl && wl.length check anymore??
-    var arr = merge && L.isArray(r), i, l, p;
+    var i, l, p, type;
 
     if (wl && wl.length) {
         for (i = 0, l = wl.length; i < l; ++i) {
             p = wl[i];
-            // if (p in s) {
+            type = L.type(r[p]);
             if (s.hasOwnProperty(p)) {
-                if (merge && L.isObject(r[p], true)) {
+                if (merge && type == "object") {
                     Y.mix(r[p], s[p]);
-                } else if (!arr && (ov || !(p in r))) {
+                } else if (ov || !(p in r)) {
                     r[p] = s[p];
-                } else if (arr) {
-                    r.push(s[p]);
-                }
+                }            
             }
         }
     } else {
@@ -1804,13 +1827,14 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
                     Y.mix(r[i], s[i], ov, wl, 0, true); // recursive
                 // otherwise apply the property only if overwrite
                 // is specified or the receiver doesn't have one.
-                } else if (!arr && (ov || !(i in r))) {
+                } else if (ov || !(i in r)) {
                     r[i] = s[i];
+                }
                 // if merge is specified and the receiver is an array,
                 // append the array item
-                } else if (arr) {
-                    r.push(s[i]);
-                }
+                // } else if (arr) {
+                    // r.push(s[i]);
+                // }
             }
         }
     
@@ -1882,6 +1906,7 @@ var O = Y.Object,
 
 owns = function(o, k) {
     return o && o.hasOwnProperty && o.hasOwnProperty(k);
+    // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
 UNDEFINED = undefined,
@@ -1985,7 +2010,7 @@ O.owns = owns;
 /**
  * Executes a function on each item. The function
  * receives the value, the key, and the object
- * as paramters (in that order).
+ * as parameters (in that order).
  * @method each
  * @static
  * @param o the object to iterate

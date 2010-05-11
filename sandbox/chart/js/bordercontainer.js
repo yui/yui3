@@ -38,13 +38,6 @@
 		GUID: "yuibordercontainer",
 
 		/**
-		 * Hash containing an array of child items for each child container in the 
-		 * BorderContainer. The child items are store here until the application swf
-		 * has been initalized. Upon initialization, they will be added.
-		 */
-		itemsQueue: {},
-		
-		/**
 		 * Reference to corresponding Actionscript class.
 		 */
 		AS_CLASS:"BorderContainer",
@@ -61,24 +54,9 @@
 		 * @param {Object} reference to the class that has direct communication with the application swf.
 		 * @private
 		 */
-		_init: function(swfowner)
+		_init: function()
 		{
-			var i, itemsArray;
-			this.swfowner = swfowner;
-			this.appswf = this.swfowner.appswf;
-			this.swfReadyFlag = true;
 			this._updateStyles();
-			for(i in this.itemsQueue)
-			{
-				if(this.itemsQueue.hasOwnProperty(i))
-				{
-					itemsArray = this.itemsQueue[i];
-					while(itemsArray.length > 0)
-					{
-						this.addItem(itemsArray.shift(), i);
-					}
-				}
-			}
 		},
 		
 		/**
@@ -150,22 +128,12 @@
 		addItem: function (item, location)
 		{
 			var locationToUpperCase = (location.charAt(0)).toUpperCase() + location.substr(1);
-			if (this.swfReadyFlag) 
-			{
-				item._init(this.swfowner);
-				this.appswf.applyMethod(this._id, "add" + locationToUpperCase + "Item", ["$" + item._id]);
-				if (location != "center")
-				{
-					item.set("styles", {position: location});
-				}
-			}
-			else
-			{
-				if(!this.itemsQueue || !this.itemsQueue.hasOwnProperty(location))
-				{
-					this.itemsQueue[location] = [];
-				}
-				this.itemsQueue[location].push(item);
-			}
+            this.applyMethod(this.get("id"), "add" + locationToUpperCase + "Item", ["$" + item.get("id")]);
+            if (location != "center")
+            {
+                item.set("styles", {position: location});
+            }
 		}
 	});
+
+Y.BorderContainer = BorderContainer;

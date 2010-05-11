@@ -608,6 +608,51 @@
             <span class="s2">&quot;yui-base&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;editor&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;createlink-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;editor-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;editor-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;frame&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;exec-command&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;editor-lists&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;editor-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;editor-tab&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;editor-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;exec-command&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;frame&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;frame&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;selector-css3&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;substitute&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;selection&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;event&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;expound&quot;</span><span class="o">:</span> <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -677,6 +722,29 @@
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;history&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;history-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-custom-complex&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;history-hash&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;event-synthetic&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;yui-later&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;history-hash-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;history-hash&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;history-deprecated&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;node&quot;</span>
         <span class="p">]</span>
@@ -998,6 +1066,15 @@
             <span class="s2">&quot;event-simulate&quot;</span>
         <span class="p">],</span> 
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;value-change&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;event-custom-complex&quot;</span>
+        <span class="p">],</span> 
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-focus&quot;</span>
+        <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;widget&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;plugins&quot;</span><span class="o">:</span> <span class="p">{</span>

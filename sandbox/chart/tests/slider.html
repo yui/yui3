@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style>
+/*Supplemental CSS for the YUI distribution*/
+#custom-doc { width: 95%; min-width: 950px; }
+#pagetitle {background-image: url(../../assets/bg_hd.gif);}
+</style>
+<!-- BEGIN EXAMPLE CODE -->
+	<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../build/infographics/infographics.js"></script>
+		
+</head>		
+<body class="yui3-skin-sam">
+		
+	<script>	
+		var starttime;
+		var mydate = new Date();
+		starttime = mydate.valueOf();
+		function writeToDiv(message)
+		{
+			var mydate = new Date();
+			var diff = mydate.valueOf() - starttime;
+			message += ": " + diff;
+			document.getElementById("output").innerHTML += "<br/>" + message;
+		}
+			var getData = function()
+			{
+				var bigArray = new Array();
+				var tempObj = new Object();
+				var i = (Math.floor(Math.random()*12)) + 1;
+				var end = i + 23;
+				var month;
+				var year;
+				var expensesValue = 8000;
+				for(i;i <= end; i++)
+				{
+					month = i;
+					year = 2009;
+					expensesValue = Math.floor(expensesValue * .9);
+					if(i > 24)
+					{
+						month = i -24;
+						year +=2;
+					}
+					else if(i > 12)
+					{
+						month = i - 12;
+						year +=1;
+					}
+					bigArray  = bigArray.concat(getMonthOfDates(month, getNumberOfDays(month, year), year, expensesValue))
+				}
+				return bigArray;
+			}
+
+			function getNumberOfDays(mon, year)
+			{
+				if(mon == 4 || mon == 6 || mon == 9 || mon ==11)
+				{
+					return 30;
+				}
+				if(mon == 2)
+				{
+					return year%4==0?29:28;
+				}
+				return 31;
+			}
+
+			function getMonthOfDates(mon, max, year, value)
+			{
+
+				var month = new Array();
+				dValue = value;
+				for(var i = 1; i <= max; i++)
+				{
+					var obj = new Object();
+					obj.date = mon + "/" + i + "/" + year;
+					var div = ((Math.random()*5))
+					var cont = (Math.random() * 101) * div;
+					obj.revenue = (cont + Math.floor((Math.random() * 101))).toFixed(2);
+					dValue = dValue - 1;
+					obj.expenses = (cont + Math.floor((Math.random() * 101))).toFixed(2);
+					month[month.length] = obj;
+
+				}
+				return month;
+			}
+		</script>
+<div>
+		<h1>Chart with Multiple Axes</h1>
+            <div id="output"></div>
+            <div id="chart" style="width:800px;height:400px;background-color:#ffffff;border:2px solid #5577AF"></div>
+            <br/>
+            <div id="slidergraph" style="width:800px;height:150px;background-color:#ffffff;border2px solid #5577AF"></div>
+            <div style="height:30px" id="sliderdiv"></div>
+		<script>
+
+			YUI({filter:"debug"}).use('node', 'json', 'event-custom', 'base', 'slider', 'graphic', 'infographics', function (Y)
+				{
+					// Create data 
+					var mydata = getData();
+
+					
+					var expensegraphstyles = {
+						color:"#5577AF",
+						marker:{fillColor:"#5577AF"},
+						weight:"2",
+						showMarkers:false
+					};
+
+					// Add revenue graph styles
+					var revenuegraphstyles = {
+						color:"#FF0000",
+						marker:{fillcolor:"#ff0000"},
+						weight:"2",
+						showMarkers:false
+					};
+					var dataProvider = {data:mydata};
+                    var dp2 = {data:mydata.concat()};
+                    var timeaxis = new Y.TimeAxis({dataProvider:dataProvider});
+					timeaxis.addKey("date");
+					timeaxis.set("autoMax", false);
+                    timeaxis.set("autoMin", false);
+                    var slidertimeaxis = new Y.TimeAxis({dataProvider:dataProvider});
+					slidertimeaxis.addKey("date");
+                    var numericaxis = new Y.NumericAxis({dataProvider:dataProvider});
+					numericaxis.addKey("revenue");
+					var slidergraph = new Y.LineSeries({parent:"slidergraph", xAxis:slidertimeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
+					
+					var linegraph = new Y.LineSeries({parent:"chart", xAxis:timeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
+					
+
+                    var slider = new Y.Slider({
+                        length: "800px",
+                        render:"#sliderdiv",
+                        min:0,
+                        max:800
+                    });
+
+                    function calculateAndUpdateMin(e)
+                    {
+                        var target = e.currentTarget,
+                            val = target.get("value"),
+                            len = parseInt(target.get("length"), 10);
+                        timeaxis.updateMinByPosition(val, len);
+                    }
+
+                    function calculateAndUpdateMax(e)
+                    {
+                        var target = e.currentTarget,
+                            val = target.get("value"),
+                            len = parseInt(target.get("length"), 10);
+                        timeaxis.updateMaxByPosition(val, len);
+                    }
+                    
+                    slider.after("slideEnd", Y.bind(calculateAndUpdateMin, this));
+                    slider.after("railMouseDown", Y.bind(calculateAndUpdateMin, this));
+                });
+</script>
+<!-- END EXAMPLE CODE -->
+</div>
+</body>
+</html>

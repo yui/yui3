@@ -14,8 +14,8 @@ var stateChangeListener,
     GLOBAL_ENV   = YUI.Env, 
     config       = YUI.config, 
     doc          = config.doc, 
-    docElement   = doc.documentElement, 
-    doScrollCap  = docElement.doScroll,
+    docElement   = doc && doc.documentElement, 
+    doScrollCap  = docElement && docElement.doScroll,
     add          = YUI.Env.add,
     remove       = YUI.Env.remove,
     targetEvent  = (doScrollCap) ? 'onreadystatechange' : 'DOMContentLoaded',
@@ -98,7 +98,8 @@ var GLOBAL_ENV = YUI.Env,
  * @for YUI
  */
 Y.publish('domready', {
-    fireOnce: true
+    fireOnce: true,
+    async: true
 });
 
 if (GLOBAL_ENV.DOMReady) {

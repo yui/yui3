@@ -5,6 +5,8 @@ package com.yahoo.util
 	import flash.external.ExternalInterface;
 	import flash.utils.getDefinitionByName;
 	import com.adobe.serialization.json.JSON;
+	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 
 	public class YUIBridge extends Object
 	{
@@ -50,7 +52,12 @@ package com.yahoo.util
 		 * @private
 		 */
 		private var _swfID:String;
-		
+
+		/**
+		 * @private
+		 */
+        private var _appname:String;
+
 		/**
 		 * @private
 		 */
@@ -81,9 +88,9 @@ package com.yahoo.util
 			var cA:Array = constructorArguments ? constructorArguments : [];
 			var classReferenceObject:Object = this.getClass(className);
 			var instance:Object;
-			
-			cA = this.parseArgs(cA);
 
+			cA = this.parseArgs(cA);
+		
 			if(classReferenceObject is Class)
 			{
 				var classReference:Class = classReferenceObject as Class;
@@ -111,7 +118,7 @@ package com.yahoo.util
 				instance = classFunction.apply(this, cA);
 			}
 			
-			_instances[instanceId] = instance;	
+			_instances[instanceId] = instance;
 		}
 
 		/**
@@ -201,20 +208,52 @@ package com.yahoo.util
 		/**
 		 * Dispatches events to the host DOM
 		 */
-		public function sendEvent (evt:Object) : void 
+		public function sendEvent (evt:Object, id:String = null) : void 
 		{
+			if(!id)
+			{
+				id = this._appname || this._swfID;
+			}
 			if (ExternalInterface.available) 
 			{
-				ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [_swfID, evt]);
+                ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [id, evt]);
 			}
 		}
 
+		/**
+		 * Allows for js class to subscribe to an as class' event
+		 */
+		public function subscribe(type:String, instanceId:String):void
+		{
+			var dispatcher:IEventDispatcher = this._instances[instanceId] as IEventDispatcher,
+				callback:Function = this.eventHandlerFactory.call(this, instanceId);
+			dispatcher.addEventListener(type, callback);
+		}
+
+		/**
+		 * Adds a js function reference as a listener to an event dispatcher.
+		 */
+		public function eventHandlerFactory(instanceId:String):Function
+		{
+			var scope:Object = this,
+				handler:Function = function(event:Event):void
+			{
+				var evt:Object = {};
+				evt.type = event.type;
+				scope.sendEvent(evt, instanceId);
+			}
+			return handler;
+		}
+		
 		/**
 		 * Adds classes to the class hash
 		 */
 		public function addClasses(value:Object):void
 		{
-			for(var i:String in value) this._classHash[i] = value[i];
+			for(var i:String in value) 
+			{
+				this._classHash[i] = value[i];
+			}
 		}
 
 		/**
@@ -314,11 +353,12 @@ package com.yahoo.util
 		{
 			if(this._stage.loaderInfo.parameters) this._flashvars = this._stage.loaderInfo.parameters;
 
-			if (this._flashvars.hasOwnProperty("yId") && this._flashvars.hasOwnProperty("YUIBridgeCallback") && this._flashvars.hasOwnProperty("YUISwfId") && ExternalInterface.available) 
+			if (this._flashvars.hasOwnProperty("yId") && this._flashvars.hasOwnProperty("YUIBridgeCallback") && ExternalInterface.available) 
 			{
 				_jsHandler = this._flashvars["YUIBridgeCallback"];
 				_swfID = this._flashvars["YUISwfId"];
 				_yId = this._flashvars["yId"];
+                _appname = this._flashvars["appname"];
 			}
 			
 			ExternalInterface.addCallback("createInstance", createInstance);
@@ -326,6 +366,7 @@ package com.yahoo.util
 			ExternalInterface.addCallback("exposeMethod", exposeMethod);
 			ExternalInterface.addCallback("getProperty", getProperty);
 			ExternalInterface.addCallback("setProperty", setProperty);
+			ExternalInterface.addCallback("subscribe", subscribe);
 		}
 
 		/**

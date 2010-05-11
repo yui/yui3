@@ -10,6 +10,12 @@ It provides the following pieces of core functionality:
 * Consistent class-name generation support
 * Plugin support
 
+3.1.1
+
+* Fixed ticket #2528758 : using widget's DOM event facade ends with error during destroy
+* Fixed ticket #2528760 : _applyParsedConfig merges arrays, instead of letting user config win
+* "init, render and destroy listeners now called synchronously, if event already fired (see Event README)"
+
 3.1.0
 
 * "render" event now published with the defaultTargetOnly set to true.

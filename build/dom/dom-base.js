@@ -7,6 +7,7 @@ YUI.add('dom-base', function(Y) {
  * for other common tasks. 
  * @module dom
  * @submodule dom-base
+ * @for DOM
  *
  */
 
@@ -273,6 +274,7 @@ Y.DOM = {
     create: function(html, doc) {
         if (typeof html === 'string') {
             html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+
         }
 
         doc = doc || Y.config.doc;
@@ -282,20 +284,29 @@ Y.DOM = {
             ret = null,
             tag, nodes;
 
-        if (m && custom[m[1]]) {
-            if (typeof custom[m[1]] === 'function') {
-                create = custom[m[1]];
-            } else {
-                tag = custom[m[1]];
+        if (html != undefined) { // not undefined or null
+            if (m && custom[m[1]]) {
+                if (typeof custom[m[1]] === 'function') {
+                    create = custom[m[1]];
+                } else {
+                    tag = custom[m[1]];
+                }
             }
-        }
 
-        nodes = create(html, doc, tag).childNodes;
+            nodes = create(html, doc, tag).childNodes;
 
-        if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
-            ret = nodes[0].parentNode.removeChild(nodes[0]);
-        } else { // return multiple nodes as a fragment
-             ret = Y.DOM._nl2frag(nodes, doc);
+            if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
+                ret = nodes[0].parentNode.removeChild(nodes[0]);
+            } else if (nodes[0] && nodes[0].className === 'yui3-big-dummy') {
+                if (nodes.length === 2) {
+                    ret = nodes[0].nextSibling;
+                } else {
+                    nodes[0].parentNode.removeChild(nodes[0]); 
+                     ret = Y.DOM._nl2frag(nodes, doc);
+                }
+            } else { // return multiple nodes as a fragment
+                 ret = Y.DOM._nl2frag(nodes, doc);
+            }
         }
 
         return ret;
@@ -394,8 +405,22 @@ Y.DOM = {
      * Inserts content in a node at the given location 
      * @method addHTML
      * @param {HTMLElement} node The node to insert into
-     * @param {String} content The content to be inserted 
-     * @param {String} where Where to insert the content; default is after lastChild 
+     * @param {String | HTMLElement} content The content to be inserted 
+     * @param {String | HTMLElement} where Where to insert the content
+     * If no "where" is given, content is appended to the node
+     * Possible values for "where"
+     * <dl>
+     * <dt>HTMLElement</dt>
+     * <dd>The element to insert before</dd>
+     * <dt>"replace"</dt>
+     * <dd>Replaces the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts before the existing HTML</dd>
+     * <dt>"before"</dt>
+     * <dd>Inserts content before the node</dd>
+     * <dt>"after"</dt>
+     * <dd>Inserts content after the node</dd>
+     * </dl>
      */
     addHTML: function(node, content, where) {
         if (typeof content === 'string') {
@@ -405,7 +430,7 @@ Y.DOM = {
         var nodeParent = node.parentNode,
             newNode;
             
-        if (content) {
+        if (content !== undefined && content !== null) {
             if (content.nodeType) { // domNode
                 newNode = content;
             } else { // create from string and cache
@@ -668,7 +693,7 @@ Y.DOM = {
     if (Y.UA.gecko || Y.UA.ie) {
         Y.mix(creators, {
             option: function(html, doc) {
-                return create('<select>' + html + '</select>', doc);
+                return create('<select><option class="yui3-big-dummy" selected></option>' + html + '</select>', doc);
             },
 
             tr: function(html, doc) {
@@ -726,6 +751,7 @@ Y.mix(Y.DOM, {
     /**
      * Determines whether a DOM element has the given className.
      * @method hasClass
+     * @for DOM
      * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to search for
      * @return {Boolean} Whether or not the element has the given class. 
@@ -738,6 +764,7 @@ Y.mix(Y.DOM, {
     /**
      * Adds a class name to a given DOM element.
      * @method addClass         
+     * @for DOM
      * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to add to the class attribute
      */
@@ -750,6 +777,7 @@ Y.mix(Y.DOM, {
     /**
      * Removes a class name from a given element.
      * @method removeClass         
+     * @for DOM
      * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to remove from the class attribute
      */
@@ -768,6 +796,7 @@ Y.mix(Y.DOM, {
      * Replace a class with another class for a given element.
      * If no oldClassName is present, the newClassName is simply added.
      * @method replaceClass  
+     * @for DOM
      * @param {HTMLElement} element The DOM element 
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
@@ -780,6 +809,7 @@ Y.mix(Y.DOM, {
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
      * @method toggleClass  
+     * @for DOM
      * @param {HTMLElement} element The DOM element
      * @param {String} className the class name to be toggled
      * @param {Boolean} addClass optional boolean to indicate whether class

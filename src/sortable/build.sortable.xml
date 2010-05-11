@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- YUI 3 Component Build File -->
+
+<project name="Sortable" default="local">
+    <description>Sourtable Build File</description>
+    <property file="build.sortable.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+</project>
