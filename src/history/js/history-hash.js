@@ -17,6 +17,8 @@
  * @class History
  * @extends HistoryBase
  * @constructor
+ * @param {Object} config (optional) Configuration object. See the HistoryBase
+ *   documentation for details.
  */
 
 var HistoryBase    = Y.HistoryBase,
@@ -103,6 +105,29 @@ Y.extend(History, HistoryBase, {
     SRC_HASH: SRC_HASH,
 
     /**
+     * <p>
+     * Prefix to prepend when setting the hash fragment. For example, if the
+     * prefix is <code>!</code> and the hash fragment is set to
+     * <code>#foo=bar&baz=quux</code>, the final hash fragment in the URL will
+     * become <code>#!foo=bar&baz=quux</code>. This can be used to help make an
+     * Ajax application crawlable in accordance with Google's guidelines at
+     * <a href="http://code.google.com/web/ajaxcrawling/">http://code.google.com/web/ajaxcrawling/</a>.
+     * </p>
+     *
+     * <p>
+     * Note that this prefix applies to all History instances. It's not possible
+     * for individual instances to use their own prefixes since they all operate
+     * on the same URL.
+     * </p>
+     *
+     * @property hashPrefix
+     * @type String
+     * @default ''
+     * @static
+     */
+    hashPrefix: '',
+
+    /**
      * Whether or not this browser supports the <code>window.onhashchange</code>
      * event natively. Note that even if this is <code>true</code>, you may
      * still want to use History's synthetic <code>hashchange</code> event since
@@ -111,7 +136,6 @@ Y.extend(History, HistoryBase, {
      *
      * @property nativeHashChange
      * @type Boolean
-     * @default false
      * @static
      */
     nativeHashChange: nativeHashChange,
@@ -125,6 +149,7 @@ Y.extend(History, HistoryBase, {
      * @type RegExp
      * @protected
      * @static
+     * @final
      */
     _REGEX_HASH: /([^\?#&]+)=([^&]+)/g,
 
@@ -180,7 +205,7 @@ Y.extend(History, HistoryBase, {
 
     /**
      * Gets the raw (not decoded) current location hash, minus the preceding '#'
-     * character.
+     * character and the hashPrefix (if one is set).
      *
      * @method getHash
      * @return {String} current location hash
@@ -189,11 +214,25 @@ Y.extend(History, HistoryBase, {
     getHash: (Y.UA.gecko ? function () {
         // Gecko's window.location.hash returns a decoded string and we want all
         // encoding untouched, so we need to get the hash value from
-        // window.location.href instead.
-        var matches = /#(.*)$/.exec(location.href);
-        return matches && matches[1] ? matches[1] : '';
+        // window.location.href instead. We have to use UA sniffing rather than
+        // feature detection, since the only way to detect this would be to
+        // actually change the hash.
+        var matches = /#(.*)$/.exec(location.href),
+            hash    = matches && matches[1] || '',
+            prefix  = History.hashPrefix;
+
+        return prefix && hash.indexOf(prefix) === 0 ?
+                    hash.replace(prefix, '') : hash;
     } : function () {
-        return location.hash.substr(1);
+        var hash   = location.hash.substr(1),
+            prefix = History.hashPrefix;
+
+        // Slight code duplication here, but execution speed is of the essence
+        // since getHash() is called every 20ms or so to poll for changes in
+        // browsers that don't support native onhashchange. An additional
+        // function call would add unnecessary overhead.
+        return prefix && hash.indexOf(prefix) === 0 ?
+                    hash.replace(prefix, '') : hash;
     }),
 
     /**
@@ -218,16 +257,28 @@ Y.extend(History, HistoryBase, {
      * @static
      */
     parseHash: function (hash) {
-        hash = hash || History.getHash();
-
-        var decode  = History.decode,
+        var decode = History.decode,
             i,
-            matches = hash.match(History._REGEX_HASH) || [],
-            len     = matches.length,
+            len,
+            matches,
             param,
-            params  = {};
+            params = {},
+            prefix = History.hashPrefix,
+            prefixIndex;
 
-        for (i = 0; i < len; ++i) {
+        hash = Lang.isValue(hash) ? hash : History.getHash();
+
+        if (prefix) {
+            prefixIndex = hash.indexOf(prefix);
+
+            if (prefixIndex === 0 || (prefixIndex === 1 && hash.charAt(0) === '#')) {
+                hash = hash.replace(prefix, '');
+            }
+        }
+
+        matches = hash.match(History._REGEX_HASH) || [];
+
+        for (i = 0, len = matches.length; i < len; ++i) {
             param = matches[i].split('=');
             params[decode(param[0])] = decode(param[1]);
         }
@@ -238,27 +289,35 @@ Y.extend(History, HistoryBase, {
     /**
      * Replaces the browser's current location hash with the specified hash
      * and removes all forward navigation states, without creating a new browser
-     * history entry.
+     * history entry. Automatically prepends the <code>hashPrefix</code> if one
+     * is set.
      *
      * @method replaceHash
      * @param {String} hash new location hash
      * @static
      */
     replaceHash: function (hash) {
-        Y.log('replaceHash: ' + hash, 'info', 'history');
-        location.replace(hash.indexOf('#') === 0 ? hash : '#' + hash);
+        if (hash.charAt(0) === '#') {
+            hash = hash.substr(1);
+        }
+
+        location.replace('#' + (History.hashPrefix || '') + hash);
     },
 
     /**
-     * Sets the browser's location hash to the specified string.
+     * Sets the browser's location hash to the specified string. Automatically
+     * prepends the <code>hashPrefix</code> if one is set.
      *
      * @method setHash
      * @param {String} hash new location hash
      * @static
      */
     setHash: function (hash) {
-        Y.log('setHash: ' + hash, 'info', 'history');
-        location.hash = hash;
+        if (hash.charAt(0) === '#') {
+            hash = hash.substr(1);
+        }
+
+        location.hash = (History.hashPrefix || '') + hash;
     }
 });
 
