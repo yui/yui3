@@ -174,7 +174,7 @@ YUI.add('frame', function(Y) {
                 this._ready = true;
                 var inst = this.getInstance(),
                     args = Y.clone(this.get('use'));
-
+                
                 this.fire('contentready');
 
                 Y.log('On available for body of iframe', 'info', 'frame');
@@ -230,9 +230,11 @@ YUI.add('frame', function(Y) {
             if (this.get('designMode')) {
                 doc.designMode = 'on';
                 if (!Y.UA.ie) {
-                    //Force other browsers into non CSS styling
-                    doc.execCommand('styleWithCSS', false, false);
-                    doc.execCommand('insertbronreturn', false, false);
+                    try {
+                        //Force other browsers into non CSS styling
+                        doc.execCommand('styleWithCSS', false, false);
+                        doc.execCommand('insertbronreturn', false, false);
+                    } catch (e) {}
                 }
             }
         },
@@ -351,6 +353,13 @@ YUI.add('frame', function(Y) {
             if (this._ready) {
                 var inst = this.getInstance();
                 inst.one('body').set('innerHTML', html);
+            } else {
+                //This needs to be wrapped in a contentready callback for the !_ready state
+                this.on('contentready', Y.bind(function(html, e) {
+                    console.log('ContentReady: ', arguments);
+                    var inst = this.getInstance();
+                    inst.one('body').set('innerHTML', html);
+                }, this, html));
             }
             return html;
         },
@@ -507,7 +516,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
 YUI.add('selection', function(Y) {
 
     /**
@@ -1036,7 +1045,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});
 YUI.add('exec-command', function(Y) {
 
 
@@ -1248,7 +1257,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['frame']});
+}, '@VERSION@' ,{requires:['frame'], skinnable:false});
 YUI.add('editor-tab', function(Y) {
 
     /**
@@ -1320,7 +1329,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('createlink-base', function(Y) {
 
     /**
@@ -1385,7 +1394,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-base', function(Y) {
 
 
@@ -1642,7 +1651,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
 YUI.add('editor-lists', function(Y) {
 
     /**
@@ -1804,7 +1813,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base'], skinnable:false});
