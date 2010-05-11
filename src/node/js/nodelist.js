@@ -400,12 +400,6 @@ NodeList.importMethod(Y.Node.prototype, [
     'remove',
 
     /** Called on each Node instance
-      * @method removeAttribute
-      * @see Node.removeAttribute
-      */
-    'removeAttribute',
-
-    /** Called on each Node instance
       * @method set
       * @see Node.set
       */
