@@ -119,6 +119,7 @@ Y.Array.each([
      'select'
 ], function(method) {
     Y.Node.prototype[method] = function(arg1, arg2, arg3) {
+    Y.log('adding: ' + method, 'info', 'node');
         var ret = this.invoke(method, arg1, arg2, arg3);
         return ret;
     };
@@ -177,7 +178,7 @@ Y.Node.importMethod(Y.DOM, [
  */
 
 /**
- * Allows for removing attributes on DOM nodes..
+ * Allows for removing attributes on DOM nodes.
  * This passes through to the DOM node, allowing for custom attributes.
  * @method removeAttribute
  * @see Node

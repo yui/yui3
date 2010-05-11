@@ -98,13 +98,15 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-		var	xcoords = this._xcoords,
+		var	parentDiv = this.get("parent"),
+            ht = parentDiv.offsetHeight,
+            xcoords = this._xcoords,
 			ycoords = this._ycoords,
 			len = xcoords.length,
-			lastValidX,
-			lastValidY,
 			lastX = xcoords[0],
 			lastY = ycoords[0],
+			lastValidX = lastX,
+			lastValidY = lastY,
 			nextX,
 			nextY,
 			i,
@@ -116,14 +118,12 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			discontinuousType = styles.discontinuousType,
 			discontinuousDashLength = styles.discontinuousDashLength,
 			discontinuousGapSpace = styles.discontinuousGapSpace,
-			canvas = this.get("canvas"),
-			context = canvas.getContext("2d");
-		lastValidX = lastX;
-		lastValidY = lastY;
-		context.lineWidth = styles.weight;
-		context.strokeStyle = styles.color;
-		context.moveTo (lastX, lastY);
-		for(i = 1; i < len; i = ++i)
+			graphic = this.get("graphic");
+        graphic.clear();
+        graphic.lineStyle(styles.weight, styles.color);
+        graphic.beginFill(styles.color, 0.5);
+        graphic.moveTo (lastX, lastY);
+        for(i = 1; i < len; i = ++i)
 		{
 			nextX = xcoords[i];
 			nextY = ycoords[i];
@@ -135,9 +135,9 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			}
 			if(lastValidX == lastX)
 			{
-				if(lineType != "dashed")
+                if(lineType != "dashed")
 				{
-					context.lineTo(nextX, nextY);
+                    graphic.lineTo(nextX, nextY);
 				}
 				else
 				{
@@ -148,7 +148,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			}
 			else if(!connectDiscontinuousPoints)
 			{
-				context.moveTo(nextX, nextY);
+				graphic.moveTo(nextX, nextY);
 			}
 			else
 			{
@@ -160,14 +160,18 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 				}
 				else
 				{
-					context.lineTo(nextX, nextY);
+                    graphic.lineTo(nextX, nextY);
 				}
 			}
 		
 			lastX = lastValidX = nextX;
 			lastY = lastValidY = nextY;
 		}
-		context.stroke();
+        graphic.lineStyle(0);
+        graphic.lineTo(lastX, ht);
+        graphic.lineTo(0, ht);
+        graphic.lineTo(0, ycoords[0]);
+        graphic.endFill();
 	},
 
 	drawMarkers: function()
@@ -197,32 +201,31 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			xCurrent = xStart,
 			yCurrent = yStart,
 			i,
-			canvas = this.get("canvas"),
-			context = canvas.getContext("2d");
+			graphic = this.get("graphic"),
 		xDelta = Math.cos(radians) * segmentLength;
 		yDelta = Math.sin(radians) * segmentLength;
 		
 		for(i = 0; i < segmentCount; ++i)
 		{
-			context.moveTo(xCurrent, yCurrent);
-			context.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+			graphic.moveTo(xCurrent, yCurrent);
+			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
 			xCurrent += xDelta;
 			yCurrent += yDelta;
 		}
 		
-		context.moveTo(xCurrent, yCurrent);
+		graphic.moveTo(xCurrent, yCurrent);
 		delta = Math.sqrt((xEnd - xCurrent) * (xEnd - xCurrent) + (yEnd - yCurrent) * (yEnd - yCurrent));
 		
 		if(delta > dashSize)
 		{
-			context.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
+			graphic.lineTo(xCurrent + Math.cos(radians) * dashSize, yCurrent + Math.sin(radians) * dashSize);
 		}
 		else if(delta > 0)
 		{
-			context.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
+			graphic.lineTo(xCurrent + Math.cos(radians) * delta, yCurrent + Math.sin(radians) * delta);
 		}
 		
-		context.moveTo(xEnd, yEnd);
+		graphic.moveTo(xEnd, yEnd);
 	}
 });
 

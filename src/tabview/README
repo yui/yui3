@@ -1,2 +1,7 @@
+
+**** version 3.1.1 ***
+    Fixed ticket #2528737 : Nested TabView fails.
+	Fixed ticket #2528782 : TabView core CSS adds unwanted styles.
+
 **** version 3.1.0 ***
     Initial release

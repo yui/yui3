@@ -32,7 +32,7 @@
             if (!this._posNode) {
                 Y.error("WidgetPosition needs to be added to the Widget, before WidgetPositionAlign is added"); 
             }
-            Y.after(this._syncUIPosAlgin, this, SYNCUI);
+            Y.after(this._syncUIPosAlign, this, SYNCUI);
             Y.after(this._bindUIPosAlign, this, BINDUI);
         }
 
@@ -180,10 +180,10 @@
              * This method in invoked after syncUI is invoked for the Widget class
              * using YUI's aop infrastructure.
              *
-             * @method _syncUIPosAlgin
+             * @method _syncUIPosAlign
              * @protected
              */
-            _syncUIPosAlgin : function() {
+            _syncUIPosAlign : function() {
                 var align = this.get(ALIGN);
                 if (align) {
                     this._uiSetAlign(align.node, align.points);

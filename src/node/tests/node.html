@@ -1041,8 +1041,9 @@ YUI({base: '../../../build/', filter: 'raw'}).use('anim', 'console', 'test', fun
 
             Assert.areEqual('test-xy', doc.one('#test-xy').get('id'), 'doc.one("#test-xy")');
             Assert.isNull(doc.one('fake-id'), 'doc.one("#fake-id")');
-            Assert.areEqual(document.documentElement.scrollHeight, mask.offsetHeight, 'get("height")');
-            Assert.areEqual(document.documentElement.scrollWidth, mask.offsetWidth, 'get("width")');
+
+            Assert.areEqual(document.documentElement.offsetHeight, mask.offsetHeight, 'get("height")');
+            Assert.areEqual(document.documentElement.offsetWidth, mask.offsetWidth, 'get("width")');
             mask.className = '';
         },
 

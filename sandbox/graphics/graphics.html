@@ -7,7 +7,7 @@
 <script type="text/javascript" src="graphics-canvas.js"></script>
 <script type="text/javascript" src="graphics-vml.js"></script>
 <style>
-v\:shape {
+v\:group, v\:shape {
     behavior:url(#default#VML);
     display:inline-block;
     zoom:1;
@@ -18,7 +18,9 @@ canvas {
 }
 
 #demo, #demo2 {
-    display: inline;
+    width:800px;
+    height:600px;
+    display: inline-block;
     zoom:1;
 }
 </style>
@@ -53,11 +55,16 @@ YUI({filter:'raw'}).use('graphics-canvas', 'graphics-vml', function(Y) {
     graphics.render(document.getElementById('demo'));
 
     //bitmap.onload = function() {
-    graphics.lineStyle(12, "#0000ff", 1);
-    //graphics.beginFill("#ff0000", 1);
-    graphics.beginGradientFill("linear", ["#ffeecc", "#ffff00"], [], [0, 1], 315);
-    graphics.drawRect(40, 450, 400, 300, 10, 10);
-    graphics.endFill();
+    graphics
+        .beginFill("blue", 1)
+        .lineStyle(25, '#999999')
+        .moveTo(10, 10)
+        .lineTo(110, 10)
+        .lineTo(110, 110)
+        //.lineStyle(10, 'red')
+        .lineTo(10, 110)
+        .lineTo(10, 10)
+        .endFill();
     
     /*
     graphics.lineStyle(12, "#0000ff", 1);
