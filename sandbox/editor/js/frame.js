@@ -355,7 +355,6 @@ YUI.add('frame', function(Y) {
             } else {
                 //This needs to be wrapped in a contentready callback for the !_ready state
                 this.on('contentready', Y.bind(function(html, e) {
-                    console.log('ContentReady: ', arguments);
                     var inst = this.getInstance();
                     inst.one('body').set('innerHTML', html);
                 }, this, html));
