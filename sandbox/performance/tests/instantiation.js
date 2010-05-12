@@ -27,6 +27,12 @@ YUI.add('perf-instantiation', function (Y) {
 //     Number of iterations to run when using iteration-based testing. Defaults
 //     to 1 if not specified.
 //
+//   preloadUrls (Object):
+//     Object hash of keys mapped to publicly-accessible URLs. Each URL will be
+//     preloaded via a cross-domain YQL proxy, and its contents will be made
+//     available to the setup/teardown/test functions as sandbox.preload.key,
+//     where "key" is the same key that was used on the preloadUrls object.
+//
 //   setup (Function):
 //     Setup function to execute before each iteration of the test. Runs in the
 //     same sandbox as the test. If the setup function returns false, the test
