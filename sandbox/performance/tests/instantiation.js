@@ -4,6 +4,16 @@ YUI.add('perf-instantiation', function (Y) {
 // test object may have the following properties, of which only the "test"
 // property is required:
 //
+//   asyncSetup (Boolean):
+//     By default, setup functions are assumed to be synchronous. Set this to
+//     true to indicate that your setup function is asynchronous. This will
+//     cause the test runner to wait for you to explicitly indicate completion
+//     by calling done() from within the setup function.
+//
+//     You may optionally pass a value to done(). To indicate a setup failure,
+//     pass false, and the test will be aborted (just as it would if you
+//     returned false from a synchronous setup function).
+//
 //   bootstrapYUI (Boolean):
 //     By default, all sandboxes are pristine. Set this to true to automatically
 //     bootstrap YUI3 core and Loader into the test sandbox.
