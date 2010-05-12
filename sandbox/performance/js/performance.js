@@ -352,18 +352,19 @@ Perf = Y.Performance = {
             '</tr>' +
             '<tr class="code hidden">' +
                 '<td colspan="8">' +
-                    '<pre><code>' +
-                        htmlentities(test.test.toString()) +
-                    '</code></pre>' +
+                    '<pre><code>{code}</code></pre>' +
                 '</td>' +
             '</tr>',
 
-            Y.merge(result, {chartUrl: CHART_URL + createQueryString(chartParams)})
+            Y.merge(result, {
+                chartUrl: CHART_URL + createQueryString(chartParams),
+                code    : htmlentities(test.test.toString())
+            })
         ));
     },
 
-    _runNextTest: function () {
-        var iteration = Perf._queue.shift(),
+    _runNextTest: function (pending) {
+        var iteration = pending || Perf._queue.shift(),
             test      = iteration && iteration.test;
 
         if (!iteration) {
@@ -375,7 +376,29 @@ Perf = Y.Performance = {
             var count;
 
             if (isFunction(test.setup)) {
-                if (iteration.sandbox.run(test.setup) === false) {
+
+                if (test.asyncSetup) {
+
+                    // The setup function is asynchronous, so we'll pause the
+                    // iteration while it runs, then restart the iteration once
+                    // the setup function finishes successfully.
+                    iteration.sandbox.run(test.setup, function (result) {
+                        if (result === false) {
+                            // Setup function returned false, so abort the test.
+                            Y.log('Test "' + iteration.name + '" failed.', 'warn', 'performance');
+                            Perf._runNextTest();
+                        } else {
+                            // Delete the setup function so it won't run again.
+                            delete iteration.test.setup;
+
+                            // Restart the iteration.
+                            Perf._runNextTest(iteration);
+                        }
+                    });
+
+                    return;
+
+                } else if (iteration.sandbox.run(test.setup) === false) {
                     // Setup function returned false, so abort the test.
                     Y.log('Test "' + iteration.name + '" failed.', 'warn', 'performance');
                     Perf._runNextTest();
