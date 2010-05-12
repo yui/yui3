@@ -267,7 +267,7 @@ Y.Performance.addTests({
 
         test: function () {
             eval(sandbox.preload.yui);
-            YUI().use('*', function (Y) {
+            YUI({bootstrap: false}).use('*', function (Y) {
                 done();
             });
         }
