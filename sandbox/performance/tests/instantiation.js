@@ -121,6 +121,85 @@ Y.Performance.addTests({
         }
     },
 
+    "YUI().use()": {
+        bootstrapYUI: true,
+        duration: 500,
+        iterations: 40,
+
+        test: function () {
+            YUI().use(function (Y) {
+                done();
+            });
+        }
+    },
+
+    // "YUI().use('anim', 'event', 'io', 'json', 'node')": {
+    //     bootstrapYUI: true,
+    //     duration: 1000,
+    //     iterations: 40,
+    //     warmup: true,
+    //
+    //     test: function () {
+    //         YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
+    //             done();
+    //         });
+    //     }
+    // },
+
+    "Simple Y.Base extension + instantiation": {
+        asyncSetup: true,
+        bootstrapYUI: true,
+        duration: 500,
+        iterations: 40,
+
+        setup: function () {
+            window.Y = YUI().use('base', function (Y) {
+                done();
+            });
+        },
+
+        test: function () {
+            function MyClass() {
+                MyClass.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MyClass, Y.Base);
+            var foo = new MyClass();
+            done();
+        }
+    },
+
+    "Simple Y.Widget extension + instantiation (no DOM)": {
+        asyncSetup: true,
+        bootstrapYUI: true,
+        duration: 500,
+        iterations: 40,
+
+        setup: function () {
+            window.Y = YUI().use('widget', function (Y) {
+                done();
+            });
+        },
+
+        test: function () {
+            function MyWidget() {
+                MyWidget.superclass.constructor.apply(this, arguments);
+            }
+
+            MyWidget.NAME  = 'mywidget';
+            MyWidget.ATTRS = {};
+
+            Y.extend(MyWidget, Y.Widget, {
+                renderUI: function () {},
+                bindUI  : function () {},
+                syncUI  : function () {}
+            });
+
+            var foo = new MyWidget();
+            done();
+        }
+    },
+
     "jQuery 1.4.2": {
         duration: 500,
         iterations: 10,
@@ -193,31 +272,6 @@ Y.Performance.addTests({
             });
         }
     },
-
-    "YUI().use()": {
-        bootstrapYUI: true,
-        duration: 500,
-        iterations: 40,
-
-        test: function () {
-            YUI().use(function (Y) {
-                done();
-            });
-        }
-    },
-
-    // "YUI().use('anim', 'event', 'io', 'json', 'node')": {
-    //     bootstrapYUI: true,
-    //     duration: 1000,
-    //     iterations: 40,
-    //     warmup: true,
-    // 
-    //     test: function () {
-    //         YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
-    //             done();
-    //         });
-    //     }
-    // },
 
     "TabView with 3 tabs": {
         bootstrapYUI: true,
