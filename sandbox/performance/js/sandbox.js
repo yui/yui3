@@ -367,7 +367,7 @@ Y.mix(Sandbox.prototype, {
                        'sandbox["' + guid + '"].value   = (typeof value === "undefined" || value === null) ? true : value;' +
                    '}' +
                    'sandbox["' + guid + '"] = {startTime: new Date().getTime()};' +
-                   (isFunction(script) ? '(' + script.toString() + '());' : script) +
+                   'return ' + (isFunction(script) ? '(' + script.toString() + '());' : '(' + script + ')') + ';' +
                '}());';
     },
 
@@ -376,7 +376,7 @@ Y.mix(Sandbox.prototype, {
                    'function done(value) {' +
                        'sandbox["' + guid + '"] = (typeof value === "undefined" || value === null) ? true : value;' +
                    '}' +
-                   (isFunction(script) ? '(' + script.toString() + '());' : script) +
+                   'return ' + (isFunction(script) ? '(' + script.toString() + '());' : '(' + script + ')') + ';' +
                '}());';
     },
 
