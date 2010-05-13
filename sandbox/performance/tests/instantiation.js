@@ -4,6 +4,16 @@ YUI.add('perf-instantiation', function (Y) {
 // test object may have the following properties, of which only the "test"
 // property is required:
 //
+//   asyncSetup (Boolean):
+//     By default, setup functions are assumed to be synchronous. Set this to
+//     true to indicate that your setup function is asynchronous. This will
+//     cause the test runner to wait for you to explicitly indicate completion
+//     by calling done() from within the setup function.
+//
+//     You may optionally pass a value to done(). To indicate a setup failure,
+//     pass false, and the test will be aborted (just as it would if you
+//     returned false from a synchronous setup function).
+//
 //   bootstrapYUI (Boolean):
 //     By default, all sandboxes are pristine. Set this to true to automatically
 //     bootstrap YUI3 core and Loader into the test sandbox.
@@ -16,6 +26,12 @@ YUI.add('perf-instantiation', function (Y) {
 //   iterations (Number):
 //     Number of iterations to run when using iteration-based testing. Defaults
 //     to 1 if not specified.
+//
+//   preloadUrls (Object):
+//     Object hash of keys mapped to publicly-accessible URLs. Each URL will be
+//     preloaded via a cross-domain YQL proxy, and its contents will be made
+//     available to the setup/teardown/test functions as sandbox.preload.key,
+//     where "key" is the same key that was used on the preloadUrls object.
 //
 //   setup (Function):
 //     Setup function to execute before each iteration of the test. Runs in the
@@ -105,6 +121,85 @@ Y.Performance.addTests({
         }
     },
 
+    "YUI().use()": {
+        bootstrapYUI: true,
+        duration: 500,
+        iterations: 40,
+
+        test: function () {
+            YUI().use(function (Y) {
+                done();
+            });
+        }
+    },
+
+    // "YUI().use('anim', 'event', 'io', 'json', 'node')": {
+    //     bootstrapYUI: true,
+    //     duration: 1000,
+    //     iterations: 40,
+    //     warmup: true,
+    //
+    //     test: function () {
+    //         YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
+    //             done();
+    //         });
+    //     }
+    // },
+
+    "Simple Y.Base extension + instantiation": {
+        asyncSetup: true,
+        bootstrapYUI: true,
+        duration: 500,
+        iterations: 40,
+
+        setup: function () {
+            window.Y = YUI().use('base', function (Y) {
+                done();
+            });
+        },
+
+        test: function () {
+            function MyClass() {
+                MyClass.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MyClass, Y.Base);
+            var foo = new MyClass();
+            done();
+        }
+    },
+
+    "Simple Y.Widget extension + instantiation (no DOM)": {
+        asyncSetup: true,
+        bootstrapYUI: true,
+        duration: 500,
+        iterations: 40,
+
+        setup: function () {
+            window.Y = YUI().use('widget', function (Y) {
+                done();
+            });
+        },
+
+        test: function () {
+            function MyWidget() {
+                MyWidget.superclass.constructor.apply(this, arguments);
+            }
+
+            MyWidget.NAME  = 'mywidget';
+            MyWidget.ATTRS = {};
+
+            Y.extend(MyWidget, Y.Widget, {
+                renderUI: function () {},
+                bindUI  : function () {},
+                syncUI  : function () {}
+            });
+
+            var foo = new MyWidget();
+            done();
+        }
+    },
+
     "jQuery 1.4.2": {
         duration: 500,
         iterations: 10,
@@ -172,36 +267,11 @@ Y.Performance.addTests({
 
         test: function () {
             eval(sandbox.preload.yui);
-            YUI().use('*', function (Y) {
+            YUI({bootstrap: false}).use('*', function (Y) {
                 done();
             });
         }
     },
-
-    "YUI().use()": {
-        bootstrapYUI: true,
-        duration: 500,
-        iterations: 40,
-
-        test: function () {
-            YUI().use(function (Y) {
-                done();
-            });
-        }
-    },
-
-    // "YUI().use('anim', 'event', 'io', 'json', 'node')": {
-    //     bootstrapYUI: true,
-    //     duration: 1000,
-    //     iterations: 40,
-    //     warmup: true,
-    // 
-    //     test: function () {
-    //         YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
-    //             done();
-    //         });
-    //     }
-    // },
 
     "TabView with 3 tabs": {
         bootstrapYUI: true,

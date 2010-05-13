@@ -954,6 +954,13 @@
         }
     }, 
     "sortable": {
+        "plugins": {
+            "sortable-scroll": {
+                "requires": [
+                    "dd-scroll"
+                ]
+            }
+        }, 
         "requires": [
             "dd-delegate", 
             "dd-drop-plugin", 

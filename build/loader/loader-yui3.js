@@ -961,6 +961,13 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "sortable": {
+        "plugins": {
+            "sortable-scroll": {
+                "requires": [
+                    "dd-scroll"
+                ]
+            }
+        }, 
         "requires": [
             "dd-delegate", 
             "dd-drop-plugin", 
