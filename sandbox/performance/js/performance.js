@@ -283,6 +283,11 @@ Perf = Y.Performance = {
             push,
             sandbox;
 
+        test = Y.mix({}, test, true);
+
+        // Note: test is now a shallow clone, but functions are still references
+        // to the original test functions. Don't modify them.
+
         if (test.warmup) {
             i += 1;
         }
@@ -375,7 +380,7 @@ Perf = Y.Performance = {
         iteration.sandbox.on('ready', function () {
             var count;
 
-            if (isFunction(test.setup)) {
+            if (!iteration.setupDone && isFunction(test.setup)) {
 
                 if (test.asyncSetup) {
 
@@ -388,10 +393,8 @@ Perf = Y.Performance = {
                             Y.log('Test "' + iteration.name + '" failed.', 'warn', 'performance');
                             Perf._runNextTest();
                         } else {
-                            // Delete the setup function so it won't run again.
-                            delete iteration.test.setup;
-
                             // Restart the iteration.
+                            iteration.setupDone = true;
                             Perf._runNextTest(iteration);
                         }
                     });
