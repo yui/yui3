@@ -1076,7 +1076,7 @@ Y.mix(Y_Node.prototype, {
 
     hasMethod: function(method) {
         var node = this._node;
-        return (node && node[method] && (typeof node[method] === 'function'));
+        return !!(node && method in node && node[method].apply);
     }
 }, true);
 
@@ -1666,7 +1666,7 @@ Y.Array.each([
      'select'
 ], function(method) {
     Y.Node.prototype[method] = function(arg1, arg2, arg3) {
-    Y.log('adding: ' + method);
+    Y.log('adding: ' + method, 'info', 'node');
         var ret = this.invoke(method, arg1, arg2, arg3);
         return ret;
     };
