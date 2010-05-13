@@ -10,8 +10,9 @@
 <h1>YUI 3 Performance</h1>
 
 <p>
+    <select id="suites"></select>
     <button id="start">Start Tests</button>
-    <button id="stop">Stop Tests</button>
+    <button id="stop" disabled="disabled">Stop Tests</button>
 </p>
 
 <div id="results"></div>
@@ -29,23 +30,66 @@
 <script src="js/sandbox.js"></script>
 <script src="js/performance.js"></script>
 <script src="tests/instantiation.js"></script>
+<script src="tests/perf-oop.js"></script>
 <script>
-var Y = YUI().use('event-base', 'performance', 'perf-instantiation', function (Y) {
+var Y = YUI().use('cookie', 'event-base', 'node-base', 'performance',
+                  'perf-instantiation', 'perf-oop', function (Y) {
+
+    var Perf   = Y.Performance,
+        start  = Y.one('#start'),
+        stop   = Y.one('#stop'),
+        suites = Y.one('#suites');
+
     if (Y.UA.gecko) {
         Y.all('.firefox').removeClass('hidden');
     } else if (Y.UA.ie) {
         Y.all('.ie').removeClass('hidden');
     }
 
-    Y.Performance.render('#results');
+    // Populate the test list.
+    Y.Object.each(Perf.getTestSuites(), function (test, name) {
+        suites.append(Y.Node.create('<option/>').append(name))
+    });
 
-    Y.on('click', function () {
-        Y.Performance.start();
-    }, '#start');
+    // Get the selected module from a cookie if set.
+    if (Y.Cookie.exists('yui3-perf-suite')) {
+        suites.set('value', Y.Cookie.get('yui3-perf-suite'));
+    }
 
-    Y.on('click', function () {
-        Y.Performance.stop();
-    }, '#stop');
+    // Render the result table.
+    Perf.render('#results');
+
+    // Handle module selection changes.
+    suites.on('change', function () {
+        Perf.stop();
+
+        Y.Cookie.set('yui3-perf-suite', this.get('value'), {
+            expires: new Date(new Date().getTime() + 5184000000) // 60 days from now
+        });
+    });
+
+    // Handle Start clicks.
+    start.on('click', function () {
+        Perf.activateTestSuite(suites.get('value'));
+        Perf.start();
+    });
+
+    // Handle Stop clicks.
+    stop.on('click', function () {
+        Perf.stop();
+    });
+
+    // Handle test start.
+    Perf.on('start', function () {
+        start.set('disabled', true);
+        stop.set('disabled', false);
+    });
+
+    // Handle test stop/finish.
+    Perf.on('finish', function () {
+        start.set('disabled', false);
+        stop.set('disabled', true);
+    });
 });
 </script>
 

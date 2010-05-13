@@ -73,7 +73,7 @@ YUI.add('perf-instantiation', function (Y) {
 //     filesystem), null will be returned and a warning will be logged in the
 //     parent window.
 
-Y.Performance.addTests({
+Y.Performance.addTestSuite('Instantiation Tests', {
     "YUI3: yui-min.js + loader-min.js parsing/execution": {
         duration: 500,
         iterations: 10,
