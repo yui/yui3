@@ -471,10 +471,6 @@
 <span class="cm">     * &lt;/dl&gt;</span>
 <span class="cm">     */</span>
     <span class="nx">addHTML</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">where</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">content</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">content</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">trim</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span> <span class="c1">// match IE which trims whitespace from innerHTML</span>
-        <span class="p">}</span>
-
         <span class="kd">var</span> <span class="nx">nodeParent</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">,</span>
             <span class="nx">newNode</span><span class="p">;</span>
             
