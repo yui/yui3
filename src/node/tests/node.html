@@ -1,4 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 <title>Node Test Suite</title>
@@ -8,11 +7,15 @@
 <style type="text/css">
 body {
     font:13px/1.22 arial;
-    width:1000px;
+}
+
+.yui-log {
+    height:1000px;
 }
 
 #doc {
     min-height:200px;
+    width:1000px;
 }
 
 #get-style {
@@ -40,11 +43,13 @@ body {
 }
 
 #test-computed {
+    border: medium solid #000;
     position:relative;
     width:50%;
     margin:auto;
     padding:10px;
     z-index: 2;
+    zoom:1;
 }
 
 #test-scroll {
@@ -166,7 +171,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
 
-    new Y.Console({node: '#yui-log', height: '50em' }).render('#yui-log');
+    new Y.Console({node: '#yui-log', height: '95%' }).render('#yui-log');
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -670,26 +675,30 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         },
 
         test_getComputedStyle: function() {
-            var node = Y.one('#test-computed');
-            var domNode = byId('test-computed');
+            var node = Y.one('#test-computed'),
+                domNode = byId('test-computed'),
+                bw = (Y.UA.ie && Y.UA.ie < 8) ? 4 : 3,
+                w = node.get('offsetWidth'),
+                h = node.get('offsetHeight');
 
-            domNode.style.zoom = 1;
-            domNode.style.border = 'medium solid #000';
+            if (!Y.UA.ie || document.compatMode !== 'BackCompat') {
+                w = w - 20 - 2 * bw;
+                h = h - 20 - 2 * bw;
+            }
 
-            var bw = (Y.UA.ie) ? 4 : 3;
-            var h = node.get('offsetHeight') - 20 - 2 * bw;
             Assert.areEqual(bw + 'px', node.getComputedStyle('borderTopWidth'), "borderTopWidth: medium");
             Assert.areEqual(h, Math.round(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
             domNode.style.padding = '1em';
-            Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 10em");
+            Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 13px");
             Assert.areEqual('visible', node.getComputedStyle('visibility'), "visibility");
             domNode.parentNode.style.visibility = 'hidden';
-            Assert.areEqual('hidden', node.getComputedStyle('visibility'), "visibility");
+            Assert.areEqual('hidden', node.getComputedStyle('visibility'), "visibility:hidden");
             domNode.parentNode.style.visibility = 'visible';
             Assert.areEqual(2, node.getComputedStyle('zIndex'), 'node.getComputedStyle("zIndex")');
-            Assert.areEqual('500px', node.getComputedStyle('width'), "percent width (from CSS)");
             domNode.style.margin = 'auto';
             Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
+
+            Assert.areEqual(w + 'px', node.getComputedStyle('width'), "percent width (from CSS)");
         },
 
         test_setStyles: function() {
@@ -1053,8 +1062,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Assert.areEqual('test-xy', doc.one('#test-xy').get('id'), 'doc.one("#test-xy")');
             Assert.isNull(doc.one('fake-id'), 'doc.one("#fake-id")');
 
-            Assert.areEqual(document.documentElement.offsetHeight, mask.offsetHeight, 'get("height")');
-            Assert.areEqual(document.documentElement.offsetWidth, mask.offsetWidth, 'get("width")');
+            Assert.areEqual(mask.offsetHeight, doc.get('docHeight'), 'get("docHeight")');
+            Assert.areEqual(mask.offsetWidth, doc.get('docWidth'), 'get("docWidth")');
             mask.className = '';
         },
 
