@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 <title>Node Test Suite</title>
@@ -1050,6 +1051,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             mask.className = 'mask';
             document.body.appendChild(mask);
             var doc = Y.one('document');
+            window.scrollTo(0,0);
             mask.style.height = doc.get('docHeight') + 'px';
             mask.style.width = doc.get('docWidth') + 'px';
             Y.DOM.setStyle(mask, 'opacity', 0.4); 
