@@ -1459,10 +1459,14 @@ YUI.add('editor-base', function(Y) {
             }
 
             var changed = this.getDomPath(e.changedNode),
-                cmds = {}, family, fsize, classes = [];
+                cmds = {}, family, fsize, classes = [],
+                fColor = '', bColor = '';
+
+            if (e.commands) {
+                cmds = e.commands;
+            }
 
             changed.each(function(n) {
-                
                 var tag = n.get('tagName').toLowerCase(),
                     cmd = EditorBase.TAG2CMD[tag],
                     el = Y.Node.getDOMNode(n);
@@ -1495,13 +1499,32 @@ YUI.add('editor-base', function(Y) {
                         classes.push(v);
                     }
                 });
+
+                fColor = EditorBase.FILTER_RGB(n.getStyle('color'));
+                var bColor2 = EditorBase.FILTER_RGB(n.getStyle('backgroundColor'));
+                if (bColor2 !== 'transparent') {
+                    bColor = bColor2;
+                }
                 
             });
+            
             e.dompath = changed;
-            e.fontFamily = family;
-            e.fontSize = fsize;
             e.classNames = classes;
             e.commands = cmds;
+
+            //TODO Dont' like this, not dynamic enough..
+            if (!e.fontFamily) {
+                e.fontFamily = family;
+            }
+            if (!e.fontSize) {
+                e.fontSize = fsize;
+            }
+            if (!e.fontColor) {
+                e.fontColor = fColor;
+            }
+            if (!e.backgroundColor) {
+                e.backgroundColor = bColor;
+            }
         },
         /**
         * Walk the dom tree from this node up to body, returning a reversed array of parents.
@@ -1592,7 +1615,32 @@ YUI.add('editor-base', function(Y) {
         * @return {Node/NodeList} The Node or Nodelist affected by the command. Only returns on override commands, not browser defined commands.
         */
         execCommand: function(cmd, val) {
-            return this.frame.execCommand(cmd, val);
+            var ret = this.frame.execCommand(cmd, val),
+                inst = this.frame.getInstance(),
+                sel = new inst.Selection(), cmds = {},
+                e = { changedNode: sel.anchorNode, changedType: 'execcommand', nodes: ret };
+
+            switch (cmd) {
+                case 'forecolor':
+                    e.fontColor = val;
+                    break;
+                case 'backcolor':
+                    e.backgroundColor = val;
+                    break;
+                case 'fontsize':
+                    e.fontSize = val;
+                    break;
+                case 'fontname':
+                    e.fontFamily = val;
+                    break;
+            }
+
+            cmds[cmd] = 1;
+            e.commands = cmds;
+
+            this.fire('nodeChange', e);
+
+            return ret;
         },
         /**
         * Get the YUI instance of the frame
@@ -1638,6 +1686,31 @@ YUI.add('editor-base', function(Y) {
             return html;
         }
     }, {
+        /**
+        * @method filter_rgb
+        * @param String css The CSS string containing rgb(#,#,#);
+        * @description Converts an RGB color string to a hex color, example: rgb(0, 255, 0) converts to #00ff00
+        * @return String
+        */
+        FILTER_RGB: function(css) {
+            if (css.toLowerCase().indexOf('rgb') != -1) {
+                var exp = new RegExp("(.*?)rgb\\s*?\\(\\s*?([0-9]+).*?,\\s*?([0-9]+).*?,\\s*?([0-9]+).*?\\)(.*?)", "gi");
+                var rgb = css.replace(exp, "$1,$2,$3,$4,$5").split(',');
+            
+                if (rgb.length == 5) {
+                    var r = parseInt(rgb[1], 10).toString(16);
+                    var g = parseInt(rgb[2], 10).toString(16);
+                    var b = parseInt(rgb[3], 10).toString(16);
+
+                    r = r.length == 1 ? '0' + r : r;
+                    g = g.length == 1 ? '0' + g : g;
+                    b = b.length == 1 ? '0' + b : b;
+
+                    css = "#" + r + g + b;
+                }
+            }
+            return css;
+        },        
         TAG2CMD: {
             'b': 'bold',
             'strong': 'bold',
