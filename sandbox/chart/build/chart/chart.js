@@ -21,34 +21,49 @@ function SWFWidget (config)
 	SWFWidget.superclass.constructor.apply(this, arguments);
 }
 
-SWFWidget.NAME = "swfWidget";
-
-SWFWidget._instances = SWFWidget._instances || {};
-
-/**
- * Handles an event from the application swf in which a listener has been
- * registered through an instance of SWFWidget. 
- * @method eventHandler
- * @param swfid {String} the id of the SWF dispatching the event
- * @param event {Object} the event being transmitted.
- * @private
- */
-SWFWidget.eventHandler = function (swfid, event) {
-	SWFWidget._instances[swfid]._eventHandler(event);
-};
-
 /**
  * Attribute config
  * @private
  */
 SWFWidget.ATTRS = {
-	/**
+    /**
+     * Reference to the application class
+     */
+    app: {
+        getter: function()
+        {
+            return this._app;
+        },
+        setter: function(val)
+        {
+            this._app = val;
+            return val;
+        }
+    },
+
+    /**
 	 * Parent element for the SWFWidget instance.
 	 */
 	parent:{
-		lazyAdd:false,
+        lazyAdd:false,
 		
-		value:null
+        getter: function()
+        {
+            return this._parent;
+        },
+
+        setter: function(val)
+        {
+            this._parent = val;
+            if(val instanceof Y.SWFApplication)
+            {
+                this.set("app", val);
+            }
+            else if(val instanceof Y.SWFWidget)
+            {
+                this.set("app", val.get("app"));
+            }
+        }   
 	},
 
 	/**
@@ -58,6 +73,7 @@ SWFWidget.ATTRS = {
 	{
 		value:false
 	},
+
 	/**
 	 * Reference to corresponding Actionscript class.
 	 */
@@ -70,6 +86,7 @@ SWFWidget.ATTRS = {
 			return this.AS_CLASS;
 		}
 	},
+
 	/**
 	 * Hash of style properties for class
 	 */
@@ -77,15 +94,10 @@ SWFWidget.ATTRS = {
 	{
 		value: {},
 
-		lazyAdd: false,
-
 		setter: function(val)
 		{
 			val = this._setStyles(val);
-			if(this.swfReadyFlag)
-			{
-				this._updateStyles();
-			}
+            this._updateStyles();
 			return val;
 		},
 		
@@ -93,11 +105,34 @@ SWFWidget.ATTRS = {
 		{
 			return Y.Lang.isObject(val);
 		}
+	},
+
+    /**
+     * Id for instance
+     */
+	id: 
+	{
+		getter: function()
+		{
+			return this._id;
+		}
 	}
 };
 
 Y.extend(SWFWidget, Y.Base,
 {
+    /**
+     * @private
+     * Storage for parent
+     */
+    _parent: null,
+
+    /**
+     * @private
+     * Storage for app
+     */
+    _app: null,
+
 	/**
 	 * Creates unique id for class instance.
 	 *
@@ -106,7 +141,6 @@ Y.extend(SWFWidget, Y.Base,
 	_createId: function()
 	{
 		this._id = Y.guid(this.GUID);
-		SWFWidget._instances[this._id] = this;
 	},
 
 	/**
@@ -222,58 +256,80 @@ Y.extend(SWFWidget, Y.Base,
 	{
 		var styleHash = this._styleObjHash,
 		styles = this.get("styles");
-		Y.Object.each(styles, function(value, key, styles)
+        Y.Object.each(styles, function(value, key, styles)
 		{
 			if(this._id === key || (styleHash && styleHash.hasOwnProperty(key) && !(styleHash[key] instanceof SWFWidget)))
 			{
-				this.appswf.applyMethod(key, "setStyles", [styles[key]]);
+                this.applyMethod(key, "setStyles", [styles[key]]);
 			}
 		}, this);
 	},
 
-	_events: {},
-
-	_init: function(swfowner)
-	{
-		this.swfowner = swfowner;
-		this.appswf = swfowner.appswf;
-		this._addSWFEventListeners();
-	},
-
-	_addSWFEventListeners: function()
-	{
-		var events = this._events,
-			i;
-		for(i in events)
-		{
-			if(events.hasOwnProperty(i) && !events[i].registered)
-			{
-				events[i].registered = true;
-				this.appswf._swf._node.subscribe(this._id, i, "SWFWidget.eventHandler"); 
-		
-			}
-		}
-	},
-
+	/**
+	 * @private (override)
+	 */
 	on: function(type , fn , context , arg)
 	{
-		var events = this._events;
-		if(!this._events.hasOwnProperty(type))
-		{
-			events[type] = {type:type, args:arguments, registered:false};
-			if(this.swfowner && this.swfowner.swfReady)
-			{
-				events[type].registered = true;
-				this.appswf._swf._node.subscribe(this._id, type, "SWFWidget.eventHandler"); 
-			}
-		}
-		SWFWidget.superclass.on.apply(this, arguments);
+        this.get("app").onFlash.apply(this.get("app"), [type, this]);
+        SWFWidget.superclass.on.apply(this, arguments);
 	},
-
+	
+	/**
+	 * @private
+	 * Dispatches events from flash.
+	 */
 	_eventHandler: function(event)
 	{
 		this.fire(event.type, event);
-	}
+	},
+    
+    /**
+     * Calls a method on the SWF
+     */
+    callSWF: function (func, args)
+    {
+        this.get("app").callSWF(arguments);
+    },
+
+    /**
+     * Creates a class instance on the SWF.
+     */
+    createInstance: function(instanceId, className, args)
+    {
+        this.get("app").createInstance(instanceId, className, args);
+    },
+    
+    /**
+     * Calls a method on an Actionscript class instance.
+     */
+    applyMethod: function (instanceId, methodName, args)
+    {
+        this.get("app").applyMethod(instanceId, methodName, args);
+    },
+
+    /**
+     * Exposes a method on an Actionscript class instance.
+     */
+    exposeMethod: function (instanceId, methodName, exposedName) 
+    {
+        this.get("app").exposeMethod(arguments);
+    },
+
+    /**
+     * Returns the value of a property on an Actionscript class instance.
+     */
+    getProperty: function (instanceId, propertyName) 
+    {
+        this.get("app").getProperty(arguments);
+    },
+
+    /**
+     * Sets the value of a property on an Actionscript class instance.
+     */
+    setProperty: function (instanceId, propertyName, propertyValue)
+    {
+        this.get("app").setProperty(arguments);
+    }
 });
 
 Y.SWFWidget = SWFWidget;
@@ -407,24 +463,9 @@ Y.SWFWidget = SWFWidget;
 		 * Initializes Container properties.
 		 * @method _init
 		 */
-		_init: function(swfowner)
+		_init: function()
 		{
-			var i, item, len;
-			this.swfowner = swfowner;
-			this.appswf = swfowner.appswf;
-			this._addBackground();
-			len = this._items.length;
-			if(len < 1) 
-			{
-				return;
-			}
-			for(i = 0; i < len; i++)
-			{
-				item = this._items[i];
-				this.addItem(item.item, item.props);
-			}
 			this._updateStyles();
-			this._addSWFEventListeners();
 		},
 
 		/**
@@ -434,8 +475,8 @@ Y.SWFWidget = SWFWidget;
 		 */
 		_addBackground:function()
 		{
-			this.appswf.createInstance("background", "Skin");
-			this.appswf.applyMethod(this._id, "addItem", ["$background", {index:0}]);
+			this.createInstance("background", "Skin");
+			this.applyMethod(this._id, "addItem", ["$background", {index:0}]);
 			this._styleObjHash.background = "background";
 		},
 
@@ -447,22 +488,16 @@ Y.SWFWidget = SWFWidget;
 		 */
 		addItem: function(item, props)
 		{
-			if(this.swfReadyFlag)
-			{
-				var args = item.swfarguments && typeof item.swfarguments == "array" ? item.args : [];
-				this.appswf.createInstance(item._id, item.get("className"), args); 
-				args =  ["$" + item._id]; 
-				if(props)
-				{
-					args.push(props);
-				}
-				this.appswf.applyMethod(this._id, "addItem", args);
-			}
-			else
-			{
-				this._items.push({item:item, props:props});
-			}
-			if(item instanceof SWFWidget)
+            var args = item.swfarguments && typeof item.swfarguments == "array" ? item.args : [];
+            this.createInstance(item._id, item.get("className"), args); 
+            args =  ["$" + item._id]; 
+            if(props)
+            {
+                args.push(props);
+            }
+            this.applyMethod(this._id, "addItem", args);
+			
+            if(item instanceof SWFWidget)
 			{
 				item.set("added", true);
 			}
@@ -488,10 +523,10 @@ Y.SWFWidget = SWFWidget;
  * will be replaced in future iterations and its api will vary significantly. 
  */
 	/**
-	 * The SWFApplication widget is a tool for creating Cartesian data visualizations.
+	 * The SWFApplication widget is the base class for hybrid flash applications.
 	 * @module swfApplication
 	 * @title SWFApplication
-	 * @requires yahoo, dom, event
+	 * @requires yahoo, dom, event, swfWidget, container
 	 * @namespace YAHOO.widget
 	 */
 	/**
@@ -510,14 +545,24 @@ Y.SWFWidget = SWFWidget;
 	 */
 	function SWFApplication ( config ) 
 	{
-		SWFApplication.superclass.constructor.apply(this, arguments);
-		this._dataId = this._id + "data";
+        SWFApplication.superclass.constructor.apply(this, arguments);
 	}
 
 	SWFApplication.NAME = "swfApplication";
 
 	SWFApplication.ATTRS = {
-		/**
+        app: {
+            setter:function(val)
+            {
+            },
+
+            getter:function()
+            {
+                return this;
+            }
+        },
+        
+        /**
 		 * URL used for swf
 		 */
 		swfurl:
@@ -559,8 +604,8 @@ Y.SWFWidget = SWFWidget;
 		 */
 		flashvars:
 		{
-			value: {appname:this._id},
-
+			value: {appname:this._id, YUIBridgeCallback:"SWF.eventHandler"},
+    
 			lazyAdd:false,
 
 			setOnce: true,
@@ -592,14 +637,16 @@ Y.SWFWidget = SWFWidget;
 				return Y.Lang.isObject(val);
 			}
 		},
-		/**
+
+        /**
 		 * Indicates whether or not to call the loadswf method upon instantiation.
 		 */
 		autoLoad: 
 		{
 			value: true
 		},
-		/**
+		
+        /**
 		 * Indicates whether the swf draws automatically.
 		 *
 		 * @private
@@ -615,7 +662,8 @@ Y.SWFWidget = SWFWidget;
 				return this.setAutoRender(val);
 			}
 		},
-		/**
+		
+        /**
 		 * Id used to insantiate a ChartDataProvider in the flash application.
 		 *
 		 * @private
@@ -624,7 +672,8 @@ Y.SWFWidget = SWFWidget;
 		{
 			value: null
 		},
-		/**
+		
+        /**
 		 * Reference to the dataProvider for the SWFApplication.
 		 * @private
 		 */
@@ -634,22 +683,62 @@ Y.SWFWidget = SWFWidget;
 
 			setter: function(val)
 			{
-				this._dataProvider = Y.JSON.stringify(val);
-				this._initDataProvider();
+				this._dataProvider = val;				
+                if(val)
+                {
+                    this.createInstance(this._dataId, "ChartDataProvider", [Y.JSON.stringify(val)]);		
+                }
 			},
 
 			getter: function()
 			{
-				return Y.JSON.parse(this._dataProvider);
+                return this._dataProvider;
 			}
-
 		}
 	};
 	
 	Y.extend(SWFApplication, Y.Container, 
 	{
-		_events: {},
-		/**
+        /**
+         * @private
+         */
+        _createId: function()
+        {
+            Y.SWFWidget.prototype._createId.apply(this, arguments);
+            if(Y.SWF._instances)
+            {
+                Y.SWF._instance = {};
+            }
+            Y.SWF._instances[this._id] = this;
+        },  
+
+        /**
+         * @private
+         * Propagates a specific event from Flash to JS.
+         * @method _eventHandler
+         * @param event {Object} The event to be propagated from Flash.
+         */
+        _eventHandler: function(event)
+        {
+            if (event.type == "swfReady") 
+            {
+                this.node = event.node = this.swf._swf._node;
+                this.appswf = event.appswf = this;
+                this._init();
+                this._clearMethodQueue();
+                this.publish("swfReady", {fireOnce:true});
+                this.fire("swfReady", event);
+            }
+            else if(event.type == "log")
+            {
+            }
+            else
+            {
+                this.fire(event.type, event);
+            } 
+        },
+		
+        /**
 		 * Reference to corresponding Actionscript class.
 		 */
 		AS_CLASS: "CartesianCanvas",
@@ -664,12 +753,12 @@ Y.SWFWidget = SWFWidget;
 		 */
 		loadswf: function()
 		{
-			this.appswf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"));
-			this.appswf.on ("swfReady", this._init, this);
+            this.swf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"));
 		},
 
 		initializer: function(cfg)
 		{
+            this._dataId = this._id + "data";
 			if(this.get("autoLoad"))
 			{
 				this.loadswf();
@@ -679,45 +768,13 @@ Y.SWFWidget = SWFWidget;
 		/**
 		 * Event handler for the swfReady event.
 		 */
-		_init: function(event)
+		_init: function()
 		{
-			var i, item, len;
-			this._setAutoRender();
-			this.swfReadyFlag = true;
-			if(this._dataProvider)
-			{
-				this._initDataProvider();
-			}
 			this._addBackground();
-			len = this._items.length;
-			if(len < 1)
-			{
-				return;
-			}
-			for(i = 0; i < len; i++)
-			{
-				item = this._items[i];
-				this.addItem(item.item, item.props);
-			}
 			this._updateStyles();
-			this._addSWFEventListeners();
-			this.fire("appReady");
+            this.fire("appReady");
 		},
 		
-		
-		/**
-		 * Instantiates a DataProvider in the flash application.
-		 *
-		 * @private
-		 */
-		_initDataProvider: function() 
-		{
-			if(this.appswf && this.swfReadyFlag) 
-			{
-				this.appswf.createInstance(this._dataId, "ChartDataProvider", [this._dataProvider]);		
-			}
-		},
-	
 		/**
 		 * Adds an item to a container instance.
 		 *
@@ -727,10 +784,7 @@ Y.SWFWidget = SWFWidget;
 		addItem: function(item, props)
 		{
 			Container.prototype.addItem.apply(this, arguments);
-			if(this.swfReadyFlag && item._init)
-			{
-				item._init(this);
-			}
+	    	item._init();
 		},
 
 		/**
@@ -741,20 +795,133 @@ Y.SWFWidget = SWFWidget;
 			if(value != this._autoRender) 
 			{
 				this._autoRender = value;
-				this._setAutoRender();
+                this.setProperty(this._id, "autoRender", this._autoRender);
 			}
 		},
 
-		/**
-		 * Updates the autoRender property of the application swf.
-		 */
-		_setAutoRender: function()
-		{
-			if(this.appswf) 
-			{
-				this.appswf.callSWF("setProperty", [this._id, "autoRender", this._autoRender]);
-			}
-		},
+        /**
+         * Calls a specific function exposed by the SWF's
+         * ExternalInterface.
+         * @method callSWF
+         * @param func {String} the name of the function to call
+         * @param args {Object} the set of arguments to pass to the function.
+         */
+        
+        callSWF: function (func, args)
+        {
+            if (!args) 
+            { 
+                  args= []; 
+            }	
+            if (this.node && this.node[func]) 
+            {
+                return(this.node[func].apply(this.node, args));
+            } 
+            else 
+            {
+                this._methodQueue.push({func:this.callSWF, args:arguments});
+            }
+        },
+        
+        createInstance: function (instanceId, className, args) 
+        {
+            if (!args) 
+            {
+                args = [];
+            }
+            if (this.node && this.node.createInstance) 
+            {
+                this.node.createInstance(instanceId, className, args);
+            }
+            else
+            {
+                this._methodQueue.push({func:this.createInstance, args:arguments});
+            }
+        },
+        
+        applyMethod: function (instanceId, methodName, args) 
+        {
+            if (!args) 
+            {
+                args = [];
+            }
+            if (this.node && this.node.applyMethod) 
+            {
+                this.node.applyMethod(instanceId, methodName, args);
+            }
+            else
+            {
+                this._methodQueue.push({func:this.applyMethod, args:arguments});
+            }
+        },
+        
+        exposeMethod: function (instanceId, methodName, exposedName) 
+        {
+            if (this.node && this.node.exposeMethod) 
+            {
+                this.node.exposeMethod(instanceId, methodName, exposedName);
+            }
+            else
+            {
+                this._methodQueue.push({func:this.exposeMethod, args:arguments});
+            }
+        },
+        
+        getProperty: function (instanceId, propertyName) 
+        {
+            if (this.node && this.node.getProperty) 
+            {
+                this.node.getProperty(instanceId, propertyName);
+            }
+            else
+            {
+                this._methodQueue.push({func:this.getProperty, args:arguments});
+            }
+        },
+        
+        setProperty: function (instanceId, propertyName, propertyValue) 
+        {
+            if (this.node && this.node.setProperty) 
+            {
+                this.node.setProperty(instanceId, propertyName, propertyValue);
+            }
+            else
+            {
+                this._methodQueue.push({func:this.setProperty, args:arguments});
+            }
+        },
+
+        onFlash: function(type, instance)
+        {
+            if(this.node && this.node.subscribe)
+            {
+                var id = instance.get("id");
+                if(!Y.SWF._instances.hasOwnProperty(id))
+                {
+                    Y.SWF._instances[id] = instance;
+                }
+                this.node.subscribe(type, id);
+            }
+            else
+            {
+                this._methodQueue.push({func:this.onFlash, args:arguments});
+            }
+        },
+
+        _methodQueue: [],
+
+        _clearMethodQueue: function()
+        {
+            var q = this._methodQueue,
+                l = q.length,
+                item;
+            while(l > 0)
+            {
+                item = q.shift();
+                item.func.apply(this, item.args);
+                l--;
+            }
+        },
 
 		_styleObjHash:{background:"background"}
 	});
@@ -795,19 +962,11 @@ Y.SWFApplication = SWFApplication;
 	 */
 	Y.extend(BorderContainer, Y.Container,
 	{
-		_events: {},
 		/**
 		 * Constant used to generate unique id.
 		 */
 		GUID: "yuibordercontainer",
 
-		/**
-		 * Hash containing an array of child items for each child container in the 
-		 * BorderContainer. The child items are store here until the application swf
-		 * has been initalized. Upon initialization, they will be added.
-		 */
-		itemsQueue: {},
-		
 		/**
 		 * Reference to corresponding Actionscript class.
 		 */
@@ -825,25 +984,9 @@ Y.SWFApplication = SWFApplication;
 		 * @param {Object} reference to the class that has direct communication with the application swf.
 		 * @private
 		 */
-		_init: function(swfowner)
+		_init: function()
 		{
-			var i, itemsArray;
-			this.swfowner = swfowner;
-			this.appswf = this.swfowner.appswf;
-			this.swfReadyFlag = true;
 			this._updateStyles();
-			for(i in this.itemsQueue)
-			{
-				if(this.itemsQueue.hasOwnProperty(i))
-				{
-					itemsArray = this.itemsQueue[i];
-					while(itemsArray.length > 0)
-					{
-						this.addItem(itemsArray.shift(), i);
-					}
-				}
-			}
-			this._addSWFEventListeners();
 		},
 		
 		/**
@@ -915,23 +1058,11 @@ Y.SWFApplication = SWFApplication;
 		addItem: function (item, location)
 		{
 			var locationToUpperCase = (location.charAt(0)).toUpperCase() + location.substr(1);
-			if (this.swfReadyFlag) 
-			{
-				item._init(this.swfowner);
-				this.appswf.applyMethod(this._id, "add" + locationToUpperCase + "Item", ["$" + item._id]);
-				if (location != "center")
-				{
-					item.set("styles", {position: location});
-				}
-			}
-			else
-			{
-				if(!this.itemsQueue || !this.itemsQueue.hasOwnProperty(location))
-				{
-					this.itemsQueue[location] = [];
-				}
-				this.itemsQueue[location].push(item);
-			}
+            this.applyMethod(this.get("id"), "add" + locationToUpperCase + "Item", ["$" + item.get("id")]);
+            if (location != "center")
+            {
+                item.set("styles", {position: location});
+            }
 		}
 	});
 
@@ -940,6 +1071,8 @@ Y.BorderContainer = BorderContainer;
 function Graph (config) 
 {
 	Graph.superclass.constructor.apply(this, arguments);
+    this.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
+    this.fire("graphReady", {swfowner:this.get("app")});
 }
 
 Graph.NAME = "graph";
@@ -997,7 +1130,6 @@ Graph.ATTRS = {
  */
 Y.extend(Graph, Y.Container, 
 {
-	_events: {},
 	GUID:"yuigraph",
 
 	/**
@@ -1013,25 +1145,6 @@ Y.extend(Graph, Y.Container,
 	AS_CLASS: "Graph",
 
 	_seriesCollection:null,
-	/**
-	 * @private
-	 * Called by the class instance containing the application swf after the swf
-	 * has been initialized.
-	 *
-	 * @method _init
-	 * @param swfowner {Object} Class instance with direct access to the application swf.
-	 */
-	_init: function(swfowner)
-	{
-		this.swfowner = swfowner;
-		this.appswf = this.swfowner.appswf;
-		if(this.get("seriesCollection"))
-		{
-			this.appswf.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
-			this.fire("graphReady", {swfowner:swfowner});
-		}
-		this._addSWFEventListeners();
-	},
 
 	/**
 	 * Converts references of AS class wrappers to string references to used with 
@@ -1121,11 +1234,9 @@ Y.Graph = Graph;
 		 * @method _init
 		 * @param swfowner {Object} Class instance with direct access to the application swf.
 		 */
-		_init: function(swfowner)
+		initializer: function(cfg)
 		{
-			this.swfowner = swfowner;
-			this.appswf = this.swfowner.appswf;
-			this.appswf.createInstance(this._id, 
+			this.createInstance(this._id, 
 				"LineSeries", 
 				[
 					{
@@ -1168,8 +1279,6 @@ Y.Graph = Graph;
 function Axis (config) 
 {
 	Axis.superclass.constructor.apply(this, arguments);
-	this._dataId = this._id + "data";
-
 }
 
 Axis.NAME = "axis";
@@ -1208,45 +1317,34 @@ Axis.ATTRS = {
  */
 Y.extend(Axis, Y.SWFWidget, 
 {
-	_events: {},
+    /**
+     * @private
+     */
+    initializer: function(cfg)
+    {
+        this._dataId = this._id + "data";
+        this.createInstance(this._dataId, this.get("axisType") + "Data", ["$" + this.get("app")._dataId]);
+        this.createInstance(this._id, "Axis", ["$" + this._dataId]);
+    },
 
 	GUID:"yuiaxis",
 
+    /**
+     * @private
+     * Storage for axisType
+     */
 	_axisType: "Numeric",
 
+    /**
+     * @private 
+     * Storage for keys
+     */
 	_keys: [],
-
-	swfReadyFlag:false,
-
 
 	/**
 	 * Reference to corresponding Actionscript class.
 	 */
 	AS_CLASS:  "Axis",
-	
-	/**
-	 * @private
-	 * Called when the Axis is initialized
-	 * @method _axisInit
-	 * @param swfowner {Object} The class with a direct reference to the application swf. 
-	 */
-	_init: function(swfowner)
-	{
-		this.swfowner = swfowner;
-		this.appswf = this.swfowner.appswf;
-		this.appswf.createInstance(this._dataId, this.get("axisType") + "Data", ["$" + this.swfowner._dataId]);
-		var i, keys = this.get("keys");
-		for (i in keys) 
-		{
-			if(keys.hasOwnProperty(i))
-			{
-				this.appswf.applyMethod(this._dataId, "addKey", [keys[i]]);
-			}
-		}
-		this.appswf.createInstance(this._id, "Axis", ["$" + this._dataId]);
-		this._addSWFEventListeners();
-		this.swfReadyFlag = true;
-	},
 	
 	/**
 	 * Uses key to lookup and extract specified data from a data source.
@@ -1257,10 +1355,7 @@ Y.extend(Axis, Y.SWFWidget,
 	addKey: function(key) 
 	{
 		this.get("keys").push(key);
-		if(this.appswf)
-		{
-			this.appswf.applyMethod("$" + this._dataId, "addKey", [key]);
-		}
+        this.applyMethod(this._dataId, "addKey", [key]);
 	}
 });
 
@@ -1525,9 +1620,6 @@ Y.SimpleChart = SimpleChart;
 function DataTip (config) 
 {
 	DataTip.superclass.constructor.apply(this, arguments);
-	if(this.get("graph") && this.get("graph").swfReady)
-	{
-	}
 }
 
 DataTip.NAME = "dataTip";
@@ -1559,16 +1651,6 @@ DataTip.ATTRS = {
 		setter: function(val)
 		{
 			this._graph = val;
-			if(this._graph && this._graph.swfReady)
-			{
-				this._init(this._graph);
-			}
-			else
-			{
-				this._graph.on("graphReady", Y.bind(function(evt){
-					this._initDataTip(evt.swfowner);
-				}, this));
-			}
 			return val;
 		}
 	}
@@ -1580,7 +1662,6 @@ DataTip.ATTRS = {
 Y.extend(DataTip, Y.Container, 
 {
 	GUID:"yuidataTip",
-
 
 	/**
 	 * Reference to corresponding Actionscript class.
@@ -1597,13 +1678,10 @@ Y.extend(DataTip, Y.Container,
 	 * @method _init
 	 * @param swfowner {Object} Class instance with direct access to the application swf.
 	 */
-	_initDataTip: function(swfowner)
+	initializer: function(cfg)
 	{
-		this.swfowner = swfowner;
-		this.swfReady = true;
-		this.appswf = this.swfowner.appswf;
-		this.appswf.createInstance(this._id, "DataTip", ["$" + this.get("graph")._id]);
-		this.appswf.applyMethod(this.get("parent")._id, "addItem", ["$" + this._id, {excludeFromLayout:true}]);
+        this.createInstance(this._id, "DataTip", ["$" + this.get("graph")._id]);
+        this.applyMethod(this.get("parent")._id, "addItem", ["$" + this._id, {excludeFromLayout:true}]);
 	}
 });
 

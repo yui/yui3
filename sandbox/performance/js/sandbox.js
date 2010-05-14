@@ -32,6 +32,15 @@ YUI.add('gallery-sandbox', function (Y) {
  *     If <code>true</code>, YUI3 Core and Loader will automatically be
  *     bootstrapped into the sandbox.
  *   </dd>
+ *
+ *   <dt><strong>waitFor (String)</strong></dt>
+ *   <dd>
+ *     If set, this sandbox's <code>ready</code> event will not fire until a
+ *     property with the specified name appears on the shared sandbox
+ *     environment object. This allows you to initialize the sandbox environment
+ *     by performing asynchronous operations (such as making an Ajax request for
+ *     some data) if necessary.
+ *   </dd>
  * </dl>
  *
  * @class Sandbox
@@ -45,6 +54,7 @@ var GlobalEnv  = YUI.namespace('Env.Sandbox'),
     config     = Y.config,
     body       = config.doc.body,
     isFunction = Lang.isFunction,
+    isValue    = Lang.isValue,
 
     EVT_READY  = 'ready',
 
@@ -67,6 +77,7 @@ Sandbox = function (config) {
     };
 
     this._createIframe();
+    this._pollReady();
 };
 
 Y.augment(Sandbox, Y.EventTarget);
@@ -80,9 +91,7 @@ Y.mix(Sandbox.prototype, {
      * @property config
      * @type Object
      */
-    config: {
-        bootstrapYUI: false
-    },
+    config: {},
 
     // -- Public Methods -------------------------------------------------------
 
@@ -213,20 +222,22 @@ Y.mix(Sandbox.prototype, {
 
         if (callback) {
             poll = Y.later(config.pollInterval || 15, this, function () {
-                var profileData = this.getEnvValue(guid),
-                    endTime     = profileData && profileData.endTime,
+                var result  = this.getEnvValue(guid),
+                    endTime = result && result.endTime,
+                    value   = result ? result.value : null,
                     startTime;
 
-                if (endTime) {
+                if (endTime && isValue(value)) {
                     poll.cancel();
 
-                    startTime = profileData.startTime;
+                    startTime = result.startTime;
                     this.deleteEnvValue(guid);
 
                     callback.call(config.win, {
-                        duration : endTime - startTime,
-                        endTime  : endTime,
-                        startTime: startTime
+                        duration   : endTime - startTime,
+                        endTime    : endTime,
+                        startTime  : startTime,
+                        returnValue: value
                     });
                 }
             }, null, true);
@@ -260,14 +271,16 @@ Y.mix(Sandbox.prototype, {
         var guid = Y.guid('run-'),
             poll;
 
-        this.setEnvValue(guid, false);
+        this.setEnvValue(guid, null);
 
         if (callback) {
             poll = Y.later(config.pollInterval || 15, this, function () {
-                if (this.getEnvValue(guid) === true) {
+                var result = this.getEnvValue(guid);
+
+                if (isValue(result)) {
                     poll.cancel();
                     this.deleteEnvValue(guid);
-                    callback.call(config.win);
+                    callback.call(null, result);
                 }
             }, null, true);
         }
@@ -301,8 +314,7 @@ Y.mix(Sandbox.prototype, {
     // -- Protected Methods ----------------------------------------------------
     _createIframe: function () {
         var iframe    = body.appendChild(Y.DOM.create('<iframe id="' + this._id + '" style="display:none"/>')),
-            iframeDoc = iframe.contentWindow.document,
-            poll;
+            iframeDoc = iframe.contentWindow.document;
 
         // Based on a technique described by Dean Edwards:
         // http://dean.edwards.name/weblog/2006/11/sandbox/
@@ -336,18 +348,13 @@ Y.mix(Sandbox.prototype, {
         iframeDoc.close();
 
         this._iframe = iframe;
-
-        poll = Y.later(config.pollInterval || 15, this, function () {
-            if (this.getEnvValue('ready') === true) {
-                poll.cancel();
-                this.fire(EVT_READY);
-            }
-        }, null, true);
     },
 
     _getCountedScript: function (script, guid) {
         return '(function () {' +
-                   'var done = function () { sandbox["' + guid + '"] += 1 };' +
+                   'function done() {' +
+                       'sandbox["' + guid + '"] += 1;' +
+                   '}' +
                    'sandbox["' + guid + '"] = sandbox["' + guid + '"] || 0;' +
                    (isFunction(script) ? '(' + script.toString() + '());' : script) +
                '}());';
@@ -355,17 +362,34 @@ Y.mix(Sandbox.prototype, {
 
     _getProfiledScript: function (script, guid) {
         return '(function () {' +
-                   'var done = function () { sandbox["' + guid + '"].endTime = new Date().getTime(); };' +
+                   'function done(value) {' +
+                       'sandbox["' + guid + '"].endTime = new Date().getTime();' +
+                       'sandbox["' + guid + '"].value   = (typeof value === "undefined" || value === null) ? true : value;' +
+                   '}' +
                    'sandbox["' + guid + '"] = {startTime: new Date().getTime()};' +
-                   (isFunction(script) ? '(' + script.toString() + '());' : script) +
+                   'return ' + (isFunction(script) ? '(' + script.toString() + '());' : '(' + script + ')') + ';' +
                '}());';
     },
 
     _getScript: function (script, guid) {
         return '(function () {' +
-                   'var done = function () { sandbox["' + guid + '"] = true; };' +
-                   (isFunction(script) ? '(' + script.toString() + '());' : script) +
+                   'function done(value) {' +
+                       'sandbox["' + guid + '"] = (typeof value === "undefined" || value === null) ? true : value;' +
+                   '}' +
+                   'return ' + (isFunction(script) ? '(' + script.toString() + '());' : '(' + script + ')') + ';' +
                '}());';
+    },
+
+    _pollReady: function () {
+        var waitFor = this.config.waitFor,
+            poll    = Y.later(config.pollInterval || 15, this, function () {
+                if (this.getEnvValue('ready') === true &&
+                        (!waitFor || isValue(this.getEnvValue(waitFor)))) {
+
+                    poll.cancel();
+                    this.fire(EVT_READY);
+                }
+            }, null, true);
     }
 }, true);
 

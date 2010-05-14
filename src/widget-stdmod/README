@@ -1,6 +1,10 @@
 An extension, which can be used with Base.build to add standard
 module (header, body, footer) support to a Widget class.
 
+3.1.1
+
+* No changes.
+
 3.1.0
 
 * Changed widget stdmod renderUI/syncUI/bindUI to Y.before, so that they are 

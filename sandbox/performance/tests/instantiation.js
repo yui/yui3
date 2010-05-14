@@ -4,6 +4,16 @@ YUI.add('perf-instantiation', function (Y) {
 // test object may have the following properties, of which only the "test"
 // property is required:
 //
+//   asyncSetup (Boolean):
+//     By default, setup functions are assumed to be synchronous. Set this to
+//     true to indicate that your setup function is asynchronous. This will
+//     cause the test runner to wait for you to explicitly indicate completion
+//     by calling done() from within the setup function.
+//
+//     You may optionally pass a value to done(). To indicate a setup failure,
+//     pass false, and the test will be aborted (just as it would if you
+//     returned false from a synchronous setup function).
+//
 //   bootstrapYUI (Boolean):
 //     By default, all sandboxes are pristine. Set this to true to automatically
 //     bootstrap YUI3 core and Loader into the test sandbox.
@@ -16,6 +26,12 @@ YUI.add('perf-instantiation', function (Y) {
 //   iterations (Number):
 //     Number of iterations to run when using iteration-based testing. Defaults
 //     to 1 if not specified.
+//
+//   preloadUrls (Object):
+//     Object hash of keys mapped to publicly-accessible URLs. Each URL will be
+//     preloaded via a cross-domain YQL proxy, and its contents will be made
+//     available to the setup/teardown/test functions as sandbox.preload.key,
+//     where "key" is the same key that was used on the preloadUrls object.
 //
 //   setup (Function):
 //     Setup function to execute before each iteration of the test. Runs in the
@@ -57,7 +73,7 @@ YUI.add('perf-instantiation', function (Y) {
 //     filesystem), null will be returned and a warning will be logged in the
 //     parent window.
 
-Y.Performance.addTests({
+Y.Performance.addTestSuite('Instantiation Tests', {
     "YUI3: yui-min.js + loader-min.js parsing/execution": {
         duration: 500,
         iterations: 10,
@@ -117,14 +133,141 @@ Y.Performance.addTests({
         }
     },
 
-    "YUI().use('anim', 'event', 'io', 'json', 'node')": {
+    // "YUI().use('anim', 'event', 'io', 'json', 'node')": {
+    //     bootstrapYUI: true,
+    //     duration: 1000,
+    //     iterations: 40,
+    //     warmup: true,
+    //
+    //     test: function () {
+    //         YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
+    //             done();
+    //         });
+    //     }
+    // },
+
+    "Simple Y.Base extension + instantiation": {
+        asyncSetup: true,
         bootstrapYUI: true,
-        duration: 1000,
+        duration: 500,
         iterations: 40,
-        warmup: true,
+
+        setup: function () {
+            window.Y = YUI().use('base', function (Y) {
+                done();
+            });
+        },
 
         test: function () {
+            function MyClass() {
+                MyClass.superclass.constructor.apply(this, arguments);
+            }
+
+            Y.extend(MyClass, Y.Base);
+            var foo = new MyClass();
+            done();
+        }
+    },
+
+    "Simple Y.Widget extension + instantiation (no DOM)": {
+        asyncSetup: true,
+        bootstrapYUI: true,
+        duration: 500,
+        iterations: 40,
+
+        setup: function () {
+            window.Y = YUI().use('widget', function (Y) {
+                done();
+            });
+        },
+
+        test: function () {
+            function MyWidget() {
+                MyWidget.superclass.constructor.apply(this, arguments);
+            }
+
+            MyWidget.NAME  = 'mywidget';
+            MyWidget.ATTRS = {};
+
+            Y.extend(MyWidget, Y.Widget, {
+                renderUI: function () {},
+                bindUI  : function () {},
+                syncUI  : function () {}
+            });
+
+            var foo = new MyWidget();
+            done();
+        }
+    },
+
+    "jQuery 1.4.2": {
+        duration: 500,
+        iterations: 10,
+        useStrictSandbox: true,
+
+        preloadUrls: {
+            jquery: 'http://code.jquery.com/jquery-1.4.2.min.js'
+        },
+
+        setup: function () {
+            // Make sure the JS was preloaded successfully.
+            if (!sandbox.preload.jquery) {
+                sandbox.log('Failed to load jquery.', 'warn', 'sandbox');
+                return false;
+            }
+        },
+
+        test: function () {
+            eval(sandbox.preload.jquery);
+            done();
+        }
+    },
+
+    "YUI 3.1.1 jQueryish package w/ explicit dependencies": {
+        duration: 500,
+        iterations: 10,
+        useStrictSandbox: true,
+
+        preloadUrls: {
+            yui: 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-base-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/yui/yui-later-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/dom/dom-min.js&3.1.1/build/event/event-min.js&3.1.1/build/pluginhost/pluginhost-min.js&3.1.1/build/node/node-min.js&3.1.1/build/attribute/attribute-base-min.js&3.1.1/build/base/base-base-min.js&3.1.1/build/anim/anim-min.js&3.1.1/build/querystring/querystring-stringify-simple-min.js&3.1.1/build/queue-promote/queue-promote-min.js&3.1.1/build/datatype/datatype-xml-min.js&3.1.1/build/io/io-min.js&3.1.1/build/json/json-min.js&3.1.1/build/yui/get-min.js&3.1.1/build/loader/loader-min.js'
+        },
+
+        setup: function () {
+            // Make sure the JS was preloaded successfully.
+            if (!sandbox.preload.yui) {
+                sandbox.log('Failed to load YUI JS.', 'warn', 'sandbox');
+                return false;
+            }
+        },
+
+        test: function () {
+            eval(sandbox.preload.yui);
             YUI().use('anim', 'event', 'io', 'json', 'node', function (Y) {
+                done();
+            });
+        }
+    },
+
+    "YUI 3.1.1 jQueryish package w/ YUI().use('*')" : {
+        duration: 500,
+        iterations: 10,
+        useStrictSandbox: true,
+
+        preloadUrls: {
+            yui: 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-base-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/yui/yui-later-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/dom/dom-min.js&3.1.1/build/event/event-min.js&3.1.1/build/pluginhost/pluginhost-min.js&3.1.1/build/node/node-min.js&3.1.1/build/attribute/attribute-base-min.js&3.1.1/build/base/base-base-min.js&3.1.1/build/anim/anim-min.js&3.1.1/build/querystring/querystring-stringify-simple-min.js&3.1.1/build/queue-promote/queue-promote-min.js&3.1.1/build/datatype/datatype-xml-min.js&3.1.1/build/io/io-min.js&3.1.1/build/json/json-min.js&3.1.1/build/yui/get-min.js&3.1.1/build/loader/loader-min.js'
+        },
+
+        setup: function () {
+            // Make sure the JS was preloaded successfully.
+            if (!sandbox.preload.yui) {
+                sandbox.log('Failed to load YUI JS.', 'warn', 'sandbox');
+                return false;
+            }
+        },
+
+        test: function () {
+            eval(sandbox.preload.yui);
+            YUI({bootstrap: false}).use('*', function (Y) {
                 done();
             });
         }

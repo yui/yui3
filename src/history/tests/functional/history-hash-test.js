@@ -2,9 +2,10 @@ YUI.add('history-hash-test', function (Y) {
 
 var Obj = Y.Object,
 
-    win      = Y.config.win,
-    location = win.location,
-    waitTime = 100;
+    defaultPrefix = Y.History.hashPrefix,
+    win           = Y.config.win,
+    location      = win.location,
+    waitTime      = 100;
 
 Y.Test.Runner.add(new Y.Test.Case({
     name: 'HistoryHash',
@@ -16,6 +17,7 @@ Y.Test.Runner.add(new Y.Test.Case({
 
     tearDown: function () {
         delete this.history;
+        Y.History.hashPrefix = defaultPrefix;
     },
 
     // -- Static Properties and Methods ----------------------------------------
@@ -38,6 +40,12 @@ Y.Test.Runner.add(new Y.Test.Case({
     'getHash() should get the current raw (not decoded) hash string': function () {
         location.hash = Y.History.encode('foo bar&baz/quux@moo+');
         Y.Assert.areSame('foo+bar%26baz%2Fquux%40moo%2B', Y.History.getHash());
+
+        location.hash = '!withprefix';
+        Y.Assert.areSame('!withprefix', Y.History.getHash());
+
+        Y.History.hashPrefix = '!';
+        Y.Assert.areSame('withprefix', Y.History.getHash());
     },
 
     'getUrl() should get the current URL': function () {
@@ -46,6 +54,14 @@ Y.Test.Runner.add(new Y.Test.Case({
 
     'parseHash() should parse a hash string into an object': function () {
         var parsed = Y.History.parseHash('#foo=bar&baz=qu+ux');
+
+        Y.Assert.isObject(parsed);
+        Y.Assert.areSame(2, Obj.size(parsed));
+        Y.Assert.areSame('bar', parsed.foo);
+        Y.Assert.areSame('qu ux', parsed.baz);
+
+        Y.History.hashPrefix = '!';
+        parsed = Y.History.parseHash('#!foo=bar&baz=qu+ux');
 
         Y.Assert.isObject(parsed);
         Y.Assert.areSame(2, Obj.size(parsed));
@@ -71,6 +87,14 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.History.replaceHash(hash);
         Y.Assert.areSame(hash, Y.History.getHash());
+
+        Y.History.hashPrefix = '!';
+
+        Y.History.replaceHash('#withprefix');
+        Y.Assert.areSame('#!withprefix', location.hash);
+
+        Y.History.replaceHash('withprefix');
+        Y.Assert.areSame('#!withprefix', location.hash);
     },
 
     'setHash() should set the hash': function () {
@@ -78,6 +102,14 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.History.setHash(hash);
         Y.Assert.areSame(hash, Y.History.getHash());
+
+        Y.History.hashPrefix = '!';
+
+        Y.History.setHash('#withprefix');
+        Y.Assert.areSame('#!withprefix', location.hash);
+
+        Y.History.setHash('withprefix');
+        Y.Assert.areSame('#!withprefix', location.hash);
     },
 
     // -- Instance Methods -----------------------------------------------------

@@ -274,6 +274,7 @@ Y.DOM = {
     create: function(html, doc) {
         if (typeof html === 'string') {
             html = Y.Lang.trim(html); // match IE which trims whitespace from innerHTML
+
         }
 
         doc = doc || Y.config.doc;
@@ -283,20 +284,29 @@ Y.DOM = {
             ret = null,
             tag, nodes;
 
-        if (m && custom[m[1]]) {
-            if (typeof custom[m[1]] === 'function') {
-                create = custom[m[1]];
-            } else {
-                tag = custom[m[1]];
+        if (html != undefined) { // not undefined or null
+            if (m && custom[m[1]]) {
+                if (typeof custom[m[1]] === 'function') {
+                    create = custom[m[1]];
+                } else {
+                    tag = custom[m[1]];
+                }
             }
-        }
 
-        nodes = create(html, doc, tag).childNodes;
+            nodes = create(html, doc, tag).childNodes;
 
-        if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
-            ret = nodes[0].parentNode.removeChild(nodes[0]);
-        } else { // return multiple nodes as a fragment
-             ret = Y.DOM._nl2frag(nodes, doc);
+            if (nodes.length === 1) { // return single node, breaking parentNode ref from "fragment"
+                ret = nodes[0].parentNode.removeChild(nodes[0]);
+            } else if (nodes[0] && nodes[0].className === 'yui3-big-dummy') { // using dummy node to preserve some attributes (e.g. OPTION not selected)
+                if (nodes.length === 2) {
+                    ret = nodes[0].nextSibling;
+                } else {
+                    nodes[0].parentNode.removeChild(nodes[0]); 
+                     ret = Y.DOM._nl2frag(nodes, doc);
+                }
+            } else { // return multiple nodes as a fragment
+                 ret = Y.DOM._nl2frag(nodes, doc);
+            }
         }
 
         return ret;
@@ -413,10 +423,6 @@ Y.DOM = {
      * </dl>
      */
     addHTML: function(node, content, where) {
-        if (typeof content === 'string') {
-            content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
-        }
-
         var nodeParent = node.parentNode,
             newNode;
             
@@ -683,7 +689,7 @@ Y.DOM = {
     if (Y.UA.gecko || Y.UA.ie) {
         Y.mix(creators, {
             option: function(html, doc) {
-                return create('<select>' + html + '</select>', doc);
+                return create('<select><option class="yui3-big-dummy" selected></option>' + html + '</select>', doc);
             },
 
             tr: function(html, doc) {

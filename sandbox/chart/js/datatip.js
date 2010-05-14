@@ -2,9 +2,6 @@
 function DataTip (config) 
 {
 	DataTip.superclass.constructor.apply(this, arguments);
-	if(this.get("graph") && this.get("graph").swfReady)
-	{
-	}
 }
 
 DataTip.NAME = "dataTip";
@@ -36,16 +33,6 @@ DataTip.ATTRS = {
 		setter: function(val)
 		{
 			this._graph = val;
-			if(this._graph && this._graph.swfReady)
-			{
-				this._init(this._graph);
-			}
-			else
-			{
-				this._graph.on("graphReady", Y.bind(function(evt){
-					this._initDataTip(evt.swfowner);
-				}, this));
-			}
 			return val;
 		}
 	}
@@ -57,7 +44,6 @@ DataTip.ATTRS = {
 Y.extend(DataTip, Y.Container, 
 {
 	GUID:"yuidataTip",
-
 
 	/**
 	 * Reference to corresponding Actionscript class.
@@ -74,13 +60,10 @@ Y.extend(DataTip, Y.Container,
 	 * @method _init
 	 * @param swfowner {Object} Class instance with direct access to the application swf.
 	 */
-	_initDataTip: function(swfowner)
+	initializer: function(cfg)
 	{
-		this.swfowner = swfowner;
-		this.swfReady = true;
-		this.appswf = this.swfowner.appswf;
-		this.appswf.createInstance(this._id, "DataTip", ["$" + this.get("graph")._id]);
-		this.appswf.applyMethod(this.get("parent")._id, "addItem", ["$" + this._id, {excludeFromLayout:true}]);
+        this.createInstance(this._id, "DataTip", ["$" + this.get("graph")._id]);
+        this.applyMethod(this.get("parent")._id, "addItem", ["$" + this._id, {excludeFromLayout:true}]);
 	}
 });
 

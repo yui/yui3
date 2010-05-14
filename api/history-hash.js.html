@@ -66,20 +66,25 @@
 <span class="cm"> * @class History</span>
 <span class="cm"> * @extends HistoryBase</span>
 <span class="cm"> * @constructor</span>
+<span class="cm"> * @param {Object} config (optional) Configuration object. See the HistoryBase</span>
+<span class="cm"> *   documentation for details.</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">Lang</span>      <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
-    <span class="nx">Obj</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
-    <span class="nx">GlobalEnv</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.History&#39;</span><span class="p">),</span>
+<span class="kd">var</span> <span class="nx">HistoryBase</span>    <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span>
+    <span class="nx">Lang</span>           <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">,</span>
+    <span class="nx">Obj</span>            <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Object</span><span class="p">,</span>
+    <span class="nx">GlobalEnv</span>      <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.History&#39;</span><span class="p">),</span>
 
-    <span class="nx">config</span>          <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span>
-    <span class="nx">doc</span>             <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
-    <span class="nx">docMode</span>         <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentMode</span><span class="p">,</span>
+    <span class="nx">SRC_HASH</span>       <span class="o">=</span> <span class="s1">&#39;hash&#39;</span><span class="p">,</span>
+
+    <span class="nx">config</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">,</span>
+    <span class="nx">doc</span>            <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">,</span>
+    <span class="nx">docMode</span>        <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">documentMode</span><span class="p">,</span>
     <span class="nx">hashNotifiers</span><span class="p">,</span>
     <span class="nx">oldHash</span><span class="p">,</span>
     <span class="nx">oldUrl</span><span class="p">,</span>
-    <span class="nx">win</span>             <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
-    <span class="nx">location</span>        <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">,</span>
+    <span class="nx">win</span>            <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+    <span class="nx">location</span>       <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">,</span>
 
     <span class="c1">// IE8 supports the hashchange event, but only in IE8 Standards</span>
     <span class="c1">// Mode. However, IE8 in IE7 compatibility mode still defines the</span>
@@ -89,38 +94,36 @@
     <span class="nx">nativeHashChange</span> <span class="o">=</span> <span class="o">!</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">win</span><span class="p">.</span><span class="nx">onhashchange</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
             <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">docMode</span><span class="p">)</span> <span class="o">||</span> <span class="nx">docMode</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">),</span>
 
-<span class="nx">History</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">History</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
     <span class="nx">History</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 <span class="p">};</span>
 
-<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">History</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">,</span> <span class="p">{</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">History</span><span class="p">,</span> <span class="nx">HistoryBase</span><span class="p">,</span> <span class="p">{</span>
     <span class="c1">// -- Initialization -------------------------------------------------------</span>
     <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Use the bookmarked state as the initialState if no initialState was</span>
         <span class="c1">// specified.</span>
         <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="p">{};</span>
-        <span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span> <span class="o">||</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">parseHash</span><span class="p">();</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">initialState</span> <span class="o">||</span> <span class="nx">History</span><span class="p">.</span><span class="nx">parseHash</span><span class="p">();</span>
 
         <span class="c1">// Subscribe to the synthetic hashchange event (defined below) to handle</span>
         <span class="c1">// changes.</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_afterHashChange</span><span class="p">,</span> <span class="k">this</span><span class="p">),</span> <span class="nx">win</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+        <span class="nx">History</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
-    <span class="nx">_storeState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">newState</span><span class="p">,</span> <span class="nx">silent</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">constructor</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">;</span>
+    <span class="nx">_storeState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">newState</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">newHash</span> <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="nx">newState</span><span class="p">);</span>
 
-        <span class="nx">constructor</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_storeState</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="nx">History</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">_storeState</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
 
         <span class="c1">// Update the location hash with the changes, but only if the new hash</span>
         <span class="c1">// actually differs from the current hash (this avoids creating multiple</span>
         <span class="c1">// history entries for a single state).</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">getHash</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">constructor</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="nx">newState</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">constructor</span><span class="p">[</span><span class="nx">silent</span> <span class="o">?</span> <span class="s1">&#39;replaceHash&#39;</span> <span class="o">:</span> <span class="s1">&#39;setHash&#39;</span><span class="p">](</span>
-                    <span class="nx">constructor</span><span class="p">.</span><span class="nx">createHash</span><span class="p">(</span><span class="nx">newState</span><span class="p">));</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">History</span><span class="p">.</span><span class="nx">getHash</span><span class="p">()</span> <span class="o">!==</span> <span class="nx">newHash</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">History</span><span class="p">[</span><span class="nx">src</span> <span class="o">===</span> <span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">SRC_REPLACE</span> <span class="o">?</span> <span class="s1">&#39;replaceHash&#39;</span> <span class="o">:</span> <span class="s1">&#39;setHash&#39;</span><span class="p">](</span><span class="nx">newHash</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -133,11 +136,45 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterHashChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">parseHash</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newHash</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">SRC_HASH</span><span class="p">,</span> <span class="nx">History</span><span class="p">.</span><span class="nx">parseHash</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newHash</span><span class="p">));</span>
     <span class="p">}</span>
 <span class="p">},</span> <span class="p">{</span>
     <span class="c1">// -- Public Static Properties ---------------------------------------------</span>
     <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;history&#39;</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Constant used to identify state changes originating from</span>
+<span class="cm">     * &lt;code&gt;hashchange&lt;/code&gt; events.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property SRC_HASH</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @static</span>
+<span class="cm">     * @final</span>
+<span class="cm">     */</span>
+    <span class="nx">SRC_HASH</span><span class="o">:</span> <span class="nx">SRC_HASH</span><span class="p">,</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Prefix to prepend when setting the hash fragment. For example, if the</span>
+<span class="cm">     * prefix is &lt;code&gt;!&lt;/code&gt; and the hash fragment is set to</span>
+<span class="cm">     * &lt;code&gt;#foo=bar&amp;baz=quux&lt;/code&gt;, the final hash fragment in the URL will</span>
+<span class="cm">     * become &lt;code&gt;#!foo=bar&amp;baz=quux&lt;/code&gt;. This can be used to help make an</span>
+<span class="cm">     * Ajax application crawlable in accordance with Google&#39;s guidelines at</span>
+<span class="cm">     * &lt;a href=&quot;http://code.google.com/web/ajaxcrawling/&quot;&gt;http://code.google.com/web/ajaxcrawling/&lt;/a&gt;.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * &lt;p&gt;</span>
+<span class="cm">     * Note that this prefix applies to all History instances. It&#39;s not possible</span>
+<span class="cm">     * for individual instances to use their own prefixes since they all operate</span>
+<span class="cm">     * on the same URL.</span>
+<span class="cm">     * &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     * @property hashPrefix</span>
+<span class="cm">     * @type String</span>
+<span class="cm">     * @default &#39;&#39;</span>
+<span class="cm">     * @static</span>
+<span class="cm">     */</span>
+    <span class="nx">hashPrefix</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Whether or not this browser supports the &lt;code&gt;window.onhashchange&lt;/code&gt;</span>
@@ -148,7 +185,6 @@
 <span class="cm">     *</span>
 <span class="cm">     * @property nativeHashChange</span>
 <span class="cm">     * @type Boolean</span>
-<span class="cm">     * @default false</span>
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">nativeHashChange</span><span class="o">:</span> <span class="nx">nativeHashChange</span><span class="p">,</span>
@@ -162,6 +198,7 @@
 <span class="cm">     * @type RegExp</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     * @static</span>
+<span class="cm">     * @final</span>
 <span class="cm">     */</span>
     <span class="nx">_REGEX_HASH</span><span class="o">:</span> <span class="sr">/([^\?#&amp;]+)=([^&amp;]+)/g</span><span class="p">,</span>
 
@@ -217,7 +254,7 @@
 
     <span class="cm">/**</span>
 <span class="cm">     * Gets the raw (not decoded) current location hash, minus the preceding &#39;#&#39;</span>
-<span class="cm">     * character.</span>
+<span class="cm">     * character and the hashPrefix (if one is set).</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method getHash</span>
 <span class="cm">     * @return {String} current location hash</span>
@@ -226,11 +263,25 @@
     <span class="nx">getHash</span><span class="o">:</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">gecko</span> <span class="o">?</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
         <span class="c1">// Gecko&#39;s window.location.hash returns a decoded string and we want all</span>
         <span class="c1">// encoding untouched, so we need to get the hash value from</span>
-        <span class="c1">// window.location.href instead.</span>
-        <span class="kd">var</span> <span class="nx">matches</span> <span class="o">=</span> <span class="sr">/#(.*)$/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">matches</span> <span class="o">&amp;&amp;</span> <span class="nx">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">?</span> <span class="nx">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="c1">// window.location.href instead. We have to use UA sniffing rather than</span>
+        <span class="c1">// feature detection, since the only way to detect this would be to</span>
+        <span class="c1">// actually change the hash.</span>
+        <span class="kd">var</span> <span class="nx">matches</span> <span class="o">=</span> <span class="sr">/#(.*)$/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">),</span>
+            <span class="nx">hash</span>    <span class="o">=</span> <span class="nx">matches</span> <span class="o">&amp;&amp;</span> <span class="nx">matches</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="nx">prefix</span>  <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">hashPrefix</span><span class="p">;</span>
+
+        <span class="k">return</span> <span class="nx">prefix</span> <span class="o">&amp;&amp;</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span>
+                    <span class="nx">hash</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">hash</span><span class="p">;</span>
     <span class="p">}</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">hash</span>   <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+            <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">hashPrefix</span><span class="p">;</span>
+
+        <span class="c1">// Slight code duplication here, but execution speed is of the essence</span>
+        <span class="c1">// since getHash() is called every 20ms or so to poll for changes in</span>
+        <span class="c1">// browsers that don&#39;t support native onhashchange. An additional</span>
+        <span class="c1">// function call would add unnecessary overhead.</span>
+        <span class="k">return</span> <span class="nx">prefix</span> <span class="o">&amp;&amp;</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span>
+                    <span class="nx">hash</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nx">hash</span><span class="p">;</span>
     <span class="p">}),</span>
 
     <span class="cm">/**</span>
@@ -255,16 +306,28 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">parseHash</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span> <span class="o">||</span> <span class="nx">History</span><span class="p">.</span><span class="nx">getHash</span><span class="p">();</span>
-
-        <span class="kd">var</span> <span class="nx">decode</span>  <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">decode</span><span class="p">,</span>
+        <span class="kd">var</span> <span class="nx">decode</span> <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">decode</span><span class="p">,</span>
             <span class="nx">i</span><span class="p">,</span>
-            <span class="nx">matches</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">History</span><span class="p">.</span><span class="nx">_REGEX_HASH</span><span class="p">)</span> <span class="o">||</span> <span class="p">[],</span>
-            <span class="nx">len</span>     <span class="o">=</span> <span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">len</span><span class="p">,</span>
+            <span class="nx">matches</span><span class="p">,</span>
             <span class="nx">param</span><span class="p">,</span>
-            <span class="nx">params</span>  <span class="o">=</span> <span class="p">{};</span>
+            <span class="nx">params</span> <span class="o">=</span> <span class="p">{},</span>
+            <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">hashPrefix</span><span class="p">,</span>
+            <span class="nx">prefixIndex</span><span class="p">;</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">hash</span> <span class="o">=</span> <span class="nx">Lang</span><span class="p">.</span><span class="nx">isValue</span><span class="p">(</span><span class="nx">hash</span><span class="p">)</span> <span class="o">?</span> <span class="nx">hash</span> <span class="o">:</span> <span class="nx">History</span><span class="p">.</span><span class="nx">getHash</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">prefix</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">prefixIndex</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">prefix</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">prefixIndex</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">||</span> <span class="p">(</span><span class="nx">prefixIndex</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;#&#39;</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">prefix</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="nx">matches</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">History</span><span class="p">.</span><span class="nx">_REGEX_HASH</span><span class="p">)</span> <span class="o">||</span> <span class="p">[];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">param</span> <span class="o">=</span> <span class="nx">matches</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">);</span>
             <span class="nx">params</span><span class="p">[</span><span class="nx">decode</span><span class="p">(</span><span class="nx">param</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="nx">decode</span><span class="p">(</span><span class="nx">param</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
         <span class="p">}</span>
@@ -275,37 +338,96 @@
     <span class="cm">/**</span>
 <span class="cm">     * Replaces the browser&#39;s current location hash with the specified hash</span>
 <span class="cm">     * and removes all forward navigation states, without creating a new browser</span>
-<span class="cm">     * history entry.</span>
+<span class="cm">     * history entry. Automatically prepends the &lt;code&gt;hashPrefix&lt;/code&gt; if one</span>
+<span class="cm">     * is set.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method replaceHash</span>
 <span class="cm">     * @param {String} hash new location hash</span>
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">replaceHash</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;replaceHash: &#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
-        <span class="nx">location</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">hash</span> <span class="o">:</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">hash</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">location</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">History</span><span class="p">.</span><span class="nx">hashPrefix</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Sets the browser&#39;s location hash to the specified string.</span>
+<span class="cm">     * Sets the browser&#39;s location hash to the specified string. Automatically</span>
+<span class="cm">     * prepends the &lt;code&gt;hashPrefix&lt;/code&gt; if one is set.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method setHash</span>
 <span class="cm">     * @param {String} hash new location hash</span>
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>
     <span class="nx">setHash</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;setHash: &#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
-        <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">hash</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="p">(</span><span class="nx">History</span><span class="p">.</span><span class="nx">hashPrefix</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">});</span>
 
 <span class="c1">// -- Synthetic hashchange Event -----------------------------------------------</span>
 <span class="nx">hashNotifiers</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.History._hashNotifiers&#39;</span><span class="p">);</span>
 
-<span class="c1">// Synthetic hashchange event to normalize hashchange differences across</span>
-<span class="c1">// browsers, and to provide hashchange for browsers that don&#39;t natively support</span>
-<span class="c1">// it.</span>
-<span class="c1">// TODO: how to document this?</span>
+<span class="c1">// TODO: YUIDoc currently doesn&#39;t provide a good way to document synthetic DOM</span>
+<span class="c1">// events. For now, we&#39;re just documenting the hashchange event on the YUI</span>
+<span class="c1">// object, which is about the best we can do until enhancements are made to</span>
+<span class="c1">// YUIDoc.</span>
+
+<span class="cm">/**</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * Synthetic &lt;code&gt;window.onhashchange&lt;/code&gt; event that normalizes differences</span>
+<span class="cm"> * across browsers and provides support for browsers that don&#39;t natively support</span>
+<span class="cm"> * &lt;code&gt;onhashchange&lt;/code&gt;.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * This event is provided by the &lt;code&gt;history-hash&lt;/code&gt; module.</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;p&gt;</span>
+<span class="cm"> * &lt;strong&gt;Usage example:&lt;/strong&gt;</span>
+<span class="cm"> * &lt;/p&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;code&gt;&lt;pre&gt;</span>
+<span class="cm"> * YUI().use(&#39;history-hash&#39;, function (Y) {</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;Y.on(&#39;hashchange&#39;, function (e) {</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// Handle hashchange events on the current window.</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;}, Y.config.win);</span>
+<span class="cm"> * });</span>
+<span class="cm"> * &lt;/pre&gt;&lt;/code&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> * @event hashchange</span>
+<span class="cm"> * @param {EventFacade} e Event facade with the following additional</span>
+<span class="cm"> *   properties:</span>
+<span class="cm"> *</span>
+<span class="cm"> * &lt;dl&gt;</span>
+<span class="cm"> *   &lt;dt&gt;oldHash&lt;/dt&gt;</span>
+<span class="cm"> *   &lt;dd&gt;</span>
+<span class="cm"> *     Previous hash fragment value before the change.</span>
+<span class="cm"> *   &lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;oldUrl&lt;/dt&gt;</span>
+<span class="cm"> *   &lt;dd&gt;</span>
+<span class="cm"> *     Previous URL (including the hash fragment) before the change.</span>
+<span class="cm"> *   &lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;newHash&lt;/dt&gt;</span>
+<span class="cm"> *   &lt;dd&gt;</span>
+<span class="cm"> *     New hash fragment value after the change.</span>
+<span class="cm"> *   &lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;newUrl&lt;/dt&gt;</span>
+<span class="cm"> *   &lt;dd&gt;</span>
+<span class="cm"> *     New URL (including the hash fragment) after the change.</span>
+<span class="cm"> *   &lt;/dd&gt;</span>
+<span class="cm"> * &lt;/dl&gt;</span>
+<span class="cm"> * @for YUI</span>
+<span class="cm"> */</span>
 <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">subscriber</span><span class="p">,</span> <span class="nx">notifier</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Ignore this subscriber if the node is anything other than the</span>
@@ -492,7 +614,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "decode", "url": "History.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "", "host": "History", "name": "getUrl", "url": "History.html#method_getUrl", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_handleChanges", "url": "HistoryBase.html#method__handleChanges", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "History", "name": "_updateIframe", "url": "History.html#method__updateIframe", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "decode", "url": "History.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "", "host": "History", "name": "getUrl", "url": "History.html#method_getUrl", "type": "method"}, {"access": "", "host": "History", "name": "hashPrefix", "url": "History.html#property_hashPrefix", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "History", "name": "SRC_HASH", "url": "History.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "History", "name": "_updateIframe", "url": "History.html#method__updateIframe", "type": "method"}];
 </script>
 </body>
 </html>

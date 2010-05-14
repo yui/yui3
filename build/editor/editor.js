@@ -171,7 +171,7 @@ YUI.add('frame', function(Y) {
                 this._ready = true;
                 var inst = this.getInstance(),
                     args = Y.clone(this.get('use'));
-
+                
                 this.fire('contentready');
 
                 if (e) {
@@ -220,9 +220,11 @@ YUI.add('frame', function(Y) {
             if (this.get('designMode')) {
                 doc.designMode = 'on';
                 if (!Y.UA.ie) {
-                    //Force other browsers into non CSS styling
-                    doc.execCommand('styleWithCSS', false, false);
-                    doc.execCommand('insertbronreturn', false, false);
+                    try {
+                        //Force other browsers into non CSS styling
+                        doc.execCommand('styleWithCSS', false, false);
+                        doc.execCommand('insertbronreturn', false, false);
+                    } catch (e) {}
                 }
             }
         },
@@ -334,6 +336,12 @@ YUI.add('frame', function(Y) {
             if (this._ready) {
                 var inst = this.getInstance();
                 inst.one('body').set('innerHTML', html);
+            } else {
+                //This needs to be wrapped in a contentready callback for the !_ready state
+                this.on('contentready', Y.bind(function(html, e) {
+                    var inst = this.getInstance();
+                    inst.one('body').set('innerHTML', html);
+                }, this, html));
             }
             return html;
         },
@@ -490,7 +498,7 @@ YUI.add('frame', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'node', 'selector-css3', 'substitute']});
+}, '@VERSION@' ,{requires:['base', 'node', 'selector-css3', 'substitute'], skinnable:false});
 YUI.add('selection', function(Y) {
 
     /**
@@ -1013,7 +1021,7 @@ YUI.add('selection', function(Y) {
     };
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node']});
+}, '@VERSION@' ,{requires:['node'], skinnable:false});
 YUI.add('exec-command', function(Y) {
 
 
@@ -1222,7 +1230,7 @@ YUI.add('exec-command', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['frame']});
+}, '@VERSION@' ,{requires:['frame'], skinnable:false});
 YUI.add('editor-tab', function(Y) {
 
     /**
@@ -1293,7 +1301,7 @@ YUI.add('editor-tab', function(Y) {
     Y.Plugin.EditorTab = EditorTab;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('createlink-base', function(Y) {
 
     /**
@@ -1357,7 +1365,7 @@ YUI.add('createlink-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 YUI.add('editor-base', function(Y) {
 
 
@@ -1419,6 +1427,84 @@ YUI.add('editor-base', function(Y) {
                     }
                     break;
             }
+
+            var changed = this.getDomPath(e.changedNode),
+                cmds = {}, family, fsize, classes = [];
+
+            changed.each(function(n) {
+                
+                var tag = n.get('tagName').toLowerCase(),
+                    cmd = EditorBase.TAG2CMD[tag],
+                    el = Y.Node.getDOMNode(n);
+
+                if (cmd) {
+                    cmds[cmd] = 1;
+                }
+
+                //Bold and Italic styles
+                var s = el.style;
+                if (s.fontWeight.toLowerCase() == 'bold') {
+                    cmds.bold = 1;
+                }
+                if (s.fontStyle.toLowerCase() == 'italic') {
+                    cmds.italic = 1;
+                }
+                if (s.textDecoration.toLowerCase() == 'underline') {
+                    cmds.underline = 1;
+                }
+                if (s.textDecoration.toLowerCase() == 'line-through') {
+                    cmds.strikethrough = 1;
+                }
+
+                family = n.getStyle('fontFamily').split(',')[0].toLowerCase();
+                fsize = n.getStyle('fontSize');
+
+                var cls = n.get('className').split(' ');
+                Y.each(cls, function(v) {
+                    if (v !== '' && (v.substr(0, 4) !== 'yui_')) {
+                        classes.push(v);
+                    }
+                });
+                
+            });
+            e.dompath = changed;
+            e.fontFamily = family;
+            e.fontSize = fsize;
+            e.classNames = classes;
+            e.commands = cmds;
+        },
+        /**
+        * Walk the dom tree from this node up to body, returning a reversed array of parents.
+        * @method getDomPath
+        * @param {Node} node The Node to start from 
+        */
+        getDomPath: function(node) {
+            
+			var domPath = [];
+
+            while (node !== null) {
+                if (!node.inDoc()) {
+                    node = null;
+                    break;
+                }
+                //Check to see if we get el.nodeName and nodeType
+                if (node.get('nodeName') && node.get('nodeType') && (node.get('nodeType') == 1)) {
+                    domPath.push(Y.Node.getDOMNode(node));
+                }
+
+                if (node.test('body')) {
+                    node = null;
+                    break;
+                }
+
+                node = node.get('parentNode');
+            }
+            if (domPath.length === 0) {
+                domPath[0] = Y.confg.doc.body;
+            }
+            
+            return Y.all(domPath.reverse());
+
         },
         /**
         * After frame ready, bind mousedown & keyup listeners
@@ -1522,6 +1608,19 @@ YUI.add('editor-base', function(Y) {
             return html;
         }
     }, {
+        TAG2CMD: {
+            'b': 'bold',
+            'strong': 'bold',
+            'i': 'italic',
+            'em': 'italic',
+            'u': 'underline',
+            'sup': 'superscript',
+            'sub': 'subscript',
+            'img': 'insertimage',
+            'a' : 'createlink',
+            'ul' : 'insertunorderedlist',
+            'ol' : 'insertorderedlist'
+        },
         /**
         * Hash table of keys to fire a nodeChange event for.
         * @static
@@ -1611,7 +1710,7 @@ YUI.add('editor-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['base', 'frame', 'node', 'exec-command']});
+}, '@VERSION@' ,{requires:['base', 'frame', 'node', 'exec-command'], skinnable:false});
 YUI.add('editor-lists', function(Y) {
 
     /**
@@ -1768,7 +1867,7 @@ YUI.add('editor-lists', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['editor-base']});
+}, '@VERSION@' ,{requires:['editor-base'], skinnable:false});
 
 
 YUI.add('editor', function(Y){}, '@VERSION@' ,{use:['frame', 'selection', 'exec-command', 'editor-base'], skinnable:false});

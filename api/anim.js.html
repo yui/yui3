@@ -102,15 +102,16 @@
         <span class="nx">NUM</span> <span class="o">=</span> <span class="nb">Number</span><span class="p">;</span>
 
     <span class="kd">var</span> <span class="nx">_running</span> <span class="o">=</span> <span class="p">{},</span>
-        <span class="nx">_instances</span> <span class="o">=</span> <span class="p">{},</span>
         <span class="nx">_timer</span><span class="p">;</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-        <span class="nx">_instances</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">_instances</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)]</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">};</span>
 
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;anim&#39;</span><span class="p">;</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">_instances</span> <span class="o">=</span> <span class="p">{};</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Regex of properties that should use the default unit.</span>
@@ -354,9 +355,10 @@
 <span class="cm">     * @static</span>
 <span class="cm">     */</span>    
     <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">run</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">_instances</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">_instances</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">run</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">_instances</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">run</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">instances</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">_instances</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">instances</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">instances</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">run</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">instances</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">run</span><span class="p">();</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">};</span>
@@ -662,6 +664,10 @@
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">},</span>
+
+        <span class="nx">destructor</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">delete</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Anim</span><span class="p">.</span><span class="nx">_instances</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="k">this</span><span class="p">)];</span>
         <span class="p">}</span>
     <span class="p">};</span>
 

@@ -18,7 +18,9 @@ YUI({
     // let them be combo handled.  Set combine to false, or include
     // them statically and set fetchCSS to false.
     // yui2: '2.5.2', 
-    yui2: '2.7.0', 
+    yui2: '2.8.1', 
+
+    '2in3': '3', 
 
     // Tangental to this example, but you can specify a gallery revision the same way
     // gallery: 'gallery-2010.02.22-22'
@@ -73,3 +75,8 @@ YUI({
 <div id="cal1Container"></div> 
 </body>
 </html>
+
+YUI({
+    yui2: '2.8.1', 
+    '2in3': '3'
+}).use('yui2-logger', 'yui2-calendar', function (Y) {

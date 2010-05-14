@@ -716,10 +716,16 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
      * @return {string} The object's guid or null
      */
     stamp: function(o, readOnly) {
+        var uid;
         if (!o) {
             return o;
         }
-        var uid = (typeof o === 'string') ? o : o._yuid;
+        if (o.uniqueID && o.nodeName) {
+            uid = o.uniqueID;
+        } else {
+            uid = (typeof o === 'string') ? o : o._yuid;
+        }
+
         if (!uid) {
             uid = this.guid();
             if (!readOnly) {
