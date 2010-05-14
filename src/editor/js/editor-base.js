@@ -59,6 +59,84 @@
                     }
                     break;
             }
+
+            var changed = this.getDomPath(e.changedNode),
+                cmds = {}, family, fsize, classes = [];
+
+            changed.each(function(n) {
+                
+                var tag = n.get('tagName').toLowerCase(),
+                    cmd = EditorBase.TAG2CMD[tag],
+                    el = Y.Node.getDOMNode(n);
+
+                if (cmd) {
+                    cmds[cmd] = 1;
+                }
+
+                //Bold and Italic styles
+                var s = el.style;
+                if (s.fontWeight.toLowerCase() == 'bold') {
+                    cmds.bold = 1;
+                }
+                if (s.fontStyle.toLowerCase() == 'italic') {
+                    cmds.italic = 1;
+                }
+                if (s.textDecoration.toLowerCase() == 'underline') {
+                    cmds.underline = 1;
+                }
+                if (s.textDecoration.toLowerCase() == 'line-through') {
+                    cmds.strikethrough = 1;
+                }
+
+                family = n.getStyle('fontFamily').split(',')[0].toLowerCase();
+                fsize = n.getStyle('fontSize');
+
+                var cls = n.get('className').split(' ');
+                Y.each(cls, function(v) {
+                    if (v !== '' && (v.substr(0, 4) !== 'yui_')) {
+                        classes.push(v);
+                    }
+                });
+                
+            });
+            e.dompath = changed;
+            e.fontFamily = family;
+            e.fontSize = fsize;
+            e.classNames = classes;
+            e.commands = cmds;
+        },
+        /**
+        * Walk the dom tree from this node up to body, returning a reversed array of parents.
+        * @method getDomPath
+        * @param {Node} node The Node to start from 
+        */
+        getDomPath: function(node) {
+            
+			var domPath = [];
+
+            while (node !== null) {
+                if (!node.inDoc()) {
+                    node = null;
+                    break;
+                }
+                //Check to see if we get el.nodeName and nodeType
+                if (node.get('nodeName') && node.get('nodeType') && (node.get('nodeType') == 1)) {
+                    domPath.push(Y.Node.getDOMNode(node));
+                }
+
+                if (node.test('body')) {
+                    node = null;
+                    break;
+                }
+
+                node = node.get('parentNode');
+            }
+            if (domPath.length === 0) {
+                domPath[0] = Y.confg.doc.body;
+            }
+            
+            return Y.all(domPath.reverse());
+
         },
         /**
         * After frame ready, bind mousedown & keyup listeners
@@ -162,6 +240,19 @@
             return html;
         }
     }, {
+        TAG2CMD: {
+            'b': 'bold',
+            'strong': 'bold',
+            'i': 'italic',
+            'em': 'italic',
+            'u': 'underline',
+            'sup': 'superscript',
+            'sub': 'subscript',
+            'img': 'insertimage',
+            'a' : 'createlink',
+            'ul' : 'insertunorderedlist',
+            'ol' : 'insertorderedlist'
+        },
         /**
         * Hash table of keys to fire a nodeChange event for.
         * @static

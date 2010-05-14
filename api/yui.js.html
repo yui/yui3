@@ -765,10 +765,16 @@
 <span class="cm">     * @return {string} The object&#39;s guid or null</span>
 <span class="cm">     */</span>
     <span class="nx">stamp</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">,</span> <span class="nx">readOnly</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">uid</span><span class="p">;</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="kd">var</span> <span class="nx">uid</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">uniqueID</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">uid</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">uniqueID</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">uid</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">;</span>
+        <span class="p">}</span>
+
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">uid</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">uid</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">guid</span><span class="p">();</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">readOnly</span><span class="p">)</span> <span class="p">{</span>

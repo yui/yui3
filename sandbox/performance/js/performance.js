@@ -12,7 +12,11 @@ var Node       = Y.Node,
 
     CHART_URL         = 'http://chart.apis.google.com/chart?',
     DEFAULT_DURATION  = 1000, // default duration for time-based tests
-    YQL_XDR_DATATABLE = 'http://pieisgood.org/test/yui/yui3/sandbox/performance/assets/xdr.xml';
+    YQL_XDR_DATATABLE = 'http://pieisgood.org/test/yui/yui3/sandbox/performance/assets/xdr.xml',
+
+    EVT_FINISH = 'finish',
+    EVT_START  = 'start',
+    EVT_STOP   = 'stop';
 
 // -- Private Methods ----------------------------------------------------------
 
@@ -196,23 +200,56 @@ Perf = Y.Performance = {
     _queue    : [],
     _results  : {},
     _sandboxes: [],
+    _suites   : {},
     _tests    : {},
 
     // -- Public Methods -------------------------------------------------------
-    addTests: function (tests) {
-        // Give each test a unique id and add it to _tests.
-        Obj.each(tests, function (test, name) {
-            Perf._tests[name] = test;
-            Perf._tests[name]._id = Y.guid('perf-');
-        });
+    activateTestSuite: function (name) {
+        if (!Obj.owns(Perf._suites, name)) {
+            Y.log("There's no test suite named '" + name + "'.", 'error', 'performance');
+            return;
+        }
+
+        Perf.clearTests();
+        Obj.each(Perf._suites[name], Perf.addTest);
     },
 
-    clear: function () {
+    addTest: function (test, name) {
+      // Give each test a unique id and add it to _tests.
+      Perf._tests[name] = test;
+      Perf._tests[name]._id = Y.guid('perf-');
+      return Perf._tests[name];
+    },
+
+    addTestSuite: function (name, tests) {
+        Perf._suites[name] = tests;
+        return Perf._suites[name];
+    },
+
+    clearResults: function () {
         Perf._results = {};
 
         if (Perf._table) {
             Perf._table.one('tbody').get('children').remove();
         }
+    },
+
+    clearTests: function () {
+      Perf.clearResults();
+      Perf._tests = {};
+    },
+
+    clearTestSuites: function () {
+        Perf.clearTests();
+        Perf._suites = {};
+    },
+
+    getTestSuite: function (name) {
+        return Obj.owns(Perf._suites, name) ? Perf._suites[name] : undefined;
+    },
+
+    getTestSuites: function () {
+        return Y.mix({}, Perf._suites, true); // shallow clone
     },
 
     render: function (parent) {
@@ -251,11 +288,13 @@ Perf = Y.Performance = {
             return;
         }
 
-        Perf.clear();
+        Perf.clearResults();
 
         if (Perf._table) {
             Perf._table.addClass('running');
         }
+
+        Perf.fire(EVT_START);
 
         Obj.each(Perf._tests, Perf._queueTest);
         this._runNextTest();
@@ -263,6 +302,7 @@ Perf = Y.Performance = {
 
     stop: function () {
         Perf._queue = [];
+        Perf.fire(EVT_STOP);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -276,12 +316,19 @@ Perf = Y.Performance = {
         if (Perf._table) {
             Perf._table.removeClass('running');
         }
+
+        Perf.fire(EVT_FINISH);
     },
 
     _queueTest: function (test, name) {
         var i = Perf._mode === Perf.MODE_ITERATION ? test.iterations || 1 : 1,
             push,
             sandbox;
+
+        test = Y.mix({}, test, true);
+
+        // Note: test is now a shallow clone, but functions are still references
+        // to the original test functions. Don't modify them.
 
         if (test.warmup) {
             i += 1;
@@ -375,7 +422,7 @@ Perf = Y.Performance = {
         iteration.sandbox.on('ready', function () {
             var count;
 
-            if (isFunction(test.setup)) {
+            if (!iteration.setupDone && isFunction(test.setup)) {
 
                 if (test.asyncSetup) {
 
@@ -388,10 +435,8 @@ Perf = Y.Performance = {
                             Y.log('Test "' + iteration.name + '" failed.', 'warn', 'performance');
                             Perf._runNextTest();
                         } else {
-                            // Delete the setup function so it won't run again.
-                            delete iteration.test.setup;
-
                             // Restart the iteration.
+                            iteration.setupDone = true;
                             Perf._runNextTest(iteration);
                         }
                     });
@@ -502,6 +547,11 @@ Perf = Y.Performance = {
     }
 };
 
+Y.augment(Perf, Y.EventTarget);
+
 }, '@VERSION@', {
-    requires: ['gallery-sandbox', 'gallery-yql', 'later', 'node', 'substitute']
+    requires: [
+        'event-custom-base', 'gallery-sandbox', 'gallery-yql', 'later', 'node',
+        'substitute'
+    ]
 });
