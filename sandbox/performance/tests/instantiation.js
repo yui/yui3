@@ -248,13 +248,13 @@ Y.Performance.addTestSuite('Instantiation Tests', {
         }
     },
 
-    "YUI 3.1.1 jQueryish package w/ YUI().use('*')" : {
+    "YUI 3.1.1 jQueryish package w/ YUI().use('*'), no bootstrap" : {
         duration: 500,
         iterations: 10,
         useStrictSandbox: true,
 
         preloadUrls: {
-            yui: 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-base-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/yui/yui-later-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/dom/dom-min.js&3.1.1/build/event/event-min.js&3.1.1/build/pluginhost/pluginhost-min.js&3.1.1/build/node/node-min.js&3.1.1/build/attribute/attribute-base-min.js&3.1.1/build/base/base-base-min.js&3.1.1/build/anim/anim-min.js&3.1.1/build/querystring/querystring-stringify-simple-min.js&3.1.1/build/queue-promote/queue-promote-min.js&3.1.1/build/datatype/datatype-xml-min.js&3.1.1/build/io/io-min.js&3.1.1/build/json/json-min.js&3.1.1/build/yui/get-min.js&3.1.1/build/loader/loader-min.js'
+            yui: 'http://yui.yahooapis.com/combo?3.1.1/build/yui/yui-base-min.js&3.1.1/build/oop/oop-min.js&3.1.1/build/yui/yui-later-min.js&3.1.1/build/event-custom/event-custom-min.js&3.1.1/build/dom/dom-min.js&3.1.1/build/event/event-min.js&3.1.1/build/pluginhost/pluginhost-min.js&3.1.1/build/node/node-min.js&3.1.1/build/attribute/attribute-base-min.js&3.1.1/build/base/base-base-min.js&3.1.1/build/anim/anim-min.js&3.1.1/build/querystring/querystring-stringify-simple-min.js&3.1.1/build/queue-promote/queue-promote-min.js&3.1.1/build/datatype/datatype-xml-min.js&3.1.1/build/io/io-min.js&3.1.1/build/json/json-min.js&3.1.1/build/yui/get-min.js'
         },
 
         setup: function () {
