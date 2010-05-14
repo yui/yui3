@@ -9,10 +9,6 @@ body {
     font:13px/1.22 arial;
 }
 
-.yui-log {
-    height:1000px;
-}
-
 #doc {
     min-height:200px;
     width:1000px;
@@ -171,7 +167,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
 
-    new Y.Console({node: '#yui-log', height: '95%' }).render('#yui-log');
+    new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -1191,11 +1187,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
 
     Y.Test.Runner.add(suite);
 
-    // allow window scroll event to happen post-onload
     Y.on('load', function() {
-//        setTimeout(function() {
             Y.Test.Runner.run();
-//        }, 1);
     }, window);
 });
 </script>

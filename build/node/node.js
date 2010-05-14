@@ -1068,7 +1068,9 @@ Y.mix(Y_Node.prototype, {
 
     hasMethod: function(method) {
         var node = this._node;
-        return !!(node && method in node && node[method].apply);
+        return !!(node && method in node &&
+            (typeof node[method] === 'function' ||
+                String(node[method]).indexOf('function') === 1)); // IE reports as object, prepends space
     }
 }, true);
 
