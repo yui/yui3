@@ -186,10 +186,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
                 break;
             case 'backcolor':
-                val = 'yellow';
+                val = '#ff0000';
                 break;
             case 'forecolor':
-                val = 'red';
+                val = '#0000FF';
                 break;
         }
         editor.frame.focus();
@@ -237,6 +237,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     var s_options = Y.all('#fontsize option');
 
     var updateButtons = function(e) {
+        //console.log(e);
         var tar = e.changedNode;
         if (tar) {
             var cmds = e.commands;
