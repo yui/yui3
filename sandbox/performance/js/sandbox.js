@@ -33,6 +33,15 @@ YUI.add('gallery-sandbox', function (Y) {
  *     bootstrapped into the sandbox.
  *   </dd>
  *
+ *   <dt><strong>hideIframe (Boolean|String)</strong></dt>
+ *   <dd>
+ *     If <code>true</code>, the sandbox iframe will be styled with
+ *     "visibility: hidden". If set to the string 'offscreen' (the default), the
+ *     iframe will remain visible, but will be positioned offscreen to keep it
+ *     out of sight. If <code>false</code> the iframe will be both visible and
+ *     onscreen.
+ *   </dd>
+ *
  *   <dt><strong>waitFor (String)</strong></dt>
  *   <dd>
  *     If set, this sandbox's <code>ready</code> event will not fire until a
@@ -91,7 +100,9 @@ Y.mix(Sandbox.prototype, {
      * @property config
      * @type Object
      */
-    config: {},
+    config: {
+        hideIframe: 'offscreen'
+    },
 
     // -- Public Methods -------------------------------------------------------
 
@@ -313,8 +324,27 @@ Y.mix(Sandbox.prototype, {
 
     // -- Protected Methods ----------------------------------------------------
     _createIframe: function () {
-        var iframe    = body.appendChild(Y.DOM.create('<iframe id="' + this._id + '" style="display:none"/>')),
-            iframeDoc = iframe.contentWindow.document;
+        var hide      = this.config.hideIframe,
+            iframe    = Y.DOM.create('<iframe class="yui3-sandbox" id="' + this._id + '"/>'),
+            iframeDoc;
+
+        if (hide === true) {
+            Y.DOM.setStyles(iframe, {
+                height: '0px',
+                visibility: 'hidden',
+                width: '0px'
+            });
+        } else if (hide === 'offscreen') {
+            Y.DOM.setStyles(iframe, {
+                position: 'absolute',
+                left: '-9999px',
+                top: '0'
+            });
+        }
+
+        body.appendChild(iframe);
+
+        iframeDoc = iframe.contentWindow.document;
 
         // Based on a technique described by Dean Edwards:
         // http://dean.edwards.name/weblog/2006/11/sandbox/
