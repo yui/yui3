@@ -220,60 +220,6 @@ Y.Performance.addTestSuite('Instantiation Tests', {
     //     }
     // },
 
-    "Simple Y.Base extension + instantiation": {
-        asyncSetup: true,
-        bootstrapYUI: true,
-        duration: 500,
-        iterations: 40,
-
-        setup: function () {
-            window.Y = YUI().use('base', function (Y) {
-                done();
-            });
-        },
-
-        test: function () {
-            function MyClass() {
-                MyClass.superclass.constructor.apply(this, arguments);
-            }
-
-            Y.extend(MyClass, Y.Base);
-            var foo = new MyClass();
-            done();
-        }
-    },
-
-    "Simple Y.Widget extension + instantiation (no DOM)": {
-        asyncSetup: true,
-        bootstrapYUI: true,
-        duration: 500,
-        iterations: 40,
-
-        setup: function () {
-            window.Y = YUI().use('widget', function (Y) {
-                done();
-            });
-        },
-
-        test: function () {
-            function MyWidget() {
-                MyWidget.superclass.constructor.apply(this, arguments);
-            }
-
-            MyWidget.NAME  = 'mywidget';
-            MyWidget.ATTRS = {};
-
-            Y.extend(MyWidget, Y.Widget, {
-                renderUI: function () {},
-                bindUI  : function () {},
-                syncUI  : function () {}
-            });
-
-            var foo = new MyWidget();
-            done();
-        }
-    },
-
     "TabView with 3 tabs": {
         bootstrapYUI: true,
         duration: 2000,

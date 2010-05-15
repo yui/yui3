@@ -31,9 +31,10 @@
 <script src="js/performance.js"></script>
 <script src="tests/instantiation.js"></script>
 <script src="tests/perf-oop.js"></script>
+<script src="tests/perf-component.js"></script>
 <script>
 var Y = YUI().use('cookie', 'event-base', 'node-base', 'performance',
-                  'perf-instantiation', 'perf-oop', function (Y) {
+                  'perf-instantiation', 'perf-oop', 'perf-component', function (Y) {
 
     var Perf   = Y.Performance,
         start  = Y.one('#start'),
