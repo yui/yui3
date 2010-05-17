@@ -170,7 +170,6 @@ YUI({base: '../../../build/', filter: 'debug'}).use('selector-css3', 'anim', 'co
 
     new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
-Y.log(Y.one('win'));
     var byId = function(id) {
         return document.getElementById(id);
     };
@@ -455,6 +454,8 @@ Y.log(Y.one('win'));
             var node = Y.one('#test-prop');
 
             Assert.isTrue(node.hasMethod('appendChild'), "node.hasMethod('appendChild')");
+            console.log(Y.one('form')._node.item);
+            Assert.isTrue(Y.one('form').hasMethod('item'), "form.hasMethod('item')");
             //Assert.isTrue(element === Y.one(node), 'element === Y.one(node)');
             Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName'); 
             var insertNode = document.createElement('div');
