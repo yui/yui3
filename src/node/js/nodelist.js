@@ -71,7 +71,7 @@ NodeList.addMethod = function(name, fn, context) {
                 args = arguments;
 
             Y.Array.each(this._nodes, function(node) {
-                var UID = (node.uniqueID) ? 'uniqueID' : '_yuid',
+                var UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid',
                     instance = Y.Node._instances[node[UID]],
                     ctx,
                     result;
