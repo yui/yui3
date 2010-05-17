@@ -168,6 +168,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
 
+
     new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
     var byId = function(id) {
@@ -454,6 +455,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             var node = Y.one('#test-prop');
 
             Assert.isTrue(node.hasMethod('appendChild'), "node.hasMethod('appendChild')");
+            var xmlNode = Y.one(document.createElement('xml'));
+            Assert.isFalse(xmlNode.hasMethod('onreadystatechange')," xmlNode.hasMethod('onreadystatechange')");
 
             //Assert.isTrue(element === Y.one(node), 'element === Y.one(node)');
             Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName'); 
