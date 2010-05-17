@@ -688,7 +688,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             }
 
             Assert.areEqual(bw + 'px', node.getComputedStyle('borderTopWidth'), "borderTopWidth: medium");
-            Assert.areEqual(h, Math.round(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
+            Assert.areEqual(h, Math.ceil(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
             domNode.style.padding = '1em';
             Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 13px");
             Assert.areEqual('visible', node.getComputedStyle('visibility'), "visibility");
