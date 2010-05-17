@@ -26,7 +26,8 @@
                 designMode: true,
                 title: EditorBase.STRINGS.title,
                 use: EditorBase.USE,
-                dir: this.get('dir')
+                dir: this.get('dir'),
+                extracss: this.get('extracss')
             }).plug(Y.Plugin.ExecCommand);
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
@@ -398,6 +399,20 @@
             dir: {
                 writeOnce: true,
                 value: 'ltr'
+            },
+            /**
+            * @attribute extracss
+            * @description A string of CSS to add to the Head of the Editor
+            * @type String
+            */            
+            extracss: {
+                value: false,
+                setter: function(css) {
+                    if (this.frame) {
+                        this.frame.set('extracss', css);
+                    }
+                    return css;
+                }
             }
         }
     });
