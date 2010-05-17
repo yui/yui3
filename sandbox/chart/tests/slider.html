@@ -8,11 +8,12 @@
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
 </style>
 <!-- BEGIN EXAMPLE CODE -->
+	<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
 	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
     <script type="text/javascript" src="../build/infographics/infographics.js"></script>
 		
-		
-<body>
+</head>		
+<body class="yui3-skin-sam">
 		
 	<script>	
 		var starttime;
@@ -89,11 +90,14 @@
 		</script>
 <div>
 		<h1>Chart with Multiple Axes</h1>
-			<div id="chart" style="width:800px;height:400px;background-color:#ffffff;border:2px solid #5577AF"></div>
-		<div id="output"></div>
+            <div id="output"></div>
+            <div id="chart" style="width:800px;height:400px;background-color:#ffffff;border:2px solid #5577AF"></div>
+            <br/>
+            <div id="slidergraph" style="width:800px;height:150px;background-color:#ffffff;border2px solid #5577AF"></div>
+            <div style="height:30px" id="sliderdiv"></div>
 		<script>
 
-			YUI({}).use('node', 'json', 'event-custom', 'base', 'graphic', 'infographics', function (Y)
+			YUI({filter:"debug"}).use('node', 'json', 'event-custom', 'base', 'slider', 'graphic', 'infographics', function (Y)
 				{
 					// Create data 
 					var mydata = getData();
@@ -113,15 +117,47 @@
 						weight:"2",
 						showMarkers:false
 					};
-					
 					var dataProvider = {data:mydata};
-					var timeaxis = new Y.TimeAxis({dataProvider:dataProvider});
-					var numericaxis = new Y.NumericAxis({dataProvider:dataProvider});
+                    var dp2 = {data:mydata.concat()};
+                    var timeaxis = new Y.TimeAxis({dataProvider:dataProvider});
 					timeaxis.addKey("date");
+					timeaxis.set("autoMax", false);
+                    timeaxis.set("autoMin", false);
+                    var slidertimeaxis = new Y.TimeAxis({dataProvider:dataProvider});
+					slidertimeaxis.addKey("date");
+                    var numericaxis = new Y.NumericAxis({dataProvider:dataProvider});
 					numericaxis.addKey("revenue");
+					var slidergraph = new Y.LineSeries({parent:"slidergraph", xAxis:slidertimeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
 					
 					var linegraph = new Y.LineSeries({parent:"chart", xAxis:timeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
-				});
+					
+
+                    var slider = new Y.Slider({
+                        length: "800px",
+                        render:"#sliderdiv",
+                        min:0,
+                        max:800
+                    });
+
+                    function calculateAndUpdateMin(e)
+                    {
+                        var target = e.currentTarget,
+                            val = target.get("value"),
+                            len = parseInt(target.get("length"), 10);
+                        timeaxis.updateMinByPosition(val, len);
+                    }
+
+                    function calculateAndUpdateMax(e)
+                    {
+                        var target = e.currentTarget,
+                            val = target.get("value"),
+                            len = parseInt(target.get("length"), 10);
+                        timeaxis.updateMaxByPosition(val, len);
+                    }
+                    
+                    slider.after("slideEnd", Y.bind(calculateAndUpdateMin, this));
+                    slider.after("railMouseDown", Y.bind(calculateAndUpdateMin, this));
+                });
 </script>
 <!-- END EXAMPLE CODE -->
 </div>

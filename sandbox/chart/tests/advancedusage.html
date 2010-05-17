@@ -193,13 +193,13 @@
 
 					// Create chart and set dataProvider
 					var mychart = new Y.BorderContainer({parent:myapp, styles:chartstyles});
-					myapp.addItem(mychart);
-
+					
+                    myapp.addItem(mychart);
 					mychart.on("renderComplete", Y.bind(function(e){
 						document.getElementById("output").innerHTML += "<br/>Graphs drawn.";
 					}, this));
 					
-					// Create axes
+                    // Create axes
 					var mybottomaxis = new Y.Axis({parent:mychart, axisType:"Time", styles:bottomaxisstyles});
 					var myleftaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:leftaxisstyles});
 					var myrightaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:rightaxisstyles});
@@ -236,9 +236,11 @@
 						handleEventListening:true
 					});
 
-					var mydatatip = new Y.DataTip({parent:myapp, graph:mygraph});
 
-					// Add items
+					var mydatatip = new Y.DataTip({parent:myapp, graph:mygraph});
+					myapp.addItem(mydatatip, {excludeFromLayout:true});
+
+                    // Add items
 					mychart.addBottomItem(mybottomaxis);
 					mychart.addLeftItem(myleftaxis);
 					mychart.addRightItem(myrightaxis);

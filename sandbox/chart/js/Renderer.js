@@ -1,6 +1,7 @@
 function Renderer(config)
 {
-	Renderer.superclass.constructor.apply(this, arguments);
+	this._createId();
+    Renderer.superclass.constructor.apply(this, arguments);
 }
 
 Renderer.NAME = "renderer";
@@ -100,7 +101,17 @@ Renderer.ATTRS = {
 };
 
 Y.extend(Renderer, Y.Base, {
-	_width: 0,
+	/**
+	 * Creates unique id for class instance.
+	 *
+	 * @private
+	 */
+	_createId: function()
+	{
+		this._id = Y.guid(this.GUID);
+	},
+	
+    _width: 0,
 
 	_height: 0,
 

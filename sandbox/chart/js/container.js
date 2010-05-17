@@ -43,19 +43,6 @@
 			}
 		},
 		/**
-		 * An array of constructor arguments used when creating an actionscript instance
-		 * of the Container.
-		 */
-		swfargs: 
-		{
-			value: [],
-
-			validator: function(val)
-			{
-				return Y.Lang.isArray(val);
-			}
-		},
-		/**
 		 * Reference to the layout strategy used for displaying child items.
 		 */
 		layout:  
@@ -128,24 +115,9 @@
 		 * Initializes Container properties.
 		 * @method _init
 		 */
-		_init: function(swfowner)
+		_init: function()
 		{
-			var i, item, len;
-			this.swfowner = swfowner;
-			this.appswf = swfowner.appswf;
-			this._addBackground();
-			len = this._items.length;
-			if(len < 1) 
-			{
-				return;
-			}
-			for(i = 0; i < len; i++)
-			{
-				item = this._items[i];
-				this.addItem(item.item, item.props);
-			}
 			this._updateStyles();
-			this._addSWFEventListeners();
 		},
 
 		/**
@@ -155,8 +127,8 @@
 		 */
 		_addBackground:function()
 		{
-			this.appswf.createInstance("background", "Skin");
-			this.appswf.applyMethod(this._id, "addItem", ["$background", {index:0}]);
+			this.createInstance("background", "Skin");
+			this.applyMethod(this._id, "addItem", ["$background", {index:0}]);
 			this._styleObjHash.background = "background";
 		},
 
@@ -168,22 +140,14 @@
 		 */
 		addItem: function(item, props)
 		{
-			if(this.swfReadyFlag)
-			{
-				var args = item.swfarguments && typeof item.swfarguments == "array" ? item.args : [];
-				this.appswf.createInstance(item._id, item.get("className"), args); 
-				args =  ["$" + item._id]; 
-				if(props)
-				{
-					args.push(props);
-				}
-				this.appswf.applyMethod(this._id, "addItem", args);
-			}
-			else
-			{
-				this._items.push({item:item, props:props});
-			}
-			if(item instanceof SWFWidget)
+            var args = ["$" + item._id]; 
+            if(props)
+            {
+                args.push(props);
+            }
+            this.applyMethod(this._id, "addItem", args);
+			
+            if(item instanceof SWFWidget)
 			{
 				item.set("added", true);
 			}

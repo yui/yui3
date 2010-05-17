@@ -52,7 +52,12 @@ package com.yahoo.util
 		 * @private
 		 */
 		private var _swfID:String;
-		
+
+		/**
+		 * @private
+		 */
+        private var _appname:String;
+
 		/**
 		 * @private
 		 */
@@ -70,9 +75,37 @@ package com.yahoo.util
 		 * @param params Arguments to passed to the function
 		 */
 		public function applyMethod(instanceId:String, method:String, params:Array = null):*
-		{	
-			if(params) params = this.parseArgs(params);
-			return (this._instances[instanceId][method] as Function).apply(this._instances[instanceId], params);
+		{
+            var func:Function,
+                chainArray:Array,
+                chain:Object,
+                i:int,
+                len:int;
+            if(params) params = this.parseArgs(params);
+            if(method.indexOf(".") > -1)
+            {
+                chainArray = method.split(".");
+                chain = this._instances[instanceId];
+                len = chainArray.length;
+                for(i = 0; i < len; ++i)
+                {
+                    chain = chain[chainArray[i]];
+                }
+                func = chain as Function;
+            }
+            else
+            {
+                if(!this._instances[instanceId][method])
+                {
+                    return;
+                }
+                func = this._instances[instanceId][method] as Function;
+            }
+            if(params)
+            {
+                return func.apply(this._instances[instanceId], params);
+            }
+            return func.apply(this._instances[instanceId]);
 		}
 
 		/**
@@ -80,7 +113,7 @@ package com.yahoo.util
 		 */
 		public function createInstance(instanceId:String, className:String, constructorArguments:Array = null) : void 
 		{
-			var cA:Array = constructorArguments ? constructorArguments : [];
+            var cA:Array = constructorArguments ? constructorArguments : [];
 			var classReferenceObject:Object = this.getClass(className);
 			var instance:Object;
 
@@ -203,38 +236,39 @@ package com.yahoo.util
 		/**
 		 * Dispatches events to the host DOM
 		 */
-		public function sendEvent (evt:Object) : void 
+		public function sendEvent (evt:Object, id:String = null) : void 
 		{
+			if(!id)
+			{
+				id = this._appname || this._swfID;
+			}
 			if (ExternalInterface.available) 
 			{
-				ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [_swfID, evt]);
+                ExternalInterface.call("YUI.applyTo", _yId, _jsHandler, [id, evt]);
 			}
 		}
 
 		/**
 		 * Allows for js class to subscribe to an as class' event
 		 */
-		public function subscribe(instanceId:String, type:String, func:String):void
+		public function subscribe(type:String, instanceId:String):void
 		{
-			var yId:String = this._yId;
-			var dispatcher:IEventDispatcher = this._instances[instanceId] as IEventDispatcher;
-			var callback:Function = this.eventHandlerFactory(yId, instanceId, func);
+			var dispatcher:IEventDispatcher = this._instances[instanceId] as IEventDispatcher,
+				callback:Function = this.eventHandlerFactory.call(this, instanceId);
 			dispatcher.addEventListener(type, callback);
 		}
 
 		/**
 		 * Adds a js function reference as a listener to an event dispatcher.
 		 */
-		public function eventHandlerFactory(yId:String, instanceId:String, func:String):Function
+		public function eventHandlerFactory(instanceId:String):Function
 		{
-			var handler:Function = function(event:Event):void
+			var scope:Object = this,
+				handler:Function = function(event:Event):void
 			{
 				var evt:Object = {};
 				evt.type = event.type;
-				if(ExternalInterface.available)
-				{
-					ExternalInterface.call("YUI.applyTo", yId, func, [instanceId, evt]);
-				}
+				scope.sendEvent(evt, instanceId);
 			}
 			return handler;
 		}
@@ -347,11 +381,12 @@ package com.yahoo.util
 		{
 			if(this._stage.loaderInfo.parameters) this._flashvars = this._stage.loaderInfo.parameters;
 
-			if (this._flashvars.hasOwnProperty("yId") && this._flashvars.hasOwnProperty("YUIBridgeCallback") && this._flashvars.hasOwnProperty("YUISwfId") && ExternalInterface.available) 
+			if (this._flashvars.hasOwnProperty("yId") && this._flashvars.hasOwnProperty("YUIBridgeCallback") && ExternalInterface.available) 
 			{
 				_jsHandler = this._flashvars["YUIBridgeCallback"];
 				_swfID = this._flashvars["YUISwfId"];
 				_yId = this._flashvars["yId"];
+                _appname = this._flashvars["appname"];
 			}
 			
 			ExternalInterface.addCallback("createInstance", createInstance);

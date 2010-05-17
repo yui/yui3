@@ -13,7 +13,10 @@
  */
 function BaseAxis (config)
 {
-	BaseAxis.superclass.constructor.apply(this, arguments);
+    this._createId();
+    this._keys = {};
+    this._data = [];
+    BaseAxis.superclass.constructor.apply(this, arguments);
 }
 
 BaseAxis.NAME = "baseAxis";
@@ -107,7 +110,8 @@ BaseAxis.ATTRS = {
 			{
 				//remove listeners
 			}
-			this._dataProvider = value;
+            value = Y.merge(value);
+			this._dataProvider = {data:value.data.concat()};
 			this._dataClone = this._dataProvider.data.concat();
 			return value;
 		},
@@ -131,7 +135,7 @@ BaseAxis.ATTRS = {
 	maximum: {
 		getter: function ()
 		{
-			if(this._autoMax) 
+			if(this._autoMax || !this._setMaximum) 
 			{
 				return this._dataMaximum;
 			}
@@ -160,12 +164,17 @@ BaseAxis.ATTRS = {
 	minimum: {
 		getter: function ()
 		{
-			if(this._autoMin) 
+			if(this._autoMin || !this._setMinimum) 
 			{
 				return this._dataMinimum;
 			}
 			return this._setMinimum;
-		}
+		},
+        setter: function(val)
+        {
+            this._setMinimum = val;
+            return val;
+        }
 	},
 
 	/**
@@ -221,6 +230,15 @@ BaseAxis.ATTRS = {
 
 Y.extend(BaseAxis, Y.Base,
 {
+	/**
+	 * Creates unique id for class instance.
+	 *
+	 * @private
+	 */
+	_createId: function()
+	{
+		this._id = Y.guid(this.GUID);
+	},
 	/**
 	 * @private
 	 * Storaga for roundingUnit
@@ -281,12 +299,12 @@ Y.extend(BaseAxis, Y.Base,
 	 * @private
 	 * Storage for data
 	 */
-	_data: [],
+	_data: null,
 	/**
 	 * @private
 	 * Storage for keys
 	 */
-	_keys: {},
+	_keys: null,
 
 	/**
 	 * @private
@@ -518,7 +536,7 @@ Y.extend(BaseAxis, Y.Base,
 		event.keysAdded = keysAdded;
 		event.keysRemoved = keysRemoved;
 		this.fire("axisUpdate", event);
-	}
+    }
 });
 Y.BaseAxis = BaseAxis;
 
