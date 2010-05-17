@@ -280,8 +280,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
 
 
 
-    var editor = new Y.EditorBase({
-        content: Y.one('#stub').get('innerHTML')
+    editor = new Y.EditorBase({
+        content: Y.one('#stub').get('innerHTML'),
+        extracss: 'body { color: red; }'
     });
     editor.after('nodeChange', function(e) {
         updateButtons(e);
