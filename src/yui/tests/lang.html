@@ -82,6 +82,10 @@
             Assert.isFalse(Y.Lang.isFunction(xframe.nul), "Cross frame null failure");
             Assert.isFalse(Y.Lang.isFunction(xframe.und), "Cross frame undefined failure");
 
+            // var a = document.createElement("xml");
+            // a.onreadystatechange = function() {};
+            // Assert.isTrue(Y.Lang.isFunction(a.onreadystatechange), "IE function fail");
+
         },
     
         test_is_null: function() {
