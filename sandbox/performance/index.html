@@ -13,6 +13,7 @@
     <select id="suites"></select>
     <button id="start">Start Tests</button>
     <button id="stop" disabled="disabled">Stop Tests</button>
+    <button id="snap" disabled="disabled">Result Snapshot (JSON)</button>
 </p>
 
 <div id="results"></div>
@@ -26,6 +27,11 @@
     Windows timer APIs that IE uses, times in IE have an error range of ±15ms.
 </p>
 
+<div id="snapshot" class="hidden">
+    <h2><label for="result-snapshot">Result Snapshot</label></h2>
+    <textarea id="result-snapshot" cols="5" rows="50"></textarea>
+</div>
+
 <script src="../../build/yui/yui-min.js"></script>
 <script src="js/sandbox.js"></script>
 <script src="js/performance.js"></script>
@@ -34,9 +40,11 @@
 <script src="tests/perf-component.js"></script>
 <script>
 var Y = YUI().use('cookie', 'event-base', 'node-base', 'performance',
-                  'perf-instantiation', 'perf-oop', 'perf-component', function (Y) {
+                  'json-stringify', 'perf-instantiation', 'perf-oop',
+                  'perf-component', function (Y) {
 
     var Perf   = Y.Performance,
+        snap   = Y.one('#snap'),
         start  = Y.one('#start'),
         stop   = Y.one('#stop'),
         suites = Y.one('#suites');
@@ -49,7 +57,7 @@ var Y = YUI().use('cookie', 'event-base', 'node-base', 'performance',
 
     // Populate the test list.
     Y.Object.each(Perf.getTestSuites(), function (test, name) {
-        suites.append(Y.Node.create('<option/>').append(name))
+        suites.append(Y.Node.create('<option/>').append(name));
     });
 
     // Get the selected module from a cookie if set.
@@ -80,15 +88,22 @@ var Y = YUI().use('cookie', 'event-base', 'node-base', 'performance',
         Perf.stop();
     });
 
+    // Handle snapshot clicks.
+    snap.on('click', function () {
+        Y.one('#result-snapshot').set('value', Y.JSON.stringify(Perf._results, null, 2));
+        Y.one('#snapshot').toggleClass('hidden');
+    });
+
     // Handle test start.
     Perf.on('start', function () {
-        start.set('disabled', true);
+        Y.all([snap, start]).set('disabled', true);
         stop.set('disabled', false);
+        Y.one('#snapshot').addClass('hidden');
     });
 
     // Handle test stop/finish.
     Perf.on('finish', function () {
-        start.set('disabled', false);
+        Y.all([snap, start]).set('disabled', false);
         stop.set('disabled', true);
     });
 });
