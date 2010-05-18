@@ -167,7 +167,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			lastX = lastValidX = nextX;
 			lastY = lastValidY = nextY;
 		}
-        graphic.lineStyle(0);
+       // graphic.lineStyle(0);
         graphic.lineTo(lastX, ht);
         graphic.lineTo(0, ht);
         graphic.lineTo(0, ycoords[0]);
@@ -201,7 +201,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			xCurrent = xStart,
 			yCurrent = yStart,
 			i,
-			graphic = this.get("graphic"),
+			graphic = this.get("graphic");
 		xDelta = Math.cos(radians) * segmentLength;
 		yDelta = Math.sin(radians) * segmentLength;
 		

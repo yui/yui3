@@ -352,7 +352,7 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	 */
 	setAreaData: function()
 	{
-		var nextX, nextY,
+        var nextX, nextY,
             parent = this.get("parent"),
 			graphic = this.get("graphic"),
 			w = parent.offsetWidth,
@@ -377,20 +377,12 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			dataLength = xData.length, 	
 			midY = dataHeight/2,
 			areaMin = leftPadding,
-            areaMax = Math.round(0.5 + (((xMax - xMin) * xScaleFactor) + leftPadding)),
+            areaMax = Math.round((((xMax - xMin) * xScaleFactor) + leftPadding)),
             i;
         for (i = 0; i < dataLength; ++i) 
 		{
-			if(xData[i] > xMax)
-            {
-                break;
-            }
-            if(xData[i] < xMin)
-            {
-                continue;
-            }
-            nextX = Math.round(0.5 + (((xData[i] - xMin) * xScaleFactor) + leftPadding));
-			nextY = Math.round(0.5 +((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
+            nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding));
+			nextY = Math.round(((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
             xcoords.push(nextX);
             ycoords.push(nextY);
         }

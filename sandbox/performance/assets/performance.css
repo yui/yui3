@@ -82,3 +82,10 @@ body {
     line-height: 1.2;
     padding: 0 0 0 7px;
 }
+
+/* -- Snapshot -------------------------------------------------------------- */
+#result-snapshot {
+    font: 11px Menlo, 'Bitstream Vera Sans Mono', Monaco, Consolas, monospace;
+    height: 200px;
+    width: 99%;
+}

@@ -1,4 +1,3 @@
-
 function DataTip (config) 
 {
 	DataTip.superclass.constructor.apply(this, arguments);
@@ -52,18 +51,9 @@ Y.extend(DataTip, Y.Container,
 
 	_graph: null,
 
-	/**
-	 * @private
-	 * Called by the class instance containing the application swf after the swf
-	 * has been initialized.
-	 *
-	 * @method _init
-	 * @param swfowner {Object} Class instance with direct access to the application swf.
-	 */
-	initializer: function(cfg)
-	{
-        this.createInstance(this._id, "DataTip", ["$" + this.get("graph")._id]);
-        this.applyMethod(this.get("parent")._id, "addItem", ["$" + this._id, {excludeFromLayout:true}]);
+    _getArgs: function()
+    {
+        return ["$" + this.get("graph")._id];
 	}
 });
 

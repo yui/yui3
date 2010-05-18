@@ -241,7 +241,7 @@
             this.swf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"));
 		},
 
-		initializer: function(cfg)
+		_instantiateSWFClass: function()
 		{
             this._dataId = this._id + "data";
 			if(this.get("autoLoad"))
@@ -256,7 +256,7 @@
 		_init: function()
 		{
 			this._addBackground();
-			this._updateStyles();
+            this._updateStyles();
             this.fire("appReady");
 		},
 		
@@ -269,7 +269,10 @@
 		addItem: function(item, props)
 		{
 			Container.prototype.addItem.apply(this, arguments);
-	    	item._init();
+	    	if(item._init)
+            {
+                item._init();
+            }
 		},
 
 		/**

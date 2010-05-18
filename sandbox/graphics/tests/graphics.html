@@ -1,14 +1,14 @@
-<html xmlns:v="urn:schemas-microsoft-com:vml">
+<html>
 <head>
-<!-- This is how we associate VML behavior with the VML namespace -->
-<style>v\:* { behavior: url(#default#VML); }</style>
+<style>v\: * { behavior:url(#default#VML); display:inline-block }</style>
+<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />
 <style>
 /*Supplemental CSS for the YUI distribution*/
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
 </style>
 <!-- BEGIN EXAMPLE CODE -->
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script>
 	<script type="text/javascript" src="../build/graphics/graphics.js"></script>
 		
 		
@@ -18,13 +18,14 @@
 			<div id="appdiv" style="width:800px;height:800px;background-color:#ffffff;border:2px solid #ff0000"></div>
 		<div style="float:right" id="output"></div>
 		<script>
-			YUI({}).use('node', 'json', 'event-custom', 'base', 'graphics', function (Y)
+			YUI({}).use('node', 'json', 'event-custom', 'graphics', function (Y)
 			{
-                graphics = new Y.Graphics({parent:"appdiv"});	
+                graphics = new Y.Graphic();
+                graphics.render(document.getElementById("appdiv"));
 				
                 graphics.lineStyle(12, "#0000ff", 1);
                 graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1], 315);
-                graphics.drawRectangle(40, 40, 400, 300);
+                graphics.drawRect(40, 40, 400, 300);
                 graphics.endFill();
                 
                 graphics.lineStyle(12, "#0000ff", 1);

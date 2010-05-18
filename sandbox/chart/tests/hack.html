@@ -3,7 +3,6 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Y! Finance</title>
-	<meta name="author" content="Allen Rabinovich">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 <style>
@@ -132,6 +131,7 @@
 </style>
 <!-- BEGIN EXAMPLE CODE -->
 	<script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
     <script type="text/javascript" src="../build/infographics/infographics.js"></script>
 		
 </head>		
@@ -257,7 +257,7 @@
 	</div>
 		<script>
 
-			YUI({}).use('node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphic', 'infographics', function (Y)
+			YUI({}).use('node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphics', 'infographics', function (Y)
             {
                 var TOUCH = Y.UA.webkit && Y.UA.mobile, 
                     EVT_MAP;
