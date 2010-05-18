@@ -813,7 +813,8 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  */
 
 /**
- * A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.
+ * A hash of log sources that should be not be logged.  If specified, 
+ * all sources are logged if not on this list.
  *
  * @property logExclude
  * @type object
@@ -830,7 +831,8 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  */
 
 /**
- * If throwFail is set, Y.fail will generate or re-throw a JS Error.  Otherwise the failure is logged.
+ * If throwFail is set, Y.error will generate or re-throw a JS Error.  
+ * Otherwise the failure is logged.
  *
  * @property throwFail
  * @type boolean
@@ -2128,6 +2130,21 @@ O.setValue = function(o, path, val) {
     }
 
     return o;
+};
+
+/**
+ * Returns true if the object has no properties of its own
+ * @method isEmpty
+ * @return {boolean} true if the object is empty
+ * @since 3.2.0
+ */
+O.isEmpty = function(o) {
+    for (var i in o) {
+        if (owns(o, i)) {
+            return false;
+        }
+    }
+    return true;
 };
 
 })();
