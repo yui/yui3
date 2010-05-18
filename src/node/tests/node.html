@@ -699,7 +699,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             domNode.style.margin = 'auto';
             Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
 
-            Assert.areEqual(w, parseInt(node.getComputedStyle('width')), "percent width (from CSS)");
+            Assert.areEqual(w, Math.ceil(parseInt(node.getComputedStyle('width'))), "percent width (from CSS)");
         },
 
         test_setStyles: function() {
