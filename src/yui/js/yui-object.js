@@ -243,4 +243,19 @@ O.setValue = function(o, path, val) {
     return o;
 };
 
+/**
+ * Returns true if the object has no properties of its own
+ * @method isEmpty
+ * @return {boolean} true if the object is empty
+ * @since 3.2.0
+ */
+O.isEmpty = function(o) {
+    for (var i in o) {
+        if (owns(o, i)) {
+            return false;
+        }
+    }
+    return true;
+};
+
 })();
