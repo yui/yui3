@@ -797,7 +797,8 @@ proto = {
  */
 
 /**
- * A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.
+ * A hash of log sources that should be not be logged.  If specified, 
+ * all sources are logged if not on this list.
  *
  * @property logExclude
  * @type object
@@ -814,7 +815,8 @@ proto = {
  */
 
 /**
- * If throwFail is set, Y.fail will generate or re-throw a JS Error.  Otherwise the failure is logged.
+ * If throwFail is set, Y.error will generate or re-throw a JS Error.  
+ * Otherwise the failure is logged.
  *
  * @property throwFail
  * @type boolean
