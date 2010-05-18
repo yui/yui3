@@ -704,7 +704,10 @@ proto = {
         if (!o) {
             return o;
         }
-        if (o.uniqueID && o.nodeName) {
+        
+        // IE generates its own unique ID for dom nodes
+        // The uniqueID property of a document node returns a new ID
+        if (o.uniqueID && o.nodeType && o.nodeType !== 9) {
             uid = o.uniqueID;
         } else {
             uid = (typeof o === 'string') ? o : o._yuid;

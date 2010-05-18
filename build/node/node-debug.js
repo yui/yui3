@@ -31,7 +31,7 @@ var DOT = '.',
     Y_DOM = Y.DOM,
 
     Y_Node = function(node) {
-        var uid = node.uniqueID || node[UID];
+        var uid = (node.nodeType !== 9) ? node.uniqueID : node[UID];
 
         if (uid && Y_Node._instances[uid] && Y_Node._instances[uid]._node !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
@@ -288,7 +288,7 @@ Y_Node.one = function(node) {
             return node; // NOTE: return
         }
 
-        uid = node.uniqueID || node._yuid;
+        uid = (node.nodeType !== 9) ? node.uniqueID : node._yuid;
         instance = Y_Node._instances[uid]; // reuse exising instances
         cachedNode = instance ? instance._node : null;
         if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
@@ -1159,7 +1159,7 @@ NodeList.addMethod = function(name, fn, context) {
                 args = arguments;
 
             Y.Array.each(this._nodes, function(node) {
-                var UID = (node.uniqueID) ? 'uniqueID' : '_yuid',
+                var UID = (node.uniqueID && node.nodeType !== 9 ) ? 'uniqueID' : '_yuid',
                     instance = Y.Node._instances[node[UID]],
                     ctx,
                     result;

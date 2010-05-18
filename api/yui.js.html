@@ -769,7 +769,10 @@
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">o</span><span class="p">;</span>
         <span class="p">}</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">uniqueID</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">nodeName</span><span class="p">)</span> <span class="p">{</span>
+        
+        <span class="c1">// IE generates its own unique ID for dom nodes</span>
+        <span class="c1">// The uniqueID property of a document node returns a new ID</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">uniqueID</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">!==</span> <span class="mi">9</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">uid</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">uniqueID</span><span class="p">;</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="nx">uid</span> <span class="o">=</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="nx">o</span> <span class="o">:</span> <span class="nx">o</span><span class="p">.</span><span class="nx">_yuid</span><span class="p">;</span>

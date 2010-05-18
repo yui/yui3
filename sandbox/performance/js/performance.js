@@ -144,7 +144,7 @@ function xdrGet(url, callback) {
     } else {
         yqlQueue[url] = [callback];
 
-        new Y.yql("use '" + YQL_XDR_DATATABLE + "'; select * from xdr where url = '" + url + "'", function (result) {
+        (new Y.yql("use '" + YQL_XDR_DATATABLE + "'; select * from xdr where url = '" + url + "'", function (result) {
             var callback;
 
             result = result.query.results.result;
@@ -155,7 +155,7 @@ function xdrGet(url, callback) {
             }
 
             delete yqlQueue[url];
-        });
+        }));
     }
 }
 
@@ -524,7 +524,7 @@ Perf = Y.Performance = {
             mean = ((test.duration || DEFAULT_DURATION) / count).toFixed(2);
 
             result = Perf._results[iteration.name] = {
-                calls : count,
+                calls    : count,
                 max      : mean,
                 mean     : mean,
                 median   : mean,
