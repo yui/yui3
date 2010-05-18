@@ -53,15 +53,16 @@
         NUM = Number;
 
     var _running = {},
-        _instances = {},
         _timer;
 
     Y.Anim = function() {
         Y.Anim.superclass.constructor.apply(this, arguments);
-        _instances[Y.stamp(this)] = this;
+        Y.Anim._instances[Y.stamp(this)] = this;
     };
 
     Y.Anim.NAME = 'anim';
+
+    Y.Anim._instances = {};
 
     /**
      * Regex of properties that should use the default unit.
@@ -305,9 +306,10 @@
      * @static
      */    
     Y.Anim.run = function() {
-        for (var i in _instances) {
-            if (_instances[i].run) {
-                _instances[i].run();
+        var instances = Y.Anim._instances;
+        for (var i in instances) {
+            if (instances[i].run) {
+                instances[i].run();
             }
         }
     };
@@ -613,6 +615,10 @@
             }
 
             return val;
+        },
+
+        destructor: function() {
+            delete Y.Anim._instances[Y.stamp(this)];
         }
     };
 

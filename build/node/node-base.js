@@ -31,13 +31,13 @@ var DOT = '.',
     Y_DOM = Y.DOM,
 
     Y_Node = function(node) {
-        var uid = node[UID];
+        var uid = node.uniqueID || node[UID];
 
         if (uid && Y_Node._instances[uid] && Y_Node._instances[uid]._node !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
-        uid = Y.stamp(node);
+        uid = uid || Y.stamp(node);
         if (!uid) { // stamp failed; likely IE non-HTMLElement
             uid = Y.guid();
         }
@@ -287,7 +287,7 @@ Y_Node.one = function(node) {
             return node; // NOTE: return
         }
 
-        uid = node._yuid;
+        uid = node.uniqueID || node._yuid;
         instance = Y_Node._instances[uid]; // reuse exising instances
         cachedNode = instance ? instance._node : null;
         if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
@@ -466,7 +466,7 @@ Y.mix(Y_Node.prototype, {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
             node = this._node,
-            id = node.getAttribute('id'); // form.id may be a field name
+            id = (node.getAttribute) ? node.getAttribute('id') : node.id; // form.id may be a field name
 
         if (node) {
             str += node[NODE_NAME];
@@ -1068,7 +1068,10 @@ Y.mix(Y_Node.prototype, {
 
     hasMethod: function(method) {
         var node = this._node;
-        return (node && node[method] && (typeof node[method] === 'function'));
+        return !!(node && method in node &&
+                typeof node[method] !== 'unknown' &&
+            (typeof node[method] === 'function' ||
+                String(node[method]).indexOf('function') === 1)); // IE reports as object, prepends space
     }
 }, true);
 
@@ -1110,7 +1113,6 @@ var NodeList = function(nodes) {
         nodes = Y.Array(nodes, 0, true);
     }
 
-    NodeList._instances[Y.stamp(this)] = this;
     /**
      * The underlying array of DOM nodes bound to the Y.NodeList instance
      * @property _nodes
@@ -1133,8 +1135,6 @@ NodeList.getDOMNodes = function(nodeList) {
     return nodeList._nodes;
 };
 
-NodeList._instances = [];
-
 NodeList.each = function(instance, fn, context) {
     var nodes = instance._nodes;
     if (nodes && nodes.length) {
@@ -1150,7 +1150,7 @@ NodeList.addMethod = function(name, fn, context) {
                 args = arguments;
 
             Y.Array.each(this._nodes, function(node) {
-                var UID = '_yuid',
+                var UID = (node.uniqueID) ? 'uniqueID' : '_yuid',
                     instance = Y.Node._instances[node[UID]],
                     ctx,
                     result;
@@ -1331,7 +1331,6 @@ Y.mix(NodeList.prototype, {
     },
 
     destructor: function() {
-        delete NodeList._instances[this[UID]];
     },
 
     /**
@@ -1477,12 +1476,6 @@ NodeList.importMethod(Y.Node.prototype, [
       * @see Node.remove
       */
     'remove',
-
-    /** Called on each Node instance
-      * @method removeAttribute
-      * @see Node.removeAttribute
-      */
-    'removeAttribute',
 
     /** Called on each Node instance
       * @method set
@@ -1724,7 +1717,7 @@ Y.Node.importMethod(Y.DOM, [
  */
 
 /**
- * Allows for removing attributes on DOM nodes..
+ * Allows for removing attributes on DOM nodes.
  * This passes through to the DOM node, allowing for custom attributes.
  * @method removeAttribute
  * @see Node

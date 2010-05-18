@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>YUI 3 Performance</title>
+    <link rel="stylesheet" href="assets/performance.css">
+</head>
+<body>
+
+<h1>YUI 3 Performance</h1>
+
+<p>
+    <select id="suites"></select>
+    <button id="start">Start Tests</button>
+    <button id="stop" disabled="disabled">Stop Tests</button>
+</p>
+
+<div id="results"></div>
+
+<p class="firefox hidden">
+    <strong>Firefox users:</strong> For accurate results, disable Firebug.
+</p>
+
+<p class="ie hidden">
+    <strong>IE users:</strong> Due to limitations in the resolution of the
+    Windows timer APIs that IE uses, times in IE have an error range of ±15ms.
+</p>
+
+<script src="../../build/yui/yui-min.js"></script>
+<script src="js/sandbox.js"></script>
+<script src="js/performance.js"></script>
+<script src="tests/instantiation.js"></script>
+<script src="tests/perf-oop.js"></script>
+<script src="tests/perf-component.js"></script>
+<script>
+var Y = YUI().use('cookie', 'event-base', 'node-base', 'performance',
+                  'perf-instantiation', 'perf-oop', 'perf-component', function (Y) {
+
+    var Perf   = Y.Performance,
+        start  = Y.one('#start'),
+        stop   = Y.one('#stop'),
+        suites = Y.one('#suites');
+
+    if (Y.UA.gecko) {
+        Y.all('.firefox').removeClass('hidden');
+    } else if (Y.UA.ie) {
+        Y.all('.ie').removeClass('hidden');
+    }
+
+    // Populate the test list.
+    Y.Object.each(Perf.getTestSuites(), function (test, name) {
+        suites.append(Y.Node.create('<option/>').append(name))
+    });
+
+    // Get the selected module from a cookie if set.
+    if (Y.Cookie.exists('yui3-perf-suite')) {
+        suites.set('value', Y.Cookie.get('yui3-perf-suite'));
+    }
+
+    // Render the result table.
+    Perf.render('#results');
+
+    // Handle module selection changes.
+    suites.on('change', function () {
+        Perf.stop();
+
+        Y.Cookie.set('yui3-perf-suite', this.get('value'), {
+            expires: new Date(new Date().getTime() + 5184000000) // 60 days from now
+        });
+    });
+
+    // Handle Start clicks.
+    start.on('click', function () {
+        Perf.activateTestSuite(suites.get('value'));
+        Perf.start();
+    });
+
+    // Handle Stop clicks.
+    stop.on('click', function () {
+        Perf.stop();
+    });
+
+    // Handle test start.
+    Perf.on('start', function () {
+        start.set('disabled', true);
+        stop.set('disabled', false);
+    });
+
+    // Handle test stop/finish.
+    Perf.on('finish', function () {
+        start.set('disabled', false);
+        stop.set('disabled', true);
+    });
+});
+</script>
+
+</body>
+</html>

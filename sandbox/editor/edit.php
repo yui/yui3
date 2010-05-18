@@ -76,9 +76,9 @@
             <option value="6">32</option>
             <option value="7">48</option>
         </select>
-        <button value="b">Bold</button>
-        <button value="i">Italic</button>
-        <button value="u">Underline</button>
+        <button value="bold">Bold</button>
+        <button value="italic">Italic</button>
+        <button value="underline">Underline</button>
         <button value="foo">Foo</button>
         <button value="img">InsertImage</button>
         <button value="wrap">Wrap</button>
@@ -115,7 +115,7 @@
     <li>Item #1</li>
 </ul>
 <ol>
-    <li style="font-family: courier new">Item #1</li>
+    <li class="davglass" style="font-family: courier new">Item #1</li>
     <li>Item #1</li>
     <li>Item #1</li>
 </ol>
@@ -186,10 +186,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
                 break;
             case 'backcolor':
-                val = 'yellow';
+                val = '#ff0000';
                 break;
             case 'forecolor':
-                val = 'red';
+                val = '#0000FF';
                 break;
         }
         editor.frame.focus();
@@ -235,28 +235,22 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     var buttons = Y.all('#test1 button');
     var f_options = Y.all('#fontname option');
     var s_options = Y.all('#fontsize option');
-    var buttonTimer = null;
 
-    var updateButtons = function(tar) {
-        if (buttonTimer) {
-            return;
-        }
+    var updateButtons = function(e) {
+        //console.log(e);
+        var tar = e.changedNode;
         if (tar) {
-            buttonTimer = true;
+            var cmds = e.commands;
+
             buttons.removeClass('selected');
             buttons.each(function(v) {
-                var val = v.get('value');
-                if (tar.test(val + ', ' + val + ' *')) {
+                if (cmds[v.get('value')]) {
                     v.addClass('selected');
                 }
             });
-            var fname = tar.getStyle('fontFamily'),
-            size = tar.getStyle('fontSize');
-            if (fname.indexOf(',' !== -1)) {
-                fname = fname.split(',');
-                fname = fname[0];
-            }
-            fname = fname.toLowerCase();
+            
+            var fname = e.fontFamily,
+            size = e.fontSize;
 
             f_options.item(0).set('selected', true);
             f_options.each(function(v) {
@@ -274,7 +268,6 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                     v.set('selected', true);
                 }
             });
-            buttonTimer = null;
         }
     };
 
@@ -287,13 +280,12 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
 
 
 
-    var editor = new Y.EditorBase({
-        content: Y.one('#stub').get('innerHTML')
+    editor = new Y.EditorBase({
+        content: Y.one('#stub').get('innerHTML'),
+        extracss: 'body { color: red; }'
     });
     editor.after('nodeChange', function(e) {
-        //This is the lag in IE 6 & 7 !!!
-        //Y.later(100, this, updateButtons, e.changedNode);
-        //updateButtons(e.changedNode);
+        updateButtons(e);
         
         if (e.changedType === 'keyup') {
             if (e.changedNode) {

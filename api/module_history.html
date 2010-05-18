@@ -50,12 +50,11 @@
 
                     </h3>
                     <div class="description summary">
-                        The Browser History Utility provides the ability to use the back/forward
-navigation buttons in a DHTML application. It also allows a DHTML
-application to be bookmarked in a specific state.
-This utility requires the following static markup:
-&lt;iframe id="yui-history-iframe" src="path-to-real-asset-in-same-domain"&gt;&lt;/iframe&gt;
-&lt;input id="yui-history-field" type="hidden"&gt;
+                        Provides browser history management functionality using a simple
+add/replace/get paradigm. This can be used to ensure that the browser's back
+and forward buttons work as the user expects and to provide bookmarkable URLs
+that return the user to the current application state, even in an Ajax
+application that doesn't perform full-page refreshes.
                     </div>
 
 
@@ -65,16 +64,34 @@ This utility requires the following static markup:
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "This class represents an instance of the browser history utility.", "guessedname": "History", "name": "History"}, {"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "This class represents a browser history module.", "guessedname": "History.Module", "name": "History.Module"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget", "HistoryBase": "HistoryBase"}, "events": {"HistoryBase": [{"access": "", "deprecated": false, "name": "[key]Change"}, {"access": "", "deprecated": false, "name": "[key]Remove"}, {"access": "", "deprecated": false, "name": "history:change"}]}, "configs": {}, "properties": {"HistoryBase": []}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}], "HistoryBase": [{"access": "protected", "deprecated": false, "name": "_change"}, {"access": "protected", "deprecated": false, "name": "_defChangeFn"}, {"access": "protected", "deprecated": false, "name": "_fireChangeEvent"}, {"access": "protected", "deprecated": false, "name": "_fireEvents"}, {"access": "protected", "deprecated": false, "name": "_fireRemoveEvent"}, {"access": "protected", "deprecated": false, "name": "_init"}, {"access": "protected", "deprecated": false, "name": "_resolveChanges"}, {"access": "protected", "deprecated": false, "name": "_storeState"}, {"access": "", "deprecated": false, "name": "add"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "replace"}]}}, "description": "The History class provides browser history management backed by\n<code>window.location.hash</code>, as well as convenience methods for working\nwith the location hash and a synthetic <code>hashchange</code> event that\nnormalizes differences across browsers.", "guessedname": "History", "name": "History"}, {"extends": {"superclass": {"EventTarget": "EventTarget"}, "events": {}, "configs": {}, "properties": {}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}]}}, "description": "The HistoryBase class provides basic state management functionality backed by\nan object. History state is shared globally among all instances and\nsubclass instances of HistoryBase.", "guessedname": "HistoryBase", "name": "HistoryBase"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
                                     <li><a href="History.html" title="History" id="class_0">History</a></li>
-                                    <li><a href="History.Module.html" title="History.Module" id="class_1">History.Module</a></li>
+                                    <li><a href="HistoryBase.html" title="HistoryBase" id="class_1">HistoryBase</a></li>
                                 </ul>
                             </div>
                     </div>
                     <div class="yui-u">
+                                    <div class="submodules">
+                                        <h4>Submodules:</h4> 
+                                        <dl>
+                                            <dt><code>history-base</code></dt>
+                                            <dd>The history-base module uses a simple object to store state. To integrate
+state management with browser history and allow the back/forward buttons to
+navigate between states, use history-hash.</dd>
+                                            <dt><code>history-hash-ie</code></dt>
+                                            <dd>The history-hash-ie module improves IE6/7 support in history-hash by using a
+hidden iframe to create entries in IE's browser history. This module is only
+needed if IE6/7 support is necessary; it's not needed for any other browser.</dd>
+                                            <dt><code>history-hash</code></dt>
+                                            <dd>The history-hash module adds the History class, which provides browser
+history management functionality backed by <code>window.location.hash</code>.
+This allows the browser's back and forward buttons to be used to navigate
+between states.</dd>
+                                        </dl>
+                                    </div>
 
                         </div>
                 </div>
@@ -150,14 +167,16 @@ This utility requires the following static markup:
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="History.html" title="History">History</a></li>
-                                <li class=""><a href="History.Module.html" title="History.Module">History.Module</a></li>
+                                <li class=""><a href="HistoryBase.html" title="HistoryBase">HistoryBase</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="history.js.html" title="history.js">history.js</a></li>
+                                <li class=""><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
+                                <li class=""><a href="history-hash-ie.js.html" title="history-hash-ie.js">history-hash-ie.js</a></li>
+                                <li class=""><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
                         </ul>
                     </div>
 
@@ -175,7 +194,7 @@ This utility requires the following static markup:
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "private", "host": "History", "name": "_checkIframeLoaded", "url": "History.html#method__checkIframeLoaded", "type": "method"}, {"access": "", "host": "History.Module", "name": "currentState", "url": "History.Module.html#property_currentState", "type": "property"}, {"access": "", "host": "History", "name": "getBookmarkedState", "url": "History.html#method_getBookmarkedState", "type": "method"}, {"access": "", "host": "History", "name": "getCurrentState", "url": "History.html#method_getCurrentState", "type": "method"}, {"access": "private", "host": "History", "name": "_getHash", "url": "History.html#method__getHash", "type": "method"}, {"access": "", "host": "History", "name": "getQueryStringParameter", "url": "History.html#method_getQueryStringParameter", "type": "method"}, {"access": "private", "host": "History", "name": "_handleFQStateChange", "url": "History.html#method__handleFQStateChange", "type": "method"}, {"access": "", "host": "History", "name": "history:globalStateChange", "url": "History.html#event_history:globalStateChange", "type": "event"}, {"access": "", "host": "History", "name": "history:moduleStateChange", "url": "History.html#event_history:moduleStateChange", "type": "event"}, {"access": "", "host": "History", "name": "history:ready", "url": "History.html#event_history:ready", "type": "event"}, {"access": "", "host": "History.Module", "name": "id", "url": "History.Module.html#property_id", "type": "property"}, {"access": "private", "host": "History", "name": "_initialize", "url": "History.html#method__initialize", "type": "method"}, {"access": "", "host": "History", "name": "initialize", "url": "History.html#method_initialize", "type": "method"}, {"access": "", "host": "History.Module", "name": "initialState", "url": "History.Module.html#property_initialState", "type": "property"}, {"access": "", "host": "History", "name": "multiNavigate", "url": "History.html#method_multiNavigate", "type": "method"}, {"access": "", "host": "History", "name": "navigate", "url": "History.html#method_navigate", "type": "method"}, {"access": "", "host": "History", "name": "register", "url": "History.html#method_register", "type": "method"}, {"access": "private", "host": "History", "name": "_storeStates", "url": "History.html#method__storeStates", "type": "method"}, {"access": "private", "host": "History.Module", "name": "upcomingState", "url": "History.Module.html#property_upcomingState", "type": "property"}, {"access": "private", "host": "History", "name": "_updateIFrame", "url": "History.html#method__updateIFrame", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "decode", "url": "History.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "", "host": "History", "name": "getUrl", "url": "History.html#method_getUrl", "type": "method"}, {"access": "", "host": "History", "name": "hashPrefix", "url": "History.html#property_hashPrefix", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "History", "name": "SRC_HASH", "url": "History.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "History", "name": "_updateIframe", "url": "History.html#method__updateIframe", "type": "method"}];
 </script>
 </body>
 </html>

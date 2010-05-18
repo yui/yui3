@@ -450,6 +450,10 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *   the fire will be notified immediately.
      *    </li>
      *    <li>
+     *   'async': fireOnce event listeners will fire synchronously if the event has already
+     *    fired unless async is true.
+     *    </li>
+     *    <li>
      *   'preventable': whether or not preventDefault() has an effect (true)
      *    </li>
      *    <li>

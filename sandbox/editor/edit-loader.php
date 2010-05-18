@@ -137,17 +137,6 @@ del {
 <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.0/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
 
 
-
-<script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/frame.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/exec-command.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/selection.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/lists.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/editor-tab.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="js/createlink-base.js?bust=<?php echo(mktime()); ?>"></script>
-
-
-
 <script type="text/javascript">
 var yConfig = {
     debug: true,
@@ -168,7 +157,7 @@ var yConfig = {
 };
 
 //YUI(yConfig).use('node', 'editor-base', function(Y) {
-YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'substitute', 'exec-command', 'editor-lists', 'createlink-base', 'editor-tab', function(Y) {
+YUI(yConfig).use('editor-base', 'editor-lists', 'createlink-base', function(Y) {
     //console.log(Y, Y.id);
 
     Y.delegate('click', function(e) {

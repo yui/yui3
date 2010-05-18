@@ -55,15 +55,16 @@ YUI.add('anim-base', function(Y) {
         NUM = Number;
 
     var _running = {},
-        _instances = {},
         _timer;
 
     Y.Anim = function() {
         Y.Anim.superclass.constructor.apply(this, arguments);
-        _instances[Y.stamp(this)] = this;
+        Y.Anim._instances[Y.stamp(this)] = this;
     };
 
     Y.Anim.NAME = 'anim';
+
+    Y.Anim._instances = {};
 
     /**
      * Regex of properties that should use the default unit.
@@ -307,9 +308,10 @@ YUI.add('anim-base', function(Y) {
      * @static
      */    
     Y.Anim.run = function() {
-        for (var i in _instances) {
-            if (_instances[i].run) {
-                _instances[i].run();
+        var instances = Y.Anim._instances;
+        for (var i in instances) {
+            if (instances[i].run) {
+                instances[i].run();
             }
         }
     };
@@ -615,6 +617,10 @@ YUI.add('anim-base', function(Y) {
             }
 
             return val;
+        },
+
+        destructor: function() {
+            delete Y.Anim._instances[Y.stamp(this)];
         }
     };
 
@@ -1167,5 +1173,5 @@ Y.Anim.behaviors.xy = {
 }, '@VERSION@' ,{requires:['anim-base', 'node-screen']});
 
 
-YUI.add('anim', function(Y){}, '@VERSION@' ,{use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy'], skinnable:false});
+YUI.add('anim', function(Y){}, '@VERSION@' ,{skinnable:false, use:['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-node-plugin', 'anim-scroll', 'anim-xy']});
 

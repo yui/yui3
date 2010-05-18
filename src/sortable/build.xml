@@ -3,7 +3,9 @@
 <!-- YUI 3 Component Build File -->
 
 <project name="Sortable" default="local">
-    <description>Sourtable Build File</description>
-    <property file="build.properties" />
-    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+    <description>Sortable Build File</description>
+    <target name="all">
+        <ant antfile="build.sortable.xml" target="all" />
+        <ant antfile="build.scroll.xml" target="all" />
+    </target>
 </project>
