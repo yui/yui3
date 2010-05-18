@@ -1853,9 +1853,10 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache, refetch){
     cache = cache || {};
 
-    return function(arg1, arg2) {
+    return function(arg1) {
 
-        var k = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+        var k = (arguments.length > 1) ? 
+            Array.prototype.join.call(arguments, DELIMITER) : arg1;
 
         if (!(k in cache) || (refetch && cache[k] == refetch)) {
             cache[k] = source.apply(source, arguments);
