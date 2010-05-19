@@ -1,11 +1,26 @@
 <html>
-<head>
-<style>v\: * { behavior:url(#default#VML); display:inline-block }</style>
 <xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />
+<head>
 <style>
 /*Supplemental CSS for the YUI distribution*/
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
+v\:group, v\:shape {
+    behavior:url(#default#VML);
+    display:inline-block;
+    zoom:1;
+}
+
+canvas {
+    border:5px solid red;
+}
+
+#demo, #demo2 {
+    width:800px;
+    height:600px;
+    display: inline-block;
+    zoom:1;
+}
 </style>
 <!-- BEGIN EXAMPLE CODE -->
 	<script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script>
@@ -15,14 +30,14 @@
 <body>
 	<div>
 		<h1>Chart with Multiple Axes</h1>
-			<div id="appdiv" style="width:800px;height:800px;background-color:#ffffff;border:2px solid #ff0000"></div>
+			<div id="appdiv"></div>
 		<div style="float:right" id="output"></div>
 		<script>
 			YUI({}).use('node', 'json', 'event-custom', 'graphics', function (Y)
 			{
-                graphics = new Y.Graphic();
+                graphics = new Y.Graphic({width:800, height:600});
                 graphics.render(document.getElementById("appdiv"));
-				
+/*				
                 graphics.lineStyle(12, "#0000ff", 1);
                 graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1], 315);
                 graphics.drawRect(40, 40, 400, 300);
@@ -37,11 +52,14 @@
                 graphics.beginGradientFill("radial", ["#00ffff", "#ee63ff"], [], [0, .8], 0);
                 graphics.drawCircle(450, 40, 100);
                 graphics.endFill();
-                
-                graphics.lineStyle(3, "#000000", 1);
-                graphics.beginFill("#000000", 1);
-                graphics.moveTo(11, 33);
-                graphics.lineTo(330, 200);
+  */              
+                graphics.beginFill("blue", 1);
+                graphics.lineStyle(3, "red", 1);
+                graphics.moveTo(10, 10);
+                graphics.lineTo(110, 10);
+                graphics.lineTo(110, 110);
+                graphics.lineTo(10, 110);
+                graphics.lineTo(10, 10);
                 graphics.endFill();
             });
 

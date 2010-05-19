@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Y! Finance</title>
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
-	<meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Y! Finance</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
 <style>
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
@@ -35,7 +35,7 @@
 		background-color:#ddd;
 		text-align:center;
 		background-image:url('http://www.mysteryhunt.ws/ipadcharts/rightback.png');
-		backround-repeat:repeat-y;
+		background-repeat:repeat-y;
 	}
 	
 	#stock-info {
@@ -388,7 +388,7 @@
                         
                         var target = e.currentTarget,
                             minVal = target.get("node").get("region").left,
-                            maxVal = minVal + sliderWidth, //target.get("node").get("offsetWidth"),
+                            maxVal = minVal + sliderWidth, 
                             len = document.getElementById("small-chart").offsetWidth;
                         timeaxis.updateMinByPosition(minVal, len);
                         timeaxis.updateMaxByPosition(maxVal, len);

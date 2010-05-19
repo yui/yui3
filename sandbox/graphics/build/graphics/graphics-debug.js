@@ -419,14 +419,15 @@ VMLGraphics.prototype = {
         this._height = 0;
         this._x = 0;
         this._y = 0;
-
         this._fill = 0;
         this._stroke = 0;
     },
 
     _createGraphics: function() {
-        var group = Y.config.doc.createElement('v:group');
-        group.style.position = 'relative';
+
+    var group = document.createElement('<group xmlns="urn:schemas-microsft.com:vml" class="vmlgroup"/>');
+    group.style.display = "inline-block";
+    group.style.position = 'relative';
         return group;
     },
 
@@ -437,13 +438,16 @@ VMLGraphics.prototype = {
 
     beginFill: function(color, alpha) {
         if (color) {
+            if (alpha) {
+                this._fillProps = {
+                    type:"solid",
+                    opacity: alpha
+                };
+            }
             this._fillColor = color;
             this._fill = 1;
         }
 
-        if (alpha) {
-            Y.log('vml alpha fill not implemented', 'warn', 'graphics-vml');
-        }
         return this;
     },
 
@@ -512,7 +516,7 @@ VMLGraphics.prototype = {
 	},
 
     endFill: function() {
-        var shape = Y.config.doc.createElement('v:shape'),
+        var shape = document.createElement('<shape xmlns="urn:schemas-microsft.com:vml" class="vmlshape"/>'),
             w = this._width,
             h = this._height,
             fillProps = this._fillProps,
@@ -521,7 +525,6 @@ VMLGraphics.prototype = {
 
         this._path += ' x e';
 
-        shape.style.position = 'absolute';
         shape.path = this._path;
 
         if (this._fill) {
@@ -540,17 +543,16 @@ VMLGraphics.prototype = {
         shape.coordSize = w + ', ' + h;
 
         if (fillProps) {
-            fill = document.createElement('v:fill');
-
+            fill = document.createElement('<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill"/>');
             for (prop in fillProps) {
                 if(fillProps.hasOwnProperty(prop)) {
-                    fill[prop] = fillProps[prop];
+                    fill.setAttribute(prop, fillProps[prop]);
                 }
             }
-
             shape.appendChild(fill);
         }
         this._vml.appendChild(shape);
+        
         this._initProps();
         return this;
     },
@@ -560,11 +562,9 @@ VMLGraphics.prototype = {
     },
 
     lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-        if (!this._stroke) {
-            this._stroke = 1;
-            this._strokeWeight = 1;//thickness * 0.7;
-            this._strokeColor = color;
-        }
+        this._stroke = 1;
+        this._strokeWeight = thickness * 0.7;
+        this._strokeColor = color;
         return this;
     },
 
@@ -580,9 +580,8 @@ VMLGraphics.prototype = {
         for (i = 0; i < len; ++i) {
             this._path += ' ' + args[i][0] + ', ' + args[i][1];
 
-            //this._trackSize.apply(this, args[i]);
+            this._trackSize.apply(this, args[i]);
         }
-
         return this;
     },
 
@@ -595,23 +594,34 @@ VMLGraphics.prototype = {
         this._vml.style.width = w + 'px';
         this._vml.style.height = h + 'px';
         this._vml.coordSize = w + ' ' + h;
-        //this._width = w;
-        //this._height = h;
     },
-
+    
     render: function(node) {
+        var w = node.offsetWidth,
+            h = node.offsetHeight;
         node = node || Y.config.doc.body;
         node.appendChild(this._vml);
+        this.setSize(w, h);
+        this._initProps();
         return this;
     }
 };
 
 if (Y.UA.ie) {
-
-    Y.config.doc.namespaces.add('v', 'urn:schemas-microsoft-com:vml').doImport('#default#VML');
-
-
-Y.log('using VML');
+    var sheet = document.createStyleSheet();
+        sheet.addRule(".vmlgroup", "behavior:url(#default#VML)", sheet.rules.length);
+        sheet.addRule(".vmlgroup", "display:inline-block", sheet.rules.length);
+        sheet.addRule(".vmlgroup", "zoom:1", sheet.rules.length);
+        sheet.addRule(".vmlshape", "behavior:url(#default#VML)", sheet.rules.length);
+        sheet.addRule(".vmlfill", "behavior:url(#default#VML)", sheet.rules.length);
+    try
+    {
+         document.namespaces.add('v', 'urn:schemas-microsoft-com:vml', "#default#VML");
+    }
+    catch(e)
+    {
+    }
+    Y.log('using VML');
     Y.Graphic = VMLGraphics;
 }
 
