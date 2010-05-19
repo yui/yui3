@@ -19,6 +19,7 @@ function SWFWidget (config)
 {
 	this._createId();
 	SWFWidget.superclass.constructor.apply(this, arguments);
+    this._instantiateSWFClass();
 }
 
 /**
@@ -66,6 +67,23 @@ SWFWidget.ATTRS = {
         }   
 	},
 
+    /**
+     * An array of constructor arguments used when creating an actionscript instance
+     * of the Container.
+     */
+    swfargs: 
+    {
+        getter: function()
+        {
+            return this._getArgs();
+        },
+
+        validator: function(val)
+        {
+            return Y.Lang.isArray(val);
+        }
+    },
+
 	/**
 	 * Indicates whether item has been added to its parent.
 	 */
@@ -92,12 +110,18 @@ SWFWidget.ATTRS = {
 	 */
 	styles:
 	{
-		value: {},
+        getter: function()
+        {
+            return this._styles;
+        },
 
 		setter: function(val)
 		{
-			val = this._setStyles(val);
-            this._updateStyles();
+			if(!this._styles)
+            {
+                this._styles = {};
+            }
+            this._styles = val = this._setStyles(val);
 			return val;
 		},
 		
@@ -121,6 +145,22 @@ SWFWidget.ATTRS = {
 
 Y.extend(SWFWidget, Y.Base,
 {
+    _getArgs: function()
+    {
+        return [];
+    },
+
+    _instantiateSWFClass: function()
+    {
+        var styles = this.get("styles"),
+            args = this.get("swfargs");
+        this.createInstance(this.get("id"), this.get("className"), args);
+        if(styles && args.indexOf(styles) === -1)
+        {
+            this._updateStyles();
+        }
+    },
+
     /**
      * @private
      * Storage for parent
@@ -254,7 +294,7 @@ Y.extend(SWFWidget, Y.Base,
 	 */
 	_updateStyles: function()
 	{
-		var styleHash = this._styleObjHash,
+        var styleHash = this._styleObjHash,
 		styles = this.get("styles");
         Y.Object.each(styles, function(value, key, styles)
 		{
@@ -264,6 +304,8 @@ Y.extend(SWFWidget, Y.Base,
 			}
 		}, this);
 	},
+
+    _styles: null,
 
 	/**
 	 * @private (override)
@@ -378,19 +420,6 @@ Y.SWFWidget = SWFWidget;
 			}
 		},
 		/**
-		 * An array of constructor arguments used when creating an actionscript instance
-		 * of the Container.
-		 */
-		swfargs: 
-		{
-			value: [],
-
-			validator: function(val)
-			{
-				return Y.Lang.isArray(val);
-			}
-		},
-		/**
 		 * Reference to the layout strategy used for displaying child items.
 		 */
 		layout:  
@@ -488,9 +517,7 @@ Y.SWFWidget = SWFWidget;
 		 */
 		addItem: function(item, props)
 		{
-            var args = item.swfarguments && typeof item.swfarguments == "array" ? item.args : [];
-            this.createInstance(item._id, item.get("className"), args); 
-            args =  ["$" + item._id]; 
+            var args = ["$" + item._id]; 
             if(props)
             {
                 args.push(props);
@@ -757,7 +784,7 @@ Y.SWFWidget = SWFWidget;
             this.swf = new Y.SWF(this.get("parent"), this.get("swfurl"), this.get("params"));
 		},
 
-		initializer: function(cfg)
+		_instantiateSWFClass: function()
 		{
             this._dataId = this._id + "data";
 			if(this.get("autoLoad"))
@@ -772,7 +799,7 @@ Y.SWFWidget = SWFWidget;
 		_init: function()
 		{
 			this._addBackground();
-			this._updateStyles();
+            this._updateStyles();
             this.fire("appReady");
 		},
 		
@@ -785,7 +812,10 @@ Y.SWFWidget = SWFWidget;
 		addItem: function(item, props)
 		{
 			Container.prototype.addItem.apply(this, arguments);
-	    	item._init();
+	    	if(item._init)
+            {
+                item._init();
+            }
 		},
 
 		/**
@@ -1068,12 +1098,9 @@ Y.SWFApplication = SWFApplication;
 	});
 
 Y.BorderContainer = BorderContainer;
-
 function Graph (config) 
 {
 	Graph.superclass.constructor.apply(this, arguments);
-    this.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
-    this.fire("graphReady", {swfowner:this.get("app")});
 }
 
 Graph.NAME = "graph";
@@ -1131,6 +1158,11 @@ Graph.ATTRS = {
  */
 Y.extend(Graph, Y.Container, 
 {
+    _getArgs: function()
+    {
+        return [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")];
+    },
+
 	GUID:"yuigraph",
 
 	/**
@@ -1309,7 +1341,9 @@ Axis.ATTRS = {
 		getter: function()
 		{
 			return this._axisType;
-		}
+		},
+
+        lazyAdd: false
 	}
 };
 
@@ -1318,17 +1352,14 @@ Axis.ATTRS = {
  */
 Y.extend(Axis, Y.SWFWidget, 
 {
-    /**
-     * @private
-     */
-    initializer: function(cfg)
+    _getArgs: function()
     {
         this._dataId = this._id + "data";
         this.createInstance(this._dataId, this.get("axisType") + "Data", ["$" + this.get("app")._dataId]);
-        this.createInstance(this._id, "Axis", ["$" + this._dataId]);
+        return ["$" + this._dataId];
     },
-
-	GUID:"yuiaxis",
+	
+    GUID:"yuiaxis",
 
     /**
      * @private
@@ -1340,7 +1371,7 @@ Y.extend(Axis, Y.SWFWidget,
      * @private 
      * Storage for keys
      */
-	_keys: [],
+	_keys: null,
 
 	/**
 	 * Reference to corresponding Actionscript class.
@@ -1617,7 +1648,6 @@ Y.Axis = Axis;
 	});
 
 Y.SimpleChart = SimpleChart;
-
 function DataTip (config) 
 {
 	DataTip.superclass.constructor.apply(this, arguments);
@@ -1671,22 +1701,35 @@ Y.extend(DataTip, Y.Container,
 
 	_graph: null,
 
-	/**
-	 * @private
-	 * Called by the class instance containing the application swf after the swf
-	 * has been initialized.
-	 *
-	 * @method _init
-	 * @param swfowner {Object} Class instance with direct access to the application swf.
-	 */
-	initializer: function(cfg)
-	{
-        this.createInstance(this._id, "DataTip", ["$" + this.get("graph")._id]);
-        this.applyMethod(this.get("parent")._id, "addItem", ["$" + this._id, {excludeFromLayout:true}]);
+    _getArgs: function()
+    {
+        return ["$" + this.get("graph")._id];
 	}
 });
 
 Y.DataTip = DataTip;
+
+function SWFButton (config) 
+{
+	SWFButton.superclass.constructor.apply(this, arguments);
+}
+
+SWFButton.NAME = "swfButton";
+
+/**
+ * Need to refactor to augment Attribute
+ */
+Y.extend(SWFButton, Y.SWFWidget, 
+{
+	GUID:"yuiswfButton",
+
+	/**
+	 * Reference to corresponding Actionscript class.
+	 */
+	AS_CLASS: "Button"
+});
+
+Y.SWFButton = SWFButton;
 
 
 }, '@VERSION@' );

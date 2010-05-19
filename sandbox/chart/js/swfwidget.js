@@ -17,6 +17,7 @@ function SWFWidget (config)
 {
 	this._createId();
 	SWFWidget.superclass.constructor.apply(this, arguments);
+    this._instantiateSWFClass();
 }
 
 /**
@@ -64,6 +65,23 @@ SWFWidget.ATTRS = {
         }   
 	},
 
+    /**
+     * An array of constructor arguments used when creating an actionscript instance
+     * of the Container.
+     */
+    swfargs: 
+    {
+        getter: function()
+        {
+            return this._getArgs();
+        },
+
+        validator: function(val)
+        {
+            return Y.Lang.isArray(val);
+        }
+    },
+
 	/**
 	 * Indicates whether item has been added to its parent.
 	 */
@@ -90,12 +108,18 @@ SWFWidget.ATTRS = {
 	 */
 	styles:
 	{
-		value: {},
+        getter: function()
+        {
+            return this._styles;
+        },
 
 		setter: function(val)
 		{
-			val = this._setStyles(val);
-            this._updateStyles();
+			if(!this._styles)
+            {
+                this._styles = {};
+            }
+            this._styles = val = this._setStyles(val);
 			return val;
 		},
 		
@@ -119,6 +143,22 @@ SWFWidget.ATTRS = {
 
 Y.extend(SWFWidget, Y.Base,
 {
+    _getArgs: function()
+    {
+        return [];
+    },
+
+    _instantiateSWFClass: function()
+    {
+        var styles = this.get("styles"),
+            args = this.get("swfargs");
+        this.createInstance(this.get("id"), this.get("className"), args);
+        if(styles && args.indexOf(styles) === -1)
+        {
+            this._updateStyles();
+        }
+    },
+
     /**
      * @private
      * Storage for parent
@@ -252,7 +292,7 @@ Y.extend(SWFWidget, Y.Base,
 	 */
 	_updateStyles: function()
 	{
-		var styleHash = this._styleObjHash,
+        var styleHash = this._styleObjHash,
 		styles = this.get("styles");
         Y.Object.each(styles, function(value, key, styles)
 		{
@@ -262,6 +302,8 @@ Y.extend(SWFWidget, Y.Base,
 			}
 		}, this);
 	},
+
+    _styles: null,
 
 	/**
 	 * @private (override)

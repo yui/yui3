@@ -148,7 +148,32 @@ package com.yahoo.renderers
 		 */
 		private var _contentHeight:Number;
 			
-		/**
+        /**
+         * @private (override)
+         */
+        override public function setStyles(styles:Object):void
+        {
+            if(styles.hasOwnProperty("url"))
+            {
+                this.url = styles.url;
+            }
+            super.setStyles(styles);
+        }
+
+        /**
+         * @private (override)
+         */
+        override public function setStyle(style:String, value:Object):Boolean
+        {
+            if(style === "url")
+            {
+                this.url = String(value);
+                return true;
+            }
+            return super.setStyle(style, value);
+        }   
+		
+        /**
 		 * @inheritDoc
 		 */
 		override protected function render():void
@@ -255,8 +280,6 @@ package com.yahoo.renderers
 			this._loader.visible = false;
 		}
 		
-		
-		
 		/**
 		 * @private
 		 */
@@ -335,6 +358,6 @@ package com.yahoo.renderers
 		private function loaderHTTPStatusHandler(event:HTTPStatusEvent):void
 		{
 			//placeholder for HTTPStatus event
-		}		
+		}
 	}
 }

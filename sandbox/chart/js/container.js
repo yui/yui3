@@ -43,19 +43,6 @@
 			}
 		},
 		/**
-		 * An array of constructor arguments used when creating an actionscript instance
-		 * of the Container.
-		 */
-		swfargs: 
-		{
-			value: [],
-
-			validator: function(val)
-			{
-				return Y.Lang.isArray(val);
-			}
-		},
-		/**
 		 * Reference to the layout strategy used for displaying child items.
 		 */
 		layout:  
@@ -153,9 +140,7 @@
 		 */
 		addItem: function(item, props)
 		{
-            var args = item.swfarguments && typeof item.swfarguments == "array" ? item.args : [];
-            this.createInstance(item._id, item.get("className"), args); 
-            args =  ["$" + item._id]; 
+            var args = ["$" + item._id]; 
             if(props)
             {
                 args.push(props);

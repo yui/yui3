@@ -8,11 +8,11 @@
 <style type="text/css">
 body {
     font:13px/1.22 arial;
-    width:1000px;
 }
 
 #doc {
     min-height:200px;
+    width:1000px;
 }
 
 #get-style {
@@ -40,11 +40,13 @@ body {
 }
 
 #test-computed {
+    border: medium solid #000;
     position:relative;
     width:50%;
     margin:auto;
     padding:10px;
     z-index: 2;
+    zoom:1;
 }
 
 #test-scroll {
@@ -166,7 +168,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
 
-    new Y.Console({node: '#yui-log', height: '50em' }).render('#yui-log');
+    new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
     var byId = function(id) {
         return document.getElementById(id);
@@ -242,6 +244,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
                 "frameDoc.one('#demo li').get('innerHTML')");
 
             ArrayAssert.itemsAreEqual([document.body], Y.all(document.body)._nodes, "Y.all(document.body)");
+            Assert.areSame(Y.one('doc'), Y.one('doc'), "Y.one('doc') === Y.one('doc')");
         },
 
         test_each: function() {
@@ -452,6 +455,9 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             var node = Y.one('#test-prop');
 
             Assert.isTrue(node.hasMethod('appendChild'), "node.hasMethod('appendChild')");
+            var xmlNode = Y.one(document.createElement('xml'));
+            Assert.isFalse(xmlNode.hasMethod('onreadystatechange')," xmlNode.hasMethod('onreadystatechange')");
+
             //Assert.isTrue(element === Y.one(node), 'element === Y.one(node)');
             Assert.areEqual(element.getElementsByTagName('em')[0].nodeName, node.getElementsByTagName('em').item(0).get('nodeName'), 'getElementsByTagName'); 
             var insertNode = document.createElement('div');
@@ -670,26 +676,30 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         },
 
         test_getComputedStyle: function() {
-            var node = Y.one('#test-computed');
-            var domNode = byId('test-computed');
+            var node = Y.one('#test-computed'),
+                domNode = byId('test-computed'),
+                bw = (Y.UA.ie && Y.UA.ie < 8) ? 4 : 3,
+                w = node.get('offsetWidth'),
+                h = node.get('offsetHeight');
 
-            domNode.style.zoom = 1;
-            domNode.style.border = 'medium solid #000';
+            if (!Y.UA.ie || document.compatMode !== 'BackCompat') {
+                w = w - 20 - 2 * bw;
+                h = h - 20 - 2 * bw;
+            }
 
-            var bw = (Y.UA.ie) ? 4 : 3;
-            var h = node.get('offsetHeight') - 20 - 2 * bw;
             Assert.areEqual(bw + 'px', node.getComputedStyle('borderTopWidth'), "borderTopWidth: medium");
-            Assert.areEqual(h, Math.round(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
+            Assert.areEqual(h, Math.ceil(parseFloat(node.getComputedStyle('height'))), "height: auto (offset minus padding and border)");
             domNode.style.padding = '1em';
-            Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 10em");
+            Assert.areEqual('13px', node.getComputedStyle('paddingTop'), "padding 13px");
             Assert.areEqual('visible', node.getComputedStyle('visibility'), "visibility");
             domNode.parentNode.style.visibility = 'hidden';
-            Assert.areEqual('hidden', node.getComputedStyle('visibility'), "visibility");
+            Assert.areEqual('hidden', node.getComputedStyle('visibility'), "visibility:hidden");
             domNode.parentNode.style.visibility = 'visible';
             Assert.areEqual(2, node.getComputedStyle('zIndex'), 'node.getComputedStyle("zIndex")');
-            Assert.areEqual('500px', node.getComputedStyle('width'), "percent width (from CSS)");
             domNode.style.margin = 'auto';
             Assert.areEqual('0px', node.getComputedStyle('marginTop'), "margin auto");
+
+            Assert.areEqual(w, Math.round(parseFloat(node.getComputedStyle('width'))), "percent width (from CSS)");
         },
 
         test_setStyles: function() {
@@ -807,8 +817,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         test_insert: function() {
             var node = Y.one('#test-insert-html'),
                 html = '<strong>foo</strong>',
-                content = node.get('innerHTML').toLowerCase();
+                content;
 
+            node.setContent('foo');
+            content = node.get('innerHTML').toLowerCase();
             node.insert(html);
             Assert.areEqual(node._node.innerHTML.toLowerCase(),
                 content + html,
@@ -846,21 +858,30 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
 
             // test fragment insertion
 
-            html = '<a>bar</a><h2>foo</h2>';
+            var childCount = node.get('childNodes').size();
+            html = '<q>bar</q><h2>foo</h2>';
             content = node.get('innerHTML').toLowerCase();
 
             node.insert(html);
-            Assert.areEqual(Y.Lang.trim(node._node.innerHTML.toLowerCase()),
-                Y.Lang.trim(content + html).toLowerCase(),
+            Assert.areEqual(childCount + 2,
+                node.get('childNodes').size(),
+                "node.insert(" + html + ")");
+
+            Assert.areEqual('Q',
+                node.get('childNodes').item(childCount).get('tagName'),
+                "node.insert(" + html + ")");
+
+            Assert.areEqual('H2',
+                node.get('childNodes').item(childCount + 1).get('tagName'),
                 "node.insert(" + html + ")");
 
             html = '<label>foo</label><input>';
             content = node.get('innerHTML').toLowerCase();
 
-            node.insert(html, 0);
+            node.insert(html);
             Assert.areEqual(node._node.innerHTML.toLowerCase(),
-                html + content,
-                "node.insert(" + html + ", 0)");
+                Y.Lang.trim(content + html).toLowerCase(),
+                "node.insert(" + html + ")");
 
             node.setContent('<em>foo</em><span>bar</span>');
 
@@ -1034,6 +1055,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             mask.className = 'mask';
             document.body.appendChild(mask);
             var doc = Y.one('document');
+            window.scrollTo(0,0);
             mask.style.height = doc.get('docHeight') + 'px';
             mask.style.width = doc.get('docWidth') + 'px';
             Y.DOM.setStyle(mask, 'opacity', 0.4); 
@@ -1042,8 +1064,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Assert.areEqual('test-xy', doc.one('#test-xy').get('id'), 'doc.one("#test-xy")');
             Assert.isNull(doc.one('fake-id'), 'doc.one("#fake-id")');
 
-            Assert.areEqual(document.documentElement.offsetHeight, mask.offsetHeight, 'get("height")');
-            Assert.areEqual(document.documentElement.offsetWidth, mask.offsetWidth, 'get("width")');
+            Assert.areEqual(mask.offsetHeight, doc.get('docHeight'), 'get("docHeight")');
+            Assert.areEqual(mask.offsetWidth, doc.get('docWidth'), 'get("docWidth")');
             mask.className = '';
         },
 
@@ -1171,11 +1193,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
 
     Y.Test.Runner.add(suite);
 
-    // allow window scroll event to happen post-onload
     Y.on('load', function() {
-//        setTimeout(function() {
             Y.Test.Runner.run();
-//        }, 1);
     }, window);
 });
 </script>

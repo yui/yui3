@@ -716,10 +716,19 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
      * @return {string} The object's guid or null
      */
     stamp: function(o, readOnly) {
+        var uid;
         if (!o) {
             return o;
         }
-        var uid = (typeof o === 'string') ? o : o._yuid;
+        
+        // IE generates its own unique ID for dom nodes
+        // The uniqueID property of a document node returns a new ID
+        if (o.uniqueID && o.nodeType && o.nodeType !== 9) {
+            uid = o.uniqueID;
+        } else {
+            uid = (typeof o === 'string') ? o : o._yuid;
+        }
+
         if (!uid) {
             uid = this.guid();
             if (!readOnly) {
@@ -804,7 +813,8 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  */
 
 /**
- * A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.
+ * A hash of log sources that should be not be logged.  If specified, 
+ * all sources are logged if not on this list.
  *
  * @property logExclude
  * @type object
@@ -821,7 +831,8 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  */
 
 /**
- * If throwFail is set, Y.fail will generate or re-throw a JS Error.  Otherwise the failure is logged.
+ * If throwFail is set, Y.error will generate or re-throw a JS Error.  
+ * Otherwise the failure is logged.
  *
  * @property throwFail
  * @type boolean

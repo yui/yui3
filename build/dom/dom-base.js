@@ -423,10 +423,6 @@ Y.DOM = {
      * </dl>
      */
     addHTML: function(node, content, where) {
-        if (typeof content === 'string') {
-            content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
-        }
-
         var nodeParent = node.parentNode,
             newNode;
             

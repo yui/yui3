@@ -1,9 +1,6 @@
-
 function Graph (config) 
 {
 	Graph.superclass.constructor.apply(this, arguments);
-    this.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
-    this.fire("graphReady", {swfowner:this.get("app")});
 }
 
 Graph.NAME = "graph";
@@ -61,6 +58,11 @@ Graph.ATTRS = {
  */
 Y.extend(Graph, Y.Container, 
 {
+    _getArgs: function()
+    {
+        return [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")];
+    },
+
 	GUID:"yuigraph",
 
 	/**

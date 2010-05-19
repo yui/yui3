@@ -30,32 +30,13 @@ if (typeof loadFirebugConsole == 'function') {
     loadFirebugConsole();
 }
 
-
 YUI({
-    base: '../../build/'
-}).use('*', function(Y) {
-
-            var loader = new Y.Loader({
-                require: ['dd', 'widget', 'io'],
-                // force: ["yui", "yui-base", "get", "yui-log", "yui-later", "loader"],
-                ignoreRegistered: true,
-                allowRollup: true, 
-                filter: 'min',
-                loadOptional: false,
-                combine: false
-            });
-
-            loader.base = Y.config.base;
-
-            loader.calculate();
-
-            var s = loader.sorted, l = s.length, m, surl, out = [], i;
-
-            //console.log(s);
-            console.log(loader.moduleInfo);
-
-
+    filter: 'raw',
+    combine: false
+}).use('event-key','widget',function(Y){
 });
+
+
 
 </script> 
 

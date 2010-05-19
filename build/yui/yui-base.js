@@ -700,10 +700,19 @@ proto = {
      * @return {string} The object's guid or null
      */
     stamp: function(o, readOnly) {
+        var uid;
         if (!o) {
             return o;
         }
-        var uid = (typeof o === 'string') ? o : o._yuid;
+        
+        // IE generates its own unique ID for dom nodes
+        // The uniqueID property of a document node returns a new ID
+        if (o.uniqueID && o.nodeType && o.nodeType !== 9) {
+            uid = o.uniqueID;
+        } else {
+            uid = (typeof o === 'string') ? o : o._yuid;
+        }
+
         if (!uid) {
             uid = this.guid();
             if (!readOnly) {
@@ -788,7 +797,8 @@ proto = {
  */
 
 /**
- * A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.
+ * A hash of log sources that should be not be logged.  If specified, 
+ * all sources are logged if not on this list.
  *
  * @property logExclude
  * @type object
@@ -805,7 +815,8 @@ proto = {
  */
 
 /**
- * If throwFail is set, Y.fail will generate or re-throw a JS Error.  Otherwise the failure is logged.
+ * If throwFail is set, Y.error will generate or re-throw a JS Error.  
+ * Otherwise the failure is logged.
  *
  * @property throwFail
  * @type boolean
@@ -1844,9 +1855,10 @@ Y.mix = function(r, s, ov, wl, mode, merge) {
 Y.cached = function(source, cache, refetch){
     cache = cache || {};
 
-    return function(arg1, arg2) {
+    return function(arg1) {
 
-        var k = (arg2) ? Array.prototype.join.call(arguments, DELIMITER) : arg1;
+        var k = (arguments.length > 1) ? 
+            Array.prototype.join.call(arguments, DELIMITER) : arg1;
 
         if (!(k in cache) || (refetch && cache[k] == refetch)) {
             cache[k] = source.apply(source, arguments);
@@ -2102,6 +2114,21 @@ O.setValue = function(o, path, val) {
     }
 
     return o;
+};
+
+/**
+ * Returns true if the object has no properties of its own
+ * @method isEmpty
+ * @return {boolean} true if the object is empty
+ * @since 3.2.0
+ */
+O.isEmpty = function(o) {
+    for (var i in o) {
+        if (owns(o, i)) {
+            return false;
+        }
+    }
+    return true;
 };
 
 })();

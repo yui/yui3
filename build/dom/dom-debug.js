@@ -424,10 +424,6 @@ Y.DOM = {
      * </dl>
      */
     addHTML: function(node, content, where) {
-        if (typeof content === 'string') {
-            content = Y.Lang.trim(content); // match IE which trims whitespace from innerHTML
-        }
-
         var nodeParent = node.parentNode,
             newNode;
             
@@ -1098,6 +1094,8 @@ var HAS_LAYOUT = 'hasLayout',
     // TODO: unit-less lineHeight (e.g. 1.22)
     re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i,
 
+    isIE8 = (Y.UA.ie >= 8),
+
     _getStyleObj = function(node) {
         return node.currentStyle || node.style;
     },
@@ -1141,6 +1139,7 @@ var HAS_LAYOUT = 'hasLayout',
                 offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
                 pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
                 sizeOffsets = ComputedStyle.sizeOffsets[prop], 
+                mode = el.ownerDocument.compatMode,
                 value = '';
 
             // IE pixelWidth incorrect for percent
@@ -1150,14 +1149,16 @@ var HAS_LAYOUT = 'hasLayout',
             if (current === AUTO || current.indexOf('%') > -1) {
                 value = el['offset' + capped];
 
-                if (sizeOffsets[0]) {
-                    value -= ComputedStyle.getPixel(el, 'padding' + sizeOffsets[0]);
-                    value -= ComputedStyle.getBorderWidth(el, 'border' + sizeOffsets[0] + 'Width', 1);
-                }
+                if (mode !== 'BackCompat') {
+                    if (sizeOffsets[0]) {
+                        value -= ComputedStyle.getPixel(el, 'padding' + sizeOffsets[0]);
+                        value -= ComputedStyle.getBorderWidth(el, 'border' + sizeOffsets[0] + 'Width', 1);
+                    }
 
-                if (sizeOffsets[1]) {
-                    value -= ComputedStyle.getPixel(el, 'padding' + sizeOffsets[1]);
-                    value -= ComputedStyle.getBorderWidth(el, 'border' + sizeOffsets[1] + 'Width', 1);
+                    if (sizeOffsets[1]) {
+                        value -= ComputedStyle.getPixel(el, 'padding' + sizeOffsets[1]);
+                        value -= ComputedStyle.getBorderWidth(el, 'border' + sizeOffsets[1] + 'Width', 1);
+                    }
                 }
 
             } else { // use style.pixelWidth, etc. to convert to pixels
@@ -1172,9 +1173,9 @@ var HAS_LAYOUT = 'hasLayout',
         },
 
         borderMap: {
-            thin: '2px', 
-            medium: '4px', 
-            thick: '6px'
+            thin: (isIE8) ? '1px' : '2px',
+            medium: (isIE8) ? '3px': '4px', 
+            thick: (isIE8) ? '5px' : '6px'
         },
 
         getBorderWidth: function(el, property, omitUnit) {
@@ -1253,47 +1254,42 @@ var HAS_LAYOUT = 'hasLayout',
     IEComputed = {};
 
 // use alpha filter for IE opacity
-try {
-    if (documentElement.style[OPACITY] === UNDEFINED &&
-            documentElement[FILTERS]) {
-        Y.DOM.CUSTOM_STYLES[OPACITY] = {
-            get: function(node) {
-                var val = 100;
-                try { // will error if no DXImageTransform
-                    val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
+if (Y.UA.ie) {
+    Y.DOM.CUSTOM_STYLES[OPACITY] = {
+        get: function(node) {
+            var val = 100;
+            try { // will error if no DXImageTransform
+                val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
 
-                } catch(e) {
-                    try { // make sure its in the document
-                        val = node[FILTERS]('alpha')[OPACITY];
-                    } catch(err) {
-                        Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
-                    }
-                }
-                return val / 100;
-            },
-
-            set: function(node, val, style) {
-                var current,
-                    styleObj;
-
-                if (val === '') { // normalize inline style behavior
-                    styleObj = _getStyleObj(node);
-                    current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
-                    val = current;
-                }
-
-                if (typeof style[FILTER] == 'string') { // in case not appended
-                    style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
-                    
-                    if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
-                        style.zoom = 1; // needs layout 
-                    }
+            } catch(e) {
+                try { // make sure its in the document
+                    val = node[FILTERS]('alpha')[OPACITY];
+                } catch(err) {
+                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
                 }
             }
-        };
-    }
-} catch(e) {
-    Y.log('documentElement.filters error (activeX disabled)', 'warn', 'dom-style');
+            return val / 100;
+        },
+
+        set: function(node, val, style) {
+            var current,
+                styleObj;
+
+            if (val === '') { // normalize inline style behavior
+                styleObj = _getStyleObj(node);
+                current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
+                val = current;
+            }
+
+            if (typeof style[FILTER] == 'string') { // in case not appended
+                style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
+                
+                if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
+                    style.zoom = 1; // needs layout 
+                }
+            }
+        }
+    };
 }
 
 try {

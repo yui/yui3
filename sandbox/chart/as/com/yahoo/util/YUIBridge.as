@@ -75,9 +75,37 @@ package com.yahoo.util
 		 * @param params Arguments to passed to the function
 		 */
 		public function applyMethod(instanceId:String, method:String, params:Array = null):*
-		{	
-			if(params) params = this.parseArgs(params);
-			return (this._instances[instanceId][method] as Function).apply(this._instances[instanceId], params);
+		{
+            var func:Function,
+                chainArray:Array,
+                chain:Object,
+                i:int,
+                len:int;
+            if(params) params = this.parseArgs(params);
+            if(method.indexOf(".") > -1)
+            {
+                chainArray = method.split(".");
+                chain = this._instances[instanceId];
+                len = chainArray.length;
+                for(i = 0; i < len; ++i)
+                {
+                    chain = chain[chainArray[i]];
+                }
+                func = chain as Function;
+            }
+            else
+            {
+                if(!this._instances[instanceId][method])
+                {
+                    return;
+                }
+                func = this._instances[instanceId][method] as Function;
+            }
+            if(params)
+            {
+                return func.apply(this._instances[instanceId], params);
+            }
+            return func.apply(this._instances[instanceId]);
 		}
 
 		/**
@@ -85,7 +113,7 @@ package com.yahoo.util
 		 */
 		public function createInstance(instanceId:String, className:String, constructorArguments:Array = null) : void 
 		{
-			var cA:Array = constructorArguments ? constructorArguments : [];
+            var cA:Array = constructorArguments ? constructorArguments : [];
 			var classReferenceObject:Object = this.getClass(className);
 			var instance:Object;
 

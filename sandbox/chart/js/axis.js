@@ -54,7 +54,9 @@ Axis.ATTRS = {
 		getter: function()
 		{
 			return this._axisType;
-		}
+		},
+
+        lazyAdd: false
 	}
 };
 
@@ -63,17 +65,14 @@ Axis.ATTRS = {
  */
 Y.extend(Axis, Y.SWFWidget, 
 {
-    /**
-     * @private
-     */
-    initializer: function(cfg)
+    _getArgs: function()
     {
         this._dataId = this._id + "data";
         this.createInstance(this._dataId, this.get("axisType") + "Data", ["$" + this.get("app")._dataId]);
-        this.createInstance(this._id, "Axis", ["$" + this._dataId]);
+        return ["$" + this._dataId];
     },
-
-	GUID:"yuiaxis",
+	
+    GUID:"yuiaxis",
 
     /**
      * @private
@@ -85,7 +84,7 @@ Y.extend(Axis, Y.SWFWidget,
      * @private 
      * Storage for keys
      */
-	_keys: [],
+	_keys: null,
 
 	/**
 	 * Reference to corresponding Actionscript class.

@@ -238,7 +238,9 @@
 
 
 					var mydatatip = new Y.DataTip({parent:myapp, graph:mygraph});
-					// Add items
+					myapp.addItem(mydatatip, {excludeFromLayout:true});
+
+                    // Add items
 					mychart.addBottomItem(mybottomaxis);
 					mychart.addLeftItem(myleftaxis);
 					mychart.addRightItem(myrightaxis);

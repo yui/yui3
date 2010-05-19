@@ -16,7 +16,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #davdoc {
             min-height: 2000px;
         }
-        #drag, #drag2, #drag3, #drag4, #drag5, #drag6, #drag7, .drop {
+        #drag {
             height: 175px;
             width: 175px;
             border: 1px solid black;
@@ -24,160 +24,28 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             text-align: center;
             overflow: hidden;
         }
-        #bd {
-            position: relative;
-        }
-        .drop {
-            border-width: 4px; 
-            background-color: #ccc;
-            height: 100px;
-            width: 100px;
-            float: left;
-            margin: 5px;
-        }
-        #play {
-            position: absolute;
-            top: 50px;
-            right: 100px;
+        #drop {
+            height: 175px;
             width: 500px;
-            border: 3px solid black;
-            /*height: 500px;
-            overflow: auto;*/
-        }
-        #fixed {
-            position: fixed;
-            left: 485px;
-            height: 100px;
-            width: 200px;
             border: 1px solid black;
-            background-color: #ccc;
-        }
-        #drag h2, #drag2 h2, #drag3 h2 {
-            margin: 0;
-            padding: 0;
-            border: none;
-        }
-        #drag3 {
-            position: relative;
-        }
-        #drag3 h2 {
-            position: absolute;
-            font-size: 85%;
-            height: 25px;
-            width: 25px;
             background-color: red;
-            color: white;
-        }
-        #drag3 h2.one {
-            top: 0;
-            left: 0;
-        }
-        #drag3 h2.two {
-            top: 0;
-            right: 0;
-        }
-        #drag3 h2.three {
-            bottom: 0;
-            left: 0;
-        }
-        #drag3 h2.four {
-            bottom: 0;
-            right: 0;
-        }
-        #drag6 {
-            height: 150px;
-            width: 150px;
-        }
-        #drag4 {
             position: absolute;
-            top: 13px;
-            left: 13px;
-            height: 73px;
-            width: 73px;
-            background-color: green;
-        }
-        #drag4.yui-dd-dragging {
-            opacity: .5;
-
-        }
-        .yui-dd-proxy {
-            background-color: red;
-        }
-        #drag7EL {
-            position: absolute;
-            display: none;
-            height: 30px;
-            width: 200px;
-            background-color: green;
-            color: white;
+            top: 300px;
+            right: 0px;
             font-weight: bold;
-            border: 2px solid black;
-            z-index: 999;
+            font-size: 120%;
         }
-        #drag4Cont {
-            border: 1px solid black;
-            position: relative;
-            height: 400px;
-            width: 400px;
-            background-image: url( grid.png );
-        }
-
-        .yui-dd-drop-active {
-            border-style: dotted;
-        }
-        .yui-dd-drop-active-valid {
-            border-color: blue;
-        }
-        .yui-dd-drop-active-invalid {
-            border-color: red;
-        }
-        .yui-dd-drop-over {
-            border-color: green;
-        }
-        #drop_4 {
-            position: relative;
-            top: -50px;
-            left: -10px;
-        }
-        #drop_8 {
-            position: relative;
-            top: -200px;
-            left: 25px;
-        }
-        #drop_2 {
-            position: relative;
-            top: 20px;
-            left: -195px;
-        }
-        #drop_6 {
-            position: relative;
-            top: -70px;
-            left: -185px;
-        }
-        #drop_1 {
-            position: relative;
-            left: 275px;
-            top: 10px;
-        }
-        #drop_5 {
-            position: relative;
-            left: 205px;
-            top: -81px;
-        }
-        #drop_7 {
-            position: relative;
-            top: -61px;
-            left: -10px;
+        #drop.yui3-dd-drop-over {
+            background-color: orange;
         }
 	</style>
 </head>
 <body class="yui-skin-sam">
-<div id="drag7EL">I'm a custom proxy</div>
 <div id="davdoc" class="yui-t7">
     <div id="hd"><h1 id="header"><a href="http://blog.davglass.com/">YUI: DragDrop 3.x</a></h1></div>
     <div id="bd">
         <div id="drag"><h2><strong>Drag</strong> Me</h2></div>
-
+        <div id="drop">Drop here</div>
     </div>
     <div id="ft">&nbsp;</div>
 </div>
@@ -188,7 +56,8 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <script type="text/javascript">
 var yConfig = {
     base: '../../build/',
-    filter: 'DEBUG',
+    //filter: 'DEBUG',
+    filter: 'RAW',
     logExclude: {
         'YUI': true,
         Event: true,
@@ -200,11 +69,14 @@ var yConfig = {
 };
 
 
-YUI(yConfig).use('dd-drag', 'dd-ddm', 'dump', function(Y) {
-    Y.DD.DDM._debugShim = true;
+YUI(yConfig).use('dd-drag', 'dd-ddm', 'dd-drop', 'dump', 'dd-scroll', function(Y) {
+    //Y.DD.DDM._debugShim = true;
+    Y.DD.DDM._useShim = false;
 
     //Add touchmove event to node
     Y.Node.DOM_EVENTS.touchmove = true;
+    Y.Node.DOM_EVENTS.touchend = true;
+    Y.Node.DOM_EVENTS.touchstart = true;
     
     //Some Event over writing ?? Extend ??
     //This needs to be added to Event, this is a total hack!!
@@ -222,26 +94,54 @@ YUI(yConfig).use('dd-drag', 'dd-ddm', 'dump', function(Y) {
         }
         return e;
     };
+
+    drop = new Y.DD.Drop({ node: '#drop' });
+    drop.on('drop:hit', function() {
+        drop.get('node').set('innerHTML', 'You Dropped on me!!!');
+    });
+
     
-    dd = new Y.DD.Drag({ node: '#drag' });
+    dd = new Y.DD.Drag({ node: '#drag', clickTimeThresh: 1 });
+    dd.plug(Y.Plugin.DDWinScroll);
     //So we know we are loaded, it's a little slow..
     dd.get('node').setStyle('backgroundColor', 'green');
+    dd.on('drag:start', function() {
+        dd.get('node').setStyle('backgroundColor', 'blue');
+    });
+    dd.on('drag:end', function() {
+        dd.get('node').setStyle('backgroundColor', 'green');
+    });
+    //console.log(dd.get('node').getXY());
+    
     
     if (Y.UA.webkit && Y.UA.mobile) {
         dd.get('node').on('touchmove', function(e) {
-
+            //console.log(dd.get('node').getXY());
             if(e.touches.length == 1) { // Only deal with one finger
                 if (!dd.get('dragging')) {
+                    //console.log('touch: [' + e.touches[0].pageX + ', ' + e.touches[0].pageY + ']');
                     dd.fire('drag:mouseDown', { ev: e.touches[0] });
-                    dd._ev_md = e.touches[0];
-                } else {
-                    console.log('touch: [' + e.touches[0].pageX + ', ' + e.touches[0].pageY + ']');
-                
-                    Y.DD.DDM._move.apply(Y.DD.DDM, [e.touches[0]]);
+                    e.preventDefault();
                 }
-                e.preventDefault();
             }
             
+        });
+        //Y.DD.DDM._pg.on('touchmove', function(e) {
+        Y.one('doc').on('touchmove', function(e) {
+            if (Y.DD.DDM.activeDrag) {
+                if (e.touches.length == 1) { // Only deal with one finger
+                    if (Y.DD.DDM.activeDrag) {
+                        //console.log('DDM touch: [' + e.touches[0].pageX + ', ' + e.touches[0].pageY + ']');
+                        Y.DD.DDM._move(e.touches[0]);
+                    }
+                }
+            }
+        });
+        Y.one('doc').on('touchend', function(e) {
+            //console.log('TOUCH END');
+            if (Y.DD.DDM.activeDrag) {
+                dd._handleMouseUp.apply(dd);
+            }
         });
     }
 

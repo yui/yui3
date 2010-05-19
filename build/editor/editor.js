@@ -198,6 +198,7 @@ YUI.add('frame', function(Y) {
             this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
 
             var html = '',
+                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : ''),
                 doc = this._instance.config.doc;
 
             html = Y.substitute(Frame.PAGE_HTML, {
@@ -207,7 +208,8 @@ YUI.add('frame', function(Y) {
                 META: Frame.META,
                 CONTENT: this.get('content'),
                 BASE_HREF: this.get('basehref'),
-                DEFAULT_CSS: Frame.DEFAULT_CSS
+                DEFAULT_CSS: Frame.DEFAULT_CSS,
+                EXTRA_CSS: extra_css
             });
             if (Y.config.doc.compatMode != 'BackCompat') {
                 html = Frame.DOC_TYPE + "\n" + html;
@@ -352,6 +354,16 @@ YUI.add('frame', function(Y) {
         focus: function() {
             this.getInstance().config.win.focus();
             return this;
+        },
+        _setExtraCSS: function(css) {
+            if (this._ready) {
+                var inst = this.getInstance(),
+                    node = inst.get('#extra_css');
+                
+                node.remove();
+                inst.one('head').append('<style id="extra_css">' + css + '</style>');
+            }
+            return css;
         }
     }, {
 
@@ -369,7 +381,7 @@ YUI.add('frame', function(Y) {
         * @description The template used to create the page when created dynamically.
         * @type String
         */
-        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/><style id="editor_css">{DEFAULT_CSS}</style></head><body>{CONTENT}</body></html>',
+        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/><style id="editor_css">{DEFAULT_CSS}</style>{EXTRA_CSS}</head><body>{CONTENT}</body></html>',
         /**
         * @static
         * @property DOC_TYPE
@@ -489,6 +501,15 @@ YUI.add('frame', function(Y) {
                     }
                     return id;
                 }
+            },
+            /**
+            * @attribute extracss
+            * @description A string of CSS to add to the Head of the Editor
+            * @type String
+            */
+            extracss: {
+                value: '',
+                setter: '_setExtraCSS'
             }
         }
     });
@@ -1396,7 +1417,8 @@ YUI.add('editor-base', function(Y) {
                 designMode: true,
                 title: EditorBase.STRINGS.title,
                 use: EditorBase.USE,
-                dir: this.get('dir')
+                dir: this.get('dir'),
+                extracss: this.get('extracss')
             }).plug(Y.Plugin.ExecCommand);
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
@@ -1427,6 +1449,107 @@ YUI.add('editor-base', function(Y) {
                     }
                     break;
             }
+
+            var changed = this.getDomPath(e.changedNode),
+                cmds = {}, family, fsize, classes = [],
+                fColor = '', bColor = '';
+
+            if (e.commands) {
+                cmds = e.commands;
+            }
+
+            changed.each(function(n) {
+                var tag = n.get('tagName').toLowerCase(),
+                    cmd = EditorBase.TAG2CMD[tag],
+                    el = Y.Node.getDOMNode(n);
+
+                if (cmd) {
+                    cmds[cmd] = 1;
+                }
+
+                //Bold and Italic styles
+                var s = el.style;
+                if (s.fontWeight.toLowerCase() == 'bold') {
+                    cmds.bold = 1;
+                }
+                if (s.fontStyle.toLowerCase() == 'italic') {
+                    cmds.italic = 1;
+                }
+                if (s.textDecoration.toLowerCase() == 'underline') {
+                    cmds.underline = 1;
+                }
+                if (s.textDecoration.toLowerCase() == 'line-through') {
+                    cmds.strikethrough = 1;
+                }
+
+                family = n.getStyle('fontFamily').split(',')[0].toLowerCase();
+                fsize = n.getStyle('fontSize');
+
+                var cls = n.get('className').split(' ');
+                Y.each(cls, function(v) {
+                    if (v !== '' && (v.substr(0, 4) !== 'yui_')) {
+                        classes.push(v);
+                    }
+                });
+
+                fColor = EditorBase.FILTER_RGB(n.getStyle('color'));
+                var bColor2 = EditorBase.FILTER_RGB(n.getStyle('backgroundColor'));
+                if (bColor2 !== 'transparent') {
+                    bColor = bColor2;
+                }
+                
+            });
+            
+            e.dompath = changed;
+            e.classNames = classes;
+            e.commands = cmds;
+
+            //TODO Dont' like this, not dynamic enough..
+            if (!e.fontFamily) {
+                e.fontFamily = family;
+            }
+            if (!e.fontSize) {
+                e.fontSize = fsize;
+            }
+            if (!e.fontColor) {
+                e.fontColor = fColor;
+            }
+            if (!e.backgroundColor) {
+                e.backgroundColor = bColor;
+            }
+        },
+        /**
+        * Walk the dom tree from this node up to body, returning a reversed array of parents.
+        * @method getDomPath
+        * @param {Node} node The Node to start from 
+        */
+        getDomPath: function(node) {
+            
+			var domPath = [];
+
+            while (node !== null) {
+                if (!node.inDoc()) {
+                    node = null;
+                    break;
+                }
+                //Check to see if we get el.nodeName and nodeType
+                if (node.get('nodeName') && node.get('nodeType') && (node.get('nodeType') == 1)) {
+                    domPath.push(Y.Node.getDOMNode(node));
+                }
+
+                if (node.test('body')) {
+                    node = null;
+                    break;
+                }
+
+                node = node.get('parentNode');
+            }
+            if (domPath.length === 0) {
+                domPath[0] = Y.confg.doc.body;
+            }
+            
+            return Y.all(domPath.reverse());
+
         },
         /**
         * After frame ready, bind mousedown & keyup listeners
@@ -1484,7 +1607,32 @@ YUI.add('editor-base', function(Y) {
         * @return {Node/NodeList} The Node or Nodelist affected by the command. Only returns on override commands, not browser defined commands.
         */
         execCommand: function(cmd, val) {
-            return this.frame.execCommand(cmd, val);
+            var ret = this.frame.execCommand(cmd, val),
+                inst = this.frame.getInstance(),
+                sel = new inst.Selection(), cmds = {},
+                e = { changedNode: sel.anchorNode, changedType: 'execcommand', nodes: ret };
+
+            switch (cmd) {
+                case 'forecolor':
+                    e.fontColor = val;
+                    break;
+                case 'backcolor':
+                    e.backgroundColor = val;
+                    break;
+                case 'fontsize':
+                    e.fontSize = val;
+                    break;
+                case 'fontname':
+                    e.fontFamily = val;
+                    break;
+            }
+
+            cmds[cmd] = 1;
+            e.commands = cmds;
+
+            this.fire('nodeChange', e);
+
+            return ret;
         },
         /**
         * Get the YUI instance of the frame
@@ -1530,6 +1678,44 @@ YUI.add('editor-base', function(Y) {
             return html;
         }
     }, {
+        /**
+        * @method filter_rgb
+        * @param String css The CSS string containing rgb(#,#,#);
+        * @description Converts an RGB color string to a hex color, example: rgb(0, 255, 0) converts to #00ff00
+        * @return String
+        */
+        FILTER_RGB: function(css) {
+            if (css.toLowerCase().indexOf('rgb') != -1) {
+                var exp = new RegExp("(.*?)rgb\\s*?\\(\\s*?([0-9]+).*?,\\s*?([0-9]+).*?,\\s*?([0-9]+).*?\\)(.*?)", "gi");
+                var rgb = css.replace(exp, "$1,$2,$3,$4,$5").split(',');
+            
+                if (rgb.length == 5) {
+                    var r = parseInt(rgb[1], 10).toString(16);
+                    var g = parseInt(rgb[2], 10).toString(16);
+                    var b = parseInt(rgb[3], 10).toString(16);
+
+                    r = r.length == 1 ? '0' + r : r;
+                    g = g.length == 1 ? '0' + g : g;
+                    b = b.length == 1 ? '0' + b : b;
+
+                    css = "#" + r + g + b;
+                }
+            }
+            return css;
+        },        
+        TAG2CMD: {
+            'b': 'bold',
+            'strong': 'bold',
+            'i': 'italic',
+            'em': 'italic',
+            'u': 'underline',
+            'sup': 'superscript',
+            'sub': 'subscript',
+            'img': 'insertimage',
+            'a' : 'createlink',
+            'ul' : 'insertunorderedlist',
+            'ol' : 'insertorderedlist'
+        },
         /**
         * Hash table of keys to fire a nodeChange event for.
         * @static
@@ -1601,6 +1787,20 @@ YUI.add('editor-base', function(Y) {
             dir: {
                 writeOnce: true,
                 value: 'ltr'
+            },
+            /**
+            * @attribute extracss
+            * @description A string of CSS to add to the Head of the Editor
+            * @type String
+            */            
+            extracss: {
+                value: false,
+                setter: function(css) {
+                    if (this.frame) {
+                        this.frame.set('extracss', css);
+                    }
+                    return css;
+                }
             }
         }
     });

@@ -29,13 +29,13 @@ var DOT = '.',
     Y_DOM = Y.DOM,
 
     Y_Node = function(node) {
-        var uid = node[UID];
+        var uid = (node.nodeType !== 9) ? node.uniqueID : node[UID];
 
         if (uid && Y_Node._instances[uid] && Y_Node._instances[uid]._node !== node) {
             node[UID] = null; // unset existing uid to prevent collision (via clone or hack)
         }
 
-        uid = Y.stamp(node);
+        uid = uid || Y.stamp(node);
         if (!uid) { // stamp failed; likely IE non-HTMLElement
             uid = Y.guid();
         }
@@ -286,7 +286,7 @@ Y_Node.one = function(node) {
             return node; // NOTE: return
         }
 
-        uid = node._yuid;
+        uid = (node.uniqueID && node.nodeType !== 9) ? node.uniqueID : node._yuid;
         instance = Y_Node._instances[uid]; // reuse exising instances
         cachedNode = instance ? instance._node : null;
         if (!instance || (cachedNode && node !== cachedNode)) { // new Node when nodes don't match
@@ -466,7 +466,7 @@ Y.mix(Y_Node.prototype, {
         var str = '',
             errorMsg = this[UID] + ': not bound to a node',
             node = this._node,
-            id = node.getAttribute('id'); // form.id may be a field name
+            id = (node.getAttribute) ? node.getAttribute('id') : node.id; // form.id may be a field name
 
         if (node) {
             str += node[NODE_NAME];
@@ -1074,7 +1074,10 @@ Y.mix(Y_Node.prototype, {
 
     hasMethod: function(method) {
         var node = this._node;
-        return !!(node && method in node && node[method].apply);
+        return !!(node && method in node &&
+                typeof node[method] !== 'unknown' &&
+            (typeof node[method] === 'function' ||
+                String(node[method]).indexOf('function') === 1)); // IE reports as object, prepends space
     }
 }, true);
 
