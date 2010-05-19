@@ -85,7 +85,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		}
 		if(styles.showMarkers) 
 		{
-	//		this.drawMarkers();
+			this.drawMarkers();
 		}
 	},
 
@@ -176,6 +176,29 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 
 	drawMarkers: function()
 	{
+	    if(this._xcoords.length < 1) 
+		{
+			return;
+		}
+        var graphic = this.get("graphic"),
+            style = this.get("styles").marker,
+            w = style.width,
+            h = style.height,
+            fill = style.fillColor,
+            xcoords = this._xcoords,
+            ycoords = this._ycoords,
+            i = 0,
+            len = xcoords.length,
+            top,
+            left;
+        for(; i < len; ++i)
+        {
+            top = ycoords[i] - h/2;
+            left = xcoords[i] - w/2;
+            graphic.beginFill(fill);
+            graphic.drawCircle(left, top, w/2);
+            graphic.endFill();
+        }
  	},
 
 	/**

@@ -354,7 +354,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	{
         var nextX, nextY,
             parent = this.get("parent"),
-			graphic = this.get("graphic"),
 			w = parent.offsetWidth,
             h = parent.offsetHeight,
             padding = this.get("styles").padding,
@@ -375,9 +374,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			xData = this.get("xAxis").getDataByKey(xKey),
 			yData = this.get("yAxis").getDataByKey(yKey),
 			dataLength = xData.length, 	
-			midY = dataHeight/2,
-			areaMin = leftPadding,
-            areaMax = Math.round((((xMax - xMin) * xScaleFactor) + leftPadding)),
             i;
         for (i = 0; i < dataLength; ++i) 
 		{
@@ -405,7 +401,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
 		var dataChange = this.checkDataFlags(),
 			resize = this.checkResizeFlags(),
 			styleChange = this.checkStyleFlags(),
-			graphic = this.get("graphic"),
             parent = this.get("parent"),
 			w = parent.offsetWidth,
             h = parent.offsetHeight,

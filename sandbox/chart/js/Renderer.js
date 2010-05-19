@@ -270,7 +270,9 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	setFlags: function(value)
 	{
-		for(var i = 0; i < value.length; i++)
+        var i = 0,
+            len = value.length;
+		for(; i < len; i++)
 		{
 			this.setFlag(value[i]);
 		}
@@ -281,9 +283,10 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	clearFlags: function()
 	{
+        var i;
 		this._renderFlags = {};
 		this._hasFlag = false;
-		for(var i in this._laterFlags)
+		for(i in this._laterFlags)
 		{
 			if(this._laterFlags.hasOwnProperty(i))
 			{
@@ -308,8 +311,9 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	checkFlags: function(flags)
 	{
-		var hasFlag = false;
-		for(var i in flags)
+		var hasFlag = false,
+            i;
+		for(i in flags)
 		{
 			if(this._renderFlags[i]) 
 			{

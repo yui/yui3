@@ -29,10 +29,9 @@ VMLGraphics.prototype = {
     },
 
     _createGraphics: function() {
-
-    var group = document.createElement('<group xmlns="urn:schemas-microsft.com:vml" class="vmlgroup"/>');
-    group.style.display = "inline-block";
-    group.style.position = 'relative';
+        var group = this.createGraphicNode("group");
+        group.style.display = "inline-block";
+        group.style.position = 'relative';
         return group;
     },
 
@@ -83,6 +82,18 @@ VMLGraphics.prototype = {
     },
 
 	drawCircle: function(x, y, r, start, end, anticlockwise) {
+        this._width = this._height = r * 2;
+        this._x = x;
+        this._y = y;
+        this._shape = "oval";
+        var circle = this.createGraphicNode("oval");
+        circle.style.width = this._width + "px";
+        circle.style.height = this._height + "px";
+        circle.style.left = x + "px";
+        circle.style.top = y + "px";
+        circle.strokeColor = this._fillColor;
+        circle.fillColor = this._fillColor;
+        this._vml.appendChild(circle);
         return this;
 	},
 
@@ -116,21 +127,35 @@ VMLGraphics.prototype = {
         }
     },
 
+    _shape: "shape",
+
 	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
         return this;
 	},
 
     endFill: function() {
-        var shape = document.createElement('<shape xmlns="urn:schemas-microsft.com:vml" class="vmlshape"/>'),
+        if(this._shape !== "shape")
+        {
+            return;
+        }
+        var shape = this.createGraphicNode(this._shape),
             w = this._width,
             h = this._height,
             fillProps = this._fillProps,
             prop,
             fill;
 
-        this._path += ' x e';
-
-        shape.path = this._path;
+        if(this._path)
+        {
+            this._path += ' x e';
+            shape.path = this._path;
+        }
+        else
+        {
+            shape.style.left = this._x;
+            shape.style.top = this._y;
+            shape.style.position = "relative";
+        }
 
         if (this._fill) {
             shape.fillColor = this._fillColor;
@@ -142,13 +167,12 @@ VMLGraphics.prototype = {
         } else {
             shape.stroked = false;
         }
-
         shape.style.width = w + 'px';
         shape.style.height = h + 'px';
         shape.coordSize = w + ', ' + h;
 
-        if (fillProps) {
-            fill = document.createElement('<fill xmlns="urn:schemas-microsft.com:vml" class="vmlfill"/>');
+        if (fillProps && this._shape === "shape") {
+            fill = this.createGraphicNode("fill");
             for (prop in fillProps) {
                 if(fillProps.hasOwnProperty(prop)) {
                     fill.setAttribute(prop, fillProps[prop]);
@@ -156,6 +180,7 @@ VMLGraphics.prototype = {
             }
             shape.appendChild(fill);
         }
+
         this._vml.appendChild(shape);
         
         this._initProps();
@@ -181,6 +206,7 @@ VMLGraphics.prototype = {
             args = [[point1, point2]];
         }
         len = args.length;
+        this._shape = "shape";
         this._path += ' l ';
         for (i = 0; i < len; ++i) {
             this._path += ' ' + args[i][0] + ', ' + args[i][1];
@@ -200,7 +226,13 @@ VMLGraphics.prototype = {
         this._vml.style.height = h + 'px';
         this._vml.coordSize = w + ' ' + h;
     },
+   
+    createGraphicNode: function(type)
+    {
+        return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
     
+    },
+
     render: function(node) {
         var w = node.offsetWidth,
             h = node.offsetHeight;
@@ -218,14 +250,10 @@ if (Y.UA.ie) {
         sheet.addRule(".vmlgroup", "display:inline-block", sheet.rules.length);
         sheet.addRule(".vmlgroup", "zoom:1", sheet.rules.length);
         sheet.addRule(".vmlshape", "behavior:url(#default#VML)", sheet.rules.length);
+        sheet.addRule(".vmlshape", "display:inline-block", sheet.rules.length);
+        sheet.addRule(".vmloval", "behavior:url(#default#VML)", sheet.rules.length);
+        sheet.addRule(".vmloval", "display:inline-block", sheet.rules.length);
         sheet.addRule(".vmlfill", "behavior:url(#default#VML)", sheet.rules.length);
-    try
-    {
-         document.namespaces.add('v', 'urn:schemas-microsoft-com:vml', "#default#VML");
-    }
-    catch(e)
-    {
-    }
     Y.log('using VML');
     Y.Graphic = VMLGraphics;
 }

@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Y! Finance</title>
+    <meta name="author" content="Allen Rabinovich">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 <style>
@@ -11,7 +12,7 @@
     html, body {
 		width:100%;
 		height:100%;
-        overflow:hidden;
+        /*overflow:hidden;*/
         margin:0;
 		background-color:#000;
     }
@@ -141,6 +142,8 @@
 		var starttime;
 		var mydate = new Date();
 		starttime = mydate.valueOf();
+		var randValue = Math.random()*401;
+		var randValue2 = Math.random()*401;
 		function writeToDiv(message)
 		{
 			var mydate = new Date();
@@ -195,15 +198,18 @@
 
 				var month = new Array();
 				dValue = value;
+				
 				for(var i = 1; i <= max; i++)
 				{
 					var obj = new Object();
 					obj.date = mon + "/" + i + "/" + year;
-					var div = ((Math.random()*5))
-					var cont = (Math.random() * 101) * div;
-					obj.revenue = (cont + Math.floor((Math.random() * 101))).toFixed(2);
+				//	var div = ((Math.random()*5))
+				//	var cont = (Math.random() * 101) * div;
+					randValue = randValue + (-30 + Math.random()*60);
+					randValue2 = randValue2 + (-30 + Math.random()*60);
+					obj.revenue = (randValue);
 					dValue = dValue - 1;
-					obj.expenses = (cont + Math.floor((Math.random() * 101))).toFixed(2);
+					obj.expenses = (randValue2);
 					month[month.length] = obj;
 
 				}
@@ -340,17 +346,17 @@
 					
 					var expensegraphstyles = {
 						color:"#5577AF",
-						marker:{fillColor:"#5577AF"},
+						marker:{fillColor:"#5577AF", width:6, height:6},
 						weight:"2",
-						showMarkers:false
+						showMarkers:true
 					};
 
 					// Add revenue graph styles
 					var revenuegraphstyles = {
 						color:"#FF0000",
-						marker:{fillcolor:"#ff0000"},
+						marker:{fillcolor:"#ff0000", width:6, height:6},
 						weight:"2",
-						showMarkers:false
+						showMarkers:true
 					};
                     var dataProvider = {data:mydata};
                     var dp2 = {data:mydata.concat()};

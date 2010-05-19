@@ -505,8 +505,9 @@ Y.extend(BaseAxis, Y.Base,
 			event = {},
 			keysAdded = event.keysAdded,
 			keysRemoved = event.keysRemoved,
-			keys = this._keys;
-		for(var i in keys)
+			keys = this._keys,
+            i;
+		for(i in keys)
 		{
 			if(keys.hasOwnProperty(i))
 			{
@@ -808,7 +809,6 @@ Y.extend(TimeAxis, Y.BaseAxis, {
     updateMaxByPosition:function(val, len)
     {
         var range = this._dataMaximum - this._dataMinimum,
-            scaleFactor = len / range,
             pos = (val/len) * range;
             pos += this._dataMinimum;
         this.set("maximum", pos);
@@ -817,7 +817,6 @@ Y.extend(TimeAxis, Y.BaseAxis, {
     updateMinByPosition:function(val, len)
     {
         var range = this._dataMaximum - this._dataMinimum,
-            scaleFactor = len / range,
             pos = (val/len) * range;
             pos += this._dataMinimum;
         this.set("minimum", pos);
@@ -825,9 +824,7 @@ Y.extend(TimeAxis, Y.BaseAxis, {
 
     updateMinAndMaxByPosition: function(minVal, maxVal, len)
     {
-        var range = this._dataMaximum - this._dataMinimum,
-            scaleFactor = len / range,
-            min = minVal / len,
+        var min = minVal / len,
             max = maxVal / len;
         min += this._dataMinimum;
         max += this._dataMaximum;
@@ -1174,7 +1171,9 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	setFlags: function(value)
 	{
-		for(var i = 0; i < value.length; i++)
+        var i = 0,
+            len = value.length;
+		for(; i < len; i++)
 		{
 			this.setFlag(value[i]);
 		}
@@ -1185,9 +1184,10 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	clearFlags: function()
 	{
+        var i;
 		this._renderFlags = {};
 		this._hasFlag = false;
-		for(var i in this._laterFlags)
+		for(i in this._laterFlags)
 		{
 			if(this._laterFlags.hasOwnProperty(i))
 			{
@@ -1212,8 +1212,9 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	checkFlags: function(flags)
 	{
-		var hasFlag = false;
-		for(var i in flags)
+		var hasFlag = false,
+            i;
+		for(i in flags)
 		{
 			if(this._renderFlags[i]) 
 			{
@@ -1582,7 +1583,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	{
         var nextX, nextY,
             parent = this.get("parent"),
-			graphic = this.get("graphic"),
 			w = parent.offsetWidth,
             h = parent.offsetHeight,
             padding = this.get("styles").padding,
@@ -1603,9 +1603,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			xData = this.get("xAxis").getDataByKey(xKey),
 			yData = this.get("yAxis").getDataByKey(yKey),
 			dataLength = xData.length, 	
-			midY = dataHeight/2,
-			areaMin = leftPadding,
-            areaMax = Math.round((((xMax - xMin) * xScaleFactor) + leftPadding)),
             i;
         for (i = 0; i < dataLength; ++i) 
 		{
@@ -1633,7 +1630,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
 		var dataChange = this.checkDataFlags(),
 			resize = this.checkResizeFlags(),
 			styleChange = this.checkStyleFlags(),
-			graphic = this.get("graphic"),
             parent = this.get("parent"),
 			w = parent.offsetWidth,
             h = parent.offsetHeight,
@@ -1785,7 +1781,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		}
 		if(styles.showMarkers) 
 		{
-	//		this.drawMarkers();
+			this.drawMarkers();
 		}
 	},
 
@@ -1876,6 +1872,29 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 
 	drawMarkers: function()
 	{
+	    if(this._xcoords.length < 1) 
+		{
+			return;
+		}
+        var graphic = this.get("graphic"),
+            style = this.get("styles").marker,
+            w = style.width,
+            h = style.height,
+            fill = style.fillColor,
+            xcoords = this._xcoords,
+            ycoords = this._ycoords,
+            i = 0,
+            len = xcoords.length,
+            top,
+            left;
+        for(; i < len; ++i)
+        {
+            top = ycoords[i] - h/2;
+            left = xcoords[i] - w/2;
+            graphic.beginFill(fill);
+            graphic.drawCircle(left, top, w/2);
+            graphic.endFill();
+        }
  	},
 
 	/**

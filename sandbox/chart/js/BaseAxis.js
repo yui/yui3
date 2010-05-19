@@ -503,8 +503,9 @@ Y.extend(BaseAxis, Y.Base,
 			event = {},
 			keysAdded = event.keysAdded,
 			keysRemoved = event.keysRemoved,
-			keys = this._keys;
-		for(var i in keys)
+			keys = this._keys,
+            i;
+		for(i in keys)
 		{
 			if(keys.hasOwnProperty(i))
 			{
