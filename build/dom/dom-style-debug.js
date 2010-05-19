@@ -419,47 +419,42 @@ var HAS_LAYOUT = 'hasLayout',
     IEComputed = {};
 
 // use alpha filter for IE opacity
-try {
-    if (documentElement.style[OPACITY] === UNDEFINED &&
-            documentElement[FILTERS]) {
-        Y.DOM.CUSTOM_STYLES[OPACITY] = {
-            get: function(node) {
-                var val = 100;
-                try { // will error if no DXImageTransform
-                    val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
+if (Y.UA.ie) {
+    Y.DOM.CUSTOM_STYLES[OPACITY] = {
+        get: function(node) {
+            var val = 100;
+            try { // will error if no DXImageTransform
+                val = node[FILTERS]['DXImageTransform.Microsoft.Alpha'][OPACITY];
 
-                } catch(e) {
-                    try { // make sure its in the document
-                        val = node[FILTERS]('alpha')[OPACITY];
-                    } catch(err) {
-                        Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
-                    }
-                }
-                return val / 100;
-            },
-
-            set: function(node, val, style) {
-                var current,
-                    styleObj;
-
-                if (val === '') { // normalize inline style behavior
-                    styleObj = _getStyleObj(node);
-                    current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
-                    val = current;
-                }
-
-                if (typeof style[FILTER] == 'string') { // in case not appended
-                    style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
-                    
-                    if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
-                        style.zoom = 1; // needs layout 
-                    }
+            } catch(e) {
+                try { // make sure its in the document
+                    val = node[FILTERS]('alpha')[OPACITY];
+                } catch(err) {
+                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'dom-style');
                 }
             }
-        };
-    }
-} catch(e) {
-    Y.log('documentElement.filters error (activeX disabled)', 'warn', 'dom-style');
+            return val / 100;
+        },
+
+        set: function(node, val, style) {
+            var current,
+                styleObj;
+
+            if (val === '') { // normalize inline style behavior
+                styleObj = _getStyleObj(node);
+                current = (OPACITY in styleObj) ? styleObj[OPACITY] : 1; // revert to original opacity
+                val = current;
+            }
+
+            if (typeof style[FILTER] == 'string') { // in case not appended
+                style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
+                
+                if (!node.currentStyle || !node.currentStyle[HAS_LAYOUT]) {
+                    style.zoom = 1; // needs layout 
+                }
+            }
+        }
+    };
 }
 
 try {

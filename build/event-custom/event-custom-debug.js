@@ -1848,7 +1848,7 @@ Y.Global = YUI.Env.globalEvents;
  *     <li>0..n additional arguments to supply the callback.</li>
  *   </ul>
  *   Example: 
- *   <code>Y.on('domready', function() { // start work });</code>
+ *   <code>Y.on('drag:drophit', function() { // start work });</code>
  * </li>
  * <li>DOM events.  These are moments reported by the browser related
  * to browser functionality and user interaction.
