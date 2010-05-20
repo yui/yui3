@@ -26,6 +26,7 @@ VMLGraphics.prototype = {
         this._y = 0;
         this._fill = 0;
         this._stroke = 0;
+        this._stroked = false;
     },
 
     _createGraphics: function() {
@@ -58,12 +59,14 @@ VMLGraphics.prototype = {
     beginGradientFill: function(type, colors, alphas, ratios, rotation) {
         var i = 1,
             len = colors.length,
+            rotation = rotation || 0;
+            rotation = 270 - rotation;
+            if(rotation < 0) rotation += 360;
             fill = {
-                type: (type === "linear") ? "gradient" : "GradientRadial",
+                type: (type === "linear") ? "gradient" : "gradientradial",
                 color: colors[0],
                 angle: rotation
             };
-
         for(;i < len; ++i) {
             fill["color" + (i + 1)] = colors[i];
         }

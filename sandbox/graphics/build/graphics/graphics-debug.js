@@ -227,31 +227,30 @@ Graphic.prototype = {
             grad;
         //temporary hack for rotation. 
         switch(r) {
-            case 45:
+            case 315:
+                grad = ctx.createLinearGradient(x, y + h, x + w, y); 
+            break;
+            case 270:
+                grad = ctx.createLinearGradient(x, y + h, x, y); 
+            break;
+            case 235:
                 grad = ctx.createLinearGradient(x + w, y + h, x, y); 
             break;
-            case 90:
+            case 180:
                 grad = ctx.createLinearGradient(x + w, y, x, y); 
             break;
             case 135:
                 grad = ctx.createLinearGradient(x + w, y, x, y + h); 
             break;
-            case 180:
+            case 90:
                 grad = ctx.createLinearGradient(x, y, x, y + h); 
             break;
-            case 225:
+            case 45:
                 grad = ctx.createLinearGradient(x, y, x + w, y + h); 
             break;
-            case 270:
+            default :
                 grad = ctx.createLinearGradient(x, y, x + w, y); 
             break;
-            case 315:
-                grad = ctx.createLinearGradient(x, y + h, x + w, y); 
-            break;
-            default:
-                grad = ctx.createLinearGradient(x, y + h, x, y); 
-            break;
-
         }
         l = colors.length;
         def = 0;
@@ -421,6 +420,7 @@ VMLGraphics.prototype = {
         this._y = 0;
         this._fill = 0;
         this._stroke = 0;
+        this._stroked = false;
     },
 
     _createGraphics: function() {
@@ -453,12 +453,14 @@ VMLGraphics.prototype = {
     beginGradientFill: function(type, colors, alphas, ratios, rotation) {
         var i = 1,
             len = colors.length,
+            rotation = rotation || 0;
+            rotation = 270 - rotation;
+            if(rotation < 0) rotation += 360;
             fill = {
-                type: (type === "linear") ? "gradient" : "GradientRadial",
+                type: (type === "linear") ? "gradient" : "gradientradial",
                 color: colors[0],
                 angle: rotation
             };
-
         for(;i < len; ++i) {
             fill["color" + (i + 1)] = colors[i];
         }

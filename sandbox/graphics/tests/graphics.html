@@ -1,5 +1,4 @@
 <html>
-<xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />
 <head>
 <style>
 /*Supplemental CSS for the YUI distribution*/
@@ -37,9 +36,8 @@ canvas {
 			{
                 graphics = new Y.Graphic({width:800, height:600});
                 graphics.render(document.getElementById("appdiv"));
-/*				
                 graphics.lineStyle(12, "#0000ff", 1);
-                graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1], 315);
+                graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1]);
                 graphics.drawRect(40, 40, 400, 300);
                 graphics.endFill();
                 
@@ -52,7 +50,7 @@ canvas {
                 graphics.beginGradientFill("radial", ["#00ffff", "#ee63ff"], [], [0, .8], 0);
                 graphics.drawCircle(450, 40, 100);
                 graphics.endFill();
-  */              
+                
                 graphics.beginFill("blue", 1);
                 graphics.lineStyle(3, "red", 1);
                 graphics.moveTo(10, 10);
