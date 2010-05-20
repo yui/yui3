@@ -37,15 +37,15 @@ canvas {
                 graphics = new Y.Graphic({width:800, height:600});
                 graphics.render(document.getElementById("appdiv"));
                 graphics.lineStyle(12, "#0000ff", 1);
-                graphics.beginGradientFill("linear", ["#ff0000", "#ffff00"], [], [0, 1]);
+                graphics.beginGradientFill("linear", ["#0000ff", "#ffffff", "#ff0000"], [], [0, 0.5, 1]);
                 graphics.drawRect(40, 40, 400, 300);
                 graphics.endFill();
-                
+               /* 
                 graphics.lineStyle(12, "#0000ff", 1);
                 graphics.beginGradientFill("linear", ["#ffeecc", "#ffff00"], [], [0, 1], 315);
                 graphics.drawRoundRect(40, 450, 400, 300, 10, 10);
                 graphics.endFill();
-
+*/
                 graphics.lineStyle(8, "#ff0000", 1);
                 graphics.beginGradientFill("radial", ["#00ffff", "#ee63ff"], [], [0, .8], 0);
                 graphics.drawCircle(450, 40, 100);

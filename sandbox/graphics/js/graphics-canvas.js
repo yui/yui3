@@ -106,8 +106,7 @@ Graphic.prototype = {
     },
     
     _initProps: function() {
-        var canvas = this._canvas,
-            context = this._context;
+        var context = this._context;
         
         context.fillStyle = 'rgba(0, 0, 0, 1)'; // use transparent when no fill
         context.lineWidth = 1;
@@ -290,8 +289,7 @@ Graphic.prototype = {
     },
 
     endFill: function() {
-        var canvas = this._canvas,
-            context = this._context,
+        var context = this._context,
             fill;
 
         if (this._fillType) {
