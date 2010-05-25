@@ -259,6 +259,7 @@
 <span class="cm">     * &lt;/dl&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method Base.build</span>
+<span class="cm">     * @deprecated Use the more convenient Base.create and Base.mix methods instead</span>
 <span class="cm">     * @static</span>
 <span class="cm">     * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.</span>
 <span class="cm">     * @param {Function} main The main class on which to base the built class</span>
@@ -284,6 +285,8 @@
 <span class="cm">     * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.</span>
 <span class="cm">     * @param {Function} main The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).</span>
 <span class="cm">     * @param {Function[]} extensions The list of extensions which will be mixed into the built class.</span>
+<span class="cm">     * @param {Object} px The set of prototype properties/methods to add to the built class.</span>
+<span class="cm">     * @param {Object} sx The set of static properties/methods to add to the built class.</span>
 <span class="cm">     * @return {Function} The newly created class.</span>
 <span class="cm">     */</span>
     <span class="nx">Base</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">base</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="nx">sx</span><span class="p">)</span> <span class="p">{</span>
