@@ -221,6 +221,7 @@ YUI.add('base-base', function(Y) {
          * easily configure on and after listeners as well as bubble targets during 
          * construction, prior to init.
          *
+         * @private
          * @method _preInitEventCfg
          * @param {Object} config The user configuration object
          */

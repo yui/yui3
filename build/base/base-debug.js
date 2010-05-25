@@ -223,6 +223,7 @@ YUI.add('base-base', function(Y) {
          * easily configure on and after listeners as well as bubble targets during 
          * construction, prior to init.
          *
+         * @private
          * @method _preInitEventCfg
          * @param {Object} config The user configuration object
          */
@@ -831,6 +832,7 @@ YUI.add('base-build', function(Y) {
      * </dl>
      *
      * @method Base.build
+     * @deprecated Use the more convenient Base.create and Base.mix methods instead
      * @static
      * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.
      * @param {Function} main The main class on which to base the built class
@@ -856,6 +858,8 @@ YUI.add('base-build', function(Y) {
      * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.
      * @param {Function} main The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).
      * @param {Function[]} extensions The list of extensions which will be mixed into the built class.
+     * @param {Object} px The set of prototype properties/methods to add to the built class.
+     * @param {Object} sx The set of static properties/methods to add to the built class.
      * @return {Function} The newly created class.
      */
     Base.create = function(name, base, extensions, px, sx) {
