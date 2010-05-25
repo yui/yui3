@@ -7,6 +7,7 @@ var Node       = Y.Node,
     Perf,
 
     isFunction = Y.Lang.isFunction,
+    xhrCache   = {},
     yqlCache   = {},
     yqlQueue   = {},
 
@@ -178,16 +179,29 @@ function xhrGet(url) {
         };
     }
 
-    var xhr = new XMLHttpRequest();
+    xhrGet = function (url) {
+        if (Obj.owns(xhrCache, url)) {
+            return xhrCache[url];
+        }
 
-    try {
-        xhr.open('GET', url, false);
-        xhr.send(null);
-    } catch (ex) {
-        Y.log("XMLHttpRequest failed. Make sure you're running these tests on an HTTP server, not the filesystem.", 'warn', 'performance');
-    }
+        var xhr = new XMLHttpRequest();
 
-    return xhr.status === 200 ? xhr.responseText : null;
+        try {
+            xhr.open('GET', url, false);
+            xhr.send(null);
+        } catch (ex) {
+            Y.log("XMLHttpRequest failed. Make sure you're running these tests on an HTTP server, not the filesystem.", 'warn', 'performance');
+        }
+
+        if (xhr.status >= 200 || xhr.status <= 299) {
+            xhrCache[url] = xhr.responseText;
+            return xhrCache[url];
+        } else {
+            return null;
+        }
+    };
+
+    return xhrGet(url);
 }
 
 Perf = Y.Performance = {
