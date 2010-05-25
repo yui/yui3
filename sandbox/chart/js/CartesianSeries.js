@@ -222,15 +222,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
     },
 
     _parent: null,
-
-	_styles: {
-		padding:{
-			top: 0,
-			left: 0,
-			right: 0,
-			bottom: 0
-		}
-	},
 	
 	/**
 	 * @private
@@ -375,6 +366,8 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			yData = this.get("yAxis").getDataByKey(yKey),
 			dataLength = xData.length, 	
             i;
+        this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
+        this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
         for (i = 0; i < dataLength; ++i) 
 		{
             nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding));
@@ -386,11 +379,16 @@ Y.extend(CartesianSeries, Y.Renderer, {
 		this.set("ycoords", ycoords);
     },
 
+    _leftOrigin: null,
+
+    _bottomOrigin: null,
+
 	/**
 	 * @private
 	 */
 	drawGraph: function()
 	{
+        this.drawMarkers();
 	},
 	
 	/**
@@ -431,6 +429,68 @@ Y.extend(CartesianSeries, Y.Renderer, {
 		}
 	},
 
+	drawMarkers: function()
+	{
+	    if(this._xcoords.length < 1) 
+		{
+			return;
+		}
+        var graphic = this.get("graphic"),
+            style = this.get("styles").marker,
+            w = style.width,
+            h = style.height,
+            fillColor = style.fillColor,
+            alpha = style.fillAlpha,
+            fillType = style.fillType || "solid",
+            borderWidth = style.borderWidth,
+            borderColor = style.borderColor,
+            borderAlpha = style.borderAlpha || 1,
+            colors = style.colors,
+            alphas = style.alpha || [],
+            ratios = style.ratios || [],
+            rotation = style.rotation || 0,
+            xcoords = this._xcoords,
+            ycoords = this._ycoords,
+            shapeMethod = style.func || "drawCircle",
+            i = 0,
+            len = xcoords.length,
+            top = ycoords[0],
+            left;
+        for(; i < len; ++i)
+        {
+            top = ycoords[i];
+            left = xcoords[i];
+            if(borderWidth > 0)
+            {
+                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
+            }
+            if(fillType === "solid")
+            {
+                graphic.beginFill(fillColor, alpha);
+            }
+            else
+            {
+                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
+            }
+            this.drawMarker(graphic, shapeMethod, left, top, w, h);
+            graphic.endFill();
+        }
+ 	},
+
+    drawMarker: function(graphic, func, left, top, w, h)
+    {
+        if(func === "drawCircle")
+        {
+            graphic.drawCircle(left, top, w/2);
+        }
+        else
+        {
+            left -= w/2;
+            top -= h/2;
+            graphic[func].call(graphic, left, top, w, h);
+        }
+    },
+
 	/**
 	 * Determines whether a data change has occurred during this render cycle.
 	 */
@@ -461,7 +521,17 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	checkStyleFlags: function () 
 	{
 		return false;
-	}
+	},
+
+    _getDefaultStyles: function()
+    {
+        return {padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }};
+    }
 });
 
 Y.CartesianSeries = CartesianSeries;

@@ -80,10 +80,9 @@ Renderer.ATTRS = {
 	{
 		value: {},
 
-		lazyAdd: false,
-
 		getter: function()
 		{
+            this._styles = this._styles || this._getDefaultStyles();
 			return this._styles;
 		},
 			   
@@ -174,7 +173,7 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	_setStyles: function(newstyles)
 	{
-		var styles = this.get("styles") || {};
+		var styles = this.get("styles");
 		return this._mergeStyles(newstyles, styles);
 	},
 
@@ -322,7 +321,12 @@ Y.extend(Renderer, Y.Base, {
 			}
 		}
 		return hasFlag;
-	}
+	},
+
+    _getDefaultStyles: function()
+    {
+        return {};
+    }
 });
 
 Y.Renderer = Renderer;

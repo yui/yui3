@@ -47,7 +47,8 @@ canvas {
                 graphics.endFill();
 */
                 graphics.lineStyle(8, "#ff0000", 1);
-                graphics.beginGradientFill("radial", ["#00ffff", "#ee63ff"], [], [0, .8], 0);
+                graphics.beginGradientFill("radial", ["#ff0000", "#0000ff"], [1, 1], [0, 1], {rotation:0});
+                //graphics.beginFill("#0000ff");
                 graphics.drawCircle(450, 40, 100);
                 graphics.endFill();
                 
