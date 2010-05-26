@@ -7,6 +7,7 @@ var Node       = Y.Node,
     Perf,
 
     isFunction = Y.Lang.isFunction,
+    isValue    = Y.Lang.isValue,
     xhrCache   = {},
     yqlCache   = {},
     yqlQueue   = {},
@@ -274,6 +275,7 @@ Perf = Y.Performance = {
                     '<tr>' +
                         '<th class="test">Test</th>' +
                         '<th class="calls">Calls</th>' +
+                        '<th class="failures">Failures</th>' +
                         '<th class="mean">Mean</th>' +
                         '<th class="median">Median</th>' +
                         '<th class="mediandev"><abbr title="Median Absolute Deviation">Med. Dev.</abbr></th>' +
@@ -282,10 +284,10 @@ Perf = Y.Performance = {
                         '<th class="min">Min</th>' +
                     '</tr>' +
                 '</thead>' +
-                '<tfoot><tr><td colspan="8"></td></tr></tfoot>' +
+                '<tfoot><tr><td colspan="9"></td></tr></tfoot>' +
                 '<tbody>' +
                     '<tr>' +
-                        '<td colspan="8">' +
+                        '<td colspan="9">' +
                             '<p>Click the button to gather results.</p>' +
                         '</td>' +
                     '</tr>' +
@@ -401,26 +403,37 @@ Perf = Y.Performance = {
             };
 
         Perf._table.one('tbody').append(Y.substitute(
-            '<tr class="test">' +
-                '<td class="test">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></td>' +
+            '<tr class="{classNames test}">' +
+                '<td class="test"><div class="bd">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></div></td>' +
                 '<td class="calls">{calls}</td>' +
+                '<td class="failures">{failures}</td>' +
                 '<td class="mean">{mean}</td>' +
                 '<td class="median">{median}</td>' +
-                '<td class="mediandev">±{mediandev}</td>' +
-                '<td class="stdev">±{stdev}</td>' +
+                '<td class="mediandev">{mediandev}</td>' +
+                '<td class="stdev">{stdev}</td>' +
                 '<td class="max">{max}</td>' +
                 '<td class="min">{min}</td>' +
             '</tr>' +
             '<tr class="code hidden">' +
-                '<td colspan="8">' +
+                '<td colspan="9">' +
                     '<pre><code>{code}</code></pre>' +
                 '</td>' +
             '</tr>',
 
             Y.merge(result, {
-                chartUrl: CHART_URL + createQueryString(chartParams),
-                code    : htmlentities(test.test.toString())
-            })
+                chartUrl : CHART_URL + createQueryString(chartParams),
+                code     : htmlentities(test.test.toString()),
+                mediandev: result['mediandev'] !== '' ? '±' + result['mediandev'] : '',
+                stdev    : result['stdev'] !== '' ? '±' + result['stdev'] : ''
+            }),
+
+            function (key, value, meta) {
+                if (key === 'classNames') {
+                    return meta + (result.failures ? ' fail' : '');
+                }
+
+                return value;
+            }
         ));
     },
 
@@ -491,19 +504,25 @@ Perf = Y.Performance = {
 
         if (!iteration.warmup) {
             result = Perf._results[iteration.name] || {
-                calls : 0,
-                name  : iteration.name,
-                points: []
+                calls   : 0,
+                failures: 0,
+                name    : iteration.name,
+                points  : []
             };
 
             result.calls += 1;
-            result.points.push(profileData.duration);
+
+            if (profileData.returnValue === false) {
+                result.failures += 1;
+            } else {
+                result.points.push(profileData.duration);
+            }
 
             if (result.calls === iteration.test.iterations) {
                 result = Y.merge(result, analyze(result.points));
 
                 Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
-                    result[key] = result[key].toFixed(2);
+                    result[key] = isValue(result[key]) ? result[key].toFixed(2) : '';
                 });
 
                 Perf._renderTestResult(result, test);
