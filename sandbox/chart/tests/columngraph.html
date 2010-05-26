@@ -16,7 +16,7 @@
 <body class="yui3-skin-sam">
 		
 <div>
-        <div id="chart" style="width:800px;height:400px;background-color:#ffffff;border:2px solid #5577AF"></div>
+        <div id="chart" style="display:block;width:800px;height:400px;background-color:#ffffff;border:2px solid #5577AF"></div>
 		<script>
 
 			YUI({}).use('node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphics', 'infographics', function (Y)
@@ -25,8 +25,8 @@
 					var mydata = {
 						id:"myData", 
 						data: [
-							{day:"Monday", expenses:3700, revenue:2200}, {day:"Tuesday", expenses:9100, revenue:100}, 
-							{day:"Wednesday", expenses:1100, revenue:1500}, {day:"Thursday", expenses:1900, revenue:2800}, {day:"Friday", expenses:700, revenue:2650}
+							{day:"Monday", taxes:2000, expenses:3700, revenue:2200}, {day:"Tuesday", taxes:50, expenses:9100, revenue:100}, 
+							{day:"Wednesday", taxes:400, expenses:1100, revenue:1500}, {day:"Thursday", taxes:200, expenses:1900, revenue:2800}, {day:"Friday", taxes:2000, expenses:700, revenue:2650}
 						]
 					};					
 
@@ -43,16 +43,53 @@
 						color:"#FF0000",
 						marker:{fillcolor:"#ff0000"},
 						weight:"2",
-						showMarkers:false
+						showMarkers:true,
+                        padding:{left:50, right:50}
 					};
-					var dataProvider = mydata;
+
+                    var taxgraphstyles = {
+						color:"#fff000",
+						marker:{fillColor:"#fff000", width:6, height:6},
+						weight:"2",
+						showMarkers:true,
+                        padding:{left:50, right:50}
+                    };
+					
+                    var dataProvider = mydata;
                     var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
 					timeaxis.addKey("date");
                     
                     var numericaxis = new Y.NumericAxis({dataProvider:dataProvider});
 					numericaxis.addKey("revenue");
-					
-					var columngraph = new Y.ColumnSeries({parent:"chart", xAxis:timeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
+			        numericaxis.addKey("expenses");	
+                    numericaxis.addKey("taxes");
+                    var graphstack = new Y.GraphStack({parent:"chart", seriesCollection:[{
+                                                                                            type:"column", 
+                                                                                            xAxis:timeaxis, 
+                                                                                            yAxis:numericaxis, 
+                                                                                            xKey:"date", 
+                                                                                            yKey:"revenue", 
+                                                                                            styles:revenuegraphstyles
+                                                                                        },
+                                                                                        {
+                                                                                            type:"column",
+                                                                                            xAxis:timeaxis,
+                                                                                            yAxis:numericaxis,
+                                                                                            xKey:"date",
+                                                                                            yKey:"expenses",
+                                                                                            styles:expensegraphstyles
+                                                                                        
+                                                                                        },
+                                                                                        {
+                                                                                            type:"line",
+                                                                                            xAxis:timeaxis,
+                                                                                            yAxis:numericaxis,
+                                                                                            xKey:"date",
+                                                                                            yKey:"taxes",
+                                                                                            styles:taxgraphstyles
+                                                                                        }
+                                                                                        ]});
+//					var columngraph = new Y.ColumnSeries({parent:"chart", xAxis:timeaxis, yAxis:numericaxis, xKey:"date", yKey:"revenue", styles:expensegraphstyles});
 
                 });
 </script>

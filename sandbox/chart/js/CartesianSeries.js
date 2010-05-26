@@ -109,14 +109,8 @@ CartesianSeries.ATTRS = {
 		},
 		setter: function(value)
 		{
-			if(this._xAxis) 
-			{
-				//this.xAxis.removeEventListener(DataEvent.NEW_DATA, this.xAxisChangeHandler);
-				//this.xAxis.removeEventListener(DataEvent.DATA_CHANGE, this.xAxisChangeHandler);
-			}
 			this._xAxis = value;			
 			this._xAxis.on("axisReady", Y.bind(this.xAxisChangeHandler, this));
-			//this.xAxis.addEventListener(DataEvent.NEW_DATA, this.xAxisChangeHandler);
 			this._xAxis.on("dataChange", Y.bind(this.xAxisChangeHandler, this));
 			this.setFlag("axisDataChange");
 			return value;
@@ -135,15 +129,8 @@ CartesianSeries.ATTRS = {
 		},
 		setter: function(value)
 		{
-			if(this._yAxis) 
-			{
-	//			this.yAxis.removeEventListener(DataEvent.NEW_DATA, this.yAxisChangeHandler);
-	//			this.yAxis.removeEventListener(DataEvent.DATA_CHANGE, this.yAxisChangeHandler);
-			}
 			this._yAxis = value;
 			this._yAxis.on("axisReady", Y.bind(this.yAxisChangeHandler, this));
-	//		this.yAxis.addEventListener(DataEvent.NEW_DATA, this.yAxisChangeHandler);
-	//		this.yAxis.addEventListener(DataEvent.DATA_CHANGE, this.yAxisChangeHandler);
 			this.setFlag("axisDataChange");
 			return value;
 		},
@@ -215,7 +202,16 @@ CartesianSeries.ATTRS = {
 };
 
 Y.extend(CartesianSeries, Y.Renderer, {
-	_setCanvas: function()
+	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuicartesianseries",
+	
+    /**
+     * @private
+     * Creates a <code>Graphic</code> instance.
+     */
+    _setCanvas: function()
     {
         this._graphic = new Y.Graphic();
         this._graphic.render(this.get("parent"));
@@ -391,6 +387,15 @@ Y.extend(CartesianSeries, Y.Renderer, {
         this.drawMarkers();
 	},
 	
+    initialize: function()
+    {
+        this._initialized = true;
+        this.setFlag("drawGraph");
+        this.callRender();
+    },
+
+    _initialized: false,
+
 	/**
 	 * @private (override)
 	 */
@@ -412,17 +417,16 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			this._yMin = yAxis.get("minimum");
 			this._yMax = yAxis.get("maximum");
 		}
-		
+
         if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))
 		{
 			this.setAreaData();
-			if(this.get("xcoords") && this.get("ycoords")) 
+			if(this.get("xcoords") && this.get("ycoords") && this._initialized) 
 			{
 				this.setLaterFlag("drawGraph");
 			}
 			return;
 		}
-		
 		if(this.checkFlag("drawGraph") || (styleChange && this._xcoords && this._ycoords))
 		{
 			this.drawGraph();

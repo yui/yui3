@@ -367,9 +367,19 @@ Graphic.prototype = {
         return this;
     },
 
+    _node: null,
+
     render: function(node) {
         node = node || Y.config.doc.body;
-        node.appendChild(this._canvas);
+        this._node = document.createElement("div");
+        this._node.style.width = node.offsetWidth + "px";
+        this._node.style.height = node.offsetHeight + "px";
+        this._node.style.display = "block";
+        this._node.style.position = "absolute";
+        this._node.style.left = node.style.left;
+        this._node.style.top = node.style.top;
+        node.appendChild(this._node);
+        this._node.appendChild(this._canvas);
         this._canvas.width = node.offsetWidth;
         this._canvas.height = node.offsetHeight;
         return this;

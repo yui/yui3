@@ -231,6 +231,11 @@ BaseAxis.ATTRS = {
 Y.extend(BaseAxis, Y.Base,
 {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuibaseaxis",
+	
+    /**
 	 * Creates unique id for class instance.
 	 *
 	 * @private

@@ -233,6 +233,11 @@ BaseAxis.ATTRS = {
 Y.extend(BaseAxis, Y.Base,
 {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuibaseaxis",
+	
+    /**
 	 * Creates unique id for class instance.
 	 *
 	 * @private
@@ -756,6 +761,11 @@ TimeAxis.ATTRS =
 
 Y.extend(TimeAxis, Y.BaseAxis, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuitimeaxis",
+	
+    /**
 	 * @private
 	 */
 	_dataType: "time",
@@ -848,6 +858,11 @@ CategoryAxis.NAME = "categoryAxis";
 Y.extend(CategoryAxis, Y.BaseAxis,
 {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuicategoryaxis",
+	
+    /**
 	 * @private
 	 */
 	_dataType: "category",
@@ -1002,6 +1017,11 @@ Renderer.ATTRS = {
 
 Y.extend(Renderer, Y.Base, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuirenderer",
+
+    /**
 	 * Creates unique id for class instance.
 	 *
 	 * @private
@@ -1342,14 +1362,8 @@ CartesianSeries.ATTRS = {
 		},
 		setter: function(value)
 		{
-			if(this._xAxis) 
-			{
-				//this.xAxis.removeEventListener(DataEvent.NEW_DATA, this.xAxisChangeHandler);
-				//this.xAxis.removeEventListener(DataEvent.DATA_CHANGE, this.xAxisChangeHandler);
-			}
 			this._xAxis = value;			
 			this._xAxis.on("axisReady", Y.bind(this.xAxisChangeHandler, this));
-			//this.xAxis.addEventListener(DataEvent.NEW_DATA, this.xAxisChangeHandler);
 			this._xAxis.on("dataChange", Y.bind(this.xAxisChangeHandler, this));
 			this.setFlag("axisDataChange");
 			return value;
@@ -1368,15 +1382,8 @@ CartesianSeries.ATTRS = {
 		},
 		setter: function(value)
 		{
-			if(this._yAxis) 
-			{
-	//			this.yAxis.removeEventListener(DataEvent.NEW_DATA, this.yAxisChangeHandler);
-	//			this.yAxis.removeEventListener(DataEvent.DATA_CHANGE, this.yAxisChangeHandler);
-			}
 			this._yAxis = value;
 			this._yAxis.on("axisReady", Y.bind(this.yAxisChangeHandler, this));
-	//		this.yAxis.addEventListener(DataEvent.NEW_DATA, this.yAxisChangeHandler);
-	//		this.yAxis.addEventListener(DataEvent.DATA_CHANGE, this.yAxisChangeHandler);
 			this.setFlag("axisDataChange");
 			return value;
 		},
@@ -1448,7 +1455,16 @@ CartesianSeries.ATTRS = {
 };
 
 Y.extend(CartesianSeries, Y.Renderer, {
-	_setCanvas: function()
+	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuicartesianseries",
+	
+    /**
+     * @private
+     * Creates a <code>Graphic</code> instance.
+     */
+    _setCanvas: function()
     {
         this._graphic = new Y.Graphic();
         this._graphic.render(this.get("parent"));
@@ -1624,6 +1640,15 @@ Y.extend(CartesianSeries, Y.Renderer, {
         this.drawMarkers();
 	},
 	
+    initialize: function()
+    {
+        this._initialized = true;
+        this.setFlag("drawGraph");
+        this.callRender();
+    },
+
+    _initialized: false,
+
 	/**
 	 * @private (override)
 	 */
@@ -1645,17 +1670,16 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			this._yMin = yAxis.get("minimum");
 			this._yMax = yAxis.get("maximum");
 		}
-		
+
         if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))
 		{
 			this.setAreaData();
-			if(this.get("xcoords") && this.get("ycoords")) 
+			if(this.get("xcoords") && this.get("ycoords") && this._initialized) 
 			{
 				this.setLaterFlag("drawGraph");
 			}
 			return;
 		}
-		
 		if(this.checkFlag("drawGraph") || (styleChange && this._xcoords && this._ycoords))
 		{
 			this.drawGraph();
@@ -1789,9 +1813,9 @@ LineSeries.ATTRS = {
 
 Y.extend(LineSeries, Y.CartesianSeries, {
 	/**
-	 * @private
-	 * Default styles for the series.
+	 * Constant used to generate unique id.
 	 */
+	GUID: "yuilineseries",
 
 	/**
 	 * @private (protected)
@@ -2028,9 +2052,91 @@ ColumnSeries.ATTRS = {
 
 Y.extend(ColumnSeries, Y.CartesianSeries, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuicolumnseries",
+	
+    /**
 	 * @private (protected)
 	 */
 	_type: "column",
+
+	drawMarkers: function()
+	{
+	    if(this._xcoords.length < 1) 
+		{
+			return;
+		}
+        var graphic = this.get("graphic"),
+            style = this.get("styles").marker,
+            w = style.width,
+            h = style.height,
+            fillColor = style.fillColor,
+            alpha = style.fillAlpha,
+            fillType = style.fillType || "solid",
+            borderWidth = style.borderWidth,
+            borderColor = style.borderColor,
+            borderAlpha = style.borderAlpha || 1,
+            colors = style.colors,
+            alphas = style.alpha || [],
+            ratios = style.ratios || [],
+            rotation = style.rotation || 0,
+            xcoords = this._xcoords,
+            ycoords = this._ycoords,
+            shapeMethod = style.func || "drawCircle",
+            i = 0,
+            len = xcoords.length,
+            top = ycoords[0],
+            type = this.get("type"),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[type],
+            seriesLen = seriesCollection.length,
+            seriesWidth = 0,
+            totalWidth = 0,
+            offset = 0,
+            ratio,
+            renderer,
+            order = this.get("order"),
+            left;
+        for(; i < seriesLen; ++i)
+        {
+            renderer = seriesCollection[i];
+            seriesWidth += renderer.get("styles").marker.width;
+            if(order > i) 
+            {
+                offset = seriesWidth;
+            }
+        }
+        totalWidth = len * seriesWidth;
+        if(totalWidth > this.get("parent").offsetWidth)
+        {
+            ratio = this.width/totalWidth;
+            seriesWidth *= ratio;
+            offset *= ratio;
+            w *= ratio;
+            w = Math.max(w, 1);
+        }
+        offset -= seriesWidth/2;
+        for(i = 0; i < len; ++i)
+        {
+            top = ycoords[i];
+            left = xcoords[i] + offset;
+            if(borderWidth > 0)
+            {
+                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
+            }
+            if(fillType === "solid")
+            {
+                graphic.beginFill(fillColor, alpha);
+            }
+            else
+            {
+                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
+            }
+            this.drawMarker(graphic, shapeMethod, left, top, w, h);
+            graphic.endFill();
+        }
+ 	},
 
     drawMarker: function(graphic, func, left, top, w, h)
     {
@@ -2066,13 +2172,160 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     }
 });
 
-
 Y.ColumnSeries = ColumnSeries;
+function GraphStack(config)
+{
+    GraphStack.superclass.constructor.apply(this, arguments);
+}
 
+GraphStack.NAME = "graphstack";
 
-		
+GraphStack.ATTRS = {
+    seriesCollection: {
+        lazyAdd: false,
 
-		
+        getter: function()
+        {
+            return this._seriesCollection;
+        },
+
+        setter: function(val)
+        {
+            this._parseSeriesCollection(val);
+            return this._seriesCollection;
+        }
+    },
+
+    parent: {
+        getter: function()
+        {
+            return this._parent;
+        },
+
+        setter: function(val)
+        {
+            this._parent = val;
+            return val;
+        }
+    }
+};
+
+Y.extend(GraphStack, Y.Base, {
+	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuigraphstack",
+    
+    _parent: null,
+
+    _seriesCollection: null,
+
+    seriesTypes: null,
+
+    _parseSeriesCollection: function(val)
+    {
+        var len = val.length,
+            i = 0,
+            series;
+        if(!val)
+        {
+            return;
+        }	
+        if(!this._seriesCollection)
+        {
+            this._seriesCollection = [];
+        }
+        if(!this.seriesTypes)
+        {
+            this.seriesTypes = [];
+        }
+        for(; i < len; ++i)
+        {	
+            series = val[i];
+            if(Y.Lang.isObject(series))
+            {
+                this._createSeries(series);
+                continue;
+            }
+            this.addSeries(series);
+        }
+        len = this._seriesCollection.length;
+        for(i = 0; i < len; ++i)
+        {
+            this._seriesCollection[i].initialize();
+        }
+    },
+
+    _addSeries: function(series)
+    {
+        var type = series.get("type"),
+            seriesCollection = this._seriesCollection,
+            graphSeriesLength = seriesCollection.length,
+            seriesTypes = this.seriesTypes,
+            typeSeriesCollection,
+            index;	
+        if(!series.get("graph")) 
+        {
+            series.set("graph", this);
+        }
+        series.graphOrder = graphSeriesLength;
+        seriesCollection.push(series);
+        if(!seriesTypes.hasOwnProperty(type))
+        {
+            this.seriesTypes[type] = [];
+        }
+        typeSeriesCollection = this.seriesTypes[type];
+        series.set("order", typeSeriesCollection.length);
+        typeSeriesCollection.push(series);
+        //series.style.zIndex = Math.max(this.numChildren - 1, 0);
+        this.fire("seriesAdded", series);
+    },
+
+    _createSeries: function(seriesData)
+    {
+        var type = seriesData.type,
+            seriesCollection = this._seriesCollection,
+            graphSeriesLength = seriesCollection.length,
+            seriesTypes = this.seriesTypes,
+            typeSeriesCollection,
+            seriesType,
+            series;
+            seriesData.graph = this;
+            seriesData.parent = this.get("parent");
+        if(!seriesTypes.hasOwnProperty(type))
+        {
+            seriesTypes[type] = [];
+        }
+        typeSeriesCollection = seriesTypes[type];
+        seriesData.graph = this;
+        seriesData.order = typeSeriesCollection.length;
+        seriesType = this._getSeries(seriesData.type);
+        series = new seriesType(seriesData);
+        typeSeriesCollection.push(series);
+        this._seriesCollection.push(series);
+    },
+
+    _getSeries: function(type)
+    {
+        var seriesClass;
+        switch(type)
+        {
+            case "line" :
+                seriesClass = Y.LineSeries;
+            break;
+            case "column" :
+                seriesClass = Y.ColumnSeries;
+            break;
+            default:
+                seriesClass = Y.CartesianSeries;
+            break;
+        }
+        return seriesClass;
+    }
+
+});
+
+Y.GraphStack = GraphStack;
 
 
 }, '@VERSION@' );

@@ -19,9 +19,9 @@ LineSeries.ATTRS = {
 
 Y.extend(LineSeries, Y.CartesianSeries, {
 	/**
-	 * @private
-	 * Default styles for the series.
+	 * Constant used to generate unique id.
 	 */
+	GUID: "yuilineseries",
 
 	/**
 	 * @private (protected)

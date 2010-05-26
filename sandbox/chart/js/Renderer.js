@@ -101,6 +101,11 @@ Renderer.ATTRS = {
 
 Y.extend(Renderer, Y.Base, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuirenderer",
+
+    /**
 	 * Creates unique id for class instance.
 	 *
 	 * @private

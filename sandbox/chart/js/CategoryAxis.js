@@ -8,6 +8,11 @@ CategoryAxis.NAME = "categoryAxis";
 Y.extend(CategoryAxis, Y.BaseAxis,
 {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuicategoryaxis",
+	
+    /**
 	 * @private
 	 */
 	_dataType: "category",

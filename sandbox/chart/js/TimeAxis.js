@@ -42,6 +42,11 @@ TimeAxis.ATTRS =
 
 Y.extend(TimeAxis, Y.BaseAxis, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuitimeaxis",
+	
+    /**
 	 * @private
 	 */
 	_dataType: "time",
