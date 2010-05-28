@@ -9,7 +9,7 @@ var Lang       = Y.Lang,
 
     CHART_URL         = 'http://chart.apis.google.com/chart?',
     DEFAULT_DURATION  = 1000, // default duration for time-based tests
-    YQL_XDR_DATATABLE = 'http://pieisgood.org/test/yui/yui3/sandbox/performance/assets/xdr.xml',
+    YQL_XDR_DATATABLE = 'http://yuilibrary.com/~rgrove/test/yui3/sandbox/performance/assets/xdr.xml',
 
     EVT_FINISH = 'finish',
     EVT_START  = 'start',
