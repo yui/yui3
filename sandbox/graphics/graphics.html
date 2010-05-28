@@ -3,9 +3,8 @@
 <xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" />
 <head>
 <title>Graphics</title>
-<script type="text/javascript" src="../../build/yui/yui-min.js"></script>
-<script type="text/javascript" src="graphics-canvas.js"></script>
-<script type="text/javascript" src="graphics-vml.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script>
+<script type="text/javascript" src="build/graphics/graphics.js"></script>
 <style>
 v\:group, v\:shape {
     behavior:url(#default#VML);
@@ -42,7 +41,7 @@ canvas {
 <script type="text/javascript">
 
 
-YUI({filter:'raw'}).use('graphics-canvas', 'graphics-vml', function(Y) {
+YUI({filter:'raw'}).use('graphics', function(Y) {
     var graphics = new Y.Graphic({width: 800, height: 600}),
         buttonHandlers = {
             clear: function() {

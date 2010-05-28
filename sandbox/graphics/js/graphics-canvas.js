@@ -78,36 +78,24 @@ Graphic.prototype = {
     /** 
      *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
-    beginGradientFill: function(type, colors, alphas, ratios, rotation) {
+    beginGradientFill: function(type, colors, alphas, ratios, matrix) {
         this._fillType =  type;
         this._fillColors = colors;
         this._fillRatios = ratios;
-        this._fillRotation = rotation;
+        if(matrix)
+        {
+            this._fillRotation = matrix.rotation || 0;
+            this._fillWidth = matrix.width || null;
+            this._fillHeight = matrix.height || null;
+            this._fillX = matrix.x || null;
+            this._fillY = matrix.y || null;
+        }
         this._context.beginPath();
         return this;
     },
-
-    _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
-        }
-        if (h > this._height) {
-            this._height = w;
-        }
-    },
-
-    _trackPos: function(x, y) {
-        if (x > this._x) {
-            this._x = x;
-        }
-        if (y > this._y) {
-            this._y = y;
-        }
-    },
     
     _initProps: function() {
-        var canvas = this._canvas,
-            context = this._context;
+        var context = this._context;
         
         context.fillStyle = 'rgba(0, 0, 0, 1)'; // use transparent when no fill
         context.lineWidth = 1;
@@ -115,10 +103,6 @@ Graphic.prototype = {
         context.lineJoin = 'miter';
         context.miterLimit = 3;
         context.strokeStyle = 'rgba(0, 0, 0, 1)';
-
-        // canvas is sized dynamically based on drawing shape
-        //canvas.width = 0;
-        //canvas.height = 0;
 
         this._width = 0;
         this._height = 0;
@@ -144,28 +128,31 @@ Graphic.prototype = {
 	drawCircle: function(x, y, radius) {
         var context = this._context,
             startAngle = 0 * Math.PI / 180,
-            endAngle = 360 * Math.PI / 180,
-            anticlockwise = false;
+            endAngle = 360 * Math.PI / 180;
 
         this._trackPos(x, y);
         this._trackSize(radius * 2, radius * 2);
 
-        context.arc(x + radius, y + radius, radius, startAngle, endAngle, anticlockwise);
+        context.arc(x, y, radius, startAngle, endAngle, false);
         return this;
 	},
 
-	drawEllipse: function(x, y, r, start, end, anticlockwise) {
-        Y.log('drawEllipse not implemented', 'warn', 'graphics-canvas');
+	drawEllipse: function(x, y, w, h) {
+        var context = this._context,
+            startAngle = 0 * Math.PI / 180,
+            endAngle = 360 * Math.PI / 180;
+
+        this._trackPos(x, y);
+        this._trackSize(w, h);
+
+        context.arc(x + w/2, y + h/2, w/2, startAngle, endAngle, false);
         return this;
 	},
 
     drawRect: function(x, y, w, h) {
         this.moveTo(x, y).lineTo(x + w, y).lineTo(x + w, y + h).lineTo(x, y + h).lineTo(x, y);
-        var context = this._context;
-
         this._trackPos(x, y);
         this._trackSize(w, h);
-
         return this;
     },
 
@@ -189,17 +176,15 @@ Graphic.prototype = {
 
     _getFill: function() {
         var type = this._fillType,
-            w = this._width,
-            h = this._height,
             fill;
 
         switch (type) {
             case 'linear': 
-                fill = this._getLinearGradient(w, h, 'fill');
+                fill = this._getLinearGradient('fill');
                 break;
 
             case 'radial': 
-                fill = this._getRadialGradient(w, h, 'fill');
+                fill = this._getRadialGradient('fill');
                 break;
 
             case 'solid': 
@@ -209,12 +194,14 @@ Graphic.prototype = {
         return fill;
     },
 
-    _getLinearGradient: function(w, h, type) {
+    _getLinearGradient: function(type) {
         var prop = '_' + type,
             colors = this[prop + 'Colors'],
             ratios = this[prop + 'Ratios'],
-            x = this._x,
-            y = this._y,
+            w = this._gradientWidth || this._width,
+            h = this._gradientHeight || this._height,
+            x = this._fillX || this._x,
+            y = this._fillY || this._y,
             ctx = this._context,
             r = this[prop + 'Rotation'],
             i,
@@ -225,31 +212,30 @@ Graphic.prototype = {
             grad;
         //temporary hack for rotation. 
         switch(r) {
-            case 45:
+            case 315:
+                grad = ctx.createLinearGradient(x, y + h, x + w, y); 
+            break;
+            case 270:
+                grad = ctx.createLinearGradient(x, y + h, x, y); 
+            break;
+            case 235:
                 grad = ctx.createLinearGradient(x + w, y + h, x, y); 
             break;
-            case 90:
+            case 180:
                 grad = ctx.createLinearGradient(x + w, y, x, y); 
             break;
             case 135:
                 grad = ctx.createLinearGradient(x + w, y, x, y + h); 
             break;
-            case 180:
+            case 90:
                 grad = ctx.createLinearGradient(x, y, x, y + h); 
             break;
-            case 225:
+            case 45:
                 grad = ctx.createLinearGradient(x, y, x + w, y + h); 
             break;
-            case 270:
+            default :
                 grad = ctx.createLinearGradient(x, y, x + w, y); 
             break;
-            case 315:
-                grad = ctx.createLinearGradient(x, y + h, x + w, y); 
-            break;
-            default:
-                grad = ctx.createLinearGradient(x, y + h, x, y); 
-            break;
-
         }
         l = colors.length;
         def = 0;
@@ -264,21 +250,23 @@ Graphic.prototype = {
         return grad;
     },
 
-    _getRadialGradient: function(w, h, type) {
+    _getRadialGradient: function(type) {
         var prop = '_' + type,
             colors = this[prop + "Colors"],
             ratios = this[prop + "Ratios"],
             i,
             l,
-            x = this._x,
-            y = this._y,
+            w = this._gradientWidth || this._width,
+            h = this._gradientHeight || this._height,
+            x = this._fillX || this._x,
+            y = this._fillY || this._y,
             color,
             ratio,
             def,
             grad,
             ctx = this._context;
 
-        grad = ctx.createRadialGradient(x + w/2, y + w/2, w/2, x + w, y + h, w/2);
+        grad = ctx.createRadialGradient(x, y, 1, x, y, w);
         l = colors.length;
         def = 0;
         for(i = 0; i < l; ++i) {
@@ -291,8 +279,7 @@ Graphic.prototype = {
     },
 
     endFill: function() {
-        var canvas = this._canvas,
-            context = this._context,
+        var context = this._context,
             fill;
 
         if (this._fillType) {
@@ -357,10 +344,7 @@ Graphic.prototype = {
 
     lineTo: function(point1, point2, etc) {
         var args = arguments, 
-            canvas = this._canvas,
             context = this._context,
-            width = this._width,
-            height = this._height,
             i, len;
         if (typeof point1 === 'string' || typeof point1 === 'number') {
             args = [[point1, point2]];
@@ -387,6 +371,24 @@ Graphic.prototype = {
         this._canvas.width = node.offsetWidth;
         this._canvas.height = node.offsetHeight;
         return this;
+    },
+
+    _trackSize: function(w, h) {
+        if (w > this._width) {
+            this._width = w;
+        }
+        if (h > this._height) {
+            this._height = w;
+        }
+    },
+
+    _trackPos: function(x, y) {
+        if (x > this._x) {
+            this._x = x;
+        }
+        if (y > this._y) {
+            this._y = y;
+        }
     }
 };
 

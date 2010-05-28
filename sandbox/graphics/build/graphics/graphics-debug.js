@@ -80,36 +80,24 @@ Graphic.prototype = {
     /** 
      *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
      */
-    beginGradientFill: function(type, colors, alphas, ratios, rotation) {
+    beginGradientFill: function(type, colors, alphas, ratios, matrix) {
         this._fillType =  type;
         this._fillColors = colors;
         this._fillRatios = ratios;
-        this._fillRotation = rotation;
+        if(matrix)
+        {
+            this._fillRotation = matrix.rotation || 0;
+            this._fillWidth = matrix.width || null;
+            this._fillHeight = matrix.height || null;
+            this._fillX = matrix.x || null;
+            this._fillY = matrix.y || null;
+        }
         this._context.beginPath();
         return this;
     },
-
-    _trackSize: function(w, h) {
-        if (w > this._width) {
-            this._width = w;
-        }
-        if (h > this._height) {
-            this._height = w;
-        }
-    },
-
-    _trackPos: function(x, y) {
-        if (x > this._x) {
-            this._x = x;
-        }
-        if (y > this._y) {
-            this._y = y;
-        }
-    },
     
     _initProps: function() {
-        var canvas = this._canvas,
-            context = this._context;
+        var context = this._context;
         
         context.fillStyle = 'rgba(0, 0, 0, 1)'; // use transparent when no fill
         context.lineWidth = 1;
@@ -117,10 +105,6 @@ Graphic.prototype = {
         context.lineJoin = 'miter';
         context.miterLimit = 3;
         context.strokeStyle = 'rgba(0, 0, 0, 1)';
-
-        // canvas is sized dynamically based on drawing shape
-        //canvas.width = 0;
-        //canvas.height = 0;
 
         this._width = 0;
         this._height = 0;
@@ -146,28 +130,31 @@ Graphic.prototype = {
 	drawCircle: function(x, y, radius) {
         var context = this._context,
             startAngle = 0 * Math.PI / 180,
-            endAngle = 360 * Math.PI / 180,
-            anticlockwise = false;
+            endAngle = 360 * Math.PI / 180;
 
         this._trackPos(x, y);
         this._trackSize(radius * 2, radius * 2);
 
-        context.arc(x + radius, y + radius, radius, startAngle, endAngle, anticlockwise);
+        context.arc(x, y, radius, startAngle, endAngle, false);
         return this;
 	},
 
-	drawEllipse: function(x, y, r, start, end, anticlockwise) {
-        Y.log('drawEllipse not implemented', 'warn', 'graphics-canvas');
+	drawEllipse: function(x, y, w, h) {
+        var context = this._context,
+            startAngle = 0 * Math.PI / 180,
+            endAngle = 360 * Math.PI / 180;
+
+        this._trackPos(x, y);
+        this._trackSize(w, h);
+
+        context.arc(x + w/2, y + h/2, w/2, startAngle, endAngle, false);
         return this;
 	},
 
     drawRect: function(x, y, w, h) {
         this.moveTo(x, y).lineTo(x + w, y).lineTo(x + w, y + h).lineTo(x, y + h).lineTo(x, y);
-        var context = this._context;
-
         this._trackPos(x, y);
         this._trackSize(w, h);
-
         return this;
     },
 
@@ -191,17 +178,15 @@ Graphic.prototype = {
 
     _getFill: function() {
         var type = this._fillType,
-            w = this._width,
-            h = this._height,
             fill;
 
         switch (type) {
             case 'linear': 
-                fill = this._getLinearGradient(w, h, 'fill');
+                fill = this._getLinearGradient('fill');
                 break;
 
             case 'radial': 
-                fill = this._getRadialGradient(w, h, 'fill');
+                fill = this._getRadialGradient('fill');
                 break;
 
             case 'solid': 
@@ -211,12 +196,14 @@ Graphic.prototype = {
         return fill;
     },
 
-    _getLinearGradient: function(w, h, type) {
+    _getLinearGradient: function(type) {
         var prop = '_' + type,
             colors = this[prop + 'Colors'],
             ratios = this[prop + 'Ratios'],
-            x = this._x,
-            y = this._y,
+            w = this._gradientWidth || this._width,
+            h = this._gradientHeight || this._height,
+            x = this._fillX || this._x,
+            y = this._fillY || this._y,
             ctx = this._context,
             r = this[prop + 'Rotation'],
             i,
@@ -227,31 +214,30 @@ Graphic.prototype = {
             grad;
         //temporary hack for rotation. 
         switch(r) {
-            case 45:
+            case 315:
+                grad = ctx.createLinearGradient(x, y + h, x + w, y); 
+            break;
+            case 270:
+                grad = ctx.createLinearGradient(x, y + h, x, y); 
+            break;
+            case 235:
                 grad = ctx.createLinearGradient(x + w, y + h, x, y); 
             break;
-            case 90:
+            case 180:
                 grad = ctx.createLinearGradient(x + w, y, x, y); 
             break;
             case 135:
                 grad = ctx.createLinearGradient(x + w, y, x, y + h); 
             break;
-            case 180:
+            case 90:
                 grad = ctx.createLinearGradient(x, y, x, y + h); 
             break;
-            case 225:
+            case 45:
                 grad = ctx.createLinearGradient(x, y, x + w, y + h); 
             break;
-            case 270:
+            default :
                 grad = ctx.createLinearGradient(x, y, x + w, y); 
             break;
-            case 315:
-                grad = ctx.createLinearGradient(x, y + h, x + w, y); 
-            break;
-            default:
-                grad = ctx.createLinearGradient(x, y + h, x, y); 
-            break;
-
         }
         l = colors.length;
         def = 0;
@@ -266,21 +252,23 @@ Graphic.prototype = {
         return grad;
     },
 
-    _getRadialGradient: function(w, h, type) {
+    _getRadialGradient: function(type) {
         var prop = '_' + type,
             colors = this[prop + "Colors"],
             ratios = this[prop + "Ratios"],
             i,
             l,
-            x = this._x,
-            y = this._y,
+            w = this._gradientWidth || this._width,
+            h = this._gradientHeight || this._height,
+            x = this._fillX || this._x,
+            y = this._fillY || this._y,
             color,
             ratio,
             def,
             grad,
             ctx = this._context;
 
-        grad = ctx.createRadialGradient(x + w/2, y + w/2, w/2, x + w, y + h, w/2);
+        grad = ctx.createRadialGradient(x, y, 1, x, y, w);
         l = colors.length;
         def = 0;
         for(i = 0; i < l; ++i) {
@@ -293,8 +281,7 @@ Graphic.prototype = {
     },
 
     endFill: function() {
-        var canvas = this._canvas,
-            context = this._context,
+        var context = this._context,
             fill;
 
         if (this._fillType) {
@@ -359,10 +346,7 @@ Graphic.prototype = {
 
     lineTo: function(point1, point2, etc) {
         var args = arguments, 
-            canvas = this._canvas,
             context = this._context,
-            width = this._width,
-            height = this._height,
             i, len;
         if (typeof point1 === 'string' || typeof point1 === 'number') {
             args = [[point1, point2]];
@@ -389,6 +373,24 @@ Graphic.prototype = {
         this._canvas.width = node.offsetWidth;
         this._canvas.height = node.offsetHeight;
         return this;
+    },
+
+    _trackSize: function(w, h) {
+        if (w > this._width) {
+            this._width = w;
+        }
+        if (h > this._height) {
+            this._height = w;
+        }
+    },
+
+    _trackPos: function(x, y) {
+        if (x > this._x) {
+            this._x = x;
+        }
+        if (y > this._y) {
+            this._y = y;
+        }
     }
 };
 
@@ -412,21 +414,22 @@ VMLGraphics.prototype = {
         this._fillColor = '#000000';
         this._strokeColor = '#000000';
         this._strokeWeight = 0;
-
+        this._fillProps = null;
         this._path = '';
 
         this._width = 0;
         this._height = 0;
         this._x = 0;
         this._y = 0;
-
         this._fill = 0;
         this._stroke = 0;
+        this._stroked = false;
     },
 
     _createGraphics: function() {
-        var group = Y.config.doc.createElement('v:group');
-        group.style.position = 'relative';
+        var group = this._createGraphicNode("group");
+        group.style.display = "inline-block";
+        group.style.position = 'absolute';
         return group;
     },
 
@@ -437,28 +440,42 @@ VMLGraphics.prototype = {
 
     beginFill: function(color, alpha) {
         if (color) {
+            if (alpha) {
+                this._fillProps = {
+                    type:"solid",
+                    opacity: alpha
+                };
+            }
             this._fillColor = color;
             this._fill = 1;
         }
 
-        if (alpha) {
-            Y.log('vml alpha fill not implemented', 'warn', 'graphics-vml');
-        }
         return this;
     },
 
     beginGradientFill: function(type, colors, alphas, ratios, rotation) {
-        var i = 1,
-            len = colors.length,
-            fill = {
-                type: (type === "linear") ? "gradient" : "GradientRadial",
-                color: colors[0],
-                angle: rotation
-            };
-
-        for(;i < len; ++i) {
-            fill["color" + (i + 1)] = colors[i];
+        var i = 0,
+            len,
+            pct,
+            fill;
+        rotation = rotation || 0;
+        rotation = 270 - rotation;
+        if(rotation < 0) 
+        {
+            rotation += 360;
         }
+        fill = {
+            type: (type === "linear") ? "gradient" : "gradientradial",
+            angle: rotation,
+            colors: ""
+        };
+        len = colors.length;
+        for(;i < len; ++i) {
+            pct = ratios[i] || i/(len-1);
+            pct = Math.round(100 * pct) + "%";
+            fill.colors += ", " + pct + " " + colors[i];
+        }
+        fill.colors = fill.colors.substr(2);
 
         this._fillProps = fill;
         return this;
@@ -474,18 +491,28 @@ VMLGraphics.prototype = {
     },
 
 	drawCircle: function(x, y, r, start, end, anticlockwise) {
+        this._width = this._height = r * 2;
+        this._x = x - r;
+        this._y = y - r;
+        this._shape = "oval";
         return this;
 	},
 
-    drawRect: function(x, y, w, h) {
-        this.moveTo(x, y)
-            .lineTo(x + w, y)
-            .lineTo(x + w, y + h)
-            .lineTo(x, y + h)
-            .lineTo(x, y);
+    drawEllipse: function(x, y, w, h) {
+        this._width = w;
+        this._height = h;
+        this._x = x;
+        this._y = y;
+        this._shape = "oval";
+        return this;
+    },
 
-        this._trackSize(w + x, h + y);
-        //this._trackPos(x, y);
+    drawRect: function(x, y, w, h) {
+        this._width = w;
+        this._height = h;
+        this._x = x;
+        this._y = y;
+        this._shape = "rect";
         return this;
     },
 
@@ -498,59 +525,60 @@ VMLGraphics.prototype = {
         }
     },
 
-    _trackPos: function(x, y) {
-        if (x > this._x) {
-            this._x = x;
-        }
-        if (y > this._y) {
-            this._y = y;
-        }
-    },
+    _shape: "shape",
 
 	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
         return this;
 	},
 
     endFill: function() {
-        var shape = Y.config.doc.createElement('v:shape'),
+        var shape = this._createGraphicNode(this._shape),
             w = this._width,
             h = this._height,
             fillProps = this._fillProps,
             prop,
             fill;
 
-        this._path += ' x e';
-
-        shape.style.position = 'absolute';
-        shape.path = this._path;
+        if(this._path)
+        {
+            this._path += ' x e';
+            shape.path = this._path;
+            shape.coordSize = w + ', ' + h;
+        }
+        else
+        {
+            shape.style.display = "block";
+            shape.style.position = "absolute";
+            shape.style.left = this._x + "px";
+            shape.style.top = this._y + "px";
+        }
 
         if (this._fill) {
             shape.fillColor = this._fillColor;
         }
-
+        
         if (this._stroke) {
             shape.strokeColor = this._strokeColor;
             shape.strokeWeight = this._strokeWeight;
         } else {
             shape.stroked = false;
         }
-
         shape.style.width = w + 'px';
         shape.style.height = h + 'px';
-        shape.coordSize = w + ', ' + h;
+       
 
         if (fillProps) {
-            fill = document.createElement('v:fill');
-
+            fill = this._createGraphicNode("fill");
             for (prop in fillProps) {
                 if(fillProps.hasOwnProperty(prop)) {
-                    fill[prop] = fillProps[prop];
+                    fill.setAttribute(prop, fillProps[prop]);
                 }
             }
-
             shape.appendChild(fill);
         }
+
         this._vml.appendChild(shape);
+        
         this._initProps();
         return this;
     },
@@ -560,11 +588,9 @@ VMLGraphics.prototype = {
     },
 
     lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-        if (!this._stroke) {
-            this._stroke = 1;
-            this._strokeWeight = 1;//thickness * 0.7;
-            this._strokeColor = color;
-        }
+        this._stroke = 1;
+        this._strokeWeight = thickness * 0.7;
+        this._strokeColor = color;
         return this;
     },
 
@@ -576,13 +602,13 @@ VMLGraphics.prototype = {
             args = [[point1, point2]];
         }
         len = args.length;
+        this._shape = "shape";
         this._path += ' l ';
         for (i = 0; i < len; ++i) {
             this._path += ' ' + args[i][0] + ', ' + args[i][1];
 
-            //this._trackSize.apply(this, args[i]);
+            this._trackSize.apply(this, args[i]);
         }
-
         return this;
     },
 
@@ -595,23 +621,42 @@ VMLGraphics.prototype = {
         this._vml.style.width = w + 'px';
         this._vml.style.height = h + 'px';
         this._vml.coordSize = w + ' ' + h;
-        //this._width = w;
-        //this._height = h;
+    },
+    
+    /**
+     * @private
+     * Creates a vml node.
+     */
+    _createGraphicNode: function(type)
+    {
+        return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
+    
     },
 
     render: function(node) {
+        var w = node.offsetWidth,
+            h = node.offsetHeight;
         node = node || Y.config.doc.body;
         node.appendChild(this._vml);
+        this.setSize(w, h);
+        this._initProps();
         return this;
     }
 };
 
 if (Y.UA.ie) {
-
-    Y.config.doc.namespaces.add('v', 'urn:schemas-microsoft-com:vml').doImport('#default#VML');
-
-
-Y.log('using VML');
+    var sheet = document.createStyleSheet();
+    sheet.addRule(".vmlgroup", "behavior:url(#default#VML)", sheet.rules.length);
+    sheet.addRule(".vmlgroup", "display:inline-block", sheet.rules.length);
+    sheet.addRule(".vmlgroup", "zoom:1", sheet.rules.length);
+    sheet.addRule(".vmlshape", "behavior:url(#default#VML)", sheet.rules.length);
+    sheet.addRule(".vmlshape", "display:inline-block", sheet.rules.length);
+    sheet.addRule(".vmloval", "behavior:url(#default#VML)", sheet.rules.length);
+    sheet.addRule(".vmloval", "display:inline-block", sheet.rules.length);
+    sheet.addRule(".vmlrect", "behavior:url(#default#VML)", sheet.rules.length);
+    sheet.addRule(".vmlrect", "display:block", sheet.rules.length);
+    sheet.addRule(".vmlfill", "behavior:url(#default#VML)", sheet.rules.length);
+    Y.log('using VML');
     Y.Graphic = VMLGraphics;
 }
 

@@ -31,7 +31,7 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 	 */
 	_updateMinAndMax: function()
 	{
-		this._dataMaximum = Math.max(this.data.length - 1, 0);
+		this._dataMaximum = Math.max(this._data.length - 1, 0);
 		this._dataMinimum = 0;
 	},
 

@@ -1,14 +1,11 @@
-// Very rough performance testing tool. Needs more work and a methodology review
-// before its results should be trusted against anything other than themselves.
 YUI.add('performance', function (Y) {
 
-var Node       = Y.Node,
+var Lang       = Y.Lang,
     Obj        = Y.Object,
     Perf,
 
-    isFunction = Y.Lang.isFunction,
-    yqlCache   = {},
-    yqlQueue   = {},
+    isFunction = Lang.isFunction,
+    isValue    = Lang.isValue,
 
     CHART_URL         = 'http://chart.apis.google.com/chart?',
     DEFAULT_DURATION  = 1000, // default duration for time-based tests
@@ -16,184 +13,16 @@ var Node       = Y.Node,
 
     EVT_FINISH = 'finish',
     EVT_START  = 'start',
-    EVT_STOP   = 'stop';
+    EVT_STOP   = 'stop',
 
-// -- Private Methods ----------------------------------------------------------
-
-// Returns an object hash containing the mean, median, sample variance,
-// sample standard deviation, and median absolute deviation of the values in the
-// specified array.
-function analyze(set) {
-    var i,
-        len = set.length,
-        max = null,
-        mean,
-        min = null,
-        sum = 0,
-        value,
-        variance;
-
-    // Find the sum, max, and min.
-    i = len;
-
-    while (i--) {
-        value = set[i];
-        sum += value;
-
-        if (max === null || value > max) {
-            max = value;
-        }
-
-        if (min === null || value < min) {
-            min = value;
-        }
-    }
-
-    // And the mean.
-    mean = sum / len;
-
-    // And the sum of the squared differences of each value from the mean.
-    i   = len;
-    sum = 0;
-
-    while (i--) {
-        sum += Math.pow(set[i] - mean, 2);
-    }
-
-    // And finally the sample variance and sample standard deviation.
-    variance = sum / (len - 1);
-
-    return {
-        max      : max,
-        mean     : mean,
-        median   : median(set),
-        mediandev: medianDeviation(set),
-        min      : min,
-        variance : variance,
-        stdev    : Math.sqrt(variance)
-    };
-}
-
-// Creates a query string based on the specified object of name/value params.
-function createQueryString(params) {
-    var _params = [];
-
-    Y.Object.each(params, function (value, key) {
-        if (Y.Lang.isValue(value)) {
-            _params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
-        }
-    });
-
-    return _params.join('&amp;');
-}
-
-function htmlentities(string) {
-    return string.replace(/&/g, '&amp;').
-                  replace(/</g, '&lt;').
-                  replace(/>/g, '&gt;').
-                  replace(/"/g, '&quot;');
-}
-
-// Returns the median of the values in the specified array. This implementation
-// is naïve and does a full sort before finding the median; if we ever start
-// working with very large arrays, this should be rewritten to use a linear
-// selection algorithm.
-function median(set) {
-    var len    = set.length,
-        sorted = [].concat(set), // copy
-        middle;
-
-    if (!len) {
-        return null;
-    }
-
-    sorted.sort(function (a, b) {
-      return a > b;
-    });
-
-    if (len % 2) { // odd number of items
-        return sorted[Math.floor(len / 2)];
-    } else { // even number of items
-        middle = sorted.splice(len / 2 - 1, 2);
-        return (middle[0] + middle[1]) / 2;
-    }
-}
-
-// Returns the median absolute deviation of the values in the specified array.
-function medianDeviation(set) {
-    var deviations = [],
-        i          = set.length,
-        setMedian  = median(set);
-
-    // Find the absolute deviations from the median of the set.
-    while (i--) {
-        deviations.push(Math.abs(set[i] - setMedian));
-    }
-
-    // The median of the deviations is the median absolute deviation.
-    return median(deviations);
-}
-
-// Cross-domain request proxied via YQL. Allows us to preload external JS
-// resources and have full control over when they're parsed and executed.
-function xdrGet(url, callback) {
-    if (yqlCache[url]) {
-        callback.call(Y.config.win, yqlCache[url]);
-    } else if (yqlQueue[url]) {
-        yqlQueue[url].push(callback);
-    } else {
-        yqlQueue[url] = [callback];
-
-        (new Y.yql("use '" + YQL_XDR_DATATABLE + "'; select * from xdr where url = '" + url + "'", function (result) {
-            var callback;
-
-            result = result.query.results.result;
-            yqlCache[url] = result;
-
-            while (callback = yqlQueue[url].shift()) {
-                callback.call(Y.config.win, result);
-            }
-
-            delete yqlQueue[url];
-        }));
-    }
-}
-
-function xhrGet(url) {
-    if (typeof XMLHttpRequest === 'undefined') {
-        Y.config.win.XMLHttpRequest = function () {
-            try {
-                return new ActiveXObject('Msxml2.XMLHTTP.6.0');
-            } catch (ex) {}
-
-            try {
-                return new ActiveXObject('Msxml2.XMLHTTP.3.0');
-            } catch (ex) {}
-
-            try {
-                return new ActiveXObject('Msxml2.XMLHTTP');
-            } catch (ex) {}
-
-            Y.error('This browser does not support XMLHttpRequest.');
-        };
-    }
-
-    var xhr = new XMLHttpRequest();
-
-    try {
-        xhr.open('GET', url, false);
-        xhr.send(null);
-    } catch (ex) {
-        Y.log("XMLHttpRequest failed. Make sure you're running these tests on an HTTP server, not the filesystem.", 'warn', 'performance');
-    }
-
-    return xhr.status === 200 ? xhr.responseText : null;
-}
+    xhrCache   = {},
+    yqlCache   = {},
+    yqlQueue   = {};
 
 Perf = Y.Performance = {
     // -- Public Constants -----------------------------------------------------
     MODE_ITERATION: 1,
-    MODE_TIME     : 2, // not yet fully-baked
+    MODE_TIME     : 2, // not yet fully baked
 
     // -- Protected Properties -------------------------------------------------
     _mode     : 1,
@@ -260,6 +89,7 @@ Perf = Y.Performance = {
                     '<tr>' +
                         '<th class="test">Test</th>' +
                         '<th class="calls">Calls</th>' +
+                        '<th class="failures">Failures</th>' +
                         '<th class="mean">Mean</th>' +
                         '<th class="median">Median</th>' +
                         '<th class="mediandev"><abbr title="Median Absolute Deviation">Med. Dev.</abbr></th>' +
@@ -268,10 +98,10 @@ Perf = Y.Performance = {
                         '<th class="min">Min</th>' +
                     '</tr>' +
                 '</thead>' +
-                '<tfoot><tr><td colspan="8"></td></tr></tfoot>' +
+                '<tfoot><tr><td colspan="9"></td></tr></tfoot>' +
                 '<tbody>' +
                     '<tr>' +
-                        '<td colspan="8">' +
+                        '<td colspan="9">' +
                             '<p>Click the button to gather results.</p>' +
                         '</td>' +
                     '</tr>' +
@@ -306,6 +136,74 @@ Perf = Y.Performance = {
     },
 
     // -- Protected Methods ----------------------------------------------------
+
+    // Returns an object hash containing the mean, median, sample variance,
+    // sample standard deviation, and median absolute deviation of the values in the
+    // specified array.
+    _analyzePoints: function (values) {
+        var i,
+            len = values.length,
+            max = null,
+            mean,
+            min = null,
+            sum = 0,
+            value,
+            variance;
+
+        // Find the sum, max, and min.
+        i = len;
+
+        while (i--) {
+            value = values[i];
+            sum += value;
+
+            if (max === null || value > max) {
+                max = value;
+            }
+
+            if (min === null || value < min) {
+                min = value;
+            }
+        }
+
+        // And the mean.
+        mean = sum / len;
+
+        // And the sum of the squared differences of each value from the mean.
+        i   = len;
+        sum = 0;
+
+        while (i--) {
+            sum += Math.pow(values[i] - mean, 2);
+        }
+
+        // And finally the sample variance and sample standard deviation.
+        variance = sum / (len - 1);
+
+        return {
+            max      : max,
+            mean     : mean,
+            median   : Perf._median(values),
+            mediandev: Perf._medianDeviation(values),
+            min      : min,
+            variance : variance,
+            stdev    : Math.sqrt(variance)
+        };
+    },
+
+    // Creates a query string based on the specified object of name/value params.
+    _createQueryString: function (params) {
+        var _params = [];
+
+        Obj.each(params, function (value, key) {
+            if (isValue(value)) {
+                _params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+            }
+        });
+
+        return _params.join('&amp;');
+    },
+
     _finish: function () {
         var sandbox;
 
@@ -318,6 +216,53 @@ Perf = Y.Performance = {
         }
 
         Perf.fire(EVT_FINISH);
+    },
+
+    _htmlEntities: function (string) {
+        return string.replace(/&/g, '&amp;').
+                      replace(/</g, '&lt;').
+                      replace(/>/g, '&gt;').
+                      replace(/"/g, '&quot;');
+    },
+
+    // Returns the median of the values in the specified array. This implementation
+    // is naïve and does a full sort before finding the median; if we ever start
+    // working with very large arrays, this should be rewritten to use a linear
+    // selection algorithm.
+    _median: function (values) {
+        var len    = values.length,
+            sorted = [].concat(values), // copy
+            middle;
+
+        if (!len) {
+            return null;
+        }
+
+        sorted.sort(function (a, b) {
+          return a > b;
+        });
+
+        if (len % 2) { // odd number of items
+            return sorted[Math.floor(len / 2)];
+        } else { // even number of items
+            middle = sorted.splice(len / 2 - 1, 2);
+            return (middle[0] + middle[1]) / 2;
+        }
+    },
+
+    // Returns the median absolute deviation of the values in the specified array.
+    _medianDeviation: function (values) {
+        var deviations = [],
+            i          = values.length,
+            median     = Perf._median(values);
+
+        // Find the absolute deviations from the median of the set.
+        while (i--) {
+            deviations.push(Math.abs(values[i] - median));
+        }
+
+        // The median of the deviations is the median absolute deviation.
+        return Perf._median(deviations);
     },
 
     _queueTest: function (test, name) {
@@ -347,17 +292,17 @@ Perf = Y.Performance = {
                     waitFor     : test.preloadUrls && 'preload'
                 }));
 
-                sandbox.setEnvValue('xhrGet', xhrGet);
+                sandbox.setEnvValue('xhrGet', Perf._xhrGet);
 
                 if (test.preloadUrls) {
-                    Y.Object.each(test.preloadUrls, function (url, key) {
-                        xdrGet(url, function (result) {
+                    Obj.each(test.preloadUrls, function (url, key) {
+                        Perf._yqlGet(url, function (result) {
                             preload[key] = result.response.body;
                         });
                     });
 
                     poll = Y.later(Y.config.pollInterval || 15, this, function (sandbox) { // note the local sandbox reference being passed in
-                        if (Y.Object.size(preload) === Y.Object.size(test.preloadUrls)) {
+                        if (Obj.size(preload) === Obj.size(test.preloadUrls)) {
                             poll.cancel();
                             sandbox.setEnvValue('preload', preload);
                         }
@@ -387,26 +332,38 @@ Perf = Y.Performance = {
             };
 
         Perf._table.one('tbody').append(Y.substitute(
-            '<tr class="test">' +
-                '<td class="test">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></td>' +
+            '<tr class="{classNames test}">' +
+                '<td class="test"><div class="bd">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></div></td>' +
                 '<td class="calls">{calls}</td>' +
+                '<td class="failures">{failures}</td>' +
                 '<td class="mean">{mean}</td>' +
                 '<td class="median">{median}</td>' +
-                '<td class="mediandev">±{mediandev}</td>' +
-                '<td class="stdev">±{stdev}</td>' +
+                '<td class="mediandev">{mediandev}</td>' +
+                '<td class="stdev">{stdev}</td>' +
                 '<td class="max">{max}</td>' +
                 '<td class="min">{min}</td>' +
             '</tr>' +
             '<tr class="code hidden">' +
-                '<td colspan="8">' +
+                '<td colspan="9">' +
                     '<pre><code>{code}</code></pre>' +
                 '</td>' +
             '</tr>',
 
             Y.merge(result, {
-                chartUrl: CHART_URL + createQueryString(chartParams),
-                code    : htmlentities(test.test.toString())
-            })
+                chartUrl : CHART_URL + Perf._createQueryString(chartParams),
+                code     : Perf._htmlEntities(test.test.toString()),
+                mediandev: result.mediandev !== '' ? '±' + result.mediandev : '',
+                name     : Perf._htmlEntities(result.name),
+                stdev    : result.stdev !== '' ? '±' + result.stdev : ''
+            }),
+
+            function (key, value, meta) {
+                if (key === 'classNames') {
+                    return meta + (result.failures ? ' fail' : '');
+                }
+
+                return value;
+            }
         ));
     },
 
@@ -466,6 +423,95 @@ Perf = Y.Performance = {
         });
     },
 
+    _xhrGet: function (url) {
+        // Create a local XMLHttpRequest so we can overwrite it later if
+        // necessary without affecting the global scope.
+        var XMLHttpRequest = Y.config.win.XMLHttpRequest;
+
+        if (Lang.isUndefined(XMLHttpRequest)) {
+            XMLHttpRequest = function () {
+                try {
+                    return new ActiveXObject('Msxml2.XMLHTTP.6.0');
+                } catch (ex1) {}
+
+                try {
+                    return new ActiveXObject('Msxml2.XMLHTTP.3.0');
+                } catch (ex2) {}
+
+                try {
+                    return new ActiveXObject('Msxml2.XMLHTTP');
+                } catch (ex3) {}
+
+                Y.error("This browser doesn't support XMLHttpRequest.");
+            };
+        }
+
+        // Redefine _xhrGet to avoid running the XHR feature detection again.
+        Perf._xhrGet = function (url) {
+            // If the URL is already in the cache, return it.
+            if (Obj.owns(xhrCache, url)) {
+                return xhrCache[url];
+            }
+
+            var xhr = new XMLHttpRequest();
+
+            try {
+                // Synchronous request.
+                xhr.open('GET', url, false);
+                xhr.send(null);
+            } catch (ex) {
+                Y.log("XMLHttpRequest failed. Make sure you're running on an HTTP server, not the local filesystem.", 'warn', 'performance');
+            }
+
+            if (xhr.status >= 200 && xhr.status <= 299) {
+                // Cache the response and return it.
+                xhrCache[url] = xhr.responseText;
+                return xhrCache[url];
+            } else {
+                return null;
+            }
+        };
+
+        return Perf._xhrGet(url);
+    },
+
+    // Cross-domain request proxied via YQL. Allows us to preload external JS
+    // resources and have full control over when they're parsed and executed.
+    _yqlGet: function (url, callback) {
+        if (yqlCache[url]) {
+            // If this URL is already in the cache, return it.
+            callback.call(null, yqlCache[url]);
+
+        } else if (yqlQueue[url]) {
+            // If a request for this URL is already queued, add the callback to
+            // the original request's callback stack instead of creating a new
+            // request.
+            yqlQueue[url].push(callback);
+
+        } else {
+            // Add this URL and its callback to the request queue and send the
+            // request. It'll be removed from the queue when the response
+            // arrives.
+            yqlQueue[url] = [callback];
+
+            (new Y.yql("use '" + YQL_XDR_DATATABLE + "'; select * from xdr where url = '" + url + "'", function (result) {
+                var callback;
+
+                // Cache the result.
+                result = result.query.results.result;
+                yqlCache[url] = result;
+
+                // Call each callback in this request's stack.
+                while (callback = yqlQueue[url].shift()) { // assignment
+                    callback.call(null, result);
+                }
+
+                // Remove the request from the queue.
+                delete yqlQueue[url];
+            }));
+        }
+    },
+
     // -- Protected Callbacks & Event Handlers ---------------------------------
     _onIterationComplete: function (iteration, profileData) {
         var result,
@@ -477,19 +523,25 @@ Perf = Y.Performance = {
 
         if (!iteration.warmup) {
             result = Perf._results[iteration.name] || {
-                calls : 0,
-                name  : iteration.name,
-                points: []
+                calls   : 0,
+                failures: 0,
+                name    : iteration.name,
+                points  : []
             };
 
             result.calls += 1;
-            result.points.push(profileData.duration);
+
+            if (profileData.returnValue === false) {
+                result.failures += 1;
+            } else {
+                result.points.push(profileData.duration);
+            }
 
             if (result.calls === iteration.test.iterations) {
-                result = Y.merge(result, analyze(result.points));
+                result = Y.merge(result, Perf._analyzePoints(result.points));
 
                 Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
-                    result[key] = result[key].toFixed(2);
+                    result[key] = isValue(result[key]) ? result[key].toFixed(2) : '';
                 });
 
                 Perf._renderTestResult(result, test);

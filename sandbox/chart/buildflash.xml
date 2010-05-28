@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <property file="buildflash.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+	
+	<property name="basedir" value="."/>
+	<property name="classpath" value="${basedir}/as"/>
+	
+	
+    <target name="build" depends="YuiModuleTargets.build, buildswf" />
+    <target name="deploybuild" depends="YuiSharedTargets.deploybuild, swfdeploy" />
+	
+	<target name="buildswc">
+			<exec executable="${flexbin}/compc" failonerror="true">	
+				<arg line="--source-path+='${classpath}'"/>
+            	<!-- Main Classes to Include (will also add dependencies) -->
+            	<arg line="--include-classes com.yahoo.renderers.Renderer"/>
+				<arg line="com.adobe.serialization.json.JSON"/>
+				<arg value="com.yahoo.renderers.Application"/>
+				<arg value="com.yahoo.util.YUIBridge"/>
+				<arg value="com.yahoo.renderers.ImageSkin"/>
+				<arg value="com.yahoo.renderers.Skin"/>
+				<arg value="com.yahoo.renderers.layout.ILayoutStrategy"/>
+				<arg value="com.yahoo.renderers.layout.Container"/>
+				<arg value="com.yahoo.renderers.layout.HFlowLayout"/>
+				<arg value="com.yahoo.renderers.layout.VFlowLayout"/>
+				<arg value="com.yahoo.renderers.layout.HLayout"/>
+				<arg value="com.yahoo.renderers.layout.VLayout"/>
+				<arg value="com.yahoo.renderers.layout.BorderLayout"/>
+				<arg value="com.yahoo.infographics.axes.Axis"/>
+				<arg value="com.yahoo.infographics.data.ChartDataProvider"/>
+				<arg value="com.yahoo.infographics.cartesian.DataTip"/>
+				<arg line="--output '${classpath}/cartesiancanvas.swc'"/>
+			</exec>
+		</target>
+		
+		<target name="buildswf" depends="buildswc">
+			<exec executable="${flexbin}/mxmlc" failonerror="true">
+				<!-- start with the classes from the SWC -->
+				<arg line="--library-path+='${classpath}'"/>
+
+				<!-- specify where to output the SWF -->
+				<arg line="--output '${component.builddir}/assets/cartesiancanvas.swf'"/>
+
+				<!-- compile the main class -->
+				<arg line="'${classpath}/CartesianCanvas.as'"/>
+			</exec>					
+		</target>
+		
+		<target name="swfdeploy" description="Charts Override to Build SWF">
+			<copy file="${component.builddir}/assets/cartesiancanvas.swf" todir="${global.build.component.assets}" />
+    	</target>
+</project>
+
+
+    

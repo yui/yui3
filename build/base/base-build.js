@@ -212,6 +212,7 @@ YUI.add('base-build', function(Y) {
      * </dl>
      *
      * @method Base.build
+     * @deprecated Use the more convenient Base.create and Base.mix methods instead
      * @static
      * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.
      * @param {Function} main The main class on which to base the built class
@@ -237,6 +238,8 @@ YUI.add('base-build', function(Y) {
      * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.
      * @param {Function} main The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).
      * @param {Function[]} extensions The list of extensions which will be mixed into the built class.
+     * @param {Object} px The set of prototype properties/methods to add to the built class.
+     * @param {Object} sx The set of static properties/methods to add to the built class.
      * @return {Function} The newly created class.
      */
     Base.create = function(name, base, extensions, px, sx) {
@@ -271,9 +274,21 @@ YUI.add('base-build', function(Y) {
     Base._buildCfg = {
         custom : { 
             ATTRS : function(prop, r, s) {
-                r[prop] = r[prop] || {};
-                if (s[prop]) {
-                    Y.aggregate(r[prop], s[prop], true);
+
+                r.ATTRS = r.ATTRS || {};
+
+                if (s.ATTRS) {
+
+                    var sAttrs = s.ATTRS,
+                        rAttrs = r.ATTRS,
+                        a;
+
+                    for (a in sAttrs) {
+                        if (sAttrs.hasOwnProperty(a)) {
+                            rAttrs[a] = rAttrs[a] || {};
+                            Y.mix(rAttrs[a], sAttrs[a], true);
+                        }
+                    }
                 }
             }
         },
