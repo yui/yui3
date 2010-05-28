@@ -17,7 +17,7 @@ VMLGraphics.prototype = {
         this._fillColor = '#000000';
         this._strokeColor = '#000000';
         this._strokeWeight = 0;
-
+        this._fillProps = null;
         this._path = '';
 
         this._width = 0;
@@ -30,9 +30,9 @@ VMLGraphics.prototype = {
     },
 
     _createGraphics: function() {
-        var group = this.createGraphicNode("group");
+        var group = this._createGraphicNode("group");
         group.style.display = "inline-block";
-        group.style.position = 'relative';
+        group.style.position = 'absolute';
         return group;
     },
 
@@ -95,29 +95,27 @@ VMLGraphics.prototype = {
 
 	drawCircle: function(x, y, r, start, end, anticlockwise) {
         this._width = this._height = r * 2;
-        this._x = x;
-        this._y = y;
+        this._x = x - r;
+        this._y = y - r;
         this._shape = "oval";
-        var circle = this.createGraphicNode("oval");
-        circle.style.width = this._width + "px";
-        circle.style.height = this._height + "px";
-        circle.style.left = x + "px";
-        circle.style.top = y + "px";
-        circle.strokeColor = this._fillColor;
-        circle.fillColor = this._fillColor;
-        this._vml.appendChild(circle);
         return this;
 	},
 
-    drawRect: function(x, y, w, h) {
-        this.moveTo(x, y)
-            .lineTo(x + w, y)
-            .lineTo(x + w, y + h)
-            .lineTo(x, y + h)
-            .lineTo(x, y);
+    drawEllipse: function(x, y, w, h) {
+        this._width = w;
+        this._height = h;
+        this._x = x;
+        this._y = y;
+        this._shape = "oval";
+        return this;
+    },
 
-        this._trackSize(w + x, h + y);
-        //this._trackPos(x, y);
+    drawRect: function(x, y, w, h) {
+        this._width = w;
+        this._height = h;
+        this._x = x;
+        this._y = y;
+        this._shape = "rect";
         return this;
     },
 
@@ -130,15 +128,6 @@ VMLGraphics.prototype = {
         }
     },
 
-    _trackPos: function(x, y) {
-        if (x > this._x) {
-            this._x = x;
-        }
-        if (y > this._y) {
-            this._y = y;
-        }
-    },
-
     _shape: "shape",
 
 	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
@@ -146,11 +135,7 @@ VMLGraphics.prototype = {
 	},
 
     endFill: function() {
-        if(this._shape !== "shape")
-        {
-            return;
-        }
-        var shape = this.createGraphicNode(this._shape),
+        var shape = this._createGraphicNode(this._shape),
             w = this._width,
             h = this._height,
             fillProps = this._fillProps,
@@ -161,18 +146,20 @@ VMLGraphics.prototype = {
         {
             this._path += ' x e';
             shape.path = this._path;
+            shape.coordSize = w + ', ' + h;
         }
         else
         {
-            shape.style.left = this._x;
-            shape.style.top = this._y;
-            shape.style.position = "relative";
+            shape.style.display = "block";
+            shape.style.position = "absolute";
+            shape.style.left = this._x + "px";
+            shape.style.top = this._y + "px";
         }
 
         if (this._fill) {
             shape.fillColor = this._fillColor;
         }
-
+        
         if (this._stroke) {
             shape.strokeColor = this._strokeColor;
             shape.strokeWeight = this._strokeWeight;
@@ -181,10 +168,10 @@ VMLGraphics.prototype = {
         }
         shape.style.width = w + 'px';
         shape.style.height = h + 'px';
-        shape.coordSize = w + ', ' + h;
+       
 
-        if (fillProps && this._shape === "shape") {
-            fill = this.createGraphicNode("fill");
+        if (fillProps) {
+            fill = this._createGraphicNode("fill");
             for (prop in fillProps) {
                 if(fillProps.hasOwnProperty(prop)) {
                     fill.setAttribute(prop, fillProps[prop]);
@@ -238,8 +225,12 @@ VMLGraphics.prototype = {
         this._vml.style.height = h + 'px';
         this._vml.coordSize = w + ' ' + h;
     },
-   
-    createGraphicNode: function(type)
+    
+    /**
+     * @private
+     * Creates a vml node.
+     */
+    _createGraphicNode: function(type)
     {
         return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
     
@@ -258,14 +249,16 @@ VMLGraphics.prototype = {
 
 if (Y.UA.ie) {
     var sheet = document.createStyleSheet();
-        sheet.addRule(".vmlgroup", "behavior:url(#default#VML)", sheet.rules.length);
-        sheet.addRule(".vmlgroup", "display:inline-block", sheet.rules.length);
-        sheet.addRule(".vmlgroup", "zoom:1", sheet.rules.length);
-        sheet.addRule(".vmlshape", "behavior:url(#default#VML)", sheet.rules.length);
-        sheet.addRule(".vmlshape", "display:inline-block", sheet.rules.length);
-        sheet.addRule(".vmloval", "behavior:url(#default#VML)", sheet.rules.length);
-        sheet.addRule(".vmloval", "display:inline-block", sheet.rules.length);
-        sheet.addRule(".vmlfill", "behavior:url(#default#VML)", sheet.rules.length);
+    sheet.addRule(".vmlgroup", "behavior:url(#default#VML)", sheet.rules.length);
+    sheet.addRule(".vmlgroup", "display:inline-block", sheet.rules.length);
+    sheet.addRule(".vmlgroup", "zoom:1", sheet.rules.length);
+    sheet.addRule(".vmlshape", "behavior:url(#default#VML)", sheet.rules.length);
+    sheet.addRule(".vmlshape", "display:inline-block", sheet.rules.length);
+    sheet.addRule(".vmloval", "behavior:url(#default#VML)", sheet.rules.length);
+    sheet.addRule(".vmloval", "display:inline-block", sheet.rules.length);
+    sheet.addRule(".vmlrect", "behavior:url(#default#VML)", sheet.rules.length);
+    sheet.addRule(".vmlrect", "display:block", sheet.rules.length);
+    sheet.addRule(".vmlfill", "behavior:url(#default#VML)", sheet.rules.length);
     Y.log('using VML');
     Y.Graphic = VMLGraphics;
 }

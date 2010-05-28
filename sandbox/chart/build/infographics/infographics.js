@@ -871,7 +871,7 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 	 */
 	_updateMinAndMax: function()
 	{
-		this._dataMaximum = Math.max(this.data.length - 1, 0);
+		this._dataMaximum = Math.max(this._data.length - 1, 0);
 		this._dataMinimum = 0;
 	},
 
@@ -981,10 +981,9 @@ Renderer.ATTRS = {
 	{
 		value: {},
 
-		lazyAdd: false,
-
 		getter: function()
 		{
+            this._styles = this._styles || this._getDefaultStyles();
 			return this._styles;
 		},
 			   
@@ -1075,7 +1074,7 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	_setStyles: function(newstyles)
 	{
-		var styles = this.get("styles") || {};
+		var styles = this.get("styles");
 		return this._mergeStyles(newstyles, styles);
 	},
 
@@ -1223,7 +1222,12 @@ Y.extend(Renderer, Y.Base, {
 			}
 		}
 		return hasFlag;
-	}
+	},
+
+    _getDefaultStyles: function()
+    {
+        return {};
+    }
 });
 
 Y.Renderer = Renderer;
@@ -1451,15 +1455,6 @@ Y.extend(CartesianSeries, Y.Renderer, {
     },
 
     _parent: null,
-
-	_styles: {
-		padding:{
-			top: 0,
-			left: 0,
-			right: 0,
-			bottom: 0
-		}
-	},
 	
 	/**
 	 * @private
@@ -1604,6 +1599,8 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			yData = this.get("yAxis").getDataByKey(yKey),
 			dataLength = xData.length, 	
             i;
+        this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
+        this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
         for (i = 0; i < dataLength; ++i) 
 		{
             nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding));
@@ -1615,11 +1612,16 @@ Y.extend(CartesianSeries, Y.Renderer, {
 		this.set("ycoords", ycoords);
     },
 
+    _leftOrigin: null,
+
+    _bottomOrigin: null,
+
 	/**
 	 * @private
 	 */
 	drawGraph: function()
 	{
+        this.drawMarkers();
 	},
 	
 	/**
@@ -1660,6 +1662,68 @@ Y.extend(CartesianSeries, Y.Renderer, {
 		}
 	},
 
+	drawMarkers: function()
+	{
+	    if(this._xcoords.length < 1) 
+		{
+			return;
+		}
+        var graphic = this.get("graphic"),
+            style = this.get("styles").marker,
+            w = style.width,
+            h = style.height,
+            fillColor = style.fillColor,
+            alpha = style.fillAlpha,
+            fillType = style.fillType || "solid",
+            borderWidth = style.borderWidth,
+            borderColor = style.borderColor,
+            borderAlpha = style.borderAlpha || 1,
+            colors = style.colors,
+            alphas = style.alpha || [],
+            ratios = style.ratios || [],
+            rotation = style.rotation || 0,
+            xcoords = this._xcoords,
+            ycoords = this._ycoords,
+            shapeMethod = style.func || "drawCircle",
+            i = 0,
+            len = xcoords.length,
+            top = ycoords[0],
+            left;
+        for(; i < len; ++i)
+        {
+            top = ycoords[i];
+            left = xcoords[i];
+            if(borderWidth > 0)
+            {
+                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
+            }
+            if(fillType === "solid")
+            {
+                graphic.beginFill(fillColor, alpha);
+            }
+            else
+            {
+                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
+            }
+            this.drawMarker(graphic, shapeMethod, left, top, w, h);
+            graphic.endFill();
+        }
+ 	},
+
+    drawMarker: function(graphic, func, left, top, w, h)
+    {
+        if(func === "drawCircle")
+        {
+            graphic.drawCircle(left, top, w/2);
+        }
+        else
+        {
+            left -= w/2;
+            top -= h/2;
+            graphic[func].call(graphic, left, top, w, h);
+        }
+    },
+
 	/**
 	 * Determines whether a data change has occurred during this render cycle.
 	 */
@@ -1690,7 +1754,17 @@ Y.extend(CartesianSeries, Y.Renderer, {
 	checkStyleFlags: function () 
 	{
 		return false;
-	}
+	},
+
+    _getDefaultStyles: function()
+    {
+        return {padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }};
+    }
 });
 
 Y.CartesianSeries = CartesianSeries;
@@ -1718,31 +1792,6 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 	 * @private
 	 * Default styles for the series.
 	 */
-	_styles: {
-		color: "#000000",
-		alpha: 1,
-		weight: 1,
-		marker: {
-			fillColor: "#000000",
-			alpha: 1,
-			weight: 1
-		},
-		showMarkers: false,
-		showLines: true,
-		lineType:"solid", 
-		dashLength:10, 
-		gapSpace:10, 
-		connectDiscontinuousPoint:true, 
-		discontinuousType:"dashed", 
-		discontinuousDashLength:10, 
-		discontinuousGapSpace:10,
-		padding:{
-			top: 0,
-			left: 0,
-			right: 0,
-			bottom: 0
-		}
-	},
 
 	/**
 	 * @private (protected)
@@ -1790,7 +1839,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 	 */
 	drawLines: function()
 	{
-		if(this._xcoords.length < 1) 
+        if(this._xcoords.length < 1) 
 		{
 			return;
 		}
@@ -1869,35 +1918,8 @@ Y.extend(LineSeries, Y.CartesianSeries, {
         graphic.lineTo(0, ycoords[0]);
         graphic.endFill();
 	},
-
-	drawMarkers: function()
-	{
-	    if(this._xcoords.length < 1) 
-		{
-			return;
-		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles").marker,
-            w = style.width,
-            h = style.height,
-            fill = style.fillColor,
-            xcoords = this._xcoords,
-            ycoords = this._ycoords,
-            i = 0,
-            len = xcoords.length,
-            top,
-            left;
-        for(; i < len; ++i)
-        {
-            top = ycoords[i] - h/2;
-            left = xcoords[i] - w/2;
-            graphic.beginFill(fill);
-            graphic.drawCircle(left, top, w/2);
-            graphic.endFill();
-        }
- 	},
-
-	/**
+	
+    /**
 	 * Draws a dashed line between two points.
 	 * 
 	 * @param xStart	The x position of the start of the line
@@ -1945,10 +1967,107 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		}
 		
 		graphic.moveTo(xEnd, yEnd);
-	}
+	},
+
+	_getDefaultStyles: function()
+    {
+        return {
+            color: "#000000",
+            alpha: 1,
+            weight: 1,
+            marker: {
+                fillColor: "#000000",
+                alpha: 1,
+                weight: 1,
+                width: 6,
+                height: 6
+            },
+            showMarkers: false,
+            showLines: true,
+            lineType:"solid", 
+            dashLength:10, 
+            gapSpace:10, 
+            connectDiscontinuousPoint:true, 
+            discontinuousType:"dashed", 
+            discontinuousDashLength:10, 
+            discontinuousGapSpace:10,
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
 });
 
 Y.LineSeries = LineSeries;
+
+
+		
+
+		
+function ColumnSeries(config)
+{
+	ColumnSeries.superclass.constructor.apply(this, arguments);
+}
+
+ColumnSeries.name = "columnSeries";
+
+ColumnSeries.ATTRS = {
+	type: {
+		/**
+		 * Indicates the type of graph.
+		 */
+		getter: function()
+		{
+			return this._type;
+		}
+	}
+};
+
+Y.extend(ColumnSeries, Y.CartesianSeries, {
+	/**
+	 * @private (protected)
+	 */
+	_type: "column",
+
+    drawMarker: function(graphic, func, left, top, w, h)
+    {
+		var origin = Math.min(this.get("parent").offsetHeight, this._bottomOrigin);
+        left -= w/2;
+        h = this._bottomOrigin - top;
+        graphic.drawRect(left, top, w, h);
+    },
+	
+	_getDefaultStyles: function()
+    {
+        return {
+            marker: {
+                fillColor: "#000000",
+                fillAlpha: 1,
+                borderColor:"#ff0000",
+                borderWidth:0,
+                borderAlpha:1,
+                colors:[],
+                alpha:[],
+                ratios:[],
+                rotation:0,
+                width:6,
+                height:6
+            },
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
+});
+
+
+Y.ColumnSeries = ColumnSeries;
 
 
 		

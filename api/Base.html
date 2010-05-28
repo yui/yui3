@@ -748,7 +748,7 @@ construction, prior to init.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:method" resource="#method_Base.build">
+                                    <div class=" deprecated" rel="yui:method" resource="#method_Base.build">
                                     <h4>
                                         <a name="method_Base.build">Base.build</a></h4>
                                     <div class="detail" >
@@ -848,6 +848,9 @@ augmented/aggregated to the built class.</span>
 
 
              
+                                            <div class="deprecated">
+                                                <strong>Deprecated</strong> Use the more convenient Base.create and Base.mix methods instead
+                                            </div>        
 
                                         </div>
 
@@ -876,6 +879,14 @@ augmented/aggregated to the built class.</span>
                                                 
                                                         , 
                                                          extensions
+                                                    
+                                                
+                                                        , 
+                                                         px
+                                                    
+                                                
+                                                        , 
+                                                         sx
                                                     
                                                 
                                             )
@@ -911,6 +922,18 @@ and mixes in the array of extensions provided.</p>
                                                         &lt;<span property="yui:type">Function[]</span>&gt;
                                                         </code>
                                                         <span property="yui:description"> The list of extensions which will be mixed into the built class.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">px</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The set of prototype properties/methods to add to the built class.</span>
+                                                        </dd>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">sx</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> The set of static properties/methods to add to the built class.</span>
                                                         </dd>
                                                 </dl>
 
@@ -1745,7 +1768,7 @@ has been through the init lifecycle phase.
                                 <li class="private"><a href="#method__initHierarchy" title="_initHierarchy">_initHierarchy</a></li>
                                 <li class="private"><a href="#method__initHierarchyData" title="_initHierarchyData">_initHierarchyData</a></li>
                                 <li class="private"><a href="#method__preInitEventCfg" title="_preInitEventCfg">_preInitEventCfg</a></li>
-                                <li class=""><a href="#method_Base.build" title="Base.build">Base.build</a></li>
+                                <li class=" deprecated"><a href="#method_Base.build" title="Base.build">Base.build</a></li>
                                 <li class=""><a href="#method_Base.create" title="Base.create">Base.create</a></li>
                                 <li class=""><a href="#method_Base.mix" title="Base.mix">Base.mix</a></li>
                                 <li class=""><a href="#method_Base.plug" title="Base.plug">Base.plug</a></li>
