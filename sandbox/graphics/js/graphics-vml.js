@@ -1,4 +1,3 @@
-
 var VMLGraphics = function(config) {
     this.initializer.apply(this, arguments);
 };
@@ -212,11 +211,9 @@ VMLGraphics.prototype = {
 };
 
 if (Y.UA.ie) {
-
     Y.config.doc.namespaces.add('v', 'urn:schemas-microsoft-com:vml').doImport('#default#VML');
 
-
-Y.log('using VML');
+    Y.log('using VML');
     Y.Graphic = VMLGraphics;
 }
 
