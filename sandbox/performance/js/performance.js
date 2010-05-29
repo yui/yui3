@@ -30,51 +30,39 @@ Perf = Y.Performance = {
     _results  : {},
     _sandboxes: [],
     _suites   : {},
-    _tests    : {},
 
     // -- Public Methods -------------------------------------------------------
-    activateTestSuite: function (name) {
-        if (!Obj.owns(Perf._suites, name)) {
-            Y.log("There's no test suite named '" + name + "'.", 'error', 'performance');
-            return;
+    addTestGroup: function (config) {
+        var suiteName = config.suite || 'Default',
+            suite     = Perf._suites[suiteName];
+
+        // Test suites are created on demand.
+        if (!suite) {
+            suite = Perf._suites[suiteName] = {
+                name  : suiteName,
+                groups: {}
+            };
         }
 
-        Perf.clearTests();
-        Obj.each(Perf._suites[name], Perf.addTest);
-    },
-
-    addTest: function (test, name) {
-      // Give each test a unique id and add it to _tests.
-      Perf._tests[name] = test;
-      Perf._tests[name]._id = Y.guid('perf-');
-      return Perf._tests[name];
-    },
-
-    addTestSuite: function (name, tests) {
-        Perf._suites[name] = tests;
-        return Perf._suites[name];
+        return (suite.groups[config.name || 'Default'] = config);
     },
 
     clearResults: function () {
         Perf._results = {};
 
+        // TODO: move this to a renderer.
         if (Perf._table) {
             Perf._table.one('tbody').get('children').remove();
         }
     },
 
-    clearTests: function () {
-      Perf.clearResults();
-      Perf._tests = {};
-    },
-
-    clearTestSuites: function () {
-        Perf.clearTests();
-        Perf._suites = {};
+    getTestGroup: function (suiteName, groupName) {
+        return Perf._suites[suiteName] &&
+                Perf._suites[suiteName].groups[groupName] || undefined;
     },
 
     getTestSuite: function (name) {
-        return Obj.owns(Perf._suites, name) ? Perf._suites[name] : undefined;
+        return Perf._suites[name];
     },
 
     getTestSuites: function () {
@@ -87,6 +75,7 @@ Perf = Y.Performance = {
             '<table class="yui3-perf-results">' +
                 '<thead>' +
                     '<tr>' +
+                        '<th class="group">Group</th>' +
                         '<th class="test">Test</th>' +
                         '<th class="calls">Calls</th>' +
                         '<th class="failures">Failures</th>' +
@@ -98,10 +87,10 @@ Perf = Y.Performance = {
                         '<th class="min">Min</th>' +
                     '</tr>' +
                 '</thead>' +
-                '<tfoot><tr><td colspan="9"></td></tr></tfoot>' +
+                '<tfoot><tr><td colspan="10"></td></tr></tfoot>' +
                 '<tbody>' +
                     '<tr>' +
-                        '<td colspan="9">' +
+                        '<td colspan="10">' +
                             '<p>Click the button to gather results.</p>' +
                         '</td>' +
                     '</tr>' +
@@ -112,21 +101,41 @@ Perf = Y.Performance = {
         Perf._table.delegate('click', Perf._onTestClick, 'tbody tr.test');
     },
 
-    start: function () {
+    /**
+     * Starts running the specified test suite.
+     *
+     * @method start
+     * @param {String} suiteName test suite to run
+     */
+    start: function (suiteName) {
         if (Perf._queue.length) {
             Y.log('Performance tests are already running.', 'warn', 'performance');
             return;
         }
 
+        var suite = Perf.getTestSuite(suiteName);
+
+        if (!suite) {
+            Y.log("There's no test suite named '" + suiteName + "'.", 'error', 'performance');
+            return;
+        }
+
         Perf.clearResults();
 
+        // TODO: move this into a renderer.
         if (Perf._table) {
             Perf._table.addClass('running');
         }
 
         Perf.fire(EVT_START);
 
-        Obj.each(Perf._tests, Perf._queueTest);
+        // Queue up all the tests from each group.
+        Obj.each(suite.groups, function (group) {
+            Obj.each(group.tests, function (test, testName) {
+                Perf._queueTest(test, testName, group);
+            });
+        });
+
         this._runNextTest();
     },
 
@@ -211,6 +220,7 @@ Perf = Y.Performance = {
             sandbox.destroy();
         }
 
+        // TODO: move this into a renderer
         if (Perf._table) {
             Perf._table.removeClass('running');
         }
@@ -265,7 +275,7 @@ Perf = Y.Performance = {
         return Perf._median(deviations);
     },
 
-    _queueTest: function (test, name) {
+    _queueTest: function (test, name, group) {
         var i = Perf._mode === Perf.MODE_ITERATION ? test.iterations || 1 : 1,
             push,
             sandbox;
@@ -275,12 +285,15 @@ Perf = Y.Performance = {
         // Note: test is now a shallow clone, but functions are still references
         // to the original test functions. Don't modify them.
 
+        // Add a warmup iteration if desired.
         if (test.warmup) {
             i += 1;
         }
 
+        // This function will create or reuse a sandbox for each test iteration
+        // and then push that iteration onto the queue, while also providing a
+        // handy closure to make async sandbox configuration easier.
         push = function () {
-            // Yeah, I know, this is wanton closure abuse. Deal with it.
             var poll,
                 preload = {};
 
@@ -310,11 +323,13 @@ Perf = Y.Performance = {
                 }
             }
 
+            // Push the test and its sandbox onto the queue.
             Perf._queue.push({
-                name   : name,
-                sandbox: sandbox,
-                test   : test,
-                warmup : test.warmup && !(test.warmup = false) // intentional assignment, sets warmup to false for future iterations
+                group    : group,
+                name     : name,
+                sandbox  : sandbox,
+                test     : test,
+                warmup   : test.warmup && !(test.warmup = false) // intentional assignment, sets warmup to false for future iterations
             });
         };
 
@@ -323,7 +338,7 @@ Perf = Y.Performance = {
         }
     },
 
-    _renderTestResult: function (result, test) {
+    _renderTestResult: function (result, test, group) {
         var chartParams = {
                 cht: 'ls',
                 chd: 't:' + result.points.join(','),
@@ -333,6 +348,7 @@ Perf = Y.Performance = {
 
         Perf._table.one('tbody').append(Y.substitute(
             '<tr class="{classNames test}">' +
+                '<td class="group">{groupName}</td>' +
                 '<td class="test"><div class="bd">{name} <img src="{chartUrl}" style="height:20px;width:100px" alt="Sparkline chart illustrating execution times."></div></td>' +
                 '<td class="calls">{calls}</td>' +
                 '<td class="failures">{failures}</td>' +
@@ -344,7 +360,7 @@ Perf = Y.Performance = {
                 '<td class="min">{min}</td>' +
             '</tr>' +
             '<tr class="code hidden">' +
-                '<td colspan="9">' +
+                '<td colspan="10">' +
                     '<pre><code>{code}</code></pre>' +
                 '</td>' +
             '</tr>',
@@ -352,6 +368,7 @@ Perf = Y.Performance = {
             Y.merge(result, {
                 chartUrl : CHART_URL + Perf._createQueryString(chartParams),
                 code     : Perf._htmlEntities(test.test.toString()),
+                groupName: Perf._htmlEntities(group.name || 'Default'),
                 mediandev: result.mediandev !== '' ? '±' + result.mediandev : '',
                 name     : Perf._htmlEntities(result.name),
                 stdev    : result.stdev !== '' ? '±' + result.stdev : ''
@@ -371,18 +388,23 @@ Perf = Y.Performance = {
         var iteration = pending || Perf._queue.shift(),
             test      = iteration && iteration.test;
 
+        // If no pending iteration was passed in and the queue was empty, we're
+        // done running tests.
         if (!iteration) {
             Perf._finish();
             return;
         }
 
+        // Wait for this iteration's sandbox to be ready, then set up and run
+        // the test. If the sandbox is already ready, the callback will execute
+        // immediately.
         iteration.sandbox.on('ready', function () {
             var count;
 
+            // Run the setup function if there is one and if it hasn't already
+            // been run for this iteration.
             if (!iteration.setupDone && isFunction(test.setup)) {
-
                 if (test.asyncSetup) {
-
                     // The setup function is asynchronous, so we'll pause the
                     // iteration while it runs, then restart the iteration once
                     // the setup function finishes successfully.
@@ -409,10 +431,20 @@ Perf = Y.Performance = {
             }
 
             if (Perf._mode === Perf.MODE_ITERATION) {
+                // In iteration mode, we time the execution of each individual
+                // iteration. This is the default mode.
                 iteration.sandbox.profile(test.test, function (profileData) {
                     Perf._onIterationComplete(iteration, profileData);
                 });
+
             } else if (Perf._mode === Perf.MODE_TIME) {
+                // In time mode, we run as many iterations as we can within the
+                // specified duration rather than profiling each iteration. For
+                // some tests, this can be a more accurate way of arriving at
+                // consistent benchmark results.
+                //
+                // This is wrapped in a setTimeout to allow some breathing room
+                // between tests and allow other UI events to be processed.
                 setTimeout(function () {
                     count = iteration.sandbox.count(test.test,
                                 test.duration || DEFAULT_DURATION);
@@ -514,87 +546,114 @@ Perf = Y.Performance = {
 
     // -- Protected Callbacks & Event Handlers ---------------------------------
     _onIterationComplete: function (iteration, profileData) {
-        var result,
-            test = iteration.test;
+        var groupName    = iteration.group.name,
+            groupResults = Perf._results[groupName],
+            result,
+            test         = iteration.test;
 
+        // If the test has a teardown function, run it.
         if (isFunction(test.teardown)) {
             iteration.sandbox.run(test.teardown);
         }
 
-        if (!iteration.warmup) {
-            result = Perf._results[iteration.name] || {
-                calls   : 0,
-                failures: 0,
-                name    : iteration.name,
-                points  : []
-            };
-
-            result.calls += 1;
-
-            if (profileData.returnValue === false) {
-                result.failures += 1;
-            } else {
-                result.points.push(profileData.duration);
-            }
-
-            if (result.calls === iteration.test.iterations) {
-                result = Y.merge(result, Perf._analyzePoints(result.points));
-
-                Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
-                    result[key] = isValue(result[key]) ? result[key].toFixed(2) : '';
-                });
-
-                Perf._renderTestResult(result, test);
-            }
-
-            Perf._results[iteration.name] = result;
-        }
-
+        // Destroy the sandbox unless we need to reuse it for another iteration.
         if (test.useStrictSandbox) {
             iteration.sandbox.destroy();
         }
 
+        // If this was a warmup iteration, continue without collecting the
+        // results.
+        if (iteration.warmup) {
+            Perf._runNextTest();
+            return;
+        }
+
+        // Collect the results of the iteration.
+        if (!groupResults) {
+            groupResults = Perf._results[groupName] = {};
+        }
+
+        result = groupResults[iteration.name] || {
+            calls   : 0,
+            failures: 0,
+            name    : iteration.name,
+            points  : []
+        };
+
+        result.calls += 1;
+
+        if (profileData.returnValue === false) {
+            // A false return value indicates that the test failed.
+            result.failures += 1;
+        } else {
+            result.points.push(profileData.duration);
+        }
+
+        if (result.calls === iteration.test.iterations) {
+            result = Y.merge(result, Perf._analyzePoints(result.points));
+
+            Y.Array.each(['max', 'mean', 'median', 'mediandev', 'min', 'stdev', 'variance'], function (key) {
+                result[key] = isValue(result[key]) ? result[key].toFixed(2) : '';
+            });
+
+            Perf._renderTestResult(result, test, iteration.group);
+        }
+
+        groupResults[iteration.name] = result;
         Perf._runNextTest();
     },
 
     _onTestClick: function (e) {
+        // TODO: move this to a renderer.
         var code = e.currentTarget.next('tr.code');
-
         code.toggleClass('hidden');
     },
 
     _onTimeComplete: function (iteration, count) {
-        var mean,
+        var groupName    = iteration.group.name,
+            groupResults = Perf._results[groupName],
+            mean,
             result,
-            test = iteration.test;
+            test         = iteration.test;
 
+        // If the test has a teardown function, run it.
         if (isFunction(test.teardown)) {
             iteration.sandbox.run(test.teardown);
         }
 
-        if (!iteration.warmup) {
-            mean = ((test.duration || DEFAULT_DURATION) / count).toFixed(2);
-
-            result = Perf._results[iteration.name] = {
-                calls    : count,
-                max      : mean,
-                mean     : mean,
-                median   : mean,
-                mediandev: 0.00,
-                min      : mean,
-                name     : iteration.name,
-                points   : [mean],
-                stdev    : 0.00,
-                variance : 0.00
-            };
-
-            Perf._renderTestResult(result, test);
-        }
-
+        // Destroy the sandbox unless we need to reuse it for another iteration.
         if (test.useStrictSandbox) {
             iteration.sandbox.destroy();
         }
 
+        // If this was a warmup iteration, continue without collecting the
+        // results.
+        if (iteration.warmup) {
+            Perf._runNextTest();
+            return;
+        }
+
+        // Collect the results of the time test.
+        if (!groupResults) {
+            groupResults = Perf._results[groupName] = {};
+        }
+
+        mean = ((test.duration || DEFAULT_DURATION) / count).toFixed(2);
+
+        result = groupResults[iteration.name] = {
+            calls    : count,
+            max      : mean,
+            mean     : mean,
+            median   : mean,
+            mediandev: 0.00,
+            min      : mean,
+            name     : iteration.name,
+            points   : [mean],
+            stdev    : 0.00,
+            variance : 0.00
+        };
+
+        Perf._renderTestResult(result, test);
         Perf._runNextTest();
     }
 };
