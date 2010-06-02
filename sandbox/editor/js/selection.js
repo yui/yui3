@@ -104,6 +104,10 @@ YUI.add('selection', function(Y) {
                 if (n.getAttribute('style') === '') {
                     n.removeAttribute('style');
                 }
+                //This is for IE
+                if (n.getAttribute('style').toLowerCase() === 'font-family: ') {
+                    n.removeAttribute('style');
+                }
             }
         });
         
