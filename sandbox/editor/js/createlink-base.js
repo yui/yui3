@@ -52,8 +52,14 @@ YUI.add('createlink-base', function(Y) {
                 Y.log('Adding link: ' + url, 'info', 'createLinkBase');
                 this.get('host')._execCommand(cmd, url);
                 out = (new inst.Selection()).getSelected();
-                a = out.item(0).one('a');
-                out.item(0).replace(a);
+                if (out.size()) {
+                    //We have a selection
+                    a = out.item(0).one('a');
+                    out.item(0).replace(a);
+                } else {
+                    //No selection, insert a new node..
+                    this.get('host')._execCommand('inserthtml', '<a href="' + url + '">' + url + '</a>');
+                }
             }
             return a;
         }
