@@ -332,7 +332,11 @@ Graphic.prototype = {
                 context.strokeStyle = this._2RGBA(context.strokeStyle, alpha);
             }
         }
-
+        
+        if(!this._fill)
+        {
+            context.beginPath();
+        }
 
         if (caps === 'butt') {
             caps = 'none';

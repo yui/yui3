@@ -87,8 +87,7 @@ Y.extend(GraphStack, Y.Base, {
             seriesCollection = this._seriesCollection,
             graphSeriesLength = seriesCollection.length,
             seriesTypes = this.seriesTypes,
-            typeSeriesCollection,
-            index;	
+            typeSeriesCollection;	
         if(!series.get("graph")) 
         {
             series.set("graph", this);
@@ -102,7 +101,6 @@ Y.extend(GraphStack, Y.Base, {
         typeSeriesCollection = this.seriesTypes[type];
         series.set("order", typeSeriesCollection.length);
         typeSeriesCollection.push(series);
-        //series.style.zIndex = Math.max(this.numChildren - 1, 0);
         this.fire("seriesAdded", series);
     },
 
@@ -110,7 +108,6 @@ Y.extend(GraphStack, Y.Base, {
     {
         var type = seriesData.type,
             seriesCollection = this._seriesCollection,
-            graphSeriesLength = seriesCollection.length,
             seriesTypes = this.seriesTypes,
             typeSeriesCollection,
             seriesType,
@@ -127,7 +124,7 @@ Y.extend(GraphStack, Y.Base, {
         seriesType = this._getSeries(seriesData.type);
         series = new seriesType(seriesData);
         typeSeriesCollection.push(series);
-        this._seriesCollection.push(series);
+        seriesCollection.push(series);
     },
 
     _getSeries: function(type)

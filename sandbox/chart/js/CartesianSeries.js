@@ -176,17 +176,9 @@ CartesianSeries.ATTRS = {
 			return value;
 		}
 	},
-    
-    /**
-     * Determines which axis property will define the bounds of the series.
-     *  <ul>
-     *      <li><code>data</code>: Maximum and minimum values are determined by the values of the datasource.</li>
-     *      <li><code>axis</code>: Maximum and minimum values are determined by the <code>Axis</code> setting.</li>
-     *  </ul>
-     */
 
     /**
-	 * The graphic in which the line series will be rendered.
+	 * The graphic in which the series will be rendered.
 	 */
 	graphic: {
 		getter: function()

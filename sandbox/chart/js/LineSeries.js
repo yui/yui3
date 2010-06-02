@@ -73,7 +73,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-		var	parentDiv = this.get("parent"),
+        var	parentDiv = this.get("parent"),
             ht = parentDiv.offsetHeight,
             xcoords = this._xcoords,
 			ycoords = this._ycoords,

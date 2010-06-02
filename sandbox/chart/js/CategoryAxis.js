@@ -59,7 +59,20 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 		}
 		this._keys[key] = arr;
 		this._data = this._data.concat(labels);
-	}
+	},
+
+    getTotalMajorUnits: function(majorUnit, len)
+    {
+        return this._data.length;
+    },
+    
+    getLabelAtPosition: function(pos, len, format)
+    {
+        var count = this._data.length - 1,
+        i = Math.round(pos/(len/count));
+        return this._data[i];
+    }
+			
 });
 
 Y.CategoryAxis = CategoryAxis;

@@ -107,8 +107,6 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
 
     drawMarker: function(graphic, func, left, top, w, h)
     {
-		var origin = Math.min(this.get("parent").offsetHeight, this._bottomOrigin);
-        left -= w/2;
         h = this._bottomOrigin - top;
         graphic.drawRect(left, top, w, h);
     },
