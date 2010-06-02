@@ -330,6 +330,7 @@ var AFTER = 'after',
         'details',
         'emitFacade',
         'fireOnce',
+        'async',
         'host',
         'preventable',
         'preventedFn',
@@ -508,6 +509,15 @@ Y.CustomEvent = function(type, o) {
      * @default false;
      */
     // this.fireOnce = false;
+    
+    /**
+     * fireOnce listeners will fire syncronously unless async
+     * is set to true
+     * @property async
+     * @type boolean
+     * @default false
+     */
+    //this.async = false;
 
     /**
      * Flag for stopPropagation that is modified during fire()
@@ -682,8 +692,11 @@ Y.CustomEvent.prototype = {
         var s = new Y.Subscriber(fn, context, args, when);
 
         if (this.fireOnce && this.fired) {
-            // setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
-            this._notify(s, this.firedWith);
+            if (this.async) {
+                setTimeout(Y.bind(this._notify, this, s, this.firedWith), 0);
+            } else {
+                this._notify(s, this.firedWith);
+            }
         }
 
         if (when == AFTER) {
@@ -1199,7 +1212,7 @@ var L = Y.Lang,
                 queuable: o.queuable,
                 monitored: o.monitored,
                 broadcast: o.broadcast,
-                defaultTargetOnly: o.defaulTargetOnly,
+                defaultTargetOnly: o.defaultTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -1528,6 +1541,10 @@ ET.prototype = {
      *   the fire will be notified immediately.
      *    </li>
      *    <li>
+     *   'async': fireOnce event listeners will fire synchronously if the event has already
+     *    fired unless async is true.
+     *    </li>
+     *    <li>
      *   'preventable': whether or not preventDefault() has an effect (true)
      *    </li>
      *    <li>
@@ -1817,7 +1834,7 @@ Y.Global = YUI.Env.globalEvents;
  *     <li>0..n additional arguments to supply the callback.</li>
  *   </ul>
  *   Example: 
- *   <code>Y.on('domready', function() { // start work });</code>
+ *   <code>Y.on('drag:drophit', function() { // start work });</code>
  * </li>
  * <li>DOM events.  These are moments reported by the browser related
  * to browser functionality and user interaction.

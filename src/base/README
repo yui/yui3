@@ -5,6 +5,14 @@ across the library and provides a consistent init() and destroy()
 sequence, by chaining initialization (initializer) and destruction 
 (destructor) methods for the class hierarcy.
 
+Development Master
+
+* Fixed Base.create to properly isolate ATTRS on extensions
+
+3.1.1	
+
+* No changes 
+
 3.1.0
 
 * As the final step in the destroy phase, Base now does a detachAll() to avoid invoking listeners 

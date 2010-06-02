@@ -1,7 +1,7 @@
 YUI.add('history-base-test', function (Y) {
 
-Y.HistoryBaseTest = new Y.Test.Case({
-    name: 'history-base',
+Y.Test.Runner.add(new Y.Test.Case({
+    name: 'HistoryBase',
 
     setUp: function () {
         YUI.Env.History._state = {};
@@ -22,8 +22,8 @@ Y.HistoryBaseTest = new Y.Test.Case({
         Y.ObjectAssert.ownsNoKeys(state);
     },
 
-    'Constructor should accept an object hash as the initial state': function () {
-        var history = new Y.HistoryBase({foo: 'bar'});
+    'Constructor should accept a config object containing an initial state': function () {
+        var history = new Y.HistoryBase({initialState: {foo: 'bar'}});
         Y.Assert.areSame(history.get().foo, 'bar');
     },
 
@@ -62,35 +62,53 @@ Y.HistoryBaseTest = new Y.Test.Case({
             args  : [Y.Mock.Value.Object]
         });
 
-        Y.Global.on('history:change', handler.onGlobalChange);
-        this.history.on('change', handler.onChange);
-        this.history.on('fooChange', handler.onFooChange);
-        this.history.on('bazChange', handler.onBazChange);
+        Y.Mock.expect(handler, {
+            method: 'onFooRemove',
+            args  : [Y.Mock.Value.Object]
+        });
 
-        this.history._resolveChanges({foo: 'bar', baz: 'quux'});
-        Y.Assert.areSame(this.history.get().foo, 'bar');
+        Y.Global.once('history:change', handler.onGlobalChange);
+        this.history.once('change', handler.onChange);
+        this.history.once('fooChange', handler.onFooChange);
+        this.history.once('bazChange', handler.onBazChange);
+        this.history.once('fooRemove', handler.onFooRemove);
+
+        this.history._resolveChanges('test', {foo: 'bar', baz: 'quux'});
+        Y.Assert.areSame('bar', this.history.get().foo);
+
+        this.history._resolveChanges('test', {foo: null});
+        Y.Assert.isUndefined(this.history.get().foo);
 
         Y.Mock.verify(handler);
     },
 
-    '_resolveChanges(true) should change the state silently': function () {
-        Y.Global.on('history:change', function () {
-            Y.Assert.fail("Global change event fired when it shouldn't have.");
+    '_resolveChanges() should pass the src param to events': function () {
+        Y.Global.once('history:change', function (e) {
+            Y.Assert.areSame('test', e.src);
         });
 
-        this.history.on('change', function () {
-            Y.Assert.fail("Local change event fired when it shouldn't have.");
+        this.history.once('change', function (e) {
+            Y.Assert.areSame('test', e.src);
         });
 
-        this.history.on('fooChange', function () {
-            Y.Assert.fail("fooChange event fired when it shouldn't have.");
+        this.history.once('fooChange', function (e) {
+            Y.Assert.areSame('test', e.src);
         });
 
-        this.history._resolveChanges({foo: 'bar'}, true);
-        Y.Assert.areSame(this.history.get().foo, 'bar');
+        this.history.once('fooRemove', function (e) {
+            Y.Assert.areSame('another test', e.src);
+        });
+
+        this.history._resolveChanges('test', {foo: 'bar'});
+        Y.Assert.areSame('bar', this.history.get().foo);
+
+        this.history._resolveChanges('another test', {foo: null});
+        Y.Assert.isUndefined(this.history.get().foo);
     },
 
     '_resolveChanges() should not fire events when there are no changes': function () {
+        this.history._resolveChanges('test', {foo: 'bar'});
+
         Y.Global.on('history:change', function () {
             Y.Assert.fail("Global change event fired when it shouldn't have.");
         });
@@ -103,9 +121,7 @@ Y.HistoryBaseTest = new Y.Test.Case({
             Y.Assert.fail("fooChange event fired when it shouldn't have.");
         });
 
-        this.history._resolveChanges({});
-        this.history._resolveChanges({foo: 'bar'}, true); // silent
-        this.history._resolveChanges({foo: 'bar'});
+        this.history._resolveChanges('test', {foo: 'bar'});
     },
 
     'local events should not fire for changes in other HistoryBase instances': function () {
@@ -121,11 +137,58 @@ Y.HistoryBaseTest = new Y.Test.Case({
             Y.Assert.fail("Local change event fired when it shouldn't have.");
         });
 
-        history2.on('change', handler.onChange);
-        history2._resolveChanges({foo: 'bar'});
+        this.history.on('fooChange', function () {
+            Y.Assert.fail("fooChange event fired when it shouldn't have.");
+        });
+
+        this.history.on('fooRemove', function () {
+            Y.Assert.fail("fooRemove event fired when it shouldn't have.");
+        });
+
+        history2.once('change', handler.onChange);
+        history2._resolveChanges('test', {foo: 'bar'});
+        history2._resolveChanges('test', {foo: null});
 
         Y.Mock.verify(handler);
+    },
+
+    // -- add() ----------------------------------------------------------------
+    'add() should change state with the correct event src': function () {
+        var changeFired = false;
+
+        this.history.on('change', function (e) {
+            changeFired = true;
+            Y.Assert.areSame(Y.HistoryBase.SRC_ADD, e.src);
+        });
+
+        this.history.add({foo: 'bar'});
+        Y.Assert.isTrue(changeFired);
+    },
+
+    'add() should support changing a single item': function () {
+        Y.Assert.isUndefined(this.history.get('foo'));
+        this.history.add('foo', 'bar');
+        Y.Assert.areSame('bar', this.history.get('foo'));
+    },
+
+    // -- replace() ------------------------------------------------------------
+    'replace() should change state with the correct event src': function () {
+        var changeFired = false;
+
+        this.history.on('change', function (e) {
+            changeFired = true;
+            Y.Assert.areSame(Y.HistoryBase.SRC_REPLACE, e.src);
+        });
+
+        this.history.replace({foo: 'bar'});
+        Y.Assert.isTrue(changeFired);
+    },
+
+    'replace() should support changing a single item': function () {
+        Y.Assert.isUndefined(this.history.get('foo'));
+        this.history.replace('foo', 'bar');
+        Y.Assert.areSame('bar', this.history.get('foo'));
     }
-});
+}));
 
 }, '@VERSION@', {requires:['test', 'history-base']});

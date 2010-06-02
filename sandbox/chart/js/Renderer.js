@@ -1,6 +1,7 @@
 function Renderer(config)
 {
-	Renderer.superclass.constructor.apply(this, arguments);
+	this._createId();
+    Renderer.superclass.constructor.apply(this, arguments);
 }
 
 Renderer.NAME = "renderer";
@@ -79,10 +80,9 @@ Renderer.ATTRS = {
 	{
 		value: {},
 
-		lazyAdd: false,
-
 		getter: function()
 		{
+            this._styles = this._styles || this._getDefaultStyles();
 			return this._styles;
 		},
 			   
@@ -100,7 +100,22 @@ Renderer.ATTRS = {
 };
 
 Y.extend(Renderer, Y.Base, {
-	_width: 0,
+	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuirenderer",
+
+    /**
+	 * Creates unique id for class instance.
+	 *
+	 * @private
+	 */
+	_createId: function()
+	{
+		this._id = Y.guid(this.GUID);
+	},
+	
+    _width: 0,
 
 	_height: 0,
 
@@ -163,7 +178,7 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	_setStyles: function(newstyles)
 	{
-		var styles = this.get("styles") || {};
+		var styles = this.get("styles");
 		return this._mergeStyles(newstyles, styles);
 	},
 
@@ -259,7 +274,9 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	setFlags: function(value)
 	{
-		for(var i = 0; i < value.length; i++)
+        var i = 0,
+            len = value.length;
+		for(; i < len; i++)
 		{
 			this.setFlag(value[i]);
 		}
@@ -270,9 +287,10 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	clearFlags: function()
 	{
+        var i;
 		this._renderFlags = {};
 		this._hasFlag = false;
-		for(var i in this._laterFlags)
+		for(i in this._laterFlags)
 		{
 			if(this._laterFlags.hasOwnProperty(i))
 			{
@@ -297,8 +315,9 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	checkFlags: function(flags)
 	{
-		var hasFlag = false;
-		for(var i in flags)
+		var hasFlag = false,
+            i;
+		for(i in flags)
 		{
 			if(this._renderFlags[i]) 
 			{
@@ -307,7 +326,12 @@ Y.extend(Renderer, Y.Base, {
 			}
 		}
 		return hasFlag;
-	}
+	},
+
+    _getDefaultStyles: function()
+    {
+        return {};
+    }
 });
 
 Y.Renderer = Renderer;

@@ -53,7 +53,7 @@ var Y = YUI({
 }).use('console-filters', 'event-delegate', 'history', 'json-stringify', function (Y) {
     new Y.Console({
         style: 'block',
-        width: 'inherit',
+        width: Y.UA.ie ? '100%' : 'inherit',
 
         entryTemplate:
             '<div class="{entry_class} {cat_class} {src_class}">' +
@@ -105,7 +105,7 @@ var Y = YUI({
     }, 'input');
 
     // Refresh with the bookmarked state, if any.
-    Y.log('bookmarked state: ' + Y.JSON.stringify(bookmarked));
+    Y.log('Bookmarked state: ' + Y.JSON.stringify(bookmarked));
     refresh(bookmarked);
 });
 </script>

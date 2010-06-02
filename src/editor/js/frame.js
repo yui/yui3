@@ -172,7 +172,7 @@
                 this._ready = true;
                 var inst = this.getInstance(),
                     args = Y.clone(this.get('use'));
-
+                
                 this.fire('contentready');
 
                 Y.log('On available for body of iframe', 'info', 'frame');
@@ -202,6 +202,7 @@
             this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
 
             var html = '',
+                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : ''),
                 doc = this._instance.config.doc;
 
             Y.log('Creating the document from javascript', 'info', 'frame');
@@ -212,7 +213,8 @@
                 META: Frame.META,
                 CONTENT: this.get('content'),
                 BASE_HREF: this.get('basehref'),
-                DEFAULT_CSS: Frame.DEFAULT_CSS
+                DEFAULT_CSS: Frame.DEFAULT_CSS,
+                EXTRA_CSS: extra_css
             });
             if (Y.config.doc.compatMode != 'BackCompat') {
                 Y.log('Adding Doctype to frame', 'info', 'frame');
@@ -228,9 +230,11 @@
             if (this.get('designMode')) {
                 doc.designMode = 'on';
                 if (!Y.UA.ie) {
-                    //Force other browsers into non CSS styling
-                    doc.execCommand('styleWithCSS', false, false);
-                    doc.execCommand('insertbronreturn', false, false);
+                    try {
+                        //Force other browsers into non CSS styling
+                        doc.execCommand('styleWithCSS', false, false);
+                        doc.execCommand('insertbronreturn', false, false);
+                    } catch (e) {}
                 }
             }
         },
@@ -349,6 +353,12 @@
             if (this._ready) {
                 var inst = this.getInstance();
                 inst.one('body').set('innerHTML', html);
+            } else {
+                //This needs to be wrapped in a contentready callback for the !_ready state
+                this.on('contentready', Y.bind(function(html, e) {
+                    var inst = this.getInstance();
+                    inst.one('body').set('innerHTML', html);
+                }, this, html));
             }
             return html;
         },
@@ -359,6 +369,16 @@
         focus: function() {
             this.getInstance().config.win.focus();
             return this;
+        },
+        _setExtraCSS: function(css) {
+            if (this._ready) {
+                var inst = this.getInstance(),
+                    node = inst.get('#extra_css');
+                
+                node.remove();
+                inst.one('head').append('<style id="extra_css">' + css + '</style>');
+            }
+            return css;
         }
     }, {
 
@@ -376,7 +396,7 @@
         * @description The template used to create the page when created dynamically.
         * @type String
         */
-        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/><style id="editor_css">{DEFAULT_CSS}</style></head><body>{CONTENT}</body></html>',
+        PAGE_HTML: '<html dir="{DIR}" lang="{LANG}"><head><title>{TITLE}</title>{META}<base href="{BASE_HREF}"/><style id="editor_css">{DEFAULT_CSS}</style>{EXTRA_CSS}</head><body>{CONTENT}</body></html>',
         /**
         * @static
         * @property DOC_TYPE
@@ -496,6 +516,15 @@
                     }
                     return id;
                 }
+            },
+            /**
+            * @attribute extracss
+            * @description A string of CSS to add to the Head of the Editor
+            * @type String
+            */
+            extracss: {
+                value: '',
+                setter: '_setExtraCSS'
             }
         }
     });

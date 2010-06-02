@@ -162,7 +162,12 @@ Y.extend(NumericAxis, Y.BaseAxis,
 		precision = precision || 0;
 		var decimalPlaces = Math.pow(10, precision);
 		return Math.round(decimalPlaces * number) / decimalPlaces;
-	}
+	},
+    
+    getFormattedLabel: function(val, format)
+    {
+        return Y.DataType.Number.format(val, format);
+    }
 });
 
 Y.NumericAxis = NumericAxis;

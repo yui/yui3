@@ -29,6 +29,7 @@ var O = Y.Object,
 
 owns = function(o, k) {
     return o && o.hasOwnProperty && o.hasOwnProperty(k);
+    // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
 UNDEFINED = undefined,
@@ -132,7 +133,7 @@ O.owns = owns;
 /**
  * Executes a function on each item. The function
  * receives the value, the key, and the object
- * as paramters (in that order).
+ * as parameters (in that order).
  * @method each
  * @static
  * @param o the object to iterate
@@ -240,6 +241,21 @@ O.setValue = function(o, path, val) {
     }
 
     return o;
+};
+
+/**
+ * Returns true if the object has no properties of its own
+ * @method isEmpty
+ * @return {boolean} true if the object is empty
+ * @since 3.2.0
+ */
+O.isEmpty = function(o) {
+    for (var i in o) {
+        if (owns(o, i)) {
+            return false;
+        }
+    }
+    return true;
 };
 
 })();

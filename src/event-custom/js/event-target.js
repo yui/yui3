@@ -116,7 +116,7 @@ var L = Y.Lang,
                 queuable: o.queuable,
                 monitored: o.monitored,
                 broadcast: o.broadcast,
-                defaultTargetOnly: o.defaulTargetOnly,
+                defaultTargetOnly: o.defaultTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };
@@ -450,6 +450,10 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
      *   the fire will be notified immediately.
      *    </li>
      *    <li>
+     *   'async': fireOnce event listeners will fire synchronously if the event has already
+     *    fired unless async is true.
+     *    </li>
+     *    <li>
      *   'preventable': whether or not preventDefault() has an effect (true)
      *    </li>
      *    <li>
@@ -740,7 +744,7 @@ Y.Global = YUI.Env.globalEvents;
  *     <li>0..n additional arguments to supply the callback.</li>
  *   </ul>
  *   Example: 
- *   <code>Y.on('domready', function() { // start work });</code>
+ *   <code>Y.on('drag:drophit', function() { // start work });</code>
  * </li>
  * <li>DOM events.  These are moments reported by the browser related
  * to browser functionality and user interaction.

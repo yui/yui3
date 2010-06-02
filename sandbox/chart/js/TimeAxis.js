@@ -5,8 +5,48 @@ function TimeAxis(config)
 
 TimeAxis.NAME = "timeAxis";
 
+TimeAxis.ATTRS = 
+{
+    maximum: {
+		getter: function ()
+		{
+			if(this._autoMax || this._setMaximum === null) 
+			{
+                return this._getNumber(this._dataMaximum);
+			}
+			return this._setMaximum;
+		},
+		setter: function (value)
+		{
+			this._setMaximum = this._getNumber(value);
+            this.fire("dataChange");
+		}
+    },
+
+    minimum: {
+		getter: function ()
+		{
+			if(this._autoMin || this._setMinimum === null) 
+			{
+				return this._dataMinimum;
+			}
+			return this._setMinimum;
+		},
+		setter: function (value)
+		{
+			this._setMinimum = this._getNumber(value);
+            this.fire("dataChange");
+        }
+    }
+};
+
 Y.extend(TimeAxis, Y.BaseAxis, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuitimeaxis",
+	
+    /**
 	 * @private
 	 */
 	_dataType: "time",
@@ -41,8 +81,53 @@ Y.extend(TimeAxis, Y.BaseAxis, {
 		}
 		this._keys[key] = arr;
 		this._data = this._data.concat(arr);
-	}
+	},
 
+    _getNumber: function(val)
+    {
+        if(Y.Lang.isDate(val))
+        {
+            val = val.valueOf();
+        }
+        else if(!Y.Lang.isNumber(val))
+        {
+            val = new Date(val.toString()).valueOf();
+        }
+
+        return val;
+    },
+
+    updateMaxByPosition:function(val, len)
+    {
+        var range = this._dataMaximum - this._dataMinimum,
+            pos = (val/len) * range;
+            pos += this._dataMinimum;
+        this.set("maximum", pos);
+    },
+
+    updateMinByPosition:function(val, len)
+    {
+        var range = this._dataMaximum - this._dataMinimum,
+            pos = (val/len) * range;
+            pos += this._dataMinimum;
+        this.set("minimum", pos);
+    },
+
+    updateMinAndMaxByPosition: function(minVal, maxVal, len)
+    {
+        var min = minVal / len,
+            max = maxVal / len;
+        min += this._dataMinimum;
+        max += this._dataMaximum;
+        this._setMaximum = this._getNumber(max);
+        this._setMinimum = this._getNumber(min);
+        this.fire("dataChange");
+    },
+    
+    getFormattedLabel: function(val, format)
+    {
+        return Y.DataType.Date.format(Y.DataType.Date.parse(val), {format:format});
+    }
 });
 
 Y.TimeAxis = TimeAxis;

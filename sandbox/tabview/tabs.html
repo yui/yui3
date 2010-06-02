@@ -14,7 +14,7 @@ p, ul, li {
 }
 </style>
 </head>
-<body>
+<body class="yui3-skin-sam">
 <h1>Tabs</h1>
 
 <div id="demo" class="yui3-skin-sam">
@@ -32,6 +32,7 @@ p, ul, li {
         <div id="bar">bar content</div>
         <div id="baz">baz content</div>
     </div>
+
 </div>
 <div id="demo3">
   <div id="yui_3_1_0_1_1270489731578892" class="yui3-widget yui3-tabview">
@@ -65,6 +66,35 @@ p, ul, li {
   </div>
 </div>
 
+<div id="demo4">
+    <ul>
+        <li><a href="#foo2">foo</a></li>
+        <li><a href="#bar2">bar</a></li>
+        <li><a href="#baz2">baz</a></li>
+    </ul>
+
+</div>
+
+<div id="demo4-tabview-panel">
+    <div id="foo2">foo content</div>
+    <div id="bar2">bar content</div>
+    <div id="baz2">baz content</div>
+</div>
+
+<div id="demo5">
+    <ul>
+        <li><a>demo5 foo</a></li>
+        <li><a>demo5 bar</a></li>
+        <li><a>demo5 baz</a></li>
+    </ul>
+
+</div>
+
+<div id="demo5-tabview-panel">
+    <div>demo5 foo content</div>
+    <div>demo5 bar content</div>
+    <div>demo5 baz content</div>
+</div>
 </body>
 <script type="text/javascript">
 YUI({filter: 'raw'}).use('tabview', 'tabview-plugin', function(Y) {
@@ -88,8 +118,10 @@ YUI({filter: 'raw'}).use('tabview', 'tabview-plugin', function(Y) {
     //tabview.remove(0);
     //tablist.get('selection').next().set('selected', 1);
 
+
+
     var tabview2 = new Y.TabView({
-        contentBox: '#demo2'
+        srcNode: '#demo2'
     });
 
     tabview2.render();
@@ -107,7 +139,19 @@ YUI({filter: 'raw'}).use('tabview', 'tabview-plugin', function(Y) {
 
     tabview3.render();
 
-});
+    var tabview4 = new Y.TabView({
+        srcNode: '#demo4',
+        panelNode: '#demo4-tabview-panel'
+    });
 
+    tabview4.render();
+
+    var tabview5 = new Y.TabView({
+        srcNode: '#demo5',
+        panelNode: '#demo5-tabview-panel'
+    });
+
+    tabview5.render();
+});
 </script>
 </html>

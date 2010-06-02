@@ -19,20 +19,25 @@ YUI.add('history-hash', function(Y) {
  * @class History
  * @extends HistoryBase
  * @constructor
+ * @param {Object} config (optional) Configuration object. See the HistoryBase
+ *   documentation for details.
  */
 
-var Lang      = Y.Lang,
-    Obj       = Y.Object,
-    GlobalEnv = YUI.namespace('Env.History'),
+var HistoryBase    = Y.HistoryBase,
+    Lang           = Y.Lang,
+    Obj            = Y.Object,
+    GlobalEnv      = YUI.namespace('Env.History'),
 
-    config          = Y.config,
-    doc             = config.doc,
-    docMode         = doc.documentMode,
+    SRC_HASH       = 'hash',
+
+    config         = Y.config,
+    doc            = config.doc,
+    docMode        = doc.documentMode,
     hashNotifiers,
     oldHash,
     oldUrl,
-    win             = config.win,
-    location        = win.location,
+    win            = config.win,
+    location       = win.location,
 
     // IE8 supports the hashchange event, but only in IE8 Standards
     // Mode. However, IE8 in IE7 compatibility mode still defines the
@@ -42,38 +47,36 @@ var Lang      = Y.Lang,
     nativeHashChange = !Lang.isUndefined(win.onhashchange) &&
             (Lang.isUndefined(docMode) || docMode > 7),
 
-History = function (config) {
+History = function () {
     History.superclass.constructor.apply(this, arguments);
 };
 
-Y.extend(History, Y.HistoryBase, {
+Y.extend(History, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
         // Use the bookmarked state as the initialState if no initialState was
         // specified.
         config = config || {};
-        config.initialState = config.initialState ||
-                this.constructor.parseHash();
+        config.initialState = config.initialState || History.parseHash();
 
         // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
 
-        this.constructor.superclass._init.call(this, config);
+        History.superclass._init.call(this, config);
     },
 
     // -- Protected Methods ----------------------------------------------------
-    _storeState: function (newState, silent) {
-        var constructor = this.constructor;
+    _storeState: function (src, newState) {
+        var newHash = History.createHash(newState);
 
-        constructor.superclass._storeState.apply(this, arguments);
+        History.superclass._storeState.apply(this, arguments);
 
         // Update the location hash with the changes, but only if the new hash
         // actually differs from the current hash (this avoids creating multiple
         // history entries for a single state).
-        if (constructor.getHash() !== constructor.createHash(newState)) {
-            constructor[silent ? 'replaceHash' : 'setHash'](
-                    constructor.createHash(newState));
+        if (History.getHash() !== newHash) {
+            History[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
         }
     },
 
@@ -86,22 +89,55 @@ Y.extend(History, Y.HistoryBase, {
      * @protected
      */
     _afterHashChange: function (e) {
-        this._resolveChanges(this.constructor.parseHash(e.newHash));
+        this._resolveChanges(SRC_HASH, History.parseHash(e.newHash));
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
     NAME: 'history',
 
     /**
-     * Whether or not this browser supports the window.onhashchange event
-     * natively. Note that even if this is <code>true</code>, you may still want
-     * to use History's synthetic hashchange event since it normalizes
-     * implementation differences and fixes spec violations across various
-     * browsers.
+     * Constant used to identify state changes originating from
+     * <code>hashchange</code> events.
+     *
+     * @property SRC_HASH
+     * @type String
+     * @static
+     * @final
+     */
+    SRC_HASH: SRC_HASH,
+
+    /**
+     * <p>
+     * Prefix to prepend when setting the hash fragment. For example, if the
+     * prefix is <code>!</code> and the hash fragment is set to
+     * <code>#foo=bar&baz=quux</code>, the final hash fragment in the URL will
+     * become <code>#!foo=bar&baz=quux</code>. This can be used to help make an
+     * Ajax application crawlable in accordance with Google's guidelines at
+     * <a href="http://code.google.com/web/ajaxcrawling/">http://code.google.com/web/ajaxcrawling/</a>.
+     * </p>
+     *
+     * <p>
+     * Note that this prefix applies to all History instances. It's not possible
+     * for individual instances to use their own prefixes since they all operate
+     * on the same URL.
+     * </p>
+     *
+     * @property hashPrefix
+     * @type String
+     * @default ''
+     * @static
+     */
+    hashPrefix: '',
+
+    /**
+     * Whether or not this browser supports the <code>window.onhashchange</code>
+     * event natively. Note that even if this is <code>true</code>, you may
+     * still want to use History's synthetic <code>hashchange</code> event since
+     * it normalizes implementation differences and fixes spec violations across
+     * various browsers.
      *
      * @property nativeHashChange
      * @type Boolean
-     * @default false
      * @static
      */
     nativeHashChange: nativeHashChange,
@@ -115,6 +151,7 @@ Y.extend(History, Y.HistoryBase, {
      * @type RegExp
      * @protected
      * @static
+     * @final
      */
     _REGEX_HASH: /([^\?#&]+)=([^&]+)/g,
 
@@ -146,7 +183,7 @@ Y.extend(History, Y.HistoryBase, {
      * Wrapper around <code>decodeURIComponent()</code> that also converts +
      * chars into spaces.
      *
-     * @method _decode
+     * @method decode
      * @param {String} string string to decode
      * @return {String} decoded string
      * @static
@@ -169,7 +206,8 @@ Y.extend(History, Y.HistoryBase, {
     },
 
     /**
-     * Gets the current location hash, minus the preceding '#' character.
+     * Gets the raw (not decoded) current location hash, minus the preceding '#'
+     * character and the hashPrefix (if one is set).
      *
      * @method getHash
      * @return {String} current location hash
@@ -178,16 +216,41 @@ Y.extend(History, Y.HistoryBase, {
     getHash: (Y.UA.gecko ? function () {
         // Gecko's window.location.hash returns a decoded string and we want all
         // encoding untouched, so we need to get the hash value from
-        // window.location.href instead.
-        var matches = /#(.*)$/.exec(location.href);
-        return matches && matches[1] ? matches[1] : '';
+        // window.location.href instead. We have to use UA sniffing rather than
+        // feature detection, since the only way to detect this would be to
+        // actually change the hash.
+        var matches = /#(.*)$/.exec(location.href),
+            hash    = matches && matches[1] || '',
+            prefix  = History.hashPrefix;
+
+        return prefix && hash.indexOf(prefix) === 0 ?
+                    hash.replace(prefix, '') : hash;
     } : function () {
-        return location.hash.substr(1);
+        var hash   = location.hash.substr(1),
+            prefix = History.hashPrefix;
+
+        // Slight code duplication here, but execution speed is of the essence
+        // since getHash() is called every 20ms or so to poll for changes in
+        // browsers that don't support native onhashchange. An additional
+        // function call would add unnecessary overhead.
+        return prefix && hash.indexOf(prefix) === 0 ?
+                    hash.replace(prefix, '') : hash;
     }),
 
     /**
+     * Gets the current bookmarkable URL.
+     *
+     * @method getUrl
+     * @return {String} current bookmarkable URL
+     * @static
+     */
+    getUrl: function () {
+        return location.href;
+    },
+
+    /**
      * Parses a location hash string into an object of key/value parameter
-     * pairs. If <em>hash</em> is not specified, the current location hash will
+     * pairs. If <i>hash</i> is not specified, the current location hash will
      * be used.
      *
      * @method parseHash
@@ -196,16 +259,28 @@ Y.extend(History, Y.HistoryBase, {
      * @static
      */
     parseHash: function (hash) {
-        hash = hash || History.getHash();
-
-        var decode  = History.decode,
+        var decode = History.decode,
             i,
-            matches = hash.match(History._REGEX_HASH) || [],
-            len     = matches.length,
+            len,
+            matches,
             param,
-            params  = {};
+            params = {},
+            prefix = History.hashPrefix,
+            prefixIndex;
 
-        for (i = 0; i < len; ++i) {
+        hash = Lang.isValue(hash) ? hash : History.getHash();
+
+        if (prefix) {
+            prefixIndex = hash.indexOf(prefix);
+
+            if (prefixIndex === 0 || (prefixIndex === 1 && hash.charAt(0) === '#')) {
+                hash = hash.replace(prefix, '');
+            }
+        }
+
+        matches = hash.match(History._REGEX_HASH) || [];
+
+        for (i = 0, len = matches.length; i < len; ++i) {
             param = matches[i].split('=');
             params[decode(param[0])] = decode(param[1]);
         }
@@ -216,37 +291,96 @@ Y.extend(History, Y.HistoryBase, {
     /**
      * Replaces the browser's current location hash with the specified hash
      * and removes all forward navigation states, without creating a new browser
-     * history entry.
+     * history entry. Automatically prepends the <code>hashPrefix</code> if one
+     * is set.
      *
      * @method replaceHash
      * @param {String} hash new location hash
      * @static
      */
     replaceHash: function (hash) {
-        Y.log('replaceHash: ' + hash, 'info', 'history-base');
-        location.replace(hash.indexOf('#') === 0 ? hash : '#' + hash);
+        if (hash.charAt(0) === '#') {
+            hash = hash.substr(1);
+        }
+
+        location.replace('#' + (History.hashPrefix || '') + hash);
     },
 
     /**
-     * Sets the browser's location hash to the specified string.
+     * Sets the browser's location hash to the specified string. Automatically
+     * prepends the <code>hashPrefix</code> if one is set.
      *
      * @method setHash
      * @param {String} hash new location hash
      * @static
      */
     setHash: function (hash) {
-        Y.log('setHash: ' + hash, 'info', 'history-base');
-        location.hash = hash;
+        if (hash.charAt(0) === '#') {
+            hash = hash.substr(1);
+        }
+
+        location.hash = (History.hashPrefix || '') + hash;
     }
 });
 
 // -- Synthetic hashchange Event -----------------------------------------------
 hashNotifiers = YUI.namespace('Env.History._hashNotifiers');
 
-// Synthetic hashchange event to normalize hashchange differences across
-// browsers, and to provide hashchange for browsers that don't natively support
-// it.
-// TODO: how to document this?
+// TODO: YUIDoc currently doesn't provide a good way to document synthetic DOM
+// events. For now, we're just documenting the hashchange event on the YUI
+// object, which is about the best we can do until enhancements are made to
+// YUIDoc.
+
+/**
+ * <p>
+ * Synthetic <code>window.onhashchange</code> event that normalizes differences
+ * across browsers and provides support for browsers that don't natively support
+ * <code>onhashchange</code>.
+ * </p>
+ *
+ * <p>
+ * This event is provided by the <code>history-hash</code> module.
+ * </p>
+ *
+ * <p>
+ * <strong>Usage example:</strong>
+ * </p>
+ *
+ * <code><pre>
+ * YUI().use('history-hash', function (Y) {
+ * &nbsp;&nbsp;Y.on('hashchange', function (e) {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Handle hashchange events on the current window.
+ * &nbsp;&nbsp;}, Y.config.win);
+ * });
+ * </pre></code>
+ *
+ * @event hashchange
+ * @param {EventFacade} e Event facade with the following additional
+ *   properties:
+ *
+ * <dl>
+ *   <dt>oldHash</dt>
+ *   <dd>
+ *     Previous hash fragment value before the change.
+ *   </dd>
+ *
+ *   <dt>oldUrl</dt>
+ *   <dd>
+ *     Previous URL (including the hash fragment) before the change.
+ *   </dd>
+ *
+ *   <dt>newHash</dt>
+ *   <dd>
+ *     New hash fragment value after the change.
+ *   </dd>
+ *
+ *   <dt>newUrl</dt>
+ *   <dd>
+ *     New URL (including the hash fragment) after the change.
+ *   </dd>
+ * </dl>
+ * @for YUI
+ */
 Y.Event.define('hashchange', {
     on: function (node, subscriber, notifier) {
         // Ignore this subscriber if the node is anything other than the
@@ -271,13 +405,13 @@ Y.Event.define('hashchange', {
 });
 
 oldHash = History.getHash();
-oldUrl  = location.href;
+oldUrl  = History.getUrl();
 
 if (nativeHashChange) {
     // Wrap the browser's native hashchange event.
     Y.Event.attach('hashchange', function (e) {
         var newHash = History.getHash(),
-            newUrl  = location.href;
+            newUrl  = History.getUrl();
 
         Obj.each(hashNotifiers, function (notifier) {
             // TODO: would there be any benefit to making this an overridable
@@ -313,7 +447,7 @@ if (nativeHashChange) {
                 newUrl;
 
             if (oldHash !== newHash) {
-                newUrl = location.href;
+                newUrl = History.getUrl();
 
                 Obj.each(hashNotifiers, function (notifier) {
                     notifier.fire({

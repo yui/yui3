@@ -2,151 +2,151 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<head>
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
-	<script type="text/javascript" src="../build/chart/chart.js"></script>
-
 <style>
-/*Supplemental CSS for the YUI distribution*/
+/*Supplemental: CSS for the YUI distribution*/
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
 </style>
-
-</head>
-	
-<body>
-<!-- BEGIN EXAMPLE CODE -->
+<!-- BEGIN EXAMPLE CODE -->	
+    <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
+    <script type="text/javascript" src="../build/infographics/infographics.js"></script>
+		
+</head>		
+<body class="yui3-skin-sam">
+		
 <div>
-		<h1>Customized Simple Chart</h1>
-			<div id="testdiv" style="height:400px;width:850px">
-				This content will be replaced by an instance of a Flash player.
-			</div>
-			<script>
+        <div id="chart" style="display:block;width:800px;height:400px;background-color:#ffffff;"></div>
+		<div id="axis" style="display:block;width:800px;min-height:20px"></div>
+        <!--div id="vertaxis" style="margin-left:50px;display:block;min-width:20px;height:800px;"></div-->
+        
+        <script>
 
-				YUI().use('json', 'node', 'event-custom', 'swfdetect', 'swf', 'base', 'chart', function (Y)
-					{
-					// Create application level styles
-					var appstyles = {
-						background:{
-							fillColor:0x000000,
-							borderColor:0xff0000,
-							borderWidth:2
-						}
-					};
+			YUI().use('datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphics', 'infographics', function (Y)
+				{
+					// Create data 
+					var mydata = {
+						id:"myData", 
+						data: [
+							{day:"Monday", taxes:2000, expenses:3700, revenue:2200}, {day:"Tuesday", taxes:50, expenses:9100, revenue:100}, 
+							{day:"Wednesday", taxes:400, expenses:1100, revenue:1500}, {day:"Thursday", taxes:200, expenses:1900, revenue:2800}, {day:"Friday", taxes:2000, expenses:700, revenue:2650}
+						]
+					};					
 
-					// Create chart styles
-					var chartstyles = {
-						padding:{left:20, top:20, bottom:10, right:20}
-					};
-
-					// Create bottom axis styles
-					var bottomaxisstyles = {
-						label:{
-							fontName:"Georgia",
-							fontSize:11,
-							color:0xBDD7EB,
-							rotation:-45,
-							margin:{top:5}
-						},
-						majorTicks:{
-							color:0xBDD7EB
-						},
-						line:{
-							color:0xBDD7EB
-						},
-						majorUnit:
-						{
-							count:30
-						},
-						padding:{left:50, right:50}
-					};	
-
-					// Create left axis styles
-					var leftaxisstyles = {
-						label:{
-							fontName:"Georgia",
-							fontSize:11,
-							color:0x5577AF,
-							margin:{right:5},
-						},
-						majorTicks:{
-							color:0xBDD7EB
-						},
-						dataFormat:{
-							prefix:"$",
-							decimalPlaces:0
-						},
-						line:{
-							color:0xBDD7EB
-						},
-						majorUnit:{
-							count:15
-						}
-					};
-
-					// Add expense graph styles
 					var expensegraphstyles = {
-						color:0x5577AF,
+						color:"#5577AF",
+						marker:{fillColor:"#5577AF", fillAlpha:0.2, width:6, height:6},
 						weight:"2",
-						marker:{fillColor:0x5577AF, borderColor:0x5577AF, width:10},
-						padding:{left:50, right:50}
+						showMarkers:true,
+                        padding:{left:50, right:50}
 					};
 
 					// Add revenue graph styles
 					var revenuegraphstyles = {
-						color:0xFF0000,
+						color:"#FF0000",
+						marker:{fillcolor:"#ff0000", fillAlpha:0.2},
 						weight:"2",
-						marker:{width:10},
-						padding:{left:50, right:50}
+						showMarkers:true,
+                        padding:{left:50, right:50}
 					};
 
-					var mydata = {
-						id:"myData", 
-						data: [
-							{day:"Monday", expenses:3700, revenue:2200}, {day:"Tuesday", expenses:9100, revenue:100}, 
-							{day:"Wednesday", expenses:1100, revenue:1500}, {day:"Thursday", expenses:1900, revenue:2800}, {day:"Friday", expenses:700, revenue:2650}
-						]
-					};					
+                    var taxgraphstyles = {
+						color:"#ff0000",
+						marker:{fillColor:"#ff0000", width:6, height:6},
+						weight:"2",
+						showMarkers:true,
+                        padding:{left:50, right:50}
+                    };
+					
+					// Create bottom axis styles
+					var bottomaxisstyles = {
+						label:{
+							color:"#BDD7EB",
+							rotation:0,
+							margin:{top:5},
+						},
+						dataFormat:{
+							pattern:"%b %d, %y"
+						},
+						majorTicks:{
+							color:"#ff0000",
+                            display:"inside"
+						},
+						line:{
+							color:"#BDD7EB"
+						},
+						majorUnit:
+						{
+							count:5
+						},
+                        padding:{left:50, right:50},
+                        position:"bottom"
+					};	
+                    
+					var leftaxisstyles = {
+						label:{
+							color:"#BDD7EB",
+							rotation:25,
+							margin:{top:5},
+						},
+						dataFormat:{
+							pattern:
+                            {
+                                prefix: "$"
+                            }
+						},
+						majorTicks:{
+							color:"#ff0000",
+                            display:"outside"
+						},
+						line:{
+							color:"#BDD7EB"
+						},
+						majorUnit:
+						{
+							count:5
+						},
+                        position:"right"
+					};	
+                    var dataProvider = mydata;
+                    var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
+					timeaxis.addKey("day");
+                    
+                    var numericaxis = new Y.NumericAxis({dataProvider:dataProvider});
+					numericaxis.addKey("revenue");
+			        numericaxis.addKey("expenses");	
+                    //numericaxis.addKey("taxes");
+                    var graphstack = new Y.GraphStack({parent:"chart", seriesCollection:[{
+                                                                                            type:"column", 
+                                                                                            xAxis:timeaxis, 
+                                                                                            yAxis:numericaxis, 
+                                                                                            xKey:"day", 
+                                                                                            yKey:"revenue", 
+                                                                                            styles:revenuegraphstyles
+                                                                                        },
+                                                                                        {
+                                                                                            type:"column",
+                                                                                            xAxis:timeaxis,
+                                                                                            yAxis:numericaxis,
+                                                                                            xKey:"day",
+                                                                                            yKey:"expenses",
+                                                                                            styles:expensegraphstyles
+                                                                                        
+                                                                                        /*},
+                                                                                        {
+                                                                                            type:"line",
+                                                                                            xAxis:timeaxis,
+                                                                                            yAxis:numericaxis,
+                                                                                            xKey:"day",
+                                                                                            yKey:"taxes",
+                                                                                            styles:taxgraphstyles
+                                                                                      */  }
+                                                                                        ]});
 
-					var myapp = new Y.SWFApplication({parent:"#testdiv", swfurl:"../build/chart/assets/cartesiancanvas.swf", styles:appstyles});
-					myapp.set("dataProvider", mydata.data);
-
-					var mychart = new Y.BorderContainer({parent:myapp, styles:chartstyles});
-					myapp.addItem(mychart);
-				
-						var myleftaxis = new Y.Axis({parent:mychart, axisType:"Numeric", styles:leftaxisstyles});
-						var mybottomaxis = new Y.Axis({parent:mychart, axisType:"Category", styles:bottomaxisstyles});
-						myleftaxis.addKey("expenses");
-						myleftaxis.addKey("revenue");
-						mybottomaxis.addKey("day");
-						var mygraph = new Y.Graph({parent:mychart, seriesCollection:[
-							{
-								type:"column",
-								xAxisData:mybottomaxis,
-								yAxisData:myleftaxis,
-								xKey:"day",
-								yKey:"expenses",
-								displayName:"Expenses",
-								styles:expensegraphstyles
-							},
-							{
-								type:"column",
-								xAxisData:mybottomaxis,
-								yAxisData:myleftaxis,
-								xKey:"day",
-								yKey:"revenue",
-								displayName:"Revenue",
-								styles:revenuegraphstyles
-							}
-						]});
-						
-						var mydatatip = new Y.DataTip({parent:mychart, graph:mygraph});
-						
-						mychart.addBottomItem(mybottomaxis);
-						mychart.addLeftItem(myleftaxis);
-						mychart.addCenterItem(mygraph);
-
-					});
+                    var axisrenderer = new Y.AxisRenderer({parent:"axis", axis:timeaxis, styles:bottomaxisstyles});
+                    //var vaxis = new Y.AxisRenderer({parent:"vertaxis", axis:numericaxis, styles:leftaxisstyles});
+                });
 </script>
 <!-- END EXAMPLE CODE -->
 </div>

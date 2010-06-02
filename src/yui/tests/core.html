@@ -81,6 +81,12 @@
                 c3('b');
 
                 Y.Assert.areEqual('b', r3);
+
+                // falsy second arg needs to produce a different key than no second arg
+                var cn = Y.ClassNameManager.getClassName;
+                Y.Assert.areEqual('yui3-a-', cn('a', ''));
+                Y.Assert.areEqual('yui3-a', cn('a'));
+
             }
         });
 

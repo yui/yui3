@@ -57,7 +57,8 @@ package
 			{
 				collection = this.parseCollections(collection);
 				return new Graph(collection, handleEventListening);
-			}
+			},
+            Button:Button
 		};
 
 		/**

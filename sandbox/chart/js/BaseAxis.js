@@ -13,7 +13,10 @@
  */
 function BaseAxis (config)
 {
-	BaseAxis.superclass.constructor.apply(this, arguments);
+    this._createId();
+    this._keys = {};
+    this._data = [];
+    BaseAxis.superclass.constructor.apply(this, arguments);
 }
 
 BaseAxis.NAME = "baseAxis";
@@ -107,7 +110,8 @@ BaseAxis.ATTRS = {
 			{
 				//remove listeners
 			}
-			this._dataProvider = value;
+            value = Y.merge(value);
+			this._dataProvider = {data:value.data.concat()};
 			this._dataClone = this._dataProvider.data.concat();
 			return value;
 		},
@@ -131,7 +135,7 @@ BaseAxis.ATTRS = {
 	maximum: {
 		getter: function ()
 		{
-			if(this._autoMax) 
+			if(this._autoMax || !this._setMaximum) 
 			{
 				return this._dataMaximum;
 			}
@@ -160,12 +164,17 @@ BaseAxis.ATTRS = {
 	minimum: {
 		getter: function ()
 		{
-			if(this._autoMin) 
+			if(this._autoMin || !this._setMinimum) 
 			{
 				return this._dataMinimum;
 			}
 			return this._setMinimum;
-		}
+		},
+        setter: function(val)
+        {
+            this._setMinimum = val;
+            return val;
+        }
 	},
 
 	/**
@@ -221,6 +230,20 @@ BaseAxis.ATTRS = {
 
 Y.extend(BaseAxis, Y.Base,
 {
+	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuibaseaxis",
+	
+    /**
+	 * Creates unique id for class instance.
+	 *
+	 * @private
+	 */
+	_createId: function()
+	{
+		this._id = Y.guid(this.GUID);
+	},
 	/**
 	 * @private
 	 * Storaga for roundingUnit
@@ -281,12 +304,12 @@ Y.extend(BaseAxis, Y.Base,
 	 * @private
 	 * Storage for data
 	 */
-	_data: [],
+	_data: null,
 	/**
 	 * @private
 	 * Storage for keys
 	 */
-	_keys: {},
+	_keys: null,
 
 	/**
 	 * @private
@@ -485,8 +508,9 @@ Y.extend(BaseAxis, Y.Base,
 			event = {},
 			keysAdded = event.keysAdded,
 			keysRemoved = event.keysRemoved,
-			keys = this._keys;
-		for(var i in keys)
+			keys = this._keys,
+            i;
+		for(i in keys)
 		{
 			if(keys.hasOwnProperty(i))
 			{
@@ -518,7 +542,35 @@ Y.extend(BaseAxis, Y.Base,
 		event.keysAdded = keysAdded;
 		event.keysRemoved = keysRemoved;
 		this.fire("axisUpdate", event);
-	}
+    },
+
+    getTotalMajorUnits: function(majorUnit, len)
+    {
+        var units;
+        if(majorUnit.determinant === "count") 
+        {
+            units = majorUnit.count;
+        }
+        else if(majorUnit.determinant === "distance") 
+        {
+            units = (len/majorUnit.distance) + 1;
+        }
+        
+        return Math.min(units, this._data.length);
+    },
+
+    getLabelAtPosition:function(pos, len, format)
+    {
+        var min = this.get("minimum"),
+            max = this.get("maximum"),
+            val = (pos/len * (max - min)) + min;
+        return this.getFormattedLabel(val, format);
+    },
+
+    getFormattedLabel: function(val, format)
+    {
+        return val;
+    }
 });
 Y.BaseAxis = BaseAxis;
 

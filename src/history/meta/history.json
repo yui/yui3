@@ -2,8 +2,7 @@
     "history": {
         "submodules": {
             "history-base": {
-                "requires"  : ["event-custom-complex"],
-                "supersedes": ["history-deprecated"]
+                "requires"  : ["event-custom-complex"]
             },
 
             "history-hash": {
@@ -12,14 +11,15 @@
                     "history-base",
                     "yui-later"
                 ]
+            },
+
+            "history-hash-ie": {
+                "requires": [
+                    "history-base",
+                    "history-hash",
+                    "node-base"
+                ]
             }
         }
-    },
-
-    "history-hash-ie": {
-        "requires": [
-            "history-base",
-            "history-hash"
-        ]
     }
 }

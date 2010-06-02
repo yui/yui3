@@ -1,4 +1,3 @@
-
 function Graph (config) 
 {
 	Graph.superclass.constructor.apply(this, arguments);
@@ -59,7 +58,11 @@ Graph.ATTRS = {
  */
 Y.extend(Graph, Y.Container, 
 {
-	_events: {},
+    _getArgs: function()
+    {
+        return [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")];
+    },
+
 	GUID:"yuigraph",
 
 	/**
@@ -75,25 +78,6 @@ Y.extend(Graph, Y.Container,
 	AS_CLASS: "Graph",
 
 	_seriesCollection:null,
-	/**
-	 * @private
-	 * Called by the class instance containing the application swf after the swf
-	 * has been initialized.
-	 *
-	 * @method _init
-	 * @param swfowner {Object} Class instance with direct access to the application swf.
-	 */
-	_init: function(swfowner)
-	{
-		this.swfowner = swfowner;
-		this.appswf = this.swfowner.appswf;
-		if(this.get("seriesCollection"))
-		{
-			this.appswf.createInstance(this._id, "Graph", [Y.JSON.stringify(this.get("seriesCollection")), this.get("handleEventListening")]);
-			this.fire("graphReady", {swfowner:swfowner});
-		}
-		this._addSWFEventListeners();
-	},
 
 	/**
 	 * Converts references of AS class wrappers to string references to used with 

@@ -1,3 +1,10 @@
+release 3.1.1
+#2528740 - Node.setContent doesn't accept falsey numbers in 3.1.0 
+#2528748 - Node references document
+#2528755 - Node - Method call error
+#2528778 - Node.insert & DOM.addHTML api entries don't mention possible arguments for where parameter
+#2528802 - Node.setData documentation is missing a parameter
+
 release 3.1.0 
 #2528195 - added support for invalid IDs
 #2528199 - fixed ID dupes across YUI instancs
