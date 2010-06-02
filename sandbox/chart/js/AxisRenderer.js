@@ -1,3 +1,6 @@
+/**
+ * Renders an axis.
+ */
 function AxisRenderer(config)
 {
     AxisRenderer.superclass.constructor.apply(this, arguments);

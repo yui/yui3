@@ -1,4 +1,7 @@
-function RightAxisLayout(renderer)
+/**
+ * Contains algorithms for rendering a right axis.
+ */
+function RightAxisLayout(config)
 {
     RightAxisLayout.superclass.constructor.apply(this, arguments);
 }

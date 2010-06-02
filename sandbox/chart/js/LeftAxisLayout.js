@@ -1,4 +1,7 @@
-function LeftAxisLayout(renderer)
+/**
+ * Contains algorithms for rendering a left axis.
+ */
+function LeftAxisLayout(config)
 {
     LeftAxisLayout.superclass.constructor.apply(this, arguments);
 }

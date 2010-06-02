@@ -1,4 +1,7 @@
-function BottomAxisLayout(renderer)
+/**
+ * Contains algorithms for rendering a bottom axis.
+ */
+function BottomAxisLayout(config)
 {
     BottomAxisLayout.superclass.constructor.apply(this, arguments);
 }

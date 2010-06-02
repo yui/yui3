@@ -2362,6 +2362,9 @@ Y.extend(GraphStack, Y.Base, {
 });
 
 Y.GraphStack = GraphStack;
+/**
+ * Renders an axis.
+ */
 function AxisRenderer(config)
 {
     AxisRenderer.superclass.constructor.apply(this, arguments);
@@ -2890,7 +2893,10 @@ Y.extend(AxisRenderer, Y.Renderer, {
 Y.AxisRenderer = AxisRenderer;
 		
         
-function LeftAxisLayout(renderer)
+/**
+ * Contains algorithms for rendering a left axis.
+ */
+function LeftAxisLayout(config)
 {
     LeftAxisLayout.superclass.constructor.apply(this, arguments);
 }
@@ -3059,7 +3065,10 @@ Y.extend(LeftAxisLayout, Y.Base, {
 });
 
 Y.LeftAxisLayout = LeftAxisLayout;
-function RightAxisLayout(renderer)
+/**
+ * Contains algorithms for rendering a right axis.
+ */
+function RightAxisLayout(config)
 {
     RightAxisLayout.superclass.constructor.apply(this, arguments);
 }
@@ -3223,7 +3232,10 @@ Y.extend(RightAxisLayout, Y.Base, {
 });
 
 Y.RightAxisLayout = RightAxisLayout;
-function BottomAxisLayout(renderer)
+/**
+ * Contains algorithms for rendering a bottom axis.
+ */
+function BottomAxisLayout(config)
 {
     BottomAxisLayout.superclass.constructor.apply(this, arguments);
 }
@@ -3386,7 +3398,10 @@ Y.extend(BottomAxisLayout, Y.Base, {
 });
 
 Y.BottomAxisLayout = BottomAxisLayout;
-function TopAxisLayout(renderer)
+/**
+ * Contains algorithms for rendering a top axis.
+ */
+function TopAxisLayout(config)
 {
     TopAxisLayout.superclass.constructor.apply(this, arguments);
 }

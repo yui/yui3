@@ -1,4 +1,7 @@
-function TopAxisLayout(renderer)
+/**
+ * Contains algorithms for rendering a top axis.
+ */
+function TopAxisLayout(config)
 {
     TopAxisLayout.superclass.constructor.apply(this, arguments);
 }
