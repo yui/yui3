@@ -35,19 +35,21 @@
 <script src="../../build/yui/yui-min.js"></script>
 <script src="js/sandbox.js"></script>
 <script src="js/performance.js"></script>
+<script src="js/performance-report.js"></script>
 <script src="tests/perf-component.js"></script>
 <script src="tests/perf-instantiation.js"></script>
 <script src="tests/perf-loops-native.js"></script>
 <script src="tests/perf-loops-yui3.js"></script>
 <script>
 var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
-    'performance', 'perf-component', 'perf-instantiation', 'perf-loops-native',
-    'perf-loops-yui3', function (Y) {
+    'performance', 'performance-report', 'perf-component', 'perf-instantiation',
+    'perf-loops-native', 'perf-loops-yui3', function (Y) {
 
     var Performance = Y.Performance,
 
-        perf        = new Performance(),
         history     = new Y.History(),
+        perf        = new Performance(),
+        report      = new Y.PerformanceReport({performance: perf}),
 
         snap        = Y.one('#snap'),
         start       = Y.one('#start'),
@@ -68,8 +70,8 @@ var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
     // Set the selected suite to the one specified in the URL, if any.
     suites.set('value', history.get('suite'));
 
-    // Render the result table.
-    perf.render('#results');
+    // Render the report.
+    report.render('#results');
 
     // Handle history changes.
     history.on('suiteChange', function (e) {
@@ -105,7 +107,7 @@ var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
 
     // Handle snapshot clicks.
     snap.on('click', function () {
-        Y.one('#result-snapshot').set('value', Y.JSON.stringify(perf._results, null, 2));
+        Y.one('#result-snapshot').set('value', Y.JSON.stringify(perf.get('results'), null, 2));
         Y.one('#snapshot').toggleClass('hidden');
     });
 
