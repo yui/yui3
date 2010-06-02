@@ -233,6 +233,11 @@ BaseAxis.ATTRS = {
 Y.extend(BaseAxis, Y.Base,
 {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuibaseaxis",
+	
+    /**
 	 * Creates unique id for class instance.
 	 *
 	 * @private
@@ -539,6 +544,34 @@ Y.extend(BaseAxis, Y.Base,
 		event.keysAdded = keysAdded;
 		event.keysRemoved = keysRemoved;
 		this.fire("axisUpdate", event);
+    },
+
+    getTotalMajorUnits: function(majorUnit, len)
+    {
+        var units;
+        if(majorUnit.determinant === "count") 
+        {
+            units = majorUnit.count;
+        }
+        else if(majorUnit.determinant === "distance") 
+        {
+            units = (len/majorUnit.distance) + 1;
+        }
+        
+        return Math.min(units, this._data.length);
+    },
+
+    getLabelAtPosition:function(pos, len, format)
+    {
+        var min = this.get("minimum"),
+            max = this.get("maximum"),
+            val = (pos/len * (max - min)) + min;
+        return this.getFormattedLabel(val, format);
+    },
+
+    getFormattedLabel: function(val, format)
+    {
+        return val;
     }
 });
 Y.BaseAxis = BaseAxis;
@@ -707,7 +740,12 @@ Y.extend(NumericAxis, Y.BaseAxis,
 		precision = precision || 0;
 		var decimalPlaces = Math.pow(10, precision);
 		return Math.round(decimalPlaces * number) / decimalPlaces;
-	}
+	},
+    
+    getFormattedLabel: function(val, format)
+    {
+        return Y.DataType.Number.format(val, format);
+    }
 });
 
 Y.NumericAxis = NumericAxis;
@@ -756,6 +794,11 @@ TimeAxis.ATTRS =
 
 Y.extend(TimeAxis, Y.BaseAxis, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuitimeaxis",
+	
+    /**
 	 * @private
 	 */
 	_dataType: "time",
@@ -828,11 +871,14 @@ Y.extend(TimeAxis, Y.BaseAxis, {
             max = maxVal / len;
         min += this._dataMinimum;
         max += this._dataMaximum;
-        //this.set("minimum", min);
-        //this.set("maximum", max);
         this._setMaximum = this._getNumber(max);
         this._setMinimum = this._getNumber(min);
         this.fire("dataChange");
+    },
+    
+    getFormattedLabel: function(val, format)
+    {
+        return Y.DataType.Date.format(Y.DataType.Date.parse(val), {format:format});
     }
 });
 
@@ -848,6 +894,11 @@ CategoryAxis.NAME = "categoryAxis";
 Y.extend(CategoryAxis, Y.BaseAxis,
 {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuicategoryaxis",
+	
+    /**
 	 * @private
 	 */
 	_dataType: "category",
@@ -894,7 +945,20 @@ Y.extend(CategoryAxis, Y.BaseAxis,
 		}
 		this._keys[key] = arr;
 		this._data = this._data.concat(labels);
-	}
+	},
+
+    getTotalMajorUnits: function(majorUnit, len)
+    {
+        return this._data.length;
+    },
+    
+    getLabelAtPosition: function(pos, len, format)
+    {
+        var count = this._data.length - 1,
+        i = Math.round(pos/(len/count));
+        return this._data[i];
+    }
+			
 });
 
 Y.CategoryAxis = CategoryAxis;
@@ -1002,6 +1066,11 @@ Renderer.ATTRS = {
 
 Y.extend(Renderer, Y.Base, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuirenderer",
+
+    /**
 	 * Creates unique id for class instance.
 	 *
 	 * @private
@@ -1342,14 +1411,8 @@ CartesianSeries.ATTRS = {
 		},
 		setter: function(value)
 		{
-			if(this._xAxis) 
-			{
-				//this.xAxis.removeEventListener(DataEvent.NEW_DATA, this.xAxisChangeHandler);
-				//this.xAxis.removeEventListener(DataEvent.DATA_CHANGE, this.xAxisChangeHandler);
-			}
 			this._xAxis = value;			
 			this._xAxis.on("axisReady", Y.bind(this.xAxisChangeHandler, this));
-			//this.xAxis.addEventListener(DataEvent.NEW_DATA, this.xAxisChangeHandler);
 			this._xAxis.on("dataChange", Y.bind(this.xAxisChangeHandler, this));
 			this.setFlag("axisDataChange");
 			return value;
@@ -1368,15 +1431,8 @@ CartesianSeries.ATTRS = {
 		},
 		setter: function(value)
 		{
-			if(this._yAxis) 
-			{
-	//			this.yAxis.removeEventListener(DataEvent.NEW_DATA, this.yAxisChangeHandler);
-	//			this.yAxis.removeEventListener(DataEvent.DATA_CHANGE, this.yAxisChangeHandler);
-			}
 			this._yAxis = value;
 			this._yAxis.on("axisReady", Y.bind(this.yAxisChangeHandler, this));
-	//		this.yAxis.addEventListener(DataEvent.NEW_DATA, this.yAxisChangeHandler);
-	//		this.yAxis.addEventListener(DataEvent.DATA_CHANGE, this.yAxisChangeHandler);
 			this.setFlag("axisDataChange");
 			return value;
 		},
@@ -1422,17 +1478,9 @@ CartesianSeries.ATTRS = {
 			return value;
 		}
 	},
-    
-    /**
-     * Determines which axis property will define the bounds of the series.
-     *  <ul>
-     *      <li><code>data</code>: Maximum and minimum values are determined by the values of the datasource.</li>
-     *      <li><code>axis</code>: Maximum and minimum values are determined by the <code>Axis</code> setting.</li>
-     *  </ul>
-     */
 
     /**
-	 * The graphic in which the line series will be rendered.
+	 * The graphic in which the series will be rendered.
 	 */
 	graphic: {
 		getter: function()
@@ -1448,7 +1496,16 @@ CartesianSeries.ATTRS = {
 };
 
 Y.extend(CartesianSeries, Y.Renderer, {
-	_setCanvas: function()
+	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuicartesianseries",
+	
+    /**
+     * @private
+     * Creates a <code>Graphic</code> instance.
+     */
+    _setCanvas: function()
     {
         this._graphic = new Y.Graphic();
         this._graphic.render(this.get("parent"));
@@ -1624,6 +1681,15 @@ Y.extend(CartesianSeries, Y.Renderer, {
         this.drawMarkers();
 	},
 	
+    initialize: function()
+    {
+        this._initialized = true;
+        this.setFlag("drawGraph");
+        this.callRender();
+    },
+
+    _initialized: false,
+
 	/**
 	 * @private (override)
 	 */
@@ -1645,17 +1711,16 @@ Y.extend(CartesianSeries, Y.Renderer, {
 			this._yMin = yAxis.get("minimum");
 			this._yMax = yAxis.get("maximum");
 		}
-		
+
         if ((resize || dataChange) && (!isNaN(w) && !isNaN(h) && w > 0 && h > 0))
 		{
 			this.setAreaData();
-			if(this.get("xcoords") && this.get("ycoords")) 
+			if(this.get("xcoords") && this.get("ycoords") && this._initialized) 
 			{
 				this.setLaterFlag("drawGraph");
 			}
 			return;
 		}
-		
 		if(this.checkFlag("drawGraph") || (styleChange && this._xcoords && this._ycoords))
 		{
 			this.drawGraph();
@@ -1789,9 +1854,9 @@ LineSeries.ATTRS = {
 
 Y.extend(LineSeries, Y.CartesianSeries, {
 	/**
-	 * @private
-	 * Default styles for the series.
+	 * Constant used to generate unique id.
 	 */
+	GUID: "yuilineseries",
 
 	/**
 	 * @private (protected)
@@ -1843,7 +1908,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-		var	parentDiv = this.get("parent"),
+        var	parentDiv = this.get("parent"),
             ht = parentDiv.offsetHeight,
             xcoords = this._xcoords,
 			ycoords = this._ycoords,
@@ -2028,14 +2093,94 @@ ColumnSeries.ATTRS = {
 
 Y.extend(ColumnSeries, Y.CartesianSeries, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuicolumnseries",
+	
+    /**
 	 * @private (protected)
 	 */
 	_type: "column",
 
+	drawMarkers: function()
+	{
+	    if(this._xcoords.length < 1) 
+		{
+			return;
+		}
+        var graphic = this.get("graphic"),
+            style = this.get("styles").marker,
+            w = style.width,
+            h = style.height,
+            fillColor = style.fillColor,
+            alpha = style.fillAlpha,
+            fillType = style.fillType || "solid",
+            borderWidth = style.borderWidth,
+            borderColor = style.borderColor,
+            borderAlpha = style.borderAlpha || 1,
+            colors = style.colors,
+            alphas = style.alpha || [],
+            ratios = style.ratios || [],
+            rotation = style.rotation || 0,
+            xcoords = this._xcoords,
+            ycoords = this._ycoords,
+            shapeMethod = style.func || "drawCircle",
+            i = 0,
+            len = xcoords.length,
+            top = ycoords[0],
+            type = this.get("type"),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[type],
+            seriesLen = seriesCollection.length,
+            seriesWidth = 0,
+            totalWidth = 0,
+            offset = 0,
+            ratio,
+            renderer,
+            order = this.get("order"),
+            left;
+        for(; i < seriesLen; ++i)
+        {
+            renderer = seriesCollection[i];
+            seriesWidth += renderer.get("styles").marker.width;
+            if(order > i) 
+            {
+                offset = seriesWidth;
+            }
+        }
+        totalWidth = len * seriesWidth;
+        if(totalWidth > this.get("parent").offsetWidth)
+        {
+            ratio = this.width/totalWidth;
+            seriesWidth *= ratio;
+            offset *= ratio;
+            w *= ratio;
+            w = Math.max(w, 1);
+        }
+        offset -= seriesWidth/2;
+        for(i = 0; i < len; ++i)
+        {
+            top = ycoords[i];
+            left = xcoords[i] + offset;
+            if(borderWidth > 0)
+            {
+                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
+            }
+            if(fillType === "solid")
+            {
+                graphic.beginFill(fillColor, alpha);
+            }
+            else
+            {
+                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
+            }
+            this.drawMarker(graphic, shapeMethod, left, top, w, h);
+            graphic.endFill();
+        }
+ 	},
+
     drawMarker: function(graphic, func, left, top, w, h)
     {
-		var origin = Math.min(this.get("parent").offsetHeight, this._bottomOrigin);
-        left -= w/2;
         h = this._bottomOrigin - top;
         graphic.drawRect(left, top, w, h);
     },
@@ -2066,13 +2211,1366 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     }
 });
 
-
 Y.ColumnSeries = ColumnSeries;
+function GraphStack(config)
+{
+    GraphStack.superclass.constructor.apply(this, arguments);
+}
 
+GraphStack.NAME = "graphstack";
 
+GraphStack.ATTRS = {
+    seriesCollection: {
+        lazyAdd: false,
+
+        getter: function()
+        {
+            return this._seriesCollection;
+        },
+
+        setter: function(val)
+        {
+            this._parseSeriesCollection(val);
+            return this._seriesCollection;
+        }
+    },
+
+    parent: {
+        getter: function()
+        {
+            return this._parent;
+        },
+
+        setter: function(val)
+        {
+            this._parent = val;
+            return val;
+        }
+    }
+};
+
+Y.extend(GraphStack, Y.Base, {
+	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuigraphstack",
+    
+    _parent: null,
+
+    _seriesCollection: null,
+
+    seriesTypes: null,
+
+    _parseSeriesCollection: function(val)
+    {
+        var len = val.length,
+            i = 0,
+            series;
+        if(!val)
+        {
+            return;
+        }	
+        if(!this._seriesCollection)
+        {
+            this._seriesCollection = [];
+        }
+        if(!this.seriesTypes)
+        {
+            this.seriesTypes = [];
+        }
+        for(; i < len; ++i)
+        {	
+            series = val[i];
+            if(Y.Lang.isObject(series))
+            {
+                this._createSeries(series);
+                continue;
+            }
+            this.addSeries(series);
+        }
+        len = this._seriesCollection.length;
+        for(i = 0; i < len; ++i)
+        {
+            this._seriesCollection[i].initialize();
+        }
+    },
+
+    _addSeries: function(series)
+    {
+        var type = series.get("type"),
+            seriesCollection = this._seriesCollection,
+            graphSeriesLength = seriesCollection.length,
+            seriesTypes = this.seriesTypes,
+            typeSeriesCollection;	
+        if(!series.get("graph")) 
+        {
+            series.set("graph", this);
+        }
+        series.graphOrder = graphSeriesLength;
+        seriesCollection.push(series);
+        if(!seriesTypes.hasOwnProperty(type))
+        {
+            this.seriesTypes[type] = [];
+        }
+        typeSeriesCollection = this.seriesTypes[type];
+        series.set("order", typeSeriesCollection.length);
+        typeSeriesCollection.push(series);
+        this.fire("seriesAdded", series);
+    },
+
+    _createSeries: function(seriesData)
+    {
+        var type = seriesData.type,
+            seriesCollection = this._seriesCollection,
+            seriesTypes = this.seriesTypes,
+            typeSeriesCollection,
+            seriesType,
+            series;
+            seriesData.graph = this;
+            seriesData.parent = this.get("parent");
+        if(!seriesTypes.hasOwnProperty(type))
+        {
+            seriesTypes[type] = [];
+        }
+        typeSeriesCollection = seriesTypes[type];
+        seriesData.graph = this;
+        seriesData.order = typeSeriesCollection.length;
+        seriesType = this._getSeries(seriesData.type);
+        series = new seriesType(seriesData);
+        typeSeriesCollection.push(series);
+        seriesCollection.push(series);
+    },
+
+    _getSeries: function(type)
+    {
+        var seriesClass;
+        switch(type)
+        {
+            case "line" :
+                seriesClass = Y.LineSeries;
+            break;
+            case "column" :
+                seriesClass = Y.ColumnSeries;
+            break;
+            default:
+                seriesClass = Y.CartesianSeries;
+            break;
+        }
+        return seriesClass;
+    }
+
+});
+
+Y.GraphStack = GraphStack;
+/**
+ * Renders an axis.
+ */
+function AxisRenderer(config)
+{
+    AxisRenderer.superclass.constructor.apply(this, arguments);
+}
+
+AxisRenderer.NAME = "AxisRenderer";
+
+AxisRenderer.ATTRS = {
+    /**
+	 * The graphic in which the axis line and ticks will be rendered.
+	 */
+	graphic: {
+		getter: function()
+		{
+			return this._graphic;
+		},
+		setter: function(value)
+		{
+			this._graphic = value;
+			return value;
+		}
+	},
+	
+    parent: {
+        lazyAdd: false,
+
+		getter: function()
+		{
+			return this._parent;
+		},
+
+		setter: function(value)
+		{
+            if(Y.Lang.isString(value))
+			{
+				this._parent = document.getElementById(value);
+			}
+			else
+			{
+				this._parent = value;
+			}
+            this._setCanvas();
+			return this._parent;
+		}
+	},
+
+	/**
+	 * Reference to the <code>Axis</code> instance used for assigning 
+	 * <code>AxisRenderer</code>.
+	 */
+	axis: {
+		getter: function()
+		{ 
+			return this._axis;
+		},
+		validator: function(value)
+		{
+			return value !== this._axis;
+		},
+		setter: function(value)
+		{
+			this._axis = value;			
+			this._axis.on("axisReady", Y.bind(this.axisChangeHandler, this));
+			this._axis.on("dataChange", Y.bind(this.axisChangeHandler, this));
+			this.setFlag("axisDataChange");
+			return value;
+		},
+		lazyAdd: false
+    },
+
+    /**
+     * Distance determined by the tick styles used to calculate the distance between the axis
+     * line in relation to the top of the axis.
+     */
+    topTickOffset: {
+        getter: function()
+        {
+            return this._topTickOffset;
+        },
+        setter: function(val)
+        {
+            this._topTickOffset = val;
+            return val;
+        }
+    },
+
+    /**
+     * Distance determined by the tick styles used to calculate the distance between the axis
+     * line in relation to the bottom of the axis.
+     */
+    bottomTickOffset: {
+        getter: function()
+        {
+            return this._bottomTickOffset;
+        },
+        setter: function(val)
+        {
+            this._bottomTickOffset = val;
+            return val;
+        }
+    },
+
+    /**
+     * Distance determined by the tick styles used to calculate the distance between the axis
+     * line in relation to the left of the axis.
+     */
+    leftTickOffset: {
+        getter: function()
+        {
+            return this._leftTickOffset;
+        },
+        setter: function(val)
+        {
+            this._leftTickOffset = val;
+            return val;
+        }
+    },
+
+    /**
+     * Distance determined by the tick styles used to calculate the distance between the axis
+     * line in relation to the right side of the axis.
+     */
+    rightTickOffset: {
+        getter: function()
+        {
+            return this._rightTickOffset;
+        },
+        setter: function(val)
+        {
+            this._rightTickOffset = val;
+            return val;
+        }
+    },
+
+    maxTickLength: {
+        getter: function()
+        {
+            return this._maxTickLength;
+        },
+
+        setter: function(val)
+        {
+            this._maxTickLength = val;
+        }
+    }
+};
+
+Y.extend(AxisRenderer, Y.Renderer, {
+	axisChangeHandler: function(e)
+    {
+        this.setFlag("data");
+        this.callRender();
+    },
+
+    _node: null,
+
+    /**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuiaxisrenderer",
+
+	/**
+	 * @private
+	 */
+	_graphic: null,
+    
+    /**
+     * @private
+     */
+    _parent: null,
+    
+    /**
+     * @private
+     * Creates a <code>Graphic</code> instance.
+     */
+    _setCanvas: function()
+    {
+        var p = this.get("parent"),
+            n = document.createElement("div");
+        p.appendChild(n);
+        n.style.position = "absolute";
+        n.style.display = "block";
+        n.style.top = p.style.top;
+        n.style.left = p.style.left;
+        n.style.width = p.offsetWidth + "px";
+        n.style.minHeight = p.offsetHeight + "px";
+        this._node = n;
+        this._graphic = new Y.Graphic();
+        this._graphic.render(this._node);
+    },
+	
+    /**
+	 * @private
+	 * Storage for keys
+	 */
+	_keys: null,
 		
+    /**
+     * @private
+     */
+    render: function ()
+    {
+        var axisPosition = this.get("styles").position,
+            positionChange = this.checkFlag("position");
+        if(!axisPosition) 
+        {
+            return;
+        }
 
+        if(positionChange || !this._layout)
+        {
+            this._layout = this.getLayout(axisPosition);
+        }
+
+        if(this.checkFlag("calculateSizeByTickLength")) 
+        {
+            this.calculateSizeByTickLength = this.get("styles").calculateSizeByTickLength;
+        }
+        if(this.checkFlag("dataFormat") || 
+            this.checkFlag("majorTicks") || 
+            positionChange || 
+            this.checkFlag("padding") || 
+            this.checkFlag("data") || 
+            this.checkFlag("resize") ||
+            this.checkFlag("majorUnit") ||
+            this.checkFlag("label") ||
+            this.checkFlag("styles") ||
+            this.checkFlag("calculateSizeByTickLength")) 
+        {
+            this.drawAxis();
+        }
+    },
+
+    _layout: null,
+
+    getLayout: function(pos)
+    {
+        var l;
+        switch(pos)
+        {
+            case "top" :
+                l = new Y.TopAxisLayout({axisRenderer:this});
+            break;
+            case "bottom" : 
+                l = new Y.BottomAxisLayout({axisRenderer:this});
+            break;
+            case "left" :
+                l = new Y.LeftAxisLayout({axisRenderer:this});
+            break;
+            case "right" :
+                l = new Y.RightAxisLayout({axisRenderer:this});
+            break;
+        }
+        return l;
+    },
+
+    /**
+     * @private
+     * Draws line based on start point, end point and line object.
+     */
+    drawLine: function(startPoint, endPoint, line)
+    {
+        var graphic = this.get("graphic");
+        graphic.lineStyle(line.weight, line.color, line.alpha);
+        graphic.moveTo(startPoint.x, startPoint.y);
+        graphic.lineTo(endPoint.x, endPoint.y);
+        graphic.endFill();
+    },
+
+    /**
+     * @private
+     * Basic logic for drawing an axis.
+     */
+    drawAxis: function ()
+    {
+        var style = this.get("styles"),
+            majorTickStyles = style.majorTicks,
+            drawTicks = majorTickStyles.display != "none",
+            tickPoint,
+            majorUnit = style.majorUnit,
+            axis = this.get("axis"),
+            len,
+            majorUnitDistance,
+            i = 0,
+            layoutLength,
+            position,
+            lineStart,
+            label,
+            graphic = this.get("graphic");
+        
+        graphic.clear();
+		this._layout.setTickOffsets();
+        layoutLength = this.getLength();
+        lineStart = this._layout.getLineStart();
+        tickPoint = this.getFirstPoint(lineStart);
+        this.drawLine(lineStart, this.getLineEnd(tickPoint), this.get("styles").line);
+        if(drawTicks) 
+        {
+           this._layout.drawTick(tickPoint, majorTickStyles);
+        }
+        len = axis.getTotalMajorUnits(majorUnit, layoutLength);
+        if(len < 1) 
+        {
+            return;
+        }
+        majorUnitDistance = layoutLength/(len - 1);
+        for(; i < len; ++i)
+	    {
+            if(drawTicks) 
+            {
+                this._layout.drawTick(tickPoint, majorTickStyles);
+            }
+            position = this.getPosition(tickPoint);
+            label = this.getLabel(tickPoint, axis.getLabelAtPosition(position, layoutLength));
+            this._layout.positionLabel(label, this._layout.getLabelPoint(tickPoint));
+            tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
+        }
+        if(this._calculateSizeByTickLength)
+        {
+            this._layout.offsetNodeForTick(this._node);
+        }
+    },
+
+    /**
+     * @private
+     * @description Draws and positions a label based on its style properties.
+     */
+    getLabel: function(pt, txt, pos)
+    {
+        var label = document.createElement("div"),
+            textNode = document.createTextNode(txt);
+        label.nodeValue = txt;
+        label.style.display = "block";
+        label.style.position = "absolute";
+        this._node.appendChild(label);
+        label.appendChild(textNode);
+        return label;
+    },   
+    
+    /**
+     * @private
+     * Indicates how to include tick length in the size calculation of an
+     * axis. If set to true, the length of the tick is used to calculate
+     * this size. If false, the offset of tick will be used.
+     */
+    _calculateSizeByTickLength: true,
+
+    /**
+     * Indicate the end point of the axis line
+     */
+    getLineEnd: function(pt)
+    {
+        var w = this._node.offsetWidth,
+            h = this._node.offsetHeight,
+            pos = this.get("styles").position;
+        if(pos === "top" || pos === "bottom")
+        {
+            return {x:w, y:pt.y};
+        }
+        else
+        {
+            return {x:pt.x, y:h};
+        }
+    },
+
+    /**
+     * Returns the distance between the first and last data points.
+     */
+    getLength: function()
+    {
+        var l,
+            style = this.get("styles"),
+            padding = style.padding,
+            w = this._node.offsetWidth,
+            h = this._node.offsetHeight,
+            pos = style.position;
+        if(pos === "top" || pos === "bottom")
+        {
+            l = w - (padding.left + padding.right);
+        }
+        else
+        {
+            l = h - (padding.top + padding.bottom);
+        }
+        return l;
+    },
+
+    getFirstPoint:function(pt)
+    {
+        var style = this.get("styles"),
+            pos = style.position,
+            padding = style.padding,
+            np = {x:pt.x, y:pt.y};
+        if(pos === "top" || pos === "bottom")
+        {
+            np.x += padding.left;
+        }
+        else
+        {
+            np.y += padding.top;
+        }
+        return np;
+    },
+
+    /**
+     * Returns the next majorUnit point.
+     */
+    getNextPoint: function(point, majorUnitDistance)
+    {
+        var style = this.get("styles"),
+            pos = style.position;
+        if(pos === "top" || pos === "bottom")
+        {
+            point.x = point.x + majorUnitDistance;		
+        }
+        else
+        {
+            point.y = point.y + majorUnitDistance;
+        }
+        return point;
+    },
+
+    /**
+     * Calculates the coordinates for the last point on an axis.
+     */
+    getLastPoint: function()
+    {
+        var style = this.get("styles"),
+            padding = style.padding,
+            w = this._node.offsetWidth,
+            pos = style.position;
+        if(pos === "top" || pos === "bottom")
+        {
+            return {x:w - padding.right, y:padding.top};
+        }
+        else
+        {
+            return {x:padding.left, y:padding.top};
+        }
+    },
+
+    /**
+     * Calculates the position of a point on the axis.
+     */
+    getPosition: function(point)
+    {
+        var p,
+            h = this._node.offsetHeight,
+            style = this.get("styles"),
+            padding = style.padding,
+            pos = style.position;
+        if(pos === "left" || pos === "right")
+        {
+            p = (h - (padding.top + padding.bottom)) - (point.y - padding.top);
+        }
+        else
+        {
+            p = point.x - padding.left;
+        }
+        return p;
+    },
+    
+    /**
+     * @private 
+     */
+    _leftTickOffset: 0,
+
+    /**
+     * @private 
+     */
+    _topTickOffset: 0,
+
+    /**
+     * @private 
+     */
+    _rightTickOffset: 0,
+
+    /**
+     * @private 
+     */
+    _bottomTickOffset: 0,
+
+    /**
+     * @private
+     */
+    _maxTickLength: 0,
+
+    _getDefaultStyles: function()
+    {
+        return {
+            majorTicks: {
+                display:"inside",
+                length:4,
+                color:"#000000",
+                weight:1,
+                alpha:1
+            },
+            minorTicks: {
+                display:"none",
+                length:2,
+                color:"#000000",
+                weight:1
+            },
+            line: {
+                weight:1,
+                color:"#000000",
+                alpha:1
+            },
+            majorUnit: {
+                determinant:"count",
+                count:5,
+                distance:75
+            },
+            padding: {
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            },
+            calculateSizeByTickLength: false,
+            hideOverlappingLabelTicks: false
+        };
+    }
+});
+
+Y.AxisRenderer = AxisRenderer;
 		
+        
+/**
+ * Contains algorithms for rendering a left axis.
+ */
+function LeftAxisLayout(config)
+{
+    LeftAxisLayout.superclass.constructor.apply(this, arguments);
+}
+
+LeftAxisLayout.ATTRS = {
+    axisRenderer: {
+        lazyAdd: false,
+
+        getter: function()
+        {
+            return this._axisRenderer;
+        },
+        setter: function(val)
+        {
+            this._axisRenderer = val;
+            return val;
+        }
+    }
+};
+
+Y.extend(LeftAxisLayout, Y.Base, {
+    _axisRenderer: null,
+
+    setTickOffsets: function()
+    {
+        var ar = this.get("axisRenderer"),
+            majorTicks = ar.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        ar.set("topTickOffset",  0);
+        ar.set("bottomTickOffset",  0);
+        ar.set("maxTickLength", tickLength);
+        
+        switch(display)
+        {
+            case "inside" :
+                ar.set("rightTickOffset",  tickLength);
+            break;
+            case "outside" : 
+                ar.set("leftTickOffset",  tickLength);
+            break;
+            case "cross":
+                ar.set("rightTickOffset", halfTick); 
+                ar.set("leftTickOffset",  halfTick);
+            break;
+        }
+    },
+
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     */
+    getLineStart: function()
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:padding.left, y:0};
+        if(display === "outside")
+        {
+            pt.x += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.x += tickLength/2;
+        }
+        return pt; 
+    },
+    
+    /**
+     * Draws a tick
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:padding.left, y:pt.y},
+            end = {x:tickLength + padding.left, y:pt.y};
+        ar.drawLine(start, end, tickStyles);
+    },
+    
+    /**
+     * Calculates the point for a label.
+     */
+    getLabelPoint: function(point)
+    {
+        var ar = this.get("axisRenderer");
+        return {x:point.x - ar.get("leftTickOffset"), y:point.y};
+    },
+
+    positionLabel: function(label, pt)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles").label,
+            leftOffset = 0,
+            topOffset = 0,
+            rot =  Math.min(90, Math.max(-90, style.rotation)),
+            absRot = Math.abs(rot),
+            radCon = Math.PI/180,
+            sinRadians = Math.sin(absRot * radCon),
+            cosRadians = Math.cos(absRot * radCon);
+        if(rot === 0)
+        {
+            leftOffset = label.offsetWidth;
+            topOffset = label.offsetHeight * 0.5;
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top =  (pt.y - topOffset) + "px";
+        }
+        else if(rot === 90)
+        {
+            leftOffset = 0;
+            topOffset = label.offsetWidth * 0.5;
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top =  (pt.y - topOffset) + "px";
+        }
+        else if(rot === -90)
+        {
+            leftOffset = label.offsetHeight;
+            topOffset = label.offsetWidth * 0.5;
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top = (pt.y + topOffset) + "px";
+        }
+        else if(rot < 0)
+        {
+            
+            leftOffset = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            topOffset = (sinRadians * label.offsetWidth) - (cosRadians * (label.offsetHeight * 0.6)); 
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top = (pt.y + topOffset) + "px";
+        }
+        else
+        {
+            topOffset = (sinRadians * label.offsetWidth) + (cosRadians * (label.offsetHeight * 0.6));
+            leftOffset = (cosRadians * label.offsetWidth);
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top = (pt.y - topOffset) + "px";
+            
+        }
+        label.style.MozTransformOrigin =  "0 0";
+        label.style.MozTransform = "rotate(" + rot + "deg)";
+        label.style.webkitTransformOrigin = "0 0";
+        label.style.webkitTransform = "rotate(" + rot + "deg)";
+    },
+
+    offsetNodeForTick: function(node)
+    {
+        var offset,
+            ar = this.get("axisRenderer"),
+            majorTicks = ar.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display;
+        if(display === "inside")
+        {
+            node.style.marginRight = (0 - tickLength) + "px";
+        }
+        else if (display === "cross")
+        {
+            node.style.marginRight = (0 - (tickLength * 0.5)) + "px";
+        }
+    }
+});
+
+Y.LeftAxisLayout = LeftAxisLayout;
+/**
+ * Contains algorithms for rendering a right axis.
+ */
+function RightAxisLayout(config)
+{
+    RightAxisLayout.superclass.constructor.apply(this, arguments);
+}
+
+RightAxisLayout.ATTRS = {
+    axisRenderer: {
+        lazyAdd: false,
+
+        getter: function()
+        {
+            return this._axisRenderer;
+        },
+        setter: function(val)
+        {
+            this._axisRenderer = val;
+            return val;
+        }
+    }
+};
+
+Y.extend(RightAxisLayout, Y.Base, {
+    _axisRenderer: null,
+
+    setTickOffsets: function()
+    {
+        var ar = this.get("axisRenderer"),
+            majorTicks = ar.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        ar.set("topTickOffset",  0);
+        ar.set("bottomTickOffset",  0);
+        ar.set("maxTickLength", tickLength);
+        
+        switch(display)
+        {
+            case "inside" :
+                ar.set("leftTickOffset",  tickLength);
+            break;
+            case "outside" : 
+                ar.set("rightTickOffset",  tickLength);
+            break;
+            case "cross":
+                ar.set("rightTickOffset",  halfTick);
+                ar.set("leftTickOffset",  halfTick);
+            break;
+        }
+    },
+
+    drawTick: function(pt, tickStyles)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:padding.left, y:pt.y},
+            end = {x:padding.left + tickLength, y:pt.y};
+        ar.drawLine(start, end, tickStyles);
+    },
+    
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     */
+    getLineStart: function()
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:0, y:padding.top};
+        if(display === "inside")
+        {
+            pt.x += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.x += tickLength/2;
+        }
+        return pt;
+    },
+    
+    /**
+     * Calculates the point for a label.
+     */
+    getLabelPoint: function(point)
+    {
+        var ar = this.get("axisRenderer");
+        return {x:point.x + ar.get("rightTickOffset"), y:point.y};
+    },
+
+    positionLabel: function(label, pt)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles").label,
+            leftOffset = 0,
+            topOffset = 0,
+            rot =  style.rotation,
+            absRot = Math.abs(rot),
+            radCon = Math.PI/180,
+            sinRadians = Math.sin(absRot * radCon),
+            cosRadians = Math.cos(absRot * radCon);
+            rot = Math.min(90, rot);
+            rot = Math.max(-90, rot);
+        if(rot === 0)
+        {
+            topOffset = label.offsetHeight * 0.5;
+            label.style.left = pt.x + "px";
+            label.style.top =  (pt.y - topOffset) + "px";
+        }
+        else if(rot === 90)
+        {
+            leftOffset = label.offsetHeight;
+            topOffset = label.offsetWidth * 0.5;
+            label.style.left = (pt.x + leftOffset) + "px";
+            label.style.top =  (pt.y - topOffset) + "px";
+        }
+        else if(rot === -90)
+        {
+            topOffset = label.offsetWidth * 0.5;
+            label.style.left = pt.x + "px";
+            label.style.top = (pt.y + topOffset) + "px";
+        }
+        else if(rot < 0)
+        {
+            topOffset = (cosRadians * (label.offsetHeight * 0.6)); 
+            label.style.left = pt.x + "px";
+            label.style.top = (pt.y - topOffset) + "px";
+        }
+        else
+        {
+            topOffset = cosRadians * (label.offsetHeight * 0.6);
+            leftOffset = sinRadians * label.offsetHeight;
+            label.style.left = (pt.x + leftOffset) + "px";
+            label.style.top = (pt.y - topOffset) + "px";
+            
+        }
+        label.style.MozTransformOrigin =  "0 0";
+        label.style.MozTransform = "rotate(" + rot + "deg)";
+        label.style.webkitTransformOrigin = "0 0";
+        label.style.webkitTransform = "rotate(" + rot + "deg)";
+    },
+
+    offsetNodeForTick: function(node)
+    {
+        var offset,
+            ar = this.get("axisRenderer"),
+            majorTicks = ar.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display;
+        if(display === "inside")
+        {
+            node.style.marginLeft = (0 - tickLength) + "px";
+        }
+        else if (display === "cross")
+        {
+            node.style.marginLeft = (0 - (tickLength * 0.5)) + "px";
+        }
+    }
+});
+
+Y.RightAxisLayout = RightAxisLayout;
+/**
+ * Contains algorithms for rendering a bottom axis.
+ */
+function BottomAxisLayout(config)
+{
+    BottomAxisLayout.superclass.constructor.apply(this, arguments);
+}
+
+BottomAxisLayout.ATTRS = {
+    axisRenderer: {
+        lazyAdd: false,
+
+        getter: function()
+        {
+            return this._axisRenderer;
+        },
+        setter: function(val)
+        {
+            this._axisRenderer = val;
+            return val;
+        }
+    }
+};
+
+Y.extend(BottomAxisLayout, Y.Base, {
+    _axisRenderer: null,
+
+    setTickOffsets: function()
+    {
+        var ar = this.get("axisRenderer"),
+            majorTicks = ar.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        ar.set("leftTickOffset",  0);
+        ar.set("rightTickOffset",  0);
+        ar.set("maxTickLength", tickLength);
+
+        switch(display)
+        {
+            case "inside" :
+                ar.set("topTickOffset",  tickLength);
+            break;
+            case "outside" : 
+                ar.set("bottomTickOffset",  tickLength);
+            break;
+            case "cross":
+                ar.set("topTickOffset",  halfTick);
+                ar.set("bottomTickOffset",  halfTick);
+            break;
+        }
+    },
+
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     */
+    getLineStart: function()
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:0, y:padding.top};
+        if(display === "inside")
+        {
+            pt.y += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.y += tickLength/2;
+        }
+        return pt; 
+    },
+    
+    /**
+     * Draws a tick
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:pt.x, y:padding.top},
+            end = {x:pt.x, y:tickLength + padding.top};
+        ar.drawLine(start, end, tickStyles);
+    },
+
+    /**
+     * Calculates the point for a label.
+     */
+    getLabelPoint: function(point)
+    {
+        var ar = this.get("axisRenderer");
+        return {x:point.x, y:point.y + ar.get("bottomTickOffset")};
+    },
+
+    positionLabel: function(label, pt)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles").label,
+            leftOffset = 0,
+            topOffset = 0,
+            rot =  style.rotation,
+            absRot = Math.abs(rot),
+            radCon = Math.PI/180,
+            sinRadians = Math.sin(absRot * radCon),
+            cosRadians = Math.cos(absRot * radCon);
+            rot = Math.min(90, rot);
+            rot = Math.max(-90, rot);
+        if(rot === 0)
+        {
+            leftOffset = label.offsetWidth * 0.5;
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top =  (pt.y - topOffset) + "px";
+        }
+        else if(Math.abs(rot) === 90)
+        {
+            leftOffset = label.offsetWidth * 0.5;
+            topOffset = label.offsetHeight * 0.5;
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top =  ((pt.y - topOffset) + leftOffset) + "px";
+        }
+        else if(rot < 0)
+        {
+            
+            leftOffset = (cosRadians * label.offsetWidth) + (sinRadians * (label.offsetHeight * 0.6));
+            topOffset = (sinRadians * label.offsetWidth); 
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top = (pt.y + topOffset) + "px";
+        }
+        else
+        {
+            topOffset = sinRadians * (label.offsetHeight * 0.6);
+            leftOffset = sinRadians * (label.offsetHeight * 0.6);
+            label.style.left = (pt.x + leftOffset) + "px";
+            label.style.top = (pt.y) + "px";
+            
+        }
+        label.style.MozTransformOrigin =  "0 0";
+        label.style.MozTransform = "rotate(" + rot + "deg)";
+        label.style.webkitTransformOrigin = "0 0";
+        label.style.webkitTransform = "rotate(" + rot + "deg)";
+    },
+
+    offsetNodeForTick: function(node)
+    {
+        var offset,
+            ar = this.get("axisRenderer"),
+            majorTicks = ar.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display;
+        if(display === "inside")
+        {
+            node.style.marginTop = (0 - tickLength) + "px";
+        }
+        else if (display === "cross")
+        {
+            node.style.marginTop = (0 - (tickLength * 0.5)) + "px";
+        }
+    }
+});
+
+Y.BottomAxisLayout = BottomAxisLayout;
+/**
+ * Contains algorithms for rendering a top axis.
+ */
+function TopAxisLayout(config)
+{
+    TopAxisLayout.superclass.constructor.apply(this, arguments);
+}
+
+TopAxisLayout.ATTRS = {
+    axisRenderer: {
+        lazyAdd: false,
+
+        getter: function()
+        {
+            return this._axisRenderer;
+        },
+        setter: function(val)
+        {
+            this._axisRenderer = val;
+            return val;
+        }
+    }
+};
+
+Y.extend(TopAxisLayout, Y.Base, {
+    _axisRenderer: null,
+
+    setTickOffsets: function()
+    {
+        var ar = this.get("axisRenderer"),
+            majorTicks = ar.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            halfTick = tickLength * 0.5,
+            display = majorTicks.display;
+        ar.set("leftTickOffset",  0);
+        ar.set("rightTickOffset",  0);
+        ar.set("maxTickLength", tickLength);
+        
+        switch(display)
+        {
+            case "inside" :
+                ar.set("bottomTickOffset",  tickLength);
+            break;
+            case "outside" : 
+                ar.set("topTickOffset",  tickLength);
+            break;
+            case "cross":
+                ar.set("topTickOffset",  halfTick);
+                ar.set("bottomTickOffset",  halfTick);
+            break;
+        }
+    },
+
+    /**
+     * Calculates the coordinates for the first point on an axis.
+     */
+    getLineStart: function()
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            padding = style.padding,
+            majorTicks = style.majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display,
+            pt = {x:0, y:padding.top};
+        if(display === "outside")
+        {
+            pt.y += tickLength;
+        }
+        else if(display === "cross")
+        {
+            pt.y += tickLength/2;
+        }
+        return pt; 
+    },
+    
+    /**
+     * Draws a tick
+     */
+    drawTick: function(pt, tickStyles)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            padding = style.padding,
+            tickLength = tickStyles.length,
+            start = {x:pt.x, y:padding.top},
+            end = {x:pt.x, y:tickLength + padding.top};
+        ar.drawLine(start, end, tickStyles);
+    },
+    
+    /**
+     * Calculates the point for a label.
+     */
+    getLabelPoint: function(pt)
+    {
+        var ar = this.get("axisRenderer");
+        return {x:pt.x, y:pt.y - ar.get("topTickOffset")};
+    },
+
+    positionLabel: function(label, pt)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles").label,
+            leftOffset = 0,
+            topOffset = 0,
+            rot =  Math.max(-90, Math.min(90, style.rotation)),
+            absRot = Math.abs(rot),
+            radCon = Math.PI/180,
+            sinRadians = Math.sin(absRot * radCon),
+            cosRadians = Math.cos(absRot * radCon);
+        if(rot === 0)
+        {
+            leftOffset = label.offsetWidth * 0.5;
+            topOffset = label.offsetHeight;
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top =  ((pt.y - topOffset)) + "px";
+        }
+        else if(rot === 90)
+        {
+            leftOffset = label.offsetHeight * 0.5;
+            topOffset = label.offsetWidth;
+            label.style.left = (pt.x + leftOffset) + "px";
+            label.style.top =  (pt.y - topOffset) + "px";
+        }
+        else if(rot === -90)
+        {
+            leftOffset = label.offsetHeight * 0.5;
+            topOffset = 0;
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top = (pt.y - topOffset) + "px";
+        }
+        else if(rot < 0)
+        {
+            
+            leftOffset = (sinRadians * (label.offsetHeight * 0.6));
+            topOffset = (cosRadians * label.offsetHeight);
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top = (pt.y - topOffset) + "px";
+        }
+        else
+        {
+            topOffset = (sinRadians * label.offsetWidth) + (cosRadians * label.offsetHeight);
+            leftOffset = (cosRadians * label.offsetWidth) - (sinRadians * (label.offsetHeight * 0.6));
+            label.style.left = (pt.x - leftOffset) + "px";
+            label.style.top = (pt.y - topOffset) + "px";
+            
+        }
+        label.style.MozTransformOrigin =  "0 0";
+        label.style.MozTransform = "rotate(" + rot + "deg)";
+        label.style.webkitTransformOrigin = "0 0";
+        label.style.webkitTransform = "rotate(" + rot + "deg)";
+    },
+
+    offsetNodeForTick: function(node)
+    {
+        var offset,
+            ar = this.get("axisRenderer"),
+            majorTicks = ar.get("styles").majorTicks,
+            tickLength = majorTicks.length,
+            display = majorTicks.display;
+        if(display === "inside")
+        {
+            node.style.marginBottom = (0 - tickLength) + "px";
+        }
+        else if (display === "cross")
+        {
+            node.style.marginBottom = (0 - (tickLength * 0.5)) + "px";
+        }
+    }
+});
+
+Y.TopAxisLayout = TopAxisLayout;
+
 
 
 }, '@VERSION@' );

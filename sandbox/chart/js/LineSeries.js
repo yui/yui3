@@ -19,9 +19,9 @@ LineSeries.ATTRS = {
 
 Y.extend(LineSeries, Y.CartesianSeries, {
 	/**
-	 * @private
-	 * Default styles for the series.
+	 * Constant used to generate unique id.
 	 */
+	GUID: "yuilineseries",
 
 	/**
 	 * @private (protected)
@@ -73,7 +73,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-		var	parentDiv = this.get("parent"),
+        var	parentDiv = this.get("parent"),
             ht = parentDiv.offsetHeight,
             xcoords = this._xcoords,
 			ycoords = this._ycoords,

@@ -2,12 +2,12 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>YUI 3 Performance</title>
+    <title>YUI Performance Tool</title>
     <link rel="stylesheet" href="assets/performance.css">
 </head>
 <body>
 
-<h1>YUI 3 Performance</h1>
+<h1>YUI Performance Tool</h1>
 
 <p>
     <select id="suites"></select>
@@ -35,19 +35,22 @@
 <script src="../../build/yui/yui-min.js"></script>
 <script src="js/sandbox.js"></script>
 <script src="js/performance.js"></script>
-<script src="tests/instantiation.js"></script>
-<script src="tests/perf-oop.js"></script>
 <script src="tests/perf-component.js"></script>
+<script src="tests/perf-instantiation.js"></script>
+<script src="tests/perf-loops-native.js"></script>
+<script src="tests/perf-loops-yui3.js"></script>
 <script>
-var Y = YUI().use('cookie', 'event-base', 'node-base', 'performance',
-                  'json-stringify', 'perf-instantiation', 'perf-oop',
-                  'perf-component', function (Y) {
+var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
+    'performance', 'perf-component', 'perf-instantiation', 'perf-loops-native',
+    'perf-loops-yui3', function (Y) {
 
-    var Perf   = Y.Performance,
-        snap   = Y.one('#snap'),
-        start  = Y.one('#start'),
-        stop   = Y.one('#stop'),
-        suites = Y.one('#suites');
+    var Perf    = Y.Performance,
+        history = new Y.History(),
+
+        snap    = Y.one('#snap'),
+        start   = Y.one('#start'),
+        stop    = Y.one('#stop'),
+        suites  = Y.one('#suites');
 
     if (Y.UA.gecko) {
         Y.all('.firefox').removeClass('hidden');
@@ -56,31 +59,41 @@ var Y = YUI().use('cookie', 'event-base', 'node-base', 'performance',
     }
 
     // Populate the test list.
-    Y.Object.each(Perf.getTestSuites(), function (test, name) {
+    Y.Object.each(Perf.getTestSuites(), function (suite, name) {
         suites.append(Y.Node.create('<option/>').append(name));
     });
 
-    // Get the selected module from a cookie if set.
-    if (Y.Cookie.exists('yui3-perf-suite')) {
-        suites.set('value', Y.Cookie.get('yui3-perf-suite'));
-    }
+    // Set the selected suite to the one specified in the URL, if any.
+    suites.set('value', history.get('suite'));
 
     // Render the result table.
     Perf.render('#results');
 
-    // Handle module selection changes.
-    suites.on('change', function () {
+    // Handle history changes.
+    history.on('suiteChange', function (e) {
         Perf.stop();
 
-        Y.Cookie.set('yui3-perf-suite', this.get('value'), {
-            expires: new Date(new Date().getTime() + 5184000000) // 60 days from now
-        });
+        if (e.src === Y.History.SRC_HASH) {
+            suites.set('value', e.newVal);
+        }
+    });
+
+    history.on('suiteRemove', function (e) {
+        Perf.stop();
+
+        if (e.src === Y.History.SRC_HASH) {
+            suites.set('selectedIndex', 0);
+        }
+    });
+
+    // Handle module selection changes.
+    suites.on('change', function () {
+        history.add('suite', this.get('value') || null);
     });
 
     // Handle Start clicks.
     start.on('click', function () {
-        Perf.activateTestSuite(suites.get('value'));
-        Perf.start();
+        Perf.start(suites.get('value'));
     });
 
     // Handle Stop clicks.
