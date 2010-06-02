@@ -259,6 +259,7 @@
 <span class="cm">     * &lt;/dl&gt;</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method Base.build</span>
+<span class="cm">     * @deprecated Use the more convenient Base.create and Base.mix methods instead</span>
 <span class="cm">     * @static</span>
 <span class="cm">     * @param {Function} name The name of the new class. Used to defined the NAME property for the new class.</span>
 <span class="cm">     * @param {Function} main The main class on which to base the built class</span>
@@ -284,6 +285,8 @@
 <span class="cm">     * @param {Function} name The name of the newly created class. Used to defined the NAME property for the new class.</span>
 <span class="cm">     * @param {Function} main The base class which the new class should extend. This class needs to be Base or a class derived from base (e.g. Widget).</span>
 <span class="cm">     * @param {Function[]} extensions The list of extensions which will be mixed into the built class.</span>
+<span class="cm">     * @param {Object} px The set of prototype properties/methods to add to the built class.</span>
+<span class="cm">     * @param {Object} sx The set of static properties/methods to add to the built class.</span>
 <span class="cm">     * @return {Function} The newly created class.</span>
 <span class="cm">     */</span>
     <span class="nx">Base</span><span class="p">.</span><span class="nx">create</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">base</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">,</span> <span class="nx">px</span><span class="p">,</span> <span class="nx">sx</span><span class="p">)</span> <span class="p">{</span>
@@ -318,9 +321,21 @@
     <span class="nx">Base</span><span class="p">.</span><span class="nx">_buildCfg</span> <span class="o">=</span> <span class="p">{</span>
         <span class="nx">custom</span> <span class="o">:</span> <span class="p">{</span> 
             <span class="nx">ATTRS</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">prop</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">r</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">r</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">[</span><span class="nx">prop</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="nx">Y</span><span class="p">.</span><span class="nx">aggregate</span><span class="p">(</span><span class="nx">r</span><span class="p">[</span><span class="nx">prop</span><span class="p">],</span> <span class="nx">s</span><span class="p">[</span><span class="nx">prop</span><span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
+
+                <span class="nx">r</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">ATTRS</span> <span class="o">||</span> <span class="p">{};</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="kd">var</span> <span class="nx">sAttrs</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">,</span>
+                        <span class="nx">rAttrs</span> <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">ATTRS</span><span class="p">,</span>
+                        <span class="nx">a</span><span class="p">;</span>
+
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">a</span> <span class="k">in</span> <span class="nx">sAttrs</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">sAttrs</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">a</span><span class="p">))</span> <span class="p">{</span>
+                            <span class="nx">rAttrs</span><span class="p">[</span><span class="nx">a</span><span class="p">]</span> <span class="o">=</span> <span class="nx">rAttrs</span><span class="p">[</span><span class="nx">a</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+                            <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">rAttrs</span><span class="p">[</span><span class="nx">a</span><span class="p">],</span> <span class="nx">sAttrs</span><span class="p">[</span><span class="nx">a</span><span class="p">],</span> <span class="kc">true</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">},</span>

@@ -1212,7 +1212,7 @@ var L = Y.Lang,
                 queuable: o.queuable,
                 monitored: o.monitored,
                 broadcast: o.broadcast,
-                defaultTargetOnly: o.defaulTargetOnly,
+                defaultTargetOnly: o.defaultTargetOnly,
                 bubbles: ('bubbles' in o) ? o.bubbles : true
             }
         };

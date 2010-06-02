@@ -272,9 +272,21 @@
     Base._buildCfg = {
         custom : { 
             ATTRS : function(prop, r, s) {
-                r[prop] = r[prop] || {};
-                if (s[prop]) {
-                    Y.aggregate(r[prop], s[prop], true);
+
+                r.ATTRS = r.ATTRS || {};
+
+                if (s.ATTRS) {
+
+                    var sAttrs = s.ATTRS,
+                        rAttrs = r.ATTRS,
+                        a;
+
+                    for (a in sAttrs) {
+                        if (sAttrs.hasOwnProperty(a)) {
+                            rAttrs[a] = rAttrs[a] || {};
+                            Y.mix(rAttrs[a], sAttrs[a], true);
+                        }
+                    }
                 }
             }
         },
