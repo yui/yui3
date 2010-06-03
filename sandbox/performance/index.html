@@ -16,6 +16,14 @@
     <button id="snap" disabled="disabled">Result Snapshot (JSON)</button>
 </p>
 
+<p>
+    <input type="radio" id="reportDetail" name="report" checked="checked" value="detail">
+    <label for="reportDetail">Detailed Report</label>
+
+    <input type="radio" id="reportComparison" name="report" value="comparison">
+    <label for="reportComparison">Comparison Report</label>
+</p>
+
 <div id="results"></div>
 
 <p class="firefox hidden">
@@ -36,25 +44,61 @@
 <script src="js/sandbox.js"></script>
 <script src="js/performance.js"></script>
 <script src="js/performance-report.js"></script>
+<script src="js/reports/performance-report-comparison.js"></script>
 <script src="tests/perf-component.js"></script>
 <script src="tests/perf-instantiation.js"></script>
 <script src="tests/perf-loops-native.js"></script>
 <script src="tests/perf-loops-yui3.js"></script>
 <script>
 var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
-    'performance', 'performance-report', 'perf-component', 'perf-instantiation',
+    'performance', 'performance-report-comparison', 'perf-component', 'perf-instantiation',
     'perf-loops-native', 'perf-loops-yui3', function (Y) {
 
-    var Performance = Y.Performance,
+    var SRC_UI = 'ui',
 
-        history     = new Y.History(),
-        perf        = new Performance(),
-        report      = new Y.PerformanceReport({performance: perf}),
+        Performance = Y.Performance,
 
-        snap        = Y.one('#snap'),
-        start       = Y.one('#start'),
-        stop        = Y.one('#stop'),
-        suites      = Y.one('#suites');
+        history = new Y.History(),
+        perf    = new Performance(),
+        report,
+
+        reportComparison = Y.one('#reportComparison'),
+        reportDetail     = Y.one('#reportDetail'),
+
+        snap   = Y.one('#snap'),
+        start  = Y.one('#start'),
+        stop   = Y.one('#stop'),
+        suites = Y.one('#suites');
+
+    function setReportType(type, src) {
+        perf.stop();
+
+        if (report) {
+            report.destroy();
+        }
+
+        Y.one('#results').purge(true).set('innerHTML', '');
+
+        if (type === 'comparison') {
+            report = new Y.PerformanceReport.Comparison({performance: perf});
+
+            if (src !== SRC_UI) {
+                reportComparison.setAttribute('checked', true);
+            }
+        } else {
+            report = new Y.PerformanceReport({performance: perf});
+
+            if (src !== SRC_UI) {
+                reportDetail.setAttribute('checked', true);
+            }
+        }
+
+        if (src !== Y.History.SRC_HASH) {
+            history.add('report', type);
+        }
+
+        report.render('#results');
+    }
 
     if (Y.UA.gecko) {
         Y.all('.firefox').removeClass('hidden');
@@ -67,13 +111,21 @@ var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
         suites.append(Y.Node.create('<option/>').append(name));
     });
 
-    // Set the selected suite to the one specified in the URL, if any.
+    // Set the selected suite.
     suites.set('value', history.get('suite'));
 
-    // Render the report.
-    report.render('#results');
+    // Set the selected report type.
+    setReportType(history.get('report'), Y.History.SRC_HASH);
 
     // Handle history changes.
+    history.on('reportChange', function (e) {
+        setReportType(e.newVal, e.src);
+    });
+
+    history.on('reportRemove', function (e) {
+        setReportType(null, e.src);
+    });
+
     history.on('suiteChange', function (e) {
         perf.stop();
 
@@ -88,6 +140,15 @@ var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
         if (e.src === Y.History.SRC_HASH) {
             suites.set('selectedIndex', 0);
         }
+    });
+
+    // Handle report type selection changes.
+    reportComparison.on('click', function () {
+        setReportType('comparison', SRC_UI);
+    });
+
+    reportDetail.on('click', function () {
+        setReportType('detail', SRC_UI);
     });
 
     // Handle module selection changes.

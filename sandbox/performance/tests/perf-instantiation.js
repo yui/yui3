@@ -1,6 +1,7 @@
 YUI.add('perf-instantiation', function (Y) {
 
 Y.Performance.addTestGroup({
+    name   : 'Default',
     suite  : 'Instantiation Tests',
     version: '2010-05-28',
     

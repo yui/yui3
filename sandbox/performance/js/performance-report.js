@@ -6,8 +6,9 @@ var Lang = Y.Lang,
 
     isValue = Lang.isValue,
 
-    CONTENT_BOX = 'contentBox',
-    PERFORMANCE = 'performance';
+    BOUNDING_BOX = 'boundingBox',
+    CONTENT_BOX  = 'contentBox',
+    PERFORMANCE  = 'performance';
 
 function Report() {
     Report.superclass.constructor.apply(this, arguments);
@@ -70,28 +71,42 @@ Y.extend(Report, Y.Widget, {
         }
     },
 
+    destructor: function () {
+        if (this._events) {
+            var e;
+
+            while (e = this._events.pop()) { // assignment
+                e.detach();
+            }
+        }
+    },
+
     bindUI: function () {
         var contentBox = this.get(CONTENT_BOX),
             perf       = this.get(PERFORMANCE);
 
-        contentBox.delegate('click', this._onResultClick, this.SELECTOR_RESULT);
+        this._events = (this._events || []).concat([
+            contentBox.delegate('click', this._onResultClick, this.SELECTOR_RESULT),
 
-        perf.after('clear', this._afterClear, this);
-        perf.after('end', this._afterEnd, this);
-        perf.after('resultAdd', this._afterResultAdd, this);
-        perf.after('start', this._afterStart, this);
+            perf.after('clear', this._afterClear, this),
+            perf.after('end', this._afterEnd, this),
+            perf.after('resultAdd', this._afterResultAdd, this),
+            perf.after('start', this._afterStart, this)
+        ]);
     },
 
     renderUI: function () {
-        var contentBox = this.get(CONTENT_BOX);
+        var contentBox = this.get(CONTENT_BOX),
+            perf       = this.get(PERFORMANCE),
+            suite      = perf.get('activeSuite');
 
-        this._renderHeader(contentBox);
-        this._renderFooter(contentBox);
-        this._renderBody(contentBox);
-    },
+        this._renderHeader(contentBox, suite);
+        this._renderFooter(contentBox, suite);
+        this._renderBody(contentBox, suite);
 
-    syncUI: function () {
-        
+        if (perf.get('complete')) {
+            this._renderResults();
+        }
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -101,7 +116,47 @@ Y.extend(Report, Y.Widget, {
         });
     },
 
-    _renderBody: function (contentBox) {
+    // -- Protected Static Methods ---------------------------------------------
+
+    /**
+     * Creates a query string based on the specified object of name/value
+     * params.
+     *
+     * @method _createQueryString
+     * @param {Object} params object of name/value parameter pairs
+     * @return {String}
+     * @protected
+     */
+    _createQueryString: function (params) {
+        var _params = [],
+            encode  = encodeURIComponent;
+
+        Obj.each(params, function (value, key) {
+            if (isValue(value)) {
+                _params.push(encode(key) + '=' + encode(value));
+            }
+        });
+
+        return _params.join('&amp;');
+    },
+
+    /**
+     * Replaces special HTML characters in the specified string with their
+     * entity equivalents.
+     *
+     * @method _htmlEntities
+     * @param {String} string
+     * @return {String}
+     * @protected
+     */
+    _htmlEntities: function (string) {
+        return string.replace(/&/g, '&amp;').
+                      replace(/</g, '&lt;').
+                      replace(/>/g, '&gt;').
+                      replace(/"/g, '&quot;');
+    },
+
+    _renderBody: function (contentBox, suite) {
         // Do nothing if BODY_TEMPLATE is empty.
         if (!this.BODY_TEMPLATE) {
             return;
@@ -118,7 +173,7 @@ Y.extend(Report, Y.Widget, {
         contentBox.append(this.BODY_TEMPLATE);
     },
 
-    _renderFooter: function (contentBox) {
+    _renderFooter: function (contentBox, suite) {
         // Do nothing if FOOTER_TEMPLATE is empty.
         if (!this.FOOTER_TEMPLATE) {
             return;
@@ -135,7 +190,7 @@ Y.extend(Report, Y.Widget, {
         contentBox.append(this.FOOTER_TEMPLATE);
     },
 
-    _renderHeader: function (contentBox) {
+    _renderHeader: function (contentBox, suite) {
         // Do nothing if HEADER_TEMPLATE is empty.
         if (!this.HEADER_TEMPLATE) {
             return;
@@ -164,11 +219,11 @@ Y.extend(Report, Y.Widget, {
             this.RESULT_TEMPLATE,
 
             Y.merge(resultData, {
-                chartUrl : this.CHART_URL + Report._createQueryString(chartParams),
-                code     : Report._htmlEntities(test.test.toString()),
-                groupName: Report._htmlEntities(group.name || 'Default'),
+                chartUrl : this.CHART_URL + this._createQueryString(chartParams),
+                code     : this._htmlEntities(test.test.toString()),
+                groupName: this._htmlEntities(group.name || 'Default'),
                 mediandev: resultData.mediandev !== '' ? '±' + resultData.mediandev : '',
-                name     : Report._htmlEntities(resultData.name),
+                name     : this._htmlEntities(resultData.name),
                 stdev    : resultData.stdev !== '' ? '±' + resultData.stdev : ''
             }),
 
@@ -182,13 +237,33 @@ Y.extend(Report, Y.Widget, {
         ));
     },
 
+    _renderResults: function () {
+        var perf    = this.get(PERFORMANCE),
+            results = perf.get('results'),
+            suite   = perf.get('activeSuite');
+
+        this._clearResults();
+
+        if (!results || !suite) {
+            return;
+        }
+
+        Obj.each(results, function (groupResult, groupName) {
+            var group = suite.groups[groupName];
+
+            Obj.each(groupResult, function (testResult, testName) {
+                this._renderResult(testResult, group.tests[testName], group);
+            }, this);
+        }, this);
+    },
+
     // -- Protected Event Handlers ---------------------------------------------
     _afterClear: function () {
         this._clearResults();
     },
 
     _afterEnd: function () {
-        this.get(CONTENT_BOX).removeClass('running');
+        this.get(BOUNDING_BOX).removeClass('running');
     },
 
     _afterResultAdd: function (e) {
@@ -196,7 +271,7 @@ Y.extend(Report, Y.Widget, {
     },
 
     _afterStart: function () {
-        this.get(CONTENT_BOX).addClass('running');
+        this.get(BOUNDING_BOX).addClass('running');
     },
 
     _onResultClick: function (e) {
@@ -214,48 +289,6 @@ Y.extend(Report, Y.Widget, {
 
             writeOnce: 'initOnly'
         }
-    },
-
-    // -- Protected Static Methods ---------------------------------------------
-
-    /**
-     * Creates a query string based on the specified object of name/value
-     * params.
-     *
-     * @method _createQueryString
-     * @param {Object} params object of name/value parameter pairs
-     * @return {String}
-     * @protected
-     * @static
-     */
-    _createQueryString: function (params) {
-        var _params = [],
-            encode  = encodeURIComponent;
-
-        Obj.each(params, function (value, key) {
-            if (isValue(value)) {
-                _params.push(encode(key) + '=' + encode(value));
-            }
-        });
-
-        return _params.join('&amp;');
-    },
-
-    /**
-     * Replaces special HTML characters in the specified string with their
-     * entity equivalents.
-     *
-     * @method _htmlEntities
-     * @param {String} string
-     * @return {String}
-     * @protected
-     * @static
-     */
-    _htmlEntities: function (string) {
-        return string.replace(/&/g, '&amp;').
-                      replace(/</g, '&lt;').
-                      replace(/>/g, '&gt;').
-                      replace(/"/g, '&quot;');
     }
 });
 
