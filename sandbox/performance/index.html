@@ -35,22 +35,26 @@
 <script src="../../build/yui/yui-min.js"></script>
 <script src="js/sandbox.js"></script>
 <script src="js/performance.js"></script>
+<script src="js/performance-report.js"></script>
 <script src="tests/perf-component.js"></script>
 <script src="tests/perf-instantiation.js"></script>
 <script src="tests/perf-loops-native.js"></script>
 <script src="tests/perf-loops-yui3.js"></script>
 <script>
 var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
-    'performance', 'perf-component', 'perf-instantiation', 'perf-loops-native',
-    'perf-loops-yui3', function (Y) {
+    'performance', 'performance-report', 'perf-component', 'perf-instantiation',
+    'perf-loops-native', 'perf-loops-yui3', function (Y) {
 
-    var Perf    = Y.Performance,
-        history = new Y.History(),
+    var Performance = Y.Performance,
 
-        snap    = Y.one('#snap'),
-        start   = Y.one('#start'),
-        stop    = Y.one('#stop'),
-        suites  = Y.one('#suites');
+        history     = new Y.History(),
+        perf        = new Performance(),
+        report      = new Y.PerformanceReport({performance: perf}),
+
+        snap        = Y.one('#snap'),
+        start       = Y.one('#start'),
+        stop        = Y.one('#stop'),
+        suites      = Y.one('#suites');
 
     if (Y.UA.gecko) {
         Y.all('.firefox').removeClass('hidden');
@@ -59,19 +63,19 @@ var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
     }
 
     // Populate the test list.
-    Y.Object.each(Perf.getTestSuites(), function (suite, name) {
+    Y.Object.each(Performance.getTestSuites(), function (suite, name) {
         suites.append(Y.Node.create('<option/>').append(name));
     });
 
     // Set the selected suite to the one specified in the URL, if any.
     suites.set('value', history.get('suite'));
 
-    // Render the result table.
-    Perf.render('#results');
+    // Render the report.
+    report.render('#results');
 
     // Handle history changes.
     history.on('suiteChange', function (e) {
-        Perf.stop();
+        perf.stop();
 
         if (e.src === Y.History.SRC_HASH) {
             suites.set('value', e.newVal);
@@ -79,7 +83,7 @@ var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
     });
 
     history.on('suiteRemove', function (e) {
-        Perf.stop();
+        perf.stop();
 
         if (e.src === Y.History.SRC_HASH) {
             suites.set('selectedIndex', 0);
@@ -93,29 +97,29 @@ var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
 
     // Handle Start clicks.
     start.on('click', function () {
-        Perf.start(suites.get('value'));
+        perf.start(suites.get('value'));
     });
 
     // Handle Stop clicks.
     stop.on('click', function () {
-        Perf.stop();
+        perf.stop();
     });
 
     // Handle snapshot clicks.
     snap.on('click', function () {
-        Y.one('#result-snapshot').set('value', Y.JSON.stringify(Perf._results, null, 2));
+        Y.one('#result-snapshot').set('value', Y.JSON.stringify(perf.get('results'), null, 2));
         Y.one('#snapshot').toggleClass('hidden');
     });
 
     // Handle test start.
-    Perf.on('start', function () {
+    perf.on('start', function () {
         Y.all([snap, start]).set('disabled', true);
         stop.set('disabled', false);
         Y.one('#snapshot').addClass('hidden');
     });
 
     // Handle test stop/finish.
-    Perf.on('finish', function () {
+    perf.on('finish', function () {
         Y.all([snap, start]).set('disabled', false);
         stop.set('disabled', true);
     });
