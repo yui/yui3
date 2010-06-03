@@ -16,7 +16,7 @@ body {
     width: 100%;
 }
 
-.yui3-performancereport-content { width: 100%; }
+.yui3-performancereport table { width: 100%; }
 
 .yui3-performancereport td p {
     color: #999;
@@ -26,7 +26,7 @@ body {
 
 .yui3-performancereport tfoot td { display: none; }
 
-.yui3-performancereport-content.running tfoot td {
+.yui3-performancereport.running tfoot td {
     background-image: url(loading.gif);
     background-position: center center;
     background-repeat: no-repeat;
@@ -84,3 +84,12 @@ body {
     height: 200px;
     width: 99%;
 }
+
+/* -- Comparison Results Table ---------------------------------------------- */
+.yui3-comparisonreport .group { text-align: center; }
+
+.yui3-comparisonreport td.group { background-color: #dfffe6; }
+.yui3-comparisonreport td.group.empty { background-color: #fff; }
+.yui3-comparisonreport td.group.fail { background-color: #ffdfdf; }
+
+.yui3-comparisonreport td.group .mediandev { color: #666; }

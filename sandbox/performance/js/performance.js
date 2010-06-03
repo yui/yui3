@@ -1,13 +1,12 @@
 YUI.add('performance', function (Y) {
 
-// -- Shorthand ----------------------------------------------------------------
+// -- Shorthand & Private Variables --------------------------------------------
 var Lang       = Y.Lang,
     Obj        = Y.Object,
 
     isFunction = Lang.isFunction,
     isValue    = Lang.isValue,
 
-    // -- Private Constants ----------------------------------------------------
     DEFAULT_DURATION  = 1000, // default duration for time-based tests
     YQL_XDR_DATATABLE = 'http://yuilibrary.com/~rgrove/test/yui3/sandbox/performance/assets/xdr.xml',
 
@@ -21,7 +20,11 @@ var Lang       = Y.Lang,
     MODE_ITERATION = 1,
     MODE_TIME      = 2, // not yet fully baked
 
-    // -- Private Variables ----------------------------------------------------
+    ACTIVE_SUITE = 'activeSuite',
+    COMPLETE     = 'complete',
+    RESULTS      = 'results',
+    RUNNING      = 'running',
+
     suites     = {},
     xhrCache   = {},
     yqlCache   = {},
@@ -33,8 +36,23 @@ function Performance() {
 
 Performance.NAME  = 'performance';
 Performance.ATTRS = {
+    activeSuite: {
+        readOnly: true
+    },
+
+    complete: {
+        getter: function (value) {
+            // FIXME: this doesn't seem to be reliable for some reason.
+            return value && !!this.get(ACTIVE_SUITE) && !this.get(RUNNING);
+        },
+        
+        readOnly: true,
+        value: false
+    },
+
     mode: {
         value: MODE_ITERATION,
+
         validator: function (value) {
             return value === MODE_ITERATION || value === MODE_TIME;
         }
@@ -43,6 +61,14 @@ Performance.ATTRS = {
     results: {
         readOnly: true,
         value: {}
+    },
+
+    running: {
+        getter: function () {
+            return this._queue && this._queue.length > 0;
+        },
+
+        readOnly: true
     }
 };
 
@@ -52,8 +78,16 @@ Y.extend(Performance, Y.Base, {
     _sandboxes: [],
 
     // -- Public Methods -------------------------------------------------------
+
+    /**
+     * Clears results from the most recent test suite and stops running tests if
+     * tests are currently running.
+     *
+     * @method clearResults
+     */
     clearResults: function () {
-        this._set('results', {});
+        this.stop();
+        this._set(RESULTS, {});
         this.fire(EVT_CLEAR);
     },
 
@@ -64,8 +98,8 @@ Y.extend(Performance, Y.Base, {
      * @param {String} suiteName test suite to run
      */
     start: function (suiteName) {
-        if (this._queue.length) {
-            Y.log('Performance tests are already running.', 'warn', 'performance');
+        if (this.get(RUNNING)) {
+            Y.log("Can't start tests: tests are already running.", 'warn', 'performance');
             return;
         }
 
@@ -77,6 +111,10 @@ Y.extend(Performance, Y.Base, {
         }
 
         this.clearResults();
+
+        this._set(ACTIVE_SUITE, suite);
+        this._set(COMPLETE, false);
+
         this.fire(EVT_START, {suite: suite});
 
         // Queue up all the tests from each group.
@@ -89,10 +127,17 @@ Y.extend(Performance, Y.Base, {
         this._runNextTest();
     },
 
+    /**
+     * Stops running tests if tests are currently running.
+     *
+     * @method stop
+     */
     stop: function () {
-        this._queue = [];
-        this.fire(EVT_STOP);
-        this.fire(EVT_END);
+        if (this.get(RUNNING)) {
+            this._queue = [];
+            this.fire(EVT_STOP);
+            this.fire(EVT_END);
+        }
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -103,6 +148,8 @@ Y.extend(Performance, Y.Base, {
             sandbox.destroy();
         }
 
+        this._queue = []; // just to be safe
+        this._set(COMPLETE, true);
         this.fire(EVT_FINISH);
         this.fire(EVT_END);
     },
@@ -380,12 +427,18 @@ Y.extend(Performance, Y.Base, {
         // Test suites are created on demand.
         if (!suite) {
             suite = suites[suiteName] = {
+                id    : Y.guid('suite-'),
                 name  : suiteName,
                 groups: {}
             };
         }
 
-        suite.groups[config.name] = config;
+        // Assign a unique id to each test.
+        Obj.each(config.tests, function (test) {
+            test.id = Y.guid('test-');
+        });
+
+        suite.groups[config.name] = Y.merge(config, {id: Y.guid('group-')});
 
         return config;
     },
