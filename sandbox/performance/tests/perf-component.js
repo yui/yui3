@@ -1,6 +1,7 @@
 YUI.add('perf-component', function (Y) {
 
 Y.Performance.addTestGroup({
+    name   : 'Default',
     suite  : 'Component Tests',
     version: '2010-05-28',
 
