@@ -98,6 +98,8 @@ Y.extend(Performance, Y.Base, {
      * @param {String} suiteName test suite to run
      */
     start: function (suiteName) {
+        var tests = {};
+
         if (this.get(RUNNING)) {
             Y.log("Can't start tests: tests are already running.", 'warn', 'performance');
             return;
@@ -117,13 +119,27 @@ Y.extend(Performance, Y.Base, {
 
         this.fire(EVT_START, {suite: suite});
 
-        // Queue up all the tests from each group.
+        // Queue up all the tests from each group, interleaving them so that
+        // we run all tests with the same name from all groups before moving on
+        // to the next test.
         Obj.each(suite.groups, function (group) {
             Obj.each(group.tests, function (test, testName) {
-                this._queueTest(test, testName, group);
+                if (!tests[testName]) {
+                    tests[testName] = [];
+                }
+
+                test.group = group;
+                tests[testName].push(test);
             }, this);
         }, this);
 
+        Obj.each(tests, function (tests, testName) {
+            Y.Array.each(tests, function (test) {
+                this._queueTest(test, testName, test.group);
+            }, this);
+        }, this);
+
+        // Start running tests.
         this._runNextTest();
     },
 
