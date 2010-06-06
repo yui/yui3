@@ -42,7 +42,6 @@ Performance.ATTRS = {
 
     complete: {
         getter: function (value) {
-            // FIXME: this doesn't seem to be reliable for some reason.
             return value && !!this.get(ACTIVE_SUITE) && !this.get(RUNNING);
         },
         
@@ -76,6 +75,7 @@ Y.extend(Performance, Y.Base, {
     // -- Protected Properties -------------------------------------------------
     _queue    : [],
     _sandboxes: [],
+    _stopped  : false,
 
     // -- Public Methods -------------------------------------------------------
 
@@ -134,7 +134,7 @@ Y.extend(Performance, Y.Base, {
      */
     stop: function () {
         if (this.get(RUNNING)) {
-            this._queue = [];
+            this._stopped = true;
             this.fire(EVT_STOP);
             this.fire(EVT_END);
         }
@@ -148,10 +148,15 @@ Y.extend(Performance, Y.Base, {
             sandbox.destroy();
         }
 
-        this._queue = []; // just to be safe
-        this._set(COMPLETE, true);
-        this.fire(EVT_FINISH);
-        this.fire(EVT_END);
+        this._queue = [];
+
+        if (!this._stopped) {
+            this._set(COMPLETE, true);
+            this.fire(EVT_FINISH);
+            this.fire(EVT_END);
+        }
+
+        this._stopped = false;
     },
 
     _queueTest: function (test, name, group) {
@@ -224,7 +229,7 @@ Y.extend(Performance, Y.Base, {
 
         // If no pending iteration was passed in and the queue was empty, we're
         // done running tests.
-        if (!iteration) {
+        if (!iteration || this._stopped) {
             this._finish();
             return;
         }
