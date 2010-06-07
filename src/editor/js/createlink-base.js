@@ -44,15 +44,22 @@
         * @return {Node} Node instance of the item touched by this command.
         */
         createlink: function(cmd) {
-            var inst = this.get('host').getInstance(), out, a,
+            var inst = this.get('host').getInstance(), out, a, sel,
                 url = prompt(CreateLinkBase.STRINGS.PROMPT, CreateLinkBase.STRINGS.DEFAULT);
 
             if (url) {
                 Y.log('Adding link: ' + url, 'info', 'createLinkBase');
                 this.get('host')._execCommand(cmd, url);
-                out = (new inst.Selection()).getSelected();
-                a = out.item(0).one('a');
-                out.item(0).replace(a);
+                sel = new inst.Selection();
+                out = sel.getSelected();
+                if (!sel.isCollapsed && out.size()) {
+                    //We have a selection
+                    a = out.item(0).one('a');
+                    out.item(0).replace(a);
+                } else {
+                    //No selection, insert a new node..
+                    this.get('host').execCommand('inserthtml', '<a href="' + url + '">' + url + '</a>');
+                }
             }
             return a;
         }

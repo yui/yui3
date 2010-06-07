@@ -108,18 +108,21 @@
 
 <div id="stub">
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
 <ul>
     <li style="font-family: courier new">Item #1</li>
     <li>Item #1</li>
     <li>Item #1</li>
 </ul>
+<div><hr>This is some loose test.</div>
 <ol>
     <li class="davglass" style="font-family: courier new">Item #1</li>
     <li>Item #1</li>
-    <li>Item #1</li>
+    <li><a href="http://yuilibrary.com/">Item #1</a></li>
 </ol>
 <p>This is <span style="font-family: Courier New">another</span> test.</p>
+This is some more loose test.
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 <style>
 del {
@@ -134,7 +137,7 @@ del {
 </div>
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
-<script type="text/javascript" src="http://yui.yahooapis.com/3.1.0pr1/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/3.1.0/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
 
 <script type="text/javascript" src="js/editor-base.js?bust=<?php echo(mktime()); ?>"></script>
@@ -251,7 +254,6 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             
             var fname = e.fontFamily,
             size = e.fontSize;
-
             f_options.item(0).set('selected', true);
             f_options.each(function(v) {
                 var val = v.get('value').toLowerCase();
@@ -300,7 +302,8 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         }
         
     });
-    editor.plug(Y.Plugin.EditorLists);
+    //Disabled for IE testing..
+    //editor.plug(Y.Plugin.EditorLists);
     editor.plug(Y.Plugin.EditorTab);
     editor.on('frame:ready', function() {
         Y.log('frame:ready, set content', 'info', 'editor');
