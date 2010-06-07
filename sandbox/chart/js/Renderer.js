@@ -89,6 +89,7 @@ Renderer.ATTRS = {
 		setter: function(val)
 		{
 			this._styles = this._setStyles(val);
+		    this.callRender();
 			return this._styles;
 		},
 		
@@ -154,14 +155,14 @@ Y.extend(Renderer, Y.Base, {
 	 * @private
 	 * Hash of values that indicates which properties need to be updated.
 	 */
-	_renderFlags: {},
+	_renderFlags: null,
 	
 	/**
 	 * @private
 	 * Hash of values that indicates which properties need to be updated
 	 * on the following render cycle.
 	 */
-	_laterFlags: {},
+	_laterFlags: null,
 	
 	/**
 	 * @private
@@ -178,8 +179,17 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	_setStyles: function(newstyles)
 	{
-		var styles = this.get("styles");
-		return this._mergeStyles(newstyles, styles);
+		var styles = this.get("styles"),
+            k;
+        for(k in newstyles)
+        {
+            if(newstyles.hasOwnProperty(k))
+            {
+                this.setFlag(k);
+            }
+        }
+        this.setFlag("styles");
+        return this._mergeStyles(newstyles, styles);
 	},
 
 	/**
@@ -252,7 +262,11 @@ Y.extend(Renderer, Y.Base, {
 		if(!this._hasFlag)
 		{
 			this._hasFlag = true;
-		}
+        }
+        if(!this._renderFlags)
+        {
+            this._renderFlags = {};
+        }
 		this._renderFlags[value] = true;
 	},
 	
@@ -266,6 +280,10 @@ Y.extend(Renderer, Y.Base, {
 		{
 			this._hasLaterFlag = true;
 		}
+        if(!this._laterFlags)
+        {
+            this._laterFlags = {};
+        }
 		this._laterFlags[value] = true;
 	},
 

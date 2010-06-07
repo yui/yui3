@@ -8,22 +8,11 @@ function RightAxisLayout(config)
 
 RightAxisLayout.ATTRS = {
     axisRenderer: {
-        lazyAdd: false,
-
-        getter: function()
-        {
-            return this._axisRenderer;
-        },
-        setter: function(val)
-        {
-            this._axisRenderer = val;
-            return val;
-        }
+        value: null
     }
 };
 
 Y.extend(RightAxisLayout, Y.Base, {
-    _axisRenderer: null,
 
     setTickOffsets: function()
     {
@@ -35,7 +24,6 @@ Y.extend(RightAxisLayout, Y.Base, {
         ar.set("topTickOffset",  0);
         ar.set("bottomTickOffset",  0);
         ar.set("maxTickLength", tickLength);
-        
         switch(display)
         {
             case "inside" :
@@ -73,7 +61,7 @@ Y.extend(RightAxisLayout, Y.Base, {
             majorTicks = style.majorTicks,
             tickLength = majorTicks.length,
             display = majorTicks.display,
-            pt = {x:0, y:padding.top};
+            pt = {x:padding.left, y:padding.top};
         if(display === "inside")
         {
             pt.x += tickLength;
@@ -98,48 +86,66 @@ Y.extend(RightAxisLayout, Y.Base, {
     {
         var ar = this.get("axisRenderer"),
             style = ar.get("styles").label,
-            leftOffset = 0,
-            topOffset = 0,
-            rot =  style.rotation,
+            leftOffset = pt.x,
+            topOffset = pt.y,
+            rot =  Math.min(Math.max(style.rotation, -90), 90),
             absRot = Math.abs(rot),
             radCon = Math.PI/180,
-            sinRadians = Math.sin(absRot * radCon),
-            cosRadians = Math.cos(absRot * radCon);
-            rot = Math.min(90, rot);
-            rot = Math.max(-90, rot);
+            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
+            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11;
+        if(Y.UA.ie)
+        {
+            label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=0)";
+            if(rot === 0)
+            {
+                topOffset -= label.offsetHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                topOffset -= label.offsetWidth * 0.5;
+            }
+            else if(rot > 0)
+            {
+                topOffset -= (cosRadians * (label.offsetHeight * 0.5));
+            }
+            else
+            {
+                topOffset -= (sinRadians * label.offsetWidth) +  (cosRadians * (label.offsetHeight * 0.5));
+            }
+            
+            label.style.left = leftOffset + "px";
+            label.style.top = topOffset + "px";
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            return;
+        }
         if(rot === 0)
         {
-            topOffset = label.offsetHeight * 0.5;
-            label.style.left = pt.x + "px";
-            label.style.top =  (pt.y - topOffset) + "px";
+            topOffset -= label.offsetHeight * 0.5;
         }
         else if(rot === 90)
         {
-            leftOffset = label.offsetHeight;
-            topOffset = label.offsetWidth * 0.5;
-            label.style.left = (pt.x + leftOffset) + "px";
-            label.style.top =  (pt.y - topOffset) + "px";
+            leftOffset += label.offsetHeight;
+            topOffset -= label.offsetWidth * 0.5;
         }
         else if(rot === -90)
         {
-            topOffset = label.offsetWidth * 0.5;
-            label.style.left = pt.x + "px";
-            label.style.top = (pt.y + topOffset) + "px";
+            topOffset += label.offsetWidth * 0.5;
         }
         else if(rot < 0)
         {
-            topOffset = (cosRadians * (label.offsetHeight * 0.6)); 
-            label.style.left = pt.x + "px";
-            label.style.top = (pt.y - topOffset) + "px";
+            topOffset -= (cosRadians * (label.offsetHeight * 0.6)); 
         }
         else
         {
-            topOffset = cosRadians * (label.offsetHeight * 0.6);
-            leftOffset = sinRadians * label.offsetHeight;
-            label.style.left = (pt.x + leftOffset) + "px";
-            label.style.top = (pt.y - topOffset) + "px";
-            
+            topOffset -= cosRadians * (label.offsetHeight * 0.6);
+            leftOffset += sinRadians * label.offsetHeight;
         }
+        label.style.left = leftOffset + "px";
+        label.style.top = topOffset + "px";
         label.style.MozTransformOrigin =  "0 0";
         label.style.MozTransform = "rotate(" + rot + "deg)";
         label.style.webkitTransformOrigin = "0 0";
@@ -148,8 +154,7 @@ Y.extend(RightAxisLayout, Y.Base, {
 
     offsetNodeForTick: function(node)
     {
-        var offset,
-            ar = this.get("axisRenderer"),
+        var ar = this.get("axisRenderer"),
             majorTicks = ar.get("styles").majorTicks,
             tickLength = majorTicks.length,
             display = majorTicks.display;
