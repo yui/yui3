@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: event   available.js  (YUI Library)</title>
+	<title>API: event   event-facade-dom-touch.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_event.html" title="event">event</a>
                 
-                 &gt; available.js (source view) 
+                 &gt; event-facade-dom-touch.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -47,52 +47,66 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * DOM event listener abstraction layer</span>
-<span class="cm"> * @module event</span>
-<span class="cm"> * @submodule event-base</span>
-<span class="cm"> */</span>
+                        <div class="highlight"><pre><span class="kd">var</span> <span class="nx">SCALE</span> <span class="o">=</span> <span class="s2">&quot;scale&quot;</span><span class="p">,</span>
+    <span class="nx">ROTATION</span> <span class="o">=</span> <span class="s2">&quot;rotation&quot;</span><span class="p">;</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Executes the callback as soon as the specified element </span>
-<span class="cm"> * is detected in the DOM.</span>
-<span class="cm"> * @event available</span>
-<span class="cm"> * @param type {string} &#39;available&#39;</span>
-<span class="cm"> * @param fn {function} the callback function to execute.</span>
-<span class="cm"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
-<span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
-<span class="cm"> * These arguments will be added after the event object.</span>
-<span class="cm"> * @return {EventHandle} the detach handle</span>
-<span class="cm"> * @for YUI</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">available</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="o">?</span>  <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="p">[];</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">onAvailable</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+<span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_touch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span><span class="nx">l</span><span class="p">;</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Calling _touch() with e = &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">touches</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">touches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found e.touches. Replicated on facade&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">targetTouches</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// TODO: Should we re-use Touch instances from the e.touches loop?</span>
+            <span class="c1">// Are we breaking things if instance equality is busted? (e.touches[n] !== e.targetTouches[m])</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found e.tagetTouches. Replicated on facade&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTouches</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">currentTouches</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTouches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">currentTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found e.currentTouches. Replicated on facade&quot;</span><span class="p">);</span>        
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">SCALE</span> <span class="k">in</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">scale</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">scale</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">ROTATION</span> <span class="k">in</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">rotation</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">rotation</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">};</span>
 
-<span class="cm">/**</span>
-<span class="cm"> * Executes the callback as soon as the specified element </span>
-<span class="cm"> * is detected in the DOM with a nextSibling property</span>
-<span class="cm"> * (indicating that the element&#39;s children are available)</span>
-<span class="cm"> * @event contentready</span>
-<span class="cm"> * @param type {string} &#39;contentready&#39;</span>
-<span class="cm"> * @param fn {function} the callback function to execute.</span>
-<span class="cm"> * @param el {string|HTMLElement|collection} the element(s) to attach</span>
-<span class="cm"> * @param context optional argument that specifies what &#39;this&#39; refers to.</span>
-<span class="cm"> * @param args* 0..n additional arguments to pass on to the callback function.</span>
-<span class="cm"> * These arguments will be added after the event object.</span>
-<span class="cm"> * @return {EventHandle} the detach handle</span>
-<span class="cm"> * @for YUI</span>
-<span class="cm"> */</span>
-<span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">evt</span><span class="p">.</span><span class="nx">plugins</span><span class="p">.</span><span class="nx">contentready</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="nx">on</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="o">?</span>  <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="kc">true</span><span class="p">)</span> <span class="o">:</span> <span class="p">[];</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">.</span><span class="nx">onContentReady</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">o</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">};</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">DOM_EVENTS</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">touchstart</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">touchmove</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">touchend</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">touchcancel</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">gesturestart</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">gesturechange</span><span class="o">:</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">gestureend</span><span class="o">:</span><span class="mi">1</span>
+    <span class="p">});</span>
+<span class="p">}</span>
 </pre></div>
 
                     </div>
@@ -175,10 +189,10 @@
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class="selected"><a href="available.js.html" title="available.js">available.js</a></li>
+                                <li class=""><a href="available.js.html" title="available.js">available.js</a></li>
                                 <li class=""><a href="delegate.js.html" title="delegate.js">delegate.js</a></li>
                                 <li class=""><a href="event-dom.js.html" title="event-dom.js">event-dom.js</a></li>
-                                <li class=""><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
+                                <li class="selected"><a href="event-facade-dom-touch.js.html" title="event-facade-dom-touch.js">event-facade-dom-touch.js</a></li>
                                 <li class=""><a href="event-facade-dom.js.html" title="event-facade-dom.js">event-facade-dom.js</a></li>
                                 <li class=""><a href="event-ready-base.js.html" title="event-ready-base.js">event-ready-base.js</a></li>
                                 <li class=""><a href="event-ready.js.html" title="event-ready.js">event-ready.js</a></li>
