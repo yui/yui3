@@ -97,7 +97,6 @@ Y_Node.DOM_EVENTS = {
     beforeunload: 1,
     blur: 1,
     change: 1,
-    changedTouches: 1, // iphone
     click: 1,
     close: 1,
     command: 1,
@@ -113,7 +112,6 @@ Y_Node.DOM_EVENTS = {
     drop: 1,
     error: 1,
     focus: 1,
-    identifier: 1, // iphone
     key: 1,
     keydown: 1,
     keypress: 1,
@@ -131,14 +129,10 @@ Y_Node.DOM_EVENTS = {
     mousewheel: 1,
     reset: 1,
     resize: 1,
-    rotation: 1, // iphone
-    scale: 1, // iphone
     select: 1,
     submit: 1,
     scroll: 1,
-    targetTouches: 1, // iphone
     textInput: 1,
-    touches: 1, // iphone
     unload: 1
 };
 
