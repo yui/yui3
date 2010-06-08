@@ -318,6 +318,10 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
         this.preventDefault();
     };
 
+    if (this._touch) {
+        this._touch(e, currentTarget, wrapper);
+    }
+
 };
 
 })();

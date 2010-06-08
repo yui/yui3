@@ -52,7 +52,10 @@ AxisRenderer.ATTRS = {
 	 * <code>AxisRenderer</code>.
 	 */
 	axis: {
-		getter: function()
+	
+    
+    /*
+        getter: function()
 		{ 
 			return this._axis;
 		},
@@ -62,13 +65,21 @@ AxisRenderer.ATTRS = {
 		},
 		setter: function(value)
 		{
-			this._axis = value;			
+		    //clean up
+            this._axis = value;			
 			this._axis.on("axisReady", Y.bind(this.axisChangeHandler, this));
 			this._axis.on("dataChange", Y.bind(this.axisChangeHandler, this));
 			this.setFlag("axisDataChange");
 			return value;
 		},
 		lazyAdd: false
+    */
+        value: null,
+
+		validator: function(value)
+		{
+			return value !== this.get("axis");
+		}
     },
 
     /**
@@ -124,6 +135,7 @@ AxisRenderer.ATTRS = {
      * line in relation to the right side of the axis.
      */
     rightTickOffset: {
+     /*
         getter: function()
         {
             return this._rightTickOffset;
@@ -133,6 +145,10 @@ AxisRenderer.ATTRS = {
             this._rightTickOffset = val;
             return val;
         }
+        */
+        lazyAdd: false,
+
+        value: 0
     },
 
     maxTickLength: {
@@ -151,7 +167,21 @@ AxisRenderer.ATTRS = {
 Y.extend(AxisRenderer, Y.Renderer, {
 	axisChangeHandler: function(e)
     {
+        var axis = e.newVal,
+            old = e.prevVal;
+        if(old)
+        {
+            //remove event listeners
+        }
+        axis.on("axisReady", Y.bind(this.axisChangeHandler, this));
+        axis.on("dataChange", Y.bind(this.axisChangeHandler, this));
         this.setFlag("data");
+    },
+
+    initializer: function()
+    {
+        //AxisRenderer.superclass.initializer.apply(this, arguments);
+        this.on("axisChanged", this.axisChangeHandler);
         this.callRender();
     },
 
@@ -179,14 +209,15 @@ Y.extend(AxisRenderer, Y.Renderer, {
     _setCanvas: function()
     {
         var p = this.get("parent"),
-            n = document.createElement("div");
+            n = document.createElement("div"),
+            style = n.style;
         p.appendChild(n);
-        n.style.position = "absolute";
-        n.style.display = "block";
-        n.style.top = p.style.top;
-        n.style.left = p.style.left;
-        n.style.width = p.offsetWidth + "px";
-        n.style.minHeight = p.offsetHeight + "px";
+        style.position = "absolute";
+        style.display = "block";
+        style.top = p.style.top;
+        style.left = p.style.left;
+        style.width = p.offsetWidth + "px";
+        style.minHeight = p.offsetHeight + "px";
         this._node = n;
         this._graphic = new Y.Graphic();
         this._graphic.render(this._node);
@@ -219,16 +250,16 @@ Y.extend(AxisRenderer, Y.Renderer, {
         {
             this.calculateSizeByTickLength = this.get("styles").calculateSizeByTickLength;
         }
-        if(this.checkFlag("dataFormat") || 
-            this.checkFlag("majorTicks") || 
-            positionChange || 
-            this.checkFlag("padding") || 
-            this.checkFlag("data") || 
-            this.checkFlag("resize") ||
-            this.checkFlag("majorUnit") ||
-            this.checkFlag("label") ||
-            this.checkFlag("styles") ||
-            this.checkFlag("calculateSizeByTickLength")) 
+        if(positionChange || 
+            this.checkFlags({dataFormat:true,
+                         majorTicks:true, 
+                         padding:true, 
+                         data:true, 
+                         resize:true,
+                         majorUnit:true,
+                         label:true,
+                         styles:true,
+                         calculateSizeByTickLength:true})) 
         {
             this.drawAxis();
         }
@@ -289,8 +320,8 @@ Y.extend(AxisRenderer, Y.Renderer, {
             position,
             lineStart,
             label,
+            labels,
             graphic = this.get("graphic");
-        
         graphic.clear();
 		this._layout.setTickOffsets();
         layoutLength = this.getLength();
@@ -307,6 +338,7 @@ Y.extend(AxisRenderer, Y.Renderer, {
             return;
         }
         majorUnitDistance = layoutLength/(len - 1);
+        this._createLabelCache();
         for(; i < len; ++i)
 	    {
             if(drawTicks) 
@@ -318,11 +350,16 @@ Y.extend(AxisRenderer, Y.Renderer, {
             this._layout.positionLabel(label, this._layout.getLabelPoint(tickPoint));
             tickPoint = this.getNextPoint(tickPoint, majorUnitDistance);
         }
+        this._clearLabelCache();
         if(this._calculateSizeByTickLength)
         {
             this._layout.offsetNodeForTick(this._node);
         }
     },
+
+    _labels: null,
+
+    _labelCache: null,
 
     /**
      * @private
@@ -330,16 +367,59 @@ Y.extend(AxisRenderer, Y.Renderer, {
      */
     getLabel: function(pt, txt, pos)
     {
-        var label = document.createElement("div"),
-            textNode = document.createTextNode(txt);
-        label.nodeValue = txt;
+        var label,
+            cache = this._labelCache;
+        if(cache.length > 0)
+        {
+            label = cache.shift();
+        }
+        else
+        {
+            label = document.createElement("span");
+        }
+        label.innerHTML = txt;
         label.style.display = "block";
         label.style.position = "absolute";
         this._node.appendChild(label);
-        label.appendChild(textNode);
+        this._labels.push(label);
         return label;
     },   
     
+    /**
+     * @private
+     * Creates a cache of labels for reuse.
+     */
+    _createLabelCache: function()
+    {
+        if(this._labels)
+        {
+            this._labelCache = this._labels.concat();
+        }
+        else
+        {
+            this._labelCache = [];
+        }
+        this._labels = [];
+    },
+    
+    /**
+     * @private
+     * Removes unused labels from the label cache
+     */
+    _clearLabelCache: function()
+    {
+        var len = this._labelCache.length,
+            i = 0,
+            label,
+            labelCache;
+        for(; i < len; ++i)
+        {
+            label = labelCache[i];
+            label.parentNode.removeChild(label);
+        }
+        this._labelCache = [];
+    },
+
     /**
      * @private
      * Indicates how to include tick length in the size calculation of an
@@ -471,12 +551,12 @@ Y.extend(AxisRenderer, Y.Renderer, {
     /**
      * @private 
      */
-    _topTickOffset: 0,
+    _rightTickOffset: 0,
 
     /**
      * @private 
      */
-    _rightTickOffset: 0,
+    _topTickOffset: 0,
 
     /**
      * @private 

@@ -101,13 +101,50 @@ Y.extend(LeftAxisLayout, Y.Base, {
     {
         var ar = this.get("axisRenderer"),
             style = ar.get("styles").label,
-            leftOffset = 0,
-            topOffset = 0,
+            leftOffset = pt.x,
+            topOffset = pt.y,
             rot =  Math.min(90, Math.max(-90, style.rotation)),
             absRot = Math.abs(rot),
             radCon = Math.PI/180,
-            sinRadians = Math.sin(absRot * radCon),
-            cosRadians = Math.cos(absRot * radCon);
+            sinRadians = parseFloat(parseFloat(Math.sin(absRot * radCon)).toFixed(8)),
+            cosRadians = parseFloat(parseFloat(Math.cos(absRot * radCon)).toFixed(8)),
+            m11 = cosRadians,
+            m12 = rot > 0 ? -sinRadians : sinRadians,
+            m21 = -m12,
+            m22 = m11;
+        if(Y.UA.ie)
+        {
+            label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=0)";
+            if(rot === 0)
+            {
+                leftOffset -= label.offsetWidth;
+                topOffset -= label.offsetHeight * 0.5;
+            }
+            else if(absRot === 90)
+            {
+                leftOffset -= label.offsetHeight;
+                topOffset -= label.offsetWidth * 0.5;
+            }
+            else if(rot === -90)
+            {
+                leftOffset -= label.offsetHeight;
+                topOffset -= label.offsetWidth * 0.5;
+            }
+            else if(rot > 0)
+            {
+                leftOffset -= (cosRadians * label.offsetWidth) + (label.offsetHeight * rot/90);
+                topOffset -= (sinRadians * label.offsetWidth) + (cosRadians * (label.offsetHeight * 0.5));
+            }
+            else
+            {
+                leftOffset -= (cosRadians * label.offsetWidth) + (absRot/90 * label.offsetHeight);
+                topOffset -= cosRadians * (label.offsetHeight * 0.5);
+            }
+            label.style.left = leftOffset + "px";
+            label.style.top = topOffset + "px";
+            label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            return;
+        }
         if(rot === 0)
         {
             leftOffset = label.offsetWidth;
@@ -153,8 +190,7 @@ Y.extend(LeftAxisLayout, Y.Base, {
 
     offsetNodeForTick: function(node)
     {
-        var offset,
-            ar = this.get("axisRenderer"),
+        var ar = this.get("axisRenderer"),
             majorTicks = ar.get("styles").majorTicks,
             tickLength = majorTicks.length,
             display = majorTicks.display;

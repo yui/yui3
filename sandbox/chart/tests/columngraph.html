@@ -8,8 +8,8 @@
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
 </style>
 <!-- BEGIN EXAMPLE CODE -->	
-    <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script>
+	<!--script type="text/javascript" src="../../../build/yui/yui.js"></script-->
     <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
     <script type="text/javascript" src="../build/infographics/infographics.js"></script>
 		
@@ -17,13 +17,16 @@
 <body class="yui3-skin-sam">
 		
 <div>
-        <div id="chart" style="display:block;width:800px;height:400px;background-color:#ffffff;"></div>
+        <input type="text" name="xLabelRotationField" id="xLabelRotationField" />
+        <button id="rotationbutton" type="button">Update Axes Label Rotation</button>
+        <input type="text" name="yLabelRotationField" id="yLabelRotationField" />
+        <div id="chart" style="display:block;width:800px;height:400px"></div>
 		<div id="axis" style="display:block;width:800px;min-height:20px"></div>
-        <!--div id="vertaxis" style="margin-left:50px;display:block;min-width:20px;height:800px;"></div-->
+        <div id="vertaxis" style="margin-left:50px;display:block;min-width:20px;height:500px;"></div>
         
         <script>
 
-			YUI().use('datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphics', 'infographics', function (Y)
+			YUI({filter:"debug", debugInclude:"attribute"}).use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'slider', 'graphics', 'infographics', function (Y)
 				{
 					// Create data 
 					var mydata = {
@@ -81,13 +84,13 @@
 							count:5
 						},
                         padding:{left:50, right:50},
-                        position:"bottom"
+                        position:"top"
 					};	
                     
 					var leftaxisstyles = {
 						label:{
 							color:"#BDD7EB",
-							rotation:25,
+							rotation:0,
 							margin:{top:5},
 						},
 						dataFormat:{
@@ -107,7 +110,7 @@
 						{
 							count:5
 						},
-                        position:"right"
+                        position:"left"
 					};	
                     var dataProvider = mydata;
                     var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
@@ -145,7 +148,13 @@
                                                                                         ]});
 
                     var axisrenderer = new Y.AxisRenderer({parent:"axis", axis:timeaxis, styles:bottomaxisstyles});
-                    //var vaxis = new Y.AxisRenderer({parent:"vertaxis", axis:numericaxis, styles:leftaxisstyles});
+                    function updateAxisLabelRotation()
+                    {
+                        axisrenderer.set("styles", {label:{rotation:document.getElementById("xLabelRotationField").value}});
+                        vaxis.set("styles", {label:{rotation:document.getElementById("yLabelRotationField").value}});
+                    }
+                    Y.on("click", updateAxisLabelRotation, "#rotationbutton");
+                    var vaxis = new Y.AxisRenderer({parent:"vertaxis", axis:numericaxis, styles:leftaxisstyles});
                 });
 </script>
 <!-- END EXAMPLE CODE -->
