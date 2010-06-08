@@ -180,7 +180,7 @@ var Y = YUI().use('event-base', 'history', 'json-stringify', 'node-base',
     });
 
     // Handle test stop/finish.
-    perf.on('finish', function () {
+    perf.on('end', function () {
         Y.all([snap, start]).set('disabled', false);
         stop.set('disabled', true);
     });

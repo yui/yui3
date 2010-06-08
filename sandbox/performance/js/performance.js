@@ -42,7 +42,6 @@ Performance.ATTRS = {
 
     complete: {
         getter: function (value) {
-            // FIXME: this doesn't seem to be reliable for some reason.
             return value && !!this.get(ACTIVE_SUITE) && !this.get(RUNNING);
         },
         
@@ -76,6 +75,7 @@ Y.extend(Performance, Y.Base, {
     // -- Protected Properties -------------------------------------------------
     _queue    : [],
     _sandboxes: [],
+    _stopped  : false,
 
     // -- Public Methods -------------------------------------------------------
 
@@ -98,6 +98,8 @@ Y.extend(Performance, Y.Base, {
      * @param {String} suiteName test suite to run
      */
     start: function (suiteName) {
+        var tests = {};
+
         if (this.get(RUNNING)) {
             Y.log("Can't start tests: tests are already running.", 'warn', 'performance');
             return;
@@ -117,13 +119,27 @@ Y.extend(Performance, Y.Base, {
 
         this.fire(EVT_START, {suite: suite});
 
-        // Queue up all the tests from each group.
+        // Queue up all the tests from each group, interleaving them so that
+        // we run all tests with the same name from all groups before moving on
+        // to the next test.
         Obj.each(suite.groups, function (group) {
             Obj.each(group.tests, function (test, testName) {
-                this._queueTest(test, testName, group);
+                if (!tests[testName]) {
+                    tests[testName] = [];
+                }
+
+                test.group = group;
+                tests[testName].push(test);
             }, this);
         }, this);
 
+        Obj.each(tests, function (tests, testName) {
+            Y.Array.each(tests, function (test) {
+                this._queueTest(test, testName, test.group);
+            }, this);
+        }, this);
+
+        // Start running tests.
         this._runNextTest();
     },
 
@@ -134,7 +150,7 @@ Y.extend(Performance, Y.Base, {
      */
     stop: function () {
         if (this.get(RUNNING)) {
-            this._queue = [];
+            this._stopped = true;
             this.fire(EVT_STOP);
             this.fire(EVT_END);
         }
@@ -148,10 +164,15 @@ Y.extend(Performance, Y.Base, {
             sandbox.destroy();
         }
 
-        this._queue = []; // just to be safe
-        this._set(COMPLETE, true);
-        this.fire(EVT_FINISH);
-        this.fire(EVT_END);
+        this._queue = [];
+
+        if (!this._stopped) {
+            this._set(COMPLETE, true);
+            this.fire(EVT_FINISH);
+            this.fire(EVT_END);
+        }
+
+        this._stopped = false;
     },
 
     _queueTest: function (test, name, group) {
@@ -224,7 +245,7 @@ Y.extend(Performance, Y.Base, {
 
         // If no pending iteration was passed in and the queue was empty, we're
         // done running tests.
-        if (!iteration) {
+        if (!iteration || this._stopped) {
             this._finish();
             return;
         }
