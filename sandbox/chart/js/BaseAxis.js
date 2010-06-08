@@ -231,6 +231,11 @@ BaseAxis.ATTRS = {
 Y.extend(BaseAxis, Y.Base,
 {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuibaseaxis",
+	
+    /**
 	 * Creates unique id for class instance.
 	 *
 	 * @private
@@ -503,8 +508,9 @@ Y.extend(BaseAxis, Y.Base,
 			event = {},
 			keysAdded = event.keysAdded,
 			keysRemoved = event.keysRemoved,
-			keys = this._keys;
-		for(var i in keys)
+			keys = this._keys,
+            i;
+		for(i in keys)
 		{
 			if(keys.hasOwnProperty(i))
 			{
@@ -536,6 +542,34 @@ Y.extend(BaseAxis, Y.Base,
 		event.keysAdded = keysAdded;
 		event.keysRemoved = keysRemoved;
 		this.fire("axisUpdate", event);
+    },
+
+    getTotalMajorUnits: function(majorUnit, len)
+    {
+        var units;
+        if(majorUnit.determinant === "count") 
+        {
+            units = majorUnit.count;
+        }
+        else if(majorUnit.determinant === "distance") 
+        {
+            units = (len/majorUnit.distance) + 1;
+        }
+        
+        return Math.min(units, this._data.length);
+    },
+
+    getLabelAtPosition:function(pos, len, format)
+    {
+        var min = this.get("minimum"),
+            max = this.get("maximum"),
+            val = (pos/len * (max - min)) + min;
+        return this.getFormattedLabel(val, format);
+    },
+
+    getFormattedLabel: function(val, format)
+    {
+        return val;
     }
 });
 Y.BaseAxis = BaseAxis;

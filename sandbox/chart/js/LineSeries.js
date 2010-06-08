@@ -19,34 +19,9 @@ LineSeries.ATTRS = {
 
 Y.extend(LineSeries, Y.CartesianSeries, {
 	/**
-	 * @private
-	 * Default styles for the series.
+	 * Constant used to generate unique id.
 	 */
-	_styles: {
-		color: "#000000",
-		alpha: 1,
-		weight: 1,
-		marker: {
-			fillColor: "#000000",
-			alpha: 1,
-			weight: 1
-		},
-		showMarkers: false,
-		showLines: true,
-		lineType:"solid", 
-		dashLength:10, 
-		gapSpace:10, 
-		connectDiscontinuousPoint:true, 
-		discontinuousType:"dashed", 
-		discontinuousDashLength:10, 
-		discontinuousGapSpace:10,
-		padding:{
-			top: 0,
-			left: 0,
-			right: 0,
-			bottom: 0
-		}
-	},
+	GUID: "yuilineseries",
 
 	/**
 	 * @private (protected)
@@ -85,7 +60,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		}
 		if(styles.showMarkers) 
 		{
-	//		this.drawMarkers();
+			this.drawMarkers();
 		}
 	},
 
@@ -94,11 +69,11 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 	 */
 	drawLines: function()
 	{
-		if(this._xcoords.length < 1) 
+        if(this._xcoords.length < 1) 
 		{
 			return;
 		}
-		var	parentDiv = this.get("parent"),
+        var	parentDiv = this.get("parent"),
             ht = parentDiv.offsetHeight,
             xcoords = this._xcoords,
 			ycoords = this._ycoords,
@@ -173,12 +148,8 @@ Y.extend(LineSeries, Y.CartesianSeries, {
         graphic.lineTo(0, ycoords[0]);
         graphic.endFill();
 	},
-
-	drawMarkers: function()
-	{
- 	},
-
-	/**
+	
+    /**
 	 * Draws a dashed line between two points.
 	 * 
 	 * @param xStart	The x position of the start of the line
@@ -226,7 +197,38 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		}
 		
 		graphic.moveTo(xEnd, yEnd);
-	}
+	},
+
+	_getDefaultStyles: function()
+    {
+        return {
+            color: "#000000",
+            alpha: 1,
+            weight: 1,
+            marker: {
+                fillColor: "#000000",
+                alpha: 1,
+                weight: 1,
+                width: 6,
+                height: 6
+            },
+            showMarkers: false,
+            showLines: true,
+            lineType:"solid", 
+            dashLength:10, 
+            gapSpace:10, 
+            connectDiscontinuousPoint:true, 
+            discontinuousType:"dashed", 
+            discontinuousDashLength:10, 
+            discontinuousGapSpace:10,
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
 });
 
 Y.LineSeries = LineSeries;

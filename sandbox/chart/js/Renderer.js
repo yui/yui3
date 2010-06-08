@@ -80,16 +80,16 @@ Renderer.ATTRS = {
 	{
 		value: {},
 
-		lazyAdd: false,
-
 		getter: function()
 		{
+            this._styles = this._styles || this._getDefaultStyles();
 			return this._styles;
 		},
 			   
 		setter: function(val)
 		{
 			this._styles = this._setStyles(val);
+		    this.callRender();
 			return this._styles;
 		},
 		
@@ -102,6 +102,11 @@ Renderer.ATTRS = {
 
 Y.extend(Renderer, Y.Base, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuirenderer",
+
+    /**
 	 * Creates unique id for class instance.
 	 *
 	 * @private
@@ -150,14 +155,14 @@ Y.extend(Renderer, Y.Base, {
 	 * @private
 	 * Hash of values that indicates which properties need to be updated.
 	 */
-	_renderFlags: {},
+	_renderFlags: null,
 	
 	/**
 	 * @private
 	 * Hash of values that indicates which properties need to be updated
 	 * on the following render cycle.
 	 */
-	_laterFlags: {},
+	_laterFlags: null,
 	
 	/**
 	 * @private
@@ -174,8 +179,17 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	_setStyles: function(newstyles)
 	{
-		var styles = this.get("styles") || {};
-		return this._mergeStyles(newstyles, styles);
+		var styles = this.get("styles"),
+            k;
+        for(k in newstyles)
+        {
+            if(newstyles.hasOwnProperty(k))
+            {
+                this.setFlag(k);
+            }
+        }
+        this.setFlag("styles");
+        return this._mergeStyles(newstyles, styles);
 	},
 
 	/**
@@ -248,7 +262,11 @@ Y.extend(Renderer, Y.Base, {
 		if(!this._hasFlag)
 		{
 			this._hasFlag = true;
-		}
+        }
+        if(!this._renderFlags)
+        {
+            this._renderFlags = {};
+        }
 		this._renderFlags[value] = true;
 	},
 	
@@ -262,6 +280,10 @@ Y.extend(Renderer, Y.Base, {
 		{
 			this._hasLaterFlag = true;
 		}
+        if(!this._laterFlags)
+        {
+            this._laterFlags = {};
+        }
 		this._laterFlags[value] = true;
 	},
 
@@ -270,7 +292,9 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	setFlags: function(value)
 	{
-		for(var i = 0; i < value.length; i++)
+        var i = 0,
+            len = value.length;
+		for(; i < len; i++)
 		{
 			this.setFlag(value[i]);
 		}
@@ -281,9 +305,10 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	clearFlags: function()
 	{
+        var i;
 		this._renderFlags = {};
 		this._hasFlag = false;
-		for(var i in this._laterFlags)
+		for(i in this._laterFlags)
 		{
 			if(this._laterFlags.hasOwnProperty(i))
 			{
@@ -308,8 +333,9 @@ Y.extend(Renderer, Y.Base, {
 	 */
 	checkFlags: function(flags)
 	{
-		var hasFlag = false;
-		for(var i in flags)
+		var hasFlag = false,
+            i;
+		for(i in flags)
 		{
 			if(this._renderFlags[i]) 
 			{
@@ -318,7 +344,12 @@ Y.extend(Renderer, Y.Base, {
 			}
 		}
 		return hasFlag;
-	}
+	},
+
+    _getDefaultStyles: function()
+    {
+        return {};
+    }
 });
 
 Y.Renderer = Renderer;

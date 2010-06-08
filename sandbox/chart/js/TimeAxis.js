@@ -42,6 +42,11 @@ TimeAxis.ATTRS =
 
 Y.extend(TimeAxis, Y.BaseAxis, {
 	/**
+	 * Constant used to generate unique id.
+	 */
+	GUID: "yuitimeaxis",
+	
+    /**
 	 * @private
 	 */
 	_dataType: "time",
@@ -95,7 +100,6 @@ Y.extend(TimeAxis, Y.BaseAxis, {
     updateMaxByPosition:function(val, len)
     {
         var range = this._dataMaximum - this._dataMinimum,
-            scaleFactor = len / range,
             pos = (val/len) * range;
             pos += this._dataMinimum;
         this.set("maximum", pos);
@@ -104,7 +108,6 @@ Y.extend(TimeAxis, Y.BaseAxis, {
     updateMinByPosition:function(val, len)
     {
         var range = this._dataMaximum - this._dataMinimum,
-            scaleFactor = len / range,
             pos = (val/len) * range;
             pos += this._dataMinimum;
         this.set("minimum", pos);
@@ -112,17 +115,18 @@ Y.extend(TimeAxis, Y.BaseAxis, {
 
     updateMinAndMaxByPosition: function(minVal, maxVal, len)
     {
-        var range = this._dataMaximum - this._dataMinimum,
-            scaleFactor = len / range,
-            min = minVal / len,
+        var min = minVal / len,
             max = maxVal / len;
         min += this._dataMinimum;
         max += this._dataMaximum;
-        //this.set("minimum", min);
-        //this.set("maximum", max);
         this._setMaximum = this._getNumber(max);
         this._setMinimum = this._getNumber(min);
         this.fire("dataChange");
+    },
+    
+    getFormattedLabel: function(val, format)
+    {
+        return Y.DataType.Date.format(Y.DataType.Date.parse(val), {format:format});
     }
 });
 
