@@ -606,6 +606,11 @@
                 "requires": [
                     "node-base"
                 ]
+            }, 
+            "event-touch": {
+                "requires": [
+                    "node-base"
+                ]
             }
         }, 
         "submodules": {
