@@ -56,7 +56,9 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">QueryString</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;QueryString&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">QueryString</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;QueryString&quot;</span><span class="p">),</span>
+    <span class="nx">stack</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">;</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * Provides Y.QueryString.escape method to be able to override default encoding</span>
@@ -71,8 +73,6 @@
 <span class="cm"> **/</span>
 <span class="nx">QueryString</span><span class="p">.</span><span class="nx">escape</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">;</span>
 
-
-<span class="kd">var</span> <span class="nx">stack</span> <span class="o">=</span> <span class="p">[];</span>
 <span class="cm">/**</span>
 <span class="cm"> * &lt;p&gt;Converts an arbitrary value to a Query String representation.&lt;/p&gt;</span>
 <span class="cm"> *</span>
@@ -85,26 +85,33 @@
 <span class="cm"> * @param name {String} (optional) Name of the current key, for handling children recursively.</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
-<span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">sep</span><span class="p">,</span> <span class="nx">eq</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">sep</span> <span class="o">=</span> <span class="nx">sep</span> <span class="o">||</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">;</span>
-    <span class="nx">eq</span> <span class="o">=</span> <span class="nx">eq</span> <span class="o">||</span> <span class="s2">&quot;=&quot;</span><span class="p">;</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isNull</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="k">typeof</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">begin</span><span class="p">,</span> <span class="nx">end</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
+        <span class="nx">sep</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">sep</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">sep</span> <span class="o">:</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">;</span>
+        <span class="nx">eq</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">eq</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">eq</span> <span class="o">:</span> <span class="s2">&quot;=&quot;</span><span class="p">;</span>
+        <span class="nx">aK</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arrayKey</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arrayKey</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNull</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">obj</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">name</span> <span class="o">?</span> <span class="nx">QueryString</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="o">+</span> <span class="nx">eq</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
     <span class="p">}</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">is</span><span class="p">(</span><span class="s1">&#39;Boolean&#39;</span><span class="p">,</span><span class="nx">obj</span><span class="p">))</span> <span class="nx">obj</span> <span class="o">=</span> <span class="o">+</span><span class="nx">obj</span><span class="p">;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">is</span><span class="p">(</span><span class="s1">&#39;Number&#39;</span><span class="p">,</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="nx">is</span><span class="p">(</span><span class="s2">&quot;String&quot;</span><span class="p">,</span><span class="nx">obj</span><span class="p">))</span> <span class="p">{</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isBoolean</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;[object Boolean]&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">obj</span> <span class="o">=+</span> <span class="nx">obj</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">obj</span><span class="p">))</span> <span class="p">{</span>
         <span class="c1">// Y.log(&quot;Number or string: &quot;+obj);</span>
         <span class="k">return</span> <span class="nx">QueryString</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="o">+</span> <span class="nx">eq</span> <span class="o">+</span> <span class="nx">QueryString</span><span class="p">.</span><span class="nx">escape</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
-    <span class="p">}</span>    
-    
-    <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">obj</span><span class="p">))</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="p">[];</span>
-        <span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="o">+</span><span class="s1">&#39;[]&#39;</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">sep</span><span class="p">,</span> <span class="nx">eq</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">obj</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">s</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">name</span> <span class="o">=</span> <span class="nx">aK</span> <span class="o">?</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;[]&#39;</span> <span class="o">:</span> <span class="nx">name</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">);</span>
         <span class="p">}</span>
+
         <span class="k">return</span> <span class="nx">s</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">sep</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="c1">// now we know it&#39;s an object.</span>
@@ -112,36 +119,33 @@
     <span class="c1">//     typeof obj + (typeof obj === &#39;object&#39; ? &quot; ok&quot; : &quot;ONOES!&quot;)+</span>
     <span class="c1">//     Object.prototype.toString.call(obj)</span>
     <span class="c1">// );</span>
-    
+
     <span class="c1">// Check for cyclical references in nested objects</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="nx">stack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;QueryString.stringify. Cyclical reference&quot;</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">stack</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">===</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&quot;QueryString.stringify. Cyclical reference&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-    
+
     <span class="nx">stack</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span>
-    
-    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="kd">var</span> <span class="nx">begin</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">?</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;[&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-    <span class="kd">var</span> <span class="nx">end</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">?</span> <span class="s1">&#39;]&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">obj</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">begin</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="nx">end</span><span class="p">;</span>
-        <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">sep</span><span class="p">,</span> <span class="nx">eq</span><span class="p">,</span> <span class="nx">n</span><span class="p">));</span>
+    <span class="nx">s</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="nx">begin</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">?</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;[&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="nx">end</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">?</span> <span class="s1">&#39;]&#39;</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">obj</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">n</span> <span class="o">=</span> <span class="nx">begin</span> <span class="o">+</span> <span class="nx">i</span> <span class="o">+</span> <span class="nx">end</span><span class="p">;</span>
+            <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">n</span><span class="p">));</span>
+        <span class="p">}</span>
     <span class="p">}</span>
-    
+
     <span class="nx">stack</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
-    
     <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">sep</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">s</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span><span class="p">)</span> <span class="k">return</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">s</span> <span class="o">&amp;&amp;</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
     <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
 <span class="p">};</span>
-<span class="kd">function</span> <span class="nx">is</span> <span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// Y.log(type === &#39;String&#39; ? &#39;test a string: &quot;&#39;+ obj+&#39;&quot; &#39; +</span>
-    <span class="c1">//     Object.prototype.toString.call(obj) + &quot; &quot; + Y.Lang[&quot;is&quot;+&quot;String&quot;](obj) : &#39;&#39;);</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">[</span><span class="s2">&quot;is&quot;</span><span class="o">+</span><span class="nx">type</span><span class="p">](</span><span class="nx">obj</span><span class="p">)</span>
-        <span class="o">||</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;[object &#39;</span><span class="o">+</span><span class="nx">type</span><span class="o">+</span><span class="s1">&#39;]&#39;</span>
-    <span class="p">);</span>
-<span class="p">}</span>
 </pre></div>
 
                     </div>
