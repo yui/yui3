@@ -1,0 +1,20 @@
+{
+    "autocomplete": {
+        "submodules": {
+            "autocomplete-base": {
+                "requires": [
+                    "base-base",
+                    "node-base",
+                    "value-change"
+                ]
+            },
+
+            "autocomplete-plugin": {
+                "requires": [
+                    "autocomplete-base",
+                    "node-pluginhost"
+                ]
+            }
+        }
+    }
+}
