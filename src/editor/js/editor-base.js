@@ -27,7 +27,8 @@
                 title: EditorBase.STRINGS.title,
                 use: EditorBase.USE,
                 dir: this.get('dir'),
-                extracss: this.get('extracss')
+                extracss: this.get('extracss'),
+                host: this
             }).plug(Y.Plugin.ExecCommand);
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));

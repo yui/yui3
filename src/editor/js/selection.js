@@ -246,6 +246,11 @@
     */
     Y.Selection.ALL = '[style],font[face]';
 
+    /**
+    * The selector to use when looking for block level items.
+    * @static
+    * @property BLOCKS
+    */
     Y.Selection.BLOCKS = 'p,div,ul,ol,table';
     /**
     * The temporary fontname applied to a selection to retrieve their values: yui-tmp
@@ -259,6 +264,10 @@
     * @property DEFAULT_TAG
     */
     Y.Selection.DEFAULT_TAG = 'span';
+
+    Y.Selection.CURID = 'yui-cursor';
+
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '">&nbsp;</span>';
 
     Y.Selection.prototype = {
         /**
@@ -549,7 +558,7 @@
             return this;
         },
         /**
-        * Put a placeholder in the DOM at the current cursor position: NOT FINISHED
+        * Put a placeholder in the DOM at the current cursor position.
         * @method setCursor
         * @return {Node}
         */
@@ -557,12 +566,25 @@
             return this.insertContent(Y.Selection.CURSOR);
         },
         /**
-        * Get the placeholder in the DOM at the current cursor position: NOT FINISHED
+        * Get the placeholder in the DOM at the current cursor position.
         * @method getCursor
         * @return {Node}
         */
         getCursor: function() {
             return Y.one('#' + Y.Selection.CURID);
+        },
+        /**
+        * Gets a stored cursor and focuses it for editing, must be called sometime after setCursor
+        * @method focusCursor
+        * @return {Node}
+        */
+        focusCursor: function() {
+            var cur = this.getCursor();
+            if (cur) {
+                cur.set('id', '');
+                cur.set('innerHTML', ' ');
+                this.selectNode(cur);
+            }
         },
         /**
         * Generic toString for logging.
