@@ -11,7 +11,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.05.12-19-08',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.06.02-18-59',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '3',
@@ -42,7 +42,8 @@ groups.gallery = {
     combine:   true,
     root:      GALLERY_ROOT,
     comboBase: COMBO_BASE,
-    patterns:  { 'gallery-': {} }
+    patterns:  { 'gallery-': {},
+                 'gallerycss-': { type: 'css' } }
 };
 
 groups.yui2 = {
@@ -485,21 +486,28 @@ Y.Loader = function(o) {
     
     self._internal = true;
 
-    // YObject.each(defaults, function(k, v) {
-    //     self.addModule(v, k);
-    // });
+    // for (i in defaults) {
+    //     if (defaults.hasOwnProperty(i)) {
+    //         self.addModule(defaults[i], i);
+    //     }
+    // }
+    //
+    //
+    // for (i in onPage) {
+    //     if ((!(i in self.moduleInfo)) && onPage[i].details) {
+    //         self.addModule(onPage[i].details, i);
+    //     }
+    // }
 
-    for (i in defaults) {
-        if (defaults.hasOwnProperty(i)) {
-            self.addModule(defaults[i], i);
-        }
-    }
+    YObject.each(defaults, function(v, k) {
+        self.addModule(v, k);
+    });
 
-    for (i in onPage) {
-        if ((!(i in self.moduleInfo)) && onPage[i].details) {
-            self.addModule(onPage[i].details, i);
+    YObject.each(onPage, function(v, k) {
+        if ((!(k in self.moduleInfo)) && ('details' in v)) {
+            self.addModule(v.details, k);
         }
-    }
+    });
 
     self._internal = false;
 
@@ -674,7 +682,6 @@ Y.Loader.prototype = {
             if (!info[name]) {
                 mdef = info[mod];
                 pkg = mdef.pkg || mod;
-                // Y.log('adding skin ' + name);
                 this.addModule({
                     name:  name,
                     group: mdef.group,
@@ -683,6 +690,9 @@ Y.Loader.prototype = {
                     path:  (parent || pkg) + '/' + sinf.base + skin + '/' + mod + '.css',
                     ext:   ext
                 });
+
+                Y.log('adding skin ' + name);
+                // console.log(info[name]);
             }
         }
 
@@ -750,7 +760,6 @@ Y.Loader.prototype = {
      * the object passed in did not provide all required attributes
      */
     addModule: function(o, name) {
-
 
         name = name || o.name;
         o.name = name;
@@ -900,7 +909,7 @@ Y.Loader.prototype = {
             }
         }
 
-        this.dirty = true;
+        // this.dirty = true;
 
         if (o.configFn) {
             ret = o.configFn(o);
@@ -1134,13 +1143,6 @@ Y.Loader.prototype = {
 
                 // Create lang pack modules
                 if (m && m.lang && m.lang.length) {
-                    // langs = YArray(m.lang);
-                    // for (i=0; i<langs.length; i=i+1) {
-                    //     lang = langs[i];
-                    //     packName = this.getLangPackName(lang, name);
-                    //     this._addLangPack(lang, m, packName);
-                    // }
-
                     // Setup root package if the module has lang defined, 
                     // it needs to provide a root language pack
                     packName = this.getLangPackName(ROOT_LANG, name);
@@ -1281,7 +1283,7 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
             if (r.hasOwnProperty(i)) {
                 m = this.getModule(i);
                 // remove if already loaded
-                if ((this.loaded[i] && (!this.forceMap[i]) && !this.ignoreRegistered) || (type && m && m.type != type)) { 
+                if ((this.loaded[i] && !this.forceMap[i] && !this.ignoreRegistered) || (type && m && m.type != type)) { 
                     delete r[i];
                 // remove anything this module supersedes
                 } else {
@@ -1309,7 +1311,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
             onEnd.call(this.context, {
                 msg: msg,
                 data: this.data,
-                // data: this.sorted,
                 success: success
             });
         }
@@ -1323,7 +1324,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
             delete this.inserted[k];
         }, this);
         this.skipped = {};
-        // Y.mix(this.loaded, this.inserted);
         fn = this.onSuccess;
         if (fn) {
             fn.call(this.context, {
@@ -1520,7 +1520,6 @@ Y.log('Undefined module: ' + mname + ', matched a pattern: ' + pname, 'info', 'l
                 self._insert(null, null, JS);
             };
 
-            // _queue.running = false;
             this._insert(null, null, CSS);
 
             return;
