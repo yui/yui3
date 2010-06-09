@@ -559,7 +559,7 @@ YUI.add('selection', function(Y) {
             return this;
         },
         /**
-        * Put a placeholder in the DOM at the current cursor position: NOT FINISHED
+        * Put a placeholder in the DOM at the current cursor position.
         * @method setCursor
         * @return {Node}
         */
@@ -567,7 +567,7 @@ YUI.add('selection', function(Y) {
             return this.insertContent(Y.Selection.CURSOR);
         },
         /**
-        * Get the placeholder in the DOM at the current cursor position: NOT FINISHED
+        * Get the placeholder in the DOM at the current cursor position.
         * @method getCursor
         * @return {Node}
         */
@@ -575,15 +575,17 @@ YUI.add('selection', function(Y) {
             return Y.one('#' + Y.Selection.CURID);
         },
         /**
-        * Get the placeholder in the DOM at the current cursor position: NOT FINISHED
-        * @method getCursor
+        * Gets a stored cursor and focuses it for editing, must be called sometime after setCursor
+        * @method focusCursor
         * @return {Node}
         */
         focusCursor: function() {
-            var cur = Y.one('#' + Y.Selection.CURID);
-            cur.set('id', '');
-            cur.set('innerHTML', ' ');
-            this.selectNode(cur);
+            var cur = this.getCursor();
+            if (cur) {
+                cur.set('id', '');
+                cur.set('innerHTML', ' ');
+                this.selectNode(cur);
+            }
         },
         /**
         * Generic toString for logging.
