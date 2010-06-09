@@ -247,6 +247,11 @@ YUI.add('selection', function(Y) {
     */
     Y.Selection.ALL = '[style],font[face]';
 
+    /**
+    * The selector to use when looking for block level items.
+    * @static
+    * @property BLOCKS
+    */
     Y.Selection.BLOCKS = 'p,div,ul,ol,table';
     /**
     * The temporary fontname applied to a selection to retrieve their values: yui-tmp
@@ -260,6 +265,10 @@ YUI.add('selection', function(Y) {
     * @property DEFAULT_TAG
     */
     Y.Selection.DEFAULT_TAG = 'span';
+
+    Y.Selection.CURID = 'yui-cursor';
+
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '">&nbsp;</span>';
 
     Y.Selection.prototype = {
         /**
@@ -564,6 +573,17 @@ YUI.add('selection', function(Y) {
         */
         getCursor: function() {
             return Y.one('#' + Y.Selection.CURID);
+        },
+        /**
+        * Get the placeholder in the DOM at the current cursor position: NOT FINISHED
+        * @method getCursor
+        * @return {Node}
+        */
+        focusCursor: function() {
+            var cur = Y.one('#' + Y.Selection.CURID);
+            cur.set('id', '');
+            cur.set('innerHTML', ' ');
+            this.selectNode(cur);
         },
         /**
         * Generic toString for logging.

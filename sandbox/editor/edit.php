@@ -98,6 +98,7 @@
         <button value="justifyleft">justifyleft</button>
         <button value="justifyright">justifyright</button>
         <button value="justifyfull">justifyfull</button>
+        <button value="replacecontent">ReplaceContent</button>
     </div>
     <div id="test"></div>
     <div id="smilies"></div>
@@ -222,7 +223,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         ':">',
         ':P' 
     ];
-
+    
     var s_cont = Y.one('#smilies');
     Y.each(smilies, function(v, k) {
         if (v) {
@@ -277,9 +278,18 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     Y.mix(Y.Plugin.ExecCommand.COMMANDS, {
         foo: function() {
             alert('You clicked on Foo');
+        },
+        replacecontent: function() {
+            var inst = this.getInstance(),
+                sel = new inst.Selection();
+
+            sel.setCursor();
+            var html = this.get('host').get('content');
+            html = '<div><p>Added From Selection Cache Test.</p>' + html + '</div>';
+            this.get('host').set('content', html);
+            var cur = sel.focusCursor();
         }
     });
-
 
 
     editor = new Y.EditorBase({
@@ -329,6 +339,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     });
     */
     editor.render('#test');
+    
 
     Y.on('click', function(e) {
         var html = editor.getContent();
@@ -340,6 +351,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     }, '#setHTML');
 
 });
+
 </script>
 </body>
 </html>
