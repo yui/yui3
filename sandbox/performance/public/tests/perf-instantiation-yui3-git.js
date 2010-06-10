@@ -1,12 +1,12 @@
-YUI.add('perf-instantiation', function (Y) {
+YUI.add('perf-instantiation-yui3-git', function (Y) {
 
 Y.Performance.addTestGroup({
-    name   : 'Default',
+    name   : 'YUI3 (git)',
     suite  : 'Instantiation Tests',
-    version: '2010-05-28',
-    
+    version: '2010-06-10',
+
     tests: {
-        "YUI3: yui-min.js + loader-min.js parsing/execution": {
+        "yui-min.js + loader-min.js parsing/execution": {
             duration: 500,
             iterations: 10,
 
@@ -14,13 +14,12 @@ Y.Performance.addTestGroup({
             useStrictSandbox: true,
 
             setup: function () {
-                var yuiJS    = sandbox.xhrGet('../../build/yui/yui-min.js'),
-                    loaderJS = sandbox.xhrGet('../../build/loader/loader-min.js');
+                var js = sandbox.xhrGet('/combo/yui3-git?build/yui/yui-min.js&build/loader/loader-min.js');
 
-                if (yuiJS && loaderJS) {
-                    window.yuiScript = yuiJS + "\n" + loaderJS;
+                if (js) {
+                    window.yuiScript = js;
                 } else {
-                    sandbox.log('Failed to load yui-min.js and/or loader-min.js.', 'warn', 'sandbox');
+                    sandbox.log('Failed to load JS.', 'warn', 'sandbox');
                     return false;
                 }
             },
@@ -29,16 +28,17 @@ Y.Performance.addTestGroup({
                 eval(yuiScript);
                 done();
             }
-        },
+        }
 
+/*
         "YUI2: yuiloader-dom-event.js parsing/execution": {
             duration: 500,
             iterations: 10,
             useStrictSandbox: true,
-
+        
             setup: function () {
                 var yuiLoaderJS = sandbox.xhrGet('assets/yui2/yuiloader-dom-event.js');
-
+        
                 if (yuiLoaderJS) {
                     window.yuiScript = yuiLoaderJS;
                 } else {
@@ -46,22 +46,22 @@ Y.Performance.addTestGroup({
                     return false;
                 }
             },
-
+        
             test: function () {
                 eval(yuiScript);
                 done();
             }
         },
-
+        
         "jQuery 1.4.2": {
             duration: 500,
             iterations: 10,
             useStrictSandbox: true,
-
+        
             preloadUrls: {
                 jquery: 'http://code.jquery.com/jquery-1.4.2.min.js'
             },
-
+        
             setup: function () {
                 // Make sure the JS was preloaded successfully.
                 if (!sandbox.preload.jquery) {
@@ -69,13 +69,13 @@ Y.Performance.addTestGroup({
                     return false;
                 }
             },
-
+        
             test: function () {
                 eval(sandbox.preload.jquery);
                 done();
             }
         },
-
+        
         "YUI 3.1.1 jQueryish package w/ explicit dependencies + rollups + Loader": {
             duration: 500,
             iterations: 10,
@@ -138,6 +138,7 @@ Y.Performance.addTestGroup({
                 });
             }
         }
+*/
     }
 });
 
