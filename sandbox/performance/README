@@ -18,8 +18,8 @@ COMPARING MULTIPLE YUI VERSIONS
 
   In config.json, you'll see a "roots" key. This is a name/value mapping of
   arbitrary root names to actual YUI source roots. The sample config includes
-  root mappings for YUI 3 git and YUI 3.1.1, and assumes you have the necessary
-  code checked out at ../../ and ../../../yui3-3.1.1/ respectively.
+  root mappings for YUI 3 local and YUI 3.1.1, and assumes you have the
+  necessary code checked out at ../../ and ../../../yui3-3.1.1/ respectively.
 
   To test against even more YUI versions, or any other JavaScript code, just add
   more roots.
@@ -27,13 +27,13 @@ COMPARING MULTIPLE YUI VERSIONS
   Each root maps to a ComboHandler URL which you can use to load static
   resources relative to that root, like so:
 
-    http://localhost:3000/combo/yui3-git?build/yui/yui-min.js&build/oop/oop-min.js
+    http://localhost:3000/combo/yui3-local?build/yui/yui-min.js&build/oop/oop-min.js
     http://localhost:3000/combo/yui3-3.1.1?build/yui/yui-min.js&build/oop/oop-min.js
 
   You can also configure the YUI 3 Loader to combine resources using these URLs:
 
     YUI({
-      comboBase: '/combo/yui3-git?',
+      comboBase: '/combo/yui3-local?',
       combine: true,
       root: 'build/'
     }).use( ... , function (Y) {

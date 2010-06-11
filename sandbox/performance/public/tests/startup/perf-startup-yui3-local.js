@@ -17,7 +17,7 @@ Y.Performance.addTestGroup({
             useStrictSandbox: true,
 
             preloadUrls: {
-                js: '/combo/yui3-git?build/yui/yui-min.js&build/loader/loader-min.js'
+                js: '/combo/yui3-local?build/yui/yui-min.js&build/loader/loader-min.js'
             },
 
             test: function () {
@@ -33,7 +33,7 @@ Y.Performance.addTestGroup({
             warmup: true,
 
             preloadUrls: {
-                js: '/combo/yui3-git?build/yui/yui-base-min.js&build/oop/oop-min.js&build/dom/dom-min.js&build/dom/selector-css3-min.js&build/yui/yui-later-min.js&build/event-custom/event-custom-min.js&build/io/io-base-min.js&build/event/event-min.js&build/pluginhost/pluginhost-min.js&build/node/node-min.js&build/io/io-form-min.js&build/querystring/querystring-stringify-simple-min.js&build/json/json-parse-min.js&build/yui/get-min.js&build/loader/loader-min.js&build/attribute/attribute-base-min.js&build/base/base-base-min.js&build/anim/anim-min.js'
+                js: '/combo/yui3-local?build/yui/yui-base-min.js&build/oop/oop-min.js&build/dom/dom-min.js&build/dom/selector-css3-min.js&build/yui/yui-later-min.js&build/event-custom/event-custom-min.js&build/io/io-base-min.js&build/event/event-min.js&build/pluginhost/pluginhost-min.js&build/node/node-min.js&build/io/io-form-min.js&build/querystring/querystring-stringify-simple-min.js&build/json/json-parse-min.js&build/yui/get-min.js&build/loader/loader-min.js&build/attribute/attribute-base-min.js&build/base/base-base-min.js&build/anim/anim-min.js'
             },
 
             test: function () {
@@ -50,7 +50,7 @@ Y.Performance.addTestGroup({
             useStrictSandbox: true,
 
             preloadUrls: {
-                js: '/combo/yui3-git?build/yui/yui-base-min.js&build/oop/oop-min.js&build/yui/yui-later-min.js&build/event-custom/event-custom-min.js&build/event/event-base-min.js&build/dom/dom-base-min.js&build/dom/selector-native-min.js&build/dom/selector-css2-min.js&build/node/node-base-min.js&build/dom/selector-css3-min.js&build/dom/dom-style-min.js&build/dom/dom-screen-min.js&build/node/node-screen-min.js&build/node/node-style-min.js&build/event/event-delegate-min.js&build/event/event-focus-min.js&build/event/event-mouseenter-min.js&build/event/event-resize-min.js&build/attribute/attribute-base-min.js&build/base/base-base-min.js&build/anim/anim-base-min.js&build/anim/anim-easing-min.js&build/anim/anim-scroll-min.js&build/anim/anim-xy-min.js&build/io/io-base-min.js&build/io/io-form-min.js&build/querystring/querystring-stringify-simple-min.js&build/json/json-parse-min.js&build/node/node-event-delegate-min.js'
+                js: '/combo/yui3-local?build/yui/yui-base-min.js&build/oop/oop-min.js&build/yui/yui-later-min.js&build/event-custom/event-custom-min.js&build/event/event-base-min.js&build/dom/dom-base-min.js&build/dom/selector-native-min.js&build/dom/selector-css2-min.js&build/node/node-base-min.js&build/dom/selector-css3-min.js&build/dom/dom-style-min.js&build/dom/dom-screen-min.js&build/node/node-screen-min.js&build/node/node-style-min.js&build/event/event-delegate-min.js&build/event/event-focus-min.js&build/event/event-mouseenter-min.js&build/event/event-resize-min.js&build/attribute/attribute-base-min.js&build/base/base-base-min.js&build/anim/anim-base-min.js&build/anim/anim-easing-min.js&build/anim/anim-scroll-min.js&build/anim/anim-xy-min.js&build/io/io-base-min.js&build/io/io-form-min.js&build/querystring/querystring-stringify-simple-min.js&build/json/json-parse-min.js&build/node/node-event-delegate-min.js'
             },
 
             test: function () {
@@ -66,7 +66,7 @@ Y.Performance.addTestGroup({
             iterations: 40,
 
             preloadUrls: {
-                js: '/combo/yui3-git?build/yui/yui-min.js&build/loader/loader-min.js'
+                js: '/combo/yui3-local?build/yui/yui-min.js&build/loader/loader-min.js'
             },
 
             setup: function () {
