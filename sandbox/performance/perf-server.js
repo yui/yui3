@@ -27,6 +27,7 @@ server.get('/combo/([^/]+)/?', function (root) {
 
     if (!rootPath) {
         this.send404();
+        this.end();
         return;
     }
 
@@ -42,6 +43,7 @@ server.get('/combo/([^/]+)/?', function (root) {
             response += fs.readFileSync(fullPath, 'utf8') + "\n";
         } catch (ex) {
             this.send404();
+            this.end();
             return;
         }
     }
@@ -64,6 +66,8 @@ server.get('/proxy/?', function () {
 
     if (!url) {
         this.sendError(400, '400 Bad Request', 'Missing required "url" parameter.');
+        this.end();
+        return;
     }
 
     url = parseURL(url);
@@ -72,6 +76,12 @@ server.get('/proxy/?', function () {
         url.port     = config.server.port;
         url.hostname = config.server.host;
         url.host     = url.hostname + ':' + url.port;
+    }
+
+    if (!proxyWhitelist(url.hostname)) {
+        this.sendError(403, '403 Forbidden', 'Proxy whitelist does not allow the requested URL.');
+        this.end();
+        return;
     }
 
     if (!url.pathname) {
@@ -112,6 +122,13 @@ server.get('/proxy/?', function () {
 server.listen(config.server.port, config.server.host);
 
 // -- Private Methods ----------------------------------------------------------
+function proxyWhitelist(hostname) {
+    return hostname === config.server.host ||
+            (config.proxy &&
+                config.proxy.hostnames &&
+                config.proxy.hostnames.indexOf(hostname) !== -1);
+}
+
 function readConfig(filename) {
     var configJSON;
 

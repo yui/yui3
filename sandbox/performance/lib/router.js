@@ -137,20 +137,20 @@ exports.Server = function Server(config) {
                 // processing other routes.
                 route.handler.apply({
                     end: function (result) {
-                        res.finished = true;
+                        if (!res.finished) {
+                            switch(typeof result) {
+                            case 'string':
+                                sendHTML(res, result);
+                                break;
 
-                        switch(typeof result) {
-                        case 'string':
-                            sendHTML(res, result);
-                            break;
+                            case 'object':
+                                sendJSON(res, result);
+                                break;
 
-                        case 'object':
-                            sendJSON(res, result);
-                            break;
-
-                        default:
-                            res.status = 204;
-                            sendResponse(res);
+                            default:
+                                res.status = 204;
+                                sendResponse(res);
+                            }
                         }
 
                         callback && callback.call(null, req, res, true);
