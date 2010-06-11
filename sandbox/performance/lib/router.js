@@ -43,16 +43,10 @@ exports.Server = function Server(config) {
     }
 
     function curry(fn, scope) {
-        var args = [],
-            i,
-            len;
-
-        for (i = 2, len = arguments.length; i < len; ++i) {
-            args.push(arguments[i]);
-        }
+        var args = Array.prototype.slice.call(arguments, 2);
 
         return function () {
-            fn.apply(scope || null, args);
+            fn.apply(scope || null, args.concat(Array.prototype.slice.call(arguments)));
         };
     }
 
