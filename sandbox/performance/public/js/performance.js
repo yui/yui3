@@ -7,8 +7,8 @@ var Lang       = Y.Lang,
     isFunction = Lang.isFunction,
     isValue    = Lang.isValue,
 
-    DEFAULT_DURATION  = 1000, // default duration for time-based tests
-    YQL_XDR_DATATABLE = 'http://yuilibrary.com/~rgrove/test/yui3/sandbox/performance/assets/xdr.xml',
+    DEFAULT_DURATION = 1000, // default duration for time-based tests
+    XDR_PROXY_URL    = '/proxy?url={url}',
 
     EVT_CLEAR      = 'clear',
     EVT_END        = 'end',
@@ -26,9 +26,9 @@ var Lang       = Y.Lang,
     RUNNING      = 'running',
 
     suites     = {},
-    xhrCache   = {},
-    yqlCache   = {},
-    yqlQueue   = {};
+    xhrCache   = {};
+    // yqlCache   = {},
+    // yqlQueue   = {};
 
 function Performance() {
     Performance.superclass.constructor.apply(this, arguments);
@@ -209,18 +209,17 @@ Y.extend(Performance, Y.Base, {
                 sandbox.setEnvValue('xhrGet', Performance._xhrGet);
 
                 if (test.preloadUrls) {
+                    // TODO: use async xhr
                     Obj.each(test.preloadUrls, function (url, key) {
-                        Performance._yqlGet(url, function (result) {
-                            preload[key] = result.response.body;
-                        });
+                        // Proxy non-local URLs.
+                        if (/^https?:\/\//.test(url)) {
+                            url = XDR_PROXY_URL.replace('{url}', encodeURIComponent(url));
+                        }
+
+                        preload[key] = Performance._xhrGet(url);
                     });
 
-                    poll = Y.later(Y.config.pollInterval || 15, this, function (sandbox) { // note the local sandbox reference being passed in
-                        if (Obj.size(preload) === Obj.size(test.preloadUrls)) {
-                            poll.cancel();
-                            sandbox.setEnvValue('preload', preload);
-                        }
-                    }, sandbox, true);
+                    sandbox.setEnvValue('preload', preload);
                 }
             }
 
@@ -480,9 +479,9 @@ Y.extend(Performance, Y.Base, {
     // -- Protected Static Methods ---------------------------------------------
 
     /**
-     * Returns an object hash containing the mean, median, sample variance, sample
-     * standard deviation, and median absolute deviation of the values in the
-     * specified array.
+     * Returns an object hash containing the mean, median, sample variance,
+     * sample standard deviation, and median absolute deviation of the values in
+     * the specified array.
      *
      * @method _analyzePoints
      * @param {Array} values values to analyze
