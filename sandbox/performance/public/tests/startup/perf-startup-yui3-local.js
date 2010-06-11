@@ -1,7 +1,7 @@
-YUI.add('perf-startup-yui3-git', function (Y) {
+YUI.add('perf-startup-yui3-local', function (Y) {
 
 Y.Performance.addTestGroup({
-    name   : 'YUI3 (git)',
+    name   : 'YUI3 (local)',
     suite  : 'Startup Tests',
     version: '2010-06-11',
 
