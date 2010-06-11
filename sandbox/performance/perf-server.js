@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 
+/**
+ * This is a Node.js-based HTTP server for the performance testing framework.
+ * See the README for details.
+ */
+
 var fs     = require('fs'),
     http   = require('http'),
+    mime   = require('./lib/mime'),
     path   = require('path'),
     sys    = require('sys'),
 
@@ -13,6 +19,7 @@ var fs     = require('fs'),
 // Combo URLs.
 server.get('/combo/([^/]+)/?', function (root) {
     var fullPath,
+        mimeType,
         relativePath,
         response = '',
         rootPath = config.roots[root];
@@ -28,6 +35,7 @@ server.get('/combo/([^/]+)/?', function (root) {
         }
 
         fullPath = path.join(rootPath, relativePath);
+        mimeType = mime.getType(path.extname(relativePath));
 
         try {
             response += fs.readFileSync(fullPath, 'utf8') + "\n";
@@ -37,8 +45,11 @@ server.get('/combo/([^/]+)/?', function (root) {
         }
     }
 
-    this.res.headers['content-type'] = 'application/javascript;charset=utf-8';
-    return response;
+    // TODO: Currently, the last file extension is what determines the
+    // Content-Type. Need to look into what the real ComboHandler does when
+    // multiple file types are requested in a single request.
+    this.res.headers['content-type'] = mimeType + ';charset=utf-8';
+    return response + "\n";
 });
 
 server.listen(config.server.port, config.server.host);
