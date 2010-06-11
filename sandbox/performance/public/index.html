@@ -40,31 +40,38 @@
     <textarea id="result-snapshot" cols="5" rows="50"></textarea>
 </div>
 
+<!-- Framework dependencies -->
 <script src="/combo/yui3-git?build/yui/yui-min.js"></script>
-<script src="js/sandbox.js"></script>
-<script src="js/performance.js"></script>
-<script src="js/performance-report.js"></script>
-<script src="js/reports/performance-report-comparison.js"></script>
-<!-- <script src="tests/perf-component.js"></script> -->
-<script src="tests/perf-instantiation-yui3-git.js"></script>
-<script src="tests/perf-instantiation-yui3-3.1.1.js"></script>
-<!-- <script src="tests/perf-loops-native.js"></script>
-<script src="tests/perf-loops-yui3.js"></script> -->
+<script src="/combo/perf?js/sandbox.js&amp;js/performance.js&amp;js/performance-report.js&amp;js/reports/performance-report-comparison.js"></script>
+
+<!-- Tests -->
+<script src="tests/perf-component.js"></script>
+<script src="tests/perf-loops-native.js"></script>
+<script src="tests/perf-loops-yui3.js"></script>
+<script src="tests/startup/perf-startup-yui3-git.js"></script>
+<script src="tests/startup/perf-startup-yui3-3.1.1.js"></script>
 <script>
 var Y = YUI({
     comboBase: '/combo/yui3-git?',
     combine: true,
     root: 'build/'
-}).use('event-base', 'history', 'json-stringify', 'node-base',
-    'performance', 'performance-report-comparison',
-    // 'perf-component', 'perf-instantiation',
-    // 'perf-loops-native', 'perf-loops-yui3',
+}).use(
+    // Framework dependencies.
+    'event-base',
+    'history',
+    'json-stringify',
+    'node-base',
+    'performance',
+    'performance-report-comparison',
 
-    'perf-instantiation-yui3-git',
-    'perf-instantiation-yui3-3.1.1',
+    // Tests.
+    'perf-component',
+    'perf-loops-native',
+    'perf-loops-yui3',
+    'perf-startup-yui3-git',
+    'perf-startup-yui3-3.1.1',
 
-    function (Y) {
-
+function (Y) {
     var SRC_UI = 'ui',
 
         Performance = Y.Performance,
