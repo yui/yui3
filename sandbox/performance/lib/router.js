@@ -132,53 +132,65 @@ exports.Server = function Server(config) {
 
             if (matches && matches.shift()) {
                 matches = matches.map(decodeURLMatch);
-                result  = route.handler.apply({
+
+                // Route matched, so pass control to the route and stop
+                // processing other routes.
+                route.handler.apply({
+                    end: function (result) {
+                        res.finished = true;
+
+                        switch(typeof result) {
+                        case 'string':
+                            sendHTML(res, result);
+                            break;
+
+                        case 'object':
+                            sendJSON(res, result);
+                            break;
+
+                        default:
+                            res.status = 204;
+                            sendResponse(res);
+                        }
+
+                        callback && callback.call(null, req, res, true);
+                    },
+
                     query: req.query,
                     req  : req,
                     res  : res,
 
-                    send404     : curry(send404,  null, res),
-                    sendHTML    : curry(sendHTML, null, res),
-                    sendJSON    : curry(sendJSON, null, res),
+                    send404     : curry(send404,      null, res),
+                    sendError   : curry(sendError,    null, res),
+                    sendHTML    : curry(sendHTML,     null, res),
+                    sendJSON    : curry(sendJSON,     null, res),
                     sendResponse: curry(sendResponse, null, res)
                 }, matches);
 
-                if (!res.finished) {
-                    switch(typeof result) {
-                    case 'string':
-                        sendHTML(res, result);
-                        break;
-
-                    case 'object':
-                        sendJSON(res, result);
-                        break;
-
-                    default:
-                        res.status = 204;
-                        sendResponse(res);
-                    }
-                }
-
-                callback && callback.call(null, req, res, true);
                 return; // <-- look, a return!
             }
         }
 
+        // No route matched; return a 404.
         send404(res);
         callback && callback.call(null, req, res, false);
     }
 
     function send404(res) {
+        sendError(res, 404, '404 Not Found', 'The requested resource was not found.');
+    }
+
+    function sendError(res, status, title, message) {
         res.headers['content-type'] = 'text/html;charset=utf-8';
-        res.status = 404;
+        res.status = status;
 
         sendResponse(res,
             '<!DOCTYPE html>' +
             '<html>' +
-                '<head><title>404 Not Found</title></head>' +
+                '<head><title>' + title + '</title></head>' +
                 '<body>' +
-                    '<h1>404 Not Found</h1>' +
-                    '<p>The requested resource was not found.</p>' +
+                    '<h1>' + title + '</h1>' +
+                    '<p>' + message + '</p>' +
                 '</body>' +
             '</html>'
         );
@@ -219,7 +231,7 @@ exports.Server = function Server(config) {
     function handleRequest(req, res) {
         // Parse the URL and query string.
         req.parsedURL = parseURL(req.url, true);
-        req.query     = req.parsedURL.query;
+        req.query     = req.parsedURL.query || {};
 
         // Set default response code.
         res.status = 200;
