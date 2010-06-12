@@ -787,7 +787,7 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base'], optional:['querystring-stringify-simple']});
+}, '@VERSION@' ,{optional:['querystring-stringify-simple'], requires:['event-custom-base']});
 
 YUI.add('io-form', function(Y) {
 
@@ -1331,7 +1331,7 @@ YUI.add('io-upload-iframe', function(Y) {
             // When a response Content-Type of "text/plain" is used, Firefox and Safari
             // will wrap the response string with <pre></pre>.
             p = b.query('pre:first-child');
-            o.c.responseText = p ? p.get('innerHTML') : b.get('innerHTML');
+            o.c.responseText = p ? p.get('text') : b.get('text');
             Y.log('The responseText value for transaction ' + o.id + ' is: ' + o.c.responseText + '.', 'info', 'io');
         }
         else {

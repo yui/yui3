@@ -4,36 +4,45 @@ var SCALE = "scale",
     ROTATION = "rotation";
 
 Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
-    var i,l;
+
+    var i,l, etCached, et,touchCache;
 
 
     if (e.touches) {
+
         this.touches = [];
+        touchCache = {};
 
         for (i = 0, l = e.touches.length; i < l; ++i) {
-            this.touches[i] = new Y.DOMEventFacade(e.touches[i], currentTarget, wrapper);
+            et = e.touches[i];
+            touchCache[Y.stamp(et)] = this.touches[i] = new Y.DOMEventFacade(et, currentTarget, wrapper);
         }
-
     }
 
     if (e.targetTouches) {
+
         this.targetTouches = [];
 
         for (i = 0, l = e.targetTouches.length; i < l; ++i) {
-            // TODO: Should we re-use Touch instances from the e.touches loop?
-            // Are we breaking things if instance equality is busted? (e.touches[n] !== e.targetTouches[m])
-            this.targetTouches[i] = new Y.DOMEventFacade(e.targetTouches[i], currentTarget, wrapper);
-        }
+            et = e.targetTouches[i];
+            etCached = touchCache && touchCache[Y.stamp(et, true)];
 
+            this.targetTouches[i] = etCached || new Y.DOMEventFacade(et, currentTarget, wrapper);
+            
+        }
     }
 
-    if (e.currentTouches) {
-        this.currentTouches = [];
+    if (e.changedTouches) {
 
-        for (i = 0, l = e.currentTouches.length; i < l; ++i) {
-            this.currentTouches[i] = new Y.DOMEventFacade(e.currentTouches[i], currentTarget, wrapper);
+        this.changedTouches = [];
+
+        for (i = 0, l = e.changedTouches.length; i < l; ++i) {
+            et = e.changedTouches[i];
+            etCached = touchCache && touchCache[Y.stamp(et, true)];
+
+            this.changedTouches[i] = etCached || new Y.DOMEventFacade(et, currentTarget, wrapper);
+            
         }
-
     }
 
     if (SCALE in e) {

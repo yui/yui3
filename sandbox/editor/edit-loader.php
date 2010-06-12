@@ -108,18 +108,21 @@
 
 <div id="stub">
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
 <ul>
     <li style="font-family: courier new">Item #1</li>
     <li>Item #1</li>
     <li>Item #1</li>
 </ul>
+This is some <strong>other</strong> loose test.
 <ol>
     <li style="font-family: courier new">Item #1</li>
     <li>Item #1</li>
     <li>Item #1</li>
 </ol>
 <p>This is <span style="font-family: Courier New">another</span> test.</p>
+This is some <strong>other</strong> loose test.
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 <style>
 del {

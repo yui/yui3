@@ -28,18 +28,20 @@ YUI.add('editor-lists', function(Y) {
             newLi, newList, sTab, par, moved = false, tag;
 
             if (Y.UA.ie && e.changedType === 'enter') {
-                e.changedEvent.halt();
-                e.preventDefault();
-                li = e.changedNode;
-                newLi = inst.Node.create('<' + LI + '>' + EditorLists.NON + '</' + LI + '>');
+                if (e.changedNode.test(LI + ', ' + LI + ' *')) {
+                    e.changedEvent.halt();
+                    e.preventDefault();
+                    li = e.changedNode;
+                    newLi = inst.Node.create('<' + LI + '>' + EditorLists.NON + '</' + LI + '>');
+                        
+                    if (!li.test(LI)) {
+                        li = li.ancestor(LI);
+                    }
+                    li.insert(newLi, 'after');
                     
-                if (!li.test(LI)) {
-                    li = li.ancestor(LI);
+                    sel = new inst.Selection();
+                    sel.selectNode(newLi.get('firstChild'));
                 }
-                li.insert(newLi, 'after');
-                
-                sel = new inst.Selection();
-                sel.selectNode(newLi.get('firstChild'));
             }
             if (e.changedType === 'tab') {
                 if (e.changedNode.test(LI + ', ' + LI + ' *')) {

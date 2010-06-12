@@ -525,6 +525,14 @@
             extracss: {
                 value: '',
                 setter: '_setExtraCSS'
+            },
+            /**
+            * @attribute host
+            * @description A reference to the Editor instance 
+            * @type Object
+            */
+            host: {
+                value: false
             }
         }
     });

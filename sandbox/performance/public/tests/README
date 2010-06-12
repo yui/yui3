@@ -14,7 +14,8 @@ required:
 
   bootstrapYUI (Boolean):
     By default, all sandboxes are pristine. Set this to true to automatically
-    bootstrap YUI3 core and Loader into the test sandbox.
+    bootstrap YUI 3 core and Loader (from the local YUI 3 checkout) into the
+    test sandbox.
 
   duration (Number):
     Time duration in milliseconds during which the number of successful runs
@@ -26,10 +27,14 @@ required:
     to 1 if not specified.
 
   preloadUrls (Object):
-    Object hash of keys mapped to publicly-accessible URLs. Each URL will be
-    preloaded via a cross-domain YQL proxy, and its contents will be made
-    available to the setup/teardown/test functions as sandbox.preload.key, where
-    "key" is the same key that was used on the preloadUrls object.
+    Object hash of keys mapped to URLs. Each URL will be preloaded via XHR, and
+    its contents will be made available to the setup/teardown/test functions as
+    sandbox.preload.key, where "key" is the same key that was used on the
+    preloadUrls object.
+
+    Any relative URL will be loaded directly, whereas any URL with an http:// or
+    https:// prefix will be loaded via a cross-domain proxy on the performance
+    server.
 
   setup (Function):
     Setup function to execute before each iteration of the test. Runs in the
