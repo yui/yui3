@@ -1,5 +1,9 @@
 Provides the base class for Plugins, which can be added to a PluginHost. 
 
+Development Master
+
+* Fixed onHostEvent to actually use on (was using after)
+
 3.1.1
 
 No changes
