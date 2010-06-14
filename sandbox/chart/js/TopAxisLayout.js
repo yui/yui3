@@ -8,23 +8,14 @@ function TopAxisLayout(config)
 
 TopAxisLayout.ATTRS = {
     axisRenderer: {
-        lazyAdd: false,
-
-        getter: function()
-        {
-            return this._axisRenderer;
-        },
-        setter: function(val)
-        {
-            this._axisRenderer = val;
-            return val;
-        }
+        value: null
     }
 };
 
 Y.extend(TopAxisLayout, Y.Base, {
-    _axisRenderer: null,
-
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     */
     setTickOffsets: function()
     {
         var ar = this.get("axisRenderer"),
@@ -34,7 +25,6 @@ Y.extend(TopAxisLayout, Y.Base, {
             display = majorTicks.display;
         ar.set("leftTickOffset",  0);
         ar.set("rightTickOffset",  0);
-        ar.set("maxTickLength", tickLength);
         
         switch(display)
         {
@@ -180,6 +170,30 @@ Y.extend(TopAxisLayout, Y.Base, {
         label.style.webkitTransform = "rotate(" + rot + "deg)";
     },
 
+    /**
+     * Calculates the size and positions the content elements.
+     */
+    setSizeAndPosition: function(labelSize)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            sz = style.line.weight,
+            majorTicks = style.majorTicks,
+            display = majorTicks.display,
+            tickLen = majorTicks.length;
+        if(display === "outside")
+        {
+            sz += tickLen;
+        }
+        else if(display === "cross")
+        {
+            sz += tickLen * 0.5;
+        }
+        sz += labelSize;
+        ar.get("node").style.top = labelSize + "px";
+        ar.set("height", sz);
+    },
+    
     offsetNodeForTick: function(node)
     {
         var ar = this.get("axisRenderer"),

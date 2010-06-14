@@ -77,7 +77,7 @@ Y.extend(GraphStack, Y.Base, {
         len = this._seriesCollection.length;
         for(i = 0; i < len; ++i)
         {
-            this._seriesCollection[i].initialize();
+            this._seriesCollection[i].render(this.get("parent"));
         }
     },
 

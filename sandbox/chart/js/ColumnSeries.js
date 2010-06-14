@@ -3,30 +3,15 @@ function ColumnSeries(config)
 	ColumnSeries.superclass.constructor.apply(this, arguments);
 }
 
-ColumnSeries.name = "columnSeries";
+ColumnSeries.NAME = "columnSeries";
 
 ColumnSeries.ATTRS = {
 	type: {
-		/**
-		 * Indicates the type of graph.
-		 */
-		getter: function()
-		{
-			return this._type;
-		}
-	}
+        value: "column"
+    }
 };
 
 Y.extend(ColumnSeries, Y.CartesianSeries, {
-	/**
-	 * Constant used to generate unique id.
-	 */
-	GUID: "yuicolumnseries",
-	
-    /**
-	 * @private (protected)
-	 */
-	_type: "column",
 
 	drawMarkers: function()
 	{
@@ -75,7 +60,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             }
         }
         totalWidth = len * seriesWidth;
-        if(totalWidth > this.get("parent").offsetWidth)
+        if(totalWidth > this.get("node").offsetWidth)
         {
             ratio = this.width/totalWidth;
             seriesWidth *= ratio;

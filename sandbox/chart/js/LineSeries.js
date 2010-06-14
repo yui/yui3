@@ -3,51 +3,19 @@ function LineSeries(config)
 	LineSeries.superclass.constructor.apply(this, arguments);
 }
 
-LineSeries.name = "lineSeries";
+LineSeries.NAME = "lineSeries";
 
 LineSeries.ATTRS = {
 	type: {
 		/**
 		 * Indicates the type of graph.
 		 */
-		getter: function()
-		{
-			return this._type;
-		}
-	}
+        value:"line"
+    }
 };
 
 Y.extend(LineSeries, Y.CartesianSeries, {
-	/**
-	 * Constant used to generate unique id.
-	 */
-	GUID: "yuilineseries",
-
-	/**
-	 * @private (protected)
-	 */
-	_type: "line",
 	
-	/**
-	 * @private (override)
-	 */
-	checkStyleFlags: function()  
-	{
-		return this.checkFlags({
-			color:true,
-			weight:true,
-			alpha:true,	
-			type:true,
-			marker:true,
-			dashLength:true,
-			gapLength:true,
-			connectDiscontinuousPoints:true,
-			discontinuousType:true,
-			discontinuousDashLength:true,
-			discontinuousGapLength:true
-		});
-	},
-
 	/**
 	 * @private
 	 */
@@ -73,8 +41,8 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var	parentDiv = this.get("parent"),
-            ht = parentDiv.offsetHeight,
+        var	node = this.get("node"),
+            ht = node.offsetHeight,
             xcoords = this._xcoords,
 			ycoords = this._ycoords,
 			len = xcoords.length,
