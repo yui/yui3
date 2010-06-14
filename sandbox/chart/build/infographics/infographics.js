@@ -1764,31 +1764,27 @@ GraphStack.ATTRS = {
     },
 
     parent: {
-        getter: function()
-        {
-            return this._parent;
-        },
-
-        setter: function(val)
-        {
-            this._parent = val;
-            return val;
-        }
+        value: null
     }
 };
 
 Y.extend(GraphStack, Y.Base, {
-	/**
-	 * Constant used to generate unique id.
-	 */
-	GUID: "yuigraphstack",
-    
-    _parent: null,
-
+    /**
+     * @private 
+     * @description Collection of series to be displayed in the graph.
+     */
     _seriesCollection: null,
 
+    /**
+     * Hash of arrays containing series mapped to a series type.
+     */
     seriesTypes: null,
 
+    /**
+     * @private
+     * @description Parses series instances to be displayed in the graph.
+     * @param {Array} Collection of series instances or object literals containing necessary properties for creating a series instance.
+     */
     _parseSeriesCollection: function(val)
     {
         var len = val.length,
@@ -1809,12 +1805,12 @@ Y.extend(GraphStack, Y.Base, {
         for(; i < len; ++i)
         {	
             series = val[i];
-            if(Y.Lang.isObject(series))
+            if(!(series instanceof Y.CartesianSeries))
             {
                 this._createSeries(series);
                 continue;
             }
-            this.addSeries(series);
+            this._addSeries(series);
         }
         len = this._seriesCollection.length;
         for(i = 0; i < len; ++i)
@@ -1823,6 +1819,11 @@ Y.extend(GraphStack, Y.Base, {
         }
     },
 
+    /**
+     * @private
+     * @description Adds a series to the graph.
+     * @param {CartesianSeries}
+     */
     _addSeries: function(series)
     {
         var type = series.get("type"),
@@ -1869,6 +1870,12 @@ Y.extend(GraphStack, Y.Base, {
         seriesCollection.push(series);
     },
 
+    /**
+     * @private
+     * @description Creates a series instance based on a specified type.
+     * @param {String} Indicates type of series instance to be created.
+     * @return {CartesianSeries} Series instance created.
+     */
     _getSeries: function(type)
     {
         var seriesClass;

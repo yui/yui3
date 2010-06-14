@@ -134,7 +134,14 @@ table, tr, td
 					numericaxis.addKey("revenue");
 			        numericaxis.addKey("expenses");	
                     numericaxis.addKey("taxes");
-                   
+                  var lineSeries = new Y.LineSeries({
+                                                        type:"line",
+                                                        xAxis:timeaxis,
+                                                        yAxis:numericaxis,
+                                                        xKey:"day",
+                                                        yKey:"taxes",
+                                                        styles:taxgraphstyles});
+
                    var graphstack = new Y.GraphStack({parent:"#chart", seriesCollection:[{
                                                                                             type:"column", 
                                                                                             xAxis:timeaxis, 
@@ -152,14 +159,15 @@ table, tr, td
                                                                                             styles:expensegraphstyles
                                                                                         
                                                                                         },
-                                                                                        {
+                                                                                        lineSeries
+                                                                                       /*{
                                                                                             type:"line",
                                                                                             xAxis:timeaxis,
                                                                                             yAxis:numericaxis,
                                                                                             xKey:"day",
                                                                                             yKey:"taxes",
                                                                                             styles:taxgraphstyles
-                                                                                       }
+                                                                                       }*/
                                                                                      ]});
 
                     var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});
