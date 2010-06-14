@@ -611,6 +611,11 @@ YUI.Env[Y.version].modules = {
                 "requires": [
                     "node-base"
                 ]
+            }, 
+            "event-touch": {
+                "requires": [
+                    "node-base"
+                ]
             }
         }, 
         "submodules": {

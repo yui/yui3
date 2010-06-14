@@ -15,7 +15,7 @@
     FONT_FAMILY = 'fontFamily';
 
     Y.Selection = function() {
-        var sel, par, ieNode, nodes, rng;
+        var sel, par, ieNode, nodes, rng, i;
 
         if (Y.config.win.getSelection) {
 	        sel = Y.config.win.getSelection();
@@ -30,32 +30,34 @@
 
             if (this.isCollapsed) {
                 this.anchorNode = this.focusNode = Y.one(sel.parentElement());
-                /*
+                
                 par = sel.parentElement();
                 nodes = par.childNodes;
                 rng = sel.duplicate();
 
-                Y.each(nodes, function(v) {
-                    rng.select(v);
+                for (i = 0; i < nodes.length; i++) {
+                    rng.select(nodes[i]);
                     if (rng.inRange(sel)) {
-                       ieNode = v; 
+                       ieNode = nodes[i]; 
                     }
-                });
+                }
 
                 this.ieNode = ieNode;
                 
+                
                 if (ieNode) {
                     if (ieNode.nodeType !== 3) {
-                        ieNode = ieNode.firstChild;
+                        if (ieNode.firstChild) {
+                            ieNode = ieNode.firstChild;
+                        }
                     }
-                    this.anchorNode = Y.Selection.resolve(ieNode);
-                    this.focusNode = Y.Selection.resolve(ieNode);
+                    this.anchorNode = this.focusNode = Y.Selection.resolve(ieNode);
                     
-                    this.anchorOffset = this.focusOffset = (ieNode.nodeValue) ? ieNode.nodeValue.length : 0 ;
+                    this.anchorOffset = this.focusOffset = (this.anchorNode.nodeValue) ? this.anchorNode.nodeValue.length : 0 ;
                     
                     this.anchorTextNode = this.focusTextNode = Y.one(ieNode);
                 }
-                */
+                
                 
             }
 
@@ -103,6 +105,10 @@
                 if (n.getAttribute('style') === '') {
                     n.removeAttribute('style');
                 }
+                //This is for IE
+                if (n.getAttribute('style').toLowerCase() === 'font-family: ') {
+                    n.removeAttribute('style');
+                }
             }
         });
         
@@ -125,7 +131,48 @@
             }
         });
 
+        Y.Selection.filterBlocks();
     };
+
+    /**
+    * Method attempts to replace all "orphined" text nodes in the main body by wrapping them with a <p>. Called from filter.
+    * @static
+    * @method filterBlocks
+    */
+    Y.Selection.filterBlocks = function() {
+        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true, newChild, firstChild;
+        if (childs) {
+            for (i = 0; i < childs.length; i++) {
+                node = Y.one(childs[i]);
+                if (!node.test(Y.Selection.BLOCKS)) {
+                    doit = true;
+                    if (childs[i].nodeType == 3) {
+                        if (childs[i].textContent == '\n') {
+                            doit = false;
+                        }
+                    }
+                    if (doit) {
+                        if (!wrapped) {
+                            wrapped = [];
+                        }
+                        wrapped.push(childs[i]);
+                    }
+                } else {
+                    if (wrapped) {
+                        newChild = Y.Node.create('<p></p>');
+                        firstChild = Y.one(wrapped[0]);
+                        for (i = 1; i < wrapped.length; i++) {
+                            newChild.append(wrapped[i]);
+                        }
+                        firstChild.replace(newChild);
+                        newChild.prepend(firstChild);
+                        wrapped = false;
+                    }
+                }
+            }
+        }
+    };
+
     /**
     * Undoes what filter does enough to return the HTML from the Editor, then re-applies the filter.
     * @static
@@ -153,6 +200,8 @@
         nons.each(function(n) {
             if (n.get('innerHTML') === '') {
                 n.remove();
+            } else {
+                n.removeClass('yui-non');
             }
         });
 
@@ -196,6 +245,13 @@
     * @property ALL
     */
     Y.Selection.ALL = '[style],font[face]';
+
+    /**
+    * The selector to use when looking for block level items.
+    * @static
+    * @property BLOCKS
+    */
+    Y.Selection.BLOCKS = 'p,div,ul,ol,table';
     /**
     * The temporary fontname applied to a selection to retrieve their values: yui-tmp
     * @static
@@ -208,6 +264,10 @@
     * @property DEFAULT_TAG
     */
     Y.Selection.DEFAULT_TAG = 'span';
+
+    Y.Selection.CURID = 'yui-cursor';
+
+    Y.Selection.CURSOR = '<span id="' + Y.Selection.CURID + '">&nbsp;</span>';
 
     Y.Selection.prototype = {
         /**
@@ -498,7 +558,7 @@
             return this;
         },
         /**
-        * Put a placeholder in the DOM at the current cursor position: NOT FINISHED
+        * Put a placeholder in the DOM at the current cursor position.
         * @method setCursor
         * @return {Node}
         */
@@ -506,12 +566,25 @@
             return this.insertContent(Y.Selection.CURSOR);
         },
         /**
-        * Get the placeholder in the DOM at the current cursor position: NOT FINISHED
+        * Get the placeholder in the DOM at the current cursor position.
         * @method getCursor
         * @return {Node}
         */
         getCursor: function() {
             return Y.one('#' + Y.Selection.CURID);
+        },
+        /**
+        * Gets a stored cursor and focuses it for editing, must be called sometime after setCursor
+        * @method focusCursor
+        * @return {Node}
+        */
+        focusCursor: function() {
+            var cur = this.getCursor();
+            if (cur) {
+                cur.set('id', '');
+                cur.set('innerHTML', ' ');
+                this.selectNode(cur);
+            }
         },
         /**
         * Generic toString for logging.

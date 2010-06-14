@@ -1,6 +1,9 @@
 YUI Event Utility
     DOM event utilities
 
+Development Master
+    - Initial event and facade support for touch (WIP)
+
 3.1.1
     - fired fireOnce listeners are executed synchronously
 	
