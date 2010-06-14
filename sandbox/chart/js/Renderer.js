@@ -32,9 +32,16 @@ Renderer.ATTRS = {
 };
 
 Renderer.prototype = {
-
+    /**
+     * @private
+     * @description Hash of newly set styles.
+     */
     _newStyles: null,
 
+    /**
+     * @private
+     * @description Storage for styles
+     */
 	_styles: null,
 	
     /**
@@ -75,6 +82,10 @@ Renderer.prototype = {
 		return b;
 	},
 	
+    /**
+     * @private
+     * @description Default style values.
+     */
     _getDefaultStyles: function()
     {
         return {};

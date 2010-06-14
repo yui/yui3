@@ -37,14 +37,14 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 	 */
 	drawLines: function()
 	{
-        if(this._xcoords.length < 1) 
+        if(this.get("xcoords").length < 1) 
 		{
 			return;
 		}
         var	node = this.get("node"),
             ht = node.offsetHeight,
-            xcoords = this._xcoords,
-			ycoords = this._ycoords,
+            xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
 			len = xcoords.length,
 			lastX = xcoords[0],
 			lastY = ycoords[0],

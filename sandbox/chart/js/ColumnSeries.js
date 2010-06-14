@@ -15,7 +15,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
 
 	drawMarkers: function()
 	{
-	    if(this._xcoords.length < 1) 
+	    if(this.get("xcoords").length < 1) 
 		{
 			return;
 		}
@@ -33,8 +33,8 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             alphas = style.alpha || [],
             ratios = style.ratios || [],
             rotation = style.rotation || 0,
-            xcoords = this._xcoords,
-            ycoords = this._ycoords,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
             shapeMethod = style.func || "drawCircle",
             i = 0,
             len = xcoords.length,

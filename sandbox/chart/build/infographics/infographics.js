@@ -999,9 +999,16 @@ Renderer.ATTRS = {
 };
 
 Renderer.prototype = {
-
+    /**
+     * @private
+     * @description Hash of newly set styles.
+     */
     _newStyles: null,
 
+    /**
+     * @private
+     * @description Storage for styles
+     */
 	_styles: null,
 	
     /**
@@ -1042,6 +1049,10 @@ Renderer.prototype = {
 		return b;
 	},
 	
+    /**
+     * @private
+     * @description Default style values.
+     */
     _getDefaultStyles: function()
     {
         return {};
@@ -1050,11 +1061,27 @@ Renderer.prototype = {
 
 Y.Renderer = Renderer;
 Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
+    /**
+     * @private
+     */
+    _leftOrigin: null,
+
+    /**
+     * @private
+     */
+    _bottomOrigin: null,
+
+    /**
+     * @private
+     */
     renderUI: function()
     {
         this._setCanvas();
     },
     
+    /**
+     * @private
+     */
     bindUI: function()
     {
         var xAxis = this.get("xAxis"),
@@ -1076,10 +1103,16 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         this._parentNode.after("heightChange", Y.bind(this._resizeHandler, this));
     },
    
+    /**
+     * @private
+     */
     _resizeHandler: function(e)
     {
     },
 
+    /**
+     * @private
+     */
     syncUI: function()
     {
         this.draw();
@@ -1095,6 +1128,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
             this.draw();
         }
     },
+
 	/**
 	 * Constant used to generate unique id.
 	 */
@@ -1120,11 +1154,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         this.set("graphic", new Y.Graphic());
         this.get("graphic").render(this.get("node"));
    },
-
-	/**
-	 * @private
-	 */
-	_graphic: null,
 	
 	/**
 	 * @private (protected)
@@ -1133,9 +1162,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 	 */
 	_xAxisChangeHandler: function(event)
 	{
-        var xAxis = this.get("xAxis");
-        this._xMin = xAxis.get("minimum");
-        this._xMax = xAxis.get("maximum");
         if(this.get("rendered") && this.get("xKey") && this.get("yKey"))
 		{
 			this.draw();
@@ -1149,90 +1175,11 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 	 */
 	_yAxisChangeHandler: function(event)
 	{
-        var yAxis = this.get("yAxis");
-        this._yMin = yAxis.get("minimum");
-        this._yMax = yAxis.get("maximum");
         if(this.get("rendered") && this.get("xKey") && this.get("yKey"))
 		{
 			this.draw();
 		}
 	},
-
-	/**
-	 * @private
-	 */
-	_type: "cartesian",
-
-	/**
-	 * @private 
-	 * Storage for <code>order</code>
-	 */
-	_order: NaN,
-	
-	/**
-	 * @private 
-	 * Storage for <code>xcoords</code>.
-	 */
-	_xcoords: [],
-
-	
-	/**
-	 * @private
-	 * Storage for xKey
-	 */
-	_xKey: null,
-	/**
-	 * @private (protected)
-	 * Storage for <code>ycoords</code>
-	 */
-	_ycoords: [],
-	/**
-	 * @private 
-	 * Storage for <code>graph</code>.
-	 */
-	_graph: null,
-	/**
-	 * @private
-	 * Storage for xAxis
-	 */
-	_xAxis: null,
-	
-	/**
-	 * @private
-	 * Storage for yAxis
-	 */
-	_yAxis: null,
-	/**
-	 * @private
-	 * Storage for yKey
-	 */
-	_yKey: null,
-	
-	/**
-	 * @private (protected)
-	 */
-	_xMin:NaN,
-	
-	/**
-	 * @private (protected)
-	 */
-	_xMax: NaN,
-	
-	/**
-	 * @private (protected)
-	 */
-	_yMin: NaN,
-	
-	/**
-	 * @private (protected)
-	 */
-	_yMax: NaN,
-
-	/**
-	 * @private (protected)
-	 * Storage for xCoords
-	 */
-	_xCoords: [],
 
 	/**
 	 * @private
@@ -1250,16 +1197,18 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 			dataHeight = h - (topPadding + padding.bottom),
 			xcoords = [],
 			ycoords = [],
-			xMax = this.get("xAxis").get("maximum"),
-			xMin = this.get("xAxis").get("minimum"),
-			yMax = this.get("yAxis").get("maximum"),
-			yMin = this.get("yAxis").get("minimum"),
+            xAxis = this.get("xAxis"),
+            yAxis = this.get("yAxis"),
+			xMax = xAxis.get("maximum"),
+			xMin = xAxis.get("minimum"),
+			yMax = yAxis.get("maximum"),
+			yMin = yAxis.get("minimum"),
 			xKey = this.get("xKey"),
 			yKey = this.get("yKey"),
 			xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-			xData = this.get("xAxis").getDataByKey(xKey),
-			yData = this.get("yAxis").getDataByKey(yKey),
+			xData = xAxis.getDataByKey(xKey),
+			yData = yAxis.getDataByKey(yKey),
 			dataLength = xData.length, 	
             i;
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
@@ -1274,10 +1223,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         this.set("xcoords", xcoords);
 		this.set("ycoords", ycoords);
     },
-
-    _leftOrigin: null,
-
-    _bottomOrigin: null,
 
 	/**
 	 * @private
@@ -1304,7 +1249,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 
 	drawMarkers: function()
 	{
-	    if(this._xcoords.length < 1) 
+	    if(!this.get("xcoords") || this.get("xcoords").length < 1) 
 		{
 			return;
 		}
@@ -1322,8 +1267,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
             alphas = style.alpha || [],
             ratios = style.ratios || [],
             rotation = style.rotation || 0,
-            xcoords = this._xcoords,
-            ycoords = this._ycoords,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
             shapeMethod = style.func || "drawCircle",
             i = 0,
             len = xcoords.length,
@@ -1377,124 +1322,64 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 ATTRS: {
 
 	type: {		
-		getter: function()
-		{
-			return this._type;
-		},
-		setter: function(value)
-		{
-			this._type = value;
-			return value;
-		}
-  	},
+  	    value: "cartesian"
+    },
 	/**
 	 * Order of this ISeries instance of this <code>type</code>.
 	 */
 	order: {
-		getter: function()
-		{
-			return this._order;
-		},
-		setter:function(value)
-		{
-			this._order = value;
-			return value;
-		}
-	},
+	    value:NaN
+    },
 	/**
 	 * x coordinates for the series.
 	 */
 	xcoords: {
-		getter: function()
-		{
-			return this._xcoords;
-		},
-
-		setter: function(value)
-		{
-			this._xcoords = value;
-			return value;
-		}
+        value: null
 	},
 	/**
 	 * y coordinates for the series
 	 */
 	ycoords: {
-		getter: function()
-		{
-			return this._ycoords;
-		},
-		setter: function(value)
-		{
-			this._ycoords = value;
-			return value;
-		}
+        value: null
 	},
 	graph: {
-		getter: function()
-		{
-			return this._graph;
-		},
-		setter: function(value)
-		{
-			this._graph = value;
-			return value;
-		}
+        value: null
 	},
 	/**
 	 * Reference to the <code>Axis</code> instance used for assigning 
 	 * x-values to the graph.
 	 */
 	xAxis: {
-		getter: function()
-		{ 
-			return this._xAxis;
-		},
-		validator: function(value)
+		value: null,
+
+        validator: function(value)
 		{
-			return value !== this._xAxis;
+			return value !== this.get("xAxis");
 		},
-		setter: function(value)
-		{
-			this._xAxis = value;			
-			return value;
-		},
-		lazyAdd: false
+		
+        lazyAdd: false
 	},
 	
 	yAxis: {
-		getter: function()
-		{ 
-			return this._yAxis;
-		},
-		validator: function(value)
+		value: null,
+
+        validator: function(value)
 		{
-			return value !== this._yAxis;
+			return value !== this.get("yAxis");
 		},
-		setter: function(value)
-		{
-			this._yAxis = value;
-			return value;
-		},
-		lazyAdd: false
+		
+        lazyAdd: false
 	},
 	/**
 	 * Indicates which array to from the hash of value arrays in 
 	 * the x-axis <code>Axis</code> instance.
 	 */
 	xKey: {
-		getter: function()
-		{ 
-			return this._xKey; 
-		},
+        value: null,
+
 		validator: function(value)
 		{
-			return value !== this._xKey;
-		},
-		setter: function(value)
-		{
-			this._xKey = value;
-			return value;
+			return value !== this.get("xKey");
 		}
 	},
 	/**
@@ -1502,18 +1387,11 @@ ATTRS: {
 	 * the y-axis <code>Axis</code> instance.
 	 */
 	yKey: {
-		getter: function()
-		{ 
-			return this._yKey; 
-		},
-		validator: function(value)
+		value: null,
+
+        validator: function(value)
 		{
-			return value !== this._yKey;
-		},
-		setter: function(value)
-		{
-			this._yKey = value;
-			return value;
+			return value !== this.get("yKey");
 		}
 	},
 
@@ -1525,16 +1403,8 @@ ATTRS: {
 	 * The graphic in which the series will be rendered.
 	 */
 	graphic: {
-		getter: function()
-		{
-			return this._graphic;
-		},
-		setter: function(value)
-		{
-			this._graphic = value;
-			return value;
-		}
-	}
+        value: null
+    }
 }
 });
 
@@ -1577,14 +1447,14 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 	 */
 	drawLines: function()
 	{
-        if(this._xcoords.length < 1) 
+        if(this.get("xcoords").length < 1) 
 		{
 			return;
 		}
         var	node = this.get("node"),
             ht = node.offsetHeight,
-            xcoords = this._xcoords,
-			ycoords = this._ycoords,
+            xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
 			len = xcoords.length,
 			lastX = xcoords[0],
 			lastY = ycoords[0],
@@ -1762,7 +1632,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
 
 	drawMarkers: function()
 	{
-	    if(this._xcoords.length < 1) 
+	    if(this.get("xcoords").length < 1) 
 		{
 			return;
 		}
@@ -1780,8 +1650,8 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             alphas = style.alpha || [],
             ratios = style.ratios || [],
             rotation = style.rotation || 0,
-            xcoords = this._xcoords,
-            ycoords = this._ycoords,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
             shapeMethod = style.func || "drawCircle",
             i = 0,
             len = xcoords.length,
