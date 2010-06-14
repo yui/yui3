@@ -26,7 +26,7 @@ server.get('/combo/([^/]+)/?', function (root) {
         rootPath = config.roots[root];
 
     if (!rootPath) {
-        this.send404();
+        this.response.send404();
         this.end();
         return;
     }
@@ -42,7 +42,7 @@ server.get('/combo/([^/]+)/?', function (root) {
         try {
             response += fs.readFileSync(fullPath, 'utf8') + "\n";
         } catch (ex) {
-            this.send404();
+            this.response.send404();
             this.end();
             return;
         }
@@ -51,7 +51,7 @@ server.get('/combo/([^/]+)/?', function (root) {
     // TODO: Currently, the last file extension is what determines the
     // Content-Type. Need to look into what the real ComboHandler does when
     // multiple file types are requested in a single request.
-    this.res.headers['content-type'] = mimeType + ';charset=utf-8';
+    this.response.setHeader('Content-Type', mimeType + ';charset=utf-8');
     this.end(response + "\n");
 });
 
@@ -65,7 +65,7 @@ server.get('/proxy/?', function () {
         url    = this.query.url;
 
     if (!url) {
-        this.sendError(400, '400 Bad Request', 'Missing required "url" parameter.');
+        this.response.sendError(400, 'Missing required "url" parameter.');
         this.end();
         return;
     }
@@ -79,7 +79,7 @@ server.get('/proxy/?', function () {
     }
 
     if (!proxyWhitelist(url.hostname)) {
-        this.sendError(403, '403 Forbidden', 'Proxy whitelist does not allow the requested URL.');
+        this.response.sendError(403, 'Proxy whitelist does not allow the requested URL.');
         this.end();
         return;
     }
@@ -99,11 +99,11 @@ server.get('/proxy/?', function () {
         var header;
 
         // Copy status and headers from the remote response to our response.
-        that.res.status = response.statusCode;
+        that.response.statusCode = response.statusCode;
 
         for (header in response.headers) {
             if (response.headers.hasOwnProperty(header)) {
-                that.res.headers[header.toLowerCase()] = response.headers[header];
+                that.response.setHeader(header, response.headers[header]);
             }
         }
 

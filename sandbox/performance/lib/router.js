@@ -11,6 +11,145 @@ var fs       = require('fs'),
     query    = require('querystring'),
     sys      = require('sys');
 
+// HTTP request factory. Augments Node's HTTPServerRequest object with
+// additional properties.
+exports.Request = function Request(req) {
+    var parsedURL = parseURL(req.url, true);
+
+    Object.defineProperties(req, {
+        parsedURL: {
+            value: parsedURL
+        },
+
+        query: {
+            value: parsedURL.query || {}
+        }
+    });
+
+    return req;
+};
+
+// HTTP response factory. Augments Node's HTTPServerResponse object with
+// additional properties and methods.
+exports.Response = function Response(res) {
+    var headers    = {},
+        statusCode = 200;
+
+    Object.defineProperties(res, {
+        headers: {
+            enumerable: true,
+
+            get: function () {
+                var _headers = {},
+                    header,
+                    name;
+
+                for (name in headers) {
+                    if (headers.hasOwnProperty(name)) {
+                        header = headers[name];
+                        _headers[header[0]] = header[1];
+                    }
+                }
+
+                return _headers;
+            }
+        },
+
+        statusCode: {
+            enumerable: true,
+
+            get: function () {
+                return statusCode;
+            },
+
+            set: function (value) {
+                return (statusCode = parseInt(value, 10));
+            }
+        }
+    });
+
+    // TODO: validate name characters in headers
+    res.addHeader = function addHeader(name, value) {
+        if (!res.hasHeader(name)) {
+            res.setHeader(name, value);
+            return true;
+        }
+
+        return false;
+    };
+
+    res.getHeader = function getHeader(name) {
+        return res.hasHeader(name) ? headers[name.toLowerCase()][1] : undefined;
+    };
+
+    res.hasHeader = function hasHeader(name) {
+        return headers.hasOwnProperty(name.toLowerCase());
+    };
+
+    res.removeHeader = function removeHeader(name) {
+        if (res.hasHeader(name)) {
+            delete headers[name.toLowerCase()];
+            return true;
+        }
+
+        return false;
+    };
+
+    res.send404 = function send404() {
+        res.sendError(404, 'The requested resource was not found.');
+    };
+
+    res.sendError = function sendError(statusCode, message, title) {
+        message = message || '';
+        title   = title || statusCode.toString() + ' ' +
+                (http.STATUS_CODES[statusCode.toString()] || 'Unknown Error');
+
+        res.setHeader('Content-Type', 'text/html;charset=utf-8');
+        res.statusCode = statusCode;
+
+        res.sendResponse(
+            '<!DOCTYPE html>' +
+            '<html>' +
+                '<head><title>' + title + '</title></head>' +
+                '<body>' +
+                    '<h1>' + title + '</h1>' +
+                    '<p>' + message + '</p>' +
+                '</body>' +
+            '</html>'
+        );
+    };
+
+    res.sendHTML = function sendHTML(body) {
+        res.addHeader('Content-Type', 'text/html;charset=utf-8');
+        res.sendResponse(body);
+    };
+
+    res.sendJSON = function sendJSON(body) {
+        res.addHeader('Content-Type', 'application/json;charset=utf-8');
+        sendResponse(JSON.stringify(body));
+    };
+
+    res.sendResponse = function sendResponse(body) {
+        if (body) {
+            res.addHeader('Content-Length', body.length || 0);
+        }
+
+        res.writeHead(res.statusCode, res.headers);
+
+        if (body) {
+            res.write(body);
+        }
+
+        res.end();
+    };
+
+    res.setHeader = function setHeader(name, value) {
+        headers[name.toLowerCase()] = [name, value];
+    };
+
+    return res;
+};
+
 // Server factory.
 exports.Server = function Server(config) {
     var publicRoot,
@@ -42,14 +181,6 @@ exports.Server = function Server(config) {
         });
     }
 
-    function curry(fn, scope) {
-        var args = Array.prototype.slice.call(arguments, 2);
-
-        return function () {
-            fn.apply(scope || null, args.concat(Array.prototype.slice.call(arguments)));
-        };
-    }
-
     function decodeURLMatch(match) {
         return match ? query.unescape(match, true) : match;
     }
@@ -62,8 +193,8 @@ exports.Server = function Server(config) {
             replace('%method',   req.method).
             replace('%url',      req.url).
             replace('%protocol', 'HTTP/' + req.httpVersion).
-            replace('%status',   res.status).
-            replace('%size',     res.headers['content-length'] || '-')
+            replace('%status',   res.statusCode).
+            replace('%size',     res.getHeader('Content-Length') || '-')
         );
     }
 
@@ -95,8 +226,8 @@ exports.Server = function Server(config) {
                         return finish(false);
                     }
 
-                    res.headers['content-type'] = mime.getType(path.extname(fullPath));
-                    sendResponse(res, buffer);
+                    res.setHeader('Content-Type', mime.getType(path.extname(fullPath)));
+                    res.sendResponse(buffer);
                     return finish(true);
                 });
 
@@ -121,7 +252,7 @@ exports.Server = function Server(config) {
             route;
 
         if (!methodRoutes || !methodRoutes.length) {
-            send404(res);
+            res.send404();
             callback && callback.call(null, req, res, false);
             return; // <-- look, a return!
         }
@@ -140,31 +271,25 @@ exports.Server = function Server(config) {
                         if (!res.finished) {
                             switch(typeof result) {
                             case 'string':
-                                sendHTML(res, result);
+                                res.sendHTML(result);
                                 break;
 
                             case 'object':
-                                sendJSON(res, result);
+                                res.sendJSON(result);
                                 break;
 
                             default:
-                                res.status = 204;
-                                sendResponse(res);
+                                res.statusCode = 204;
+                                res.sendResponse();
                             }
                         }
 
                         callback && callback.call(null, req, res, true);
                     },
 
-                    query: req.query,
-                    req  : req,
-                    res  : res,
-
-                    send404     : curry(send404,      null, res),
-                    sendError   : curry(sendError,    null, res),
-                    sendHTML    : curry(sendHTML,     null, res),
-                    sendJSON    : curry(sendJSON,     null, res),
-                    sendResponse: curry(sendResponse, null, res)
+                    query   : req.query,
+                    request : req,
+                    response: res
                 }, matches);
 
                 return; // <-- look, a return!
@@ -172,72 +297,14 @@ exports.Server = function Server(config) {
         }
 
         // No route matched; return a 404.
-        send404(res);
+        res.send404();
         callback && callback.call(null, req, res, false);
-    }
-
-    function send404(res) {
-        sendError(res, 404, '404 Not Found', 'The requested resource was not found.');
-    }
-
-    function sendError(res, status, title, message) {
-        res.headers['content-type'] = 'text/html;charset=utf-8';
-        res.status = status;
-
-        sendResponse(res,
-            '<!DOCTYPE html>' +
-            '<html>' +
-                '<head><title>' + title + '</title></head>' +
-                '<body>' +
-                    '<h1>' + title + '</h1>' +
-                    '<p>' + message + '</p>' +
-                '</body>' +
-            '</html>'
-        );
-    }
-
-    function sendHTML(res, body) {
-        if (!res.headers['content-type']) {
-            res.headers['content-type'] = 'text/html;charset=utf-8';
-        }
-
-        sendResponse(res, body);
-    }
-
-    function sendJSON(res, body) {
-        if (!res.headers['content-type']) {
-            res.headers['content-type'] = 'application/json;charset=utf-8';
-        }
-
-        sendResponse(res, JSON.stringify(body));
-    }
-
-    function sendResponse(res, body) {
-        if (body && !res.headers['content-length']) {
-            res.headers['content-length'] = body.length;
-        }
-
-        res.writeHead(res.status, res.headers);
-
-        if (body) {
-            res.write(body);
-        }
-
-        res.end();
-        res.finished = true;
     }
 
     // -- Private Callbacks ----------------------------------------------------
     function handleRequest(req, res) {
-        // Parse the URL and query string.
-        req.parsedURL = parseURL(req.url, true);
-        req.query     = req.parsedURL.query || {};
-
-        // Set default response code.
-        res.status = 200;
-
-        // Set default response headers.
-        res.headers = {};
+        req = exports.Request(req);
+        res = exports.Response(res);
 
         // Look for a matching public file.
         matchPublic(req, res, function (req, res, matched) {
