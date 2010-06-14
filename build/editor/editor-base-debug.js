@@ -29,7 +29,8 @@ YUI.add('editor-base', function(Y) {
                 title: EditorBase.STRINGS.title,
                 use: EditorBase.USE,
                 dir: this.get('dir'),
-                extracss: this.get('extracss')
+                extracss: this.get('extracss'),
+                host: this
             }).plug(Y.Plugin.ExecCommand);
 
             frame.after('ready', Y.bind(this._afterFrameReady, this));
@@ -95,7 +96,10 @@ YUI.add('editor-base', function(Y) {
                     cmds.strikethrough = 1;
                 }
 
-                family = n.getStyle('fontFamily').split(',')[0].toLowerCase();
+                var family2 = n.getStyle('fontFamily').split(',')[0].toLowerCase();
+                if (family2) {
+                    family = family2;
+                }
                 fsize = n.getStyle('fontSize');
 
                 var cls = n.get('className').split(' ');
@@ -138,7 +142,8 @@ YUI.add('editor-base', function(Y) {
         */
         getDomPath: function(node) {
             
-			var domPath = [];
+			var domPath = [],
+                inst = this.frame.getInstance();
 
             while (node !== null) {
                 if (!node.inDoc()) {
@@ -147,7 +152,7 @@ YUI.add('editor-base', function(Y) {
                 }
                 //Check to see if we get el.nodeName and nodeType
                 if (node.get('nodeName') && node.get('nodeType') && (node.get('nodeType') == 1)) {
-                    domPath.push(Y.Node.getDOMNode(node));
+                    domPath.push(inst.Node.getDOMNode(node));
                 }
 
                 if (node.test('body')) {
@@ -158,10 +163,10 @@ YUI.add('editor-base', function(Y) {
                 node = node.get('parentNode');
             }
             if (domPath.length === 0) {
-                domPath[0] = Y.confg.doc.body;
+                domPath[0] = inst.config.doc.body;
             }
             
-            return Y.all(domPath.reverse());
+            return inst.all(domPath.reverse());
 
         },
         /**

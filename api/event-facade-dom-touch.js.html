@@ -51,40 +51,51 @@
     <span class="nx">ROTATION</span> <span class="o">=</span> <span class="s2">&quot;rotation&quot;</span><span class="p">;</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_touch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span><span class="nx">l</span><span class="p">;</span>
 
-    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Calling _touch() with e = &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span><span class="nx">l</span><span class="p">,</span> <span class="nx">etCached</span><span class="p">,</span> <span class="nx">et</span><span class="p">,</span><span class="nx">touchCache</span><span class="p">;</span>
+
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Calling facade._touch() with e = &quot;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found e.touches. Replicating on facade&quot;</span><span class="p">);</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">touches</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">touchCache</span> <span class="o">=</span> <span class="p">{};</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">touches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
+            <span class="nx">et</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">touches</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="nx">touchCache</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">et</span><span class="p">)]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">touches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">et</span><span class="p">,</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
         <span class="p">}</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found e.touches. Replicated on facade&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found e.targetTouches. Replicating on facade&quot;</span><span class="p">);</span>
+
         <span class="k">this</span><span class="p">.</span><span class="nx">targetTouches</span> <span class="o">=</span> <span class="p">[];</span>
 
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// TODO: Should we re-use Touch instances from the e.touches loop?</span>
-            <span class="c1">// Are we breaking things if instance equality is busted? (e.touches[n] !== e.targetTouches[m])</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
-        <span class="p">}</span>
+            <span class="nx">et</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="nx">etCached</span> <span class="o">=</span> <span class="nx">touchCache</span> <span class="o">&amp;&amp;</span> <span class="nx">touchCache</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">et</span><span class="p">,</span> <span class="kc">true</span><span class="p">)];</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found e.tagetTouches. Replicated on facade&quot;</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">targetTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">etCached</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">et</span><span class="p">,</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="nx">etCached</span><span class="p">)</span> <span class="p">{</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found native event in touches. Using same facade in targetTouches&quot;</span><span class="p">);</span> <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTouches</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">currentTouches</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">changedTouches</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found e.changedTouches. Replicating on facade&quot;</span><span class="p">);</span>        
 
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">currentTouches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">currentTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">changedTouches</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">changedTouches</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">et</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">changedTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+            <span class="nx">etCached</span> <span class="o">=</span> <span class="nx">touchCache</span> <span class="o">&amp;&amp;</span> <span class="nx">touchCache</span><span class="p">[</span><span class="nx">Y</span><span class="p">.</span><span class="nx">stamp</span><span class="p">(</span><span class="nx">et</span><span class="p">,</span> <span class="kc">true</span><span class="p">)];</span>
+
+            <span class="k">this</span><span class="p">.</span><span class="nx">changedTouches</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">etCached</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOMEventFacade</span><span class="p">(</span><span class="nx">et</span><span class="p">,</span> <span class="nx">currentTarget</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">);</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="nx">etCached</span><span class="p">)</span> <span class="p">{</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found native event in touches. Using same facade in changedTouches&quot;</span><span class="p">);</span> <span class="p">}</span>
         <span class="p">}</span>
-
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found e.currentTouches. Replicated on facade&quot;</span><span class="p">);</span>        
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">SCALE</span> <span class="k">in</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
