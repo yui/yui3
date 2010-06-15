@@ -306,6 +306,12 @@ exports.Server = function Server(config) {
         req = exports.Request(req);
         res = exports.Response(res);
 
+        // Fast error and no logging for all favicon requests (for now).
+        if (req.parsedURL.pathname === '/favicon.ico') {
+            res.send404();
+            return;
+        }
+
         // Look for a matching public file.
         matchPublic(req, res, function (req, res, matched) {
             if (matched) {
