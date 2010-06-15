@@ -19,11 +19,15 @@ var fs       = require('fs'),
 
 // Combo URLs.
 server.get('/combo/([^/]+)/?', function (root) {
-    var fullPath,
+    var expires,
+        fullPath,
+        lastModified,
         mimeType,
+        mtime,
         relativePath,
         response = '',
-        rootPath = config.roots[root];
+        rootPath = config.roots[root],
+        stat;
 
     if (!rootPath) {
         this.response.send404();
@@ -41,17 +45,32 @@ server.get('/combo/([^/]+)/?', function (root) {
 
         try {
             response += fs.readFileSync(fullPath, 'utf8') + "\n";
+            mtime = new Date(fs.statSync(fullPath).mtime);
         } catch (ex) {
             this.response.send404();
             this.end();
             return;
         }
+
+        if (!lastModified || mtime > lastModified) {
+            lastModified = mtime;
+        }
     }
+
+    expires = new Date();
+    expires.setUTCFullYear(expires.getUTCFullYear() + 10);
 
     // TODO: Currently, the last file extension is what determines the
     // Content-Type. Need to look into what the real ComboHandler does when
     // multiple file types are requested in a single request.
+    this.response.setHeader('Cache-Control', 'public;max-age=315569260');
     this.response.setHeader('Content-Type', mimeType + ';charset=utf-8');
+    this.response.setHeader('Expires', expires.toUTCString());
+
+    if (lastModified) {
+        this.response.setHeader('Last-Modified', lastModified.toUTCString());
+    }
+
     this.end(response + "\n");
 });
 

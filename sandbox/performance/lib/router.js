@@ -147,6 +147,9 @@ exports.Response = function Response(res) {
         headers[name.toLowerCase()] = [name, value];
     };
 
+    // Default headers.
+    res.addHeader('Date', new Date().toUTCString());
+
     return res;
 };
 
