@@ -1099,17 +1099,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         this.after("xAxisChange", Y.bind(this.xAxisChangeHandler, this));
         this.after("yAxisChange", Y.bind(this.yAxisChangeHandler, this));
         this.after("stylesChange", Y.bind(this._updateHandler, this));
-        this._parentNode.after("widthChange", Y.bind(this._resizeHandler, this));
-        this._parentNode.after("heightChange", Y.bind(this._resizeHandler, this));
     },
    
-    /**
-     * @private
-     */
-    _resizeHandler: function(e)
-    {
-    },
-
     /**
      * @private
      */
@@ -1148,8 +1139,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         style.display = "block";
         style.top = "0px"; 
         style.left = "0px";
-        style.width = "800px";
-        style.height = "300px";
+        style.width = "100%";
+        style.height = "100%";
         this.set("node", n);
         this.set("graphic", new Y.Graphic());
         this.get("graphic").render(this.get("node"));
@@ -1187,9 +1178,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 	setAreaData: function()
 	{
         var nextX, nextY,
-            node = this.get("node"),
-			w = node.offsetWidth,
-            h = node.offsetHeight,
+            node = Y.Node.one(this._parentNode).get("parentNode"),
+			w = node.get("offsetWidth"),
+            h = node.get("offsetHeight"),
             padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
@@ -1211,6 +1202,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 			yData = yAxis.getDataByKey(yKey),
 			dataLength = xData.length, 	
             i;
+        this.get("graphic").setSize(w, h);
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
         this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
         for (i = 0; i < dataLength; ++i) 
@@ -1237,16 +1229,20 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 	 */
 	draw: function()
     {
-        var node = this.get("node"),
-			w = node.offsetWidth,
-            h = node.offsetHeight;
+        var node = Y.Node.one(this._parentNode).get("parentNode"),
+			w = node.get("offsetWidth"),
+            h = node.get("offsetHeight");
         if  (!isNaN(w) && !isNaN(h) && w > 0 && h > 0)
 		{
             this.setAreaData();
             this.drawGraph();
 		}
 	},
-
+    
+    /**
+     * @private
+     * @description Draws the markers for the graph
+     */
 	drawMarkers: function()
 	{
 	    if(!this.get("xcoords") || this.get("xcoords").length < 1) 
@@ -1291,10 +1287,14 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
                 graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
             }
             this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.endFill();
+            graphic.end();
         }
  	},
 
+    /**
+     * @private
+     * @description Draws a marker
+     */
     drawMarker: function(graphic, func, left, top, w, h)
     {
         if(func === "drawCircle")
@@ -1309,6 +1309,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         }
     },
 
+    /**
+     * @private
+     * @return Default styles for the widget
+     */
     _getDefaultStyles: function()
     {
         return {padding:{
@@ -1451,9 +1455,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var	node = this.get("node"),
-            ht = node.offsetHeight,
-            xcoords = this.get("xcoords"),
+        var xcoords = this.get("xcoords"),
 			ycoords = this.get("ycoords"),
 			len = xcoords.length,
 			lastX = xcoords[0],
@@ -1474,8 +1476,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			graphic = this.get("graphic");
         graphic.clear();
         graphic.lineStyle(styles.weight, styles.color);
-        graphic.beginFill(styles.color, 0.5);
-        graphic.moveTo (lastX, lastY);
+        graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
 		{
 			nextX = xcoords[i];
@@ -1519,12 +1520,8 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		
 			lastX = lastValidX = nextX;
 			lastY = lastValidY = nextY;
-		}
-       // graphic.lineStyle(0);
-        graphic.lineTo(lastX, ht);
-        graphic.lineTo(0, ht);
-        graphic.lineTo(0, ycoords[0]);
-        graphic.endFill();
+        }
+        graphic.end();
 	},
 	
     /**
@@ -1666,6 +1663,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             ratio,
             renderer,
             order = this.get("order"),
+            node = Y.Node.one(this._parentNode).get("parentNode"),
             left;
         for(; i < seriesLen; ++i)
         {
@@ -1677,7 +1675,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             }
         }
         totalWidth = len * seriesWidth;
-        if(totalWidth > this.get("node").offsetWidth)
+        if(totalWidth > node.offsetWidth)
         {
             ratio = this.width/totalWidth;
             seriesWidth *= ratio;
@@ -1703,7 +1701,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
                 graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
             }
             this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.endFill();
+            graphic.end();
         }
  	},
 
@@ -1740,6 +1738,131 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
 });
 
 Y.ColumnSeries = ColumnSeries;
+function BarSeries(config)
+{
+	BarSeries.superclass.constructor.apply(this, arguments);
+}
+
+BarSeries.NAME = "barSeries";
+
+BarSeries.ATTRS = {
+	type: {
+        value: "bar"
+    }
+};
+
+Y.extend(BarSeries, Y.CartesianSeries, {
+    drawMarkers: function()
+	{
+	    if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var graphic = this.get("graphic"),
+            style = this.get("styles").marker,
+            w = style.width,
+            h = style.height,
+            fillColor = style.fillColor,
+            alpha = style.fillAlpha,
+            fillType = style.fillType || "solid",
+            borderWidth = style.borderWidth,
+            borderColor = style.borderColor,
+            borderAlpha = style.borderAlpha || 1,
+            colors = style.colors,
+            alphas = style.alpha || [],
+            ratios = style.ratios || [],
+            rotation = style.rotation || 0,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            shapeMethod = style.func || "drawCircle",
+            i = 0,
+            len = xcoords.length,
+            top = ycoords[0],
+            type = this.get("type"),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[type],
+            seriesLen = seriesCollection.length,
+            seriesHeight = 0,
+            totalHeight = 0,
+            offset = 0,
+            ratio,
+            renderer,
+            order = this.get("order"),
+            node = Y.Node.one(this._parentNode).get("parentNode"),
+            left;
+        for(; i < seriesLen; ++i)
+        {
+            renderer = seriesCollection[i];
+            seriesHeight += renderer.get("styles").marker.height;
+            if(order > i) 
+            {
+                offset = seriesHeight;
+            }
+        }
+        totalHeight = len * seriesHeight;
+        if(totalHeight > node.offsetHeight)
+        {
+            ratio = this.height/totalHeight;
+            seriesHeight *= ratio;
+            offset *= ratio;
+            h *= ratio;
+            h = Math.max(h, 1);
+        }
+        offset -= seriesHeight/2;
+        for(i = 0; i < len; ++i)
+        {
+            top = ycoords[i] + offset;
+            left = xcoords[i];
+            if(borderWidth > 0)
+            {
+                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
+            }
+            if(fillType === "solid")
+            {
+                graphic.beginFill(fillColor, alpha);
+            }
+            else
+            {
+                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
+            }
+            this.drawMarker(graphic, shapeMethod, left, top, w, h);
+            graphic.end();
+        }
+ 	},
+
+    drawMarker: function(graphic, func, left, top, w, h)
+    {
+        w = left - this._leftOrigin;
+        graphic.drawRect(this._leftOrigin, top, w, h);
+    },
+	
+	_getDefaultStyles: function()
+    {
+        return {
+            marker: {
+                fillColor: "#000000",
+                fillAlpha: 1,
+                borderColor:"#ff0000",
+                borderWidth:0,
+                borderAlpha:1,
+                colors:[],
+                alpha:[],
+                ratios:[],
+                rotation:0,
+                width:6,
+                height:6
+            },
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
+});
+
+Y.BarSeries = BarSeries;
 function GraphStack(config)
 {
     GraphStack.superclass.constructor.apply(this, arguments);
@@ -1856,7 +1979,6 @@ Y.extend(GraphStack, Y.Base, {
             seriesType,
             series;
             seriesData.graph = this;
-            seriesData.parent = this.get("parent");
         if(!seriesTypes.hasOwnProperty(type))
         {
             seriesTypes[type] = [];
@@ -1886,6 +2008,9 @@ Y.extend(GraphStack, Y.Base, {
             break;
             case "column" :
                 seriesClass = Y.ColumnSeries;
+            break;
+            case "bar" :
+                seriesClass = Y.BarSeries;
             break;
             default:
                 seriesClass = Y.CartesianSeries;
@@ -3065,7 +3190,7 @@ Y.mix(Y.AxisRenderer.prototype, {
         graphic.lineStyle(line.weight, line.color, line.alpha);
         graphic.moveTo(startPoint.x, startPoint.y);
         graphic.lineTo(endPoint.x, endPoint.y);
-        graphic.endFill();
+        graphic.end();
     },
 
     /**

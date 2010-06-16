@@ -1,19 +1,18 @@
-function ColumnSeries(config)
+function BarSeries(config)
 {
-	ColumnSeries.superclass.constructor.apply(this, arguments);
+	BarSeries.superclass.constructor.apply(this, arguments);
 }
 
-ColumnSeries.NAME = "columnSeries";
+BarSeries.NAME = "barSeries";
 
-ColumnSeries.ATTRS = {
+BarSeries.ATTRS = {
 	type: {
-        value: "column"
+        value: "bar"
     }
 };
 
-Y.extend(ColumnSeries, Y.CartesianSeries, {
-
-	drawMarkers: function()
+Y.extend(BarSeries, Y.CartesianSeries, {
+    drawMarkers: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
@@ -43,8 +42,8 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             graph = this.get("graph"),
             seriesCollection = graph.seriesTypes[type],
             seriesLen = seriesCollection.length,
-            seriesWidth = 0,
-            totalWidth = 0,
+            seriesHeight = 0,
+            totalHeight = 0,
             offset = 0,
             ratio,
             renderer,
@@ -54,26 +53,26 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
         for(; i < seriesLen; ++i)
         {
             renderer = seriesCollection[i];
-            seriesWidth += renderer.get("styles").marker.width;
+            seriesHeight += renderer.get("styles").marker.height;
             if(order > i) 
             {
-                offset = seriesWidth;
+                offset = seriesHeight;
             }
         }
-        totalWidth = len * seriesWidth;
-        if(totalWidth > node.offsetWidth)
+        totalHeight = len * seriesHeight;
+        if(totalHeight > node.offsetHeight)
         {
-            ratio = this.width/totalWidth;
-            seriesWidth *= ratio;
+            ratio = this.height/totalHeight;
+            seriesHeight *= ratio;
             offset *= ratio;
-            w *= ratio;
-            w = Math.max(w, 1);
+            h *= ratio;
+            h = Math.max(h, 1);
         }
-        offset -= seriesWidth/2;
+        offset -= seriesHeight/2;
         for(i = 0; i < len; ++i)
         {
-            top = ycoords[i];
-            left = xcoords[i] + offset;
+            top = ycoords[i] + offset;
+            left = xcoords[i];
             if(borderWidth > 0)
             {
                 graphic.lineStyle(borderWidth, borderColor, borderAlpha);
@@ -93,8 +92,8 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
 
     drawMarker: function(graphic, func, left, top, w, h)
     {
-        h = this._bottomOrigin - top;
-        graphic.drawRect(left, top, w, h);
+        w = left - this._leftOrigin;
+        graphic.drawRect(this._leftOrigin, top, w, h);
     },
 	
 	_getDefaultStyles: function()
@@ -123,4 +122,4 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
     }
 });
 
-Y.ColumnSeries = ColumnSeries;
+Y.BarSeries = BarSeries;

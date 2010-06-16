@@ -41,7 +41,7 @@ Y.mix(Y.AxisRenderer.prototype, {
         graphic.lineStyle(line.weight, line.color, line.alpha);
         graphic.moveTo(startPoint.x, startPoint.y);
         graphic.lineTo(endPoint.x, endPoint.y);
-        graphic.endFill();
+        graphic.end();
     },
 
     /**

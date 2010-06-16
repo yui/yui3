@@ -41,9 +41,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		{
 			return;
 		}
-        var	node = this.get("node"),
-            ht = node.offsetHeight,
-            xcoords = this.get("xcoords"),
+        var xcoords = this.get("xcoords"),
 			ycoords = this.get("ycoords"),
 			len = xcoords.length,
 			lastX = xcoords[0],
@@ -64,8 +62,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			graphic = this.get("graphic");
         graphic.clear();
         graphic.lineStyle(styles.weight, styles.color);
-        graphic.beginFill(styles.color, 0.5);
-        graphic.moveTo (lastX, lastY);
+        graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
 		{
 			nextX = xcoords[i];
@@ -109,12 +106,8 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		
 			lastX = lastValidX = nextX;
 			lastY = lastValidY = nextY;
-		}
-       // graphic.lineStyle(0);
-        graphic.lineTo(lastX, ht);
-        graphic.lineTo(0, ht);
-        graphic.lineTo(0, ycoords[0]);
-        graphic.endFill();
+        }
+        graphic.end();
 	},
 	
     /**

@@ -37,17 +37,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         this.after("xAxisChange", Y.bind(this.xAxisChangeHandler, this));
         this.after("yAxisChange", Y.bind(this.yAxisChangeHandler, this));
         this.after("stylesChange", Y.bind(this._updateHandler, this));
-        this._parentNode.after("widthChange", Y.bind(this._resizeHandler, this));
-        this._parentNode.after("heightChange", Y.bind(this._resizeHandler, this));
     },
    
-    /**
-     * @private
-     */
-    _resizeHandler: function(e)
-    {
-    },
-
     /**
      * @private
      */
@@ -86,8 +77,8 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         style.display = "block";
         style.top = "0px"; 
         style.left = "0px";
-        style.width = "800px";
-        style.height = "300px";
+        style.width = "100%";
+        style.height = "100%";
         this.set("node", n);
         this.set("graphic", new Y.Graphic());
         this.get("graphic").render(this.get("node"));
@@ -125,9 +116,9 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 	setAreaData: function()
 	{
         var nextX, nextY,
-            node = this.get("node"),
-			w = node.offsetWidth,
-            h = node.offsetHeight,
+            node = Y.Node.one(this._parentNode).get("parentNode"),
+			w = node.get("offsetWidth"),
+            h = node.get("offsetHeight"),
             padding = this.get("styles").padding,
 			leftPadding = padding.left,
 			topPadding = padding.top,
@@ -149,6 +140,7 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 			yData = yAxis.getDataByKey(yKey),
 			dataLength = xData.length, 	
             i;
+        this.get("graphic").setSize(w, h);
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
         this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
         for (i = 0; i < dataLength; ++i) 
@@ -175,16 +167,20 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 	 */
 	draw: function()
     {
-        var node = this.get("node"),
-			w = node.offsetWidth,
-            h = node.offsetHeight;
+        var node = Y.Node.one(this._parentNode).get("parentNode"),
+			w = node.get("offsetWidth"),
+            h = node.get("offsetHeight");
         if  (!isNaN(w) && !isNaN(h) && w > 0 && h > 0)
 		{
             this.setAreaData();
             this.drawGraph();
 		}
 	},
-
+    
+    /**
+     * @private
+     * @description Draws the markers for the graph
+     */
 	drawMarkers: function()
 	{
 	    if(!this.get("xcoords") || this.get("xcoords").length < 1) 
@@ -229,10 +225,14 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
                 graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
             }
             this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.endFill();
+            graphic.end();
         }
  	},
 
+    /**
+     * @private
+     * @description Draws a marker
+     */
     drawMarker: function(graphic, func, left, top, w, h)
     {
         if(func === "drawCircle")
@@ -247,6 +247,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         }
     },
 
+    /**
+     * @private
+     * @return Default styles for the widget
+     */
     _getDefaultStyles: function()
     {
         return {padding:{
