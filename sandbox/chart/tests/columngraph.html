@@ -73,7 +73,12 @@ table, tr, td
 						showMarkers:false,
                         padding:{left:50, right:50}
                     };
-					
+				
+                    var taxareastyles = {
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        padding:{left:50, right:50}
+                    };
 					// Create bottom axis styles
 					var bottomaxisstyles = {
 						label:{
@@ -155,15 +160,15 @@ table, tr, td
                                                                                             styles:expensegraphstyles
                                                                                         
                                                                                         },
-                                                                                        lineSeries
-                                                                                       /*{
-                                                                                            type:"line",
+                                                                                        {
+                                                                                            type:"area",
                                                                                             xAxis:timeaxis,
                                                                                             yAxis:numericaxis,
                                                                                             xKey:"day",
                                                                                             yKey:"taxes",
-                                                                                            styles:taxgraphstyles
-                                                                                       }*/
+                                                                                            styles:taxareastyles
+                                                                                        },
+                                                                                        lineSeries
                                                                                      ]});
 
                     var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});

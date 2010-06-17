@@ -147,6 +147,9 @@ Y.extend(GraphStack, Y.Base, {
             case "bar" :
                 seriesClass = Y.BarSeries;
             break;
+            case "area" : 
+                seriesClass = Y.AreaSeries;
+            break;
             default:
                 seriesClass = Y.CartesianSeries;
             break;

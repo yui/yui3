@@ -74,6 +74,12 @@ table, tr, td
                         padding:{top:50, bottom:50}
                     };
 					
+                    var taxareastyles = {
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        padding:{top:50, bottom:50}
+                    };
+
 					// Create bottom axis styles
 					var bottomaxisstyles = {
 						label:{
@@ -155,15 +161,16 @@ table, tr, td
                                                                                             styles:expensegraphstyles
                                                                                         
                                                                                         },
+                                                                                        {
+                                                                                            type:"area",
+                                                                                            direction:"vertical",
+                                                                                            yAxis:timeaxis,
+                                                                                            xAxis:numericaxis,
+                                                                                            yKey:"day",
+                                                                                            xKey:"taxes",
+                                                                                            styles:taxareastyles
+                                                                                        },
                                                                                         lineSeries
-                                                                                       /*{
-                                                                                            type:"line",
-                                                                                            xAxis:timeaxis,
-                                                                                            yAxis:numericaxis,
-                                                                                            xKey:"day",
-                                                                                            yKey:"taxes",
-                                                                                            styles:taxgraphstyles
-                                                                                       }*/
                                                                                      ]});
 
                     var axisrenderer = new Y.AxisRenderer({axis:numericaxis, position:"bottom", styles:bottomaxisstyles});
