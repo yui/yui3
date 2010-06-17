@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>DOM - Build All Modules</description>
+    <description>Node - Build All Modules</description>
 
-    <macrodef name="build-all">
+    <macrodef name="build-node">
         <attribute name="target"/>
         <sequential>
             <subant target="@{target}">
@@ -12,14 +12,16 @@
     </macrodef>
 
     <target name="local">
-        <build-all target="local"/>
+        <build-node target="local"/>
     </target>
-
     <target name="deploy">
-        <build-all target="deploy"/>
+        <build-node target="deploy"/>
+    </target>
+    <target name="all">
+        <build-node target="all"/>
+    </target>
+    <target name="clean">
+        <build-node target="clean"/>
     </target>
 
-    <target name="all">
-        <build-all target="all"/>
-    </target>
 </project>

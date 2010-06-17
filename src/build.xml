@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="yui3" default="all">
+    <description>YUI 3</description>
+    <macrodef name="build-all">
+        <attribute name="target"/>
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="." includes="*/build.xml"/>
+            </subant>
+        </sequential>
+    </macrodef>
+    <target name="all">
+        <build-all target="all"/>
+    </target>
+    <target name="clean">
+        <build-all target="clean"/>
+    </target>
+</project>
