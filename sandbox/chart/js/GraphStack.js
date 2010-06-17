@@ -114,7 +114,6 @@ Y.extend(GraphStack, Y.Base, {
             seriesType,
             series;
             seriesData.graph = this;
-            seriesData.parent = this.get("parent");
         if(!seriesTypes.hasOwnProperty(type))
         {
             seriesTypes[type] = [];
@@ -144,6 +143,12 @@ Y.extend(GraphStack, Y.Base, {
             break;
             case "column" :
                 seriesClass = Y.ColumnSeries;
+            break;
+            case "bar" :
+                seriesClass = Y.BarSeries;
+            break;
+            case "area" : 
+                seriesClass = Y.AreaSeries;
             break;
             default:
                 seriesClass = Y.CartesianSeries;

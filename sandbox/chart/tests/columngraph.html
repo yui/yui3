@@ -32,8 +32,8 @@ table, tr, td
   <div style="position:absolute;top:50px;left:100px">      
 <table>
 <tr><td></td><td></td><td></td></tr>
-<tr><td><div id="vertaxis" style="margin:0px 0px 0px 0px;height:300px;position:relative;border: 1px solid #0000ff"></div></td><td><div id="chart" style="position:relative"></div></td><td></td></tr>
-<tr><td></td><td><div id="axis" style="margin:0px 0px 0px 0px;position:relative;width:800px;border:1px solid #ff0000"></div></td><td></td></tr>
+<tr><td><div id="vertaxis" style="margin:0px 0px 0px 0px;height:300px;position:relative"></div></td><td><div id="chart" style="width:100%;height:100%;position:relative"></div></td><td></td></tr>
+<tr><td></td><td><div id="axis" style="margin:0px 0px 0px 0px;position:relative;width:800px"></div></td><td></td></tr>
 </table>
 </div>
 <script>
@@ -70,10 +70,15 @@ table, tr, td
 						color:"#ff0000",
 						marker:{fillColor:"#ff0000", width:6, height:6},
 						weight:"2",
-						showMarkers:true,
+						showMarkers:false,
                         padding:{left:50, right:50}
                     };
-					
+				
+                    var taxareastyles = {
+                        color: "#0000ff",
+                        alpha: 0.5,
+                        padding:{left:50, right:50}
+                    };
 					// Create bottom axis styles
 					var bottomaxisstyles = {
 						label:{
@@ -95,11 +100,7 @@ table, tr, td
 						{
 							count:5
 						},
-                        padding:{left:50, right:50},
-					    left:"30px",
-                        top: "30px",
-                        width: "800px",
-                        height: "400px"
+                        padding:{left:50, right:50}
                     };	
                     
 					var leftaxisstyles = {
@@ -159,15 +160,15 @@ table, tr, td
                                                                                             styles:expensegraphstyles
                                                                                         
                                                                                         },
-                                                                                        lineSeries
-                                                                                       /*{
-                                                                                            type:"line",
+                                                                                        {
+                                                                                            type:"area",
                                                                                             xAxis:timeaxis,
                                                                                             yAxis:numericaxis,
                                                                                             xKey:"day",
                                                                                             yKey:"taxes",
-                                                                                            styles:taxgraphstyles
-                                                                                       }*/
+                                                                                            styles:taxareastyles
+                                                                                        },
+                                                                                        lineSeries
                                                                                      ]});
 
                     var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});

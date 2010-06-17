@@ -14,17 +14,16 @@ VMLGraphics.prototype = {
     },
 
     _initProps: function() {
-        this._fillColor = '#000000';
-        this._strokeColor = '#000000';
+        this._fillColor = null;
+        this._strokeColor = null;
         this._strokeWeight = 0;
         this._fillProps = null;
         this._path = '';
-
         this._width = 0;
         this._height = 0;
         this._x = 0;
         this._y = 0;
-        this._fill = 0;
+        this._fill = null;
         this._stroke = 0;
         this._stroked = false;
     },
@@ -134,17 +133,21 @@ VMLGraphics.prototype = {
         return this;
 	},
 
-    endFill: function() {
+    end: function() {
         var shape = this._createGraphicNode(this._shape),
             w = this._width,
             h = this._height,
             fillProps = this._fillProps,
             prop,
             fill;
-
+        
         if(this._path)
         {
-            this._path += ' x e';
+            if(this._fill)
+            {
+                this._path += ' x';
+            }
+            this._path += ' e';
             shape.path = this._path;
             shape.coordSize = w + ', ' + h;
         }
@@ -155,11 +158,15 @@ VMLGraphics.prototype = {
             shape.style.left = this._x + "px";
             shape.style.top = this._y + "px";
         }
-
+        
         if (this._fill) {
             shape.fillColor = this._fillColor;
         }
-        
+        else
+        {
+            shape.filled = false;
+        }
+
         if (this._stroke) {
             shape.strokeColor = this._strokeColor;
             shape.strokeWeight = this._strokeWeight;
@@ -177,6 +184,7 @@ VMLGraphics.prototype = {
                     fill.setAttribute(prop, fillProps[prop]);
                 }
             }
+            shape.filled = true;
             shape.appendChild(fill);
         }
 
