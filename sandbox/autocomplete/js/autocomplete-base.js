@@ -41,10 +41,12 @@ var Lang       = Y.Lang,
     QUERY            = 'query',
     QUERY_DELAY      = 'queryDelay',
     REQUEST_TEMPLATE = 'requestTemplate',
+    RESULT_FILTER    = 'resultFilter',
+    VALUE_CHANGE     = 'valueChange',
 
     EVT_QUERY        = QUERY,
     EVT_RESULTS      = 'results',
-    EVT_VALUE_CHANGE = 'valueChange';
+    EVT_VALUE_CHANGE = VALUE_CHANGE;
 
 // Constructor
 function AutoComplete() {
@@ -95,17 +97,8 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
         });
 
         /**
-         * <p>
          * Fires after query results are received from the DataSource. If no
          * DataSource has been set, this event will not fire.
-         * </p>
-         *
-         * <p>
-         * To filter or modify results locally, subscribe to the "before" state
-         * of this event and, in your listener(s), modify the
-         * <code>results</code> property on the event facade. The modified
-         * results will then be passed on to subsequent listeners.
-         * </p>
          *
          * @event results
          * @param {EventFacade} e Event facade with the following additional
@@ -158,7 +151,10 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
 
         // Attach events.
         this._events = [
-            input.on('valueChange', this._onValueChange, this)
+            // Note that we're listening to the valueChange event from the
+            // value-change module here, not our own valueChange event (which
+            // just wraps this one for convenience).
+            input.on(VALUE_CHANGE, this._onValueChange, this)
         ];
     },
 
@@ -204,15 +200,18 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
      * @protected
      */
     _onResponse: function (e) {
-        var results = e && e.response && e.response.results || e;
+        var filter,
+            query,
+            results = e && e.response && e.response.results;
 
-        // If results is truthy and not an empty array, then fire the "results"
-        // event.
-        if (results && !(('length' in results) && results.length === 0)) {
+        if (results) {
+            filter = this.get(RESULT_FILTER);
+            query  = e.callback.query;
+
             this.fire(EVT_RESULTS, {
                 data   : e.data,
-                query  : e.callback.query,
-                results: results
+                query  : query,
+                results: filter ? filter(query, results) : results
             });
         }
     },
@@ -232,6 +231,8 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
             value = e.value || '',
             query = this._parseValue(value),
             that;
+
+        Y.log('valueChange: new: "' + value + '"; old: "' + (e.oldValue || '') + '"', 'info', AC);
 
         this.fire(EVT_VALUE_CHANGE, {
             newVal : value,
@@ -274,15 +275,17 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
 
         this._set(QUERY, query);
 
-        Y.log('query: ' + query, 'info', AC);
+        Y.log('query: "' + query + '"; inputValue: "' + e.inputValue + '"', 'info', AC);
 
         if (dataSource) {
-            Y.log('send request', 'info', AC);
+            Y.log('sendRequest: ' + this.get(REQUEST_TEMPLATE)(query), 'info', AC);
+
             dataSource.sendRequest({
                 request: this.get(REQUEST_TEMPLATE)(query),
                 callback: {
                     query  : query,
                     success: Y.bind(this._onResponse, this)
+                    // TODO: handle failures here, or should the implementer rely on DataSource events for that?
                 }
             });
         }
@@ -340,11 +343,11 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
          * </p>
          *
          * @attribute dataSource
-         * @type DataSource|Object
+         * @type DataSource|Object|null
          */
         dataSource: {
             validator: function (value) {
-                return value && isFunction(value.sendRequest);
+                return (value && isFunction(value.sendRequest)) || value === null;
             }
         },
 
@@ -395,7 +398,8 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
          * @readonly
          */
         query: {
-            readOnly: true
+            readOnly: true,
+            value: null
         },
 
         /**
@@ -463,6 +467,28 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
                         replace(/(^|[^\\])((\\{2})*)\{query\}/, '$1$2' + encodeURIComponent(query)).
                         replace(/(^|[^\\])((\\{2})*)\\(\{query\})/, '$1$2$4');
                 };
+            }
+        },
+
+        /**
+         * <p>
+         * Local filter function for results. If set, this function will be
+         * called with two arguments: the query and the results received from
+         * the DataSource. It will be expected to return a filtered or modified
+         * version of those results, which will then be passed on to listeners
+         * to the <code>results</code> event.
+         * </p>
+         *
+         * <p>
+         * If no DataSource is set, the result filter will not be called.
+         * </p>
+         *
+         * @attribute resultFilter
+         * @type Function|null
+         */
+        resultFilter: {
+            validator: function (value) {
+                return isFunction(value) || value === null;
             }
         }
     }
