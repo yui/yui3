@@ -1,0 +1,31 @@
+#log .yui3-console-entry {
+    min-height: inherit;
+    padding: 5px;
+}
+
+#log .yui3-console-entry-warn {
+    background-position: -15px 5px;
+}
+
+#log .yui3-console-entry-error {
+    background-position: 6px -33px;
+}
+
+#log .yui3-console-controls,
+/*#log .yui3-console-filters-sources,*/
+#log .yui3-console-hd {
+    display: none;
+}
+
+#log .yui3-console-bd {
+    border: 0;
+}
+
+
+#log .yui3-console-ft,
+#log .yui3-console-filters-sources,
+#log .yui3-console-content {
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+}
