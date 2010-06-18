@@ -12,18 +12,18 @@
 }
 
 #log .yui3-console-controls,
-#log .yui3-console-filters-sources,
+/*#log .yui3-console-filters-sources,*/
 #log .yui3-console-hd {
     display: none;
 }
 
 #log .yui3-console-bd {
-    border: 0 none;
-    height: auto !important;
-    overflow: visible;
+    border: 0;
 }
 
+
 #log .yui3-console-ft,
+#log .yui3-console-filters-sources,
 #log .yui3-console-content {
     border-radius: 0;
     -moz-border-radius: 0;
