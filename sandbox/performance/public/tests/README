@@ -1,6 +1,6 @@
 Tests are defined in an object hash mapping test names to test objects. A test
-object may have the following properties, of which only the "test" property is
-required:
+object may have the following properties, of which only the "iterations" and
+"test" properties are required:
 
   asyncSetup (Boolean):
     By default, setup functions are assumed to be synchronous. Set this to true
@@ -23,8 +23,7 @@ required:
     specified.
 
   iterations (Number):
-    Number of iterations to run when using iteration-based testing. Defaults
-    to 1 if not specified.
+    Number of iterations to run when using iteration-based testing. Required.
 
   preloadUrls (Object):
     Object hash of keys mapped to URLs. Each URL will be preloaded via XHR, and
