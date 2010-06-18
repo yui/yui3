@@ -34,7 +34,7 @@ Y.extend(BarSeries, Y.CartesianSeries, {
             rotation = style.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawCircle",
+            shapeMethod = style.func || "drawRect",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
@@ -73,6 +73,7 @@ Y.extend(BarSeries, Y.CartesianSeries, {
         {
             top = ycoords[i] + offset;
             left = xcoords[i];
+            w = left - this._leftOrigin;
             if(borderWidth > 0)
             {
                 graphic.lineStyle(borderWidth, borderColor, borderAlpha);
@@ -92,7 +93,6 @@ Y.extend(BarSeries, Y.CartesianSeries, {
 
     drawMarker: function(graphic, func, left, top, w, h)
     {
-        w = left - this._leftOrigin;
         graphic.drawRect(this._leftOrigin, top, w, h);
     },
 	

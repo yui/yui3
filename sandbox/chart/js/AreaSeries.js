@@ -24,7 +24,6 @@ Y.extend(AreaSeries, Y.CartesianSeries, {
 	 */
 	drawGraph: function()
 	{
-		var styles = this.get("styles");
 		this.drawArea();
 	},
 

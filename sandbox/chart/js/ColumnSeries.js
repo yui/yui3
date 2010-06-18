@@ -35,7 +35,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
             rotation = style.rotation || 0,
             xcoords = this.get("xcoords"),
             ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawCircle",
+            shapeMethod = style.func || "drawRect",
             i = 0,
             len = xcoords.length,
             top = ycoords[0],
@@ -73,6 +73,7 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
         for(i = 0; i < len; ++i)
         {
             top = ycoords[i];
+            h = this._bottomOrigin - top;
             left = xcoords[i] + offset;
             if(borderWidth > 0)
             {
@@ -93,7 +94,6 @@ Y.extend(ColumnSeries, Y.CartesianSeries, {
 
     drawMarker: function(graphic, func, left, top, w, h)
     {
-        h = this._bottomOrigin - top;
         graphic.drawRect(left, top, w, h);
     },
 	
