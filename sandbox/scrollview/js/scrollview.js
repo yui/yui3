@@ -12,8 +12,7 @@
  * @class ScrollView
  * @constructor
  * @extends ScrollViewBase
- * @uses ScrollViewScrollbars
+ * @uses Y.ScrollbarsPlugin
  * @param config {Object} Configuration object
- */
-Y.ScrollView = Y.Base.create('scrollview', Y.ScrollViewBase,
-    [Y.ScrollViewScrollbars]);
+ */ 
+Y.Base.plug(Y.ScrollView, Y.ScrollbarsPlugin);
