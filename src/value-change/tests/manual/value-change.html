@@ -43,11 +43,11 @@
 //   });
 // });
 
-YUI().use('value-change', function(Y) {
+var Y = YUI().use('value-change', function(Y) {
     Y.Node.DOM_EVENTS['input'] = true;
 
     Y.all('.valuechange').on('valueChange', function (e) {
-        Y.log("valueChange: from " + e.oldValue + " to " + e.value);
+        Y.log("valueChange: from " + e.prevVal + " to " + e.newVal);
     });
 
     Y.all('.input').on('input', function (e) {
