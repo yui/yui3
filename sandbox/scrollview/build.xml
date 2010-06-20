@@ -5,21 +5,21 @@
     <target name="local">
 		<ant antfile="build.scrollview-base.xml" target="local" />
 		<ant antfile="build.scrollbars-plugin.xml" target="local" />
-		<ant antfile="build.scrollview-paging.xml" target="local" />
+		<ant antfile="build.paginator-plugin.xml" target="local" />
 		<ant antfile="build.scrollview.xml" target="local" />
     </target>
 
     <target name="deploy">
 		<ant antfile="build.scrollview-base.xml" target="deploy" />
 		<ant antfile="build.scrollbars-plugin.xml" target="deploy" />
-		<ant antfile="build.scrollview-paging.xml" target="deploy" />
+		<ant antfile="build.paginator-plugin.xml" target="deploy" />
 		<ant antfile="build.scrollview.xml" target="deploy" />
     </target>
 
     <target name="all">
 		<ant antfile="build.scrollview-base.xml" target="all" />
 		<ant antfile="build.scrollbars-plugin.xml" target="all" />
-		<ant antfile="build.scrollview-paging.xml" target="all" />
+		<ant antfile="build.paginator-plugin.xml" target="all" />
 		<ant antfile="build.scrollview.xml" target="all" />
     </target>
 
