@@ -60,6 +60,11 @@ Y.CustomEvent.prototype.getSubscriber = function (fn, ctx) {
  *       <dd>REQUIRED.  The name of the synthetic event.  What goes
  *       <code>node.on(<strong>HERE</strong>, callback )</code>.</dd>
  *
+ *   <dt><code>init</code></dt>
+ *       <dd><code>function (node, subscription, fireEvent)</code> One time
+ *       setup for an event. Executes before the first call to <code>on</code>
+ *       (below)</dd>
+ *
  *   <dt><code>on</code></dt>
  *       <dd><code>function ( node, subscription, fireEvent )</code> The
  *       implementation logic for subscription.  Any special setup you need to
@@ -73,6 +78,11 @@ Y.CustomEvent.prototype.getSubscriber = function (fn, ctx) {
  *       <dd><code>function ( node, subscription, fireEvent )</code> The
  *       implementation logic for cleaning up a detached subscription. E.g.
  *       detach any DOM subscriptions done in <code>on</code>.</dd>
+ *
+ *   <dt><code>destroy</code></dt>
+ *       <dd><code>function (node, subscription, fireEvent)</code> One time
+ *       tear down for an event.  Executes after the last call to
+ *       <code>detach</code></dd>
  *
  *   <dt><code>publishConfig</code></dt>
  *       <dd>(Object) The configuration object that will be used to instantiate
@@ -141,7 +151,8 @@ SyntheticEvent.prototype = {
             payload,  // extra info extracted from the args by implementation
             key, domGuid, // Ids for registering as a DOM event
             _handles, // Collection of detach handles for array subs
-            handle;   // The detach handle for this subscription
+            handle,   // The detach handle for this subscription
+            init;     // First subscription?
 
         // Y.on normalizes Nodes to DOM nodes and NodeLists to an array of DOM
         // nodes.  Other possible value is a selector string.
@@ -185,6 +196,7 @@ SyntheticEvent.prototype = {
             ce = node._yuievt ? node._yuievt.events[self.type] : null;
 
             if (!ce) {
+                init = true;
                 ce = node.publish(self.type, self._publishConfig);
 
                 // node.detach() with type missing doesn't reach adapter fork
@@ -225,9 +237,13 @@ SyntheticEvent.prototype = {
                     self.detach.call(Y, type, this.sub.fn, this.sub.context);
                 };
 
+                if (init && isFunction(self.impl.init)) {
+                    self.impl.init(node, handle.sub, ce);
+                }
+
                 // Pass control to the implementation code
                 if (isFunction(self.impl.on)) {
-                    self.impl.on.call(self.impl, node, handle.sub, ce);
+                    self.impl.on(node, handle.sub, ce);
                 }
             }
         }
@@ -306,11 +322,15 @@ SyntheticEvent.prototype = {
                 }
 
                 if (isFunction(self.impl.detach)) {
-                    self.impl.detach.call(self.impl, el, sub, ce);
+                    self.impl.detach(el, sub, ce);
                 }
 
                 // Standard detach cleanup
                 ce._delete(sub);
+
+                if (isFunction(self.impl.destroy) && !ce.getSubscriber()) {
+                    self.impl.destroy(el, sub, ce);
+                }
 
                 ret = 1;
             }
