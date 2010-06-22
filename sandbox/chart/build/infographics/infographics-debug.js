@@ -761,6 +761,98 @@ Y.extend(NumericAxis, Y.BaseAxis,
 
 Y.NumericAxis = NumericAxis;
 		
+function StackedAxis(config)
+{
+	StackedAxis.superclass.constructor.apply(this, arguments);
+}
+
+StackedAxis.NAME = "stackedAxis";
+
+
+Y.extend(StackedAxis, Y.NumericAxis,
+{
+    /**
+	 * @private
+	 * Determines the maximum and minimum values for the axis.
+	 */
+	_updateMinAndMax: function()
+	{
+		var max = 0,
+			min = 0,
+			pos = 0,
+            neg = 0,
+            len = 0,
+			i = 0,
+            key,
+            num,
+            keys = this.get("keys");
+
+        for(key in keys)
+        {
+            if(keys.hasOwnProperty(key))
+            {
+                len = Math.max(len, keys[key].length);
+            }
+        }
+        for(; i < len; ++i)
+        {
+            pos = 0;
+            neg = 0;
+            for(key in keys)
+            {
+                if(keys.hasOwnProperty(key))
+                {
+                    num = keys[key][i];
+					if(isNaN(num))
+					{
+                        continue;
+					}
+                    if(num >= 0)
+                    {
+                        pos += num;
+                    }
+                    else
+                    {
+                        neg += num;
+                    }
+                }
+            }
+            if(pos > 0)
+            {
+                max = Math.max(max, pos);
+            }
+            else 
+            {
+                max = Math.max(max, neg);
+            }
+            if(neg < 0)
+            {
+                min = Math.min(min, neg);
+            }
+            else
+            {
+                min = Math.min(min, pos);
+            }
+        }
+        if(this._roundMinAndMax && !isNaN(this._roundingUnit))
+		{
+			this._dataMaximum = this._roundUpToNearest(max, this._roundingUnit);
+			this._dataMinimum = this._roundDownToNearest(min, this._roundingUnit);
+		}
+		else
+		{
+			this._dataMaximum = max;
+			this._dataMinimum = min;
+		}
+		if(this._alwaysShowZero && min > 0)
+		{
+			this._dataMinimum = Math.min(0, this._dataMinimum);
+		}
+	}
+});
+
+Y.StackedAxis = StackedAxis;
+		
 function TimeAxis(config)
 {
 	TimeAxis.superclass.constructor.apply(this, arguments);
@@ -1209,14 +1301,20 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 			yKey = this.get("yKey"),
 			xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-			xData = xAxis.getDataByKey(xKey),
-			yData = yAxis.getDataByKey(yKey),
+			xData = xAxis.getDataByKey(xKey).concat(),
+			yData = yAxis.getDataByKey(yKey).concat(),
 			dataLength = xData.length, 	
-            i;
+            direction = this.get("direction"),
+            i = 0;
+        //Assuming a vertical graph has a range/category for its vertical axis.    
+        if(direction === "vertical")
+        {
+            yData = yData.reverse();
+        }
         this.get("graphic").setSize(w, h);
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
         this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
-        for (i = 0; i < dataLength; ++i) 
+        for (; i < dataLength; ++i) 
 		{
             nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding));
 			nextY = Math.round(((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
@@ -1419,6 +1517,10 @@ ATTRS: {
 	 */
 	graphic: {
         value: null
+    },
+
+    direction: {
+        value: "horizontal"
     }
 }
 });
@@ -1759,6 +1861,9 @@ BarSeries.NAME = "barSeries";
 BarSeries.ATTRS = {
 	type: {
         value: "bar"
+    },
+    direction: {
+        value: "vertical"
     }
 };
 
@@ -2282,6 +2387,165 @@ Y.extend(CandlestickSeries, Y.RangeSeries, {
 });
 
 Y.CandlestickSeries = CandlestickSeries;
+function StackedAreaSeries(config)
+{
+	StackedAreaSeries.superclass.constructor.apply(this, arguments);
+}
+
+StackedAreaSeries.NAME = "stackedSeries";
+
+StackedAreaSeries.ATTRS = {
+	type: {
+		/**
+		 * Indicates the type of graph.
+		 */
+        value:"stacked"
+    },
+    direction: {
+        value:"horizontal"
+    }
+};
+
+Y.extend(StackedAreaSeries, Y.CartesianSeries, {
+	
+	/**
+	 * @private
+	 */
+	drawGraph: function()
+	{
+		this.drawArea();
+	},
+
+	/**
+	 * @protected
+	 */
+	drawArea: function()
+	{
+        if(this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var direction = this.get("direction"),
+            node = Y.Node.one(this._parentNode).get("parentNode"),
+            h = node.get("offsetHeight"),
+            order = this.get("order"),
+            type = this.get("type"),
+            graph = this.get("graph"),
+            seriesCollection = graph.seriesTypes[type],
+            xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
+			prevXCoords,
+            prevYCoords,
+            allXCoords,
+            allYCoords,
+            len = xcoords.length,
+			firstX = xcoords[0],
+			firstY = ycoords[0],
+            lastValidX = firstX,
+			lastValidY = firstY,
+			nextX,
+			nextY,
+			i = 0,
+			styles = this.get("styles"),
+			graphic = this.get("graphic");
+        if(order > 0)
+        {
+            prevXCoords = seriesCollection[order - 1].get("xcoords").concat();
+            prevYCoords = seriesCollection[order - 1].get("ycoords").concat();
+            if(direction === "vertical")
+            {
+                len = prevXCoords.length;
+                for(; i < len; ++i)
+                {
+                    if(!isNaN(prevXCoords[i]) && !isNaN(xcoords[i]))
+                    {
+                        xcoords[i] += prevXCoords[i];
+                    }
+                }
+            }
+            else
+            {
+                len = prevYCoords.length;
+                for(; i < len; ++i)
+                {
+                    if(!isNaN(prevYCoords[i]) && !isNaN(ycoords[i]))
+                    {
+                        ycoords[i] = prevYCoords[i] - (h - ycoords[i]);
+                    }
+                }
+            }
+            allYCoords = ycoords.concat();
+            allXCoords = xcoords.concat();
+            allXCoords = allXCoords.concat(prevXCoords.concat().reverse());
+            allYCoords = allYCoords.concat(prevYCoords.concat().reverse());
+            firstX = allXCoords[0];
+            firstY = allYCoords[0];
+            allXCoords.push(firstX);
+            allYCoords.push(firstY);
+        }
+        else
+        {
+            allYCoords = ycoords.concat();
+            allXCoords = xcoords.concat();
+            if(direction === "vertical")
+            {
+                allXCoords.push(this._leftOrigin);
+                allXCoords.push(this._leftOrigin);
+                allYCoords.push(allYCoords[allYCoords.length-1]);
+                allYCoords.push(firstY);
+            }
+            else
+            {
+                allXCoords.push(allXCoords[allXCoords.length-1]);
+                allXCoords.push(firstX);
+                allYCoords.push(this._bottomOrigin);
+                allYCoords.push(this._bottomOrigin);
+            }
+            allXCoords.push(firstX);
+            allYCoords.push(firstY);
+        }
+        len = allXCoords.length;
+        graphic.clear();
+        graphic.beginFill(styles.color, styles.alpha);
+        graphic.moveTo(firstX, firstY);
+        for(i = 1; i < len; i = ++i)
+		{
+			nextX = allXCoords[i];
+			nextY = allYCoords[i];
+			if(isNaN(nextY))
+			{
+				lastValidX = nextX;
+				lastValidY = nextY;
+				continue;
+			}
+            graphic.lineTo(nextX, nextY);
+            lastValidX = nextX;
+			lastValidY = nextY;
+        }
+        graphic.end();
+	},
+	
+	_getDefaultStyles: function()
+    {
+        return {
+            color: "#000000",
+            alpha: 1,
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
+});
+
+Y.StackedAreaSeries = StackedAreaSeries;
+
+
+		
+
+		
 function GraphStack(config)
 {
     GraphStack.superclass.constructor.apply(this, arguments);
@@ -2439,6 +2703,9 @@ Y.extend(GraphStack, Y.Base, {
             break;
             case "ohlc" :
                 seriesClass = Y.OHLCSeries;
+            break;
+            case "stackedarea" :
+                seriesClass = Y.StackedAreaSeries;
             break;
             default:
                 seriesClass = Y.CartesianSeries;
@@ -3863,10 +4130,20 @@ Y.mix(Y.AxisRenderer.prototype, {
             h = this.get("node").offsetHeight,
             style = this.get("styles"),
             padding = style.padding,
-            pos = this.get("position");
-        if(pos === "left" || pos === "right")
+            pos = this.get("position"),
+            dataType = this.get("axis").get("dataType");
+        if(pos === "left" || pos === "right") 
         {
-            p = (h - (padding.top + padding.bottom)) - (point.y - padding.top);
+            //Numeric data on a vertical axis is displayed from bottom to top.
+            //Categorical and Timeline data is displayed from top to bottom.
+            if(dataType === "numeric")
+            {
+                p = (h - (padding.top + padding.bottom)) - (point.y - padding.top);
+            }
+            else
+            {
+                p = point.y - padding.top;
+            }
         }
         else
         {

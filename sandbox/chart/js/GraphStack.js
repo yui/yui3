@@ -156,6 +156,9 @@ Y.extend(GraphStack, Y.Base, {
             case "ohlc" :
                 seriesClass = Y.OHLCSeries;
             break;
+            case "stackedarea" :
+                seriesClass = Y.StackedAreaSeries;
+            break;
             default:
                 seriesClass = Y.CartesianSeries;
             break;

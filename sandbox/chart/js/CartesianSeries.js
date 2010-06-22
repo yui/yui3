@@ -136,14 +136,20 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
 			yKey = this.get("yKey"),
 			xScaleFactor = dataWidth / (xMax - xMin),
 			yScaleFactor = dataHeight / (yMax - yMin),
-			xData = xAxis.getDataByKey(xKey),
-			yData = yAxis.getDataByKey(yKey),
+			xData = xAxis.getDataByKey(xKey).concat(),
+			yData = yAxis.getDataByKey(yKey).concat(),
 			dataLength = xData.length, 	
-            i;
+            direction = this.get("direction"),
+            i = 0;
+        //Assuming a vertical graph has a range/category for its vertical axis.    
+        if(direction === "vertical")
+        {
+            yData = yData.reverse();
+        }
         this.get("graphic").setSize(w, h);
         this._leftOrigin = Math.round(((0 - xMin) * xScaleFactor) + leftPadding);
         this._bottomOrigin =  Math.round((dataHeight + topPadding) - (0 - yMin) * yScaleFactor);
-        for (i = 0; i < dataLength; ++i) 
+        for (; i < dataLength; ++i) 
 		{
             nextX = Math.round((((xData[i] - xMin) * xScaleFactor) + leftPadding));
 			nextY = Math.round(((dataHeight + topPadding) - (yData[i] - yMin) * yScaleFactor));
@@ -346,6 +352,10 @@ ATTRS: {
 	 */
 	graphic: {
         value: null
+    },
+
+    direction: {
+        value: "horizontal"
     }
 }
 });

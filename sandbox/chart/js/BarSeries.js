@@ -8,6 +8,9 @@ BarSeries.NAME = "barSeries";
 BarSeries.ATTRS = {
 	type: {
         value: "bar"
+    },
+    direction: {
+        value: "vertical"
     }
 };
 
