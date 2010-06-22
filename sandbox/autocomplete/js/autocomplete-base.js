@@ -154,7 +154,10 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
             // Note that we're listening to the valueChange event from the
             // value-change module here, not our own valueChange event (which
             // just wraps this one for convenience).
-            input.on(VALUE_CHANGE, this._onValueChange, this)
+
+            // NOTE: bind is currently necessary because synthetic events don't
+            // respect context params.
+            input.on(VALUE_CHANGE, Y.bind(this._onValueChange, this))
         ];
     },
 
@@ -205,14 +208,18 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
             results = e && e.response && e.response.results;
 
         if (results) {
-            filter = this.get(RESULT_FILTER);
-            query  = e.callback.query;
+            query = e.callback.query;
 
-            this.fire(EVT_RESULTS, {
-                data   : e.data,
-                query  : query,
-                results: filter ? filter(query, results) : results
-            });
+            // Ignore stale responses that aren't for the current query.
+            if (query === this.get(QUERY)) {
+                filter = this.get(RESULT_FILTER);
+
+                this.fire(EVT_RESULTS, {
+                    data   : e.data,
+                    query  : query,
+                    results: filter ? filter(query, results) : results
+                });
+            }
         }
     },
 
@@ -228,15 +235,15 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
     _onValueChange: function (e) {
         var delay,
             fire,
-            value = e.value || '',
+            value = e.newVal,
             query = this._parseValue(value),
             that;
 
-        Y.log('valueChange: new: "' + value + '"; old: "' + (e.oldValue || '') + '"', 'info', AC);
+        Y.log('valueChange: new: "' + value + '"; old: "' + e.prevVal + '"', 'info', AC);
 
         this.fire(EVT_VALUE_CHANGE, {
             newVal : value,
-            prevVal: e.oldValue || ''
+            prevVal: e.prevVal
         });
 
         if (query.length >= this.get(MIN_QUERY_LENGTH)) {

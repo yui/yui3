@@ -47,7 +47,9 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="cm">/**</span>
+                        <div class="highlight"><pre><span class="c1">// TODO: parse out AFTER_PREFIX (private to event module, so copy)  How to deal</span>
+<span class="c1">// with after subs?  (impl.after || impl.on)(...) ?</span>
+<span class="cm">/**</span>
 <span class="cm"> * Define new DOM events that can be subscribed from any Node.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @module event</span>
@@ -107,6 +109,11 @@
 <span class="cm"> *       &lt;dd&gt;REQUIRED.  The name of the synthetic event.  What goes</span>
 <span class="cm"> *       &lt;code&gt;node.on(&lt;strong&gt;HERE&lt;/strong&gt;, callback )&lt;/code&gt;.&lt;/dd&gt;</span>
 <span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;init&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function (node, subscription, fireEvent)&lt;/code&gt; One time</span>
+<span class="cm"> *       setup for an event. Executes before the first call to &lt;code&gt;on&lt;/code&gt;</span>
+<span class="cm"> *       (below)&lt;/dd&gt;</span>
+<span class="cm"> *</span>
 <span class="cm"> *   &lt;dt&gt;&lt;code&gt;on&lt;/code&gt;&lt;/dt&gt;</span>
 <span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
 <span class="cm"> *       implementation logic for subscription.  Any special setup you need to</span>
@@ -120,6 +127,11 @@
 <span class="cm"> *       &lt;dd&gt;&lt;code&gt;function ( node, subscription, fireEvent )&lt;/code&gt; The</span>
 <span class="cm"> *       implementation logic for cleaning up a detached subscription. E.g.</span>
 <span class="cm"> *       detach any DOM subscriptions done in &lt;code&gt;on&lt;/code&gt;.&lt;/dd&gt;</span>
+<span class="cm"> *</span>
+<span class="cm"> *   &lt;dt&gt;&lt;code&gt;destroy&lt;/code&gt;&lt;/dt&gt;</span>
+<span class="cm"> *       &lt;dd&gt;&lt;code&gt;function (node, subscription, fireEvent)&lt;/code&gt; One time</span>
+<span class="cm"> *       tear down for an event.  Executes after the last call to</span>
+<span class="cm"> *       &lt;code&gt;detach&lt;/code&gt;&lt;/dd&gt;</span>
 <span class="cm"> *</span>
 <span class="cm"> *   &lt;dt&gt;&lt;code&gt;publishConfig&lt;/code&gt;&lt;/dt&gt;</span>
 <span class="cm"> *       &lt;dd&gt;(Object) The configuration object that will be used to instantiate</span>
@@ -188,7 +200,8 @@
             <span class="nx">payload</span><span class="p">,</span>  <span class="c1">// extra info extracted from the args by implementation</span>
             <span class="nx">key</span><span class="p">,</span> <span class="nx">domGuid</span><span class="p">,</span> <span class="c1">// Ids for registering as a DOM event</span>
             <span class="nx">_handles</span><span class="p">,</span> <span class="c1">// Collection of detach handles for array subs</span>
-            <span class="nx">handle</span><span class="p">;</span>   <span class="c1">// The detach handle for this subscription</span>
+            <span class="nx">handle</span><span class="p">,</span>   <span class="c1">// The detach handle for this subscription</span>
+            <span class="nx">init</span><span class="p">;</span>     <span class="c1">// First subscription?</span>
 
         <span class="c1">// Y.on normalizes Nodes to DOM nodes and NodeLists to an array of DOM</span>
         <span class="c1">// nodes.  Other possible value is a selector string.</span>
@@ -232,6 +245,7 @@
             <span class="nx">ce</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_yuievt</span> <span class="o">?</span> <span class="nx">node</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">self</span><span class="p">.</span><span class="nx">type</span><span class="p">]</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">init</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
                 <span class="nx">ce</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">self</span><span class="p">.</span><span class="nx">_publishConfig</span><span class="p">);</span>
 
                 <span class="c1">// node.detach() with type missing doesn&#39;t reach adapter fork</span>
@@ -272,9 +286,13 @@
                     <span class="nx">self</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">fn</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">sub</span><span class="p">.</span><span class="nx">context</span><span class="p">);</span>
                 <span class="p">};</span>
 
+                <span class="k">if</span> <span class="p">(</span><span class="nx">init</span> <span class="o">&amp;&amp;</span> <span class="nx">isFunction</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">init</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+                <span class="p">}</span>
+
                 <span class="c1">// Pass control to the implementation code</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">on</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">on</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">,</span> <span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+                    <span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">handle</span><span class="p">.</span><span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -353,11 +371,15 @@
                 <span class="p">}</span>
 
                 <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">detach</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">detach</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+                    <span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">detach</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
                 <span class="p">}</span>
 
                 <span class="c1">// Standard detach cleanup</span>
                 <span class="nx">ce</span><span class="p">.</span><span class="nx">_delete</span><span class="p">(</span><span class="nx">sub</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">destroy</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">ce</span><span class="p">.</span><span class="nx">getSubscriber</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="nx">self</span><span class="p">.</span><span class="nx">impl</span><span class="p">.</span><span class="nx">destroy</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">sub</span><span class="p">,</span> <span class="nx">ce</span><span class="p">);</span>
+                <span class="p">}</span>
 
                 <span class="nx">ret</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
             <span class="p">}</span>

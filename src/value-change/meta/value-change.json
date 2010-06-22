@@ -1,11 +1,8 @@
 {
     "value-change": {
         "requires": [
-            "node-base",
-            "event-focus"
-        ],
-        "optional": [
-            "event-custom-complex"
+            "event-focus",
+            "event-synthetic"
         ]
     }
 }

@@ -98,6 +98,471 @@ YUI.add('io-base', function(Y) {
     //--------------------------------------
     //  Methods
     //--------------------------------------
+
+   /**
+    * @description Method that creates the XMLHttpRequest transport
+    *
+    * @method _xhr
+    * @private
+    * @static
+    * @return object
+    */
+    function _xhr() {
+        return w.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    }
+
+
+   /**
+    * @description Method that increments _transactionId for each transaction.
+    *
+    * @method _id
+    * @private
+    * @static
+    * @return int
+    */
+    function _id() {
+        var id = transactionId;
+
+        transactionId++;
+
+        return id;
+    }
+
+   /**
+    * @description Method that creates a unique transaction object for each
+    * request.
+    *
+    * @method _create
+    * @private
+    * @static
+    * @param {number} c - configuration object subset to determine if
+    *                     the transaction is an XDR or file upload,
+    *                     requiring an alternate transport.
+    * @param {number} i - transaction id
+    * @return object
+    */
+    function _create(c, i) {
+        var o = {};
+            o.id = Y.Lang.isNumber(i) ? i : _id();
+            c = c || {};
+
+        if (!c.use && !c.upload) {
+            o.c = _xhr();
+        }
+        else if (c.use) {
+            if (c.use === 'native') {
+                if (w.XDomainRequest) {
+                    o.c = new XDomainRequest();
+                    o.t = c.use;
+                }
+                else {
+                    o.c = _xhr();
+                }
+            }
+            else {
+                o.c = Y.io._transport[c.use];
+                o.t = c.use;
+            }
+        }
+        else {
+            o.c = {};
+        }
+
+        return o;
+    }
+
+
+    function _destroy(o) {
+        // IE, when using XMLHttpRequest as an ActiveX Object, will throw
+        // a "Type Mismatch" error if the event handler is set to "null".
+        if (w && w.XMLHttpRequest) {
+            if (o.c) {
+                o.c.onreadystatechange = null;
+            }
+        }
+
+        o.c = null;
+        o = null;
+    }
+
+   /**
+    * @description Method for creating and subscribing transaction events.
+    *
+    * @method _tE
+    * @private
+    * @static
+    * @param {string} e - event to be published
+    * @param {object} c - configuration data subset for event subscription.
+    *
+    * @return void
+    */
+    function _tE(e, c) {
+        var eT = new Y.EventTarget().publish('transaction:' + e),
+            a = c.arguments,
+            cT = c.context || Y;
+
+        if (a) {
+            eT.on(c.on[e], cT, a);
+        }
+        else {
+            eT.on(c.on[e], cT);
+        }
+
+        return eT;
+    }
+
+   /**
+    * @description Fires event "io:start" and creates, fires a
+    * transaction-specific start event, if config.on.start is
+    * defined.
+    *
+    * @method _ioStart
+    * @private
+    * @static
+    * @param {number} id - transaction id
+    * @param {object} c - configuration object for the transaction.
+    *
+    * @return void
+    */
+    function _ioStart(id, c) {
+        var a = c.arguments;
+
+        if (a) {
+            Y.fire(E_START, id, a);
+        }
+        else {
+            Y.fire(E_START, id);
+        }
+
+        if (c.on && c.on.start) {
+            _tE('start', c).fire(id);
+        }
+    }
+
+
+   /**
+    * @description Fires event "io:complete" and creates, fires a
+    * transaction-specific "complete" event, if config.on.complete is
+    * defined.
+    *
+    * @method _ioComplete
+    * @private
+    * @static
+    * @param {object} o - transaction object.
+    * @param {object} c - configuration object for the transaction.
+    *
+    * @return void
+    */
+    function _ioComplete(o, c) {
+        var r = o.e ? { status: 0, statusText: o.e } : o.c,
+            a = c.arguments;
+
+        if (a) {
+            Y.fire(E_COMPLETE, o.id, r, a);
+        }
+        else {
+            Y.fire(E_COMPLETE, o.id, r);
+        }
+
+        if (c.on && c.on.complete) {
+            _tE('complete', c).fire(o.id, r);
+        }
+    }
+
+   /**
+    * @description Fires event "io:end" and creates, fires a
+    * transaction-specific "end" event, if config.on.end is
+    * defined.
+    *
+    * @method _ioEnd
+    * @private
+    * @static
+    * @param {object} o - transaction object.
+    * @param {object} c - configuration object for the transaction.
+    *
+    * @return void
+    */
+    function _ioEnd(o, c) {
+        var a = c.arguments;
+
+        if (a) {
+            Y.fire(E_END, o.id, a);
+        }
+        else {
+            Y.fire(E_END, o.id);
+        }
+
+        if (c.on && c.on.end) {
+            _tE('end', c).fire(o.id);
+        }
+
+        _destroy(o);
+    }
+
+   /**
+    * @description Fires event "io:success" and creates, fires a
+    * transaction-specific "success" event, if config.on.success is
+    * defined.
+    *
+    * @method _ioSuccess
+    * @private
+    * @static
+    * @param {object} o - transaction object.
+    * @param {object} c - configuration object for the transaction.
+    *
+    * @return void
+    */
+    function _ioSuccess(o, c) {
+        var a = c.arguments;
+
+        if (a) {
+            Y.fire(E_SUCCESS, o.id, o.c, a);
+        }
+        else {
+            Y.fire(E_SUCCESS, o.id, o.c);
+        }
+
+        if (c.on && c.on.success) {
+            _tE('success', c).fire(o.id, o.c);
+        }
+
+        _ioEnd(o, c);
+    }
+
+   /**
+    * @description Fires event "io:failure" and creates, fires a
+    * transaction-specific "failure" event, if config.on.failure is
+    * defined.
+    *
+    * @method _ioFailure
+    * @private
+    * @static
+    * @param {object} o - transaction object.
+    * @param {object} c - configuration object for the transaction.
+    *
+    * @return void
+    */
+    function _ioFailure(o, c) {
+        var r = o.e ? { status: 0, statusText: o.e } : o.c,
+            a = c.arguments;
+
+        if (a) {
+            Y.fire(E_FAILURE, o.id, r, a);
+        }
+        else {
+            Y.fire(E_FAILURE, o.id, r);
+        }
+
+        if (c.on && c.on.failure) {
+            _tE('failure', c).fire(o.id, r);
+        }
+
+        _ioEnd(o, c);
+    }
+
+   /**
+    * @description Resends an XDR transaction, using the Flash tranport,
+    * if the native transport fails.
+    *
+    * @method _resend
+    * @private
+    * @static
+
+    * @param {object} o - Transaction object generated by _create().
+    * @param {string} uri - qualified path to transaction resource.
+    * @param {object} c - configuration object for the transaction.
+    *
+    * @return void
+    */
+    function _resend(o, uri, c, d) {
+        _destroy(o);
+        c.xdr.use = 'flash';
+        // If the original request included serialized form data and
+        // additional data are defined in configuration.data, it must
+        // be reset to prevent data duplication.
+        c.data = c.form && d ? d : null;
+
+        return Y.io(uri, c, o.id);
+    }
+
+   /**
+    * @description Method that concatenates string data for HTTP GET transactions.
+    *
+    * @method _concat
+    * @private
+    * @static
+    * @param {string} s - URI or root data.
+    * @param {string} d - data to be concatenated onto URI.
+    * @return int
+    */
+    function _concat(s, d) {
+        s += ((s.indexOf('?') == -1) ? '?' : '&') + d;
+        return s;
+    }
+
+   /**
+    * @description Method that stores default client headers for all transactions.
+    * If a label is passed with no value argument, the header will be deleted.
+    *
+    * @method _setHeader
+    * @private
+    * @static
+    * @param {string} l - HTTP header
+    * @param {string} v - HTTP header value
+    * @return int
+    */
+    function _setHeader(l, v) {
+        if (v) {
+            _headers[l] = v;
+        }
+        else {
+            delete _headers[l];
+        }
+    }
+
+   /**
+    * @description Method that sets all HTTP headers to be sent in a transaction.
+    *
+    * @method _setHeaders
+    * @private
+    * @static
+    * @param {object} o - XHR instance for the specific transaction.
+    * @param {object} h - HTTP headers for the specific transaction, as defined
+    *                     in the configuration object passed to YUI.io().
+    * @return void
+    */
+    function _setHeaders(o, h) {
+        var p;
+            h = h || {};
+
+        for (p in _headers) {
+            if (_headers.hasOwnProperty(p)) {
+                if (h[p]) {
+                    // Configuration headers will supersede io preset headers,
+                    // if headers match.
+                    continue;
+                }
+                else {
+                    h[p] = _headers[p];
+                }
+            }
+        }
+
+        for (p in h) {
+            if (h.hasOwnProperty(p)) {
+                o.setRequestHeader(p, h[p]);
+            }
+        }
+    }
+
+   /**
+    * @description Terminates a transaction due to an explicit abort or
+    * timeout.
+    *
+    * @method _ioCancel
+    * @private
+    * @static
+    * @param {object} o - Transaction object generated by _create().
+    * @param {string} s - Identifies timed out or aborted transaction.
+    *
+    * @return void
+    */
+    function _ioCancel(o, s) {
+        if (o && o.c) {
+            o.e = s;
+            o.c.abort();
+        }
+    }
+
+   /**
+    * @description Starts timeout count if the configuration object
+    * has a defined timeout property.
+    *
+    * @method _startTimeout
+    * @private
+    * @static
+    * @param {object} o - Transaction object generated by _create().
+    * @param {object} t - Timeout in milliseconds.
+    * @return void
+    */
+    function _startTimeout(o, t) {
+        _timeout[o.id] = w.setTimeout(function() { _ioCancel(o, 'timeout'); }, t);
+    }
+
+   /**
+    * @description Clears the timeout interval started by _startTimeout().
+    *
+    * @method _clearTimeout
+    * @private
+    * @static
+    * @param {number} id - Transaction id.
+    * @return void
+    */
+    function _clearTimeout(id) {
+        w.clearTimeout(_timeout[id]);
+        delete _timeout[id];
+    }
+
+   /**
+    * @description Method that determines if a transaction response qualifies
+    * as success or failure, based on the response HTTP status code, and
+    * fires the appropriate success or failure events.
+    *
+    * @method _handleResponse
+    * @private
+    * @static
+    * @param {object} o - Transaction object generated by _create().
+    * @param {object} c - Configuration object passed to io().
+    * @return void
+    */
+    function _handleResponse(o, c) {
+        var status;
+
+        try {
+            if (o.c.status && o.c.status !== 0) {
+                status = o.c.status;
+            }
+            else {
+                status = 0;
+            }
+        }
+        catch(e) {
+            status = 0;
+        }
+
+        // IE reports HTTP 204 as HTTP 1223.
+        if (status >= 200 && status < 300 || status === 1223) {
+            _ioSuccess(o, c);
+        }
+        else {
+            _ioFailure(o, c);
+        }
+    }
+
+   /**
+    * @description Event handler bound to onreadystatechange.
+    *
+    * @method _readyState
+    * @private
+    * @static
+    * @param {object} o - Transaction object generated by _create().
+    * @param {object} c - Configuration object passed to YUI.io().
+    * @return void
+    */
+    function _readyState(o, c) {
+        if (o.c.readyState === 4) {
+            if (c.timeout) {
+                _clearTimeout(o.id);
+            }
+
+            w.setTimeout(
+                function() {
+                    _ioComplete(o, c);
+                    _handleResponse(o, c);
+                }, 0);
+        }
+    }
+
    /**
     * @description Method for requesting a transaction. _io() is implemented as
     * yui.io().  Each transaction may include a configuration object.  Its
@@ -204,9 +669,12 @@ YUI.add('io-base', function(Y) {
 
         if (c.form) {
             if (c.form.upload) {
-                return Y.io._upload(o, uri, c);
+                // This is a file upload transaction, calling
+                // upload() in io-upload-iframe.
+                return Y.io.upload(o, uri, c);
             }
             else {
+                // Serialize HTML form data.
                 f = Y.io._serialize(c.form, c.data);
                 if (m === 'POST' || m === 'PUT') {
                     c.data = f;
@@ -216,8 +684,13 @@ YUI.add('io-base', function(Y) {
                 }
             }
         }
-        else if (c.data && m === 'GET') {
+
+        if (c.data && m === 'GET') {
             uri = _concat(uri, c.data);
+        }
+
+        if (c.data && m === 'POST') {
+            c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
         }
 
         if (o.t) {
@@ -236,16 +709,12 @@ YUI.add('io-base', function(Y) {
                 o.c.withCredentials = true;
             }
         }
-        catch(a) {
+        catch(e1) {
             if (c.xdr) {
                 // This exception is usually thrown by browsers
                 // that do not support native XDR transactions.
                 return _resend(o, u, c, oD);
             }
-        }
-
-        if (c.data && m === 'POST') {
-            c.headers = Y.merge({ 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, c.headers);
         }
 
         _setHeaders(o.c, c.headers);
@@ -271,7 +740,7 @@ YUI.add('io-base', function(Y) {
                 return r;
             }
         }
-        catch(b) {
+        catch(e2) {
             if (c.xdr) {
                 // This exception is usually thrown by browsers
                 // that do not support native XDR transactions.
@@ -293,454 +762,7 @@ YUI.add('io-base', function(Y) {
             isInProgress: function() {
                 return o.c ? o.c.readyState !== 4 && o.c.readyState !== 0 : false;
             }
-        }
-    }
-
-   /**
-    * @description Method for creating and subscribing transaction events.
-    *
-    * @method _tE
-    * @private
-    * @static
-    * @param {string} e - event to be published
-    * @param {object} c - configuration data subset for event subscription.
-    *
-    * @return void
-    */
-    function _tE(e, c) {
-        var eT = new Y.EventTarget().publish('transaction:' + e),
-            a = c.arguments,
-            cT = c.context || Y;
-
-        a ? eT.on(c.on[e], cT, a) : eT.on(c.on[e], cT);
-
-        return eT;
-    }
-
-   /**
-    * @description Fires event "io:start" and creates, fires a
-    * transaction-specific start event, if config.on.start is
-    * defined.
-    *
-    * @method _ioStart
-    * @private
-    * @static
-    * @param {number} id - transaction id
-    * @param {object} c - configuration object for the transaction.
-    *
-    * @return void
-    */
-    function _ioStart(id, c) {
-        var a = c.arguments;
-            // Set default value of argument c, property "on" to Object if
-            // the property is null or undefined.
-            c.on = c.on || {};
-
-        a ? Y.fire(E_START, id, a) : Y.fire(E_START, id);
-        if (c.on.start) {
-            _tE('start', c).fire(id);
-        }
-    }
-
-
-   /**
-    * @description Fires event "io:complete" and creates, fires a
-    * transaction-specific "complete" event, if config.on.complete is
-    * defined.
-    *
-    * @method _ioComplete
-    * @private
-    * @static
-    * @param {object} o - transaction object.
-    * @param {object} c - configuration object for the transaction.
-    *
-    * @return void
-    */
-    function _ioComplete(o, c) {
-        var r = o.e ? { status: 0, statusText: o.e } : o.c,
-            a = c.arguments;
-            // Set default value of argument c, property "on" to Object if
-            // the property is null or undefined.
-            c.on = c.on || {};
-
-        a ? Y.fire(E_COMPLETE, o.id, r, a) : Y.fire(E_COMPLETE, o.id, r);
-        if (c.on.complete) {
-            _tE('complete', c).fire(o.id, r);
-        }
-    }
-
-   /**
-    * @description Fires event "io:success" and creates, fires a
-    * transaction-specific "success" event, if config.on.success is
-    * defined.
-    *
-    * @method _ioSuccess
-    * @private
-    * @static
-    * @param {object} o - transaction object.
-    * @param {object} c - configuration object for the transaction.
-    *
-    * @return void
-    */
-    function _ioSuccess(o, c) {
-        var a = c.arguments;
-            // Set default value of argument c, property "on" to Object if
-            // the property is null or undefined.
-            c.on = c.on || {};
-
-        a ? Y.fire(E_SUCCESS, o.id, o.c, a) : Y.fire(E_SUCCESS, o.id, o.c);
-        if (c.on.success) {
-            _tE('success', c).fire(o.id, o.c);
-        }
-
-        _ioEnd(o, c);
-    }
-
-   /**
-    * @description Fires event "io:failure" and creates, fires a
-    * transaction-specific "failure" event, if config.on.failure is
-    * defined.
-    *
-    * @method _ioFailure
-    * @private
-    * @static
-    * @param {object} o - transaction object.
-    * @param {object} c - configuration object for the transaction.
-    *
-    * @return void
-    */
-    function _ioFailure(o, c) {
-        var r = o.e ? { status: 0, statusText: o.e } : o.c,
-            a = c.arguments;
-            // Set default value of argument c, property "on" to Object if
-            // the property is null or undefined.
-            c.on = c.on || {};
-
-        a ? Y.fire(E_FAILURE, o.id, r, a) : Y.fire(E_FAILURE, o.id, r);
-        if (c.on.failure) {
-            _tE('failure', c).fire(o.id, r);
-        }
-
-        _ioEnd(o, c);
-    }
-
-   /**
-    * @description Fires event "io:end" and creates, fires a
-    * transaction-specific "end" event, if config.on.end is
-    * defined.
-    *
-    * @method _ioEnd
-    * @private
-    * @static
-    * @param {object} o - transaction object.
-    * @param {object} c - configuration object for the transaction.
-    *
-    * @return void
-    */
-    function _ioEnd(o, c) {
-        var a = c.arguments;
-            // Set default value of argument c, property "on" to Object if
-            // the property is null or undefined.
-            c.on = c.on || {};
-
-        a ? Y.fire(E_END, o.id, a) : Y.fire(E_END, o.id);
-        if (c.on.end) {
-            _tE('end', c).fire(o.id);
-        }
-
-        _destroy(o);
-    }
-
-   /**
-    * @description Terminates a transaction due to an explicit abort or
-    * timeout.
-    *
-    * @method _ioCancel
-    * @private
-    * @static
-    * @param {object} o - Transaction object generated by _create().
-    * @param {string} s - Identifies timed out or aborted transaction.
-    *
-    * @return void
-    */
-    function _ioCancel(o, s) {
-        if (o && o.c) {
-            o.e = s;
-            o.c.abort();
-        }
-    }
-
-   /**
-    * @description Resends an XDR transaction, using the Flash tranport,
-    * if the native transport fails.
-    *
-    * @method _resend
-    * @private
-    * @static
-
-    * @param {object} o - Transaction object generated by _create().
-    * @param {string} uri - qualified path to transaction resource.
-    * @param {object} c - configuration object for the transaction.
-    *
-    * @return void
-    */
-    function _resend(o, uri, c, d) {
-        var id = parseInt(o.id);
-
-        _destroy(o);
-        c.xdr.use = 'flash';
-        // If the original request included serialized form data,
-        // it must be reset to prevent duplication.
-        c.form && d ? c.data = d : c.data = null;
-
-        return Y.io(uri, c, id);
-    }
-
-   /**
-    * @description Method that increments _transactionId for each transaction.
-    *
-    * @method _id
-    * @private
-    * @static
-    * @return int
-    */
-    function _id() {
-        var id = transactionId;
-
-        transactionId++;
-
-        return id;
-    }
-
-   /**
-    * @description Method that creates a unique transaction object for each
-    * request.
-    *
-    * @method _create
-    * @private
-    * @static
-    * @param {number} c - configuration object subset to determine if
-    *                     the transaction is an XDR or file upload,
-    *                     requiring an alternate transport.
-    * @param {number} i - transaction id
-    * @return object
-    */
-    function _create(c, i) {
-        var o = {};
-            o.id = Y.Lang.isNumber(i) ? i : _id();
-            c = c || {};
-
-        if (!c.use && !c.upload) {
-            o.c = _xhr();
-        }
-        else if (c.use) {
-            if (c.use === 'native') {
-                if (w.XDomainRequest) {
-                    o.c = new XDomainRequest();
-                    o.t = c.use;
-                }
-                else {
-                    o.c = _xhr();
-                }
-            }
-            else {
-                o.c = Y.io._transport[c.use];
-                o.t = c.use;
-            }
-            // Remove the custom header when making cross-domain
-            // requests to avoid unintended pre-flight requests
-            // or access control conflicts.
-            delete _headers['X-Requested-With'];
-        }
-        else {
-            o.c = {};
-        }
-
-        return o;
-    };
-
-   /**
-    * @description Method that creates the XMLHttpRequest transport
-    *
-    * @method _xhr
-    * @private
-    * @static
-    * @return object
-    */
-    function _xhr() {
-        return w.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    }
-
-   /**
-    * @description Method that concatenates string data for HTTP GET transactions.
-    *
-    * @method _concat
-    * @private
-    * @static
-    * @param {string} s - URI or root data.
-    * @param {string} d - data to be concatenated onto URI.
-    * @return int
-    */
-    function _concat(s, d) {
-        s += ((s.indexOf('?') == -1) ? '?' : '&') + d;
-        return s;
-    }
-
-   /**
-    * @description Method that stores default client headers for all transactions.
-    * If a label is passed with no value argument, the header will be deleted.
-    *
-    * @method _setHeader
-    * @private
-    * @static
-    * @param {string} l - HTTP header
-    * @param {string} v - HTTP header value
-    * @return int
-    */
-    function _setHeader(l, v) {
-        if (v) {
-            _headers[l] = v;
-        }
-        else {
-            delete _headers[l];
-        }
-    }
-
-   /**
-    * @description Method that sets all HTTP headers to be sent in a transaction.
-    *
-    * @method _setHeaders
-    * @private
-    * @static
-    * @param {object} o - XHR instance for the specific transaction.
-    * @param {object} h - HTTP headers for the specific transaction, as defined
-    *                     in the configuration object passed to YUI.io().
-    * @return void
-    */
-    function _setHeaders(o, h) {
-        var p;
-            h = h || {};
-
-        for (p in _headers) {
-            if (_headers.hasOwnProperty(p)) {
-                if (h[p]) {
-                    // Configuration headers will supersede io preset headers,
-                    // if headers match.
-                    continue;
-                }
-                else {
-                    h[p] = _headers[p];
-                }
-            }
-        }
-
-        for (p in h) {
-            if (h.hasOwnProperty(p)) {
-                o.setRequestHeader(p, h[p]);
-            }
-        }
-    }
-
-   /**
-    * @description Starts timeout count if the configuration object
-    * has a defined timeout property.
-    *
-    * @method _startTimeout
-    * @private
-    * @static
-    * @param {object} o - Transaction object generated by _create().
-    * @param {object} t - Timeout in milliseconds.
-    * @return void
-    */
-    function _startTimeout(o, t) {
-        _timeout[o.id] = w.setTimeout(function() { _ioCancel(o, 'timeout'); }, t);
-    }
-
-   /**
-    * @description Clears the timeout interval started by _startTimeout().
-    *
-    * @method _clearTimeout
-    * @private
-    * @static
-    * @param {number} id - Transaction id.
-    * @return void
-    */
-    function _clearTimeout(id) {
-        w.clearTimeout(_timeout[id]);
-        delete _timeout[id];
-    }
-
-   /**
-    * @description Event handler bound to onreadystatechange.
-    *
-    * @method _readyState
-    * @private
-    * @static
-    * @param {object} o - Transaction object generated by _create().
-    * @param {object} c - Configuration object passed to YUI.io().
-    * @return void
-    */
-    function _readyState(o, c) {
-        if (o.c.readyState === 4) {
-            if (c.timeout) {
-                _clearTimeout(o.id);
-            }
-
-            w.setTimeout(
-                function() {
-                    _ioComplete(o, c);
-                    _handleResponse(o, c);
-                }, 0);
-        }
-    }
-
-   /**
-    * @description Method that determines if a transaction response qualifies
-    * as success or failure, based on the response HTTP status code, and
-    * fires the appropriate success or failure events.
-    *
-    * @method _handleResponse
-    * @private
-    * @static
-    * @param {object} o - Transaction object generated by _create().
-    * @param {object} c - Configuration object passed to io().
-    * @return void
-    */
-    function _handleResponse(o, c) {
-        var status;
-
-        try{
-            if (o.c.status && o.c.status !== 0) {
-                status = o.c.status;
-            }
-            else {
-                status = 0;
-            }
-        }
-        catch(e) {
-            status = 0;
-        }
-
-        // IE reports HTTP 204 as HTTP 1223.
-        if (status >= 200 && status < 300 || status === 1223) {
-            _ioSuccess(o, c);
-        }
-        else {
-            _ioFailure(o, c);
-        }
-    }
-
-    function _destroy(o) {
-        // IE, when using XMLHttpRequest as an ActiveX Object, will throw
-        // a "Type Mismatch" error if the event handler is set to "null".
-        if (w && w.XMLHttpRequest) {
-            if (o.c) {
-                o.c.onreadystatechange = null;
-            }
-        }
-
-        o.c = null;
-        o = null;
+        };
     }
 
     _io.start = _ioStart;
@@ -784,4 +806,4 @@ YUI.add('io-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-custom-base'], optional:['querystring-stringify-simple']});
+}, '@VERSION@' ,{optional:['querystring-stringify-simple'], requires:['event-custom-base']});
