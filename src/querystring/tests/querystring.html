@@ -187,6 +187,10 @@ YUI({
                 }, { arrayKey: true, sep: ";", eq: ":" })
             }, { arrayKey: true, sep: ";", eq: ":" });
             Y.Assert.areSame(f, "a:b;q:x%3Ay%3By%3Az");
+        },
+        testArrayKey : function () {
+            var f = Y.QueryString.stringify({ foo: ["bar","baz"] });
+            Y.Assert.areSame(f, "foo=bar&foo=baz");
         }
     }));
 
