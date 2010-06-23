@@ -528,12 +528,11 @@ VMLGraphics.prototype = {
     },
 
     drawRect: function(x, y, w, h) {
-        this._width = w;
-        this._height = h;
-        this._x = x;
-        this._y = y;
-        this._shape = "rect";
-        return this;
+        this.moveTo(x, y);
+        this.lineTo(x + w, y);
+        this.lineTo(x + w, y + h);
+        this.lineTo(x, y + h);
+        this.lineTo(x, y);
     },
 
     _trackSize: function(w, h) {

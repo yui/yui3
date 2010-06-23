@@ -32,8 +32,8 @@ table, tr, td
   <div style="position:absolute;top:50px;left:100px">      
 <table>
 <tr><td></td><td></td><td></td></tr>
-<tr><td><div id="vertaxis" style="margin:0px 0px 0px 0px;height:300px;position:relative"></div></td><td><div id="chart" style="width:100%;height:100%;position:relative"></div></td><td></td></tr>
-<tr><td></td><td><div id="axis" style="margin:0px 0px 0px 0px;position:relative;width:800px"></div></td><td></td></tr>
+<tr><td><div id="vertaxis" style="margin:0px 0px 0px 0px;height:300px;position:relative;"></div></td><td><div id="chart" style="width:100%;height:100%;position:relative"></div></td><td></td></tr>
+<tr><td></td><td><div id="axis" style="margin:0px 0px 0px 0px;position:relative;width:800px;"></div></td><td></td></tr>
 </table>
 </div>
 <script>
@@ -44,11 +44,11 @@ table, tr, td
 					var mydata = {
 						id:"myData", 
 						data: [
-							{day:"Monday", taxes:2000, expenses:3700, revenue:2200}, 
-                            {day:"Tuesday", taxes:50, expenses:5100, revenue:4100}, 
-							{day:"Wednesday", taxes:400, expenses:1100, revenue:1500}, 
-                            {day:"Thursday", taxes:500, expenses:1900, revenue:2800}, 
-                            {day:"Friday", taxes:2000, expenses:700, revenue:2650}
+							{day:"5/1/2010", taxes:2000, expenses:3700, revenue:2200}, 
+                            {day:"5/2/2010", taxes:50, expenses:3100, revenue:100}, 
+							{day:"5/3/2010", taxes:400, expenses:1100, revenue:1500}, 
+                            {day:"5/4/2010", taxes:200, expenses:1900, revenue:2800}, 
+                            {day:"5/5/2010", taxes:5000, expenses:5000, revenue:2650}
 						]
 					};					
 
@@ -57,7 +57,7 @@ table, tr, td
 						marker:{fillColor:"#5577AF", fillAlpha:0.2, width:6, height:6},
 						weight:"2",
 						showMarkers:true,
-                        padding:{left:50, right:50}
+                        padding:{top:50, bottom:50}
 					};
 
 					// Add revenue graph styles
@@ -66,22 +66,23 @@ table, tr, td
 						marker:{fillcolor:"#ff0000", fillAlpha:0.2},
 						weight:"2",
 						showMarkers:true,
-                        padding:{left:50, right:50}
+                        padding:{top:50, bottom:50}
 					};
 
                     var taxgraphstyles = {
 						color:"#ff0000",
 						marker:{fillColor:"#ff0000", width:6, height:6},
 						weight:"2",
-						showMarkers:false,
-                        padding:{left:50, right:50}
+						showMarkers:true,
+                        padding:{top:50, bottom:50}
                     };
-				
+					
                     var taxareastyles = {
                         color: "#0000ff",
                         alpha: 0.5,
-                        padding:{left:50, right:50}
+                        padding:{top:50, bottom:50}
                     };
+
 					// Create bottom axis styles
 					var bottomaxisstyles = {
 						label:{
@@ -102,8 +103,7 @@ table, tr, td
 						majorUnit:
 						{
 							count:5
-						},
-                        padding:{left:50, right:50}
+						}
                     };	
                     
 					var leftaxisstyles = {
@@ -128,52 +128,52 @@ table, tr, td
 						majorUnit:
 						{
 							count:5
-						}
+						},
+                        padding:{top:50, bottom:50}
 					};	
                     var dataProvider = mydata;
-                    var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
+                    var timeaxis = new Y.TimeAxis({dataProvider:dataProvider});
 					timeaxis.addKey("day");
                     
                     var numericaxis = new Y.StackedAxis({dataProvider:dataProvider});
 					numericaxis.addKey("revenue");
 			        numericaxis.addKey("expenses");	
                     numericaxis.addKey("taxes");
-                  var lineSeries = new Y.LineSeries({
-                                                        type:"line",
-                                                        xAxis:timeaxis,
-                                                        yAxis:numericaxis,
-                                                        xKey:"day",
-                                                        yKey:"taxes",
+                  var lineSeries = new Y.StackedBarSeries({
+                                                        yAxis:timeaxis,
+                                                        xAxis:numericaxis,
+                                                        yKey:"day",
+                                                        xKey:"taxes",
                                                         styles:taxgraphstyles});
 
                    var graphstack = new Y.GraphStack({parent:"#chart", seriesCollection:[{
-                                                                                            type:"stackedcolumn", 
-                                                                                            xAxis:timeaxis, 
-                                                                                            yAxis:numericaxis, 
-                                                                                            xKey:"day", 
-                                                                                            yKey:"revenue", 
+                                                                                            type:"stackedbar", 
+                                                                                            yAxis:timeaxis, 
+                                                                                            xAxis:numericaxis, 
+                                                                                            yKey:"day", 
+                                                                                            xKey:"revenue", 
                                                                                             styles:revenuegraphstyles
                                                                                         },
                                                                                         {
-                                                                                            type:"stackedcolumn",
-                                                                                            xAxis:timeaxis,
-                                                                                            yAxis:numericaxis,
-                                                                                            xKey:"day",
-                                                                                            yKey:"expenses",
+                                                                                            type:"stackedbar",
+                                                                                            yAxis:timeaxis,
+                                                                                            xAxis:numericaxis,
+                                                                                            yKey:"day",
+                                                                                            xKey:"expenses",
                                                                                             styles:expensegraphstyles
                                                                                         
                                                                                         },
                                                                                         {
-                                                                                            type:"stackedcolumn",
-                                                                                            xAxis:timeaxis,
-                                                                                            yAxis:numericaxis,
-                                                                                            xKey:"day",
-                                                                                            yKey:"taxes",
+                                                                                            type:"stackedbar",
+                                                                                            yAxis:timeaxis,
+                                                                                            xAxis:numericaxis,
+                                                                                            yKey:"day",
+                                                                                            xKey:"taxes",
                                                                                             styles:taxareastyles
                                                                                         }
                                                                                      ]});
 
-                    var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});
+                    var axisrenderer = new Y.AxisRenderer({axis:numericaxis, position:"bottom", styles:bottomaxisstyles});
                     axisrenderer.render("#axis");
                     function updateAxisLabelRotation()
                     {
@@ -181,7 +181,7 @@ table, tr, td
                         vaxis.set("styles", {label:{rotation:document.getElementById("yLabelRotationField").value}});
                     }
                     Y.on("click", updateAxisLabelRotation, "#rotationbutton");
-                    var vaxis = new Y.AxisRenderer({position:"left", axis:numericaxis, styles:leftaxisstyles});
+                    var vaxis = new Y.AxisRenderer({position:"left", axis:timeaxis, styles:leftaxisstyles});
                     vaxis.render("#vertaxis");
                 });
 </script>
