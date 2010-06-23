@@ -162,6 +162,9 @@ Y.extend(GraphStack, Y.Base, {
             case "stackedline" :
                 seriesClass = Y.StackedLineSeries;
             break;
+            case "stackedcolumn" :
+                seriesClass = Y.StackedColumnSeries;
+            break;
             default:
                 seriesClass = Y.CartesianSeries;
             break;
