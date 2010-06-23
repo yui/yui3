@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <title>AutoComplete manual test</title>
+    <link rel="stylesheet" href="../assets/test-console.css">
+    <style>
+    body { width: 60%; }
+    #ac { width: 17em; }
+    #log { margin-top: 4em; }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<h1>AutoComplete manual test</h1>
+
+<form>
+    <p>
+        <label for="ac">Type things here!</label><br>
+        <input type="text" id="ac">
+    </p>
+
+    <fieldset id="data-sources">
+        <legend>DataSource</legend>
+        <div>
+            <input type="radio" id="ds-none" name="ds" value="none">
+            <label for="ds-none">None</label>
+
+            <input type="radio" id="ds-local" name="ds" value="local" checked="1">
+            <label for="ds-local">Local</label>
+
+            <input type="radio" id="ds-remote" name="ds" value="remote">
+            <label for="ds-remote">Remote (JSONP)</label>
+        </div>
+    </fieldset>
+</form>
+
+<div id="log"></div>
+
+<script src="../assets/test-data.js"></script>
+<script src="../../../../build/yui/yui.js"></script>
+<script src="../../js/autocomplete-base.js"></script>
+<script>
+var Y = YUI({
+    filter: 'raw',
+    filters: {
+        'autocomplete': 'debug'
+    },
+    useBrowserConsole: false
+}).use('autocomplete-base', 'console-filters', 'datasource-get',
+        'datasource-jsonschema', 'datasource-local', 'dump', 'event-delegate',
+        function (Y) {
+
+new Y.Console({
+    height: '400px',
+    width: '35%'
+}).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
+
+var dataSourceLocal = new Y.DataSource.Local({
+        source: ExampleData.arrayStates
+    }),
+
+    dataSourceRemote = new Y.DataSource.Get({
+        source: 'http://query.yahooapis.com/v1/public/yql?format=json&'
+    }),
+
+    autoComplete = new Y.AutoComplete({inputNode: '#ac'});
+
+dataSourceRemote.plug({
+    fn: Y.Plugin.DataSourceJSONSchema,
+    cfg: {
+        schema: {
+            resultListLocator: 'query.results.Result'
+        }
+    }
+});
+
+// Handle clicks on datasource radio buttons.
+Y.delegate('click', function (e) {
+    switch (e.currentTarget.get('value')) {
+    case 'none':
+        useNone();
+        break;
+
+    case 'local':
+        useLocal();
+        break;
+
+    case 'remote':
+        useRemote();
+        break;
+    }
+}, '#data-sources', 'input[type="radio"]');
+
+useLocal();
+
+autoComplete.on('results', function (e) {
+    Y.log('results: ' + Y.dump(e.results), 'info', 'autocomplete');
+});
+
+autoComplete.get('inputNode').focus();
+
+// For easier console debugging.
+Y.autoComplete = autoComplete;
+
+// -- DataSource functions -----------------------------------------------------
+function useLocal() {
+    Y.log('using local data source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+    autoComplete.set('dataSource', dataSourceLocal);
+    autoComplete.set('requestTemplate', function (q) { return q; });
+    autoComplete.set('resultFilter', startsWith);
+}
+
+function useNone() {
+    Y.log('using no data source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+    autoComplete.set('dataSource', null);
+    autoComplete.set('resultFilter', null);
+}
+
+function useRemote() {
+    Y.log('using remote data source', 'info', 'autocomplete');
+
+    autoComplete.detachAll('test|*');
+    autoComplete.set('dataSource', dataSourceRemote);
+    autoComplete.set('requestTemplate', 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'));
+    autoComplete.set('resultFilter', null);
+}
+
+// -- Filter functions ---------------------------------------------------------
+
+// Case-insensitive "starts with" filter.
+function startsWith(query, results) {
+    var filtered   = [],
+        i          = 0,
+        len        = results.length,
+        queryLower = query.toLowerCase(),
+        result;
+
+    for (; i < len; ++i) {
+        result = results[i];
+
+        if (result.toLowerCase().indexOf(queryLower) === 0) {
+            filtered.push(result);
+        }
+    }
+
+    return filtered;
+}
+
+});
+</script>
+
+</body>
+</html>

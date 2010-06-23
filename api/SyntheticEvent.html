@@ -67,6 +67,10 @@ infrastructure.  Don't instantiate this object directly, use
 <dt><code>type</code></dt>
 <dd>REQUIRED.  The name of the synthetic event.  What goes
 <code>node.on(<strong>HERE</strong>, callback )</code>.</dd>
+<dt><code>init</code></dt>
+<dd><code>function (node, subscription, fireEvent)</code> One time
+setup for an event. Executes before the first call to <code>on</code>
+(below)</dd>
 <dt><code>on</code></dt>
 <dd><code>function ( node, subscription, fireEvent )</code> The
 implementation logic for subscription.  Any special setup you need to
@@ -79,6 +83,10 @@ criteria have been met to fire the synthetic event, call
 <dd><code>function ( node, subscription, fireEvent )</code> The
 implementation logic for cleaning up a detached subscription. E.g.
 detach any DOM subscriptions done in <code>on</code>.</dd>
+<dt><code>destroy</code></dt>
+<dd><code>function (node, subscription, fireEvent)</code> One time
+tear down for an event.  Executes after the last call to
+<code>detach</code></dd>
 <dt><code>publishConfig</code></dt>
 <dd>(Object) The configuration object that will be used to instantiate
 the underlying CustomEvent.  By default, the event is defined with

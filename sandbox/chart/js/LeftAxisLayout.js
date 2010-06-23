@@ -8,23 +8,18 @@ function LeftAxisLayout(config)
 
 LeftAxisLayout.ATTRS = {
     axisRenderer: {
-        lazyAdd: false,
+        value: null
+    },
 
-        getter: function()
-        {
-            return this._axisRenderer;
-        },
-        setter: function(val)
-        {
-            this._axisRenderer = val;
-            return val;
-        }
+    maxLabelSize: {
+        value: 0
     }
 };
 
 Y.extend(LeftAxisLayout, Y.Base, {
-    _axisRenderer: null,
-
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     */
     setTickOffsets: function()
     {
         var ar = this.get("axisRenderer"),
@@ -34,7 +29,6 @@ Y.extend(LeftAxisLayout, Y.Base, {
             display = majorTicks.display;
         ar.set("topTickOffset",  0);
         ar.set("bottomTickOffset",  0);
-        ar.set("maxTickLength", tickLength);
         
         switch(display)
         {
@@ -111,7 +105,9 @@ Y.extend(LeftAxisLayout, Y.Base, {
             m11 = cosRadians,
             m12 = rot > 0 ? -sinRadians : sinRadians,
             m21 = -m12,
-            m22 = m11;
+            m22 = m11,
+            max = 0,
+            maxLabelSize = this.get("maxLabelSize");
         if(Y.UA.ie)
         {
             label.style.filter = "progid:DXImageTransform.Microsoft.BasicImage(rotation=0)";
@@ -143,51 +139,74 @@ Y.extend(LeftAxisLayout, Y.Base, {
             label.style.left = leftOffset + "px";
             label.style.top = topOffset + "px";
             label.style.filter = 'progid:DXImageTransform.Microsoft.Matrix(M11=' + m11 + ' M12=' + m12 + ' M21=' + m21 + ' M22=' + m22 + ' sizingMethod="auto expand")';
+            this.set("maxLabelSize", Math.max(maxLabelSize, label.offsetWidth));
             return;
         }
         if(rot === 0)
         {
-            leftOffset = label.offsetWidth;
-            topOffset = label.offsetHeight * 0.5;
-            label.style.left = (pt.x - leftOffset) + "px";
-            label.style.top =  (pt.y - topOffset) + "px";
+            max = label.offsetWidth;
+            leftOffset -= max;
+            topOffset -= label.offsetHeight * 0.5;
         }
         else if(rot === 90)
         {
-            leftOffset = 0;
-            topOffset = label.offsetWidth * 0.5;
-            label.style.left = (pt.x - leftOffset) + "px";
-            label.style.top =  (pt.y - topOffset) + "px";
+            max = label.offsetHeight;
+            topOffset -= label.offsetWidth * 0.5;
         }
         else if(rot === -90)
         {
-            leftOffset = label.offsetHeight;
-            topOffset = label.offsetWidth * 0.5;
-            label.style.left = (pt.x - leftOffset) + "px";
-            label.style.top = (pt.y + topOffset) + "px";
-        }
-        else if(rot < 0)
-        {
-            
-            leftOffset = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
-            topOffset = (sinRadians * label.offsetWidth) - (cosRadians * (label.offsetHeight * 0.6)); 
-            label.style.left = (pt.x - leftOffset) + "px";
-            label.style.top = (pt.y + topOffset) + "px";
+            max = label.offsetHeight;
+            leftOffset -= max;
+            topOffset += label.offsetWidth * 0.5;
         }
         else
         {
-            topOffset = (sinRadians * label.offsetWidth) + (cosRadians * (label.offsetHeight * 0.6));
-            leftOffset = (cosRadians * label.offsetWidth);
-            label.style.left = (pt.x - leftOffset) + "px";
-            label.style.top = (pt.y - topOffset) + "px";
-            
+            max = (cosRadians * label.offsetWidth) + (sinRadians * label.offsetHeight);
+            if(rot < 0)
+            {
+                leftOffset -= max;
+                topOffset += (sinRadians * label.offsetWidth) - (cosRadians * (label.offsetHeight * 0.6)); 
+            }
+            else
+            {
+                leftOffset -= (cosRadians * label.offsetWidth);
+                topOffset -= (sinRadians * label.offsetWidth) + (cosRadians * (label.offsetHeight * 0.6));
+            }
         }
+        label.style.left = leftOffset + "px";
+        label.style.top = topOffset + "px";
         label.style.MozTransformOrigin =  "0 0";
         label.style.MozTransform = "rotate(" + rot + "deg)";
         label.style.webkitTransformOrigin = "0 0";
         label.style.webkitTransform = "rotate(" + rot + "deg)";
+        this.set("maxLabelSize", Math.max(max, maxLabelSize));
     },
 
+    /**
+     * Calculates the size and positions the content elements.
+     */
+    setSizeAndPosition: function()
+    {
+        var labelSize = this.get("maxLabelSize"),
+            ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            sz = style.line.weight,
+            majorTicks = style.majorTicks,
+            display = majorTicks.display,
+            tickLen = majorTicks.length;
+        if(display === "outside")
+        {
+            sz += tickLen;
+        }
+        else if(display === "cross")
+        {
+            sz += tickLen * 0.5;
+        }
+        sz += labelSize;
+        ar.get("node").style.left = labelSize + "px";
+        ar.set("width", sz);
+    },
+    
     offsetNodeForTick: function(node)
     {
         var ar = this.get("axisRenderer"),

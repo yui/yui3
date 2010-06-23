@@ -3,51 +3,19 @@ function LineSeries(config)
 	LineSeries.superclass.constructor.apply(this, arguments);
 }
 
-LineSeries.name = "lineSeries";
+LineSeries.NAME = "lineSeries";
 
 LineSeries.ATTRS = {
 	type: {
 		/**
 		 * Indicates the type of graph.
 		 */
-		getter: function()
-		{
-			return this._type;
-		}
-	}
+        value:"line"
+    }
 };
 
 Y.extend(LineSeries, Y.CartesianSeries, {
-	/**
-	 * Constant used to generate unique id.
-	 */
-	GUID: "yuilineseries",
-
-	/**
-	 * @private (protected)
-	 */
-	_type: "line",
 	
-	/**
-	 * @private (override)
-	 */
-	checkStyleFlags: function()  
-	{
-		return this.checkFlags({
-			color:true,
-			weight:true,
-			alpha:true,	
-			type:true,
-			marker:true,
-			dashLength:true,
-			gapLength:true,
-			connectDiscontinuousPoints:true,
-			discontinuousType:true,
-			discontinuousDashLength:true,
-			discontinuousGapLength:true
-		});
-	},
-
 	/**
 	 * @private
 	 */
@@ -69,14 +37,12 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 	 */
 	drawLines: function()
 	{
-        if(this._xcoords.length < 1) 
+        if(this.get("xcoords").length < 1) 
 		{
 			return;
 		}
-        var	parentDiv = this.get("parent"),
-            ht = parentDiv.offsetHeight,
-            xcoords = this._xcoords,
-			ycoords = this._ycoords,
+        var xcoords = this.get("xcoords"),
+			ycoords = this.get("ycoords"),
 			len = xcoords.length,
 			lastX = xcoords[0],
 			lastY = ycoords[0],
@@ -96,8 +62,7 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 			graphic = this.get("graphic");
         graphic.clear();
         graphic.lineStyle(styles.weight, styles.color);
-        graphic.beginFill(styles.color, 0.5);
-        graphic.moveTo (lastX, lastY);
+        graphic.moveTo(lastX, lastY);
         for(i = 1; i < len; i = ++i)
 		{
 			nextX = xcoords[i];
@@ -141,12 +106,8 @@ Y.extend(LineSeries, Y.CartesianSeries, {
 		
 			lastX = lastValidX = nextX;
 			lastY = lastValidY = nextY;
-		}
-       // graphic.lineStyle(0);
-        graphic.lineTo(lastX, ht);
-        graphic.lineTo(0, ht);
-        graphic.lineTo(0, ycoords[0]);
-        graphic.endFill();
+        }
+        graphic.end();
 	},
 	
     /**

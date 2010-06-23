@@ -54,7 +54,7 @@ Y.extend(NumericAxis, Y.BaseAxis,
 			len,
 			num,
 			i,
-			str = "";
+            key;
 		if(data && data.length && data.length > 0)
 		{
 			len = data.length;
@@ -63,14 +63,25 @@ Y.extend(NumericAxis, Y.BaseAxis,
 			{
 				for(i = 1; i < len; i++)
 				{	
-					num = data[i];
+                    num = data[i];
 					if(isNaN(num))
 					{
-						continue;
+						if(Y.Lang.isObject(num))
+                        {
+                            //hloc values
+                            for(key in num)
+                            {
+                               if(num.hasOwnProperty(key))
+                               {
+                                    max = Math.max(num[key], max);
+                                    min = Math.min(num[key], min);
+                               }
+                            }
+                        }
+                        continue;
 					}
 					max = Math.max(num, max);
 					min = Math.min(num, min);
-					str += "\n" + num;
 				}
 			}
 		}	

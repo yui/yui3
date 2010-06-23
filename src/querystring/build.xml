@@ -2,22 +2,26 @@
 <project name="YUI" default="local">
     <description>QueryString - Build All Modules</description>
 
+    <macrodef name="build-querystring">
+        <attribute name="target"/>
+        <sequential>
+            <ant antfile="querystring.xml" target="@{target}"/>
+            <ant antfile="querystring-parse-simple.xml" target="@{target}"/>
+            <ant antfile="querystring-stringify-simple.xml" target="@{target}"/>
+        </sequential>
+    </macrodef>
+
     <target name="local">
-	<ant antfile="querystring.xml" target="local" />
-	<ant antfile="querystring-parse-simple.xml" target="local" />
-	<ant antfile="querystring-stringify-simple.xml" target="local" />
+        <build-querystring target="local"/>
     </target>
-
     <target name="deploy">
-	<ant antfile="querystring.xml" target="deploy" />
-	<ant antfile="querystring-parse-simple.xml" target="deploy" />
-	<ant antfile="querystring-stringify-simple.xml" target="deploy" />
+        <build-querystring target="deploy"/>
     </target>
-
     <target name="all">
-	<ant antfile="querystring.xml" target="all" />
-	<ant antfile="querystring-parse-simple.xml" target="all" />
-	<ant antfile="querystring-stringify-simple.xml" target="all" />
+        <build-querystring target="all"/>
+    </target>
+    <target name="clean">
+        <build-querystring target="clean"/>
     </target>
 
 </project>

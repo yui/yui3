@@ -278,7 +278,7 @@ Graphic.prototype = {
         return grad;
     },
 
-    endFill: function() {
+    end: function() {
         var context = this._context,
             fill;
 
@@ -287,9 +287,9 @@ Graphic.prototype = {
             if (fill) {
                 context.fillStyle = fill;
             }
+            context.closePath();
         }
 
-        context.closePath();
 
         if (this._fillType) {
             context.fill();
@@ -359,7 +359,6 @@ Graphic.prototype = {
 
             this._trackSize.apply(this, args[i]);
         }
-
         return this;
     },
 
@@ -367,6 +366,14 @@ Graphic.prototype = {
         this._context.moveTo(x, y);
         this._trackPos(x, y);
         return this;
+    },
+
+    setSize: function(w, h)
+    {
+        this._node.style.width = w + "px";
+        this._node.style.height = h + "px";
+        this._canvas.width = w;
+        this._canvas.height = h;
     },
 
     _node: null,
@@ -382,8 +389,8 @@ Graphic.prototype = {
         this._node.style.top = node.style.top;
         node.appendChild(this._node);
         this._node.appendChild(this._canvas);
-        this._canvas.width = node.offsetWidth;
-        this._canvas.height = node.offsetHeight;
+        this._canvas.width = node.offsetWidth > 0 ? node.offsetWidth : 100;
+        this._canvas.height = node.offsetHeight > 0 ? node.offsetHeight : 100;
         return this;
     },
 

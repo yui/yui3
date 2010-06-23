@@ -13,7 +13,9 @@ RightAxisLayout.ATTRS = {
 };
 
 Y.extend(RightAxisLayout, Y.Base, {
-
+    /**
+     * Sets the length of the tick on either side of the axis line.
+     */
     setTickOffsets: function()
     {
         var ar = this.get("axisRenderer"),
@@ -23,7 +25,7 @@ Y.extend(RightAxisLayout, Y.Base, {
             display = majorTicks.display;
         ar.set("topTickOffset",  0);
         ar.set("bottomTickOffset",  0);
-        ar.set("maxTickLength", tickLength);
+        
         switch(display)
         {
             case "inside" :
@@ -152,6 +154,29 @@ Y.extend(RightAxisLayout, Y.Base, {
         label.style.webkitTransform = "rotate(" + rot + "deg)";
     },
 
+    /**
+     * Calculates the size and positions the content elements.
+     */
+    setSizeAndPosition: function(labelSize)
+    {
+        var ar = this.get("axisRenderer"),
+            style = ar.get("styles"),
+            sz = style.line.weight,
+            majorTicks = style.majorTicks,
+            display = majorTicks.display,
+            tickLen = majorTicks.length;
+        if(display === "outside")
+        {
+            sz += tickLen;
+        }
+        else if(display === "cross")
+        {
+            sz += tickLen * 0.5;
+        }
+        sz += labelSize;
+        ar.set("width", sz);
+    },
+    
     offsetNodeForTick: function(node)
     {
         var ar = this.get("axisRenderer"),
