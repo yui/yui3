@@ -1,7 +1,22 @@
+/**
+ * Adds a synthetic <code>valueChange</code> event that fires when the
+ * <code>value</code> property of an input field or textarea changes as a result
+ * of a keystroke, mouse operation, or input method editor (IME) input event.
+ *
+ * @module value-change
+ */
+
+/**
+ * Provides the implementation for the synthetic <code>valueChange</code> event.
+ *
+ * @class ValueChange
+ * @static
+ */
+
 var VALUE        = 'value',
     VALUE_CHANGE = 'valueChange',
 
-// Just a simple namespace to make our methods overridable.
+// Just a simple namespace to make methods overridable.
 VC = {
     // -- Static Constants -----------------------------------------------------
     TIMEOUT: 10000,
@@ -102,6 +117,55 @@ VC = {
         });
     }
 };
+
+/**
+ * <p>
+ * Synthetic event that fires when the <code>value</code> property of an input
+ * field or textarea changes as a result of a keystroke, mouse operation, or
+ * input method editor (IME) input event.
+ * </p>
+ *
+ * <p>
+ * Unlike the <code>onchange</code> event, this event fires when the value
+ * actually changes and not when the element loses focus. This event also
+ * reports IME and multi-stroke input more reliably than <code>oninput</code> or
+ * the various key events across browsers.
+ * </p>
+ *
+ * <p>
+ * This event is provided by the <code>value-change</code> module.
+ * </p>
+ *
+ * <p>
+ * <strong>Usage example:</strong>
+ * </p>
+ *
+ * <code><pre>
+ * YUI().use('value-change', function (Y) {
+ * &nbsp;&nbsp;Y.one('input').on('valueChange', function (e) {
+ * &nbsp;&nbsp;&nbsp;&nbsp;// Handle valueChange events on the first input element on the page.
+ * &nbsp;&nbsp;});
+ * });
+ * </pre></code>
+ *
+ * @event valueChange
+ * @param {EventFacade} e Event facade with the following additional
+ *   properties:
+ *
+ * <dl>
+ *   <dt>prevVal (String)</dt>
+ *   <dd>
+ *     Previous value before the latest change.
+ *   </dd>
+ *
+ *   <dt>newVal (String)</dt>
+ *   <dd>
+ *     New value after the latest change.
+ *   </dd>
+ * </dl>
+ *
+ * @for YUI
+ */
 
 // FIXME: synthetic events don't seem to respect the context param of on()
 Y.Event.define(VALUE_CHANGE, {
