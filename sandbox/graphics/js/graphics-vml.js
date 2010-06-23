@@ -1,4 +1,3 @@
-
 var VMLGraphics = function(config) {
     this.initializer.apply(this, arguments);
 };

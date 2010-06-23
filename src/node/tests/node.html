@@ -168,6 +168,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
 
+            var html = '<style>body {height:100px}</style>';
+            Y.one('head').append(html);
     new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
     var byId = function(id) {
@@ -1188,6 +1190,13 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             node.clearData();
             Assert.areEqual(undefined, node.getData('baz'),
                 "node.clearData()");
+        },
+
+        test_appendStyle: function() {
+            var html = '<style>body {height:100px}</style>';
+            Y.one('head').append(html);
+            Assert.areEqual('100px', Y.one('body').getStyle('height'),
+                "Y.one('head').append(" + html + ")");
         }
     })); 
 
