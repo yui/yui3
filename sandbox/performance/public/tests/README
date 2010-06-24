@@ -12,6 +12,12 @@ object may have the following properties, of which only the "iterations" and
     false, and the test will be aborted (just as it would if you returned false
     from a synchronous setup function).
 
+  asyncTeardown (Boolean):
+    By default, teardown functions are assumed to be synchronous. Set this to
+    true to indicate that your teardown function is asynchronous. This will
+    cause the test runner to wait for you to explicitly indicate completion by
+    calling done() from within the teardown function.
+
   bootstrapYUI (Boolean):
     By default, all sandboxes are pristine. Set this to true to automatically
     bootstrap YUI 3 core and Loader (from the local YUI 3 checkout) into the

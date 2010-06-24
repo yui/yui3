@@ -156,6 +156,21 @@ Y.extend(GraphStack, Y.Base, {
             case "ohlc" :
                 seriesClass = Y.OHLCSeries;
             break;
+            case "stackedarea" :
+                seriesClass = Y.StackedAreaSeries;
+            break;
+            case "stackedline" :
+                seriesClass = Y.StackedLineSeries;
+            break;
+            case "stackedcolumn" :
+                seriesClass = Y.StackedColumnSeries;
+            break;
+            case "stackedbar" :
+                seriesClass = Y.StackedBarSeries;
+            break;
+            case "dotseries" :
+                seriesClass = Y.DotSeries;
+            break;
             default:
                 seriesClass = Y.CartesianSeries;
             break;

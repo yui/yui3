@@ -286,10 +286,20 @@ Y.mix(Y.AxisRenderer.prototype, {
             h = this.get("node").offsetHeight,
             style = this.get("styles"),
             padding = style.padding,
-            pos = this.get("position");
-        if(pos === "left" || pos === "right")
+            pos = this.get("position"),
+            dataType = this.get("axis").get("dataType");
+        if(pos === "left" || pos === "right") 
         {
-            p = (h - (padding.top + padding.bottom)) - (point.y - padding.top);
+            //Numeric data on a vertical axis is displayed from bottom to top.
+            //Categorical and Timeline data is displayed from top to bottom.
+            if(dataType === "numeric")
+            {
+                p = (h - (padding.top + padding.bottom)) - (point.y - padding.top);
+            }
+            else
+            {
+                p = point.y - padding.top;
+            }
         }
         else
         {

@@ -12,6 +12,9 @@ OHLCSeries.ATTRS = {
 };
 
 Y.extend(OHLCSeries, Y.RangeSeries, {
+	/**
+	 * @private
+	 */
     drawMarker: function(graphic, hloc, left, style)
     {
         var h = hloc.h,
@@ -40,6 +43,9 @@ Y.extend(OHLCSeries, Y.RangeSeries, {
         graphic.end();
     },
 	
+	/**
+	 * @private
+	 */
 	_getDefaultStyles: function()
     {
         return {

@@ -12,6 +12,9 @@ CandlestickSeries.ATTRS = {
 };
 
 Y.extend(CandlestickSeries, Y.RangeSeries, {
+    /**
+     * @private
+     */
     drawMarker: function(graphic, hloc, left, style)
     {
         var h = hloc.h,

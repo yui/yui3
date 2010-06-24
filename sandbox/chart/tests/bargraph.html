@@ -38,14 +38,17 @@ table, tr, td
 </div>
 <script>
 
-			YUI({filter:"debug"}).use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'slider', 'graphics', 'infographics', function (Y)
+			YUI().use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'slider', 'graphics', 'infographics', function (Y)
 				{
 					// Create data 
 					var mydata = {
 						id:"myData", 
 						data: [
-							{day:"Monday", taxes:2000, expenses:3700, revenue:2200}, {day:"Tuesday", taxes:50, expenses:9100, revenue:100}, 
-							{day:"Wednesday", taxes:400, expenses:1100, revenue:1500}, {day:"Thursday", taxes:200, expenses:1900, revenue:2800}, {day:"Friday", taxes:2000, expenses:700, revenue:2650}
+							{day:"5/1/2010", taxes:2000, expenses:3700, revenue:2200}, 
+                            {day:"5/2/2010", taxes:50, expenses:9100, revenue:100}, 
+							{day:"5/3/2010", taxes:400, expenses:1100, revenue:1500}, 
+                            {day:"5/4/2010", taxes:200, expenses:1900, revenue:2800}, 
+                            {day:"5/5/2010", taxes:5000, expenses:5000, revenue:2650}
 						]
 					};					
 
@@ -129,7 +132,7 @@ table, tr, td
                         padding:{top:50, bottom:50}
 					};	
                     var dataProvider = mydata;
-                    var timeaxis = new Y.CategoryAxis({dataProvider:dataProvider});
+                    var timeaxis = new Y.TimeAxis({dataProvider:dataProvider});
 					timeaxis.addKey("day");
                     
                     var numericaxis = new Y.NumericAxis({dataProvider:dataProvider});
@@ -138,6 +141,7 @@ table, tr, td
                     numericaxis.addKey("taxes");
                   var lineSeries = new Y.LineSeries({
                                                         type:"line",
+                                                        direction:"vertical",
                                                         yAxis:timeaxis,
                                                         xAxis:numericaxis,
                                                         yKey:"day",
