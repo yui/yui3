@@ -5,8 +5,9 @@
     <macrodef name="build-cssbase">
         <attribute name="target"/>
         <sequential>
-            <ant antfile="build.cssbase.xml" target="@{target}"/>
-            <ant antfile="build.cssbase-context.xml" target="@{target}"/>
+            <subant target="@{target}">
+                <fileset dir="." includes="build.*.xml"/>
+            </subant>
         </sequential>
     </macrodef>
 
