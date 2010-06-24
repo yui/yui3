@@ -70,7 +70,7 @@ table, tr, td
 						color:"#ff0000",
 						marker:{fillColor:"#ff0000", width:6, height:6},
 						weight:"2",
-						showMarkers:false,
+						showMarkers:true,
                         padding:{left:50, right:50}
                     };
 				
@@ -142,7 +142,12 @@ table, tr, td
                                                         xKey:"day",
                                                         yKey:"taxes",
                                                         styles:taxgraphstyles});
-
+                var dotSeries = new Y.DotSeries({
+                                                        xAxis:timeaxis,
+                                                        yAxis:numericaxis,
+                                                        xKey:"day",
+                                                        yKey:"taxes",
+                                                        styles:taxgraphstyles});
                    var graphstack = new Y.GraphStack({parent:"#chart", seriesCollection:[{
                                                                                             type:"column", 
                                                                                             xAxis:timeaxis, 
@@ -168,8 +173,9 @@ table, tr, td
                                                                                             yKey:"taxes",
                                                                                             styles:taxareastyles
                                                                                         },
-                                                                                        lineSeries
-                                                                                     ]});
+                                                                                        lineSeries,
+                                                                                        dotSeries
+                                                                                        ]});
 
                     var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});
                     axisrenderer.render("#axis");

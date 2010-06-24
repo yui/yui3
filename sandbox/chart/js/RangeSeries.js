@@ -63,7 +63,10 @@ Y.extend(RangeSeries, Y.CartesianSeries, {
 		this.set("ycoords", ycoords);
     },
 
-	drawMarkers: function()
+    /**
+     * @private
+     */
+	drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{

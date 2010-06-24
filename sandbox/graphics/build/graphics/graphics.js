@@ -414,7 +414,6 @@ Graphic.prototype = {
 };
 
 Y.Graphic = Graphic;
-
 var VMLGraphics = function(config) {
     this.initializer.apply(this, arguments);
 };
@@ -537,7 +536,7 @@ VMLGraphics.prototype = {
             this._width = w;
         }
         if (h > this._height) {
-            this._height = w;
+            this._height = h;
         }
     },
 
@@ -603,7 +602,6 @@ VMLGraphics.prototype = {
         }
 
         this._vml.appendChild(shape);
-        
         this._initProps();
         return this;
     },

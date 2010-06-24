@@ -23,7 +23,7 @@ StackedBarSeries.ATTRS = {
 };
 
 Y.extend(StackedBarSeries, Y.CartesianSeries, {
-    drawMarkers: function()
+    drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
