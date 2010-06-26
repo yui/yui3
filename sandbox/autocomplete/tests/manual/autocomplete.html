@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="../assets/test-console.css">
     <style>
     body { width: 60%; }
+    fieldset { margin-bottom: 1em; }
+    fieldset label { margin-right: 0.5em; }
+
     #ac { width: 17em; }
     #log { margin-top: 4em; }
     </style>
@@ -16,7 +19,7 @@
 
 <form>
     <p>
-        <label for="ac">Type things here!</label><br>
+        <label for="ac">Type things here! Try the name of a US state.</label><br>
         <input type="text" id="ac">
     </p>
 
@@ -33,6 +36,12 @@
             <label for="ds-remote">Remote (JSONP)</label>
         </div>
     </fieldset>
+
+    <fieldset id="filters">
+      <legend>Result Filters</legend>
+      <div>
+      </div>
+    </fieldset>
 </form>
 
 <div id="log"></div>
@@ -40,6 +49,7 @@
 <script src="../assets/test-data.js"></script>
 <script src="../../../../build/yui/yui.js"></script>
 <script src="../../js/autocomplete-base.js"></script>
+<script src="../../js/autocomplete-filters.js"></script>
 <script>
 var Y = YUI({
     filter: 'raw',
@@ -47,15 +57,19 @@ var Y = YUI({
         'autocomplete': 'debug'
     },
     useBrowserConsole: false
-}).use('autocomplete-base', 'console-filters', 'datasource-get',
-        'datasource-jsonschema', 'datasource-local', 'dump', 'event-delegate',
-        function (Y) {
+}).use('autocomplete-base', 'autocomplete-filters', 'console-filters',
+        'datasource-get', 'datasource-jsonschema', 'datasource-local', 'dump',
+        'event-delegate',
 
+function (Y) {
+
+// -- Console setup ------------------------------------------------------------
 new Y.Console({
     height: '400px',
     width: '35%'
 }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
 
+// -- AutoComplete setup -------------------------------------------------------
 var dataSourceLocal = new Y.DataSource.Local({
         source: ExampleData.arrayStates
     }),
@@ -75,6 +89,24 @@ dataSourceRemote.plug({
     }
 });
 
+autoComplete.on('results', function (e) {
+    Y.log('results: ' + Y.dump(e.results), 'info', 'autocomplete');
+});
+
+// For easier debugging.
+Y.autoComplete = autoComplete;
+
+// -- UI stuff -----------------------------------------------------------------
+var filtersDiv = Y.one('#filters');
+
+// Create filter checkboxes.
+Y.Object.each(Y.AutoComplete.Filters, function (filter, name) {
+  filtersDiv.append(
+    '<input type="checkbox" class="filter" id="filter_' + name + '" value="' + name + '"' + (name === 'startsWith' ? ' checked="checked"' : '') + '>' +
+    '<label for="filter_' + name + '">' + name + '</label>'
+  );
+});
+
 // Handle clicks on datasource radio buttons.
 Y.delegate('click', function (e) {
     switch (e.currentTarget.get('value')) {
@@ -92,16 +124,31 @@ Y.delegate('click', function (e) {
     }
 }, '#data-sources', 'input[type="radio"]');
 
-useLocal();
+// Handle clicks on filters.
+Y.delegate('click', setFilters, '#filters', 'input[type="checkbox"]');
 
-autoComplete.on('results', function (e) {
-    Y.log('results: ' + Y.dump(e.results), 'info', 'autocomplete');
-});
+useLocal();
+setFilters();
 
 autoComplete.get('inputNode').focus();
 
-// For easier console debugging.
-Y.autoComplete = autoComplete;
+// -- UI functions -------------------------------------------------------------
+function setFilters() {
+    var filters     = [],
+        filterNames = [];
+
+    Y.all('#filters input.filter').each(function (input) {
+        if (input.get('checked')) {
+            filterNames.push(input.get('value'));
+        }
+    });
+
+    Y.Array.each(filterNames, function (name) {
+        filters.push(Y.AutoComplete.Filters[name]);
+    });
+
+    autoComplete.set('resultFilters', filters);
+}
 
 // -- DataSource functions -----------------------------------------------------
 function useLocal() {
@@ -110,7 +157,7 @@ function useLocal() {
     autoComplete.detachAll('test|*');
     autoComplete.set('dataSource', dataSourceLocal);
     autoComplete.set('requestTemplate', function (q) { return q; });
-    autoComplete.set('resultFilter', startsWith);
+    // autoComplete.set('resultFilters', [Y.AutoComplete.Filters.startsWith]);
 }
 
 function useNone() {
@@ -118,7 +165,7 @@ function useNone() {
 
     autoComplete.detachAll('test|*');
     autoComplete.set('dataSource', null);
-    autoComplete.set('resultFilter', null);
+    // autoComplete.set('resultFilters', []);
 }
 
 function useRemote() {
@@ -127,28 +174,7 @@ function useRemote() {
     autoComplete.detachAll('test|*');
     autoComplete.set('dataSource', dataSourceRemote);
     autoComplete.set('requestTemplate', 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'));
-    autoComplete.set('resultFilter', null);
-}
-
-// -- Filter functions ---------------------------------------------------------
-
-// Case-insensitive "starts with" filter.
-function startsWith(query, results) {
-    var filtered   = [],
-        i          = 0,
-        len        = results.length,
-        queryLower = query.toLowerCase(),
-        result;
-
-    for (; i < len; ++i) {
-        result = results[i];
-
-        if (result.toLowerCase().indexOf(queryLower) === 0) {
-            filtered.push(result);
-        }
-    }
-
-    return filtered;
+    // autoComplete.set('resultFilters', []);
 }
 
 });
