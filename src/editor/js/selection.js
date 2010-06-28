@@ -140,7 +140,7 @@
     * @method filterBlocks
     */
     Y.Selection.filterBlocks = function() {
-        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true, newChild, firstChild;
+        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true;
         if (childs) {
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
@@ -158,19 +158,25 @@
                         wrapped.push(childs[i]);
                     }
                 } else {
-                    if (wrapped) {
-                        newChild = Y.Node.create('<p></p>');
-                        firstChild = Y.one(wrapped[0]);
-                        for (i = 1; i < wrapped.length; i++) {
-                            newChild.append(wrapped[i]);
-                        }
-                        firstChild.replace(newChild);
-                        newChild.prepend(firstChild);
-                        wrapped = false;
-                    }
+                    wrapped = Y.Selection._wrapBlock(wrapped);
                 }
             }
+            wrapped = Y.Selection._wrapBlock(wrapped);
         }
+    };
+
+    Y.Selection._wrapBlock = function(wrapped) {
+        if (wrapped) {
+            var newChild = Y.Node.create('<p></p>'),
+                firstChild = Y.one(wrapped[0]), i;
+
+            for (i = 1; i < wrapped.length; i++) {
+                newChild.append(wrapped[i]);
+            }
+            firstChild.replace(newChild);
+            newChild.prepend(firstChild);
+        }
+        return false;
     };
 
     /**
@@ -251,7 +257,7 @@
     * @static
     * @property BLOCKS
     */
-    Y.Selection.BLOCKS = 'p,div,ul,ol,table';
+    Y.Selection.BLOCKS = 'p,div,ul,ol,table,style';
     /**
     * The temporary fontname applied to a selection to retrieve their values: yui-tmp
     * @static
@@ -398,7 +404,14 @@
         */
         insertAtCursor: function(html, node, offset, collapse) {
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
-                inHTML, txt, txt2, newNode, range = this.createRange();
+                inHTML, txt, txt2, newNode, range = this.createRange(), b;
+
+                if (node.test('body')) {
+                    console.log('Node: ', node);
+                    b = Y.Node.create('<span></span>');
+                    node.append(b);
+                    node = b;
+                }
 
             
             if (range.pasteHTML) {
@@ -419,9 +432,11 @@
                 node.replace(txt, node);
                 newNode = Y.Node.create(html);
                 txt.insert(newNode, 'after');
-                newNode.insert(cur, 'after');
-                cur.insert(txt2, 'after');
-                this.selectNode(cur, collapse);
+                if (txt2 && txt2.get('length')) {
+                    newNode.insert(cur, 'after');
+                    cur.insert(txt2, 'after');
+                    this.selectNode(cur, collapse);
+                }
             }
             return newNode;
         },
