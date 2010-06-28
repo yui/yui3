@@ -106,6 +106,7 @@
 
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
+<button id="focusEditor">Focus Editor</button>
 
 <div id="stub">
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
@@ -356,6 +357,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     Y.on('click', function(e) {
         editor.set('content', '<p>This is a test: ' + (new Date()) + '</p>');
     }, '#setHTML');
+
+    Y.on('click', function(e) {
+        editor.focus();
+    }, '#focusEditor');
 
 });
 
