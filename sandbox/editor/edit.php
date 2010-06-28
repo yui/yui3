@@ -322,7 +322,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         //editor.execCommand('enableObjectResizing', false);
         //this.set('content', Y.one('#stub').get('innerHTML'));
         editor.frame.on('keydown', function(e) {
-            if (e.charCode == 83 && e.metaKey) {
+            if (e.charCode == 83 && (e.ctrlKey || e.metaKey)) {
                 e.halt();
             }
         });

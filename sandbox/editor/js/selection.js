@@ -399,7 +399,14 @@ YUI.add('selection', function(Y) {
         */
         insertAtCursor: function(html, node, offset, collapse) {
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
-                inHTML, txt, txt2, newNode, range = this.createRange();
+                inHTML, txt, txt2, newNode, range = this.createRange(), b;
+
+                if (node.test('body')) {
+                    console.log('Node: ', node);
+                    b = Y.Node.create('<span></span>');
+                    node.append(b);
+                    node = b;
+                }
 
             
             if (range.pasteHTML) {
@@ -420,9 +427,11 @@ YUI.add('selection', function(Y) {
                 node.replace(txt, node);
                 newNode = Y.Node.create(html);
                 txt.insert(newNode, 'after');
-                newNode.insert(cur, 'after');
-                cur.insert(txt2, 'after');
-                this.selectNode(cur, collapse);
+                if (txt2 && txt2.get('length')) {
+                    newNode.insert(cur, 'after');
+                    cur.insert(txt2, 'after');
+                    this.selectNode(cur, collapse);
+                }
             }
             return newNode;
         },
