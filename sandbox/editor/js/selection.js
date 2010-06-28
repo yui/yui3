@@ -141,7 +141,7 @@ YUI.add('selection', function(Y) {
     * @method filterBlocks
     */
     Y.Selection.filterBlocks = function() {
-        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true, newChild, firstChild;
+        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true;
         if (childs) {
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
@@ -159,19 +159,25 @@ YUI.add('selection', function(Y) {
                         wrapped.push(childs[i]);
                     }
                 } else {
-                    if (wrapped) {
-                        newChild = Y.Node.create('<p></p>');
-                        firstChild = Y.one(wrapped[0]);
-                        for (i = 1; i < wrapped.length; i++) {
-                            newChild.append(wrapped[i]);
-                        }
-                        firstChild.replace(newChild);
-                        newChild.prepend(firstChild);
-                        wrapped = false;
-                    }
+                    wrapped = Y.Selection._wrapBlock(wrapped);
                 }
             }
+            wrapped = Y.Selection._wrapBlock(wrapped);
         }
+    };
+
+    Y.Selection._wrapBlock = function(wrapped) {
+        if (wrapped) {
+            var newChild = Y.Node.create('<p></p>'),
+                firstChild = Y.one(wrapped[0]), i;
+
+            for (i = 1; i < wrapped.length; i++) {
+                newChild.append(wrapped[i]);
+            }
+            firstChild.replace(newChild);
+            newChild.prepend(firstChild);
+        }
+        return false;
     };
 
     /**
@@ -252,7 +258,7 @@ YUI.add('selection', function(Y) {
     * @static
     * @property BLOCKS
     */
-    Y.Selection.BLOCKS = 'p,div,ul,ol,table';
+    Y.Selection.BLOCKS = 'p,div,ul,ol,table,style';
     /**
     * The temporary fontname applied to a selection to retrieve their values: yui-tmp
     * @static

@@ -125,6 +125,7 @@ This is some <strong>other</strong> loose test.
 <p>This is <span style="font-family: Courier New">another</span> test.</p>
 This is some more loose test.
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+This is some more loose test.
 <style>
 del {
     background-color: yellow;
@@ -135,6 +136,7 @@ del {
     text-decoration: underline overline;
 }
 </style>
+This is some more loose test.
 </div>
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
