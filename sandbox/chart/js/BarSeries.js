@@ -15,7 +15,10 @@ BarSeries.ATTRS = {
 };
 
 Y.extend(BarSeries, Y.CartesianSeries, {
-    drawMarkers: function()
+	/**
+	 * @private
+	 */
+    drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
@@ -94,11 +97,17 @@ Y.extend(BarSeries, Y.CartesianSeries, {
         }
  	},
 
+	/**
+	 * @private
+	 */
     drawMarker: function(graphic, func, left, top, w, h)
     {
         graphic.drawRect(this._leftOrigin, top, w, h);
     },
 	
+	/**
+	 * @private
+	 */
 	_getDefaultStyles: function()
     {
         return {

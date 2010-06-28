@@ -20,7 +20,89 @@ YUI.add('querystring-parse', function(Y) {
  * @class QueryString
  * @static
  */
-var QueryString = Y.namespace("QueryString");
+var QueryString = Y.namespace("QueryString"),
+
+// Parse a key=val string.
+// These can get pretty hairy
+// example flow:
+// parse(foo[bar][][bla]=baz)
+// return parse(foo[bar][][bla],"baz")
+// return parse(foo[bar][], {bla : "baz"})
+// return parse(foo[bar], [{bla:"baz"}])
+// return parse(foo, {bar:[{bla:"baz"}]})
+// return {foo:{bar:[{bla:"baz"}]}}
+pieceParser = function (eq) {
+    return function parsePiece (key, val) {
+
+        var sliced, numVal, head, tail, ret;
+
+        if (arguments.length !== 2) {
+            // key=val, called from the map/reduce
+            key = key.split(eq);
+            return parsePiece(
+                QueryString.unescape(key.shift()),
+                QueryString.unescape(key.join(eq))
+            );
+        }
+        key = key.replace(/^\s+|\s+$/g, '');
+        if (Y.Lang.isString(val)) {
+            val = val.replace(/^\s+|\s+$/g, '');
+            // convert numerals to numbers
+            if (!isNaN(val)) {
+                numVal = +val;
+                if (val === numVal.toString(10)) {
+                    val = numVal;
+                }
+            }
+        }
+        sliced = /(.*)\[([^\]]*)\]$/.exec(key);
+        if (!sliced) {
+            ret = {};
+            if (key) {
+                ret[key] = val;
+            }
+            return ret;
+        }
+        // ["foo[][bar][][baz]", "foo[][bar][]", "baz"]
+        tail = sliced[2]; 
+        head = sliced[1];
+
+        // array: key[]=val
+        if (!tail) {
+            return parsePiece(head, [val]);
+        }
+
+        // obj: key[subkey]=val
+        ret = {};
+        ret[tail] = val;
+        return parsePiece(head, ret);
+    };
+},
+
+// the reducer function that merges each query piece together into one set of params
+mergeParams = function(params, addition) {
+    return (
+        // if it's uncontested, then just return the addition.
+        (!params) ? addition
+        // if the existing value is an array, then concat it.
+        : (Y.Lang.isArray(params)) ? params.concat(addition)
+        // if the existing value is not an array, and either are not objects, arrayify it.
+        : (!Y.Lang.isObject(params) || !Y.Lang.isObject(addition)) ? [params].concat(addition)
+        // else merge them as objects, which is a little more complex
+        : mergeObjects(params, addition)
+    );
+},
+
+// Merge two *objects* together. If this is called, we've already ruled
+// out the simple cases, and need to do the for-in business.
+mergeObjects = function(params, addition) {
+    for (var i in addition) {
+        if (i && addition.hasOwnProperty(i)) {
+            params[i] = mergeParams(params[i], addition[i]);
+        }
+    }
+    return params;
+};
 
 /**
  * Provides Y.QueryString.parse method to accept Query Strings and return native
@@ -59,75 +141,6 @@ QueryString.unescape = function (s) {
 };
 
 
-// Parse a key=val string.
-// These can get pretty hairy
-// example flow:
-// parse(foo[bar][][bla]=baz)
-// return parse(foo[bar][][bla],"baz")
-// return parse(foo[bar][], {bla : "baz"})
-// return parse(foo[bar], [{bla:"baz"}])
-// return parse(foo, {bar:[{bla:"baz"}]})
-// return {foo:{bar:[{bla:"baz"}]}}
-var pieceParser = function (eq) {
-    return function parsePiece (key, val) {
-        if (arguments.length !== 2) {
-            // key=val, called from the map/reduce
-            key = key.split(eq);
-            return parsePiece(
-                QueryString.unescape(key.shift()),
-                QueryString.unescape(key.join(eq))
-            );
-        }
-        key = key.replace(/^\s+|\s+$/g, '');
-        if (Y.Lang.isString(val)) {
-            val = val.replace(/^\s+|\s+$/g, '');
-            // convert numerals to numbers
-            if (!isNaN(val)) {
-                var numVal = +val;
-                if (val === numVal.toString(10)) val = numVal;
-            }
-        }
-        var sliced = /(.*)\[([^\]]*)\]$/.exec(key);
-        if (!sliced) {
-            var ret = {};
-            if (key) ret[key] = val;
-            return ret;
-        }
-        // ["foo[][bar][][baz]", "foo[][bar][]", "baz"]
-        var tail = sliced[2], head = sliced[1];
-
-        // array: key[]=val
-        if (!tail) return parsePiece(head, [val]);
-
-        // obj: key[subkey]=val
-        var ret = {};
-        ret[tail] = val;
-        return parsePiece(head, ret);
-    };
-};
-
-// the reducer function that merges each query piece together into one set of params
-function mergeParams (params, addition) {
-    return (
-        // if it's uncontested, then just return the addition.
-        (!params) ? addition
-        // if the existing value is an array, then concat it.
-        : (Y.Lang.isArray(params)) ? params.concat(addition)
-        // if the existing value is not an array, and either are not objects, arrayify it.
-        : (!Y.Lang.isObject(params) || !Y.Lang.isObject(addition)) ? [params].concat(addition)
-        // else merge them as objects, which is a little more complex
-        : mergeObjects(params, addition)
-    );
-};
-
-// Merge two *objects* together. If this is called, we've already ruled
-// out the simple cases, and need to do the for-in business.
-function mergeObjects (params, addition) {
-    for (var i in addition) if (i && addition.hasOwnProperty(i)) {
-        params[i] = mergeParams(params[i], addition[i]);
-    }
-    return params;
-};
 
 
 }, '@VERSION@' ,{requires:['collection']});

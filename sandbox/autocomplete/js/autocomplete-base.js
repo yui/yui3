@@ -41,7 +41,7 @@ var Lang       = Y.Lang,
     QUERY            = 'query',
     QUERY_DELAY      = 'queryDelay',
     REQUEST_TEMPLATE = 'requestTemplate',
-    RESULT_FILTER    = 'resultFilter',
+    RESULT_FILTERS   = 'resultFilters',
     VALUE_CHANGE     = 'valueChange',
 
     EVT_QUERY        = QUERY,
@@ -195,7 +195,7 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
     // -- Protected Event Handlers ---------------------------------------------
 
     /**
-     * Handles DataSource responses and fires the <code>result</code> event if
+     * Handles DataSource responses and fires the <code>results</code> event if
      * there appear to be results.
      *
      * @method _onResponse
@@ -203,7 +203,9 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
      * @protected
      */
     _onResponse: function (e) {
-        var filter,
+        var filters,
+            i,
+            len,
             query,
             results = e && e.response && e.response.results;
 
@@ -212,12 +214,16 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
 
             // Ignore stale responses that aren't for the current query.
             if (query === this.get(QUERY)) {
-                filter = this.get(RESULT_FILTER);
+                filters = this.get(RESULT_FILTERS) || [];
+
+                for (i = 0, len = filters.length; i < len; ++i) {
+                    results = filters[i](query, results);
+                }
 
                 this.fire(EVT_RESULTS, {
                     data   : e.data,
                     query  : query,
-                    results: filter ? filter(query, results) : results
+                    results: results
                 });
             }
         }
@@ -454,11 +460,6 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
          * @default encodeURIComponent
          */
         requestTemplate: {
-            // Note: While the requestTemplate can be set to either a function
-            // or a string, it will always be returned as a function that
-            // accepts a query and returns a string.
-            value: encodeURIComponent,
-
             setter: function (template) {
                 if (isFunction(template)) {
                     return template;
@@ -474,29 +475,38 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
                         replace(/(^|[^\\])((\\{2})*)\{query\}/, '$1$2' + encodeURIComponent(query)).
                         replace(/(^|[^\\])((\\{2})*)\\(\{query\})/, '$1$2$4');
                 };
-            }
+            },
+
+            // Note: While the requestTemplate can be set to either a function
+            // or a string, it will always be returned as a function that
+            // accepts a query and returns a string.
+            value: encodeURIComponent
         },
 
         /**
          * <p>
-         * Local filter function for results. If set, this function will be
-         * called with two arguments: the query and the results received from
-         * the DataSource. It will be expected to return a filtered or modified
-         * version of those results, which will then be passed on to listeners
-         * to the <code>results</code> event.
+         * Array of local result filter functions. If provided, each filter
+         * will be called with two arguments: the query and the results received
+         * from the DataSource. Each filter is expected to return a filtered or
+         * modified version of those results, which will then be passed on to
+         * subsequent filters and to subscribers to the <code>results</code>
+         * event.
          * </p>
          *
          * <p>
-         * If no DataSource is set, the result filter will not be called.
+         * If no DataSource is set, result filters will not be called.
          * </p>
          *
-         * @attribute resultFilter
-         * @type Function|null
+         * @attribute resultFilters
+         * @type Array
+         * @default []
          */
-        resultFilter: {
+        resultFilters: {
             validator: function (value) {
-                return isFunction(value) || value === null;
-            }
+                return Lang.isArray(value);
+            },
+
+            value: []
         }
     }
 });
