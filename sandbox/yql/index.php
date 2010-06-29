@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Example</title>
+</head>
+<body class="yui-skin-sam">
+
+<p>YUI Gallery YQL example</p>
+
+<div id="res"></div>
+
+<script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/jsonp/jsonp-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="./js/yql.js?bust=<?php echo(mktime()); ?>"></script>
+<script>
+var yConfig = {
+    base: '../../build/',
+    filter: 'DEBUG',
+    allowRollup: false,
+    logExclude: {
+        'YUI': true,
+        Event: true,
+        Base: true,
+        Attribute: true,
+        augment: true
+    },
+    throwFail: true,
+    debug: false
+};
+YUI(yConfig).use('node', 'jsonp', 'yql', function(Y) {
+
+    var res = Y.one('#res');
+    
+    Y.YQL('select * from weather.forecast where location=62896', function(r) {
+        console.log(arguments);
+        var el = Y.Node.create('<div class="mod"></div>');
+        el.set('innerHTML', '<h2>Weather for 62896</h2>' +
+            r.query.results.channel.item.description);
+        res.appendChild(el);
+    });
+});
+</script>
+</body>
+</html>
+
