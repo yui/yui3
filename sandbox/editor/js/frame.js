@@ -370,9 +370,14 @@ YUI.add('frame', function(Y) {
         * @description Set the focus to the iframe
         */
         focus: function() {
-            this.getInstance().config.win.focus();
+            this.getInstance().one('win').focus();
             return this;
         },
+        /**
+        * @private
+        * @method _setExtraCSS
+        * @description Set's the extra CSS on the instance..
+        */
         _setExtraCSS: function(css) {
             if (this._ready) {
                 var inst = this.getInstance(),
