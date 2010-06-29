@@ -8,22 +8,12 @@
      * @class YQLRequest
      * @constructor
      * @param {String} sql The SQL statement to execute
-     * @param {Function} callback The callback to execute after the query (optional).
+     * @param {Function/Object} callback The callback to execute after the query (Falls through to JSONP).
      * @param {Object} params An object literal of extra parameters to pass along (optional).
+     * @param {Object} params An object literal of configuration options (optional): proto (http|https), base (url)
      */
-    var yql = function (sql, callback, params) {
-        this.query(sql, callback, params);
-    };
-
-    /**
-    * @method query
-    * @description Builds the query and fire the Get call.
-    * @param {String} sql The SQL statement to execute
-    * @param {Function} callback The callback to execute after the query (optional).
-    * @param {Object} params An object literal of extra parameters to pass along (optional).
-    */
-    yql.prototype.query = function(sql, callback, params) {
-        var qs = '', url = Y.YQLRequest.PROTO;
+    var YQLRequest = function (sql, callback, params, opts) {
+        var qs = '', url = ((opts && opts.proto) ? opts.proto : Y.YQLRequest.PROTO);
         
         if (!params) {
             params = {};
@@ -38,7 +28,7 @@
             qs += k + '=' + encodeURIComponent(v) + '&';
         });
         
-        url += Y.YQLRequest.BASE_URL + qs;
+        url += ((opts && opts.base) ? opts.base : Y.YQLRequest.BASE_URL) + qs;
 
         Y.jsonp(url, callback);
     };
@@ -48,21 +38,21 @@
     * @property PROTO
     * @description Default protocol to use: http
     */
-    yql.PROTO = 'http';
+    YQLRequest.PROTO = 'http';
     /**
     * @static
     * @property BASE_URL
     * @description The base URL to query: query.yahooapis.com/v1/public/yql?
     */
-    yql.BASE_URL = ':/'+'/query.yahooapis.com/v1/public/yql?';
+    YQLRequest.BASE_URL = ':/'+'/query.yahooapis.com/v1/public/yql?';
     /**
     * @static
     * @property ENV
     * @description The environment file to load: http://datatables.org/alltables.env
     */
-    yql.ENV = 'http:/'+'/datatables.org/alltables.env';
+    YQLRequest.ENV = 'http:/'+'/datatables.org/alltables.env';
     
-    Y.YQLRequest = yql;
+    Y.YQLRequest = YQLRequest;
 	
     /**
      * This class adds a sugar class to allow access to YQL (http://developer.yahoo.com/yql/).
