@@ -361,8 +361,13 @@ proto = {
     _attach: function(r, fromLoader) {
         var i, name, mod, details, req, use,
             mods = YUI.Env.mods,
-            done = this.Env._attached,
+            Y    = this,
+            done = Y.Env._attached,
             len  = r.length;
+
+        if (Y.Env.lastError) {
+            return;
+        }
 
         for (i=0; i<len; i++) {
             name = r[i]; 
@@ -375,17 +380,22 @@ proto = {
                 use        = details.use;
 
                 if (req && req.length) {
-                    this._attach(this.Array(req));
+                    Y._attach(Y.Array(req));
                 }
 
-                // this.log('attaching ' + name, 'info', 'yui');
+                // Y.log('attaching ' + name, 'info', 'yui');
 
                 if (mod.fn) {
-                    mod.fn(this, name);
+                    try {
+                        mod.fn(Y, name);
+                    } catch (e) {
+                        Y.Env.lastError = e;
+                        Y.error('Attach error: ' + name, e, name);
+                    }
                 }
 
                 if (use && use.length) {
-                    this._attach(this.Array(use));
+                    Y._attach(Y.Array(use));
                 }
             }
         }
@@ -484,8 +494,16 @@ proto = {
                 if (use) { // make sure we grab the submodule dependencies too
                     YArray.each(YArray(use), process);
                 }
+            },
 
-
+            notify = function(response) {
+                if (callback  && !Y.Env.lastError) {
+                    try {
+                        callback(Y, response);
+                    } catch (e) {
+                        Y.error('use callback error', e, args);
+                    }
+                }
             },
 
             handleLoader = function(fromLoader) {
@@ -520,9 +538,7 @@ proto = {
                     newData.push(function() {
                         Y.log('Nested USE callback: ' + data, 'info', 'yui');
                         Y._attach(data);
-                        if (callback) {
-                            callback(Y, response);
-                        }
+                        notify(response);
                     });
                     Y._loading  = false;
                     Y.use.apply(Y, newData);
@@ -530,9 +546,7 @@ proto = {
                     if (data) {
                         Y._attach(data);
                     }
-                    if (callback) {
-                        callback(Y, response);
-                    }
+                    notify(response);
                 }
 
                 if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
@@ -546,6 +560,8 @@ proto = {
             Y._useQueue.add(args);
             return Y;
         }
+
+        Y.Env.lastError = null;
 
         // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback, 'info', 'yui');
 
@@ -685,13 +701,20 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
      * @return {YUI} this YUI instance
      */
     error: function(msg, e) {
-        if (this.config.throwFail) {
-            throw (e || new Error(msg)); 
-        } else {
-            this.message(msg, "error"); // don't scrub this one
+
+        var Y = this;
+        
+        if (Y.config.errorFn) {
+            Y.config.errorFn.apply(Y, arguments);
         }
 
-        return this;
+        if (Y.config.throwFail) {
+            throw (e || new Error(msg)); 
+        } else {
+            Y.message(msg, "error"); // don't scrub this one
+        }
+
+        return Y;
     },
 
     /**
@@ -1198,6 +1221,16 @@ Y.log('This instance is not provisioned to fetch missing modules: ' + missing, '
  * a supported native console.
  * @since 3.1.0
  * @property logFn
+ * @type Function
+ */
+
+/**
+ * A callback to execute when Y.error is called.  It receives the
+ * error message and an javascript error object if Y.error was
+ * executed because a javascript error was caught.
+ *
+ * @since 3.2.0
+ * @property errorFn
  * @type Function
  */
 YUI.add('yui-base', function(Y) {
@@ -1921,7 +1954,7 @@ owns = function(o, k) {
     // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
-UNDEFINED = undefined,
+UNDEFINED,
 
 /**
  * Extracts the keys, values, or size from an object

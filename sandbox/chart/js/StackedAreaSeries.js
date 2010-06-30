@@ -18,19 +18,10 @@ StackedAreaSeries.ATTRS = {
 };
 
 Y.extend(StackedAreaSeries, Y.CartesianSeries, {
-	
 	/**
 	 * @private
 	 */
-	drawGraph: function()
-	{
-		this.drawArea();
-	},
-
-	/**
-	 * @protected
-	 */
-	drawArea: function()
+	drawSeries: function()
 	{
         if(this.get("xcoords").length < 1) 
 		{

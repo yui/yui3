@@ -1085,6 +1085,11 @@
             "widget-base"
         ]
     }, 
+    "yql": {
+        "requires": [
+            "jsonp"
+        ]
+    }, 
     "yui": {
         "submodules": {
             "get": {}, 

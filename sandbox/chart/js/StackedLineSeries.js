@@ -15,27 +15,10 @@ StackedLineSeries.ATTRS = {
 };
 
 Y.extend(StackedLineSeries, Y.CartesianSeries, {
-	
-	/**
+    /**
 	 * @private
 	 */
-	drawGraph: function()
-	{
-		var styles = this.get("styles");
-		if(styles.showLines) 
-		{
-			this.drawLines();
-		}
-		if(styles.showMarkers) 
-		{
-			this.drawMarkers();
-		}
-	},
-	
-    /**
-	 * @protected
-	 */
-	drawLines: function()
+	drawSeries: function()
 	{
         if(this.get("xcoords").length < 1) 
 		{

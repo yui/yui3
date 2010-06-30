@@ -12,8 +12,10 @@ ColumnSeries.ATTRS = {
 };
 
 Y.extend(ColumnSeries, Y.CartesianSeries, {
-
-	drawMarkers: function()
+	/**
+	 * @private
+	 */
+	drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{

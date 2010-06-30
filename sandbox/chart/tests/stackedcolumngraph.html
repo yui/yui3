@@ -38,16 +38,16 @@ table, tr, td
 </div>
 <script>
 
-			YUI({filter:"debug"}).use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'slider', 'graphics', 'infographics', function (Y)
+			YUI().use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'slider', 'graphics', 'infographics', function (Y)
 				{
 					// Create data 
 					var mydata = {
 						id:"myData", 
 						data: [
-							{day:"Monday", taxes:2000, expenses:-3700, revenue:2200}, 
+							{day:"Monday", taxes:2000, expenses:3700, revenue:2200}, 
                             {day:"Tuesday", taxes:50, expenses:5100, revenue:4100}, 
-							{day:"Wednesday", taxes:-400, expenses:1100, revenue:1500}, 
-                            {day:"Thursday", taxes:-500, expenses:1900, revenue:-2800}, 
+							{day:"Wednesday", taxes:400, expenses:1100, revenue:1500}, 
+                            {day:"Thursday", taxes:500, expenses:1900, revenue:2800}, 
                             {day:"Friday", taxes:2000, expenses:700, revenue:2650}
 						]
 					};					

@@ -106,6 +106,7 @@
 
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
+<button id="focusEditor">Focus Editor</button>
 
 <div id="stub">
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
@@ -125,6 +126,7 @@ This is some <strong>other</strong> loose test.
 <p>This is <span style="font-family: Courier New">another</span> test.</p>
 This is some more loose test.
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+This is some more loose test.
 <style>
 del {
     background-color: yellow;
@@ -135,6 +137,7 @@ del {
     text-decoration: underline overline;
 }
 </style>
+This is some more loose test.
 </div>
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
@@ -321,6 +324,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         //This stops image resizes, but for all images!!
         //editor.execCommand('enableObjectResizing', false);
         //this.set('content', Y.one('#stub').get('innerHTML'));
+        editor.frame.on('keydown', function(e) {
+            if (e.charCode == 83 && (e.ctrlKey || e.metaKey)) {
+                e.halt();
+            }
+        });
     });
     /*
     editor.on('frame:keyup', function(e) {
@@ -349,6 +357,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     Y.on('click', function(e) {
         editor.set('content', '<p>This is a test: ' + (new Date()) + '</p>');
     }, '#setHTML');
+
+    Y.on('click', function(e) {
+        editor.focus();
+    }, '#focusEditor');
 
 });
 

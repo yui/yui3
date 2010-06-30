@@ -1,0 +1,8 @@
+{
+    "jsonp": {
+        "requires": [
+            "get",
+            "oop"
+        ]
+    }
+}

@@ -115,15 +115,16 @@ This is some <strong>other</strong> loose test.
     <li>Item #1</li>
     <li>Item #1</li>
 </ul>
-This is some <strong>other</strong> loose test.
+<div><hr>This is some loose test.</div>
 <ol>
-    <li style="font-family: courier new">Item #1</li>
+    <li class="davglass" style="font-family: courier new">Item #1</li>
     <li>Item #1</li>
-    <li>Item #1</li>
+    <li><a href="http://yuilibrary.com/">Item #1</a></li>
 </ol>
 <p>This is <span style="font-family: Courier New">another</span> test.</p>
-This is some <strong>other</strong> loose test.
+This is some more loose test.
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+This is some more loose test.
 <style>
 del {
     background-color: yellow;
@@ -134,6 +135,7 @@ del {
     text-decoration: underline overline;
 }
 </style>
+This is some more loose test.
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>

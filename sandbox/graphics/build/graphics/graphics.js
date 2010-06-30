@@ -414,7 +414,6 @@ Graphic.prototype = {
 };
 
 Y.Graphic = Graphic;
-
 var VMLGraphics = function(config) {
     this.initializer.apply(this, arguments);
 };
@@ -525,12 +524,11 @@ VMLGraphics.prototype = {
     },
 
     drawRect: function(x, y, w, h) {
-        this._width = w;
-        this._height = h;
-        this._x = x;
-        this._y = y;
-        this._shape = "rect";
-        return this;
+        this.moveTo(x, y);
+        this.lineTo(x + w, y);
+        this.lineTo(x + w, y + h);
+        this.lineTo(x, y + h);
+        this.lineTo(x, y);
     },
 
     _trackSize: function(w, h) {
@@ -538,7 +536,7 @@ VMLGraphics.prototype = {
             this._width = w;
         }
         if (h > this._height) {
-            this._height = w;
+            this._height = h;
         }
     },
 
@@ -604,7 +602,6 @@ VMLGraphics.prototype = {
         }
 
         this._vml.appendChild(shape);
-        
         this._initProps();
         return this;
     },

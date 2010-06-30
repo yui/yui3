@@ -67,7 +67,89 @@
 <span class="cm"> * @class QueryString</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
-<span class="kd">var</span> <span class="nx">QueryString</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;QueryString&quot;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">QueryString</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s2">&quot;QueryString&quot;</span><span class="p">),</span>
+
+<span class="c1">// Parse a key=val string.</span>
+<span class="c1">// These can get pretty hairy</span>
+<span class="c1">// example flow:</span>
+<span class="c1">// parse(foo[bar][][bla]=baz)</span>
+<span class="c1">// return parse(foo[bar][][bla],&quot;baz&quot;)</span>
+<span class="c1">// return parse(foo[bar][], {bla : &quot;baz&quot;})</span>
+<span class="c1">// return parse(foo[bar], [{bla:&quot;baz&quot;}])</span>
+<span class="c1">// return parse(foo, {bar:[{bla:&quot;baz&quot;}]})</span>
+<span class="c1">// return {foo:{bar:[{bla:&quot;baz&quot;}]}}</span>
+<span class="nx">pieceParser</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">eq</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="kd">function</span> <span class="nx">parsePiece</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+
+        <span class="kd">var</span> <span class="nx">sliced</span><span class="p">,</span> <span class="nx">numVal</span><span class="p">,</span> <span class="nx">head</span><span class="p">,</span> <span class="nx">tail</span><span class="p">,</span> <span class="nx">ret</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">!==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// key=val, called from the map/reduce</span>
+            <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">eq</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">parsePiece</span><span class="p">(</span>
+                <span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span><span class="p">(</span><span class="nx">key</span><span class="p">.</span><span class="nx">shift</span><span class="p">()),</span>
+                <span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span><span class="p">(</span><span class="nx">key</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">eq</span><span class="p">))</span>
+            <span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\s+|\s+$/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\s+|\s+$/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+            <span class="c1">// convert numerals to numbers</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
+                <span class="nx">numVal</span> <span class="o">=</span> <span class="o">+</span><span class="nx">val</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="nx">numVal</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">numVal</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="nx">sliced</span> <span class="o">=</span> <span class="sr">/(.*)\[([^\]]*)\]$/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sliced</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="p">{};</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">ret</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="c1">// [&quot;foo[][bar][][baz]&quot;, &quot;foo[][bar][]&quot;, &quot;baz&quot;]</span>
+        <span class="nx">tail</span> <span class="o">=</span> <span class="nx">sliced</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span> 
+        <span class="nx">head</span> <span class="o">=</span> <span class="nx">sliced</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+
+        <span class="c1">// array: key[]=val</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">tail</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">parsePiece</span><span class="p">(</span><span class="nx">head</span><span class="p">,</span> <span class="p">[</span><span class="nx">val</span><span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// obj: key[subkey]=val</span>
+        <span class="nx">ret</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">ret</span><span class="p">[</span><span class="nx">tail</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">parsePiece</span><span class="p">(</span><span class="nx">head</span><span class="p">,</span> <span class="nx">ret</span><span class="p">);</span>
+    <span class="p">};</span>
+<span class="p">},</span>
+
+<span class="c1">// the reducer function that merges each query piece together into one set of params</span>
+<span class="nx">mergeParams</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">addition</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="c1">// if it&#39;s uncontested, then just return the addition.</span>
+        <span class="p">(</span><span class="o">!</span><span class="nx">params</span><span class="p">)</span> <span class="o">?</span> <span class="nx">addition</span>
+        <span class="c1">// if the existing value is an array, then concat it.</span>
+        <span class="o">:</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">params</span><span class="p">))</span> <span class="o">?</span> <span class="nx">params</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">addition</span><span class="p">)</span>
+        <span class="c1">// if the existing value is not an array, and either are not objects, arrayify it.</span>
+        <span class="o">:</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">addition</span><span class="p">))</span> <span class="o">?</span> <span class="p">[</span><span class="nx">params</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">addition</span><span class="p">)</span>
+        <span class="c1">// else merge them as objects, which is a little more complex</span>
+        <span class="o">:</span> <span class="nx">mergeObjects</span><span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">addition</span><span class="p">)</span>
+    <span class="p">);</span>
+<span class="p">},</span>
+
+<span class="c1">// Merge two *objects* together. If this is called, we&#39;ve already ruled</span>
+<span class="c1">// out the simple cases, and need to do the for-in business.</span>
+<span class="nx">mergeObjects</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">addition</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">addition</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&amp;&amp;</span> <span class="nx">addition</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">params</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">mergeParams</span><span class="p">(</span><span class="nx">params</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">addition</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * Provides Y.QueryString.parse method to accept Query Strings and return native</span>
@@ -103,77 +185,6 @@
 <span class="cm"> **/</span>
 <span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nb">decodeURIComponent</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\+/g</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">));</span>
-<span class="p">};</span>
-
-
-<span class="c1">// Parse a key=val string.</span>
-<span class="c1">// These can get pretty hairy</span>
-<span class="c1">// example flow:</span>
-<span class="c1">// parse(foo[bar][][bla]=baz)</span>
-<span class="c1">// return parse(foo[bar][][bla],&quot;baz&quot;)</span>
-<span class="c1">// return parse(foo[bar][], {bla : &quot;baz&quot;})</span>
-<span class="c1">// return parse(foo[bar], [{bla:&quot;baz&quot;}])</span>
-<span class="c1">// return parse(foo, {bar:[{bla:&quot;baz&quot;}]})</span>
-<span class="c1">// return {foo:{bar:[{bla:&quot;baz&quot;}]}}</span>
-<span class="kd">var</span> <span class="nx">pieceParser</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">eq</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="kd">function</span> <span class="nx">parsePiece</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">!==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// key=val, called from the map/reduce</span>
-            <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="nx">eq</span><span class="p">);</span>
-            <span class="k">return</span> <span class="nx">parsePiece</span><span class="p">(</span>
-                <span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span><span class="p">(</span><span class="nx">key</span><span class="p">.</span><span class="nx">shift</span><span class="p">()),</span>
-                <span class="nx">QueryString</span><span class="p">.</span><span class="nx">unescape</span><span class="p">(</span><span class="nx">key</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">eq</span><span class="p">))</span>
-            <span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\s+|\s+$/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\s+|\s+$/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-            <span class="c1">// convert numerals to numbers</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">val</span><span class="p">))</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">numVal</span> <span class="o">=</span> <span class="o">+</span><span class="nx">val</span><span class="p">;</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">===</span> <span class="nx">numVal</span><span class="p">.</span><span class="nx">toString</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">numVal</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="kd">var</span> <span class="nx">sliced</span> <span class="o">=</span> <span class="sr">/(.*)\[([^\]]*)\]$/</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">sliced</span><span class="p">)</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="p">{};</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="nx">ret</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
-            <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="c1">// [&quot;foo[][bar][][baz]&quot;, &quot;foo[][bar][]&quot;, &quot;baz&quot;]</span>
-        <span class="kd">var</span> <span class="nx">tail</span> <span class="o">=</span> <span class="nx">sliced</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="nx">head</span> <span class="o">=</span> <span class="nx">sliced</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-
-        <span class="c1">// array: key[]=val</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">tail</span><span class="p">)</span> <span class="k">return</span> <span class="nx">parsePiece</span><span class="p">(</span><span class="nx">head</span><span class="p">,</span> <span class="p">[</span><span class="nx">val</span><span class="p">]);</span>
-
-        <span class="c1">// obj: key[subkey]=val</span>
-        <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="p">{};</span>
-        <span class="nx">ret</span><span class="p">[</span><span class="nx">tail</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nx">parsePiece</span><span class="p">(</span><span class="nx">head</span><span class="p">,</span> <span class="nx">ret</span><span class="p">);</span>
-    <span class="p">};</span>
-<span class="p">};</span>
-
-<span class="c1">// the reducer function that merges each query piece together into one set of params</span>
-<span class="kd">function</span> <span class="nx">mergeParams</span> <span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">addition</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="c1">// if it&#39;s uncontested, then just return the addition.</span>
-        <span class="p">(</span><span class="o">!</span><span class="nx">params</span><span class="p">)</span> <span class="o">?</span> <span class="nx">addition</span>
-        <span class="c1">// if the existing value is an array, then concat it.</span>
-        <span class="o">:</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">params</span><span class="p">))</span> <span class="o">?</span> <span class="nx">params</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">addition</span><span class="p">)</span>
-        <span class="c1">// if the existing value is not an array, and either are not objects, arrayify it.</span>
-        <span class="o">:</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">addition</span><span class="p">))</span> <span class="o">?</span> <span class="p">[</span><span class="nx">params</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">addition</span><span class="p">)</span>
-        <span class="c1">// else merge them as objects, which is a little more complex</span>
-        <span class="o">:</span> <span class="nx">mergeObjects</span><span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">addition</span><span class="p">)</span>
-    <span class="p">);</span>
-<span class="p">};</span>
-
-<span class="c1">// Merge two *objects* together. If this is called, we&#39;ve already ruled</span>
-<span class="c1">// out the simple cases, and need to do the for-in business.</span>
-<span class="kd">function</span> <span class="nx">mergeObjects</span> <span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">addition</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">addition</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&amp;&amp;</span> <span class="nx">addition</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">params</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">mergeParams</span><span class="p">(</span><span class="nx">params</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">addition</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">params</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 
@@ -231,6 +242,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
