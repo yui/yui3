@@ -92,7 +92,7 @@ button {
         <a href="foo.html" id="link-2" tabIndex="-1">foo</a>
         <form id="test-form" class="test-class" action="#">
             <label for="test-text-value"><em>label</em></label>
-            <input name="test-text-value" value="text value">
+            <input name="test-text-value" id="test-text-value" value="text value">
             <input name="test-text-novalue">
     
             <textarea name="test-textarea-value" value="textarea value"></textarea>
@@ -138,6 +138,10 @@ button {
         </ol>
     </div>
 
+    <table id="test-table">
+        <tr><td id="test-td"><div><em>grandchild of td</em></div></td></tr>
+    </table>
+
     <ol>
         <li>item 1</li>
         <li>item 2</li>
@@ -168,8 +172,6 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
 
-            var html = '<style>body {height:100px}</style>';
-            Y.one('head').append(html);
     new Y.Console({node: '#yui-log', height: '1000px' }).render('#yui-log');
 
     var byId = function(id) {
@@ -213,7 +215,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
 
             Assert.areEqual(byId('test-nodes').getElementsByTagName('li')[1],
                     Y.Node.getDOMNode(Y.one('#test-nodes li:nth-child(2)')), 'Y.one("#test-nodes:nth-child(2)")');
-            Assert.areEqual(document.getElementById('form.foo@bar:baz'), Y.Node.getDOMNode(Y.one('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
+            Assert.areEqual(byId('form.foo@bar:baz'), Y.Node.getDOMNode(Y.one('[id="form.foo@bar:baz"]')), "[id=form.foo@bar:baz]");
 
             var firstChild = Y.one('body :first-child');
             Y.one('body').insertBefore(Y.Node.create('<div>foo</div>'), firstChild);
@@ -247,6 +249,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
 
             ArrayAssert.itemsAreEqual([document.body], Y.all(document.body)._nodes, "Y.all(document.body)");
             Assert.areSame(Y.one('doc'), Y.one('doc'), "Y.one('doc') === Y.one('doc')");
+
+            Assert.areEqual(byId('test-text-value'),
+                    Y.one('doc').one('.test-class #test-text-value')._node,
+                    "Y.one('doc').one('.test-class #test-text-value')");
         },
 
         test_each: function() {
@@ -485,6 +491,7 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             clone = Y.one('.bar').cloneNode(true);
             Assert.isTrue(clone.hasClass('bar'), "clone.hasClass('bar') (before appending)");
             Y.one('body').appendChild(clone);
+            clone.set('id', 'new-bar');
             Assert.isTrue(clone.test('.bar'), "clone.test('.bar') (after appending)");
 
             Assert.isTrue(
@@ -1197,6 +1204,13 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             Y.one('head').append(html);
             Assert.areEqual('100px', Y.one('body').getStyle('height'),
                 "Y.one('head').append(" + html + ")");
+        },
+
+        test_ancestor: function() {
+            var node = Y.one('#test-table em').ancestor('td');
+
+            Y.Assert.areEqual(byId('test-td'), node._node,
+               "Y.one('#test-table div').ancestor('td'))"); 
         }
     })); 
 

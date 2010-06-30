@@ -2326,6 +2326,7 @@ var PARENT_NODE = 'parentNode',
                 tokens = Selector._tokenize(selector),
                 token = tokens[tokens.length - 1],
                 rootDoc = Y.DOM._getDoc(root),
+                child,
                 id,
                 className,
                 tagName;
@@ -2346,16 +2347,26 @@ var PARENT_NODE = 'parentNode',
                 className = token.className;
                 tagName = token.tagName || '*';
 
-                // try ID first
-                if (id) {
-                    nodes = Y.DOM.allById(id, root);
-                // try className
-                } else if (className) {
-                    nodes = root.getElementsByClassName(className);
-                } else { // default to tagName
-                    nodes = root.getElementsByTagName(tagName);
-                }
+                if (root.getElementsByTagName) { // non-IE lacks DOM api on doc frags
+                    // try ID first
+                    if (id) {
+                        nodes = Y.DOM.allById(id, root);
+                    // try className
+                    } else if (className) {
+                        nodes = root.getElementsByClassName(className);
+                    } else { // default to tagName
+                        nodes = root.getElementsByTagName(tagName);
+                    }
 
+                } else { // brute getElementsByTagName('*')
+                    child = root.firstChild;
+                    while (child) {
+                        if (child.tagName) { // only collect HTMLElements
+                            nodes.push(child);
+                        }
+                        child = child.nextSilbing || child.firstChild;
+                    }
+                }
                 if (nodes.length) {
                     ret = Selector._filterNodes(nodes, tokens, firstOnly);
                 }
