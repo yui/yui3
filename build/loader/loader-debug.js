@@ -3062,6 +3062,11 @@ YUI.Env[Y.version].modules = {
             "widget-base"
         ]
     }, 
+    "yql": {
+        "requires": [
+            "jsonp"
+        ]
+    }, 
     "yui": {
         "submodules": {
             "get": {}, 
