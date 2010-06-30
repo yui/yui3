@@ -160,7 +160,7 @@ YUI.add('plugin', function(Y) {
          * @return handle {EventHandle} The detach handle for the listener. 
          */
         onHostEvent : function(type, fn, context) {
-            var handle = this.get("host").after(type, fn, context || this);
+            var handle = this.get("host").on(type, fn, context || this);
             this._handles.push(handle);
             return handle;
         },
@@ -222,7 +222,6 @@ YUI.add('plugin', function(Y) {
     });
 
     Y.namespace("Plugin").Base = Plugin;
-
 
 
 }, '@VERSION@' ,{requires:['base-base']});
