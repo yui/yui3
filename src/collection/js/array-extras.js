@@ -118,6 +118,8 @@ A.reject = function(a, f, o) {
 
 /**
 * Executes the supplied function on each item in the array.
+* Iteration stops if the supplied function does not return
+* a truthy value.
 * @method Array.every
 * @param a {Array} the array to iterate
 * @param f {Function} the function to execute on each item

@@ -621,7 +621,7 @@ Y.Loader.prototype = {
                     ext:   ext
                 });
 
-                Y.log('adding skin ' + name);
+                // Y.log('adding skin ' + name);
                 // console.log(info[name]);
             }
         }

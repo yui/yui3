@@ -232,11 +232,13 @@ YUI.add('frame', function(Y) {
             if (this.get('designMode')) {
                 doc.designMode = 'on';
                 if (!Y.UA.ie) {
-                    try {
-                        //Force other browsers into non CSS styling
-                        doc.execCommand('styleWithCSS', false, false);
-                        doc.execCommand('insertbronreturn', false, false);
-                    } catch (e) {}
+                    this._instance.on('domready', function(e) {
+                        try {
+                            //Force other browsers into non CSS styling
+                            doc.execCommand('styleWithCSS', false, false);
+                            doc.execCommand('insertbronreturn', false, false);
+                        } catch (e) {}
+                    });
                 }
             }
         },

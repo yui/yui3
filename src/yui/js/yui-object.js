@@ -32,7 +32,7 @@ owns = function(o, k) {
     // return Object.prototype.hasOwnProperty.call(o, k);
 },
 
-UNDEFINED = undefined,
+UNDEFINED,
 
 /**
  * Extracts the keys, values, or size from an object

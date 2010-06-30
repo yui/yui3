@@ -33,7 +33,7 @@ var YLang      = Y.Lang,
  *  <li>args    - array of subsequent parameters to pass to the callbacks</li>
  * </ul>
  *
- * @module gallery-jsonp
+ * @module jsonp
  * @class JSONPRequest
  * @constructor
  * @param url {String} the url of the JSONP service
@@ -92,7 +92,7 @@ JSONPRequest.prototype = {
         var subs = callback.on || {};
 
         if (!subs.success) {
-            subs = Y.mix({ success: this._getCallbackFromUrl(url) }, callback);
+            subs.success = this._getCallbackFromUrl(url);
         }
 
         // Apply defaults and store
@@ -118,29 +118,51 @@ JSONPRequest.prototype = {
      */
     _getCallbackFromUrl: function (url) {
         var match = url.match(JSONPRequest._pattern),
-            callback, context, bits, i;
+            bracketAlias = {},
+            i = 0,
+            callback, context, bits, bit;
 
         if (match) {
-            // resolve from the global
-            context = Y.config.win;
+            // callback=foo[2].bar["baz"]func => ['func','baz','bar','2','foo']
+            // TODO: Doesn't handle escaping
+            bits = match[1].replace(/\[(?:(['"])([^\]\1]+)\1|(\d+))\]/g,
+                        function (_, name, idx) {
+                            bracketAlias[i] = name || idx;
 
-            // callback=foo.bar.func => [ 'func', 'bar', 'foo' ]
-            // @TODO doesn't support bracket notation (callback=foo["bar"].func)
-            bits = match[1].split( /\./ ).reverse();
+                            var nextChar = (RegExp.rightContext||'.').charAt(0),
+                                token = '.@' + (++i);
+
+                            if (nextChar !== '.' && nextChar !== '[') {
+                                token += '.';
+                            }
+                            return token;
+                        }).split(/\./).reverse();
 
             callback = bits.shift();
 
-            for ( i = bits.length - 1; i >= 0; --i ) {
-                context = context[ bits[ i ] ];
-                if ( !isObject( context ) ) {
+            // TODO: fall back to resolve from Y?  How to identify Y, though?
+            // Y.jsonp('http://foo.com/?callback=Y.loadJSONP') assumes
+            // the implementer did YUI().use(.., function (Y) {...}) and not
+            // YUI().use(.., function (SOMETHING_ELSE) {...})
+            // resolve from the global
+            context = Y.config.win;
+
+            for (i = bits.length - 1; i >= 0; --i) {
+                bit = bits[i];
+                if (bit.charAt(0) === '@') {
+                    bit = bracketAlias[bit.slice(1)];
+                }
+                context = context[bit];
+                if (!isObject(context)) {
                     return null;
                 }
             }
 
-            if ( isObject( context ) && isFunction( context[ callback ] ) ) {
+            if (isObject(context)) {
                 // bind to preserve context declared inline, so
-                // callback=foo.bar.func => 'this' is foo.bar in func
-                return Y.bind( context[ callback ], context );
+                // callback=foo.bar.func => 'this' is foo.bar in func.
+                // bind by string to allow for response-time resolution
+                return Y.bind(callback, context);
             }
         }
 
@@ -167,12 +189,13 @@ JSONPRequest.prototype = {
             return (isFunction(fn)) ?
                 function (data) {
                     delete YUI.Env.JSONP[proxy];
-                    fn.apply( config.context, [data].concat(config.args));
+                    fn.apply(config.context, [data].concat(config.args));
                 } :
                 null;
         }
 
         // Temporary un-sandboxed function alias
+        // TODO: queuing
         YUI.Env.JSONP[proxy] = wrap(config.on.success);
 
         Y.Get.script(url, {

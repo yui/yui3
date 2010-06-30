@@ -231,11 +231,13 @@ YUI.add('frame', function(Y) {
             if (this.get('designMode')) {
                 doc.designMode = 'on';
                 if (!Y.UA.ie) {
-                    try {
-                        //Force other browsers into non CSS styling
-                        doc.execCommand('styleWithCSS', false, false);
-                        doc.execCommand('insertbronreturn', false, false);
-                    } catch (e) {}
+                    this._instance.on('domready', function(e) {
+                        try {
+                            //Force other browsers into non CSS styling
+                            doc.execCommand('styleWithCSS', false, false);
+                            doc.execCommand('insertbronreturn', false, false);
+                        } catch (e) {}
+                    });
                 }
             }
         },
@@ -368,9 +370,14 @@ YUI.add('frame', function(Y) {
         * @description Set the focus to the iframe
         */
         focus: function() {
-            this.getInstance().config.win.focus();
+            this.getInstance().one('win').focus();
             return this;
         },
+        /**
+        * @private
+        * @method _setExtraCSS
+        * @description Set's the extra CSS on the instance..
+        */
         _setExtraCSS: function(css) {
             if (this._ready) {
                 var inst = this.getInstance(),
