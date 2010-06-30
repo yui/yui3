@@ -200,6 +200,10 @@ onload = function() {
                     $('h2', Y.DOM.byId('test:colon'), true),
                     "$('h2', Y.DOM.byId('test:colon'), true)");
 
+
+                Assert.areEqual(Y.DOM.byId('demo-last-child'), $('.foo #demo-last-child', true, document.body), 
+                    "$('.foo #demo-last-child', true, document.body)");
+
                 // standard: no element-scoped query
                 //ArrayAssert.itemsAreEqual(document.body.getElementsByTagName('p'), $('body p', document.body), "$('body p', document.body)");
 

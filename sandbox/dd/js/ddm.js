@@ -26,7 +26,7 @@ YUI.add('dd-ddm', function(Y) {
         _activateTargets: function() { },
         _deactivateTargets: function() {},
         _startDrag: function() {
-            if (this.activeDrag.get('useShim')) {
+            if (this.activeDrag && this.activeDrag.get('useShim')) {
                 this._pg_activate();
                 this._activateTargets();
             }
