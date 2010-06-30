@@ -32,7 +32,6 @@ YUI(yConfig).use('node', 'jsonp', 'yql', function(Y) {
     var res = Y.one('#res');
     
     Y.YQL('select * from weather.forecast where location=62896', function(r) {
-        console.log(arguments);
         var el = Y.Node.create('<div class="mod"></div>');
         el.set('innerHTML', '<h2>Weather for 62896</h2>' +
             r.query.results.channel.item.description);
