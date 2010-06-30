@@ -168,8 +168,8 @@ Y.extend(GraphStack, Y.Base, {
             case "stackedbar" :
                 seriesClass = Y.StackedBarSeries;
             break;
-            case "dotseries" :
-                seriesClass = Y.DotSeries;
+            case "markerseries" :
+                seriesClass = Y.MarkerSeries;
             break;
             default:
                 seriesClass = Y.CartesianSeries;

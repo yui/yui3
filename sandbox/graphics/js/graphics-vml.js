@@ -54,22 +54,44 @@ VMLGraphics.prototype = {
         return this;
     },
 
-    beginGradientFill: function(type, colors, alphas, ratios, rotation) {
+    beginGradientFill: function(type, colors, alphas, ratios, box) {
         var i = 0,
             len,
             pct,
-            fill;
-        rotation = rotation || 0;
-        rotation = 270 - rotation;
-        if(rotation < 0) 
+            fill = {colors:""},
+            rotation = 0;
+        
+        if(type === "linear")
         {
-            rotation += 360;
+            if(box)
+            {
+                rotation = box.rotation || 0;
+            }
+            if(rotation > 0 && rotation <= 90)
+            {
+                rotation = 450 - rotation;
+            }
+            else if(rotation <= 270)
+            {
+                rotation = 270 - rotation;
+            }
+            else if(rotation <= 360)
+            {
+                rotation = 630 - rotation;
+            }
+            else
+            {
+                rotation = 270;
+            }
+            fill.type = "gradient";
+            fill.angle = rotation;
         }
-        fill = {
-            type: (type === "linear") ? "gradient" : "gradientradial",
-            angle: rotation,
-            colors: ""
-        };
+        else if(type === "radial")
+        {
+            fill.type = "gradientradial";
+            fill.focus = "100%";
+            fill.focusposition = "50%,50%";
+        }
         len = colors.length;
         for(;i < len; ++i) {
             pct = ratios[i] || i/(len-1);
@@ -77,7 +99,6 @@ VMLGraphics.prototype = {
             fill.colors += ", " + pct + " " + colors[i];
         }
         fill.colors = fill.colors.substr(2);
-
         this._fillProps = fill;
         return this;
     },
@@ -114,6 +135,12 @@ VMLGraphics.prototype = {
         this.lineTo(x + w, y + h);
         this.lineTo(x, y + h);
         this.lineTo(x, y);
+    },
+
+    getShape: function(config)
+    {
+
+
     },
 
     _trackSize: function(w, h) {
