@@ -27,11 +27,13 @@ YUI({
 
     }, errorFn: function(msg, e, data) {
         alert('error: ' + msg + ', ' + data);
-    }
+    },
+
+    throwFail: false
 }).use('lib1', function (Y) {
 
 
-    Y.replace('blah', 'blah');
+    Y.replace('boo', 'boo');
 
     Y.use('lib2', function (Y) {
         Y.log("lib2: " + Y.lib2);

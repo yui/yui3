@@ -365,6 +365,10 @@ proto = {
             done = Y.Env._attached,
             len  = r.length;
 
+        if (Y.Env.lastError) {
+            return;
+        }
+
         for (i=0; i<len; i++) {
             name = r[i]; 
             mod  = mods[name];
@@ -385,6 +389,7 @@ proto = {
                     try {
                         mod.fn(Y, name);
                     } catch (e) {
+                        Y.Env.lastError = e;
                         Y.error('Attach error: ' + name, e, name);
                     }
                 }
@@ -492,7 +497,7 @@ proto = {
             },
 
             notify = function(response) {
-                if (callback) {
+                if (callback  && !Y.Env.lastError) {
                     try {
                         callback(Y, response);
                     } catch (e) {
@@ -555,6 +560,8 @@ proto = {
             Y._useQueue.add(args);
             return Y;
         }
+
+        Y.Env.lastError = null;
 
         // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback, 'info', 'yui');
 
