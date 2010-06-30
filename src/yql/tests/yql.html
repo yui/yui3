@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>YQL Tests</title>
+    <script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../../build/jsonp/jsonp-min.js"></script>
+    <script type="text/javascript" src="../../../build/yql/yql-min.js"></script>
+
+    <style>
+        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-cat {
+            background-color: green;
+            color: white;
+            font-weight: bold;
+        }
+        .yui-skin-sam .yui-console-entry-src,
+        .yui-skin-sam .yui-console-entry-time {
+            display: none;
+        }
+        .yui-skin-sam .yui-console-entry {
+            position: relative;
+        }
+        .yui-skin-sam .yui-console-entry-pass .yui-console-entry-content {
+            position: absolute;
+            top: 1px;
+            right: 4px;
+        }
+        .yui-skin-sam .yui-console-entry-fail .yui-console-entry-cat {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+        }
+        .yui-skin-sam .yui-console-bd {
+            height: auto !important;
+        }
+    </style>
+
+</head>
+<body class="yui3-skin-sam">
+<script type="text/javascript" src="yql.js"></script>
+</body>
+</html>
