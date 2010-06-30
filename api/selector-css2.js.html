@@ -135,6 +135,7 @@
                 <span class="nx">tokens</span> <span class="o">=</span> <span class="nx">Selector</span><span class="p">.</span><span class="nx">_tokenize</span><span class="p">(</span><span class="nx">selector</span><span class="p">),</span>
                 <span class="nx">token</span> <span class="o">=</span> <span class="nx">tokens</span><span class="p">[</span><span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
                 <span class="nx">rootDoc</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">_getDoc</span><span class="p">(</span><span class="nx">root</span><span class="p">),</span>
+                <span class="nx">child</span><span class="p">,</span>
                 <span class="nx">id</span><span class="p">,</span>
                 <span class="nx">className</span><span class="p">,</span>
                 <span class="nx">tagName</span><span class="p">;</span>
@@ -155,16 +156,26 @@
                 <span class="nx">className</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">className</span><span class="p">;</span>
                 <span class="nx">tagName</span> <span class="o">=</span> <span class="nx">token</span><span class="p">.</span><span class="nx">tagName</span> <span class="o">||</span> <span class="s1">&#39;*&#39;</span><span class="p">;</span>
 
-                <span class="c1">// try ID first</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">allById</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">root</span><span class="p">);</span>
-                <span class="c1">// try className</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="nx">className</span><span class="p">);</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// default to tagName</span>
-                    <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">tagName</span><span class="p">);</span>
-                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// non-IE lacks DOM api on doc frags</span>
+                    <span class="c1">// try ID first</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">DOM</span><span class="p">.</span><span class="nx">allById</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">root</span><span class="p">);</span>
+                    <span class="c1">// try className</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByClassName</span><span class="p">(</span><span class="nx">className</span><span class="p">);</span>
+                    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// default to tagName</span>
+                        <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">tagName</span><span class="p">);</span>
+                    <span class="p">}</span>
 
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// brute getElementsByTagName(&#39;*&#39;)</span>
+                    <span class="nx">child</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">;</span>
+                    <span class="k">while</span> <span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// only collect HTMLElements</span>
+                            <span class="nx">nodes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">child</span><span class="p">);</span>
+                        <span class="p">}</span>
+                        <span class="nx">child</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">nextSilbing</span> <span class="o">||</span> <span class="nx">child</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
                 <span class="k">if</span> <span class="p">(</span><span class="nx">nodes</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">Selector</span><span class="p">.</span><span class="nx">_filterNodes</span><span class="p">(</span><span class="nx">nodes</span><span class="p">,</span> <span class="nx">tokens</span><span class="p">,</span> <span class="nx">firstOnly</span><span class="p">);</span>
                 <span class="p">}</span>
@@ -545,6 +556,7 @@
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
                         </ul>
                     </div>
