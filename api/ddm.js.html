@@ -73,7 +73,7 @@
         <span class="nx">_activateTargets</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="p">},</span>
         <span class="nx">_deactivateTargets</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{},</span>
         <span class="nx">_startDrag</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">activeDrag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;useShim&#39;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">activeDrag</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">activeDrag</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;useShim&#39;</span><span class="p">))</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_pg_activate</span><span class="p">();</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">_activateTargets</span><span class="p">();</span>
             <span class="p">}</span>
@@ -231,6 +231,7 @@
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
                         </ul>
                     </div>
