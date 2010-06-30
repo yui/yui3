@@ -68,6 +68,7 @@ groups.yui2 = {
 
 YUI.Env[VERSION] = META;
 }());
+
 (function() {
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
@@ -1864,7 +1865,9 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
 
 
+
 }, '@VERSION@' ,{requires:['get']});
+
 YUI.add('loader-rollup', function(Y) {
 
 /**
@@ -1967,7 +1970,9 @@ Y.Loader.prototype._rollup = function() {
 };
 
 
+
 }, '@VERSION@' ,{requires:['loader-base']});
+
 YUI.add('loader-yui3', function(Y) {
 
 /**
@@ -2058,9 +2063,18 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "cache": {
-        "requires": [
-            "plugin"
-        ]
+        "submodules": {
+            "cache-base": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "cache-offline": {
+                "requires": [
+                    "cache-base"
+                ]
+            }
+        }
     }, 
     "classnamemanager": {
         "requires": [
@@ -2219,8 +2233,7 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local", 
-                    "cache"
+                    "datasource-local"
                 ]
             }, 
             "datasource-function": {
@@ -3140,7 +3153,9 @@ YUI.Env[Y.version].modules = {
 };
 
 
+
 }, '@VERSION@' ,{requires:['loader-base']});
+
 
 
 YUI.add('loader', function(Y){}, '@VERSION@' ,{use:['loader-base', 'loader-rollup', 'loader-yui3' ]});

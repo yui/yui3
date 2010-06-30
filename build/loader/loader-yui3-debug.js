@@ -88,9 +88,18 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "cache": {
-        "requires": [
-            "plugin"
-        ]
+        "submodules": {
+            "cache-base": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "cache-offline": {
+                "requires": [
+                    "cache-base"
+                ]
+            }
+        }
     }, 
     "classnamemanager": {
         "requires": [
@@ -249,8 +258,7 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local", 
-                    "cache"
+                    "datasource-local"
                 ]
             }, 
             "datasource-function": {
@@ -1168,6 +1176,7 @@ YUI.Env[Y.version].modules = {
         }
     }
 };
+
 
 
 }, '@VERSION@' ,{requires:['loader-base']});
