@@ -414,6 +414,10 @@
             <span class="nx">done</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">_attached</span><span class="p">,</span>
             <span class="nx">len</span>  <span class="o">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
 
+        <span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lastError</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+
         <span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">len</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">name</span> <span class="o">=</span> <span class="nx">r</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span> 
             <span class="nx">mod</span>  <span class="o">=</span> <span class="nx">mods</span><span class="p">[</span><span class="nx">name</span><span class="p">];</span>
@@ -434,6 +438,7 @@
                     <span class="k">try</span> <span class="p">{</span>
                         <span class="nx">mod</span><span class="p">.</span><span class="nx">fn</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
                     <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lastError</span> <span class="o">=</span> <span class="nx">e</span><span class="p">;</span>
                         <span class="nx">Y</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Attach error: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">name</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
@@ -541,7 +546,7 @@
             <span class="p">},</span>
 
             <span class="nx">notify</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span>  <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lastError</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">try</span> <span class="p">{</span>
                         <span class="nx">callback</span><span class="p">(</span><span class="nx">Y</span><span class="p">,</span> <span class="nx">response</span><span class="p">);</span>
                     <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
@@ -604,6 +609,8 @@
             <span class="nx">Y</span><span class="p">.</span><span class="nx">_useQueue</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="p">;</span>
         <span class="p">}</span>
+
+        <span class="nx">Y</span><span class="p">.</span><span class="nx">Env</span><span class="p">.</span><span class="nx">lastError</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 
         <span class="c1">// Y.log(Y.id + &#39;: use called: &#39; + a + &#39; :: &#39; + callback, &#39;info&#39;, &#39;yui&#39;);</span>
 
