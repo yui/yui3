@@ -507,7 +507,7 @@ VMLGraphics.prototype = {
             {
                 rotation = 270;
             }
-            fill.type = "gradient";
+            fill.type = "gradientunscaled";
             fill.angle = rotation;
         }
         else if(type === "radial")
