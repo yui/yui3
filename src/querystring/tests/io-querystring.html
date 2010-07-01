@@ -43,45 +43,49 @@
 <script src="../../../build/yui/yui.js"></script>
 <script>
 
-var DATA = {
-    foo : "bar",
-    baz : { quux : "foo" },
-    arr : [1,2,3]
-};
+var DATA1 = {
+	    foo : "bar",
+	    baz : { quux : "foo" }
+	},
+	DATA2 = {
+	    foo : "bar",
+	    baz : { quux : "foo" },
+	    arr : [1,2,3]
+	};
+
 function verify (expected) {
     return function (_, o) {
         var actual = o.responseText;
-        if (actual !== expected) throw new Error("Expected: "+expected+"\nActual: "+actual);
+
+        if (actual !== expected) {
+        	throw new Error("Expected: "+expected+"\nActual: "+actual);
+        }
+
         document.body.appendChild(document.createElement("pre")).innerHTML =
             "Success! " + expected;
     };
 };
 
 
-YUI({
-    filter : 'raw'
-}).use( 'io', function (Y) {
+YUI({ filter : 'raw' }).use( 'querystring-stringify-simple', 'io-base', function (Y) {
     Y.io("./test.php?simple_qs", {
         method : "POST",
-        data : DATA,
+        data : DATA1,
         on : {
-            success : verify('{"POST":{"foo":"bar","baz":"[object Object]","arr":"1,2,3"},"GET":{"simple_qs":""}}')
+            success : verify('{"POST":{"foo":"bar","baz":"[object Object]"},"GET":{"simple_qs":""}}')
         }
     });
 });
 
-YUI({
-    filter : 'raw'
-}).use( 'querystring', 'io', function (Y) {
-    
+YUI({ filter : 'raw' }).use( 'querystring', 'io-base', function (Y) {
     Y.io("./test.php?with_qs", {
         method : "POST",
-        data : DATA,
+        data : DATA2,
         on : {
             success : verify('{"POST":{"foo":"bar","baz":{"quux":"foo"},"arr":["1","2","3"]},"GET":{"with_qs":""}}')
         }
     });
-        
+
 });
 </script>
 </body>
