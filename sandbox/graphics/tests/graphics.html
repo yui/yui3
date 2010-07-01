@@ -4,12 +4,6 @@
 /*Supplemental CSS for the YUI distribution*/
 #custom-doc { width: 95%; min-width: 950px; }
 #pagetitle {background-image: url(../../assets/bg_hd.gif);}
-v\:group, v\:shape {
-    behavior:url(#default#VML);
-    display:inline-block;
-    zoom:1;
-}
-
 canvas {
     border:5px solid red;
 }
@@ -22,7 +16,8 @@ canvas {
 }
 </style>
 <!-- BEGIN EXAMPLE CODE -->
-	<script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script>
+	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+	<!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
 	<script type="text/javascript" src="../build/graphics/graphics.js"></script>
 		
 		
@@ -36,9 +31,10 @@ canvas {
 			{
                 graphics = new Y.Graphic({width:800, height:600});
                 graphics.render(document.getElementById("appdiv"));
+                graphics.setSize(800, 600);
                 graphics.lineStyle(12, "#0000ff", 1);
-                graphics.beginGradientFill("linear", ["#0000ff", "#ffffff", "#ff0000"], [], [0, 0.5, 1]);
-                graphics.drawRect(40, 40, 400, 300);
+                graphics.beginGradientFill("linear", ["#0000ff", "#ffffff", "#ff0000"], [], [0, 0.5, 1], {rotation:360, x:40, y:40, width:600, height:300});
+                graphics.drawRect(40, 40, 600, 300);
                 graphics.end();
                /* 
                 graphics.lineStyle(12, "#0000ff", 1);
@@ -47,11 +43,10 @@ canvas {
                 graphics.end();
 */
                 graphics.lineStyle(8, "#ff0000", 1);
-                graphics.beginGradientFill("radial", ["#ff0000", "#0000ff"], [1, 1], [0, 1], {rotation:0});
+                graphics.beginGradientFill("radial", ["#ff0000", "#0000ff"], [1, 1], [0, 1], {rotation:0, width:100, height:100});
                 //graphics.beginFill("#0000ff");
                 graphics.drawCircle(450, 40, 100);
                 graphics.end();
-                
                 graphics.beginFill("blue", 1);
                 graphics.lineStyle(3, "red", 1);
                 graphics.moveTo(10, 10);
