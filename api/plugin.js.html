@@ -61,7 +61,11 @@
 <span class="cm">     * @param {Object} config Configuration object with property name/value pairs.</span>
 <span class="cm">     */</span>
     <span class="kd">function</span> <span class="nx">Plugin</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">Plugin</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hasImpl</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">hasImpl</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Plugin</span><span class="p">.</span><span class="nx">Base</span><span class="p">))</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="nx">Plugin</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">Plugin</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">initializer</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="cm">/**</span>
@@ -334,6 +338,7 @@
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
                         </ul>
                     </div>

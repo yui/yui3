@@ -61,6 +61,7 @@ if (!GLOBAL_ENV._ready) {
 }
 
 })();
+
 YUI.add('event-base', function(Y) {
 
 (function() {
@@ -112,6 +113,7 @@ if (GLOBAL_ENV.DOMReady) {
 }
 
 })();
+
 (function() {
 
 /**
@@ -439,6 +441,7 @@ Y.DOMEventFacade = function(ev, currentTarget, wrapper) {
 };
 
 })();
+
 (function() {
 /**
  * DOM event listener abstraction layer
@@ -1336,6 +1339,7 @@ Event._poll();
 
 })();
 
+
 /**
  * DOM event listener abstraction layer
  * @module event
@@ -1384,4 +1388,6 @@ Y.Env.evt.plugins.contentready = {
 };
 
 
+
 }, '@VERSION@' ,{requires:['event-custom-base']});
+

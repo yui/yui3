@@ -1,5 +1,7 @@
 YUI.add('event-synthetic', function(Y) {
 
+// TODO: parse out AFTER_PREFIX (private to event module, so copy)  How to deal
+// with after subs?  (impl.after || impl.on)(...) ?
 /**
  * Define new DOM events that can be subscribed from any Node.
  *
@@ -430,6 +432,7 @@ Y.Event.define = function (type, cfg) {
         EvtPlugins[e.type] = DOMEvents[e.type] = new Y.SyntheticEvent(e);
     }
 };
+
 
 
 }, '@VERSION@' ,{requires:['node-base', 'event-custom']});

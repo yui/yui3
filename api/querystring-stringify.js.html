@@ -86,10 +86,9 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="p">[],</span>
-        <span class="nx">begin</span><span class="p">,</span> <span class="nx">end</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">s</span><span class="p">;</span>
-        <span class="nx">sep</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">sep</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">sep</span> <span class="o">:</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">;</span>
-        <span class="nx">eq</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">eq</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">eq</span> <span class="o">:</span> <span class="s2">&quot;=&quot;</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">begin</span><span class="p">,</span> <span class="nx">end</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">l</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span>
+        <span class="nx">sep</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">sep</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">sep</span> <span class="o">:</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">,</span>
+        <span class="nx">eq</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">eq</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">eq</span> <span class="o">:</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span>
         <span class="nx">aK</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">&amp;&amp;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arrayKey</span> <span class="o">?</span> <span class="nx">c</span><span class="p">.</span><span class="nx">arrayKey</span> <span class="o">:</span> <span class="kc">false</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isNull</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">||</span> <span class="nx">L</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">obj</span><span class="p">))</span> <span class="p">{</span>
@@ -108,7 +107,9 @@
     <span class="k">if</span> <span class="p">(</span><span class="nx">L</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">obj</span><span class="p">))</span> <span class="p">{</span>
         <span class="nx">s</span> <span class="o">=</span> <span class="p">[];</span>
         <span class="nx">name</span> <span class="o">=</span> <span class="nx">aK</span> <span class="o">?</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;[]&#39;</span> <span class="o">:</span> <span class="nx">name</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> 
+        <span class="nx">l</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span> <span class="o">++</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">s</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="nx">QueryString</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">obj</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">c</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span> <span class="p">);</span>
         <span class="p">}</span>
 
@@ -213,6 +214,7 @@
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
                         </ul>
                     </div>

@@ -160,6 +160,7 @@ Y.Node.importMethod(Y.DOM, [
     'swapXY'
 ]);
 
+
 /**
  * Returns a region object for the node 
  * @config region
@@ -230,6 +231,7 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
     }
     return Y.DOM.inRegion(node1, node2, all, altRegion); 
 };
+
 
 
 }, '@VERSION@' ,{requires:['dom-screen']});

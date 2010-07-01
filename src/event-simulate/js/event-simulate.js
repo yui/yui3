@@ -568,6 +568,7 @@ function simulateUIEvent(target /*:HTMLElement*/, type /*:String*/,
  * @param {String} type The type of event to simulate (i.e., "click").
  * @param {Object} options (Optional) Extra options to copy onto the event object.
  * @return {void}
+ * @for Event
  * @method simulate
  * @static
  */

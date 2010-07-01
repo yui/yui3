@@ -198,8 +198,8 @@ Graphic.prototype = {
         var prop = '_' + type,
             colors = this[prop + 'Colors'],
             ratios = this[prop + 'Ratios'],
-            w = this._gradientWidth || this._width,
-            h = this._gradientHeight || this._height,
+            w = this._fillWidth || this._width,
+            h = this._fillHeight || this._height,
             x = this._fillX || this._x,
             y = this._fillY || this._y,
             ctx = this._context,
@@ -209,34 +209,43 @@ Graphic.prototype = {
             color,
             ratio,
             def,
-            grad;
-        //temporary hack for rotation. 
-        switch(r) {
-            case 315:
-                grad = ctx.createLinearGradient(x, y + h, x + w, y); 
-            break;
-            case 270:
-                grad = ctx.createLinearGradient(x, y + h, x, y); 
-            break;
-            case 235:
-                grad = ctx.createLinearGradient(x + w, y + h, x, y); 
-            break;
-            case 180:
-                grad = ctx.createLinearGradient(x + w, y, x, y); 
-            break;
-            case 135:
-                grad = ctx.createLinearGradient(x + w, y, x, y + h); 
-            break;
-            case 90:
-                grad = ctx.createLinearGradient(x, y, x, y + h); 
-            break;
-            case 45:
-                grad = ctx.createLinearGradient(x, y, x + w, y + h); 
-            break;
-            default :
-                grad = ctx.createLinearGradient(x, y, x + w, y); 
-            break;
+            grad,
+            x1, x2, y1, y2,
+            cx = x + w/2,
+            cy = y + h/2,
+            radCon = Math.PI/180,
+            tanRadians = parseFloat(parseFloat(Math.tan(r * radCon)).toFixed(8));
+        if(Math.abs(tanRadians) * w/2 >= h/2)
+        {
+            if(r < 180)
+            {
+                y1 = y;
+                y2 = y + h;
+            }
+            else
+            {
+                y1 = y + h;
+                y2 = y;
+            }
+            x1 = cx - ((cy - y1)/tanRadians);
+            x2 = cx - ((cy - y2)/tanRadians); 
         }
+        else
+        {
+            if(r > 90 && r < 270)
+            {
+                x1 = x + w;
+                x2 = x;
+            }
+            else
+            {
+                x1 = x;
+                x2 = x + w;
+            }
+            y1 = ((tanRadians * (cx - x1)) - cy) * -1;
+            y2 = ((tanRadians * (cx - x2)) - cy) * -1;
+        }
+        grad = ctx.createLinearGradient(x1, y1, x2, y2);
         l = colors.length;
         def = 0;
         for(i = 0; i < l; ++i)
@@ -246,7 +255,7 @@ Graphic.prototype = {
             grad.addColorStop(ratio, color);
             def = (i + 1) / l;
         }
-
+        
         return grad;
     },
 
@@ -256,8 +265,8 @@ Graphic.prototype = {
             ratios = this[prop + "Ratios"],
             i,
             l,
-            w = this._gradientWidth || this._width,
-            h = this._gradientHeight || this._height,
+            w = this._fillWidth || this._width,
+            h = this._fillHeight || this._height,
             x = this._fillX || this._x,
             y = this._fillY || this._y,
             color,
@@ -399,7 +408,7 @@ Graphic.prototype = {
             this._width = w;
         }
         if (h > this._height) {
-            this._height = w;
+            this._height = h;
         }
     },
 

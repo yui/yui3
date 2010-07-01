@@ -37,10 +37,9 @@ QueryString.escape = encodeURIComponent;
  * @static
  */
 QueryString.stringify = function (obj, c, name) {
-    var s = [],
-        begin, end, i, n, s;
-        sep = c && c.sep ? c.sep : "&";
-        eq = c && c.eq ? c.eq : "=";
+    var begin, end, i, l, n, s,
+        sep = c && c.sep ? c.sep : "&",
+        eq = c && c.eq ? c.eq : "=",
         aK = c && c.arrayKey ? c.arrayKey : false;
 
     if (L.isNull(obj) || L.isUndefined(obj) || L.isFunction(obj)) {
@@ -59,7 +58,9 @@ QueryString.stringify = function (obj, c, name) {
     if (L.isArray(obj)) {
         s = [];
         name = aK ? name + '[]' : name;
-        for (i = 0, l = obj.length; i < l; i ++) {
+        i = 0; 
+        l = obj.length;
+        for (; i < l; i ++) {
             s.push( QueryString.stringify(obj[i], c, name) );
         }
 

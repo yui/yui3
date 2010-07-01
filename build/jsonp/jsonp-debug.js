@@ -1,7 +1,6 @@
-YUI.add('jsonp', function(Y) {
+YUI.add('jsonp-base', function(Y) {
 
 var YLang      = Y.Lang,
-    isObject   = YLang.isObject,
     isFunction = YLang.isFunction;
 
 /**
@@ -33,7 +32,8 @@ var YLang      = Y.Lang,
  *  <li>args    - array of subsequent parameters to pass to the callbacks</li>
  * </ul>
  *
- * @module gallery-jsonp
+ * @module jsonp
+ * @submodule jsonp-base
  * @class JSONPRequest
  * @constructor
  * @param url {String} the url of the JSONP service
@@ -92,7 +92,7 @@ JSONPRequest.prototype = {
         var subs = callback.on || {};
 
         if (!subs.success) {
-            subs = Y.mix({ success: this._getCallbackFromUrl(url) }, callback);
+            subs.success = this._defaultCallback(url, callback);
         }
 
         // Apply defaults and store
@@ -103,48 +103,38 @@ JSONPRequest.prototype = {
             }, callback, { on: subs });
     },
 
-    /**
-     * <p>Parses the url for a callback named explicitly in the string.
-     * Override this if the target JSONP service uses a different query
-     * parameter or url format.</p>
+    /** 
+     * <p>Parse the callback from the url.  Override this for alternate default
+     * logic.  This handles top level global or Y function reference in the
+     * url.  First looks on the global, then the YUI instance for the included
+     * method name.  Also accepts "Y.functionName" as a path to a method on the
+     * YUI instance (regardless of what variable name was chosen for the YUI
+     * instance).  So "...?callback=jsonpHandler" will look for a global method
+     * jsonpHandler, then if that fails, it will look for a method jsonpHandler
+     * on the YUI instance.  "...?callback=Y.jsonpHandler" would also look for
+     * the method on the YUI instance.</p>
      *
-     * <p>If the callback is declared inline, the corresponding function will
-     * be returned.  Otherwise null.</p>
-     *
-     * @method _getCallbackFromUrl
-     * @param url {String} the url to search in
-     * @return {Function} the callback function if found, or null
-     * @protected
+     * <p>For support of namespaced or nested functions, include jsonp-url.</p>
+     * 
+     * @method _defaultCallback
+     * @param url {String} the url passed at construction
+     * @param config {Object} (optional) the config object passed at
+     *                        construction
+     * @return {Function}
      */
-    _getCallbackFromUrl: function (url) {
-        var match = url.match(JSONPRequest._pattern),
-            callback, context, bits, i;
+    _defaultCallback: function (url) {
+        var match = url.match(JSONPRequest._pattern) || [],
+            name  = match[1],
+            callback;
 
-        if (match) {
-            // resolve from the global
-            context = Y.config.win;
-
-            // callback=foo.bar.func => [ 'func', 'bar', 'foo' ]
-            // @TODO doesn't support bracket notation (callback=foo["bar"].func)
-            bits = match[1].split( /\./ ).reverse();
-
-            callback = bits.shift();
-
-            for ( i = bits.length - 1; i >= 0; --i ) {
-                context = context[ bits[ i ] ];
-                if ( !isObject( context ) ) {
-                    return null;
-                }
-            }
-
-            if ( isObject( context ) && isFunction( context[ callback ] ) ) {
-                // bind to preserve context declared inline, so
-                // callback=foo.bar.func => 'this' is foo.bar in func
-                return Y.bind( context[ callback ], context );
+        if (name) {
+            name = name.replace(/^Y\./,'');
+            if (/^\w+$/.test(name)) {
+                callback = Y.config.win[name] || Y[name];
             }
         }
 
-        return null;
+        return (isFunction(callback)) ? callback : function () {};
     },
 
     /** 
@@ -168,12 +158,13 @@ JSONPRequest.prototype = {
             return (isFunction(fn)) ?
                 function (data) {
                     delete YUI.Env.JSONP[proxy];
-                    fn.apply( config.context, [data].concat(config.args));
+                    fn.apply(config.context, [data].concat(config.args));
                 } :
                 null;
         }
 
         // Temporary un-sandboxed function alias
+        // TODO: queuing
         YUI.Env.JSONP[proxy] = wrap(config.on.success);
 
         Y.Get.script(url, {
@@ -235,3 +226,110 @@ YUI.Env.JSONP = {};
 
 
 }, '@VERSION@' ,{requires:['get','oop']});
+YUI.add('jsonp-url', function(Y) {
+
+var isObject   = Y.Lang.isObject,
+    isFunction = Y.Lang.isFunction,
+    DOT = '.',
+    AT  = '@';
+
+/**
+ * Adds support for parsing complex callback identifiers from the jsonp url.
+ * This includes callback=foo[1]bar.baz["goo"] as well as referencing methods
+ * in the YUI instance.
+ *
+ * @module jsonp
+ * @submodule jsonp-url
+ * @for JSONPRequest
+ */
+
+function _resolve(root, path, aliases) {
+    var i = path.length - 1,
+        callbackName = path[0],
+        bit;
+
+    if (callbackName.charAt(0) === AT) {
+        callbackName = aliases[callbackName];
+    }
+
+    // Stop at index 1.  Index 0 is the function name.
+    for (; i > 0; --i) {
+        bit = path[i];
+        if (bit.charAt(0) === AT) {
+            bit = aliases[bit];
+        }
+        root = root[bit];
+        if (!isObject(root)) {
+            return null;
+        }
+    }
+
+    // Bind to preserve context declared inline, so
+    // callback=foo.bar.func => 'this' is foo.bar in func.
+    return (isObject(root) && isFunction(root[callbackName])) ?
+            Y.bind(callbackName, root) :
+            null;
+}
+
+/**
+ * <p>Parses the url for a callback named explicitly in the string.
+ * Override this if the target JSONP service uses a different query
+ * parameter or url format.</p>
+ *
+ * <p>If the callback is declared inline, the corresponding function will
+ * be returned.  Otherwise null.</p>
+ *
+ * @method _defaultCallback
+ * @param url {String} the url to search in
+ * @return {Function} the callback function if found, or null
+ * @protected
+ */
+Y.JSONPRequest.prototype._defaultCallback = function (url) {
+    var match = url.match(Y.JSONPRequest._pattern),
+        bracketAlias = {},
+        i = 0,
+        path, callback;
+
+    if (match) {
+        // callback=foo[2].bar["baz"]func => ['func','baz','bar','2','foo']
+        // TODO: Doesn't handle escaping or url encoding
+        path = match[1].replace(/\[(?:(['"])([^\]\1]+)\1|(\d+))\]/g,
+                    function (_, quote, name, idx) {
+                        var nextChar = (RegExp.rightContext||'.').charAt(0),
+                            token = AT + (++i);
+
+                        bracketAlias[token] = name || idx;
+
+                        if (nextChar !== DOT && nextChar !== '[') {
+                            token += DOT;
+                        }
+                        return DOT + token;
+                    }).split(/\./).reverse();
+
+        // First look for a global function
+        callback = _resolve(Y.config.win, path, bracketAlias);
+
+        if (!callback) {
+            // Then for function relative to Y, but excluding "Y"
+            callback = _resolve(Y, path, bracketAlias);
+            
+            if (!callback && path.length > 1) {
+                // Finally, assume the first path bit is Y.  It's either this or
+                // look for a particular pattern, such as "Y", but the YUI
+                // instance could be named anything in the implementation
+                path.pop();
+                callback = _resolve(Y, path, bracketAlias);
+            }
+        }
+    }
+
+    return callback || function () {};
+};
+            
+
+
+}, '@VERSION@' ,{requires:['jsonp-base']});
+
+
+YUI.add('jsonp', function(Y){}, '@VERSION@' ,{use:['jsonp-base', 'jsonp-url']});
+

@@ -1,3 +1,7 @@
+// Automated tests should only cover js API.  Use a manual test for native API
+Y.JSON.useNativeParse = false;
+Y.JSON.useNativeStringify = false;
+
 var suite = new Y.Test.Suite("Y.JSON (JavaScript implementation)"),
 
     JSON_STRING = '[' +
@@ -57,8 +61,6 @@ var suite = new Y.Test.Suite("Y.JSON (JavaScript implementation)"),
 /*****************************/
 /*     Tests begin here      */
 /*****************************/
-// wrapped in a function to allow repeating tests with native behavior disabled
-function addTests() {
 suite.add(new Y.Test.Case({
     name : "parse",
 
@@ -870,38 +872,4 @@ suite.add(new Y.Test.Case({
     }
 }));
 
-/*
-suite.add(new Y.Test.Case({
-    name : "unicode",
-
-    test_ : function () {
-        Y.Assert.areSame();
-    },
-}));
-*/
-}
-
-// If native JSON is available, run the tests again without native calls
-if (Y.JSON.useNativeParse) {
-    suite.add(new Y.Test.Case({
-        test_disableNative : function () {
-            Y.JSON.useNativeParse = false;
-            Y.JSON.useNativeStringify = false;
-        }
-    }));
-    addTests();
-    suite.add(new Y.Test.Case({
-        test_reenableNative : function () {
-            Y.JSON.useNativeParse = true;
-            Y.JSON.useNativeStringify = true;
-        }
-    }));
-
-    Y.Test.Runner.add(suite);
-
-    suite = new Y.Test.Suite("Y.JSON (native implementation)");
-}
-
-addTests();
 Y.Test.Runner.add(suite);
-

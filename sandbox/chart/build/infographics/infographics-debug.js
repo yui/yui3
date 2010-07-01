@@ -1326,14 +1326,6 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
     },
 
 	/**
-	 * @private
-	 */
-	drawGraph: function()
-	{
-        this.drawMarkers();
-	},
-	
-	/**
 	 * @private (override)
 	 */
 	draw: function()
@@ -1344,80 +1336,10 @@ Y.CartesianSeries = Y.Base.create("cartesianSeries", Y.Widget, [Y.Renderer], {
         if  (!isNaN(w) && !isNaN(h) && w > 0 && h > 0)
 		{
             this.setAreaData();
-            this.drawGraph();
+            this.drawSeries();
 		}
 	},
     
-    /**
-     * @private
-     * @description Draws the markers for the graph
-     */
-	drawMarkers: function()
-	{
-	    if(!this.get("xcoords") || this.get("xcoords").length < 1) 
-		{
-			return;
-		}
-        var graphic = this.get("graphic"),
-            style = this.get("styles").marker,
-            w = style.width,
-            h = style.height,
-            fillColor = style.fillColor,
-            alpha = style.fillAlpha,
-            fillType = style.fillType || "solid",
-            borderWidth = style.borderWidth,
-            borderColor = style.borderColor,
-            borderAlpha = style.borderAlpha || 1,
-            colors = style.colors,
-            alphas = style.alpha || [],
-            ratios = style.ratios || [],
-            rotation = style.rotation || 0,
-            xcoords = this.get("xcoords"),
-            ycoords = this.get("ycoords"),
-            shapeMethod = style.func || "drawCircle",
-            i = 0,
-            len = xcoords.length,
-            top = ycoords[0],
-            left;
-        for(; i < len; ++i)
-        {
-            top = ycoords[i];
-            left = xcoords[i];
-            if(borderWidth > 0)
-            {
-                graphic.lineStyle(borderWidth, borderColor, borderAlpha);
-            }
-            if(fillType === "solid")
-            {
-                graphic.beginFill(fillColor, alpha);
-            }
-            else
-            {
-                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
-            }
-            this.drawMarker(graphic, shapeMethod, left, top, w, h);
-            graphic.end();
-        }
- 	},
-
-    /**
-     * @private
-     * @description Draws a marker
-     */
-    drawMarker: function(graphic, func, left, top, w, h)
-    {
-        if(func === "drawCircle")
-        {
-            graphic.drawCircle(left, top, w/2);
-        }
-        else
-        {
-            left -= w/2;
-            top -= h/2;
-            graphic[func].call(graphic, left, top, w, h);
-        }
-    },
-
     /**
      * @private
      * @return Default styles for the widget
@@ -1525,6 +1447,129 @@ ATTRS: {
 }
 });
 
+function MarkerSeries(config)
+{
+	MarkerSeries.superclass.constructor.apply(this, arguments);
+}
+
+MarkerSeries.NAME = "markerSeries";
+
+MarkerSeries.ATTRS = {
+	type: {
+		/**
+		 * Indicates the type of graph.
+		 */
+        value:"marker"
+    }
+};
+
+Y.extend(MarkerSeries, Y.CartesianSeries, {
+    /**
+     * @private
+     * @description Draws the markers for the graph
+     */
+	drawSeries: function()
+	{
+	    if(!this.get("xcoords") || this.get("xcoords").length < 1) 
+		{
+			return;
+		}
+        var graphic = this.get("graphic"),
+            style = this.get("styles"),
+            w = style.width,
+            h = style.height,
+            fillColor = style.fill.color,
+            fillAlpha = style.fill.alpha,
+            fillType = style.fill.type || "solid",
+            borderWeight = style.border.weight,
+            borderColor = style.border.color,
+            borderAlpha = style.border.alpha || 1,
+            colors = style.fill.colors,
+            alphas = style.fill.alphas || [],
+            ratios = style.fill.ratios || [],
+            rotation = style.fill.rotation || 0,
+            xcoords = this.get("xcoords"),
+            ycoords = this.get("ycoords"),
+            shapeMethod = style.func || "drawCircle",
+            i = 0,
+            len = xcoords.length,
+            top = ycoords[0],
+            left;
+        for(; i < len; ++i)
+        {
+            top = ycoords[i];
+            left = xcoords[i];
+            if(borderWeight > 0)
+            {
+                graphic.lineStyle(borderWeight, borderColor, borderAlpha);
+            }
+            if(fillType === "solid")
+            {
+                graphic.beginFill(fillColor, fillAlpha);
+            }
+            else
+            {
+                graphic.beginGradientFill(fillType, colors, alphas, ratios, {rotation:rotation, width:w, height:h});
+            }
+            this.drawMarker(graphic, shapeMethod, left, top, w, h);
+            graphic.end();
+        }
+ 	},
+
+    /**
+     * @private
+     * @description Draws a marker
+     */
+    drawMarker: function(graphic, func, left, top, w, h)
+    {
+        if(func === "drawCircle")
+        {
+            graphic.drawCircle(left, top, w/2);
+        }
+        else
+        {
+            left -= w/2;
+            top -= h/2;
+            graphic[func].call(graphic, left, top, w, h);
+        }
+    },
+
+	_getDefaultStyles: function()
+    {
+        return {
+            fill:{
+                type: "solid",
+                color: "#000000",
+                alpha: 1,
+                colors:null,
+                alphas: null,
+                ratios: null
+            },
+            border:{
+                color: "#000000",
+                weight: 1,
+                alpha: 1
+            },
+            width: 6,
+            height: 6,
+            shape: "circle",
+
+            padding:{
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0
+            }
+        };
+    }
+});
+
+Y.MarkerSeries = MarkerSeries;
+
+
+		
+
+		
 function LineSeries(config)
 {
 	LineSeries.superclass.constructor.apply(this, arguments);
@@ -1542,27 +1587,10 @@ LineSeries.ATTRS = {
 };
 
 Y.extend(LineSeries, Y.CartesianSeries, {
-	
 	/**
 	 * @private
 	 */
-	drawGraph: function()
-	{
-		var styles = this.get("styles");
-		if(styles.showLines) 
-		{
-			this.drawLines();
-		}
-		if(styles.showMarkers) 
-		{
-			this.drawMarkers();
-		}
-	},
-
-	/**
-	 * @protected
-	 */
-	drawLines: function()
+	drawSeries: function()
 	{
         if(this.get("xcoords").length < 1) 
 		{
@@ -1739,8 +1767,10 @@ ColumnSeries.ATTRS = {
 };
 
 Y.extend(ColumnSeries, Y.CartesianSeries, {
-
-	drawMarkers: function()
+	/**
+	 * @private
+	 */
+	drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
@@ -1868,7 +1898,10 @@ BarSeries.ATTRS = {
 };
 
 Y.extend(BarSeries, Y.CartesianSeries, {
-    drawMarkers: function()
+	/**
+	 * @private
+	 */
+    drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
@@ -1947,11 +1980,17 @@ Y.extend(BarSeries, Y.CartesianSeries, {
         }
  	},
 
+	/**
+	 * @private
+	 */
     drawMarker: function(graphic, func, left, top, w, h)
     {
         graphic.drawRect(this._leftOrigin, top, w, h);
     },
 	
+	/**
+	 * @private
+	 */
 	_getDefaultStyles: function()
     {
         return {
@@ -1999,19 +2038,10 @@ AreaSeries.ATTRS = {
 };
 
 Y.extend(AreaSeries, Y.CartesianSeries, {
-	
-	/**
-	 * @private
-	 */
-	drawGraph: function()
-	{
-		this.drawArea();
-	},
-
 	/**
 	 * @protected
 	 */
-	drawArea: function()
+	drawSeries: function()
 	{
         if(this.get("xcoords").length < 1) 
 		{
@@ -2148,7 +2178,10 @@ Y.extend(RangeSeries, Y.CartesianSeries, {
 		this.set("ycoords", ycoords);
     },
 
-	drawMarkers: function()
+    /**
+     * @private
+     */
+	drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
@@ -2217,6 +2250,9 @@ OHLCSeries.ATTRS = {
 };
 
 Y.extend(OHLCSeries, Y.RangeSeries, {
+	/**
+	 * @private
+	 */
     drawMarker: function(graphic, hloc, left, style)
     {
         var h = hloc.h,
@@ -2245,6 +2281,9 @@ Y.extend(OHLCSeries, Y.RangeSeries, {
         graphic.end();
     },
 	
+	/**
+	 * @private
+	 */
 	_getDefaultStyles: function()
     {
         return {
@@ -2283,6 +2322,9 @@ CandlestickSeries.ATTRS = {
 };
 
 Y.extend(CandlestickSeries, Y.RangeSeries, {
+    /**
+     * @private
+     */
     drawMarker: function(graphic, hloc, left, style)
     {
         var h = hloc.h,
@@ -2404,27 +2446,10 @@ StackedLineSeries.ATTRS = {
 };
 
 Y.extend(StackedLineSeries, Y.CartesianSeries, {
-	
-	/**
+    /**
 	 * @private
 	 */
-	drawGraph: function()
-	{
-		var styles = this.get("styles");
-		if(styles.showLines) 
-		{
-			this.drawLines();
-		}
-		if(styles.showMarkers) 
-		{
-			this.drawMarkers();
-		}
-	},
-	
-    /**
-	 * @protected
-	 */
-	drawLines: function()
+	drawSeries: function()
 	{
         if(this.get("xcoords").length < 1) 
 		{
@@ -2647,19 +2672,10 @@ StackedAreaSeries.ATTRS = {
 };
 
 Y.extend(StackedAreaSeries, Y.CartesianSeries, {
-	
 	/**
 	 * @private
 	 */
-	drawGraph: function()
-	{
-		this.drawArea();
-	},
-
-	/**
-	 * @protected
-	 */
-	drawArea: function()
+	drawSeries: function()
 	{
         if(this.get("xcoords").length < 1) 
 		{
@@ -2808,8 +2824,10 @@ StackedColumnSeries.ATTRS = {
 };
 
 Y.extend(StackedColumnSeries, Y.CartesianSeries, {
-
-	drawMarkers: function()
+	/**
+	 * @private
+	 */
+	drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
@@ -2978,7 +2996,7 @@ StackedBarSeries.ATTRS = {
 };
 
 Y.extend(StackedBarSeries, Y.CartesianSeries, {
-    drawMarkers: function()
+    drawSeries: function()
 	{
 	    if(this.get("xcoords").length < 1) 
 		{
@@ -3296,6 +3314,9 @@ Y.extend(GraphStack, Y.Base, {
             break;
             case "stackedbar" :
                 seriesClass = Y.StackedBarSeries;
+            break;
+            case "markerseries" :
+                seriesClass = Y.MarkerSeries;
             break;
             default:
                 seriesClass = Y.CartesianSeries;
