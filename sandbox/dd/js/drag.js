@@ -19,8 +19,10 @@ YUI.add('dd-drag', function(Y) {
         DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',        
-        MOUSE_UP = 'mouseup',
-        MOUSE_DOWN = 'mousedown',
+        //MOUSE_UP = 'mouseup',
+        //MOUSE_DOWN = 'mousedown',
+        MOUSE_UP = 'moveend',
+        MOUSE_DOWN = 'movestart',
         DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
@@ -736,9 +738,10 @@ YUI.add('dd-drag', function(Y) {
             var ev = e.ev;
             this._dragThreshMet = false;
             this._ev_md = ev;
+            console.log(e, ev);
             
             if (this.get('primaryButtonOnly') && ev.button > 1) {
-                return false;
+                //return false;
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown();
@@ -758,6 +761,7 @@ YUI.add('dd-drag', function(Y) {
         * @return {Boolean}
         */
         validClick: function(ev) {
+            console.log(ev.target);
             var r = false, n = false,
             tar = ev.target,
             hTest = null,
@@ -765,6 +769,7 @@ YUI.add('dd-drag', function(Y) {
             nlist = null,
             set = false;
             if (this._handles) {
+                console.log('Valid Click1: ', r);
                 Y.each(this._handles, function(i, n) {
                     if (i instanceof Y.Node || i instanceof Y.NodeList) {
                         if (!r) {
@@ -773,13 +778,16 @@ YUI.add('dd-drag', function(Y) {
                                 nlist = new Y.NodeList(i._node);
                             }
                             nlist.each(function(nl) {
-                                if (nl.contains(tar)) {
+                                console.log('Valid Click1.1: ', nl, tar);
+                                //if (nl.contains(tar)) {
+                                if (tar.contains(nl)) {
                                     r = true;
                                 }
                             });
                         }
                     } else if (Y.Lang.isString(n)) {
                         //Am I this or am I inside this
+                        console.log('Valid Click1.2: ', n);
                         if (tar.test(n + ', ' + n + ' *') && !hTest) {
                             hTest = n;
                             r = true;
@@ -787,12 +795,15 @@ YUI.add('dd-drag', function(Y) {
                     }
                 });
             } else {
+                console.log('Valid Click2: ', r);
                 n = this.get(NODE);
+                console.log('Valid Click2: ', n, tar, n.contains(tar), n.compareTo(tar));
                 if (n.contains(tar) || n.compareTo(tar)) {
                     r = true;
                 }
             }
             if (r) {
+                console.log('Valid Click3: ', r);
                 if (this._invalids) {
                     Y.each(this._invalids, function(i, n) {
                         if (Y.Lang.isString(n)) {
@@ -818,6 +829,7 @@ YUI.add('dd-drag', function(Y) {
                     this.set('activeHandle', this.get(NODE));
                 }
             }
+            console.log('Valid Click: ', r);
             return r;
         },
         /**
@@ -954,7 +966,10 @@ YUI.add('dd-drag', function(Y) {
             this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));
+            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this), {
+                minDistance: this.get('clickPixelThresh'),
+                minTime: this.get('clickTimeThresh')
+            });
             node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
             node.on(DRAG_START, Y.bind(this._fixDragStart, this));
         },
