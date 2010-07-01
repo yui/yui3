@@ -10,6 +10,7 @@ It provides the following pieces of core functionality:
 * Consistent class-name generation support
 * Plugin support
 
+
 3.1.1
 
 * Fixed ticket #2528758 : using widget's DOM event facade ends with error during destroy
