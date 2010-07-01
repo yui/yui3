@@ -78,6 +78,7 @@ Y.Node.importMethod(Y.DOM, methods);
  */
 Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
+
 Y.mix(Y.Node.ATTRS, {
     offsetHeight: {
         setter: function(h) {
@@ -117,6 +118,7 @@ Y.mix(Y.Node.prototype, {
         });
     }
 });
+
 
 
 }, '@VERSION@' ,{requires:['dom-style', 'node-base']});

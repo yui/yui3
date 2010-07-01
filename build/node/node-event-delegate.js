@@ -25,4 +25,5 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 };
 
 
+
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});

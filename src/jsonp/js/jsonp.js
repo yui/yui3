@@ -1,5 +1,4 @@
 var YLang      = Y.Lang,
-    isObject   = YLang.isObject,
     isFunction = YLang.isFunction;
 
 /**
@@ -32,6 +31,7 @@ var YLang      = Y.Lang,
  * </ul>
  *
  * @module jsonp
+ * @submodule jsonp-base
  * @class JSONPRequest
  * @constructor
  * @param url {String} the url of the JSONP service
@@ -90,7 +90,7 @@ JSONPRequest.prototype = {
         var subs = callback.on || {};
 
         if (!subs.success) {
-            subs.success = this._getCallbackFromUrl(url);
+            subs.success = this._defaultCallback(url, callback);
         }
 
         // Apply defaults and store
@@ -101,70 +101,38 @@ JSONPRequest.prototype = {
             }, callback, { on: subs });
     },
 
-    /**
-     * <p>Parses the url for a callback named explicitly in the string.
-     * Override this if the target JSONP service uses a different query
-     * parameter or url format.</p>
+    /** 
+     * <p>Parse the callback from the url.  Override this for alternate default
+     * logic.  This handles top level global or Y function reference in the
+     * url.  First looks on the global, then the YUI instance for the included
+     * method name.  Also accepts "Y.functionName" as a path to a method on the
+     * YUI instance (regardless of what variable name was chosen for the YUI
+     * instance).  So "...?callback=jsonpHandler" will look for a global method
+     * jsonpHandler, then if that fails, it will look for a method jsonpHandler
+     * on the YUI instance.  "...?callback=Y.jsonpHandler" would also look for
+     * the method on the YUI instance.</p>
      *
-     * <p>If the callback is declared inline, the corresponding function will
-     * be returned.  Otherwise null.</p>
-     *
-     * @method _getCallbackFromUrl
-     * @param url {String} the url to search in
-     * @return {Function} the callback function if found, or null
-     * @protected
+     * <p>For support of namespaced or nested functions, include jsonp-url.</p>
+     * 
+     * @method _defaultCallback
+     * @param url {String} the url passed at construction
+     * @param config {Object} (optional) the config object passed at
+     *                        construction
+     * @return {Function}
      */
-    _getCallbackFromUrl: function (url) {
-        var match = url.match(JSONPRequest._pattern),
-            bracketAlias = {},
-            i = 0,
-            callback, context, bits, bit;
+    _defaultCallback: function (url) {
+        var match = url.match(JSONPRequest._pattern) || [],
+            name  = match[1],
+            callback;
 
-        if (match) {
-            // callback=foo[2].bar["baz"]func => ['func','baz','bar','2','foo']
-            // TODO: Doesn't handle escaping
-            bits = match[1].replace(/\[(?:(['"])([^\]\1]+)\1|(\d+))\]/g,
-                        function (_, name, idx) {
-                            bracketAlias[i] = name || idx;
-
-                            var nextChar = (RegExp.rightContext||'.').charAt(0),
-                                token = '.@' + (++i);
-
-                            if (nextChar !== '.' && nextChar !== '[') {
-                                token += '.';
-                            }
-                            return token;
-                        }).split(/\./).reverse();
-
-            callback = bits.shift();
-
-            // TODO: fall back to resolve from Y?  How to identify Y, though?
-            // Y.jsonp('http://foo.com/?callback=Y.loadJSONP') assumes
-            // the implementer did YUI().use(.., function (Y) {...}) and not
-            // YUI().use(.., function (SOMETHING_ELSE) {...})
-            // resolve from the global
-            context = Y.config.win;
-
-            for (i = bits.length - 1; i >= 0; --i) {
-                bit = bits[i];
-                if (bit.charAt(0) === '@') {
-                    bit = bracketAlias[bit.slice(1)];
-                }
-                context = context[bit];
-                if (!isObject(context)) {
-                    return null;
-                }
-            }
-
-            if (isObject(context)) {
-                // bind to preserve context declared inline, so
-                // callback=foo.bar.func => 'this' is foo.bar in func.
-                // bind by string to allow for response-time resolution
-                return Y.bind(callback, context);
+        if (name) {
+            name = name.replace(/^Y\./,'');
+            if (/^\w+$/.test(name)) {
+                callback = Y.config.win[name] || Y[name];
             }
         }
 
-        return null;
+        return (isFunction(callback)) ? callback : function () {};
     },
 
     /** 
