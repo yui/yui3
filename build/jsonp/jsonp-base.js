@@ -1,3 +1,5 @@
+YUI.add('jsonp-base', function(Y) {
+
 var YLang      = Y.Lang,
     isFunction = YLang.isFunction;
 
@@ -143,7 +145,6 @@ JSONPRequest.prototype = {
      */
     send : function (callback) {
         if (!this._config.on.success) {
-            Y.log("No success handler defined.  Aborting JSONP request.", "warn", "jsonp");
             return this;
         }
 
@@ -221,3 +222,6 @@ Y.jsonp = function (url,c) {
 };
 
 YUI.Env.JSONP = {};
+
+
+}, '@VERSION@' ,{requires:['get','oop']});

@@ -1,3 +1,5 @@
+YUI.add('jsonp-base', function(Y) {
+
 var YLang      = Y.Lang,
     isFunction = YLang.isFunction;
 
@@ -221,3 +223,6 @@ Y.jsonp = function (url,c) {
 };
 
 YUI.Env.JSONP = {};
+
+
+}, '@VERSION@' ,{requires:['get','oop']});
