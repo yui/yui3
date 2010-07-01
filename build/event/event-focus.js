@@ -93,4 +93,5 @@ plugins.blur = eventAdapter;
 })();
 
 
+
 }, '@VERSION@' ,{requires:['node-base']});
