@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="YUI" default="local">
-    <description>cssbase - Build All Modules</description>
+    <description>cssfonts - Build All Modules</description>
 
-    <macrodef name="build-cssbase">
+    <macrodef name="build-cssfonts">
         <attribute name="target"/>
         <sequential>
             <subant target="@{target}">
@@ -12,16 +12,16 @@
     </macrodef>
 
     <target name="local">
-        <build-cssbase target="local"/>
+        <build-cssfonts target="local"/>
     </target>
     <target name="deploy">
-        <build-cssbase target="deploy"/>
+        <build-cssfonts target="deploy"/>
     </target>
     <target name="all">
-        <build-cssbase target="all"/>
+        <build-cssfonts target="all"/>
     </target>
     <target name="clean">
-        <build-cssbase target="clean"/>
+        <build-cssfonts target="clean"/>
     </target>
 
 </project>
