@@ -137,28 +137,7 @@ YUI.add('frame', function(Y) {
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
 
-            this._iframe.setStyle('visibility', 'visible');
-        },
-        /**
-        * @method use
-        * @description This is a scoped version of the normal YUI.use method & is bound to this frame/window.
-        * At setup, the inst.use method is mapped to this method.
-        */
-        use: function() {
-            var inst = this.getInstance(),
-                args = Y.Array(arguments),
-                cb = false;
-
-            if (Y.Lang.isFunction(args[args.length - 1])) {
-                cb = args.pop();
-            }
-            if (cb) {
-                args.push(function() {
-                    cb.apply(inst, arguments);
-
-                });
-            }
-            inst._use.apply(inst, args);
+            this._iframe.setStyle('visibility', 'inherit');
         },
         /**
         * @private
@@ -185,6 +164,72 @@ YUI.add('frame', function(Y) {
 
                 inst.one('doc').get('documentElement').addClass('yui-js-enabled');
             }
+        },
+        /**
+        * @private
+        * @method _resolveBaseHref
+        * @description Resolves the basehref of the page the frame is created on. Only applies to dynamic content.
+        * @param {String} href The new value to use, if empty it will be resolved from the current url.
+        * @return {String}
+        */
+        _resolveBaseHref: function(href) {
+            if (!href || href === '') {
+                href = Y.config.doc.location.href;
+                if (href.indexOf('?') !== -1) { //Remove the query string
+                    href = href.substring(0, href.indexOf('?'));
+                }
+                href = href.substring(0, href.lastIndexOf('/')) + '/';
+            }
+            return href;
+        },
+        /**
+        * @private
+        * @method _getHTML
+        * @description Get the content from the iframe
+        * @param {String} html The raw HTML from the body of the iframe.
+        * @return {String}
+        */
+        _getHTML: function(html) {
+            if (this._ready) {
+                var inst = this.getInstance();
+                html = inst.one('body').get('innerHTML');
+            }
+            return html;
+        },
+        /**
+        * @private
+        * @method _setHTML
+        * @description Set the content of the iframe
+        * @param {String} html The raw HTML to set the body of the iframe to.
+        * @return {String}
+        */
+        _setHTML: function(html) {
+            if (this._ready) {
+                var inst = this.getInstance();
+                inst.one('body').set('innerHTML', html);
+            } else {
+                //This needs to be wrapped in a contentready callback for the !_ready state
+                this.on('contentready', Y.bind(function(html, e) {
+                    var inst = this.getInstance();
+                    inst.one('body').set('innerHTML', html);
+                }, this, html));
+            }
+            return html;
+        },
+        /**
+        * @private
+        * @method _setExtraCSS
+        * @description Set's the extra CSS on the instance..
+        */
+        _setExtraCSS: function(css) {
+            if (this._ready) {
+                var inst = this.getInstance(),
+                    node = inst.get('#extra_css');
+                
+                node.remove();
+                inst.one('head').append('<style id="extra_css">' + css + '</style>');
+            }
+            return css;
         },
         /**
         * @private
@@ -231,6 +276,28 @@ YUI.add('frame', function(Y) {
                     });
                 }
             }
+        },
+        //BEGIN PUBLIC METHODS
+        /**
+        * @method use
+        * @description This is a scoped version of the normal YUI.use method & is bound to this frame/window.
+        * At setup, the inst.use method is mapped to this method.
+        */
+        use: function() {
+            var inst = this.getInstance(),
+                args = Y.Array(arguments),
+                cb = false;
+
+            if (Y.Lang.isFunction(args[args.length - 1])) {
+                cb = args.pop();
+            }
+            if (cb) {
+                args.push(function() {
+                    cb.apply(inst, arguments);
+
+                });
+            }
+            inst._use.apply(inst, args);
         },
         /**
         * @method delegate
@@ -299,73 +366,46 @@ YUI.add('frame', function(Y) {
             return this;
         },
         /**
-        * @private
-        * @method _resolveBaseHref
-        * @description Resolves the basehref of the page the frame is created on. Only applies to dynamic content.
-        * @param {String} href The new value to use, if empty it will be resolved from the current url.
-        * @return {String}
-        */
-        _resolveBaseHref: function(href) {
-            if (!href || href === '') {
-                href = Y.config.doc.location.href;
-                if (href.indexOf('?') !== -1) { //Remove the query string
-                    href = href.substring(0, href.indexOf('?'));
-                }
-                href = href.substring(0, href.lastIndexOf('/')) + '/';
-            }
-            return href;
-        },
-        /**
-        * @private
-        * @method _getHTML
-        * @description Get the content from the iframe
-        * @param {String} html The raw HTML from the body of the iframe.
-        * @return {String}
-        */
-        _getHTML: function(html) {
-            if (this._ready) {
-                var inst = this.getInstance();
-                html = inst.one('body').get('innerHTML');
-            }
-            return html;
-        },
-        /**
-        * @private
-        * @method _setHTML
-        * @description Set the content of the iframe
-        * @param {String} html The raw HTML to set the body of the iframe to.
-        * @return {String}
-        */
-        _setHTML: function(html) {
-            if (this._ready) {
-                var inst = this.getInstance();
-                inst.one('body').set('innerHTML', html);
-            } else {
-                //This needs to be wrapped in a contentready callback for the !_ready state
-                this.on('contentready', Y.bind(function(html, e) {
-                    var inst = this.getInstance();
-                    inst.one('body').set('innerHTML', html);
-                }, this, html));
-            }
-            return html;
-        },
-        /**
         * @method focus
         * @description Set the focus to the iframe
+        * @return {Frame}
+        * @chainable        
         */
         focus: function() {
-            this.getInstance().config.win.focus();
+            this.getInstance().one('win').focus();
             return this;
         },
-        _setExtraCSS: function(css) {
-            if (this._ready) {
-                var inst = this.getInstance(),
-                    node = inst.get('#extra_css');
-                
-                node.remove();
-                inst.one('head').append('<style id="extra_css">' + css + '</style>');
-            }
-            return css;
+        /**
+        * @method show
+        * @description Show the iframe instance
+        * @return {Frame}
+        * @chainable        
+        */
+        show: function() {
+            this._iframe.setStyles({
+                position: 'static',
+                left: ''
+            });
+            if (Y.UA.gecko) {
+                try {
+                    this._instance.config.doc.designMode = 'on';
+                } catch (e) { }
+                this.focus();
+            }           
+            return this;
+        },
+        /**
+        * @method hide
+        * @description Hide the iframe instance
+        * @return {Frame}
+        * @chainable        
+        */
+        hide: function() {
+            this._iframe.setStyles({
+                position: 'absolute',
+                left: '-999999px'
+            });
+            return this;
         }
     }, {
 

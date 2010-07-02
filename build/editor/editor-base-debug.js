@@ -146,6 +146,10 @@ YUI.add('editor-base', function(Y) {
                 inst = this.frame.getInstance();
 
             while (node !== null) {
+                if (node.test('html') || node.test('doc')) {
+                    node = null;
+                    break;
+                }
                 if (!node.inDoc()) {
                     node = null;
                     break;
@@ -281,7 +285,27 @@ YUI.add('editor-base', function(Y) {
         * @chainable
         */
         focus: function() {
-            this.frame.getInstance().one('win').focus();
+            this.frame.focus();
+            return this;
+        },
+        /**
+        * Handles the showing of the Editor instance. Currently only handles the iframe
+        * @method show
+        * @return {EditorBase}
+        * @chainable
+        */
+        show: function() {
+            this.frame.show();
+            return this;
+        },
+        /**
+        * Handles the hiding of the Editor instance. Currently only handles the iframe
+        * @method hide
+        * @return {EditorBase}
+        * @chainable
+        */
+        hide: function() {
+            this.frame.hide();
             return this;
         },
         /**
