@@ -139,7 +139,7 @@ button {
     </div>
 
     <table id="test-table">
-        <tr><td id="test-td"><div><em>grandchild of td</em></div></td></tr>
+        <tr><td id="test-td"><div><div>grandchild of td</div></div></td></tr>
     </table>
 
     <ol>
@@ -1207,11 +1207,16 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         },
 
         test_ancestor: function() {
-            var node = Y.one('#test-table em').ancestor('td');
+            var node = Y.one('#test-table div div').ancestor('td');
 
             Y.Assert.areEqual(byId('test-td'), node._node,
                "Y.one('#test-table div').ancestor('td'))"); 
+
+            node = Y.Node.create('<div><div><table><tbody><tr></tr><tr></tr><tr><td><div><div class="inner"></div></div></td></tr></tbody></table></div></div>');
+            var inner = node.one('.inner');
+            inner.ancestor('td');
         }
+
     })); 
 
     Y.Test.Runner.add(suite);
