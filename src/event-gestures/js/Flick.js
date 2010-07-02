@@ -1,17 +1,13 @@
 // TODO: Better way to sniff 'n' switch touch support?
 var TOUCH = "ontouchstart" in Y.config.win,
 
-    TOUCH_EVENT_MAP = {
+    EVENT = (TOUCH) ? {
         start: "touchstart",
         end: "touchend"
-    },
-
-    MOUSE_EVENT_MAP = {
+    } : {
         start: "mousedown",
         end: "mouseup"
     },
-
-    EVENT = (TOUCH) ? TOUCH_EVENT_MAP : MOUSE_EVENT_MAP,
 
     START = "start",
     END = "end",
@@ -20,9 +16,11 @@ var TOUCH = "ontouchstart" in Y.config.win,
     MIN_VELOCITY = "minVelocity",
     MIN_DISTANCE = "minDistance",
 
-    FLICK_START = "_flickStart",
-    FLICK_START_HANDLE = "_flickStartHandle",
-    FLICK_END_HANDLE = "_flickEndHandle";
+    FLICK_START = "_fs",
+    FLICK_START_HANDLE = "_fsh",
+    FLICK_END_HANDLE = "_feh",
+
+    NODE_TYPE = "nodeType";
 
 Y.Event.define('flick', {
 
@@ -88,13 +86,14 @@ Y.Event.define('flick', {
                 pageX: e.pageX, 
                 pageY: e.pageY,
                 clientX: e.clientX, 
-                clientY: e.clientY
+                clientY: e.clientY,
+                _e : e
             });
 
             endHandle = node.getData(FLICK_END_HANDLE);
 
             if (!endHandle) {
-                doc = node.get(OWNER_DOCUMENT);
+                doc = node.get(NODE_TYPE) === 9 ? node : node.get(OWNER_DOCUMENT);
 
                 endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
                 node.setData(FLICK_END_HANDLE,endHandle);
@@ -159,7 +158,8 @@ Y.Event.define('flick', {
                             clientX: endEvent.clientX, 
                             clientY: endEvent.clientY,
                             pageX: endEvent.pageX,
-                            pageY: endEvent.pageY
+                            pageY: endEvent.pageY,
+                            _e : e 
                         }
                     });
                 }
