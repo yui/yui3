@@ -6,7 +6,12 @@
     <link rel="stylesheet" href="../assets/test-console.css">
     <style>
     body { width: 60%; }
-    fieldset { margin-bottom: 1em; }
+
+    fieldset {
+        border: 1px solid #afafaf;
+        margin-bottom: 1em;
+    }
+
     fieldset label { margin-right: 0.5em; }
 
     #ac { width: 17em; }
@@ -29,7 +34,7 @@
             <input type="radio" id="ds-none" name="ds" value="none">
             <label for="ds-none">None</label>
 
-            <input type="radio" id="ds-local" name="ds" value="local" checked="1">
+            <input type="radio" id="ds-local" name="ds" value="local" checked="checked">
             <label for="ds-local">Local</label>
 
             <input type="radio" id="ds-remote" name="ds" value="remote">
@@ -42,6 +47,14 @@
       <div>
       </div>
     </fieldset>
+
+    <fieldset id="highlighters">
+      <legend>Result Highlighters</legend>
+      <div>
+          <input type="radio" class="highlighter" name="highlighter" id="highlighter_none" value="none" checked="checked">
+          <label for="highlighter_none">None</label>
+      </div>
+    </fieldset>
 </form>
 
 <div id="log"></div>
@@ -50,6 +63,7 @@
 <script src="../../../../build/yui/yui.js"></script>
 <script src="../../js/autocomplete-base.js"></script>
 <script src="../../js/autocomplete-filters.js"></script>
+<script src="../../js/autocomplete-highlighters.js"></script>
 <script>
 var Y = YUI({
     filter: 'raw',
@@ -57,11 +71,17 @@ var Y = YUI({
         'autocomplete': 'debug'
     },
     useBrowserConsole: false
-}).use('autocomplete-base', 'autocomplete-filters', 'console-filters',
-        'datasource-get', 'datasource-jsonschema', 'datasource-local', 'dump',
-        'event-delegate',
-
-function (Y) {
+}).use(
+    'autocomplete-base',
+    'autocomplete-filters',
+    'autocomplete-highlighters',
+    'console-filters',
+    'datasource-get',
+    'datasource-jsonschema',
+    'datasource-local',
+    'dump',
+    'event-delegate',
+    function (Y) {
 
 // -- Console setup ------------------------------------------------------------
 new Y.Console({
@@ -97,14 +117,31 @@ autoComplete.on('results', function (e) {
 Y.autoComplete = autoComplete;
 
 // -- UI stuff -----------------------------------------------------------------
-var filtersDiv = Y.one('#filters');
+var filtersDiv      = Y.one('#filters>div'),
+    highlightersDiv = Y.one('#highlighters>div');
 
 // Create filter checkboxes.
 Y.Object.each(Y.AutoComplete.Filters, function (filter, name) {
-  filtersDiv.append(
-    '<input type="checkbox" class="filter" id="filter_' + name + '" value="' + name + '"' + (name === 'startsWith' ? ' checked="checked"' : '') + '>' +
-    '<label for="filter_' + name + '">' + name + '</label>'
-  );
+    if (name.indexOf('_') === 0) {
+        return;
+    }
+
+    filtersDiv.append(
+        '<input type="checkbox" class="filter" id="filter_' + name + '" value="' + name + '"' + (name === 'startsWith' ? ' checked="checked"' : '') + '>' +
+        '<label for="filter_' + name + '">' + name + '</label>'
+    );
+});
+
+// Create highlighter radio buttons.
+Y.Object.each(Y.AutoComplete.Highlighters, function (highlighter, name) {
+    if (name.indexOf('_') === 0) {
+        return;
+    }
+
+    highlightersDiv.append(
+        '<input type="radio" class="highlighter" name="highlighter" id="highlighter_' + name + '" value="' + name + '">' +
+        '<label for="highlighter_' + name + '">' + name + '</label>'
+    );
 });
 
 // Handle clicks on datasource radio buttons.
@@ -127,8 +164,12 @@ Y.delegate('click', function (e) {
 // Handle clicks on filters.
 Y.delegate('click', setFilters, '#filters', 'input[type="checkbox"]');
 
+// Handle clicks on highlighters.
+Y.delegate('click', setHighlighter, '#highlighters', 'input[type="radio"]');
+
 useLocal();
 setFilters();
+setHighlighter();
 
 autoComplete.get('inputNode').focus();
 
@@ -150,6 +191,19 @@ function setFilters() {
     autoComplete.set('resultFilters', filters);
 }
 
+function setHighlighter() {
+    Y.all('#highlighters input.highlighter').some(function (input) {
+        var name;
+
+        if (input.get('checked')) {
+            name = input.get('value');
+            autoComplete.set('resultHighlighter', name === 'none' ? null :
+                    Y.AutoComplete.Highlighters[name]);
+            return true;
+        }
+    });
+}
+
 // -- DataSource functions -----------------------------------------------------
 function useLocal() {
     Y.log('using local data source', 'info', 'autocomplete');
@@ -157,7 +211,6 @@ function useLocal() {
     autoComplete.detachAll('test|*');
     autoComplete.set('dataSource', dataSourceLocal);
     autoComplete.set('requestTemplate', function (q) { return q; });
-    // autoComplete.set('resultFilters', [Y.AutoComplete.Filters.startsWith]);
 }
 
 function useNone() {
@@ -165,7 +218,6 @@ function useNone() {
 
     autoComplete.detachAll('test|*');
     autoComplete.set('dataSource', null);
-    // autoComplete.set('resultFilters', []);
 }
 
 function useRemote() {
@@ -174,7 +226,6 @@ function useRemote() {
     autoComplete.detachAll('test|*');
     autoComplete.set('dataSource', dataSourceRemote);
     autoComplete.set('requestTemplate', 'q=' + encodeURIComponent('select * from search.suggest where query="') + '{query}' + encodeURIComponent('"'));
-    // autoComplete.set('resultFilters', []);
 }
 
 });
