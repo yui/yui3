@@ -213,29 +213,31 @@
     <span class="c1">// JavaScript implementation in lieu of native browser support.  Based on</span>
     <span class="c1">// the json2.js library from http://json.org</span>
     <span class="nx">_parse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// Replace certain Unicode characters that are otherwise handled</span>
-            <span class="c1">// incorrectly by some browser implementations.</span>
-            <span class="c1">// NOTE: This modifies the input if such characters are found!</span>
-            <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">_UNICODE_EXCEPTIONS</span><span class="p">,</span> <span class="nx">_escapeException</span><span class="p">);</span>
-            
-            <span class="c1">// Test for any remaining invalid characters</span>
-            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_UNSAFE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">_ESCAPES</span><span class="p">,</span><span class="s1">&#39;@&#39;</span><span class="p">).</span>
-                                <span class="nx">replace</span><span class="p">(</span><span class="nx">_VALUES</span><span class="p">,</span><span class="s1">&#39;]&#39;</span><span class="p">).</span>
-                                <span class="nx">replace</span><span class="p">(</span><span class="nx">_BRACKETS</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="c1">// Replace certain Unicode characters that are otherwise handled</span>
+        <span class="c1">// incorrectly by some browser implementations.</span>
+        <span class="c1">// NOTE: This modifies the input if such characters are found!</span>
+        <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">_UNICODE_EXCEPTIONS</span><span class="p">,</span> <span class="nx">_escapeException</span><span class="p">);</span>
+        
+        <span class="c1">// Test for any remaining invalid characters</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_UNSAFE</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">_ESCAPES</span><span class="p">,</span><span class="s1">&#39;@&#39;</span><span class="p">).</span>
+                            <span class="nx">replace</span><span class="p">(</span><span class="nx">_VALUES</span><span class="p">,</span><span class="s1">&#39;]&#39;</span><span class="p">).</span>
+                            <span class="nx">replace</span><span class="p">(</span><span class="nx">_BRACKETS</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)))</span> <span class="p">{</span>
 
-                <span class="c1">// Eval the text into a JavaScript data structure, apply any</span>
-                <span class="c1">// reviver function, and return</span>
-                <span class="k">return</span> <span class="nx">_revive</span><span class="p">(</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">),</span> <span class="nx">reviver</span> <span class="p">);</span>
-            <span class="p">}</span>
+            <span class="c1">// Eval the text into a JavaScript data structure, apply any</span>
+            <span class="c1">// reviver function, and return</span>
+            <span class="k">return</span> <span class="nx">_revive</span><span class="p">(</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nx">s</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">),</span> <span class="nx">reviver</span> <span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">throw</span> <span class="k">new</span> <span class="nx">SyntaxError</span><span class="p">(</span><span class="s1">&#39;JSON.parse&#39;</span><span class="p">);</span>
     <span class="p">};</span>
     
 <span class="nx">Y</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;JSON&#39;</span><span class="p">).</span><span class="nx">parse</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">Native</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">useNativeParse</span> <span class="o">?</span>
-        <span class="nx">Native</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">)</span> <span class="o">:</span> <span class="nx">_parse</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">!==</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">s</span> <span class="o">+=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">Native</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">useNativeParse</span> <span class="o">?</span>
+            <span class="nx">Native</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">)</span> <span class="o">:</span> <span class="nx">_parse</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">reviver</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="kd">function</span> <span class="nx">workingNative</span><span class="p">(</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="p">)</span> <span class="p">{</span>
