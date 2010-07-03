@@ -1,7 +1,8 @@
 YUI.add('jsonp-url', function(Y) {
 
-var isObject   = Y.Lang.isObject,
-    isFunction = Y.Lang.isFunction,
+var JSONPRequest = Y.JSONPRequest,
+    getByPath    = Y.Object.getValue,
+    noop         = function () {},
     DOT = '.',
     AT  = '@';
 
@@ -15,89 +16,111 @@ var isObject   = Y.Lang.isObject,
  * @for JSONPRequest
  */
 
-function _resolve(root, path, aliases) {
-    var i = path.length - 1,
-        callbackName = path[0],
-        bit;
+Y.mix(JSONPRequest.prototype, {
+    /**
+     * RegExp used by the default URL formatter to insert the generated callback
+     * name into the JSONP url.  Looks for a query param callback=.  If a value
+     * is assigned, it will be clobbered.
+     *
+     * @member _pattern
+     * @type RegExp
+     * @default /\bcallback=.*?(?=&|$)/i
+     * @protected
+     */
+    _pattern: /\bcallback=(.*?)(?=&|$)/i,
 
-    if (callbackName.charAt(0) === AT) {
-        callbackName = aliases[callbackName];
-    }
+    /**
+     * Template used by the default URL formatter to add the callback function
+     * name to the url.
+     *
+     * @member _template
+     * @type String
+     * @default "callback={callback}"
+     * @protected
+     */
+    _template: "callback={callback}",
 
-    // Stop at index 1.  Index 0 is the function name.
-    for (; i > 0; --i) {
-        bit = path[i];
-        if (bit.charAt(0) === AT) {
-            bit = aliases[bit];
-        }
-        root = root[bit];
-        if (!isObject(root)) {
-            return null;
-        }
-    }
+    /**
+     * <p>Parses the url for a callback named explicitly in the string.
+     * Override this if the target JSONP service uses a different query
+     * parameter or url format.</p>
+     *
+     * <p>If the callback is declared inline, the corresponding function will
+     * be returned.  Otherwise null.</p>
+     *
+     * @method _defaultCallback
+     * @param url {String} the url to search in
+     * @return {Function} the callback function if found, or null
+     * @protected
+     */
+    _defaultCallback: function (url) {
+        var match = url.match(this._pattern),
+            bracketAlias = {},
+            i = 0,
+            path, callback;
 
-    // Bind to preserve context declared inline, so
-    // callback=foo.bar.func => 'this' is foo.bar in func.
-    return (isObject(root) && isFunction(root[callbackName])) ?
-            Y.bind(callbackName, root) :
-            null;
-}
+        if (match) {
+            // callback=foo[2].bar["baz"]func => ['foo','2','bar','baz','func']
+            // TODO: Doesn't handle escaping or url encoding
+            path = match[1].replace(/\[(?:(['"])([^\]\1]+)\1|(\d+))\]/g,
+                        function (_, quote, name, idx) {
+                            var nextChar = (RegExp.rightContext||'.').charAt(0),
+                                token = AT + (++i);
 
-/**
- * <p>Parses the url for a callback named explicitly in the string.
- * Override this if the target JSONP service uses a different query
- * parameter or url format.</p>
- *
- * <p>If the callback is declared inline, the corresponding function will
- * be returned.  Otherwise null.</p>
- *
- * @method _defaultCallback
- * @param url {String} the url to search in
- * @return {Function} the callback function if found, or null
- * @protected
- */
-Y.JSONPRequest.prototype._defaultCallback = function (url) {
-    var match = url.match(Y.JSONPRequest._pattern),
-        bracketAlias = {},
-        i = 0,
-        path, callback;
+                            bracketAlias[token] = name || idx;
 
-    if (match) {
-        // callback=foo[2].bar["baz"]func => ['func','baz','bar','2','foo']
-        // TODO: Doesn't handle escaping or url encoding
-        path = match[1].replace(/\[(?:(['"])([^\]\1]+)\1|(\d+))\]/g,
-                    function (_, quote, name, idx) {
-                        var nextChar = (RegExp.rightContext||'.').charAt(0),
-                            token = AT + (++i);
-
-                        bracketAlias[token] = name || idx;
-
-                        if (nextChar !== DOT && nextChar !== '[') {
-                            token += DOT;
-                        }
-                        return DOT + token;
-                    }).split(/\./).reverse();
-
-        // First look for a global function
-        callback = _resolve(Y.config.win, path, bracketAlias);
-
-        if (!callback) {
-            // Then for function relative to Y, but excluding "Y"
-            callback = _resolve(Y, path, bracketAlias);
+                            if (nextChar !== DOT && nextChar !== '[') {
+                                token += DOT;
+                            }
+                            return DOT + token;
+                        }).split(/\./);
             
-            if (!callback && path.length > 1) {
-                // Finally, assume the first path bit is Y.  It's either this or
-                // look for a particular pattern, such as "Y", but the YUI
-                // instance could be named anything in the implementation
-                path.pop();
-                callback = _resolve(Y, path, bracketAlias);
+            // Restore tokens from brack notation
+            Y.each(path, function (bit, i) {
+                if (bit.charAt(0) === '@') {
+                    path[i] = bracketAlias[bit];
+                }
+            });
+
+            // First look for a global function, then the Y, then try the Y
+            // again from the second token (to support "...?callback=Y.handler")
+            callback = getByPath(Y.config.win, path) ||
+                       getByPath(Y, path) ||
+                       getByPath(Y, path.slice(1));
+        }
+
+        return callback || noop;
+    },
+
+    /**
+     * URL formatter that looks for callback= in the url and appends it
+     * if not present.  The supplied proxy name will be assigned to the query
+     * param.  Override this method by passing a function as the
+     * &quot;format&quot; property in the config object to the constructor.
+     *
+     * @method _format
+     * @param url { String } the original url
+     * @param proxy {String} the function name that will be used as a proxy to
+     *      the configured callback methods.
+     * @return {String} fully qualified JSONP url
+     * @protected
+     */
+    _format: function (url, proxy) {
+        var callback = this._template.replace(/\{callback\}/, proxy),
+            lastChar;
+
+        if (this._pattern.test(url)) {
+            return url.replace(this._pattern, callback);
+        } else {
+            lastChar = url.slice(-1);
+            if (lastChar !== '&' && lastChar !== '?') {
+                url += (url.indexOf('?') > -1) ? '&' : '?';
             }
+            return url + callback;
         }
     }
 
-    return callback || function () {};
-};
-            
+}, true);
 
 
 }, '@VERSION@' ,{requires:['jsonp-base']});

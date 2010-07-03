@@ -1,20 +1,19 @@
 YUI.add('jsonp-base', function(Y) {
 
-var YLang      = Y.Lang,
-    isFunction = YLang.isFunction;
+var isFunction = Y.Lang.isFunction;
 
 /**
  * <p>Provides a JSONPRequest class for repeated JSONP calls, and a convenience
  * method Y.jsonp(url, callback) to instantiate and send a JSONP request.</p>
  *
- * <p>The callback for the response can be named in the url explicitly or
- * provided in the configuration (second parameter to the constructor).
+ * <p>Both the constructor as well as the convenience function take two
+ * parameters: a url string and a callback.</p>
  *
- * <p>By default, the query parameter string &quot;callback=???&quot; will be
- * searched for in the url (??? can be anything).  If it's not found, it will
- * be added on.  If the JSONP service uses a different parameter name or url
- * format, you can override this behavior with the <code>format</code> property
- * in the callback config.</p>
+ * <p>The url provided must include the placeholder string
+ * &quot;{callback}&quot; which will be replaced by a dynamically
+ * generated routing function to pass the data to your callback function.
+ * An example url might look like
+ * &quot;http://example.com/service?callback={callback}&quot;.</p>
  *
  * <p>The second parameter can be a callback function that accepts the JSON
  * payload as its argument, or a configuration object supporting the keys:</p>
@@ -43,31 +42,6 @@ var YLang      = Y.Lang,
 function JSONPRequest() {
     this._init.apply(this, arguments);
 }
-
-/**
- * RegExp used by the default URL formatter to insert the generated callback
- * name into the JSONP url.  Looks for a query param callback=.  If a value is
- * assigned, it will be clobbered.
- *
- * @member JSONPRequest._pattern
- * @type RegExp
- * @default /\bcallback=.*?(?=&|$)/i
- * @protected
- * @static
- */
-JSONPRequest._pattern = /\bcallback=(.*?)(?=&|$)/i;
-
-/**
- * Template used by the default URL formatter to add the callback function name
- * to the url.
- *
- * @member JSONPRequest._template
- * @type String
- * @default "callback={callback}"
- * @protected
- * @static
- */
-JSONPRequest._template = "callback={callback}";
 
 JSONPRequest.prototype = {
     /**
@@ -104,17 +78,9 @@ JSONPRequest.prototype = {
     },
 
     /** 
-     * <p>Parse the callback from the url.  Override this for alternate default
-     * logic.  This handles top level global or Y function reference in the
-     * url.  First looks on the global, then the YUI instance for the included
-     * method name.  Also accepts "Y.functionName" as a path to a method on the
-     * YUI instance (regardless of what variable name was chosen for the YUI
-     * instance).  So "...?callback=jsonpHandler" will look for a global method
-     * jsonpHandler, then if that fails, it will look for a method jsonpHandler
-     * on the YUI instance.  "...?callback=Y.jsonpHandler" would also look for
-     * the method on the YUI instance.</p>
-     *
-     * <p>For support of namespaced or nested functions, include jsonp-url.</p>
+     * Override this method to provide logic to default the success callback if
+     * it is not provided at construction.  This is overridden by jsonp-url to
+     * parse the callback from the url string.
      * 
      * @method _defaultCallback
      * @param url {String} the url passed at construction
@@ -122,20 +88,7 @@ JSONPRequest.prototype = {
      *                        construction
      * @return {Function}
      */
-    _defaultCallback: function (url) {
-        var match = url.match(JSONPRequest._pattern) || [],
-            name  = match[1],
-            callback;
-
-        if (name) {
-            name = name.replace(/^Y\./,'');
-            if (/^\w+$/.test(name)) {
-                callback = Y.config.win[name] || Y[name];
-            }
-        }
-
-        return (isFunction(callback)) ? callback : function () {};
-    },
+    _defaultCallback: function () {},
 
     /** 
      * Issues the JSONP request.
@@ -143,15 +96,15 @@ JSONPRequest.prototype = {
      * @method send
      * @chainable
      */
-    send : function (callback) {
-        if (!this._config.on.success) {
-            return this;
-        }
-
-        var proxy  = Y.guid().replace(/-/g, '_'),
+    send : function () {
+        var proxy  = Y.guid(),
             config = this._config,
             url    = config.format.call(this,
                         this.url, 'YUI.Env.JSONP.' + proxy);
+
+        if (!config.on.success) {
+            return this;
+        }
 
         function wrap(fn) {
             return (isFunction(fn)) ?
@@ -168,11 +121,22 @@ JSONPRequest.prototype = {
 
         Y.Get.script(url, {
             onFailure: wrap(config.on.failure),
-            onTimeout: wrap(config.on.timeout || config.on.failure),
+            onTimeout: wrap(config.on.timeout),
             timeout  : config.timeout
         });
 
         return this;
+    },
+
+    /** 
+     * Initiates the JSONP transaction.
+     *
+     * @method _dispatch
+     * @param url {String} fully formed url with callback 
+     * @param config {Object} configuration object
+     * @protected
+     */
+    _dispatch: function (url, config) {
     },
 
     /**
@@ -189,20 +153,8 @@ JSONPRequest.prototype = {
      * @protected
      */
     _format: function (url, proxy) {
-        var callback = JSONPRequest._template.replace(/\{callback\}/, proxy),
-            lastChar;
-
-        if (JSONPRequest._pattern.test(url)) {
-            return url.replace(JSONPRequest._pattern, callback);
-        } else {
-            lastChar = url.slice(-1);
-            if (lastChar !== '&' && lastChar !== '?') {
-                url += (url.indexOf('?') > -1) ? '&' : '?';
-            }
-            return url + callback;
-        }
+        return url.replace(/\{callback\}/, proxy);
     }
-
 };
 
 Y.JSONPRequest = JSONPRequest;
