@@ -13,32 +13,58 @@
     }
     #toolbar {
         border-bottom: 1px solid #999;
-        padding: 5px;
-        background-color: #EEE;
+        background-color: #F2F2F2;
         min-height: 25px;
+        position: relative;
     }
     #toolbar select {
         position: relative;
         top: -4px;
+        margin-right: 7px;
+    }
+    #fontname {
+        margin-left: 7px;
     }
     #toolbar .yui3-icon {
         background: url("http://yui.yahooapis.com/2.8.1/build/editor/assets/skins/sam/editor-sprite.gif") no-repeat scroll 30px 30px transparent;
     }
     #toolbar .yui3-icon-bold {
-        background-position: 0 0;
+        background-position: 0 -1px;
     }
     #toolbar .yui3-icon-italic {
-        background-position:0 -36px;
+        background-position:0 -37px;
     }
     #toolbar .yui3-icon-underline {
-        background-position:0 -72px;
+        background-position:0 -73px;
     }
     #toolbar .yui3-icon-createlink {
-        background-position:0 -792px;
+        background-position:0 -794px;
+    }
+    #toolbar .yui3-state-default, 
+        #toolbar .yui3-state-active,
+        #toolbar .yui3-state-hover {
+        margin-left: -1px;
+        border-color: #808080;
+        background:url("http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/sprite.png") repeat-x scroll 0 0 transparent;
     }
     #toolbar .yui3-state-active {
-        background:none repeat scroll 0 0 #BFDFFF;
-        border-color:#333333;
+        background-position: 0 -1700px;
+    }
+    #toolbar .yui3-state-hover {
+        background-position: 0 -1300px;
+    }
+    
+    #toolbar h2 {
+        letter-spacing:0;
+        margin:0;
+        color:#000000;
+        font-size:100%;
+        font-weight:bold;
+        margin: 0;
+        margin-bottom: 7px;
+        padding: 0.3em 1em;
+        text-align:left;
+        background:url("http://yui.yahooapis.com/2.8.1/build/assets/skins/sam/sprite.png") repeat-x scroll 0 -206px transparent;
     }
     
 	</style>
@@ -49,6 +75,7 @@
 
 <div id="editor_cont">
     <div id="toolbar">
+        <h2 tabindex="-1">Text Editing Tools</h2>
         <select id="fontname">
             <option selected> </option>
             <option>Arial</option>
