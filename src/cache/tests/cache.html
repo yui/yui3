@@ -34,17 +34,14 @@
             name: "Class Tests",
         
             testDefaults: function() {
-                // TODO: remove empty config
-                var cache = new Y.Cache({});
-                cache.add(1, "a");
+                var cache = new Y.Cache();
                 ASSERT.isInstanceOf(Y.Cache, cache, "Expected instance of Y.Cache.");
                 ASSERT.areSame(0, cache.get("max"), "Expected default max of 0.");
                 ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
             },
 
             testDestructor: function() {
-                // TODO: remove empty config
-                var cache = new Y.Cache({});
+                var cache = new Y.Cache();
                 cache.destroy();
                 ASSERT.isNull(cache.get("entries"), "Expected null array.");
             }
@@ -54,8 +51,7 @@
             name: "Basic Tests",
 
             testmax0: function() {
-                // TODO: remove empty config
-                var cache = new Y.Cache({});
+                var cache = new Y.Cache();
                 ASSERT.areSame(0, cache.get("max"), "Expected max to be 0.");
                 
                 cache.add(1, "a");
@@ -104,7 +100,7 @@
                 ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array.");
                 cache.add(3, "c");
                 ARRAYASSERT.isEmpty(cache.get("entries"), "Expected empty array (still).");
-                ASSERT.areSame(-5, cache.get("max"), "Expected negative value normalized to 0.");
+                ASSERT.areSame(0, cache.get("max"), "Expected negative value normalized to 0.");
             },
 
             testRetrieve: function() {
@@ -253,10 +249,6 @@
                 cache.retrieve(1);
                 ASSERT.areSame(3, cache.get("size"), "Expected 3 entries.");
                 ASSERT.areSame(1, cache.get("entries")[2].request, "Expected entry to be refreshed.");
-            },
-
-            testPayload: function() {
-                //TODO
             }
         });
 

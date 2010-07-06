@@ -333,7 +333,9 @@ Y.extend(DSLocal, Y.Base, {
 Y.namespace("DataSource").Local = DSLocal;
 
 
+
 }, '@VERSION@' ,{requires:['base']});
+
 YUI.add('datasource-io', function(Y) {
 
 /**
@@ -479,7 +481,9 @@ Y.DataSource.IO = DSIO;
     
 
 
+
 }, '@VERSION@' ,{requires:['datasource-local', 'io']});
+
 YUI.add('datasource-get', function(Y) {
 
 /**
@@ -673,7 +677,9 @@ Y.DataSource.Get = Y.extend(DSGet, Y.DataSource.Local, {
 YUI.namespace("Env.DataSource.callbacks");
 
 
+
 }, '@VERSION@' ,{requires:['datasource-local', 'get']});
+
 YUI.add('datasource-function', function(Y) {
 
 /**
@@ -780,26 +786,29 @@ Y.DataSource.Function = DSFn;
     
 
 
+
 }, '@VERSION@' ,{requires:['datasource-local']});
+
 YUI.add('datasource-cache', function(Y) {
 
 /**
- * Extends DataSource with caching functionality.
+ * Plugs DataSource with caching functionality.
  *
  * @module datasource
  * @submodule datasource-cache
  */
 
 /**
- * Adds cacheability to the DataSource Utility.
- * @class DataSourceCache
- * @extends Cache
- */    
-var DataSourceCache = function() {
-    DataSourceCache.superclass.constructor.apply(this, arguments);
+ * DataSourceCache extension binds Cache to DataSource.
+ * @class DataSourceCacheExtension
+ */
+var DataSourceCacheExtension = function() {
+    this.after("initializedChange", function() {
+        DataSourceCacheExtension.prototype.initializer.apply(this, arguments);
+    });
 };
 
-Y.mix(DataSourceCache, {
+Y.mix(DataSourceCacheExtension, {
     /**
      * The namespace for the plugin. This will be the property on the host which
      * references the plugin instance.
@@ -819,22 +828,12 @@ Y.mix(DataSourceCache, {
      * @type String
      * @static
      * @final
-     * @value "dataSourceCache"
+     * @value "dataSourceCacheExtension"
      */
-    NAME: "dataSourceCache",
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSourceCache Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    ATTRS: {
-
-    }
+    NAME: "dataSourceCacheExtension"
 });
 
-Y.extend(DataSourceCache, Y.Cache, {
+DataSourceCacheExtension.prototype = {
     /**
     * Internal init() handler.
     *
@@ -865,10 +864,10 @@ Y.extend(DataSourceCache, Y.Cache, {
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
             this.get("host").fire("response", Y.mix({response: entry.response}, e));
-            return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
+            return new Y.Do.Halt("DataSourceCache extension halted _defRequestFn");
         }
     },
-    
+
     /**
      * Adds data to cache before returning data.
      *
@@ -903,12 +902,57 @@ Y.extend(DataSourceCache, Y.Cache, {
             this.add(e.request, e.response, (e.callback && e.callback.argument));
         }
      }
+};
+
+Y.namespace("Plugin").DataSourceCacheExtension = DataSourceCacheExtension;
+
+
+
+/**
+ * DataSource plugin adds cache functionality.
+ * @class DataSourceCache
+ * @extends Cache
+ * @uses Plugin.Base, DataSourceCachePlugin
+ */
+function DataSourceCache(config) {
+  var tmpclass = Y.Base.create("dataSourceCache", config.cache, [Y.Plugin.Base, Y.Plugin.DataSourceCacheExtension]);
+  tmpclass.NS = "tmpClass";
+  var tmpinstance = new tmpclass(config);
+  return tmpinstance;
+}
+
+Y.mix(DataSourceCache, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "cache"
+     */
+    NS: "cache",
+
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     * @final
+     * @value "dataSourceCache"
+     */
+    NAME: "dataSourceCache"
 });
 
-Y.namespace('Plugin').DataSourceCache = DataSourceCache;
+
+Y.namespace("Plugin").DataSourceCache = DataSourceCache;
 
 
-}, '@VERSION@' ,{requires:['datasource-local', 'cache']});
+
+}, '@VERSION@' ,{requires:['datasource-local']});
+
 YUI.add('datasource-jsonschema', function(Y) {
 
 /**
@@ -1013,7 +1057,9 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
+
 }, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-json']});
+
 YUI.add('datasource-xmlschema', function(Y) {
 
 /**
@@ -1118,7 +1164,9 @@ Y.extend(DataSourceXMLSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceXMLSchema = DataSourceXMLSchema;
 
 
+
 }, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-xml']});
+
 YUI.add('datasource-arrayschema', function(Y) {
 
 /**
@@ -1223,7 +1271,9 @@ Y.extend(DataSourceArraySchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceArraySchema = DataSourceArraySchema;
 
 
+
 }, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-array']});
+
 YUI.add('datasource-textschema', function(Y) {
 
 /**
@@ -1328,7 +1378,9 @@ Y.extend(DataSourceTextSchema, Y.Plugin.Base, {
 Y.namespace('Plugin').DataSourceTextSchema = DataSourceTextSchema;
 
 
+
 }, '@VERSION@' ,{requires:['plugin', 'datasource-local', 'dataschema-text']});
+
 YUI.add('datasource-polling', function(Y) {
 
 /**
@@ -1419,7 +1471,9 @@ Pollable.prototype = {
 Y.augment(Y.DataSource.Local, Pollable);
 
 
+
 }, '@VERSION@' ,{requires:['datasource-local']});
+
 
 
 YUI.add('datasource', function(Y){}, '@VERSION@' ,{use:['datasource-local','datasource-io','datasource-get','datasource-function','datasource-cache','datasource-jsonschema','datasource-xmlschema','datasource-arrayschema','datasource-textschema','datasource-polling']});

@@ -1,20 +1,21 @@
 /**
- * Extends DataSource with caching functionality.
+ * Plugs DataSource with caching functionality.
  *
  * @module datasource
  * @submodule datasource-cache
  */
 
 /**
- * Adds cacheability to the DataSource Utility.
- * @class DataSourceCache
- * @extends Cache
- */    
-var DataSourceCache = function() {
-    DataSourceCache.superclass.constructor.apply(this, arguments);
+ * DataSourceCache extension binds Cache to DataSource.
+ * @class DataSourceCacheExtension
+ */
+var DataSourceCacheExtension = function() {
+    this.after("initializedChange", function() {
+        DataSourceCacheExtension.prototype.initializer.apply(this, arguments);
+    });
 };
 
-Y.mix(DataSourceCache, {
+Y.mix(DataSourceCacheExtension, {
     /**
      * The namespace for the plugin. This will be the property on the host which
      * references the plugin instance.
@@ -34,22 +35,12 @@ Y.mix(DataSourceCache, {
      * @type String
      * @static
      * @final
-     * @value "dataSourceCache"
+     * @value "dataSourceCacheExtension"
      */
-    NAME: "dataSourceCache",
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // DataSourceCache Attributes
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    ATTRS: {
-
-    }
+    NAME: "dataSourceCacheExtension"
 });
 
-Y.extend(DataSourceCache, Y.Cache, {
+DataSourceCacheExtension.prototype = {
     /**
     * Internal init() handler.
     *
@@ -80,10 +71,10 @@ Y.extend(DataSourceCache, Y.Cache, {
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
             this.get("host").fire("response", Y.mix({response: entry.response}, e));
-            return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
+            return new Y.Do.Halt("DataSourceCache extension halted _defRequestFn");
         }
     },
-    
+
     /**
      * Adds data to cache before returning data.
      *
@@ -118,6 +109,49 @@ Y.extend(DataSourceCache, Y.Cache, {
             this.add(e.request, e.response, (e.callback && e.callback.argument));
         }
      }
+};
+
+Y.namespace("Plugin").DataSourceCacheExtension = DataSourceCacheExtension;
+
+
+
+/**
+ * DataSource plugin adds cache functionality.
+ * @class DataSourceCache
+ * @extends Cache
+ * @uses Plugin.Base, DataSourceCachePlugin
+ */
+function DataSourceCache(config) {
+  var tmpclass = Y.Base.create("dataSourceCache", config.cache, [Y.Plugin.Base, Y.Plugin.DataSourceCacheExtension]);
+  tmpclass.NS = "tmpClass";
+  var tmpinstance = new tmpclass(config);
+  return tmpinstance;
+}
+
+Y.mix(DataSourceCache, {
+    /**
+     * The namespace for the plugin. This will be the property on the host which
+     * references the plugin instance.
+     *
+     * @property NS
+     * @type String
+     * @static
+     * @final
+     * @value "cache"
+     */
+    NS: "cache",
+
+    /**
+     * Class name.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     * @final
+     * @value "dataSourceCache"
+     */
+    NAME: "dataSourceCache"
 });
 
-Y.namespace('Plugin').DataSourceCache = DataSourceCache;
+
+Y.namespace("Plugin").DataSourceCache = DataSourceCache;
