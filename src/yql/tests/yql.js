@@ -18,6 +18,7 @@ YUI({
             
 
     var template = {
+        name: 'YQL Test',
         setUp : function() {
         },
         
@@ -47,8 +48,10 @@ YUI({
             this.wait(wait, 1500);
         }
     };
-    Y.Test.Runner.clear();
-    Y.Test.Runner.add(new Y.Test.Case(template));
+    var suite = new Y.Test.Suite("YQL");
+    
+    suite.add(new Y.Test.Case(template));
+    Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
 

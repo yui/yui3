@@ -82,6 +82,7 @@ YUI({
         dd, drop, proxy, del,
 
     template = {
+        name: 'DD Test',
         setUp : function() {
         },
         
@@ -353,8 +354,10 @@ YUI({
         }
     };
     
-    Y.Test.Runner.clear();
-    Y.Test.Runner.add(new Y.Test.Case(template));
+    var suite = new Y.Test.Suite("DD");
+    
+    suite.add(new Y.Test.Case(template));
+    Y.Test.Runner.add(suite);
     Y.Test.Runner.run();
 });
 
