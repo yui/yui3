@@ -52,6 +52,32 @@ YUI.add('editor-base', function(Y) {
         _defNodeChangeFn: function(e) {
             Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
             switch (e.changedType) {
+                case 'keyup':
+                    if (e.changedEvent.keyCode === 8) {
+                        var inst = this.getInstance(),
+                        ps = inst.all('body > p'), br, p, sel, item;
+
+                        if (ps.size() < 2) {
+                            item = inst.one('body');
+                            if (ps.item(0)) {
+                                item = ps.item(0);
+                            }
+                            br = item.all('br');
+                            if (br.size() === 1) {
+                                br.item(0).remove();
+                            }
+                            if (item.get('innerHTML') === '' && !item.test('p')) {
+                                inst.one('body').append('<p>&nbsp;</p>');
+                                sel = new inst.Selection();
+                                try {
+                                    sel.selectNode(inst.one('body > p').get('firstChild'));
+                                } catch (e) {}
+                            } else if (item.test('p') && item.get('innerHTML').length === 0) {
+                                e.changedEvent.halt();
+                            }
+                        }
+                    }
+                    break;
                 case 'enter':
                     //Enter key goes here..
                     break;
@@ -146,7 +172,7 @@ YUI.add('editor-base', function(Y) {
                 inst = this.frame.getInstance();
 
             while (node !== null) {
-                if (node.test('html') || node.test('doc')) {
+                if (node.test('html') || node.test('doc') || !node.get('tagName')) {
                     node = null;
                     break;
                 }
@@ -416,6 +442,9 @@ YUI.add('editor-base', function(Y) {
                     if (str.substr(0, 1) === "\n") {
                         Y.log('Stripping first carriage return from content before injecting', 'warn', 'editor');
                         str = str.substr(1);
+                    }
+                    if (str === '') {
+                        str = '<br>';
                     }
                     return this.frame.set('content', str);
                 },

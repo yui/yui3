@@ -360,7 +360,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     }, '#setHTML');
 
     Y.on('click', function(e) {
-        editor.focus();
+        editor.focus(true);
     }, '#focusEditor');
 
 });
