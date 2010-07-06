@@ -80,6 +80,12 @@ YUI.add('frame', function(Y) {
             var config = (c) ? c : {};
             config.win = Y.Node.getDOMNode(this._iframe.get('contentWindow'));
             config.doc = Y.Node.getDOMNode(this._iframe.get('contentWindow.document'));
+            if (!config.doc) {
+                config.doc = Y.config.doc;
+            }
+            if (!config.win) {
+                config.win = Y.config.win;
+            }
             return config;
         },
         /**
@@ -272,7 +278,7 @@ YUI.add('frame', function(Y) {
                             //Force other browsers into non CSS styling
                             doc.execCommand('styleWithCSS', false, false);
                             doc.execCommand('insertbronreturn', false, false);
-                        } catch (e) {}
+                        } catch (err) {}
                     });
                 }
             }
@@ -342,7 +348,7 @@ YUI.add('frame', function(Y) {
             if (node) {
                 this.set('container', node);
             }
-            var inst,
+            var inst, timer,
                 res = this._create(),
                 cb = Y.bind(function(i) {
                     this._instanceLoaded(i);
@@ -357,7 +363,16 @@ YUI.add('frame', function(Y) {
                 fn = Y.bind(function() {
                     config = this._resolveWinDoc(config);
                     inst = YUI(config);
-                    inst.use('node-base', cb);
+                    try {
+                        inst.use('node-base', cb);
+                        if (timer) {
+                            clearInterval(timer);
+                        }
+                    } catch (e) {
+                        timer = setInterval(function() {
+                            fn();
+                        }, 350);
+                    }
                 }, this);
 
             args.push(fn);
@@ -1217,7 +1232,6 @@ YUI.add('exec-command', function(Y) {
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
 
-
                 if (fn) {
                     return fn.call(this, action, value);
                 } else {
@@ -1380,6 +1394,30 @@ YUI.add('exec-command', function(Y) {
                 },
                 hilitecolor: function() {
                     ExecCommand.COMMANDS.backcolor.apply(this, arguments);
+                },
+                fontname: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
+                    if (sel.isCollapsed) {
+                        n = this.command('inserthtml', '<span style="font-family: ' + val + '">&nbsp;</span>');
+                        sel.selectNode(n.get('firstChild'));
+                        return n;
+                    } else {
+                        return this._command('fontname', val);
+                    }
+                },
+                fontsize: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
+                    if (sel.isCollapsed) {
+                        n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
+                        sel.selectNode(n.get('firstChild'));
+                        return n;
+                    } else {
+                        return this._command('fontsize', val);
+                    }
                 }
             }
         });

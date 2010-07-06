@@ -80,6 +80,12 @@ YUI.add('frame', function(Y) {
             var config = (c) ? c : {};
             config.win = Y.Node.getDOMNode(this._iframe.get('contentWindow'));
             config.doc = Y.Node.getDOMNode(this._iframe.get('contentWindow.document'));
+            if (!config.doc) {
+                config.doc = Y.config.doc;
+            }
+            if (!config.win) {
+                config.win = Y.config.win;
+            }
             return config;
         },
         /**
@@ -272,7 +278,7 @@ YUI.add('frame', function(Y) {
                             //Force other browsers into non CSS styling
                             doc.execCommand('styleWithCSS', false, false);
                             doc.execCommand('insertbronreturn', false, false);
-                        } catch (e) {}
+                        } catch (err) {}
                     });
                 }
             }
@@ -342,7 +348,7 @@ YUI.add('frame', function(Y) {
             if (node) {
                 this.set('container', node);
             }
-            var inst,
+            var inst, timer,
                 res = this._create(),
                 cb = Y.bind(function(i) {
                     this._instanceLoaded(i);
@@ -357,7 +363,16 @@ YUI.add('frame', function(Y) {
                 fn = Y.bind(function() {
                     config = this._resolveWinDoc(config);
                     inst = YUI(config);
-                    inst.use('node-base', cb);
+                    try {
+                        inst.use('node-base', cb);
+                        if (timer) {
+                            clearInterval(timer);
+                        }
+                    } catch (e) {
+                        timer = setInterval(function() {
+                            fn();
+                        }, 350);
+                    }
                 }, this);
 
             args.push(fn);

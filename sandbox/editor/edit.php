@@ -109,7 +109,8 @@
 <button id="focusEditor">Focus Editor</button>
 
 <div id="stub">
-<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+</div>
+<!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
 <ul>
@@ -138,7 +139,7 @@ del {
 }
 </style>
 This is some more loose test.
-</div>
+</div-->
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
 <script type="text/javascript" src="http://yui.yahooapis.com/3.1.0/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -261,7 +262,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             f_options.item(0).set('selected', true);
             f_options.each(function(v) {
                 var val = v.get('value').toLowerCase();
-                if (val === fname) {
+                if (val === fname.toLowerCase()) {
                     v.set('selected', true);
                 }
             });

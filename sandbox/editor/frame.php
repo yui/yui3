@@ -119,7 +119,6 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         Y.one('#out').prepend('<p>' + str + '</p>');
     };
 
-
     var iframe = new Y.Frame({
         designMode: true,
         content: Y.one('#stub').get('innerHTML'),
@@ -199,10 +198,18 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'frame', 'substitute', functio
         Y.one('#arrow').setStyle('display', 'block').setXY([e.frameX - 8, e.frameY - 20]);
     });
     
+
+    Y.on('click', function(e) {
+        //console.log('test one: ', e.target);
+        e.target.set('innerHTML', '');
+        iframe3.render(e.target);
+    }, '#test3');
+
     var iframe3 = new Y.Frame({
         container: '#test3',
-        src: 'local.htm',
-        use: ['node','selector-css3', 'anim']
+        //src: 'local.htm',
+        content: Y.one('#stub').get('innerHTML'),
+        use: ['node','selector-css3']
     }).render();
 
     iframe3.after('ready', function() {

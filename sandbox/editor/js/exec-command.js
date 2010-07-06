@@ -33,7 +33,6 @@ YUI.add('exec-command', function(Y) {
             command: function(action, value) {
                 var fn = ExecCommand.COMMANDS[action];
 
-
                 Y.log('execCommand(' + action + '): "' + value + '"', 'info', 'exec-command');
                 if (fn) {
                     return fn.call(this, action, value);
@@ -199,6 +198,30 @@ YUI.add('exec-command', function(Y) {
                 },
                 hilitecolor: function() {
                     ExecCommand.COMMANDS.backcolor.apply(this, arguments);
+                },
+                fontname: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
+                    if (sel.isCollapsed) {
+                        n = this.command('inserthtml', '<span style="font-family: ' + val + '">&nbsp;</span>');
+                        sel.selectNode(n.get('firstChild'));
+                        return n;
+                    } else {
+                        return this._command('fontname', val);
+                    }
+                },
+                fontsize: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
+                    if (sel.isCollapsed) {
+                        n = this.command('inserthtml', '<font size="' + val + '">&nbsp;</font>');
+                        sel.selectNode(n.get('firstChild'));
+                        return n;
+                    } else {
+                        return this._command('fontsize', val);
+                    }
                 }
             }
         });

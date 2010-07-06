@@ -78,6 +78,12 @@
             var config = (c) ? c : {};
             config.win = Y.Node.getDOMNode(this._iframe.get('contentWindow'));
             config.doc = Y.Node.getDOMNode(this._iframe.get('contentWindow.document'));
+            if (!config.doc) {
+                config.doc = Y.config.doc;
+            }
+            if (!config.win) {
+                config.win = Y.config.win;
+            }
             return config;
         },
         /**
@@ -278,7 +284,7 @@
                             //Force other browsers into non CSS styling
                             doc.execCommand('styleWithCSS', false, false);
                             doc.execCommand('insertbronreturn', false, false);
-                        } catch (e) {}
+                        } catch (err) {}
                     });
                 }
             }
@@ -352,7 +358,7 @@
             if (node) {
                 this.set('container', node);
             }
-            var inst,
+            var inst, timer,
                 res = this._create(),
                 cb = Y.bind(function(i) {
                     Y.log('Internal instance loaded with node', 'info', 'frame');
@@ -371,7 +377,18 @@
                     inst = YUI(config);
                     inst.log = Y.log; //Dump the instance logs to the parent instance.
                     Y.log('Creating new internal instance with node only', 'info', 'frame');
-                    inst.use('node-base', cb);
+                    try {
+                        inst.use('node-base', cb);
+                        if (timer) {
+                            clearInterval(timer);
+                        }
+                    } catch (e) {
+                        timer = setInterval(function() {
+                            Y.log('[TIMER] Internal use call failed, retrying', 'info', 'frame');
+                            fn();
+                        }, 350);
+                        Y.log('Internal use call failed, retrying', 'info', 'frame');
+                    }
                 }, this);
 
             args.push(fn);
