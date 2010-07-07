@@ -6,6 +6,7 @@
     /**
      * Wraps some common Selection/Range functionality into a simple object
      * @class Selection
+     * @for Selection
      * @constructor
      */
     
