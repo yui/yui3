@@ -854,11 +854,29 @@ YUI.add('selection', function(Y) {
     };
 
     /**
+    * Returns the innerHTML of a node with all HTML tags removed.
+    * @static
+    * @method getText
+    * @param {Node} node The Node instance to remove the HTML from
+    * @return {String} The string of text
+    */
+    Y.Selection.getText = function(node) {
+        return node.get('innerHTML').replace(Y.Selection.STRIP_HTML, '');
+    };
+
+    /**
     * The selector to use when looking for Nodes to cache the value of: [style],font[face]
     * @static
     * @property ALL
     */
     Y.Selection.ALL = '[style],font[face]';
+
+    /**
+    * RegExp used to strip HTML tags from a string
+    * @static
+    * @property STRIP_HTML
+    */
+    Y.Selection.STRIP_HTML = /<\S[^><]*>/g;
 
     /**
     * The selector to use when looking for block level items.
@@ -1658,17 +1676,16 @@ YUI.add('editor-base', function(Y) {
                     if (e.changedEvent.keyCode === 8) {
                         var inst = this.getInstance(),
                         ps = inst.all('body > p'), br, p, sel, item;
-
                         if (ps.size() < 2) {
                             item = inst.one('body');
                             if (ps.item(0)) {
                                 item = ps.item(0);
                             }
-                            br = item.all('br');
-                            if (br.size() === 1) {
-                                br.item(0).remove();
-                            }
-                            if (item.get('innerHTML') === '' && !item.test('p')) {
+                            if (inst.Selection.getText(item) === '' && !item.test('p')) {
+                                br = item.all('br');
+                                if (br.size() === 1) {
+                                    br.item(0).remove();
+                                }
                                 inst.one('body').append('<p>&nbsp;</p>');
                                 sel = new inst.Selection();
                                 try {
