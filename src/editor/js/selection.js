@@ -425,7 +425,6 @@
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
                 if (node.test('body')) {
-                    console.log('Node: ', node);
                     b = Y.Node.create('<span></span>');
                     node.append(b);
                     node = b;
@@ -582,6 +581,9 @@
                     }
                 }
             } else {
+                if (node.nodeType === 3) {
+                    node = node.parentNode;
+                }
                 range.moveToElementText(node);
                 range.select();
                 if (collapse) {
