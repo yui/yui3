@@ -199,7 +199,7 @@ SyntheticEvent.prototype = {
 
             if (!ce) {
                 init = true;
-                ce = node.publish(self.type, Y.merge(self._publishConfig));
+                ce = node.publish(self.type, self._publishConfig);
 
                 // node.detach() with type missing doesn't reach adapter fork
                 ce.detach = function (fn, context) {
