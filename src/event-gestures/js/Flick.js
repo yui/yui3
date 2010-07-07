@@ -154,6 +154,8 @@ Y.Event.define('flick', {
                         axis:axis,
                         start: start,
                         end : {
+                            target: e.target,
+                            currentTarget: e.currentTarget,
                             time: endTime,
                             clientX: endEvent.clientX, 
                             clientY: endEvent.clientY,

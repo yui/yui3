@@ -81,6 +81,8 @@ define('movestart', {
 
             // TODO: Pass through e instead?
             payload = {
+                target: e.target,
+                currentTarget: e.currentTarget,
                 time : new Date().getTime(),
                 clientX: e.clientX,
                 clientY: e.clientY,
@@ -142,6 +144,8 @@ define('move', {
                 e.preventDefault();
 
                 payload = {
+                    target: e.target,
+                    currentTarget: e.currentTarget,
                     time : new Date().getTime(),
                     clientX: e.clientX, 
                     clientY: e.clientY,
@@ -202,6 +206,8 @@ define('moveend', {
                 e.preventDefault();
 
                 payload = {
+                    target: e.target,
+                    currentTarget: e.currentTarget,
                     time : new Date().getTime(),
                     clientX: e.clientX, 
                     clientY: e.clientY,
