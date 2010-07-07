@@ -10,6 +10,7 @@ YUI.add('frame', function(Y) {
      * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
      * @class Frame
+     * @for Frame
      * @extends Base
      * @constructor
      */
@@ -595,6 +596,7 @@ YUI.add('selection', function(Y) {
     /**
      * Wraps some common Selection/Range functionality into a simple object
      * @class Selection
+     * @for Selection
      * @constructor
      */
     
@@ -1226,10 +1228,9 @@ YUI.add('exec-command', function(Y) {
      */     
     /**
      * Plugin for the frame module to handle execCommands for Editor
-     * @class ExecCommand
+     * @class Plugin.ExecCommand
      * @extends Base
      * @constructor
-     * @namespace Plugin
      */
         var ExecCommand = function() {
             ExecCommand.superclass.constructor.apply(this, arguments);
@@ -1467,10 +1468,9 @@ YUI.add('editor-tab', function(Y) {
      */     
     /**
      * Handles tab and shift-tab indent/outdent support.
-     * @class EditorTab
+     * @class Plugin.EditorTab
      * @constructor
      * @extends Base
-     * @namespace Plugin
      */
     
     var EditorTab = function() {
@@ -1538,9 +1538,8 @@ YUI.add('createlink-base', function(Y) {
      */     
     /**
      * Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
-     * @class CreateLinkBase
+     * @class Plugin.CreateLinkBase
      * @static
-     * @namespace Plugin
      */
     
     var CreateLinkBase = {};
@@ -1611,6 +1610,7 @@ YUI.add('editor-base', function(Y) {
     /**
      * Base class for Editor. Handles the business logic of Editor, no GUI involved only utility methods and events.
      * @class EditorBase
+     * @for EditorBase
      * @extends Base
      * @constructor
      */
@@ -2111,8 +2111,19 @@ YUI.add('editor-base', function(Y) {
     /**
     * @event nodeChange
     * @description Fired from mouseup & keyup.
-    * @param {Event.Facade} event An Event Facade object with the following specific property added:
-    * <dl><dt>node</dt><dd>The node currently being interacted with</dd></dl>
+    * @param {Event.Facade} event An Event Facade object with the following specific properties added:
+    * <dl>
+    *   <dt>changedEvent</dt><dd>The event that caused the nodeChange</dd>
+    *   <dt>changedNode</dt><dd>The node that was interacted with</dd>
+    *   <dt>changedType</dt><dd>The type of change: mousedown, mouseup, right, left, backspace, tab, enter, etc..</dd>
+    *   <dt>commands</dt><dd>The list of execCommands that belong to this change and the dompath that's associated with the changedNode</dd>
+    *   <dt>classNames</dt><dd>An array of classNames that are applied to the changedNode and all of it's parents</dd>
+    *   <dt>dompath</dt><dd>A sorted array of node instances that make up the DOM path from the changedNode to body.</dd>
+    *   <dt>backgroundColor</dt><dd>The cascaded backgroundColor of the changedNode</dd>
+    *   <dt>fontColor</dt><dd>The cascaded fontColor of the changedNode</dd>
+    *   <dt>fontFamily</dt><dd>The cascaded fontFamily of the changedNode</dd>
+    *   <dt>fontSize</dt><dd>The cascaded fontSize of the changedNode</dd>
+    * </dl>
     * @type {Event.Custom}
     */
 
@@ -2130,10 +2141,9 @@ YUI.add('editor-lists', function(Y) {
      */     
     /**
      * Handles list manipulation inside the Editor. Adds keyboard manipulation and execCommand support. Adds overrides for the <a href="Plugin.ExecCommand.html#method_COMMANDS.insertorderedlist">insertorderedlist</a> and <a href="Plugin.ExecCommand.html#method_COMMANDS.insertunorderedlist">insertunorderedlist</a> execCommands.
-     * @class EditorLists
+     * @class Plugin.EditorLists
      * @constructor
      * @extends Base
-     * @namespace Plugin
      */
     
     var EditorLists = function() {

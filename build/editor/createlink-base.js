@@ -7,9 +7,8 @@ YUI.add('createlink-base', function(Y) {
      */     
     /**
      * Adds prompt style link creation. Adds an override for the <a href="Plugin.ExecCommand.html#method_COMMANDS.createlink">createlink execCommand</a>.
-     * @class CreateLinkBase
+     * @class Plugin.CreateLinkBase
      * @static
-     * @namespace Plugin
      */
     
     var CreateLinkBase = {};
