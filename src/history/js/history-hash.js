@@ -37,14 +37,6 @@ var HistoryBase    = Y.HistoryBase,
     win            = config.win,
     location       = win.location,
 
-    // IE8 supports the hashchange event, but only in IE8 Standards
-    // Mode. However, IE8 in IE7 compatibility mode still defines the
-    // event but never fires it, so we can't just sniff for the event. We also
-    // can't just sniff for IE8, since other browsers have begun to support this
-    // event as well.
-    nativeHashChange = !Lang.isUndefined(win.onhashchange) &&
-            (Lang.isUndefined(docMode) || docMode > 7),
-
 History = function () {
     History.superclass.constructor.apply(this, arguments);
 };
@@ -126,19 +118,6 @@ Y.extend(History, HistoryBase, {
      * @static
      */
     hashPrefix: '',
-
-    /**
-     * Whether or not this browser supports the <code>window.onhashchange</code>
-     * event natively. Note that even if this is <code>true</code>, you may
-     * still want to use History's synthetic <code>hashchange</code> event since
-     * it normalizes implementation differences and fixes spec violations across
-     * various browsers.
-     *
-     * @property nativeHashChange
-     * @type Boolean
-     * @static
-     */
-    nativeHashChange: nativeHashChange,
 
     // -- Protected Static Properties ------------------------------------------
 
@@ -405,7 +384,7 @@ Y.Event.define('hashchange', {
 oldHash = History.getHash();
 oldUrl  = History.getUrl();
 
-if (nativeHashChange) {
+if (HistoryBase.nativeHashChange) {
     // Wrap the browser's native hashchange event.
     Y.Event.attach('hashchange', function (e) {
         var newHash = History.getHash(),
