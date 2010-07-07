@@ -38,6 +38,15 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.ObjectAssert.ownsNoKeys(history.get());
     },
 
+    // -- Static Properties ----------------------------------------------------
+    'HistoryBase should have a static boolean html5 property': function () {
+        Y.Assert.isBoolean(Y.HistoryBase.html5);
+    },
+
+    'HistoryBase should have a static boolean nativeHashChange property': function () {
+        Y.Assert.isBoolean(Y.HistoryBase.nativeHashChange);
+    },
+
     // -- _resolveChanges() ----------------------------------------------------
     '_resolveChanges() should change the state and fire events': function () {
         var handler = Y.Mock();

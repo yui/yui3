@@ -56,20 +56,30 @@
 <span class="cm"> * @submodule history-hash-ie</span>
 <span class="cm"> */</span>
 
-<span class="kd">var</span> <span class="nx">Do</span>        <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">,</span>
-    <span class="nx">GlobalEnv</span> <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.History&#39;</span><span class="p">),</span>
-    <span class="nx">History</span>   <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">History</span><span class="p">,</span>
-    <span class="nx">iframe</span>    <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">,</span>
-    <span class="nx">win</span>       <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
-    <span class="nx">location</span>  <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+<span class="c1">// Combination of a UA sniff to ensure this is IE (or a browser that wants us to</span>
+<span class="c1">// treat it like IE) and feature detection for native hashchange support (false</span>
+<span class="c1">// for IE &lt; 8 or IE8/9 in IE7 mode).</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">nativeHashChange</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">Do</span>          <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Do</span><span class="p">,</span>
+        <span class="nx">GlobalEnv</span>   <span class="o">=</span> <span class="nx">YUI</span><span class="p">.</span><span class="nx">namespace</span><span class="p">(</span><span class="s1">&#39;Env.HistoryHash&#39;</span><span class="p">),</span>
+        <span class="nx">HistoryHash</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHash</span><span class="p">,</span>
+        <span class="nx">iframe</span>      <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_iframe</span><span class="p">,</span>
+        <span class="nx">win</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
+        <span class="nx">location</span>    <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
 
-<span class="k">if</span> <span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">UA</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">History</span><span class="p">.</span><span class="nx">getHash</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">iframe</span> <span class="o">?</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+    <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getHash</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// The iframe&#39;s hash always wins over the parent frame&#39;s. This results</span>
+        <span class="c1">// in the unfortunate edge case that changing the parent&#39;s hash without</span>
+        <span class="c1">// using the YUI History API will not result in a hashchange event, but</span>
+        <span class="c1">// this is a reasonable tradeoff. The only time the parent frame&#39;s hash</span>
+        <span class="c1">// will be returned is if the iframe hasn&#39;t been created yet (i.e.,</span>
+        <span class="c1">// before domready).</span>
+        <span class="k">return</span> <span class="nx">iframe</span> <span class="o">?</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span>
+                <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">};</span>
 
-    <span class="nx">History</span><span class="p">.</span><span class="nx">getUrl</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nx">History</span><span class="p">.</span><span class="nx">getHash</span><span class="p">();</span>
+    <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getUrl</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">getHash</span><span class="p">();</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">hash</span> <span class="o">&amp;&amp;</span> <span class="nx">hash</span> <span class="o">!==</span> <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
             <span class="k">return</span> <span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/#.*$/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">hash</span><span class="p">;</span>
@@ -87,9 +97,9 @@
 <span class="cm">     *   history state will be replaced without adding a new history entry</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     * @static</span>
-<span class="cm">     * @for History</span>
+<span class="cm">     * @for HistoryHash</span>
 <span class="cm">     */</span>
-    <span class="nx">History</span><span class="p">.</span><span class="nx">_updateIframe</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">replace</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">hash</span><span class="p">,</span> <span class="nx">replace</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">iframeDoc</span>      <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nb">document</span><span class="p">,</span>
             <span class="nx">iframeLocation</span> <span class="o">=</span> <span class="nx">iframeDoc</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
 
@@ -104,30 +114,44 @@
         <span class="p">}</span>
     <span class="p">};</span>
 
-    <span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">History</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">,</span> <span class="nx">History</span><span class="p">,</span> <span class="s1">&#39;replaceHash&#39;</span><span class="p">,</span> <span class="nx">History</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-    <span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">History</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">,</span> <span class="nx">History</span><span class="p">,</span> <span class="s1">&#39;setHash&#39;</span><span class="p">);</span>
+    <span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">,</span> <span class="nx">HistoryHash</span><span class="p">,</span> <span class="s1">&#39;replaceHash&#39;</span><span class="p">,</span> <span class="nx">HistoryHash</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+    <span class="nx">Do</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">,</span> <span class="nx">HistoryHash</span><span class="p">,</span> <span class="s1">&#39;setHash&#39;</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">iframe</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Create an iframe to store history state.</span>
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;creating dynamic history iframe&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
-
-        <span class="nx">iframe</span> <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
-            <span class="s1">&#39;&lt;iframe src=&quot;javascript:0&quot; style=&quot;display:none&quot;/&gt;&#39;</span>
-        <span class="p">));</span>
-
-        <span class="c1">// Don&#39;t add the iframe to the DOM until the DOM is ready, lest we</span>
-        <span class="c1">// frighten IE.</span>
         <span class="nx">Y</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;domready&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="c1">// The iframe is appended to the documentElement rather than the</span>
-            <span class="c1">// body. Keeping it outside the body prevents scrolling on the</span>
-            <span class="c1">// initial page load (hat tip to Ben Alman and jQuery BBQ for this</span>
+            <span class="c1">// Create a hidden iframe to store history state, following the</span>
+            <span class="c1">// iframe-hiding recommendations from</span>
+            <span class="c1">// http://www.paciellogroup.com/blog/?p=604.</span>
+            <span class="c1">//</span>
+            <span class="c1">// This iframe will allow history navigation within the current page</span>
+            <span class="c1">// context. After navigating to another page, all but the most</span>
+            <span class="c1">// recent history state will be lost.</span>
+            <span class="c1">//</span>
+            <span class="c1">// Earlier versions of the YUI History Utility attempted to work</span>
+            <span class="c1">// around this limitation by having the iframe load a static</span>
+            <span class="c1">// resource. This workaround was extremely fragile and tended to</span>
+            <span class="c1">// break frequently (and silently) since it was entirely dependent</span>
+            <span class="c1">// on IE&#39;s inconsistent handling of iframe history.</span>
+            <span class="c1">//</span>
+            <span class="c1">// Since this workaround didn&#39;t work much of the time anyway and</span>
+            <span class="c1">// added significant complexity, it has been removed, and IE6 and 7</span>
+            <span class="c1">// now get slightly degraded history support.</span>
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;creating dynamic history iframe&#39;</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">);</span>
+
+            <span class="nx">iframe</span> <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_iframe</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">getDOMNode</span><span class="p">(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">Node</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
+                <span class="s1">&#39;&lt;iframe src=&quot;javascript:0&quot; style=&quot;display:none&quot; height=&quot;0&quot; width=&quot;0&quot; tabindex=&quot;-1&quot; title=&quot;empty&quot;/&gt;&#39;</span>
+            <span class="p">));</span>
+
+            <span class="c1">// Append the iframe to the documentElement rather than the body.</span>
+            <span class="c1">// Keeping it outside the body prevents scrolling on the initial</span>
+            <span class="c1">// page load (hat tip to Ben Alman and jQuery BBQ for this</span>
             <span class="c1">// technique).</span>
             <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">doc</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
 
             <span class="c1">// Update the iframe with the initial location hash, if any. This</span>
             <span class="c1">// will create an initial history entry that the user can return to</span>
             <span class="c1">// after the state has changed.</span>
-            <span class="nx">History</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+            <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">_updateIframe</span><span class="p">(</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
         <span class="p">});</span>
 
         <span class="c1">// Listen for hashchange events and keep the parent window&#39;s location</span>
@@ -168,6 +192,7 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
@@ -215,8 +240,8 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="History.html" title="History">History</a></li>
                                 <li class=""><a href="HistoryBase.html" title="HistoryBase">HistoryBase</a></li>
+                                <li class=""><a href="HistoryHash.html" title="HistoryHash">HistoryHash</a></li>
                         </ul>
                     </div>
 
@@ -243,7 +268,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "History", "name": "_afterHashChange", "url": "History.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "", "host": "History", "name": "createHash", "url": "History.html#method_createHash", "type": "method"}, {"access": "", "host": "History", "name": "decode", "url": "History.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "History", "name": "encode", "url": "History.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "History", "name": "getHash", "url": "History.html#method_getHash", "type": "method"}, {"access": "", "host": "History", "name": "getUrl", "url": "History.html#method_getUrl", "type": "method"}, {"access": "", "host": "History", "name": "hashPrefix", "url": "History.html#property_hashPrefix", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "History", "name": "nativeHashChange", "url": "History.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "History", "name": "parseHash", "url": "History.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "History", "name": "_REGEX_HASH", "url": "History.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "History", "name": "replaceHash", "url": "History.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "History", "name": "setHash", "url": "History.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "History", "name": "SRC_HASH", "url": "History.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "History", "name": "_updateIframe", "url": "History.html#method__updateIframe", "type": "method"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "HistoryBase", "name": "[key]Change", "url": "HistoryBase.html#event_[key]Change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "[key]Remove", "url": "HistoryBase.html#event_[key]Remove", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "add", "url": "HistoryBase.html#method_add", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_afterHashChange", "url": "HistoryHash.html#method__afterHashChange", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_change", "url": "HistoryBase.html#method__change", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "createHash", "url": "HistoryHash.html#method_createHash", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "decode", "url": "HistoryHash.html#method_decode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_defChangeFn", "url": "HistoryBase.html#method__defChangeFn", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "encode", "url": "HistoryHash.html#method_encode", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireChangeEvent", "url": "HistoryBase.html#method__fireChangeEvent", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireEvents", "url": "HistoryBase.html#method__fireEvents", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_fireRemoveEvent", "url": "HistoryBase.html#method__fireRemoveEvent", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "get", "url": "HistoryBase.html#method_get", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getHash", "url": "HistoryHash.html#method_getHash", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "getUrl", "url": "HistoryHash.html#method_getUrl", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "hashPrefix", "url": "HistoryHash.html#property_hashPrefix", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "history:change", "url": "HistoryBase.html#event_history:change", "type": "event"}, {"access": "", "host": "HistoryBase", "name": "html5", "url": "HistoryBase.html#property_html5", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_init", "url": "HistoryBase.html#method__init", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "NAME", "url": "HistoryBase.html#property_NAME", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "nativeHashChange", "url": "HistoryBase.html#property_nativeHashChange", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "parseHash", "url": "HistoryHash.html#method_parseHash", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_REGEX_HASH", "url": "HistoryHash.html#property__REGEX_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "replace", "url": "HistoryBase.html#method_replace", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "replaceHash", "url": "HistoryHash.html#method_replaceHash", "type": "method"}, {"access": "protected", "host": "HistoryBase", "name": "_resolveChanges", "url": "HistoryBase.html#method__resolveChanges", "type": "method"}, {"access": "", "host": "HistoryHash", "name": "setHash", "url": "HistoryHash.html#method_setHash", "type": "method"}, {"access": "", "host": "HistoryBase", "name": "SRC_ADD", "url": "HistoryBase.html#property_SRC_ADD", "type": "property"}, {"access": "", "host": "HistoryHash", "name": "SRC_HASH", "url": "HistoryHash.html#property_SRC_HASH", "type": "property"}, {"access": "", "host": "HistoryBase", "name": "SRC_REPLACE", "url": "HistoryBase.html#property_SRC_REPLACE", "type": "property"}, {"access": "protected", "host": "HistoryBase", "name": "_storeState", "url": "HistoryBase.html#method__storeState", "type": "method"}, {"access": "protected", "host": "HistoryHash", "name": "_updateIframe", "url": "HistoryHash.html#method__updateIframe", "type": "method"}];
 </script>
 </body>
 </html>

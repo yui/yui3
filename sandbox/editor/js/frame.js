@@ -9,6 +9,7 @@ YUI.add('frame', function(Y) {
      * Creates a wrapper around an iframe. It loads the content either from a local
      * file or from script and creates a local YUI instance bound to that new window and document.
      * @class Frame
+     * @for Frame
      * @extends Base
      * @constructor
      */
@@ -79,6 +80,12 @@ YUI.add('frame', function(Y) {
             var config = (c) ? c : {};
             config.win = Y.Node.getDOMNode(this._iframe.get('contentWindow'));
             config.doc = Y.Node.getDOMNode(this._iframe.get('contentWindow.document'));
+            if (!config.doc) {
+                config.doc = Y.config.doc;
+            }
+            if (!config.win) {
+                config.win = Y.config.win;
+            }
             return config;
         },
         /**
@@ -137,30 +144,7 @@ YUI.add('frame', function(Y) {
             inst._use = inst.use;
             inst.use = Y.bind(this.use, this);
 
-            this._iframe.setStyle('visibility', 'visible');
-        },
-        /**
-        * @method use
-        * @description This is a scoped version of the normal YUI.use method & is bound to this frame/window.
-        * At setup, the inst.use method is mapped to this method.
-        */
-        use: function() {
-            Y.log('Calling augmented use after ready', 'info', 'frame');
-            var inst = this.getInstance(),
-                args = Y.Array(arguments),
-                cb = false;
-
-            if (Y.Lang.isFunction(args[args.length - 1])) {
-                cb = args.pop();
-            }
-            if (cb) {
-                args.push(function() {
-                    Y.log('Internal callback from augmented use', 'info', 'frame');
-                    cb.apply(inst, arguments);
-
-                });
-            }
-            inst._use.apply(inst, args);
+            this._iframe.setStyle('visibility', 'inherit');
         },
         /**
         * @private
@@ -190,129 +174,6 @@ YUI.add('frame', function(Y) {
 
                 inst.one('doc').get('documentElement').addClass('yui-js-enabled');
             }
-        },
-        /**
-        * @private
-        * @method _instanceLoaded
-        * @description Called from the first YUI instance that sets up the internal instance.
-        * This loads the content into the window/frame and attaches the contentready event.
-        * @param {YUI} inst The internal YUI instance bound to the frame/window
-        */
-        _instanceLoaded: function(inst) {
-            this._instance = inst;
-            this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
-
-            var html = '',
-                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : ''),
-                doc = this._instance.config.doc;
-
-            Y.log('Creating the document from javascript', 'info', 'frame');
-            html = Y.substitute(Frame.PAGE_HTML, {
-                DIR: this.get('dir'),
-                LANG: this.get('lang'),
-                TITLE: this.get('title'),
-                META: Frame.META,
-                CONTENT: this.get('content'),
-                BASE_HREF: this.get('basehref'),
-                DEFAULT_CSS: Frame.DEFAULT_CSS,
-                EXTRA_CSS: extra_css
-            });
-            if (Y.config.doc.compatMode != 'BackCompat') {
-                Y.log('Adding Doctype to frame', 'info', 'frame');
-                html = Frame.DOC_TYPE + "\n" + html;
-            } else {
-                Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
-            }
-
-            Y.log('Injecting content into iframe', 'info', 'frame');
-            doc.open();
-            doc.write(html);
-            doc.close();
-            if (this.get('designMode')) {
-                doc.designMode = 'on';
-                if (!Y.UA.ie) {
-                    this._instance.on('domready', function(e) {
-                        try {
-                            //Force other browsers into non CSS styling
-                            doc.execCommand('styleWithCSS', false, false);
-                            doc.execCommand('insertbronreturn', false, false);
-                        } catch (e) {}
-                    });
-                }
-            }
-        },
-        /**
-        * @method delegate
-        * @description A delegate method passed to the instance's delegate method
-        * @param {String} type The type of event to listen for
-        * @param {Function} fn The method to attach
-        * @param {String} cont The container to act as a delegate, if no "sel" passed, the body is assumed as the container.
-        * @param {String} sel The selector to match in the event (optional)
-        * @return {EventHandle} The Event handle returned from Y.delegate
-        */
-        delegate: function(type, fn, cont, sel) {
-            var inst = this.getInstance();
-            if (!inst) {
-                Y.log('Delegate events can not be attached until after the ready event has fired.', 'error', 'iframe');
-                return false;
-            }
-            if (!sel) {
-                sel = cont;
-                cont = 'body';
-            }
-            return inst.delegate(type, fn, cont, sel);
-        },
-        /**
-        * @method getInstance
-        * @description Get a reference to the internal YUI instance.
-        * @return {YUI} The internal YUI instance
-        */
-        getInstance: function() {
-            return this._instance;
-        },
-        /**
-        * @method render
-        * @description Render the iframe into the container config option or open the window.
-        * @param {String/HTMLElement/Node} node The node to render to
-        * @return {Y.Frame}
-        * @chainable
-        */
-        render: function(node) {
-            if (this._rendered) {
-                Y.log('Frame already rendered.', 'warn', 'frame');
-                return this;
-            }
-            this._rendered = true;
-            if (node) {
-                this.set('container', node);
-            }
-            var inst,
-                res = this._create(),
-                cb = Y.bind(function(i) {
-                    Y.log('Internal instance loaded with node', 'info', 'frame');
-                    this._instanceLoaded(i);
-                }, this),
-                args = Y.clone(this.get('use')),
-                config = {
-                    debug: false,
-                    bootstrap: false,
-                    win: res.win,
-                    doc: res.doc
-                },
-                fn = Y.bind(function() {
-                    Y.log('New Modules Loaded into main instance', 'info', 'frame');
-                    config = this._resolveWinDoc(config);
-                    inst = YUI(config);
-                    inst.log = Y.log; //Dump the instance logs to the parent instance.
-                    Y.log('Creating new internal instance with node only', 'info', 'frame');
-                    inst.use('node-base', cb);
-                }, this);
-
-            args.push(fn);
-
-            Y.log('Adding new modules to main instance', 'info', 'frame');
-            Y.use.apply(Y, args);
-            return this;
         },
         /**
         * @private
@@ -366,14 +227,6 @@ YUI.add('frame', function(Y) {
             return html;
         },
         /**
-        * @method focus
-        * @description Set the focus to the iframe
-        */
-        focus: function() {
-            this.getInstance().one('win').focus();
-            return this;
-        },
-        /**
         * @private
         * @method _setExtraCSS
         * @description Set's the extra CSS on the instance..
@@ -387,6 +240,206 @@ YUI.add('frame', function(Y) {
                 inst.one('head').append('<style id="extra_css">' + css + '</style>');
             }
             return css;
+        },
+        /**
+        * @private
+        * @method _instanceLoaded
+        * @description Called from the first YUI instance that sets up the internal instance.
+        * This loads the content into the window/frame and attaches the contentready event.
+        * @param {YUI} inst The internal YUI instance bound to the frame/window
+        */
+        _instanceLoaded: function(inst) {
+            this._instance = inst;
+            this._instance.on('contentready', Y.bind(this._onContentReady, this), 'body');
+
+            var html = '',
+                extra_css = ((this.get('extracss')) ? '<style id="extra_css">' + this.get('extracss') + '</style>' : ''),
+                doc = this._instance.config.doc;
+
+            Y.log('Creating the document from javascript', 'info', 'frame');
+            html = Y.substitute(Frame.PAGE_HTML, {
+                DIR: this.get('dir'),
+                LANG: this.get('lang'),
+                TITLE: this.get('title'),
+                META: Frame.META,
+                CONTENT: this.get('content'),
+                BASE_HREF: this.get('basehref'),
+                DEFAULT_CSS: Frame.DEFAULT_CSS,
+                EXTRA_CSS: extra_css
+            });
+            if (Y.config.doc.compatMode != 'BackCompat') {
+                Y.log('Adding Doctype to frame', 'info', 'frame');
+                html = Frame.DOC_TYPE + "\n" + html;
+            } else {
+                Y.log('DocType skipped because we are in BackCompat Mode.', 'warn', 'frame');
+            }
+
+            Y.log('Injecting content into iframe', 'info', 'frame');
+            doc.open();
+            doc.write(html);
+            doc.close();
+            if (this.get('designMode')) {
+                doc.designMode = 'on';
+                if (!Y.UA.ie) {
+                    this._instance.on('domready', function(e) {
+                        try {
+                            //Force other browsers into non CSS styling
+                            doc.execCommand('styleWithCSS', false, false);
+                            doc.execCommand('insertbronreturn', false, false);
+                        } catch (err) {}
+                    });
+                }
+            }
+        },
+        //BEGIN PUBLIC METHODS
+        /**
+        * @method use
+        * @description This is a scoped version of the normal YUI.use method & is bound to this frame/window.
+        * At setup, the inst.use method is mapped to this method.
+        */
+        use: function() {
+            Y.log('Calling augmented use after ready', 'info', 'frame');
+            var inst = this.getInstance(),
+                args = Y.Array(arguments),
+                cb = false;
+
+            if (Y.Lang.isFunction(args[args.length - 1])) {
+                cb = args.pop();
+            }
+            if (cb) {
+                args.push(function() {
+                    Y.log('Internal callback from augmented use', 'info', 'frame');
+                    cb.apply(inst, arguments);
+
+                });
+            }
+            inst._use.apply(inst, args);
+        },
+        /**
+        * @method delegate
+        * @description A delegate method passed to the instance's delegate method
+        * @param {String} type The type of event to listen for
+        * @param {Function} fn The method to attach
+        * @param {String} cont The container to act as a delegate, if no "sel" passed, the body is assumed as the container.
+        * @param {String} sel The selector to match in the event (optional)
+        * @return {EventHandle} The Event handle returned from Y.delegate
+        */
+        delegate: function(type, fn, cont, sel) {
+            var inst = this.getInstance();
+            if (!inst) {
+                Y.log('Delegate events can not be attached until after the ready event has fired.', 'error', 'iframe');
+                return false;
+            }
+            if (!sel) {
+                sel = cont;
+                cont = 'body';
+            }
+            return inst.delegate(type, fn, cont, sel);
+        },
+        /**
+        * @method getInstance
+        * @description Get a reference to the internal YUI instance.
+        * @return {YUI} The internal YUI instance
+        */
+        getInstance: function() {
+            return this._instance;
+        },
+        /**
+        * @method render
+        * @description Render the iframe into the container config option or open the window.
+        * @param {String/HTMLElement/Node} node The node to render to
+        * @return {Y.Frame}
+        * @chainable
+        */
+        render: function(node) {
+            if (this._rendered) {
+                Y.log('Frame already rendered.', 'warn', 'frame');
+                return this;
+            }
+            this._rendered = true;
+            if (node) {
+                this.set('container', node);
+            }
+            var inst, timer,
+                res = this._create(),
+                cb = Y.bind(function(i) {
+                    Y.log('Internal instance loaded with node', 'info', 'frame');
+                    this._instanceLoaded(i);
+                }, this),
+                args = Y.clone(this.get('use')),
+                config = {
+                    debug: false,
+                    bootstrap: false,
+                    win: res.win,
+                    doc: res.doc
+                },
+                fn = Y.bind(function() {
+                    Y.log('New Modules Loaded into main instance', 'info', 'frame');
+                    config = this._resolveWinDoc(config);
+                    inst = YUI(config);
+                    inst.log = Y.log; //Dump the instance logs to the parent instance.
+                    Y.log('Creating new internal instance with node only', 'info', 'frame');
+                    try {
+                        inst.use('node-base', cb);
+                        if (timer) {
+                            clearInterval(timer);
+                        }
+                    } catch (e) {
+                        timer = setInterval(function() {
+                            Y.log('[TIMER] Internal use call failed, retrying', 'info', 'frame');
+                            fn();
+                        }, 350);
+                        Y.log('Internal use call failed, retrying', 'info', 'frame');
+                    }
+                }, this);
+
+            args.push(fn);
+
+            Y.log('Adding new modules to main instance', 'info', 'frame');
+            Y.use.apply(Y, args);
+            return this;
+        },
+        /**
+        * @method focus
+        * @description Set the focus to the iframe
+        * @return {Frame}
+        * @chainable        
+        */
+        focus: function() {
+            this.getInstance().one('win').focus();
+            return this;
+        },
+        /**
+        * @method show
+        * @description Show the iframe instance
+        * @return {Frame}
+        * @chainable        
+        */
+        show: function() {
+            this._iframe.setStyles({
+                position: 'static',
+                left: ''
+            });
+            if (Y.UA.gecko) {
+                try {
+                    this._instance.config.doc.designMode = 'on';
+                } catch (e) { }
+                this.focus();
+            }           
+            return this;
+        },
+        /**
+        * @method hide
+        * @description Hide the iframe instance
+        * @return {Frame}
+        * @chainable        
+        */
+        hide: function() {
+            this._iframe.setStyles({
+                position: 'absolute',
+                left: '-999999px'
+            });
+            return this;
         }
     }, {
 

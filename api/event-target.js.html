@@ -530,7 +530,9 @@
 <span class="cm">     *</span>
 <span class="cm">     */</span>
     <span class="nx">publish</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">pre</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">ce</span><span class="p">,</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">defaults</span><span class="p">,</span>
+            <span class="nx">edata</span>    <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">,</span>
+            <span class="nx">pre</span>      <span class="o">=</span> <span class="nx">edata</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prefix</span><span class="p">;</span>
 
         <span class="nx">type</span> <span class="o">=</span> <span class="p">(</span><span class="nx">pre</span><span class="p">)</span> <span class="o">?</span> <span class="nx">_getType</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="nx">pre</span><span class="p">)</span> <span class="o">:</span> <span class="nx">type</span><span class="p">;</span>
 
@@ -547,7 +549,7 @@
             <span class="k">return</span> <span class="nx">ret</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span> 
+        <span class="nx">events</span> <span class="o">=</span> <span class="nx">edata</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span> 
         <span class="nx">ce</span> <span class="o">=</span> <span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">ce</span><span class="p">)</span> <span class="p">{</span>
@@ -556,8 +558,12 @@
                 <span class="nx">ce</span><span class="p">.</span><span class="nx">applyConfig</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+
+            <span class="nx">defaults</span> <span class="o">=</span> <span class="nx">edata</span><span class="p">.</span><span class="nx">defaults</span><span class="p">;</span>
+
             <span class="c1">// apply defaults</span>
-            <span class="nx">ce</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span> <span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">mix</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">defaults</span><span class="p">)</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_yuievt</span><span class="p">.</span><span class="nx">defaults</span><span class="p">);</span>
+            <span class="nx">ce</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">CustomEvent</span><span class="p">(</span><span class="nx">type</span><span class="p">,</span>
+                                  <span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">defaults</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="o">:</span> <span class="nx">defaults</span><span class="p">);</span>
             <span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ce</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -915,6 +921,7 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class="selected"><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>

@@ -95,7 +95,16 @@ suite.add(new Y.Test.Case({
             test_failOnSingleQuote              : true,
             test_failOnTabCharacter             : true,
             test_failOnLineBreakChar            : true,
-            test_failOnMismatchedClose          : true
+            test_failOnMismatchedClose          : true,
+            test_failOnObjectInput              : true,
+            test_failOnArrayInput               : true,
+            test_failOnDateInput                : true,
+            test_failOnRegExpInput              : true,
+            test_failOnErrorInput               : true,
+            test_failOnFunctionInput            : true,
+            test_failOnNaNInput                 : true,
+            test_failOnInfinityInput            : true,
+            test_failOnUndefinedInput           : true
         }
     },
 
@@ -309,6 +318,104 @@ suite.add(new Y.Test.Case({
     test_failOnMismatchedClose : function () {
         // parse should throw an error 
         Y.JSON.parse('["mismatched"}');
+    },
+    test_failOnObjectInput: function () {
+        // parse should throw an error 
+        Y.JSON.parse({"should": "be treated as [object Object]"});
+    },
+    test_arrayContainingValidJSON: function () {
+        // Should be ToString'ed to '{"foo":"bar"}' which is valid
+        var o = Y.JSON.parse(['{"foo":"bar"}']);
+
+        Y.Assert.isObject(o);
+        Y.Assert.areSame("bar", o.foo);
+    },
+    test_failOnArrayInput: function () {
+        // parse should throw an error 
+        Y.JSON.parse(['x', 'y']); // should be treated as "x,y");
+    },
+    test_failOnDateInput: function () {
+        // parse should throw an error 
+        Y.JSON.parse(new Date()); // should be treated as date string
+    },
+    test_failOnRegExpInput: function () {
+        // parse should throw an error 
+        Y.JSON.parse(/should fail/); // should ToString to '/should fail/'
+        Y.JSON.parse(/true/); // should ToString to '/true/'
+    },
+    test_failOnErrorInput: function () {
+        // parse should throw an error 
+        Y.JSON.parse(new Error("Boom")); // ToString to 'Error: Boom'
+        Y.JSON.parse(new Error("true")); // ToString to 'Error: true'
+        Y.JSON.parse(new SyntaxError("true")); // ToString to 'Error: true'
+    },
+    test_failOnFunctionInput: function () {
+        // parse should throw an error 
+        Y.JSON.parse(function () { return "decompiled!"; }); // ToString 'function ...'
+    },
+    test_failOnNaNInput: function () {
+        // parse should throw an error 
+        Y.JSON.parse(NaN); // ToString to 'NaN', but not a valid JSON number
+    },
+    test_failOnInfinityInput: function () {
+        // parse should throw an error 
+        Y.JSON.parse(Infinity); // ToString to 'Infinity', but not valid JSON
+    },
+    test_failOnUndefinedInput: function () {
+        // Should be ToString'ed to 'undefined'
+        Y.JSON.parse(undefined);
+        Y.JSON.parse();
+    },
+    test_booleanInput: function () {
+        // Should be ToString'ed to 'true'
+        var bool = Y.JSON.parse(true);
+
+        Y.Assert.isBoolean(bool);
+        Y.Assert.isTrue(bool);
+
+        bool = Y.JSON.parse(false);
+
+        Y.Assert.isBoolean(bool);
+        Y.Assert.isFalse(bool);
+
+        // Should be ToString'ed to 'true'
+        bool = Y.JSON.parse(new Boolean(true));
+
+        Y.Assert.isBoolean(bool);
+        Y.Assert.isTrue(bool);
+
+        bool = Y.JSON.parse(new Boolean(false));
+
+        Y.Assert.isBoolean(bool);
+        Y.Assert.isFalse(bool);
+    },
+    test_stringObjectInput: function () {
+        // Should be ToString'ed to '{"foo":"bar"}' which is valid
+        var o = Y.JSON.parse(new String('{"foo":"bar"}'));
+
+        Y.Assert.isObject(o);
+        Y.Assert.areSame("bar", o.foo);
+    },
+    test_numberInput: function () {
+        Y.Assert.areSame(0, Y.JSON.parse(0));
+        Y.Assert.areSame(100, Y.JSON.parse(100));
+        Y.Assert.areSame(-100, Y.JSON.parse(-100));
+        Y.Assert.areSame(-1.05e2, Y.JSON.parse(-1.05e2));
+    },
+    test_nullInput: function () {
+        // Should be ToString'ed to 'null'
+        Y.Assert.isNull(Y.JSON.parse(null));
+    },
+    test_objectWithToStringInput: function () {
+        // Should be ToString'ed to '{"foo":"bar"}' which is valid
+        var o = Y.JSON.parse({
+            toString: function () {
+                return '{"foo":"bar"}';
+            }
+        });
+
+        Y.Assert.isObject(o);
+        Y.Assert.areSame("bar", o.foo);
     }
 }));
 
@@ -753,8 +860,8 @@ suite.add(new Y.Test.Case({
                         alpha: "abc"
                     },
                     arr: [1, 7, 2]
-                }
-                ,function (k,v) {
+                },
+                function (k,v) {
                     var t = typeof v;
 
                     if (k === 'change') {
@@ -791,8 +898,8 @@ suite.add(new Y.Test.Case({
                         alpha: "abc"
                     },
                     arr: [1, 7, 2]
-                }
-                ,function (k,v) {
+                },
+                function (k,v) {
                     var t = typeof v;
 
                     if (k === 'change') {
