@@ -43,6 +43,9 @@ YUI.add('history-base', function(Y) {
 var Lang        = Y.Lang,
     Obj         = Y.Object,
     GlobalEnv   = YUI.namespace('Env.History'),
+    docMode     = Y.config.doc.documentMode,
+    isUndefined = Y.Lang.isUndefined,
+    win         = Y.config.win,
 
     EVT_CHANGE  = 'change',
     NAME        = 'historyBase',
@@ -96,6 +99,35 @@ HistoryBase.SRC_ADD = SRC_ADD;
  * @final
  */
 HistoryBase.SRC_REPLACE = SRC_REPLACE;
+
+/**
+ * Whether or not this browser supports the HTML5 History API.
+ *
+ * @property html5
+ * @type Boolean
+ * @static
+ */
+HistoryBase.html5 = !!(win.history && win.history.pushState &&
+        win.history.replaceState && !isUndefined(win.onpopstate));
+
+/**
+ * Whether or not this browser supports the <code>window.onhashchange</code>
+ * event natively. Note that even if this is <code>true</code>, you may
+ * still want to use HistoryHash's synthetic <code>hashchange</code> event
+ * since it normalizes implementation differences and fixes spec violations
+ * across various browsers.
+ *
+ * @property nativeHashChange
+ * @type Boolean
+ * @static
+ */
+
+// IE8 supports the hashchange event, but only in IE8 Standards
+// Mode. However, IE8 in IE7 compatibility mode still defines the
+// event but never fires it, so we can't just detect the event. We also can't
+// just UA sniff for IE8, since other browsers support this event as well.
+HistoryBase.nativeHashChange = !isUndefined(win.onhashchange) &&
+        (!docMode || docMode > 7);
 
 Y.mix(HistoryBase.prototype, {
     // -- Initialization -------------------------------------------------------
@@ -482,7 +514,7 @@ Y.HistoryBase = HistoryBase;
 YUI.add('history-hash', function(Y) {
 
 /**
- * The history-hash module adds the History class, which provides browser
+ * The history-hash module adds the HistoryHash class, which provides browser
  * history management functionality backed by <code>window.location.hash</code>.
  * This allows the browser's back and forward buttons to be used to navigate
  * between states.
@@ -492,12 +524,12 @@ YUI.add('history-hash', function(Y) {
  */
 
 /**
- * The History class provides browser history management backed by
+ * The HistoryHash class provides browser history management backed by
  * <code>window.location.hash</code>, as well as convenience methods for working
  * with the location hash and a synthetic <code>hashchange</code> event that
  * normalizes differences across browsers.
  *
- * @class History
+ * @class HistoryHash
  * @extends HistoryBase
  * @constructor
  * @param {Object} config (optional) Configuration object. See the HistoryBase
@@ -507,57 +539,46 @@ YUI.add('history-hash', function(Y) {
 var HistoryBase    = Y.HistoryBase,
     Lang           = Y.Lang,
     Obj            = Y.Object,
-    GlobalEnv      = YUI.namespace('Env.History'),
+    GlobalEnv      = YUI.namespace('Env.HistoryHash'),
 
     SRC_HASH       = 'hash',
 
-    config         = Y.config,
-    doc            = config.doc,
-    docMode        = doc.documentMode,
     hashNotifiers,
     oldHash,
     oldUrl,
-    win            = config.win,
+    win            = Y.config.win,
     location       = win.location,
 
-    // IE8 supports the hashchange event, but only in IE8 Standards
-    // Mode. However, IE8 in IE7 compatibility mode still defines the
-    // event but never fires it, so we can't just sniff for the event. We also
-    // can't just sniff for IE8, since other browsers have begun to support this
-    // event as well.
-    nativeHashChange = !Lang.isUndefined(win.onhashchange) &&
-            (Lang.isUndefined(docMode) || docMode > 7),
-
-History = function () {
-    History.superclass.constructor.apply(this, arguments);
+HistoryHash = function () {
+    HistoryHash.superclass.constructor.apply(this, arguments);
 };
 
-Y.extend(History, HistoryBase, {
+Y.extend(HistoryHash, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
         // Use the bookmarked state as the initialState if no initialState was
         // specified.
         config = config || {};
-        config.initialState = config.initialState || History.parseHash();
+        config.initialState = config.initialState || HistoryHash.parseHash();
 
         // Subscribe to the synthetic hashchange event (defined below) to handle
         // changes.
         Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
 
-        History.superclass._init.call(this, config);
+        HistoryHash.superclass._init.call(this, config);
     },
 
     // -- Protected Methods ----------------------------------------------------
     _storeState: function (src, newState) {
-        var newHash = History.createHash(newState);
+        var newHash = HistoryHash.createHash(newState);
 
-        History.superclass._storeState.apply(this, arguments);
+        HistoryHash.superclass._storeState.apply(this, arguments);
 
         // Update the location hash with the changes, but only if the new hash
         // actually differs from the current hash (this avoids creating multiple
         // history entries for a single state).
-        if (History.getHash() !== newHash) {
-            History[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
+        if (HistoryHash.getHash() !== newHash) {
+            HistoryHash[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
         }
     },
 
@@ -570,7 +591,7 @@ Y.extend(History, HistoryBase, {
      * @protected
      */
     _afterHashChange: function (e) {
-        this._resolveChanges(SRC_HASH, History.parseHash(e.newHash));
+        this._resolveChanges(SRC_HASH, HistoryHash.parseHash(e.newHash));
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
@@ -598,9 +619,9 @@ Y.extend(History, HistoryBase, {
      * </p>
      *
      * <p>
-     * Note that this prefix applies to all History instances. It's not possible
-     * for individual instances to use their own prefixes since they all operate
-     * on the same URL.
+     * Note that this prefix applies to all HistoryHash instances. It's not
+     * possible for individual instances to use their own prefixes since they
+     * all operate on the same URL.
      * </p>
      *
      * @property hashPrefix
@@ -609,19 +630,6 @@ Y.extend(History, HistoryBase, {
      * @static
      */
     hashPrefix: '',
-
-    /**
-     * Whether or not this browser supports the <code>window.onhashchange</code>
-     * event natively. Note that even if this is <code>true</code>, you may
-     * still want to use History's synthetic <code>hashchange</code> event since
-     * it normalizes implementation differences and fixes spec violations across
-     * various browsers.
-     *
-     * @property nativeHashChange
-     * @type Boolean
-     * @static
-     */
-    nativeHashChange: nativeHashChange,
 
     // -- Protected Static Properties ------------------------------------------
 
@@ -648,7 +656,7 @@ Y.extend(History, HistoryBase, {
      * @static
      */
     createHash: function (params) {
-        var encode = History.encode,
+        var encode = HistoryHash.encode,
             hash   = [];
 
         Obj.each(params, function (value, key) {
@@ -702,13 +710,13 @@ Y.extend(History, HistoryBase, {
         // actually change the hash.
         var matches = /#(.*)$/.exec(location.href),
             hash    = matches && matches[1] || '',
-            prefix  = History.hashPrefix;
+            prefix  = HistoryHash.hashPrefix;
 
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     } : function () {
         var hash   = location.hash.substr(1),
-            prefix = History.hashPrefix;
+            prefix = HistoryHash.hashPrefix;
 
         // Slight code duplication here, but execution speed is of the essence
         // since getHash() is called every 20ms or so to poll for changes in
@@ -740,16 +748,16 @@ Y.extend(History, HistoryBase, {
      * @static
      */
     parseHash: function (hash) {
-        var decode = History.decode,
+        var decode = HistoryHash.decode,
             i,
             len,
             matches,
             param,
             params = {},
-            prefix = History.hashPrefix,
+            prefix = HistoryHash.hashPrefix,
             prefixIndex;
 
-        hash = Lang.isValue(hash) ? hash : History.getHash();
+        hash = Lang.isValue(hash) ? hash : HistoryHash.getHash();
 
         if (prefix) {
             prefixIndex = hash.indexOf(prefix);
@@ -759,7 +767,7 @@ Y.extend(History, HistoryBase, {
             }
         }
 
-        matches = hash.match(History._REGEX_HASH) || [];
+        matches = hash.match(HistoryHash._REGEX_HASH) || [];
 
         for (i = 0, len = matches.length; i < len; ++i) {
             param = matches[i].split('=');
@@ -784,7 +792,7 @@ Y.extend(History, HistoryBase, {
             hash = hash.substr(1);
         }
 
-        location.replace('#' + (History.hashPrefix || '') + hash);
+        location.replace('#' + (HistoryHash.hashPrefix || '') + hash);
     },
 
     /**
@@ -800,12 +808,12 @@ Y.extend(History, HistoryBase, {
             hash = hash.substr(1);
         }
 
-        location.hash = (History.hashPrefix || '') + hash;
+        location.hash = (HistoryHash.hashPrefix || '') + hash;
     }
 });
 
 // -- Synthetic hashchange Event -----------------------------------------------
-hashNotifiers = YUI.namespace('Env.History._hashNotifiers');
+hashNotifiers = YUI.namespace('Env.HistoryHash._hashNotifiers');
 
 // TODO: YUIDoc currently doesn't provide a good way to document synthetic DOM
 // events. For now, we're just documenting the hashchange event on the YUI
@@ -868,7 +876,7 @@ Y.Event.define('hashchange', {
         // window or document body, since those are the only elements that
         // should support the hashchange event. Note that the body could also be
         // a frameset, but that's okay since framesets support hashchange too.
-        if ((node.compareTo(win) || node.compareTo(doc.body)) &&
+        if ((node.compareTo(win) || node.compareTo(Y.config.doc.body)) &&
                 !Obj.owns(hashNotifiers, notifier.key)) {
 
             hashNotifiers[notifier.key] = notifier;
@@ -885,18 +893,16 @@ Y.Event.define('hashchange', {
     }
 });
 
-oldHash = History.getHash();
-oldUrl  = History.getUrl();
+oldHash = HistoryHash.getHash();
+oldUrl  = HistoryHash.getUrl();
 
-if (nativeHashChange) {
+if (HistoryBase.nativeHashChange) {
     // Wrap the browser's native hashchange event.
     Y.Event.attach('hashchange', function (e) {
-        var newHash = History.getHash(),
-            newUrl  = History.getUrl();
+        var newHash = HistoryHash.getHash(),
+            newUrl  = HistoryHash.getUrl();
 
         Obj.each(hashNotifiers, function (notifier) {
-            // TODO: would there be any benefit to making this an overridable
-            // protected method?
             notifier.fire({
                 oldHash: oldHash,
                 oldUrl : oldUrl,
@@ -912,23 +918,27 @@ if (nativeHashChange) {
     // Begin polling for location hash changes if there's not already a global
     // poll running.
     if (!GlobalEnv._hashPoll) {
-        if (Y.UA.webkit && !Y.UA.chrome) {
+        if (Y.UA.webkit && !Y.UA.chrome &&
+                navigator.vendor.indexOf('Apple') !== -1) {
             // Attach a noop unload handler to disable Safari's back/forward
             // cache. This works around a nasty Safari bug when the back button
             // is used to return from a page on another domain, but results in
             // slightly worse performance. This bug is not present in Chrome.
             //
-            // Current as of Safari 4.0.5 (6531.22.7).
+            // Unfortunately a UA sniff is unavoidable here, but the
+            // consequences of a false positive are minor.
+            //
+            // Current as of Safari 5.0 (6533.16).
             // See: https://bugs.webkit.org/show_bug.cgi?id=34679
             Y.on('unload', function () {}, win);
         }
 
-        GlobalEnv._hashPoll = Y.later(config.pollInterval || 50, null, function () {
-            var newHash = History.getHash(),
+        GlobalEnv._hashPoll = Y.later(50, null, function () {
+            var newHash = HistoryHash.getHash(),
                 newUrl;
 
             if (oldHash !== newHash) {
-                newUrl = History.getUrl();
+                newUrl = HistoryHash.getUrl();
 
                 Obj.each(hashNotifiers, function (notifier) {
                     notifier.fire({
@@ -946,7 +956,15 @@ if (nativeHashChange) {
     }
 }
 
-Y.History = History;
+Y.HistoryHash = HistoryHash;
+
+// Only point Y.History at HistoryHash if the current browser doesn't support
+// HTML5 history, or if the HistoryHTML5 class is not present. The history-hash
+// module is always loaded after history-html5 if history-html5 is loaded, so
+// this check doesn't introduce a race condition.
+if (!HistoryBase.html5 || !Y.HistoryHTML5) {
+    Y.History = HistoryHash;
+}
 
 
 }, '@VERSION@' ,{requires:['event-synthetic', 'history-base', 'yui-later']});
@@ -964,15 +982,15 @@ YUI.add('history-hash-ie', function(Y) {
 // Combination of a UA sniff to ensure this is IE (or a browser that wants us to
 // treat it like IE) and feature detection for native hashchange support (false
 // for IE < 8 or IE8/9 in IE7 mode).
-if (Y.UA.ie && !Y.History.nativeHashChange) {
-    var Do        = Y.Do,
-        GlobalEnv = YUI.namespace('Env.History'),
-        History   = Y.History,
-        iframe    = GlobalEnv._iframe,
-        win       = Y.config.win,
-        location  = win.location;
+if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
+    var Do          = Y.Do,
+        GlobalEnv   = YUI.namespace('Env.HistoryHash'),
+        HistoryHash = Y.HistoryHash,
+        iframe      = GlobalEnv._iframe,
+        win         = Y.config.win,
+        location    = win.location;
 
-    History.getHash = function () {
+    HistoryHash.getHash = function () {
         // The iframe's hash always wins over the parent frame's. This results
         // in the unfortunate edge case that changing the parent's hash without
         // using the YUI History API will not result in a hashchange event, but
@@ -983,8 +1001,8 @@ if (Y.UA.ie && !Y.History.nativeHashChange) {
                 location.hash.substr(1);
     };
 
-    History.getUrl = function () {
-        var hash = History.getHash();
+    HistoryHash.getUrl = function () {
+        var hash = HistoryHash.getHash();
 
         if (hash && hash !== location.hash.substr(1)) {
             return location.href.replace(/#.*$/, '') + '#' + hash;
@@ -1002,9 +1020,9 @@ if (Y.UA.ie && !Y.History.nativeHashChange) {
      *   history state will be replaced without adding a new history entry
      * @protected
      * @static
-     * @for History
+     * @for HistoryHash
      */
-    History._updateIframe = function (hash, replace) {
+    HistoryHash._updateIframe = function (hash, replace) {
         var iframeDoc      = iframe.contentWindow.document,
             iframeLocation = iframeDoc.location;
 
@@ -1018,8 +1036,8 @@ if (Y.UA.ie && !Y.History.nativeHashChange) {
         }
     };
 
-    Do.after(History._updateIframe, History, 'replaceHash', History, true);
-    Do.after(History._updateIframe, History, 'setHash');
+    Do.after(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
+    Do.after(HistoryHash._updateIframe, HistoryHash, 'setHash');
 
     if (!iframe) {
         Y.on('domready', function () {
@@ -1054,7 +1072,7 @@ if (Y.UA.ie && !Y.History.nativeHashChange) {
             // Update the iframe with the initial location hash, if any. This
             // will create an initial history entry that the user can return to
             // after the state has changed.
-            History._updateIframe(location.hash.substr(1));
+            HistoryHash._updateIframe(location.hash.substr(1));
         });
 
         // Listen for hashchange events and keep the parent window's location

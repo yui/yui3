@@ -43,6 +43,9 @@ YUI.add('history-base', function(Y) {
 var Lang        = Y.Lang,
     Obj         = Y.Object,
     GlobalEnv   = YUI.namespace('Env.History'),
+    docMode     = Y.config.doc.documentMode,
+    isUndefined = Y.Lang.isUndefined,
+    win         = Y.config.win,
 
     EVT_CHANGE  = 'change',
     NAME        = 'historyBase',
@@ -96,6 +99,35 @@ HistoryBase.SRC_ADD = SRC_ADD;
  * @final
  */
 HistoryBase.SRC_REPLACE = SRC_REPLACE;
+
+/**
+ * Whether or not this browser supports the HTML5 History API.
+ *
+ * @property html5
+ * @type Boolean
+ * @static
+ */
+HistoryBase.html5 = !!(win.history && win.history.pushState &&
+        win.history.replaceState && !isUndefined(win.onpopstate));
+
+/**
+ * Whether or not this browser supports the <code>window.onhashchange</code>
+ * event natively. Note that even if this is <code>true</code>, you may
+ * still want to use HistoryHash's synthetic <code>hashchange</code> event
+ * since it normalizes implementation differences and fixes spec violations
+ * across various browsers.
+ *
+ * @property nativeHashChange
+ * @type Boolean
+ * @static
+ */
+
+// IE8 supports the hashchange event, but only in IE8 Standards
+// Mode. However, IE8 in IE7 compatibility mode still defines the
+// event but never fires it, so we can't just detect the event. We also can't
+// just UA sniff for IE8, since other browsers support this event as well.
+HistoryBase.nativeHashChange = !isUndefined(win.onhashchange) &&
+        (!docMode || docMode > 7);
 
 Y.mix(HistoryBase.prototype, {
     // -- Initialization -------------------------------------------------------

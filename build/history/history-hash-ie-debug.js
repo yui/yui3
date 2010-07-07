@@ -12,15 +12,15 @@ YUI.add('history-hash-ie', function(Y) {
 // Combination of a UA sniff to ensure this is IE (or a browser that wants us to
 // treat it like IE) and feature detection for native hashchange support (false
 // for IE < 8 or IE8/9 in IE7 mode).
-if (Y.UA.ie && !Y.History.nativeHashChange) {
-    var Do        = Y.Do,
-        GlobalEnv = YUI.namespace('Env.History'),
-        History   = Y.History,
-        iframe    = GlobalEnv._iframe,
-        win       = Y.config.win,
-        location  = win.location;
+if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
+    var Do          = Y.Do,
+        GlobalEnv   = YUI.namespace('Env.HistoryHash'),
+        HistoryHash = Y.HistoryHash,
+        iframe      = GlobalEnv._iframe,
+        win         = Y.config.win,
+        location    = win.location;
 
-    History.getHash = function () {
+    HistoryHash.getHash = function () {
         // The iframe's hash always wins over the parent frame's. This results
         // in the unfortunate edge case that changing the parent's hash without
         // using the YUI History API will not result in a hashchange event, but
@@ -31,8 +31,8 @@ if (Y.UA.ie && !Y.History.nativeHashChange) {
                 location.hash.substr(1);
     };
 
-    History.getUrl = function () {
-        var hash = History.getHash();
+    HistoryHash.getUrl = function () {
+        var hash = HistoryHash.getHash();
 
         if (hash && hash !== location.hash.substr(1)) {
             return location.href.replace(/#.*$/, '') + '#' + hash;
@@ -50,9 +50,9 @@ if (Y.UA.ie && !Y.History.nativeHashChange) {
      *   history state will be replaced without adding a new history entry
      * @protected
      * @static
-     * @for History
+     * @for HistoryHash
      */
-    History._updateIframe = function (hash, replace) {
+    HistoryHash._updateIframe = function (hash, replace) {
         var iframeDoc      = iframe.contentWindow.document,
             iframeLocation = iframeDoc.location;
 
@@ -67,8 +67,8 @@ if (Y.UA.ie && !Y.History.nativeHashChange) {
         }
     };
 
-    Do.after(History._updateIframe, History, 'replaceHash', History, true);
-    Do.after(History._updateIframe, History, 'setHash');
+    Do.after(HistoryHash._updateIframe, HistoryHash, 'replaceHash', HistoryHash, true);
+    Do.after(HistoryHash._updateIframe, HistoryHash, 'setHash');
 
     if (!iframe) {
         Y.on('domready', function () {
@@ -104,7 +104,7 @@ if (Y.UA.ie && !Y.History.nativeHashChange) {
             // Update the iframe with the initial location hash, if any. This
             // will create an initial history entry that the user can return to
             // after the state has changed.
-            History._updateIframe(location.hash.substr(1));
+            HistoryHash._updateIframe(location.hash.substr(1));
         });
 
         // Listen for hashchange events and keep the parent window's location
