@@ -194,7 +194,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
                 break;
             case 'backcolor':
-                val = '#ff0000';
+                val = '#33CC99';
                 break;
             case 'forecolor':
                 val = '#0000FF';

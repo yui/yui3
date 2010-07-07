@@ -1033,7 +1033,6 @@ YUI.add('selection', function(Y) {
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
                 if (node.test('body')) {
-                    console.log('Node: ', node);
                     b = Y.Node.create('<span></span>');
                     node.append(b);
                     node = b;
@@ -1190,6 +1189,9 @@ YUI.add('selection', function(Y) {
                     }
                 }
             } else {
+                if (node.nodeType === 3) {
+                    node = node.parentNode;
+                }
                 range.moveToElementText(node);
                 range.select();
                 if (collapse) {
@@ -1427,13 +1429,23 @@ YUI.add('exec-command', function(Y) {
                     return blockItem;
                 },
                 backcolor: function(cmd, val) {
+                    var inst = this.getInstance(),
+                        sel = new inst.Selection(), n;
+
                     if (Y.UA.gecko || Y.UA.opera) {
                         cmd = 'hilitecolor';
                     }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', 'true');
                     }
-                    this._command(cmd, val);
+                    if (sel.isCollapsed) {
+                        n = this.command('inserthtml', '<span style="background-color: ' + val + '"><span>&nbsp;</span>&nbsp;</span>');
+                        inst.Selection.filterBlocks();
+                        sel.selectNode(n.get('firstChild'));
+                        return n;
+                    } else {
+                        return this._command(cmd, val);
+                    }
                     if (!Y.UA.ie) {
                         this._command('styleWithCSS', false);
                     }
@@ -1663,6 +1675,18 @@ YUI.add('editor-base', function(Y) {
                 defaultFn: this._defNodeChangeFn
             });
         },
+        copyStyles: function(from, to) {
+            var styles = ['color', 'fontSize', 'fontFamily', 'backgroundColor', 'fontStyle' ],
+                newStyles = {};
+
+            Y.each(styles, function(v) {
+                newStyles[v] = from.getStyle(v);
+            });
+            if (from.ancestor('b,strong')) {
+                newStyles.fontWeight = 'bold';
+            }
+            to.setStyles(newStyles);
+        },
         /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
@@ -1672,33 +1696,51 @@ YUI.add('editor-base', function(Y) {
         _defNodeChangeFn: function(e) {
             Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
             switch (e.changedType) {
-                case 'keyup':
-                    if (e.changedEvent.keyCode === 8) {
-                        var inst = this.getInstance(),
-                        ps = inst.all('body > p'), br, p, sel, item;
-                        if (ps.size() < 2) {
-                            item = inst.one('body');
-                            if (ps.item(0)) {
-                                item = ps.item(0);
+                case 'backspace-up':
+                    var inst = this.getInstance(),
+                    ps = inst.all('body > p'), br, p, sel, item;
+                    if (ps.size() < 2) {
+                        item = inst.one('body');
+                        if (ps.item(0)) {
+                            item = ps.item(0);
+                        }
+                        if (inst.Selection.getText(item) === '' && !item.test('p')) {
+                            br = item.all('br');
+                            if (br.size() === 1) {
+                                br.item(0).remove();
                             }
-                            if (inst.Selection.getText(item) === '' && !item.test('p')) {
-                                br = item.all('br');
-                                if (br.size() === 1) {
-                                    br.item(0).remove();
-                                }
-                                inst.one('body').append('<p>&nbsp;</p>');
-                                sel = new inst.Selection();
-                                try {
-                                    sel.selectNode(inst.one('body > p').get('firstChild'));
-                                } catch (e) {}
-                            } else if (item.test('p') && item.get('innerHTML').length === 0) {
-                                e.changedEvent.halt();
-                            }
+                            inst.one('body').append('<p>&nbsp;</p>');
+                            sel = new inst.Selection();
+                            try {
+                                sel.selectNode(inst.one('body > p').get('firstChild'));
+                            } catch (e) {}
+                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
+                            e.changedEvent.halt();
                         }
                     }
                     break;
-                case 'enter':
-                    //Enter key goes here..
+                case 'enter-up':
+                    if (e.changedNode.test('p')) {
+                        var prev = e.changedNode.previous(), lc, lc2, found = false;
+                        if (prev) {
+                            lc = prev.one(':last-child');
+                            while (!found) {
+                                if (lc) {
+                                    lc2 = lc.one(':last-child');
+                                    if (lc2) {
+                                        lc = lc2;
+                                    } else {
+                                        found = true;
+                                    }
+                                } else {
+                                    found = true;
+                                }
+                            }
+                            if (lc) {
+                                this.copyStyles(lc, e.changedNode);
+                            }
+                        }
+                    }
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -1850,6 +1892,7 @@ YUI.add('editor-base', function(Y) {
 
                 if (sel.anchorNode) {
                     this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-up', selection: sel, changedEvent: e  });
                 }
             }
         },

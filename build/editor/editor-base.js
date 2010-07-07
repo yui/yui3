@@ -43,6 +43,18 @@ YUI.add('editor-base', function(Y) {
                 defaultFn: this._defNodeChangeFn
             });
         },
+        copyStyles: function(from, to) {
+            var styles = ['color', 'fontSize', 'fontFamily', 'backgroundColor', 'fontStyle' ],
+                newStyles = {};
+
+            Y.each(styles, function(v) {
+                newStyles[v] = from.getStyle(v);
+            });
+            if (from.ancestor('b,strong')) {
+                newStyles.fontWeight = 'bold';
+            }
+            to.setStyles(newStyles);
+        },
         /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
@@ -51,33 +63,51 @@ YUI.add('editor-base', function(Y) {
         */
         _defNodeChangeFn: function(e) {
             switch (e.changedType) {
-                case 'keyup':
-                    if (e.changedEvent.keyCode === 8) {
-                        var inst = this.getInstance(),
-                        ps = inst.all('body > p'), br, p, sel, item;
-                        if (ps.size() < 2) {
-                            item = inst.one('body');
-                            if (ps.item(0)) {
-                                item = ps.item(0);
+                case 'backspace-up':
+                    var inst = this.getInstance(),
+                    ps = inst.all('body > p'), br, p, sel, item;
+                    if (ps.size() < 2) {
+                        item = inst.one('body');
+                        if (ps.item(0)) {
+                            item = ps.item(0);
+                        }
+                        if (inst.Selection.getText(item) === '' && !item.test('p')) {
+                            br = item.all('br');
+                            if (br.size() === 1) {
+                                br.item(0).remove();
                             }
-                            if (inst.Selection.getText(item) === '' && !item.test('p')) {
-                                br = item.all('br');
-                                if (br.size() === 1) {
-                                    br.item(0).remove();
-                                }
-                                inst.one('body').append('<p>&nbsp;</p>');
-                                sel = new inst.Selection();
-                                try {
-                                    sel.selectNode(inst.one('body > p').get('firstChild'));
-                                } catch (e) {}
-                            } else if (item.test('p') && item.get('innerHTML').length === 0) {
-                                e.changedEvent.halt();
-                            }
+                            inst.one('body').append('<p>&nbsp;</p>');
+                            sel = new inst.Selection();
+                            try {
+                                sel.selectNode(inst.one('body > p').get('firstChild'));
+                            } catch (e) {}
+                        } else if (item.test('p') && item.get('innerHTML').length === 0) {
+                            e.changedEvent.halt();
                         }
                     }
                     break;
-                case 'enter':
-                    //Enter key goes here..
+                case 'enter-up':
+                    if (e.changedNode.test('p')) {
+                        var prev = e.changedNode.previous(), lc, lc2, found = false;
+                        if (prev) {
+                            lc = prev.one(':last-child');
+                            while (!found) {
+                                if (lc) {
+                                    lc2 = lc.one(':last-child');
+                                    if (lc2) {
+                                        lc = lc2;
+                                    } else {
+                                        found = true;
+                                    }
+                                } else {
+                                    found = true;
+                                }
+                            }
+                            if (lc) {
+                                this.copyStyles(lc, e.changedNode);
+                            }
+                        }
+                    }
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -228,6 +258,7 @@ YUI.add('editor-base', function(Y) {
 
                 if (sel.anchorNode) {
                     this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-up', selection: sel, changedEvent: e  });
                 }
             }
         },

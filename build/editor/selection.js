@@ -425,7 +425,6 @@ YUI.add('selection', function(Y) {
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
                 if (node.test('body')) {
-                    console.log('Node: ', node);
                     b = Y.Node.create('<span></span>');
                     node.append(b);
                     node = b;
@@ -578,6 +577,9 @@ YUI.add('selection', function(Y) {
                     }
                 }
             } else {
+                if (node.nodeType === 3) {
+                    node = node.parentNode;
+                }
                 range.moveToElementText(node);
                 range.select();
                 if (collapse) {
