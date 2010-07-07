@@ -1600,7 +1600,9 @@ ET.prototype = {
             }
         } else {
             // apply defaults
-            ce = new Y.CustomEvent(type, (opts) ? Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults);
+            ce = new Y.CustomEvent(type, (opts) ? 
+                Y.mix(Y.merge(opts), this._yuievt.defaults) : 
+                this._yuievt.defaults);
             events[type] = ce;
         }
 

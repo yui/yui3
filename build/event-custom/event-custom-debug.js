@@ -1613,7 +1613,9 @@ Y.log('EventTarget unsubscribeAll() is deprecated, use detachAll()', 'warn', 'de
             }
         } else {
             // apply defaults
-            ce = new Y.CustomEvent(type, (opts) ? Y.mix(opts, this._yuievt.defaults) : this._yuievt.defaults);
+            ce = new Y.CustomEvent(type, (opts) ? 
+                Y.mix(Y.merge(opts), this._yuievt.defaults) : 
+                this._yuievt.defaults);
             events[type] = ce;
         }
 
