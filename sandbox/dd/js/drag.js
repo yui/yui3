@@ -738,7 +738,6 @@ YUI.add('dd-drag', function(Y) {
             var ev = e.ev;
             this._dragThreshMet = false;
             this._ev_md = ev;
-            console.log(e, ev);
             
             if (this.get('primaryButtonOnly') && ev.button > 1) {
                 //return false;
@@ -761,7 +760,11 @@ YUI.add('dd-drag', function(Y) {
         * @return {Boolean}
         */
         validClick: function(ev) {
-            console.log(ev.target);
+            console.log('Event: ', ev);
+            console.log('Target: ', ev.target);
+            console.log('CurrentTarget: ', ev.currentTarget);
+            console.log('_e.Target: ', ev._e.target);
+            console.log('_e.CurrentTarget: ', ev._e.currentTarget);
             var r = false, n = false,
             tar = ev.target,
             hTest = null,
@@ -769,7 +772,7 @@ YUI.add('dd-drag', function(Y) {
             nlist = null,
             set = false;
             if (this._handles) {
-                console.log('Valid Click1: ', r);
+                //console.log('Valid Click1: ', r);
                 Y.each(this._handles, function(i, n) {
                     if (i instanceof Y.Node || i instanceof Y.NodeList) {
                         if (!r) {
@@ -778,16 +781,18 @@ YUI.add('dd-drag', function(Y) {
                                 nlist = new Y.NodeList(i._node);
                             }
                             nlist.each(function(nl) {
-                                console.log('Valid Click1.1: ', nl, tar);
+                                //console.log('Valid Click1.1: ', nl, tar);
                                 //if (nl.contains(tar)) {
+                                //console.log('Contains: ', nl, tar.contains(nl));
                                 if (tar.contains(nl)) {
+                                    //console.log('CONTAINS');
                                     r = true;
                                 }
                             });
                         }
                     } else if (Y.Lang.isString(n)) {
                         //Am I this or am I inside this
-                        console.log('Valid Click1.2: ', n);
+                        //console.log('Valid Click1.2: ', n);
                         if (tar.test(n + ', ' + n + ' *') && !hTest) {
                             hTest = n;
                             r = true;
@@ -795,19 +800,21 @@ YUI.add('dd-drag', function(Y) {
                     }
                 });
             } else {
-                console.log('Valid Click2: ', r);
+                //console.log('Valid Click2: ', r);
                 n = this.get(NODE);
-                console.log('Valid Click2: ', n, tar, n.contains(tar), n.compareTo(tar));
+                //console.log('Valid Click2: ', n, tar, n.contains(tar), n.compareTo(tar));
                 if (n.contains(tar) || n.compareTo(tar)) {
                     r = true;
                 }
             }
             if (r) {
-                console.log('Valid Click3: ', r);
+                //console.log('Valid Click3: ', r);
                 if (this._invalids) {
                     Y.each(this._invalids, function(i, n) {
+                        //console.log('Invalid: ', i, n);
                         if (Y.Lang.isString(n)) {
                             //Am I this or am I inside this
+                            //console.log(tar, n, n + ', ' + n + ' *', tar.test(n + ', ' + n + ' *'));
                             if (tar.test(n + ', ' + n + ' *')) {
                                 r = false;
                             }
@@ -829,7 +836,7 @@ YUI.add('dd-drag', function(Y) {
                     this.set('activeHandle', this.get(NODE));
                 }
             }
-            console.log('Valid Click: ', r);
+            console.log('FINAL Valid Click: ', r);
             return r;
         },
         /**
@@ -972,6 +979,10 @@ YUI.add('dd-drag', function(Y) {
             });
             node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
             node.on(DRAG_START, Y.bind(this._fixDragStart, this));
+            node.on('move', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')));
+            //Should not need this, _handleMouseUp calls this..
+            //node.on('moveend', Y.bind(DDM._end, DDM));
+            
         },
         /**
         * @private

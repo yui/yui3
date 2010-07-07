@@ -214,6 +214,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     <div id="ft">&nbsp;</div>
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/event/event-touch.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/event/event-synthetic-debug.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/event-gestures/event-gestures-debug.js?bust=<?php echo(mktime()); ?>"></script>
