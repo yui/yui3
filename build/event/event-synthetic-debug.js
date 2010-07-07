@@ -199,7 +199,7 @@ SyntheticEvent.prototype = {
 
             if (!ce) {
                 init = true;
-                ce = node.publish(self.type, self._publishConfig);
+                ce = node.publish(self.type, Y.merge(self._publishConfig));
 
                 // node.detach() with type missing doesn't reach adapter fork
                 ce.detach = function (fn, context) {
@@ -432,7 +432,6 @@ Y.Event.define = function (type, cfg) {
         EvtPlugins[e.type] = DOMEvents[e.type] = new Y.SyntheticEvent(e);
     }
 };
-
 
 
 }, '@VERSION@' ,{requires:['node-base', 'event-custom']});
