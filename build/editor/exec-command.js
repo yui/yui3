@@ -8,10 +8,9 @@ YUI.add('exec-command', function(Y) {
      */     
     /**
      * Plugin for the frame module to handle execCommands for Editor
-     * @class ExecCommand
+     * @class Plugin.ExecCommand
      * @extends Base
      * @constructor
-     * @namespace Plugin
      */
         var ExecCommand = function() {
             ExecCommand.superclass.constructor.apply(this, arguments);
