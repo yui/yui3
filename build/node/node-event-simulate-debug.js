@@ -20,5 +20,4 @@ YUI.add('node-event-simulate', function(Y) {
 
 
 
-
 }, '@VERSION@' ,{requires:['node-base', 'event-simulate']});

@@ -103,5 +103,4 @@ YUI.add('shim-plugin', function(Y) {
     Y.Plugin.Shim = Shim;
 
 
-
 }, '@VERSION@' ,{requires:['node-style', 'node-pluginhost']});
