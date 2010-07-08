@@ -355,8 +355,8 @@ YUI(yConfig).use('event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-p
     //dd4.setHandle('#drag4Handle', true);
 
     dd6 = new Y1.DD.Drag({
-        node: '#drag6'//,
-        //offsetNode: false
+        node: '#drag6',
+        offsetNode: false
     }).plug(Y1.Plugin.DDProxy, {
         resizeFrame: false,
     }).addInvalid('strong.no').on('drag:start', function() {
