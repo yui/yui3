@@ -59,19 +59,12 @@
 <span class="cm"> */</span>
 
 <span class="cm">/**</span>
-<span class="cm"> * The history-base module uses a simple object to store state. To integrate</span>
-<span class="cm"> * state management with browser history and allow the back/forward buttons to</span>
-<span class="cm"> * navigate between states, use history-hash.</span>
+<span class="cm"> * Provides global state management backed by an object, but with no browser</span>
+<span class="cm"> * history integration. For actual browser history integration and back/forward</span>
+<span class="cm"> * support, use the history-html5 or history-hash modules.</span>
 <span class="cm"> *</span>
 <span class="cm"> * @module history</span>
 <span class="cm"> * @submodule history-base</span>
-<span class="cm"> */</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * The HistoryBase class provides basic state management functionality backed by</span>
-<span class="cm"> * an object. History state is shared globally among all instances and</span>
-<span class="cm"> * subclass instances of HistoryBase.</span>
-<span class="cm"> *</span>
 <span class="cm"> * @class HistoryBase</span>
 <span class="cm"> * @uses EventTarget</span>
 <span class="cm"> * @constructor</span>
@@ -94,14 +87,14 @@
     <span class="nx">isUndefined</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">,</span>
     <span class="nx">win</span>         <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
 
-    <span class="nx">EVT_CHANGE</span>  <span class="o">=</span> <span class="s1">&#39;change&#39;</span><span class="p">,</span>
-    <span class="nx">NAME</span>        <span class="o">=</span> <span class="s1">&#39;historyBase&#39;</span><span class="p">,</span>
-    <span class="nx">SRC_ADD</span>     <span class="o">=</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span>
-    <span class="nx">SRC_REPLACE</span> <span class="o">=</span> <span class="s1">&#39;replace&#39;</span><span class="p">,</span>
+    <span class="nx">DEFAULT_OPTIONS</span> <span class="o">=</span> <span class="p">{</span><span class="nx">merge</span><span class="o">:</span> <span class="kc">true</span><span class="p">},</span>
+    <span class="nx">EVT_CHANGE</span>      <span class="o">=</span> <span class="s1">&#39;change&#39;</span><span class="p">,</span>
+    <span class="nx">SRC_ADD</span>         <span class="o">=</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span>
+    <span class="nx">SRC_REPLACE</span>     <span class="o">=</span> <span class="s1">&#39;replace&#39;</span><span class="p">;</span>
 
-<span class="nx">HistoryBase</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">HistoryBase</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">_init</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-<span class="p">};</span>
+<span class="p">}</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">augment</span><span class="p">(</span><span class="nx">HistoryBase</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">EventTarget</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">emitFacade</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -123,7 +116,7 @@
 <span class="cm"> * @type String</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
-<span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="nx">NAME</span><span class="p">;</span>
+<span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;historyBase&#39;</span><span class="p">;</span>
 
 <span class="cm">/**</span>
 <span class="cm"> * Constant used to identify state changes originating from the</span>
@@ -253,19 +246,37 @@
     <span class="c1">// -- Public Methods -------------------------------------------------------</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Adds a state entry with new values for the specified key or keys. Any key</span>
-<span class="cm">     * with a &lt;code&gt;null&lt;/code&gt; or &lt;code&gt;undefined&lt;/code&gt; value will be removed</span>
-<span class="cm">     * from the current state; all others will be merged into it.</span>
+<span class="cm">     * Adds a state entry with new values for the specified keys. By default,</span>
+<span class="cm">     * the new state will be merged into the existing state, and new values will</span>
+<span class="cm">     * override existing values. Specifying a &lt;code&gt;null&lt;/code&gt; or</span>
+<span class="cm">     * &lt;code&gt;undefined&lt;/code&gt; value will cause that key to be removed from the</span>
+<span class="cm">     * new state entry.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method add</span>
-<span class="cm">     * @param {Object|String} state|key object hash of key/value string pairs,</span>
-<span class="cm">     *   or the name of a single key</span>
-<span class="cm">     * @param {String|null} value (optional) if &lt;i&gt;state&lt;/i&gt; is the name of a</span>
-<span class="cm">     *   single key, &lt;i&gt;value&lt;/i&gt; will become its new value</span>
+<span class="cm">     * @param {Object} state Object hash of key/value pairs.</span>
+<span class="cm">     * @param {Object} options (optional) Zero or more of the following options:</span>
+<span class="cm">     *   &lt;dl&gt;</span>
+<span class="cm">     *     &lt;dt&gt;merge (Boolean)&lt;/dt&gt;</span>
+<span class="cm">     *     &lt;dd&gt;</span>
+<span class="cm">     *       &lt;p&gt;</span>
+<span class="cm">     *       If &lt;code&gt;true&lt;/code&gt; (the default), the new state will be merged</span>
+<span class="cm">     *       into the existing state. New values will override existing values,</span>
+<span class="cm">     *       and &lt;code&gt;null&lt;/code&gt; or &lt;code&gt;undefined&lt;/code&gt; values will be</span>
+<span class="cm">     *       removed from the state.</span>
+<span class="cm">     *       &lt;/p&gt;</span>
+<span class="cm">     *</span>
+<span class="cm">     *       &lt;p&gt;</span>
+<span class="cm">     *       If &lt;code&gt;false&lt;/code&gt;, the existing state will be discarded as a</span>
+<span class="cm">     *       whole and the new state will take its place.</span>
+<span class="cm">     *       &lt;/p&gt;</span>
+<span class="cm">     *     &lt;/dd&gt;</span>
+<span class="cm">     *   &lt;/dl&gt;</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
-    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_change</span><span class="p">(</span><span class="nx">SRC_ADD</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+    <span class="nx">add</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">SRC_ADD</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_change</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="cm">/**</span>
@@ -274,9 +285,9 @@
 <span class="cm">     * no key is specified.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method get</span>
-<span class="cm">     * @param {String} key (optional) state parameter key</span>
-<span class="cm">     * @return {Object|mixed} value of the specified state parameter, or an</span>
-<span class="cm">     *   object hash of key/value pairs for all current state parameters</span>
+<span class="cm">     * @param {String} key (optional) State parameter key.</span>
+<span class="cm">     * @return {Object|String} Value of the specified state parameter, or an</span>
+<span class="cm">     *   object hash of key/value pairs for all current state parameters.</span>
 <span class="cm">     */</span>
     <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">state</span> <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span><span class="p">;</span>
@@ -289,19 +300,20 @@
     <span class="p">},</span>
 
     <span class="cm">/**</span>
-<span class="cm">     * Replaces the current state entry with new values for the specified</span>
-<span class="cm">     * parameters, just as with &lt;code&gt;add()&lt;/code&gt;, except that no change events</span>
-<span class="cm">     * are generated.</span>
+<span class="cm">     * Same as &lt;code&gt;add()&lt;/code&gt; except that a new browser history entry will</span>
+<span class="cm">     * not be created. Instead, the current history entry will be replaced with</span>
+<span class="cm">     * the new state.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method replace</span>
-<span class="cm">     * @param {Object|String} state|key object hash of key/value string pairs,</span>
-<span class="cm">     *   or the name of a single key</span>
-<span class="cm">     * @param {String|null} value (optional) if &lt;i&gt;state&lt;/i&gt; is the name of a</span>
-<span class="cm">     *   single key, &lt;i&gt;value&lt;/i&gt; will become its new value</span>
+<span class="cm">     * @param {Object} state Object hash of key/value pairs.</span>
+<span class="cm">     * @param {Object} options (optional) Zero or more options. See</span>
+<span class="cm">     *   &lt;code&gt;add()&lt;/code&gt; for a list of supported options.</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
-    <span class="nx">replace</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_change</span><span class="p">(</span><span class="nx">SRC_REPLACE</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+    <span class="nx">replace</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nb">Array</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">SRC_REPLACE</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_change</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
     <span class="p">},</span>
 
     <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
@@ -311,25 +323,22 @@
 <span class="cm">     * add() and replace().</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _change</span>
-<span class="cm">     * @param {String} src source of the change, for inclusion in event facades</span>
-<span class="cm">     *   to facilitate filtering</span>
-<span class="cm">     * @param {Object|String} state|key object hash of key/value string pairs,</span>
-<span class="cm">     *   or the name of a single key</span>
-<span class="cm">     * @param {String|null} value (optional) if &lt;i&gt;state&lt;/i&gt; is the name of a</span>
-<span class="cm">     *   single key, &lt;i&gt;value&lt;/i&gt; will become its new value</span>
+<span class="cm">     * @param {String} src Source of the change, for inclusion in event facades</span>
+<span class="cm">     *   to facilitate filtering.</span>
+<span class="cm">     * @param {Object} state Object hash of key/value pairs.</span>
+<span class="cm">     * @param {Object} options (optional) Zero or more options. See</span>
+<span class="cm">     *   &lt;code&gt;add()&lt;/code&gt; for a list of supported options.</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     * @chainable</span>
 <span class="cm">     */</span>
-    <span class="nx">_change</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">key</span><span class="p">;</span>
+    <span class="nx">_change</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">?</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">DEFAULT_OPTIONS</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="o">:</span> <span class="nx">DEFAULT_OPTIONS</span><span class="p">;</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="nx">Lang</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">state</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">key</span>        <span class="o">=</span> <span class="nx">state</span><span class="p">;</span>
-            <span class="nx">state</span>      <span class="o">=</span> <span class="p">{};</span>
-            <span class="nx">state</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">merge</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">state</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span><span class="p">,</span> <span class="nx">state</span><span class="p">);</span>
         <span class="p">}</span>
 
-        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">merge</span><span class="p">(</span><span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span><span class="p">,</span> <span class="nx">state</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">state</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
     <span class="p">},</span>
 
@@ -338,12 +347,16 @@
 <span class="cm">     * care of actually firing the necessary events.</span>
 <span class="cm">     *</span>
 <span class="cm">     * @method _fireEvents</span>
-<span class="cm">     * @param {String} src source of the changes, for inclusion in event facades</span>
-<span class="cm">     *   to facilitate filtering</span>
-<span class="cm">     * @param {Object} changes resolved changes</span>
+<span class="cm">     * @param {String} src Source of the changes, for inclusion in event facades</span>
+<span class="cm">     *   to facilitate filtering.</span>
+<span class="cm">     * @param {Object} changes Resolved changes.</span>
+<span class="cm">     * @param {Object} options Zero or more options. See &lt;code&gt;add()&lt;/code&gt; for</span>
+<span class="cm">     *   a list of supported options.</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_fireEvents</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">changes</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Note: the options param isn&#39;t used here, but it is used by subclasses.</span>
+
         <span class="c1">// Fire the global change event.</span>
         <span class="k">this</span><span class="p">.</span><span class="nx">fire</span><span class="p">(</span><span class="nx">EVT_CHANGE</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">changed</span><span class="o">:</span> <span class="nx">changes</span><span class="p">.</span><span class="nx">changed</span><span class="p">,</span>
@@ -481,9 +494,11 @@
 <span class="cm">     *   to facilitate filtering</span>
 <span class="cm">     * @param {Object} newState object hash of key/value pairs representing the</span>
 <span class="cm">     *   new state</span>
+<span class="cm">     * @param {Object} options Zero or more options. See &lt;code&gt;add()&lt;/code&gt; for</span>
+<span class="cm">     *   a list of supported options.</span>
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
-    <span class="nx">_resolveChanges</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">newState</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">_resolveChanges</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">newState</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">changed</span>   <span class="o">=</span> <span class="p">{},</span>
             <span class="nx">isChanged</span><span class="p">,</span>
             <span class="nx">prevState</span> <span class="o">=</span> <span class="nx">GlobalEnv</span><span class="p">.</span><span class="nx">_state</span><span class="p">,</span>
@@ -520,7 +535,7 @@
                 <span class="nx">newState</span> <span class="o">:</span> <span class="nx">newState</span><span class="p">,</span>
                 <span class="nx">prevState</span><span class="o">:</span> <span class="nx">prevState</span><span class="p">,</span>
                 <span class="nx">removed</span>  <span class="o">:</span> <span class="nx">removed</span>
-            <span class="p">});</span>
+            <span class="p">},</span> <span class="nx">options</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">},</span>
 
@@ -633,6 +648,7 @@
                         <ul class="content">
                                 <li class=""><a href="HistoryBase.html" title="HistoryBase">HistoryBase</a></li>
                                 <li class=""><a href="HistoryHash.html" title="HistoryHash">HistoryHash</a></li>
+                                <li class=""><a href="HistoryHTML5.html" title="HistoryHTML5">HistoryHTML5</a></li>
                         </ul>
                     </div>
 
@@ -642,6 +658,7 @@
                                 <li class="selected"><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
                                 <li class=""><a href="history-hash-ie.js.html" title="history-hash-ie.js">history-hash-ie.js</a></li>
                                 <li class=""><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
+                                <li class=""><a href="history-html5.js.html" title="history-html5.js">history-html5.js</a></li>
                         </ul>
                     </div>
 

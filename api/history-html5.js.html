@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: history   (YUI Library)</title>
+	<title>API: history   history-html5.js  (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -20,7 +20,7 @@
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_history.html" title="history">history</a>
                 
-                
+                 &gt; history-html5.js (source view) 
         <form onsubmit="return false">
             <div id="propertysearch">
                 Search: <input autocomplete="off" id="searchinput" />
@@ -43,62 +43,52 @@
                 </fieldset>
             </form>
 
-                   
-                    <h3>Module: history
-                    
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Provides browser history management using the HTML5 history API.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @module history</span>
+<span class="cm"> * @submodule history-html5</span>
+<span class="cm"> * @class HistoryHTML5</span>
+<span class="cm"> * @extends HistoryBase</span>
+<span class="cm"> * @constructor</span>
+<span class="cm"> * @param {Object} config (optional) Configuration object. See the HistoryBase</span>
+<span class="cm"> *   documentation for details.</span>
+<span class="cm"> */</span>
 
+<span class="kd">var</span> <span class="nx">HistoryBase</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryBase</span><span class="p">;</span>
 
-                    </h3>
-                    <div class="description summary">
-                        Provides browser history management functionality using a simple
-add/replace/get paradigm. This can be used to ensure that the browser's back
-and forward buttons work as the user expects and to provide bookmarkable URLs
-that return the user to the current application state, even in an Ajax
-application that doesn't perform full-page refreshes.
+<span class="kd">function</span> <span class="nx">HistoryHTML5</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">HistoryHTML5</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">HistoryHTML5</span><span class="p">,</span> <span class="nx">HistoryBase</span><span class="p">,</span> <span class="p">{</span>
+    <span class="c1">// -- Initialization -------------------------------------------------------</span>
+    <span class="nx">_init</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">},</span>
+
+    <span class="c1">// -- Protected Methods ----------------------------------------------------</span>
+    <span class="nx">_storeState</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">newState</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">},</span> <span class="p">{</span>
+    <span class="c1">// -- Public Static Properties ---------------------------------------------</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;historyhtml5&#39;</span>
+
+<span class="p">});</span>
+
+<span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHTML5</span> <span class="o">=</span> <span class="nx">HistoryHTML5</span><span class="p">;</span>
+
+<span class="c1">// Only point Y.History at HistoryHTML5 if it doesn&#39;t already exist and if the</span>
+<span class="c1">// current browser supports HTML5 history.</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">&amp;&amp;</span> <span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">=</span> <span class="nx">HistoryHTML5</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
                     </div>
-
-
-
-                <div class="yui-gc">
-                    <div class="yui-u first">
-
-                            <p>This module contains the following classes:</p>
-                            <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {"EventTarget": "EventTarget"}, "events": {}, "configs": {}, "properties": {}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}]}}, "description": "Provides global state management backed by an object, but with no browser\nhistory integration. For actual browser history integration and back/forward\nsupport, use the history-html5 or history-hash modules.", "guessedname": "HistoryBase", "name": "HistoryBase"}, {"extends": {"superclass": {"EventTarget": "EventTarget", "HistoryBase": "HistoryBase"}, "events": {"HistoryBase": [{"access": "", "deprecated": false, "name": "[key]Change"}, {"access": "", "deprecated": false, "name": "[key]Remove"}, {"access": "", "deprecated": false, "name": "history:change"}]}, "configs": {}, "properties": {"HistoryBase": []}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}], "HistoryBase": [{"access": "protected", "deprecated": false, "name": "_change"}, {"access": "protected", "deprecated": false, "name": "_defChangeFn"}, {"access": "protected", "deprecated": false, "name": "_fireChangeEvent"}, {"access": "protected", "deprecated": false, "name": "_fireEvents"}, {"access": "protected", "deprecated": false, "name": "_fireRemoveEvent"}, {"access": "protected", "deprecated": false, "name": "_init"}, {"access": "protected", "deprecated": false, "name": "_resolveChanges"}, {"access": "protected", "deprecated": false, "name": "_storeState"}, {"access": "", "deprecated": false, "name": "add"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "replace"}]}}, "description": "Provides browser history management backed by\n<code>window.location.hash</code>, as well as convenience methods for working\nwith the location hash and a synthetic <code>hashchange</code> event that\nnormalizes differences across browsers.", "guessedname": "HistoryHash", "name": "HistoryHash"}, {"extends": {"superclass": {"EventTarget": "EventTarget", "HistoryBase": "HistoryBase"}, "events": {"HistoryBase": [{"access": "", "deprecated": false, "name": "[key]Change"}, {"access": "", "deprecated": false, "name": "[key]Remove"}, {"access": "", "deprecated": false, "name": "history:change"}]}, "configs": {}, "properties": {"HistoryBase": []}, "methods": {"EventTarget": [{"access": "private", "deprecated": false, "name": "_getType"}, {"access": "private", "deprecated": false, "name": "_monitor"}, {"access": "private", "deprecated": false, "name": "_parseType"}, {"access": "", "deprecated": false, "name": "addTarget"}, {"access": "", "deprecated": false, "name": "after"}, {"access": "", "deprecated": false, "name": "before"}, {"access": "", "deprecated": false, "name": "bubble"}, {"access": "", "deprecated": false, "name": "detach"}, {"access": "", "deprecated": false, "name": "detachAll"}, {"access": "", "deprecated": false, "name": "fire"}, {"access": "", "deprecated": false, "name": "getEvent"}, {"access": "", "deprecated": false, "name": "getTargets"}, {"access": "", "deprecated": false, "name": "on"}, {"access": "", "deprecated": false, "name": "once"}, {"access": "", "deprecated": false, "name": "publish"}, {"access": "", "deprecated": false, "name": "removeTarget"}, {"access": "", "deprecated": true, "name": "subscribe"}, {"access": "", "deprecated": true, "name": "unsubscribe"}, {"access": "", "deprecated": true, "name": "unsubscribeAll"}], "HistoryBase": [{"access": "protected", "deprecated": false, "name": "_change"}, {"access": "protected", "deprecated": false, "name": "_defChangeFn"}, {"access": "protected", "deprecated": false, "name": "_fireChangeEvent"}, {"access": "protected", "deprecated": false, "name": "_fireEvents"}, {"access": "protected", "deprecated": false, "name": "_fireRemoveEvent"}, {"access": "protected", "deprecated": false, "name": "_init"}, {"access": "protected", "deprecated": false, "name": "_resolveChanges"}, {"access": "protected", "deprecated": false, "name": "_storeState"}, {"access": "", "deprecated": false, "name": "add"}, {"access": "", "deprecated": false, "name": "get"}, {"access": "", "deprecated": false, "name": "replace"}]}}, "description": "Provides browser history management using the HTML5 history API.", "guessedname": "HistoryHTML5", "name": "HistoryHTML5"}];
-                            </script>
-                            <div id="splash_classList">
-                                <ul>
-                                    <li><a href="HistoryBase.html" title="HistoryBase" id="class_0">HistoryBase</a></li>
-                                    <li><a href="HistoryHash.html" title="HistoryHash" id="class_1">HistoryHash</a></li>
-                                    <li><a href="HistoryHTML5.html" title="HistoryHTML5" id="class_2">HistoryHTML5</a></li>
-                                </ul>
-                            </div>
-                    </div>
-                    <div class="yui-u">
-                                    <div class="submodules">
-                                        <h4>Submodules:</h4> 
-                                        <dl>
-                                            <dt><code>history-base</code></dt>
-                                            <dd>Provides global state management backed by an object, but with no browser
-history integration. For actual browser history integration and back/forward
-support, use the history-html5 or history-hash modules.</dd>
-                                            <dt><code>history-hash-ie</code></dt>
-                                            <dd>Improves IE6/7 support in history-hash by using a hidden iframe to create
-entries in IE's browser history. This module is only needed if IE6/7 support
-is necessary; it's not needed for any other browser.</dd>
-                                            <dt><code>history-hash</code></dt>
-                                            <dd>Provides browser history management backed by
-<code>window.location.hash</code>, as well as convenience methods for working
-with the location hash and a synthetic <code>hashchange</code> event that
-normalizes differences across browsers.</dd>
-                                            <dt><code>history-html5</code></dt>
-                                            <dd>Provides browser history management using the HTML5 history API.</dd>
-                                        </dl>
-                                    </div>
-
-                        </div>
-                </div>
-
 			</div>
 		</div>
 		<div class="yui-b">
@@ -184,7 +174,7 @@ normalizes differences across browsers.</dd>
                                 <li class=""><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
                                 <li class=""><a href="history-hash-ie.js.html" title="history-hash-ie.js">history-hash-ie.js</a></li>
                                 <li class=""><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
-                                <li class=""><a href="history-html5.js.html" title="history-html5.js">history-html5.js</a></li>
+                                <li class="selected"><a href="history-html5.js.html" title="history-html5.js">history-html5.js</a></li>
                         </ul>
                     </div>
 
