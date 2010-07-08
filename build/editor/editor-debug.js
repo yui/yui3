@@ -1886,12 +1886,12 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyUp: function(e) {
-            if (EditorBase.NC_KEYS[e.keyCode]) {
-                var inst = this.frame.getInstance(),
-                    sel = new inst.Selection();
-
-                if (sel.anchorNode) {
-                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection();
+            
+            if (sel.anchorNode) {
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keyup', selection: sel, changedEvent: e  });
+                if (EditorBase.NC_KEYS[e.keyCode]) {
                     this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-up', selection: sel, changedEvent: e  });
                 }
             }
@@ -1902,11 +1902,15 @@ YUI.add('editor-base', function(Y) {
         * @private
         */
         _onFrameKeyDown: function(e) {
-            if (EditorBase.NC_KEYS[e.keyCode]) {
-                var inst = this.frame.getInstance(),
-                    sel = new inst.Selection();
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection();
 
-                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode], changedEvent: e });
+            if (sel.anchorNode) {
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keydown', changedEvent: e });
+                if (EditorBase.NC_KEYS[e.keyCode]) {
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode], changedEvent: e });
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-down', changedEvent: e });
+                }
             }
         },
         /**
