@@ -1,4 +1,4 @@
-Browser History Utility
+Browser History Utility (deprecated since 3.2.0)
 
 3.2.0
     * Deprecated the Browser History Utility and renamed its module to

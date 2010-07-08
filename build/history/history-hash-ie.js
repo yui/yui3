@@ -1,9 +1,9 @@
 YUI.add('history-hash-ie', function(Y) {
 
 /**
- * The history-hash-ie module improves IE6/7 support in history-hash by using a
- * hidden iframe to create entries in IE's browser history. This module is only
- * needed if IE6/7 support is necessary; it's not needed for any other browser.
+ * Improves IE6/7 support in history-hash by using a hidden iframe to create
+ * entries in IE's browser history. This module is only needed if IE6/7 support
+ * is necessary; it's not needed for any other browser.
  *
  * @module history
  * @submodule history-hash-ie
@@ -116,4 +116,4 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
 }
 
 
-}, '@VERSION@' ,{requires:['history-base', 'history-hash', 'node-base']});
+}, '@VERSION@' ,{requires:['history-base', 'history-hash', 'node-base'], supersedes:['history-deprecated']});
