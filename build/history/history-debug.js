@@ -1120,42 +1120,10 @@ function HistoryHTML5() {
 Y.extend(HistoryHTML5, HistoryBase, {
     // -- Initialization -------------------------------------------------------
     _init: function (config) {
-        // Use the bookmarked state as the initialState if no initialState was
-        // specified.
-        config = config || {};
-        config.initialState = config.initialState || HistoryHash.parseHash();
-
-        // Subscribe to the synthetic hashchange event (defined below) to handle
-        // changes.
-        Y.after('hashchange', Y.bind(this._afterHashChange, this), win);
-
-        HistoryHash.superclass._init.call(this, config);
     },
 
     // -- Protected Methods ----------------------------------------------------
     _storeState: function (src, newState) {
-        // var newHash = HistoryHash.createHash(newState);
-        // 
-        // HistoryHash.superclass._storeState.apply(this, arguments);
-        // 
-        // // Update the location hash with the changes, but only if the new hash
-        // // actually differs from the current hash (this avoids creating multiple
-        // // history entries for a single state).
-        // if (HistoryHash.getHash() !== newHash) {
-        //     HistoryHash[src === HistoryBase.SRC_REPLACE ? 'replaceHash' : 'setHash'](newHash);
-        // }
-    },
-
-    // -- Protected Event Handlers ---------------------------------------------
-
-    /**
-     * Handler for hashchange events.
-     *
-     * @method _afterHashChange
-     * @protected
-     */
-    _afterHashChange: function (e) {
-        this._resolveChanges(SRC_HASH, HistoryHash.parseHash(e.newHash));
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
