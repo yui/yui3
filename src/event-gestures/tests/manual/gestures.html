@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>Touch/Gesture Events</title>
+        
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
+
+        <style>
+        #testNode, #testNode2 {
+            background-color: blue;
+            width:200px;
+            height:200px;
+            font-family:monospace;
+            font-size:7pt;
+            position:relative;
+        }
+
+        #testNode div {
+            white-space:nowrap;
+        }
+
+        #testNode.active {
+            background-color:red;
+        }
+        </style>
+
+        <script src="../../../../build/yui/yui.js"></script>
+
+    </head>
+    <body>
+        <div id="testNode"></div>
+        <div id="testNode2"></div>
+        <script>
+            YUI({filter:"raw", combine:false}).use("event-gestures", function(Y) {
+
+                var div = Y.Node.one("#testNode"),
+                    div2 = Y.Node.one("#testNode2");
+
+                var flickHandler = function(e) {
+                    div.append("<div>flick, e:" + [e.velocity, e.distance, e.button] + "</div>");                    
+                };
+
+                var moveStartHandler = function(e) {
+                    var target = e.target;
+
+                    target.set("innerHTML", "");
+                    target.append("<div>movestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                };
+
+                var moveHandler = function(e) {
+                    div.append("<div>move, page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                };
+
+                var moveEndHandler = function(e) {
+                    div.append("<div>moveend page:" + [e.pageX, e.pageY, e.button] + "</div>");
+                };
+
+                /* Waiting on synth event infrastructure to support this properly */
+                var flickCfg = {
+                    minDistance:20,
+                    minVelocity:0,
+                };
+
+                /* Waiting on synth event infrastructure to support this properly */
+                var moveStartCfg = {
+                    minDistance: 10,
+                    minTime: 500,
+                    button:1
+                };
+
+                div.on("flick", flickHandler, flickCfg);
+
+                div.on("movestart", moveStartHandler, moveStartCfg);
+                div.on("move", moveHandler);
+                div.on("moveend", moveEndHandler);
+
+                div2.on("movestart", moveStartHandler, moveStartCfg);
+
+
+                div.addClass("active");
+            });
+        </script>
+    </body>
+</html>

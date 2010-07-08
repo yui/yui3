@@ -176,7 +176,7 @@ Y.Event.define('flick', {
 });
 
 
-}, '@VERSION@' ,{use:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});
 YUI.add('event-move', function(Y) {
 
 // TODO: Better way to sniff 'n' switch touch support?
@@ -208,6 +208,10 @@ var TOUCH = "ontouchstart" in Y.config.win,
     OWNER_DOCUMENT = "ownerDocument",
 
     NODE_TYPE = "nodeType",
+    
+    PUB_CFG = {
+        emitFacade:false
+    },
 
     define = Y.Event.define;
 
@@ -246,12 +250,13 @@ define('movestart', {
         return params;
     },
 
+    publishConfig: PUB_CFG,
+
     _onStart : function(e, node, subscriber, ce) {
 
         e.preventDefault();
 
-        var start = true, // always true for mouse
-            payload; 
+        var start = true; // always true for mouse
 
         if (e.touches) {
             start = (e.touches.length === 1);
@@ -259,9 +264,13 @@ define('movestart', {
         }
 
         if (start) {
+            e.type = "movestart";
 
             // TODO: Pass through e instead?
+            /*
             payload = {
+                target: e.target,
+                currentTarget: e.currentTarget,
                 time : new Date().getTime(),
                 clientX: e.clientX,
                 clientY: e.clientY,
@@ -270,9 +279,9 @@ define('movestart', {
                 button : e.button,
                 _e : e
             };
-
-            node.setData(MOVE_START, payload);
-            ce.fire(payload);
+            */
+            node.setData(MOVE_START, e);
+            ce.fire(e);
         }
     },
 
@@ -305,24 +314,36 @@ define('move', {
         }
     },
 
+    publishConfig: PUB_CFG,
+
     _onMove : function(e, node, subscriber, ce) {
 
         var start = node.getData(MOVE_START),
             move = !!(start),
-            payload;
+            te;
 
         if (move) {
 
             if (e.touches) {
                 move = (e.touches.length === 1);
+                te = e;
                 e = e.touches[0];
+
+                if (!e.target) {
+                    e.target = te.target;
+                    e.currentTarget = te.currentTarget;
+                }
             }
 
             if (move) {
-
                 e.preventDefault();
 
+                e.type = "move";
+
+                /*
                 payload = {
+                    target: e.target,
+                    currentTarget: e.currentTarget,
                     time : new Date().getTime(),
                     clientX: e.clientX, 
                     clientY: e.clientY,
@@ -331,9 +352,10 @@ define('move', {
                     button : e.button,
                     _e : e
                 };
+                */
     
-                node.setData(_MOVE, payload);
-                ce.fire(payload);
+                node.setData(_MOVE, e);
+                ce.fire(e);
             }
         }
     }
@@ -363,10 +385,11 @@ define('moveend', {
         }
     },
 
+    publishConfig: PUB_CFG,
+
     _onEnd : function(e, node, subscriber, ce) {
 
-        var moveEnd = !!(node.getData(_MOVE) || node.getData(MOVE_START)),
-            payload;
+        var moveEnd = !!(node.getData(_MOVE) || node.getData(MOVE_START));
 
         if (moveEnd) {
 
@@ -379,10 +402,13 @@ define('moveend', {
             }
 
             if (moveEnd) {
-
                 e.preventDefault();
+                e.type = "moveend";
 
+                /*
                 payload = {
+                    target: e.target,
+                    currentTarget: e.currentTarget,
                     time : new Date().getTime(),
                     clientX: e.clientX, 
                     clientY: e.clientY,
@@ -391,18 +417,19 @@ define('moveend', {
                     button: e.button,
                     _e : e
                 };
+                */
 
                 node.setData(MOVE_START, null);
                 node.setData(_MOVE, null);
 
-                ce.fire(payload);
+                ce.fire(e);
             }
         }
     }
 });
 
 
-}, '@VERSION@' ,{use:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});
 
 
 YUI.add('event-gestures', function(Y){}, '@VERSION@' ,{use:['event-flick', 'event-move']});

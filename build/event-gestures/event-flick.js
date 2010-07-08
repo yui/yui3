@@ -176,4 +176,4 @@ Y.Event.define('flick', {
 });
 
 
-}, '@VERSION@' ,{use:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});

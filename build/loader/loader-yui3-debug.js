@@ -674,6 +674,24 @@ YUI.Env[Y.version].modules = {
             }
         }
     }, 
+    "event-gestures": {
+        "submodules": {
+            "event-flick": {
+                "requires": [
+                    "node-base", 
+                    "event-touch", 
+                    "event-synthetic"
+                ]
+            }, 
+            "event-move": {
+                "requires": [
+                    "node-base", 
+                    "event-touch", 
+                    "event-synthetic"
+                ]
+            }
+        }
+    }, 
     "event-simulate": {
         "requires": [
             "event-base"
@@ -767,6 +785,21 @@ YUI.Env[Y.version].modules = {
             "json-stringify": {
                 "requires": [
                     "yui-base"
+                ]
+            }
+        }
+    }, 
+    "jsonp": {
+        "submodules": {
+            "jsonp-base": {
+                "requires": [
+                    "get", 
+                    "oop"
+                ]
+            }, 
+            "jsonp-url": {
+                "requires": [
+                    "jsonp-base"
                 ]
             }
         }
