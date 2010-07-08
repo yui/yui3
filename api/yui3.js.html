@@ -721,6 +721,24 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;event-gestures&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;event-flick&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-touch&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-synthetic&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-move&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-touch&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-synthetic&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;event-simulate&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;event-base&quot;</span>
@@ -814,6 +832,21 @@
             <span class="s2">&quot;json-stringify&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;jsonp&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;jsonp-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;get&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;oop&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;jsonp-url&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;jsonp-base&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1080,12 +1113,9 @@
         <span class="s2">&quot;skinnable&quot;</span><span class="o">:</span> <span class="kc">true</span>
     <span class="p">},</span> 
     <span class="s2">&quot;value-change&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;optional&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;event-custom-complex&quot;</span>
-        <span class="p">],</span> 
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
-            <span class="s2">&quot;event-focus&quot;</span>
+            <span class="s2">&quot;event-focus&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;event-synthetic&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;widget&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -1142,6 +1172,11 @@
             <span class="s2">&quot;widget-base&quot;</span>
         <span class="p">]</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;yql&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;jsonp&quot;</span>
+        <span class="p">]</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;yui&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
             <span class="s2">&quot;get&quot;</span><span class="o">:</span> <span class="p">{},</span> 
@@ -1181,6 +1216,7 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>
@@ -1209,6 +1245,7 @@
                                 <li class=""><a href="module_swfdetect.html" title="swfdetect">swfdetect</a></li>
                                 <li class=""><a href="module_tabview.html" title="tabview">tabview</a></li>
                                 <li class=""><a href="module_test.html" title="test">test</a></li>
+                                <li class=""><a href="module_value-change.html" title="value-change">value-change</a></li>
                                 <li class=""><a href="module_widget.html" title="widget">widget</a></li>
                                 <li class=""><a href="module_widget-anim.html" title="widget-anim">widget-anim</a></li>
                                 <li class=""><a href="module_widget-child.html" title="widget-child">widget-child</a></li>
@@ -1219,6 +1256,7 @@
                                 <li class=""><a href="module_widget-position-constrain.html" title="widget-position-constrain">widget-position-constrain</a></li>
                                 <li class=""><a href="module_widget-stack.html" title="widget-stack">widget-stack</a></li>
                                 <li class=""><a href="module_widget-stdmod.html" title="widget-stdmod">widget-stdmod</a></li>
+                                <li class=""><a href="module_yql.html" title="yql">yql</a></li>
                                 <li class=""><a href="module_yui.html" title="yui">yui</a></li>
                         </ul>
                     </div>

@@ -1080,6 +1080,7 @@ Y.mix(Y_Node.prototype, {
 Y.Node = Y_Node;
 Y.get = Y.Node.get;
 Y.one = Y.Node.one;
+
 /**
  * The NodeList module provides support for managing collections of Nodes.
  * @module node
@@ -1542,6 +1543,7 @@ Y.all = function(nodes) {
 };
 
 Y.Node.all = Y.all;
+
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -1730,6 +1732,7 @@ Y.Node.importMethod(Y.DOM, [
  * @param {string} name The attribute to remove 
  */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'removeAttribute']);
+
 (function(Y) {
     var methods = [
     /**
@@ -1822,6 +1825,7 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'remo
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
+
 if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
         if (attr === 'value') {
@@ -1873,7 +1877,9 @@ if (Y.config.doc.createElement('form').elements.nodeType) {
 
 
 
+
 }, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});
+
 YUI.add('node-style', function(Y) {
 
 (function(Y) {
@@ -1954,6 +1960,7 @@ Y.Node.importMethod(Y.DOM, methods);
  */
 Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
+
 Y.mix(Y.Node.ATTRS, {
     offsetHeight: {
         setter: function(h) {
@@ -1995,7 +2002,9 @@ Y.mix(Y.Node.prototype, {
 });
 
 
+
 }, '@VERSION@' ,{requires:['dom-style', 'node-base']});
+
 YUI.add('node-screen', function(Y) {
 
 /**
@@ -2158,6 +2167,7 @@ Y.Node.importMethod(Y.DOM, [
     'swapXY'
 ]);
 
+
 /**
  * Returns a region object for the node 
  * @config region
@@ -2230,7 +2240,9 @@ Y.Node.prototype.inRegion = function(node2, all, altRegion) {
 };
 
 
+
 }, '@VERSION@' ,{requires:['dom-screen']});
+
 YUI.add('node-pluginhost', function(Y) {
 
 /**
@@ -2284,7 +2296,9 @@ Y.NodeList.prototype.unplug = function() {
 };
 
 
+
 }, '@VERSION@' ,{requires:['node-base', 'pluginhost']});
+
 YUI.add('node-event-delegate', function(Y) {
 
 /**
@@ -2312,8 +2326,10 @@ Y.Node.prototype.delegate = function(type, fn, selector) {
 };
 
 
+
 }, '@VERSION@' ,{requires:['node-base', 'event-delegate', 'pluginhost']});
 
 
-YUI.add('node', function(Y){}, '@VERSION@' ,{requires:['dom', 'event-base', 'event-delegate', 'pluginhost'], use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], skinnable:false});
+
+YUI.add('node', function(Y){}, '@VERSION@' ,{skinnable:false, use:['node-base', 'node-style', 'node-screen', 'node-pluginhost', 'node-event-delegate'], requires:['dom', 'event-base', 'event-delegate', 'pluginhost']});
 

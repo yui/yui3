@@ -16,8 +16,8 @@ table, tr, td
 }
 </style>
 <!-- BEGIN EXAMPLE CODE -->	
-    <!--script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script-->
-	<script type="text/javascript" src="../../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/3.1.1/build/yui/yui.js"></script>
+	<!--script type="text/javascript" src="../../../build/yui/yui.js"></script-->
     <script type="text/javascript" src="../../graphics/build/graphics/graphics.js"></script>
     <script type="text/javascript" src="../build/infographics/infographics.js"></script>
 		
@@ -38,14 +38,14 @@ table, tr, td
 </div>
 <script>
 
-			YUI({filter:"debug"}).use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'slider', 'graphics', 'infographics', function (Y)
+			YUI().use('dom', 'datatype', 'node', 'json', 'dd-constrain', 'event-custom', 'base', 'widget', "widget-position", "widget-stack", "widget-position-align", "widget-stdmod", 'slider', 'graphics', 'infographics', function (Y)
 				{
 					// Create data 
 					var mydata = {
 						id:"myData", 
 						data: [
 							{day:"Monday", taxes:2000, expenses:3700, revenue:2200}, {day:"Tuesday", taxes:50, expenses:9100, revenue:100}, 
-							{day:"Wednesday", taxes:400, expenses:1100, revenue:1500}, {day:"Thursday", taxes:200, expenses:1900, revenue:2800}, {day:"Friday", taxes:2000, expenses:700, revenue:2650}
+							{day:"Wednesday", taxes:-4000, expenses:1100, revenue:1500}, {day:"Thursday", taxes:200, expenses:1900, revenue:2800}, {day:"Friday", taxes:2000, expenses:700, revenue:2650}
 						]
 					};					
 
@@ -67,10 +67,16 @@ table, tr, td
 					};
 
                     var taxgraphstyles = {
-						color:"#ff0000",
-						marker:{fillColor:"#ff0000", width:6, height:6},
-						weight:"2",
-						showMarkers:false,
+						fill:
+                        {
+                            color:"#ff0000",
+						},
+                        width:6, 
+                        height:6,
+						border:
+                        {
+                            weight:"0"
+                        },    
                         padding:{left:50, right:50}
                     };
 				
@@ -142,7 +148,12 @@ table, tr, td
                                                         xKey:"day",
                                                         yKey:"taxes",
                                                         styles:taxgraphstyles});
-
+                var markerSeries = new Y.MarkerSeries({
+                                                        xAxis:timeaxis,
+                                                        yAxis:numericaxis,
+                                                        xKey:"day",
+                                                        yKey:"taxes",
+                                                        styles:taxgraphstyles});
                    var graphstack = new Y.GraphStack({parent:"#chart", seriesCollection:[{
                                                                                             type:"column", 
                                                                                             xAxis:timeaxis, 
@@ -168,8 +179,9 @@ table, tr, td
                                                                                             yKey:"taxes",
                                                                                             styles:taxareastyles
                                                                                         },
-                                                                                        lineSeries
-                                                                                     ]});
+                                                                                        lineSeries,
+                                                                                        markerSeries
+                                                                                        ]});
 
                     var axisrenderer = new Y.AxisRenderer({axis:timeaxis, position:"bottom", styles:bottomaxisstyles});
                     axisrenderer.render("#axis");

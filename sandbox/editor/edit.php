@@ -106,9 +106,11 @@
 
 <button id="getHTML">Get HTML</button>
 <button id="setHTML">Set HTML</button>
+<button id="focusEditor">Focus Editor</button>
 
 <div id="stub">
-<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+</div>
+<!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
 <ul>
@@ -125,6 +127,7 @@ This is some <strong>other</strong> loose test.
 <p>This is <span style="font-family: Courier New">another</span> test.</p>
 This is some more loose test.
 <p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+This is some more loose test.
 <style>
 del {
     background-color: yellow;
@@ -135,7 +138,8 @@ del {
     text-decoration: underline overline;
 }
 </style>
-</div>
+This is some more loose test.
+</div-->
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
 <script type="text/javascript" src="http://yui.yahooapis.com/3.1.0/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -190,7 +194,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
                 break;
             case 'backcolor':
-                val = '#ff0000';
+                val = '#33CC99';
                 break;
             case 'forecolor':
                 val = '#0000FF';
@@ -258,7 +262,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             f_options.item(0).set('selected', true);
             f_options.each(function(v) {
                 var val = v.get('value').toLowerCase();
-                if (val === fname) {
+                if (val === fname.toLowerCase()) {
                     v.set('selected', true);
                 }
             });
@@ -321,6 +325,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         //This stops image resizes, but for all images!!
         //editor.execCommand('enableObjectResizing', false);
         //this.set('content', Y.one('#stub').get('innerHTML'));
+        editor.frame.on('keydown', function(e) {
+            if (e.charCode == 83 && (e.ctrlKey || e.metaKey)) {
+                e.halt();
+            }
+        });
     });
     /*
     editor.on('frame:keyup', function(e) {
@@ -349,6 +358,10 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     Y.on('click', function(e) {
         editor.set('content', '<p>This is a test: ' + (new Date()) + '</p>');
     }, '#setHTML');
+
+    Y.on('click', function(e) {
+        editor.focus(true);
+    }, '#focusEditor');
 
 });
 

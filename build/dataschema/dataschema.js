@@ -62,7 +62,9 @@ Y.namespace("DataSchema").Base = SchemaBase;
 Y.namespace("Parsers");
 
 
+
 }, '@VERSION@' ,{requires:['base']});
+
 YUI.add('dataschema-json', function(Y) {
 
 /**
@@ -359,7 +361,9 @@ var LANG = Y.Lang,
 Y.DataSchema.JSON = Y.mix(SchemaJSON, Y.DataSchema.Base);
 
 
+
 }, '@VERSION@' ,{requires:['json', 'dataschema-base']});
+
 YUI.add('dataschema-xml', function(Y) {
 
 /**
@@ -393,10 +397,10 @@ var LANG = Y.Lang,
          * @static
          */
         apply: function(schema, data) {
-            var xmldoc = data,
+            var xmldoc = data, // unnecessary variables
                 data_out = {results:[],meta:{}};
 
-            if(xmldoc && xmldoc.nodeType && (xmldoc.nodeType === 9 || xmldoc.nodeType === 1 || xmldoc.nodeType === 11) && schema) {
+            if(xmldoc && xmldoc.nodeType && (9 === xmldoc.nodeType || 1 === xmldoc.nodeType || 11 === xmldoc.nodeType) && schema) {
                 // Parse results data
                 data_out = SchemaXML._parseResults(schema, xmldoc, data_out);
 
@@ -426,51 +430,127 @@ var LANG = Y.Lang,
                 result, res, value = null;
 
             try {
-                // Standards mode
-                if(!LANG.isUndefined(xmldoc.evaluate)) {
-                    result = xmldoc.evaluate(locator, context, xmldoc.createNSResolver(!context.ownerDocument ? context.documentElement : context.ownerDocument.documentElement), 0, null);
-                    while(res = result.iterateNext()) {
-                        value = res.textContent;
-                    }
+                result = SchemaXML._getXPathResult(locator, context, xmldoc);
+                while(res = result.iterateNext()) {
+                    value = res.textContent || res.value || res.text || res.innerHTML || null;
                 }
-                // IE mode
-                else {
-                    // XPath is supported
-                    try {
-                        xmldoc.setProperty("SelectionLanguage", "XPath");
-                        result = context.selectNodes(locator)[0];
-                        value = result.value || result.text || null;
-                    }
-                    // Fallback for DOM nodes and fragments
-                    catch(ee) {
-                        var locatorArray = locator.split("/"), i=0, l=locatorArray.length, location, subloc;
-                        // Iterate over each locator piece
-                        for(; i<l; i++) {
-                            location = locatorArray[i];
 
-                            // grab nth child []
-                            if((location.indexOf("[") > -1) && (location.indexOf("]") > -1)) {
-                                subloc = location.slice(location.indexOf("[")+1, location.indexOf("]"));
-                                //XPath is 1-based while DOM is 0-based
-                                subloc--;
-                                context = context.childNodes[subloc];
-                            }
-
-                            // grab attribute value @
-                            if(location.indexOf("@") > -1) {
-                                subloc = location.substr(location.indexOf("@"));
-                                context = subloc ? context.getAttribute(subloc) : context;
-                            }
-                        }
-                        
-                        // grab node value
-                        value = context.innerHTML;
-                    }
-                }
                 return Y.DataSchema.Base.parse(value, field);
-
             }
             catch(e) {
+            }
+
+            return null;
+        },
+
+        /**
+         * Fetches the XPath-specified result for a given location in an XML node or document.
+         *
+         * @param locator {String} The XPath location.
+         * @param context {Object} XML node or document to search within.
+         * @param xmldoc {Object} XML document to resolve namespace.
+         * @return {Object} Data collection or null.
+         * @static
+         * @protected
+         */
+        _getXPathResult: function(locator, context, xmldoc) {
+            // Standards mode
+            if (! LANG.isUndefined(xmldoc.evaluate)) {
+                return xmldoc.evaluate(locator, context, xmldoc.createNSResolver(context.ownerDocument ? context.ownerDocument.documentElement : context.documentElement), 0, null);
+            }
+            // IE mode
+            else {
+                var values=[], locatorArray = locator.split(/\b\/\b/), i=0, l=locatorArray.length, location, subloc, m, isNth;
+                
+                // XPath is supported
+                try {
+                    // this fixes the IE 5.5+ issue where childnode selectors begin at 0 instead of 1
+                    xmldoc.setProperty("SelectionLanguage", "XPath");
+                    values = context.selectNodes(locator);
+                }
+                // Fallback for DOM nodes and fragments
+                catch (e) {
+                    // Iterate over each locator piece
+                    for (; i<l && context; i++) {
+                        location = locatorArray[i];
+
+                        // grab nth child []
+                        if ((location.indexOf("[") > -1) && (location.indexOf("]") > -1)) {
+                            subloc = location.slice(location.indexOf("[")+1, location.indexOf("]"));
+                            //XPath is 1-based while DOM is 0-based
+                            subloc--;
+                            context = context.childNodes[subloc];
+                            isNth = true;
+                        }
+                        // grab attribute value @
+                        else if (location.indexOf("@") > -1) {
+                            subloc = location.substr(location.indexOf("@"));
+                            context = subloc ? context.getAttribute(subloc.replace('@', '')) : context;
+                        }
+                        // grab that last instance of tagName
+                        else if (-1 < location.indexOf("//")) {
+                            subloc = context.getElementsByTagName(location.substr(2));
+                            context = subloc.length ? subloc[subloc.length - 1] : null;
+                        }
+                        // find the last matching location in children
+                        else if (l != i + 1) {
+                            for (m=context.childNodes.length-1; 0 <= m; m-=1) {
+                                if (location === context.childNodes[m].tagName) {
+                                    context = context.childNodes[m];
+                                    m = -1;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (context) {
+                        // attribute
+                        if (LANG.isString(context)) {
+                            values[0] = {value: context};
+                        }
+                        // nth child
+                        else if (isNth) {
+                            values[0] = {value: context.innerHTML};
+                        }
+                        // all children
+                        else {
+                            values = Y.Array(context.childNodes, 0, true);
+                        }
+                    }
+                }
+
+                // returning a mock-standard object for IE
+                return {
+                    index: 0,
+                    
+                    iterateNext: function() {
+                        if (this.index >= this.values.length) {return undefined;}
+                        var result = this.values[this.index];
+                        this.index += 1;
+                        return result;
+                    },
+
+                    values: values
+                };
+            }
+        },
+
+        /**
+         * Schema-parsed result field.
+         *
+         * @method _parseField
+         * @param field {String | Object} Required. Field definition.
+         * @param result {Object} Required. Schema parsed data object.
+         * @param context {Object} Required. XML node or document to search within.
+         * @static
+         * @protected
+         */
+        _parseField: function(field, result, context) {
+            if (field.schema) {
+                result[field.key] = SchemaXML._parseResults(field.schema, context, {results:[],meta:{}}).results;
+            }
+            else {
+                result[field.key || field] = SchemaXML._getLocationValue(field, context);
             }
         },
 
@@ -499,37 +579,63 @@ var LANG = Y.Lang,
         },
 
         /**
+         * Schema-parsed result to add to results list.
+         *
+         * @method _parseResult
+         * @param fields {Array} Required. A collection of field definition.
+         * @param context {Object} Required. XML node or document to search within.
+         * @return {Object} Schema-parsed data.
+         * @static
+         * @protected
+         */
+        _parseResult: function(fields, context) {
+            var result = {}, j;
+
+            // Find each field value
+            for (j=fields.length-1; 0 <= j; j--) {
+                SchemaXML._parseField(fields[j], result, context);
+            }
+
+            return result;
+        },
+
+        /**
          * Schema-parsed list of results from full data
          *
          * @method _parseResults
          * @param schema {Object} Schema to parse against.
-         * @param xmldoc_in {Object} XML document parse.
+         * @param context {Object} XML node document parse.
          * @param data_out {Object} In-progress schema-parsed data to update.
          * @return {Object} Schema-parsed data.
          * @static
          * @protected
          */
-        _parseResults: function(schema, xmldoc_in, data_out) {
-            if(schema.resultListLocator && LANG.isArray(schema.resultFields)) {
-                var nodeList = xmldoc_in.getElementsByTagName(schema.resultListLocator),
+        _parseResults: function(schema, context, data_out) {
+            if (schema.resultListLocator && LANG.isArray(schema.resultFields)) {
+                var xmldoc = context.ownerDocument || context,
                     fields = schema.resultFields,
                     results = [],
-                    node, field, result, i, j;
+                    node, result, nodeList, i=0;
 
-                if(nodeList.length) {
-                    // Loop through each result node
-                    for(i=nodeList.length-1; i>= 0; i--) {
-                        result = {};
-                        node = nodeList[i];
-
-                        // Find each field value
-                        for(j=fields.length-1; j>= 0; j--) {
-                            field = fields[j];
-                            result[field.key || field] = SchemaXML._getLocationValue(field, node);
-                        }
-                        results[i] = result;
+                if (schema.resultListLocator.match(/^[:\-\w]+$/)) {
+                    nodeList = context.getElementsByTagName(schema.resultListLocator);
+                    
+                    // loop through each result node
+                    for (i=nodeList.length-1; 0 <= i; i--) {
+                        results[i] = SchemaXML._parseResult(fields, nodeList[i]);
                     }
+                }
+                else {
+                    nodeList = SchemaXML._getXPathResult(schema.resultListLocator, context, xmldoc);
 
+                    // loop through the nodelist
+                    while (node = nodeList.iterateNext()) {
+                        results[i] = SchemaXML._parseResult(fields, node);
+                        i += 1;
+                    }
+                }
+
+                if (results.length) {
                     data_out.results = results;
                 }
                 else {
@@ -543,7 +649,9 @@ var LANG = Y.Lang,
 Y.DataSchema.XML = Y.mix(SchemaXML, Y.DataSchema.Base);
 
 
+
 }, '@VERSION@' ,{requires:['dataschema-base']});
+
 YUI.add('dataschema-array', function(Y) {
 
 /**
@@ -642,7 +750,9 @@ var LANG = Y.Lang,
 Y.DataSchema.Array = Y.mix(SchemaArray, Y.DataSchema.Base);
 
 
+
 }, '@VERSION@' ,{requires:['dataschema-base']});
+
 YUI.add('dataschema-text', function(Y) {
 
 /**
@@ -750,7 +860,9 @@ var LANG = Y.Lang,
 Y.DataSchema.Text = Y.mix(SchemaText, Y.DataSchema.Base);
 
 
+
 }, '@VERSION@' ,{requires:['dataschema-base']});
+
 
 
 YUI.add('dataschema', function(Y){}, '@VERSION@' ,{use:['dataschema-base','dataschema-json','dataschema-xml','dataschema-array','dataschema-text']});

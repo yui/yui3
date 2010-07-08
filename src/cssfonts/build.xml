@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <description>cssfonts - Build All Modules</description>
+
+    <macrodef name="build-cssfonts">
+        <attribute name="target"/>
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="." includes="build.*.xml"/>
+            </subant>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-cssfonts target="local"/>
+    </target>
+    <target name="deploy">
+        <build-cssfonts target="deploy"/>
+    </target>
+    <target name="all">
+        <build-cssfonts target="all"/>
+    </target>
+    <target name="clean">
+        <build-cssfonts target="clean"/>
+    </target>
+
+</project>

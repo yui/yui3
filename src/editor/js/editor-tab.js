@@ -5,10 +5,9 @@
      */     
     /**
      * Handles tab and shift-tab indent/outdent support.
-     * @class EditorTab
+     * @class Plugin.EditorTab
      * @constructor
      * @extends Base
-     * @namespace Plugin
      */
     
     var EditorTab = function() {

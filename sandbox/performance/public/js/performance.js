@@ -319,8 +319,27 @@ Y.extend(Performance, Y.Base, {
             test         = iteration.test;
 
         // If the test has a teardown function, run it.
-        if (isFunction(test.teardown)) {
-            iteration.sandbox.run(test.teardown);
+        if (!iteration.teardownDone && isFunction(test.teardown)) {
+            if (test.asyncTeardown) {
+                // The teardown function is asynchronous, so we'll pause the
+                // iteration while it runs, then restart the iteration once the
+                // teardown function finishes successfully.
+                iteration.sandbox.run(test.teardown, Y.bind(function (result) {
+                    if (result === false) {
+                        // Teardown function failed.
+                        Y.log('Test "' + iteration.name + '" failed on teardown.', 'warn', 'performance');
+                    }
+
+                    // Continue ending the iteration.
+                    iteration.teardownDone = true;
+                    this._onIterationComplete(iteration, profileData);
+                }, this));
+
+                return;
+            } else if (iteration.sandbox.run(test.teardown) === false) {
+                // Teardown function failed.
+                Y.log('Test "' + iteration.name + '" failed on teardown.', 'warn', 'performance');
+            }
         }
 
         // Destroy the sandbox unless we need to reuse it for another iteration.
@@ -385,8 +404,27 @@ Y.extend(Performance, Y.Base, {
             test         = iteration.test;
 
         // If the test has a teardown function, run it.
-        if (isFunction(test.teardown)) {
-            iteration.sandbox.run(test.teardown);
+        if (!iteration.teardownDone && isFunction(test.teardown)) {
+            if (test.asyncTeardown) {
+                // The teardown function is asynchronous, so we'll pause the
+                // iteration while it runs, then restart the iteration once the
+                // teardown function finishes successfully.
+                iteration.sandbox.run(test.teardown, Y.bind(function (result) {
+                    if (result === false) {
+                        // Teardown function failed.
+                        Y.log('Test "' + iteration.name + '" failed on teardown.', 'warn', 'performance');
+                    }
+
+                    // Continue ending the iteration.
+                    iteration.teardownDone = true;
+                    this._onTimeComplete(iteration, count);
+                }, this));
+
+                return;
+            } else if (iteration.sandbox.run(test.teardown) === false) {
+                // Teardown function failed.
+                Y.log('Test "' + iteration.name + '" failed on teardown.', 'warn', 'performance');
+            }
         }
 
         // Destroy the sandbox unless we need to reuse it for another iteration.

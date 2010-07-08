@@ -11,7 +11,7 @@ var VERSION         = Y.version,
     BUILD           = '/build/',
     ROOT            = VERSION + BUILD,
     CDN_BASE        = Y.Env.base,
-    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.06.02-18-59',
+    GALLERY_VERSION = CONFIG.gallery || 'gallery-2010.06.23-18-37',
     GALLERY_ROOT    = GALLERY_VERSION + BUILD,
     TNT             = '2in3',
     TNT_VERSION     = CONFIG[TNT] || '3',
@@ -2614,6 +2614,24 @@ YUI.Env[Y.version].modules = {
             }
         }
     }, 
+    "event-gestures": {
+        "submodules": {
+            "event-flick": {
+                "requires": [
+                    "node-base", 
+                    "event-touch", 
+                    "event-synthetic"
+                ]
+            }, 
+            "event-move": {
+                "requires": [
+                    "node-base", 
+                    "event-touch", 
+                    "event-synthetic"
+                ]
+            }
+        }
+    }, 
     "event-simulate": {
         "requires": [
             "event-base"
@@ -2707,6 +2725,21 @@ YUI.Env[Y.version].modules = {
             "json-stringify": {
                 "requires": [
                     "yui-base"
+                ]
+            }
+        }
+    }, 
+    "jsonp": {
+        "submodules": {
+            "jsonp-base": {
+                "requires": [
+                    "get", 
+                    "oop"
+                ]
+            }, 
+            "jsonp-url": {
+                "requires": [
+                    "jsonp-base"
                 ]
             }
         }
@@ -2973,12 +3006,9 @@ YUI.Env[Y.version].modules = {
         "skinnable": true
     }, 
     "value-change": {
-        "optional": [
-            "event-custom-complex"
-        ], 
         "requires": [
-            "node-base", 
-            "event-focus"
+            "event-focus", 
+            "event-synthetic"
         ]
     }, 
     "widget": {
@@ -3033,6 +3063,11 @@ YUI.Env[Y.version].modules = {
         "path": "widget/widget-locale-min.js", 
         "requires": [
             "widget-base"
+        ]
+    }, 
+    "yql": {
+        "requires": [
+            "jsonp"
         ]
     }, 
     "yui": {

@@ -14,7 +14,11 @@ YUI.add('plugin', function(Y) {
      * @param {Object} config Configuration object with property name/value pairs.
      */
     function Plugin(config) {
-        Plugin.superclass.constructor.apply(this, arguments);
+        if (! (this.hasImpl && this.hasImpl(Y.Plugin.Base)) ) {
+            Plugin.superclass.constructor.apply(this, arguments);
+        } else {
+            Plugin.prototype.initializer.apply(this, arguments);
+        }
     }
 
     /**

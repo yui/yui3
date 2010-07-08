@@ -18,20 +18,10 @@ AreaSeries.ATTRS = {
 };
 
 Y.extend(AreaSeries, Y.CartesianSeries, {
-	
-	/**
-	 * @private
-	 */
-	drawGraph: function()
-	{
-		var styles = this.get("styles");
-		this.drawArea();
-	},
-
 	/**
 	 * @protected
 	 */
-	drawArea: function()
+	drawSeries: function()
 	{
         if(this.get("xcoords").length < 1) 
 		{

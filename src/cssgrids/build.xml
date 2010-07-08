@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <description>cssgrids - Build All Modules</description>
+
+    <macrodef name="build-cssgrids">
+        <attribute name="target"/>
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="." includes="build.*.xml"/>
+            </subant>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-cssgrids target="local"/>
+    </target>
+    <target name="deploy">
+        <build-cssgrids target="deploy"/>
+    </target>
+    <target name="all">
+        <build-cssgrids target="all"/>
+    </target>
+    <target name="clean">
+        <build-cssgrids target="clean"/>
+    </target>
+
+</project>
