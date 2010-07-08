@@ -301,7 +301,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         extracss: 'body { color: red; }'
     });
     editor.after('nodeChange', function(e) {
-        updateButtons(e);
+        if (e.changedType !== 'execcommand') {
+            updateButtons(e);
+        }
         
         if (e.changedType === 'keyup') {
             if (e.changedNode) {
