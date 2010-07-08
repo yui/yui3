@@ -1,19 +1,11 @@
 /**
- * The history-hash module adds the HistoryHash class, which provides browser
- * history management functionality backed by <code>window.location.hash</code>.
- * This allows the browser's back and forward buttons to be used to navigate
- * between states.
- *
- * @module history
- * @submodule history-hash
- */
-
-/**
- * The HistoryHash class provides browser history management backed by
+ * Provides browser history management backed by
  * <code>window.location.hash</code>, as well as convenience methods for working
  * with the location hash and a synthetic <code>hashchange</code> event that
  * normalizes differences across browsers.
  *
+ * @module history
+ * @submodule history-hash
  * @class HistoryHash
  * @extends HistoryBase
  * @constructor
@@ -32,11 +24,11 @@ var HistoryBase    = Y.HistoryBase,
     oldHash,
     oldUrl,
     win            = Y.config.win,
-    location       = win.location,
+    location       = win.location;
 
-HistoryHash = function () {
+function HistoryHash() {
     HistoryHash.superclass.constructor.apply(this, arguments);
-};
+}
 
 Y.extend(HistoryHash, HistoryBase, {
     // -- Initialization -------------------------------------------------------
@@ -76,11 +68,11 @@ Y.extend(HistoryHash, HistoryBase, {
      * @protected
      */
     _afterHashChange: function (e) {
-        this._resolveChanges(SRC_HASH, HistoryHash.parseHash(e.newHash));
+        this._resolveChanges(SRC_HASH, HistoryHash.parseHash(e.newHash), {});
     }
 }, {
     // -- Public Static Properties ---------------------------------------------
-    NAME: 'history',
+    NAME: 'historyHash',
 
     /**
      * Constant used to identify state changes originating from
@@ -443,10 +435,10 @@ if (HistoryBase.nativeHashChange) {
 
 Y.HistoryHash = HistoryHash;
 
-// Only point Y.History at HistoryHash if the current browser doesn't support
-// HTML5 history, or if the HistoryHTML5 class is not present. The history-hash
-// module is always loaded after history-html5 if history-html5 is loaded, so
-// this check doesn't introduce a race condition.
-if (!HistoryBase.html5 || !Y.HistoryHTML5) {
+// Only point Y.History at HistoryHash if it doesn't already exist and if the
+// current browser doesn't support HTML5 history, or if the HistoryHTML5 class
+// is not present. The history-hash module is always loaded after history-html5
+// if history-html5 is loaded, so this check doesn't introduce a race condition.
+if (!Y.History && (!HistoryBase.html5 || !Y.HistoryHTML5)) {
     Y.History = HistoryHash;
 }

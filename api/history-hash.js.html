@@ -48,21 +48,13 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * The history-hash module adds the HistoryHash class, which provides browser</span>
-<span class="cm"> * history management functionality backed by &lt;code&gt;window.location.hash&lt;/code&gt;.</span>
-<span class="cm"> * This allows the browser&#39;s back and forward buttons to be used to navigate</span>
-<span class="cm"> * between states.</span>
-<span class="cm"> *</span>
-<span class="cm"> * @module history</span>
-<span class="cm"> * @submodule history-hash</span>
-<span class="cm"> */</span>
-
-<span class="cm">/**</span>
-<span class="cm"> * The HistoryHash class provides browser history management backed by</span>
+<span class="cm"> * Provides browser history management backed by</span>
 <span class="cm"> * &lt;code&gt;window.location.hash&lt;/code&gt;, as well as convenience methods for working</span>
 <span class="cm"> * with the location hash and a synthetic &lt;code&gt;hashchange&lt;/code&gt; event that</span>
 <span class="cm"> * normalizes differences across browsers.</span>
 <span class="cm"> *</span>
+<span class="cm"> * @module history</span>
+<span class="cm"> * @submodule history-hash</span>
 <span class="cm"> * @class HistoryHash</span>
 <span class="cm"> * @extends HistoryBase</span>
 <span class="cm"> * @constructor</span>
@@ -81,11 +73,11 @@
     <span class="nx">oldHash</span><span class="p">,</span>
     <span class="nx">oldUrl</span><span class="p">,</span>
     <span class="nx">win</span>            <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">win</span><span class="p">,</span>
-    <span class="nx">location</span>       <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">,</span>
+    <span class="nx">location</span>       <span class="o">=</span> <span class="nx">win</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
 
-<span class="nx">HistoryHash</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">HistoryHash</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">superclass</span><span class="p">.</span><span class="nx">constructor</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
-<span class="p">};</span>
+<span class="p">}</span>
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">HistoryHash</span><span class="p">,</span> <span class="nx">HistoryBase</span><span class="p">,</span> <span class="p">{</span>
     <span class="c1">// -- Initialization -------------------------------------------------------</span>
@@ -125,11 +117,11 @@
 <span class="cm">     * @protected</span>
 <span class="cm">     */</span>
     <span class="nx">_afterHashChange</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">SRC_HASH</span><span class="p">,</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">parseHash</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newHash</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_resolveChanges</span><span class="p">(</span><span class="nx">SRC_HASH</span><span class="p">,</span> <span class="nx">HistoryHash</span><span class="p">.</span><span class="nx">parseHash</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">newHash</span><span class="p">),</span> <span class="p">{});</span>
     <span class="p">}</span>
 <span class="p">},</span> <span class="p">{</span>
     <span class="c1">// -- Public Static Properties ---------------------------------------------</span>
-    <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;history&#39;</span><span class="p">,</span>
+    <span class="nx">NAME</span><span class="o">:</span> <span class="s1">&#39;historyHash&#39;</span><span class="p">,</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Constant used to identify state changes originating from</span>
@@ -492,11 +484,11 @@
 
 <span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHash</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">;</span>
 
-<span class="c1">// Only point Y.History at HistoryHash if the current browser doesn&#39;t support</span>
-<span class="c1">// HTML5 history, or if the HistoryHTML5 class is not present. The history-hash</span>
-<span class="c1">// module is always loaded after history-html5 if history-html5 is loaded, so</span>
-<span class="c1">// this check doesn&#39;t introduce a race condition.</span>
-<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHTML5</span><span class="p">)</span> <span class="p">{</span>
+<span class="c1">// Only point Y.History at HistoryHash if it doesn&#39;t already exist and if the</span>
+<span class="c1">// current browser doesn&#39;t support HTML5 history, or if the HistoryHTML5 class</span>
+<span class="c1">// is not present. The history-hash module is always loaded after history-html5</span>
+<span class="c1">// if history-html5 is loaded, so this check doesn&#39;t introduce a race condition.</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">HistoryBase</span><span class="p">.</span><span class="nx">html5</span> <span class="o">||</span> <span class="o">!</span><span class="nx">Y</span><span class="p">.</span><span class="nx">HistoryHTML5</span><span class="p">))</span> <span class="p">{</span>
     <span class="nx">Y</span><span class="p">.</span><span class="nx">History</span> <span class="o">=</span> <span class="nx">HistoryHash</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
@@ -577,6 +569,7 @@
                         <ul class="content">
                                 <li class=""><a href="HistoryBase.html" title="HistoryBase">HistoryBase</a></li>
                                 <li class=""><a href="HistoryHash.html" title="HistoryHash">HistoryHash</a></li>
+                                <li class=""><a href="HistoryHTML5.html" title="HistoryHTML5">HistoryHTML5</a></li>
                         </ul>
                     </div>
 
@@ -586,6 +579,7 @@
                                 <li class=""><a href="history-base.js.html" title="history-base.js">history-base.js</a></li>
                                 <li class=""><a href="history-hash-ie.js.html" title="history-hash-ie.js">history-hash-ie.js</a></li>
                                 <li class="selected"><a href="history-hash.js.html" title="history-hash.js">history-hash.js</a></li>
+                                <li class=""><a href="history-html5.js.html" title="history-html5.js">history-html5.js</a></li>
                         </ul>
                     </div>
 

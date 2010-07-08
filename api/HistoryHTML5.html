@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: history  HistoryHash   (YUI Library)</title>
+	<title>API: history  HistoryHTML5   (YUI Library)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -19,7 +19,7 @@
         <h3>history&nbsp; <span class="subtitle">3.1.0</span></h3>
         <a href="./index.html" title="Yahoo! UI Library">Yahoo! UI Library</a> 
             &gt; <a href="./module_history.html" title="history">history</a>
-                 &gt; HistoryHash 
+                 &gt; HistoryHTML5 
                 
         <form onsubmit="return false">
             <div id="propertysearch">
@@ -48,7 +48,7 @@
 
                         
                         
-                            Class <b property="yui:name">HistoryHash</b>
+                            Class <b property="yui:name">HistoryHTML5</b>
                         <span class="extends">
                            - extends <a href="HistoryBase.html" title="HistoryBase">HistoryBase</a>
                         </span>
@@ -60,17 +60,14 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Provides browser history management backed by
-<code>window.location.hash</code>, as well as convenience methods for working
-with the location hash and a synthetic <code>hashchange</code> event that
-normalizes differences across browsers.
+                        Provides browser history management using the HTML5 history API.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
                         <h3 id="constructor">Constructor</h3>
                         <div class="content">
                             <div class="detail">
-                                <strong property="yui:name">HistoryHash</strong>
+                                <strong property="yui:name">HistoryHTML5</strong>
                                 <code>
                                     (
   
@@ -98,72 +95,6 @@ documentation for details.</span>
                     </div>
                     
                     <div rel="yui:properties" resource="#properties">
-                        <div class="section field details">
-                            <h3 id="properties">Properties</h3>
-                            <div class="content">
-                                    <div class="protected" rel="yui:property" resource="#property__REGEX_HASH">
-                                    <h4><a name="property__REGEX_HASH" property="yui:name">_REGEX_HASH</a>
-                                        - <code>protected static final <span property="yui:type">RegExp</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Regular expression used to parse location hash/query strings.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_hashPrefix">
-                                    <h4><a name="property_hashPrefix" property="yui:name">hashPrefix</a>
-                                        - <code>static <span property="yui:type">String</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            <p>
-Prefix to prepend when setting the hash fragment. For example, if the
-prefix is <code>!</code> and the hash fragment is set to
-<code>#foo=bar&baz=quux</code>, the final hash fragment in the URL will
-become <code>#!foo=bar&baz=quux</code>. This can be used to help make an
-Ajax application crawlable in accordance with Google's guidelines at
-<a href="http://code.google.com/web/ajaxcrawling/">http://code.google.com/web/ajaxcrawling/</a>.
-</p>
-<p>
-Note that this prefix applies to all HistoryHash instances. It's not
-possible for individual instances to use their own prefixes since they
-all operate on the same URL.
-</p>
-                                        </div>
-                                    </div>
-     
-                                        
-                                    <div class="default" property="yui:defaultValue">
-                                        Default Value: ''
-                                    </div>        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:property" resource="#property_SRC_HASH">
-                                    <h4><a name="property_SRC_HASH" property="yui:name">SRC_HASH</a>
-                                        - <code>static final <span property="yui:type">String</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            Constant used to identify state changes originating from
-<code>hashchange</code> events.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
 
                         <div rel="yui:inheritance">
                         <div class="section field inheritance" rel="yui:superclass"  resource="HistoryBase.html">
@@ -178,472 +109,6 @@ all operate on the same URL.
                     </div>
 
                     <div rel="yui:methods" resource="#methods">
-                        <div class="section method details">
-                            <h3 id="methods">Methods</h3>
-                            <div class="content">
-                                    <div class="protected" rel="yui:method" resource="#method__afterHashChange">
-                                    <h4>
-                                        <a name="method__afterHashChange">_afterHashChange</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                        
-                                        
-                                        void
-                                            <strong property="yui:name">_afterHashChange</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Handler for hashchange events.
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="protected" rel="yui:method" resource="#method__updateIframe">
-                                    <h4>
-                                        <a name="method__updateIframe">_updateIframe</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                         protected 
-                                         static 
-                                        
-                                        void
-                                            <strong property="yui:name">_updateIframe</strong>
-                                           (
-                                                
-                                                        
-                                                         hash
-                                                    
-                                                
-                                                        , 
-                                                         replace
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Updates the history iframe with the specified hash.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">hash</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> location hash</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">replace</span>
-                                                        &lt;<span property="yui:type">Boolean</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> (optional) if <code>true</code>, the current
-history state will be replaced without adding a new history entry</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_createHash">
-                                    <h4>
-                                        <a name="method_createHash">createHash</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        String
-                                            <strong property="yui:name">createHash</strong>
-                                           (
-                                                
-                                                        
-                                                         params
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Creates a location hash string from the specified object of key/value
-pairs.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">params</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> object of key/value parameter pairs</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            String
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">location hash string</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_decode">
-                                    <h4>
-                                        <a name="method_decode">decode</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        String
-                                            <strong property="yui:name">decode</strong>
-                                           (
-                                                
-                                                        
-                                                         string
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Wrapper around <code>decodeURIComponent()</code> that also converts +
-chars into spaces.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">string</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> string to decode</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            String
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">decoded string</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_encode">
-                                    <h4>
-                                        <a name="method_encode">encode</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        String
-                                            <strong property="yui:name">encode</strong>
-                                           (
-                                                
-                                                        
-                                                         string
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Wrapper around <code>encodeURIComponent()</code> that converts spaces to
-+ chars.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">string</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> string to encode</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            String
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">encoded string</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_getHash">
-                                    <h4>
-                                        <a name="method_getHash">getHash</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        String
-                                            <strong property="yui:name">getHash</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Gets the raw (not decoded) current location hash, minus the preceding '#'
-character and the hashPrefix (if one is set).
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            String
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">current location hash</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_getUrl">
-                                    <h4>
-                                        <a name="method_getUrl">getUrl</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        String
-                                            <strong property="yui:name">getUrl</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Gets the current bookmarkable URL.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            String
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">current bookmarkable URL</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_parseHash">
-                                    <h4>
-                                        <a name="method_parseHash">parseHash</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        Object
-                                            <strong property="yui:name">parseHash</strong>
-                                           (
-                                                
-                                                        
-                                                         hash
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Parses a location hash string into an object of key/value parameter
-pairs. If <i>hash</i> is not specified, the current location hash will
-be used.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">hash</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> (optional) location hash string</span>
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code property="yui:return">
-                                                            Object
-                                                    </code></dt>
-                                                    <dd property="yui:returnInfo">object of parsed key/value parameter pairs</dd>
-                                                </dl>
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_replaceHash">
-                                    <h4>
-                                        <a name="method_replaceHash">replaceHash</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        void
-                                            <strong property="yui:name">replaceHash</strong>
-                                           (
-                                                
-                                                        
-                                                         hash
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Replaces the browser's current location hash with the specified hash
-and removes all forward navigation states, without creating a new browser
-history entry. Automatically prepends the <code>hashPrefix</code> if one
-is set.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">hash</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> new location hash</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="" rel="yui:method" resource="#method_setHash">
-                                    <h4>
-                                        <a name="method_setHash">setHash</a></h4>
-                                    <div class="detail" >
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        void
-                                            <strong property="yui:name">setHash</strong>
-                                           (
-                                                
-                                                        
-                                                         hash
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description" property="yui:description">
-                                            Sets the browser's location hash to the specified string. Automatically
-prepends the <code>hashPrefix</code> if one is set.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl rel="yui:parameters">
-                                                    <dt>Parameters:</dt>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">hash</span>
-                                                        &lt;<span property="yui:type">String</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description"> new location hash</span>
-                                                        </dd>
-                                                </dl>
-
-
-
-             
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
 
                         <div rel="yui:inheritance">                    
                             <div class="section field inheritance" rel="yui:superclass"  resource="EventTarget.html">
@@ -855,8 +320,8 @@ prepends the <code>hashPrefix</code> if one is set.
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="HistoryBase.html" title="HistoryBase">HistoryBase</a></li>
-                                <li class="selected"><a href="HistoryHash.html" title="HistoryHash">HistoryHash</a></li>
-                                <li class=""><a href="HistoryHTML5.html" title="HistoryHTML5">HistoryHTML5</a></li>
+                                <li class=""><a href="HistoryHash.html" title="HistoryHash">HistoryHash</a></li>
+                                <li class="selected"><a href="HistoryHTML5.html" title="HistoryHTML5">HistoryHTML5</a></li>
                         </ul>
                     </div>
 
@@ -870,30 +335,7 @@ prepends the <code>hashPrefix</code> if one is set.
                         </ul>
                     </div>
 
-                    <div id="propertyList" class="module">
-                        <h4>Properties</h4>
-                        <ul class="content">        
-                                <li class="protected"><a href="#property__REGEX_HASH" title="_REGEX_HASH">_REGEX_HASH</a></li>
-                                <li class=""><a href="#property_hashPrefix" title="hashPrefix">hashPrefix</a></li>
-                                <li class=""><a href="#property_SRC_HASH" title="SRC_HASH">SRC_HASH</a></li>
-                        </ul>
-                    </div>
 
-                    <div id="methodsList" class="module">
-                        <h4>Methods</h4>
-                        <ul class="content">        
-                                <li class="protected"><a href="#method__afterHashChange" title="_afterHashChange">_afterHashChange</a></li>
-                                <li class="protected"><a href="#method__updateIframe" title="_updateIframe">_updateIframe</a></li>
-                                <li class=""><a href="#method_createHash" title="createHash">createHash</a></li>
-                                <li class=""><a href="#method_decode" title="decode">decode</a></li>
-                                <li class=""><a href="#method_encode" title="encode">encode</a></li>
-                                <li class=""><a href="#method_getHash" title="getHash">getHash</a></li>
-                                <li class=""><a href="#method_getUrl" title="getUrl">getUrl</a></li>
-                                <li class=""><a href="#method_parseHash" title="parseHash">parseHash</a></li>
-                                <li class=""><a href="#method_replaceHash" title="replaceHash">replaceHash</a></li>
-                                <li class=""><a href="#method_setHash" title="setHash">setHash</a></li>
-                        </ul>
-                    </div>
 
 
 
