@@ -915,10 +915,11 @@ Y.namespace("Plugin").DataSourceCacheExtension = DataSourceCacheExtension;
  * @uses Plugin.Base, DataSourceCachePlugin
  */
 function DataSourceCache(config) {
-  var tmpclass = Y.Base.create("dataSourceCache", config.cache, [Y.Plugin.Base, Y.Plugin.DataSourceCacheExtension]);
-  tmpclass.NS = "tmpClass";
-  var tmpinstance = new tmpclass(config);
-  return tmpinstance;
+    var cache = config && config.cache ? config.cache : Y.Cache,
+        tmpclass = Y.Base.create("dataSourceCache", cache, [Y.Plugin.Base, Y.Plugin.DataSourceCacheExtension]),
+        tmpinstance = new tmpclass(config);
+    tmpclass.NS = "tmpClass";
+    return tmpinstance;
 }
 
 Y.mix(DataSourceCache, {
