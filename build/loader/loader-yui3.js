@@ -702,13 +702,22 @@ YUI.Env[Y.version].modules = {
             "history-base": {
                 "requires": [
                     "event-custom-complex"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
                 ]
             }, 
             "history-hash": {
+                "after": [
+                    "history-html5"
+                ], 
                 "requires": [
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
                 ]
             }, 
             "history-hash-ie": {
@@ -716,9 +725,27 @@ YUI.Env[Y.version].modules = {
                     "history-base", 
                     "history-hash", 
                     "node-base"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
+                ]
+            }, 
+            "history-html5": {
+                "requires": [
+                    "history-base"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
                 ]
             }
-        }
+        }, 
+        "supersedes": [
+            "history-base", 
+            "history-deprecated", 
+            "history-hash", 
+            "history-hash-ie", 
+            "history-html5"
+        ]
     }, 
     "history-deprecated": {
         "requires": [
