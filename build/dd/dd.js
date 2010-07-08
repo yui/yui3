@@ -161,10 +161,11 @@ YUI.add('dd-ddm-base', function(Y) {
         _setupListeners: function() {
             this._createPG();
             this._active = true;
-            var doc = Y.one(Y.config.doc);
-            doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
-            //Y.Event.nativeAdd(document, 'mousemove', Y.bind(this._move, this));
-            doc.on('mouseup', Y.bind(this._end, this));
+            //var doc = Y.one(Y.config.doc);
+            //doc.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            //doc.on('mouseup', Y.bind(this._end, this));
+            //doc.on('move', Y.bind(this._move, this));
+            //doc.on('moveend', Y.bind(this._end, this));
         },
         /**
         * @private
@@ -461,8 +462,10 @@ YUI.add('dd-ddm', function(Y) {
                 bd.appendChild(pg);
             }
             this._pg = pg;
-            this._pg.on('mouseup', Y.bind(this._end, this));
-            this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            //this._pg.on('mouseup', Y.bind(this._end, this));
+            //this._pg.on('mousemove', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            this._pg.on('move', Y.throttle(Y.bind(this._move, this), this.get('throttleTime')));
+            this._pg.on('moveend', Y.bind(this._end, this));
             
             win = Y.one('win');
             Y.on('window:resize', Y.bind(this._pg_size, this));
@@ -907,8 +910,10 @@ YUI.add('dd-drag', function(Y) {
         DRAG_NODE = 'dragNode',
         OFFSET_HEIGHT = 'offsetHeight',
         OFFSET_WIDTH = 'offsetWidth',        
-        MOUSE_UP = 'mouseup',
-        MOUSE_DOWN = 'mousedown',
+        //MOUSE_UP = 'mouseup',
+        //MOUSE_DOWN = 'mousedown',
+        MOUSE_UP = 'moveend',
+        MOUSE_DOWN = 'movestart',
         DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
@@ -1625,7 +1630,7 @@ YUI.add('dd-drag', function(Y) {
             this._ev_md = ev;
             
             if (this.get('primaryButtonOnly') && ev.button > 1) {
-                return false;
+                //return false;
             }
             if (this.validClick(ev)) {
                 this._fixIEMouseDown();
@@ -1841,9 +1846,16 @@ YUI.add('dd-drag', function(Y) {
             this._dragThreshMet = false;
             var node = this.get(NODE);
             node.addClass(DDM.CSS_PREFIX + '-draggable');
-            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this));
+            node.on(MOUSE_DOWN, Y.bind(this._handleMouseDownEvent, this), {
+                minDistance: this.get('clickPixelThresh'),
+                minTime: this.get('clickTimeThresh')
+            });
             node.on(MOUSE_UP, Y.bind(this._handleMouseUp, this));
             node.on(DRAG_START, Y.bind(this._fixDragStart, this));
+            node.on('move', Y.throttle(Y.bind(DDM._move, DDM), DDM.get('throttleTime')));
+            //Should not need this, _handleMouseUp calls this..
+            //node.on('moveend', Y.bind(DDM._end, DDM));
+            
         },
         /**
         * @private

@@ -760,11 +760,6 @@ YUI.add('dd-drag', function(Y) {
         * @return {Boolean}
         */
         validClick: function(ev) {
-            console.log('Event: ', ev);
-            console.log('Target: ', ev.target);
-            console.log('CurrentTarget: ', ev.currentTarget);
-            console.log('_e.Target: ', ev._e.target);
-            console.log('_e.CurrentTarget: ', ev._e.currentTarget);
             var r = false, n = false,
             tar = ev.target,
             hTest = null,
@@ -772,7 +767,6 @@ YUI.add('dd-drag', function(Y) {
             nlist = null,
             set = false;
             if (this._handles) {
-                //console.log('Valid Click1: ', r);
                 Y.each(this._handles, function(i, n) {
                     if (i instanceof Y.Node || i instanceof Y.NodeList) {
                         if (!r) {
@@ -781,18 +775,13 @@ YUI.add('dd-drag', function(Y) {
                                 nlist = new Y.NodeList(i._node);
                             }
                             nlist.each(function(nl) {
-                                //console.log('Valid Click1.1: ', nl, tar);
-                                //if (nl.contains(tar)) {
-                                //console.log('Contains: ', nl, tar.contains(nl));
-                                if (tar.contains(nl)) {
-                                    //console.log('CONTAINS');
+                                if (nl.contains(tar)) {
                                     r = true;
                                 }
                             });
                         }
                     } else if (Y.Lang.isString(n)) {
                         //Am I this or am I inside this
-                        //console.log('Valid Click1.2: ', n);
                         if (tar.test(n + ', ' + n + ' *') && !hTest) {
                             hTest = n;
                             r = true;
@@ -800,21 +789,16 @@ YUI.add('dd-drag', function(Y) {
                     }
                 });
             } else {
-                //console.log('Valid Click2: ', r);
                 n = this.get(NODE);
-                //console.log('Valid Click2: ', n, tar, n.contains(tar), n.compareTo(tar));
                 if (n.contains(tar) || n.compareTo(tar)) {
                     r = true;
                 }
             }
             if (r) {
-                //console.log('Valid Click3: ', r);
                 if (this._invalids) {
                     Y.each(this._invalids, function(i, n) {
-                        //console.log('Invalid: ', i, n);
                         if (Y.Lang.isString(n)) {
                             //Am I this or am I inside this
-                            //console.log(tar, n, n + ', ' + n + ' *', tar.test(n + ', ' + n + ' *'));
                             if (tar.test(n + ', ' + n + ' *')) {
                                 r = false;
                             }
@@ -836,7 +820,6 @@ YUI.add('dd-drag', function(Y) {
                     this.set('activeHandle', this.get(NODE));
                 }
             }
-            console.log('FINAL Valid Click: ', r);
             return r;
         },
         /**
