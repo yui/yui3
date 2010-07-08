@@ -42,7 +42,7 @@
                 };
 
                 var moveStartHandler = function(e) {
-                    var target = e._e.target;
+                    var target = e.target;
 
                     target.set("innerHTML", "");
                     target.append("<div>movestart, page:" + [e.pageX, e.pageY, e.button] + "</div>");
