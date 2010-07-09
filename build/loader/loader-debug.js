@@ -68,6 +68,7 @@ groups.yui2 = {
 
 YUI.Env[VERSION] = META;
 }());
+
 (function() {
 /**
  * Loader dynamically loads script and css files.  It includes the dependency
@@ -1864,7 +1865,9 @@ Y.log('Attempting to use combo: ' + combining, "info", "loader");
 
 
 
+
 }, '@VERSION@' ,{requires:['get']});
+
 YUI.add('loader-rollup', function(Y) {
 
 /**
@@ -1967,7 +1970,9 @@ Y.Loader.prototype._rollup = function() {
 };
 
 
+
 }, '@VERSION@' ,{requires:['loader-base']});
+
 YUI.add('loader-yui3', function(Y) {
 
 /**
@@ -2058,9 +2063,18 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "cache": {
-        "requires": [
-            "plugin"
-        ]
+        "submodules": {
+            "cache-base": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "cache-offline": {
+                "requires": [
+                    "cache-base"
+                ]
+            }
+        }
     }, 
     "classnamemanager": {
         "requires": [
@@ -2219,8 +2233,7 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local", 
-                    "cache"
+                    "datasource-local"
                 ]
             }, 
             "datasource-function": {
@@ -2672,13 +2685,22 @@ YUI.Env[Y.version].modules = {
             "history-base": {
                 "requires": [
                     "event-custom-complex"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
                 ]
             }, 
             "history-hash": {
+                "after": [
+                    "history-html5"
+                ], 
                 "requires": [
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
                 ]
             }, 
             "history-hash-ie": {
@@ -2686,9 +2708,27 @@ YUI.Env[Y.version].modules = {
                     "history-base", 
                     "history-hash", 
                     "node-base"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
+                ]
+            }, 
+            "history-html5": {
+                "requires": [
+                    "history-base"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
                 ]
             }
-        }
+        }, 
+        "supersedes": [
+            "history-base", 
+            "history-deprecated", 
+            "history-hash", 
+            "history-hash-ie", 
+            "history-html5"
+        ]
     }, 
     "history-deprecated": {
         "requires": [
@@ -3113,7 +3153,9 @@ YUI.Env[Y.version].modules = {
 };
 
 
+
 }, '@VERSION@' ,{requires:['loader-base']});
+
 
 
 YUI.add('loader', function(Y){}, '@VERSION@' ,{use:['loader-base', 'loader-rollup', 'loader-yui3' ]});

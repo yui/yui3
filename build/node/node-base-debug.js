@@ -1080,7 +1080,6 @@ Y.mix(Y_Node.prototype, {
 Y.Node = Y_Node;
 Y.get = Y.Node.get;
 Y.one = Y.Node.one;
-
 /**
  * The NodeList module provides support for managing collections of Nodes.
  * @module node
@@ -1373,10 +1372,8 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     on: function(type, fn, context) {
-        var args = Y.Array(arguments, 0, true);
-        args.splice(2, 0, this._nodes);
-        args[3] = context || this;
-        return Y.on.apply(Y, args);
+        context = context || this;
+        return Y.on(type, fn, this._nodes, context);
     },
 
     /**
@@ -1392,10 +1389,8 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     after: function(type, fn, context) {
-        var args = Y.Array(arguments, 0, true);
-        args.splice(2, 0, this._nodes);
-        args[3] = context || this;
-        return Y.after.apply(Y, args);
+        context = context || this;
+        return Y.after(type, fn, this._nodes, context || this);
     },
 
     /**
@@ -1543,7 +1538,6 @@ Y.all = function(nodes) {
 };
 
 Y.Node.all = Y.all;
-
 Y.Array.each([
     /**
      * Passes through to DOM method.
@@ -1732,7 +1726,6 @@ Y.Node.importMethod(Y.DOM, [
  * @param {string} name The attribute to remove 
  */
 Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'removeAttribute']);
-
 (function(Y) {
     var methods = [
     /**
@@ -1825,7 +1818,6 @@ Y.NodeList.importMethod(Y.Node.prototype, ['getAttribute', 'setAttribute', 'remo
     Y.NodeList.importMethod(Y.Node.prototype, methods);
 })(Y);
 
-
 if (!Y.config.doc.documentElement.hasAttribute) { // IE < 8
     Y.Node.prototype.hasAttribute = function(attr) {
         if (attr === 'value') {
@@ -1874,7 +1866,6 @@ if (Y.config.doc.createElement('form').elements.nodeType) {
             }
     };
 }
-
 
 
 

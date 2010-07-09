@@ -50,7 +50,7 @@
                         
                             Class <b property="yui:name">Cache</b>
                         <span class="extends">
-                           - extends <a href="Plugin.Base.html" title="Plugin.Base">Plugin.Base</a>
+                           - extends <a href="Base.html" title="Base">Base</a>
                         </span>
 
                     </h2>
@@ -59,6 +59,9 @@
                         <dl class="subclasses" rel="yui:subclasses">
                             <dt>Known Subclasses:</dt>
                             <dd>
+                                    <span rel="yui:subclass" resource="CacheOffline.html">
+                                    <a href="CacheOffline.html" property="yui:name" title="CacheOffline">CacheOffline</a>
+                                    </span>
                                     <span rel="yui:subclass" resource="DataSourceCache.html">
                                     <a href="DataSourceCache.html" property="yui:name" title="DataSourceCache">DataSourceCache</a>
                                     </span>
@@ -122,22 +125,6 @@
 
                                     <hr />
                                     </div>
-                                    <div class="" rel="yui:property" resource="#property_NS">
-                                    <h4><a name="property_NS" property="yui:name">NS</a>
-                                        - <code>static final <span property="yui:type">String</span></code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description" property="yui:description">
-                                            The namespace for the plugin. This will be the property on the host which
-references the plugin instance.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
                             </div>
                         </div>
 
@@ -157,18 +144,6 @@ references the plugin instance.
                                     
                                         <span rel="yui:property" resource="Base.html#property_name">
                                         <a class=" deprecated" href="Base.html#property_name" property="yui:name" title="name">name</a>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
-                            <h4>Properties inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
-                            <div class="content" rel="yui:properties">
-                                <code>
-                                    
-                                        <span rel="yui:property" resource="Plugin.Base.html#property__handles">
-                                        <a class="private" href="Plugin.Base.html#property__handles" property="yui:name" title="_handles">_handles</a>
                                         </span>
                                     
                                 </code>
@@ -272,6 +247,66 @@ references the plugin instance.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getEntries">
+                                    <h4>
+                                        <a name="method__getEntries">_getEntries</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_getEntries</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Gets all entries.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected" rel="yui:method" resource="#method__getSize">
+                                    <h4>
+                                        <a name="method__getSize">_getSize</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_getSize</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Gets size.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="protected" rel="yui:method" resource="#method__isMatch">
                                     <h4>
                                         <a name="method__isMatch">_isMatch</a></h4>
@@ -336,6 +371,36 @@ cache-matching algorithm.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="protected" rel="yui:method" resource="#method__setMax">
+                                    <h4>
+                                        <a name="method__setMax">_setMax</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">_setMax</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            Sets max.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="" rel="yui:method" resource="#method_add">
                                     <h4>
                                         <a name="method_add">add</a></h4>
@@ -356,16 +421,12 @@ cache-matching algorithm.
                                                          response
                                                     
                                                 
-                                                        , 
-                                                         payload
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description" property="yui:description">
                                             Adds a new entry to the cache of the format
-{request:request, response:response, payload:payload}.
+{request:request, response:response}.
 If cache is full, evicts the stalest entry before adding the new one.
                                         </div>
 
@@ -384,12 +445,6 @@ If cache is full, evicts the stalest entry before adding the new one.
                                                         &lt;<span property="yui:type">Object</span>&gt;
                                                         </code>
                                                         <span property="yui:description">  Response value.</span>
-                                                        </dd>
-                                                        <dd rel="yui:parameter">
-                                                        <code><span property="yui:name">payload</span>
-                                                        &lt;<span property="yui:type">Object</span>&gt;
-                                                        </code>
-                                                        <span property="yui:description">  (optional) Arbitrary data payload.</span>
                                                         </dd>
                                                 </dl>
 
@@ -526,7 +581,7 @@ If cache is full, evicts the stalest entry before adding the new one.
                                         </code>
                                         
                                         <div class="description" property="yui:description">
-                                            Retrieves cached entry for given request, if available, and refreshes
+                                            Retrieves cached object for given request, if available, and refreshes
 entry in the cache. Returns null if there is no cache match.
                                         </div>
 
@@ -547,7 +602,7 @@ entry in the cache. Returns null if there is no cache match.
                                                     <code property="yui:return">
                                                             Object
                                                     </code></dt>
-                                                    <dd property="yui:returnInfo">Cached entry object with the properties request, response, and payload, or null.</dd>
+                                                    <dd property="yui:returnInfo">Cached object with the properties request and response, or null.</dd>
                                                 </dl>
 
 
@@ -781,37 +836,6 @@ entry in the cache. Returns null if there is no cache match.
                                             </span>
                                             <span rel="yui:method" resource="Base.html#method_toString">                                        
                                             <a class="" href="Base.html#method_toString" property="yui:name" title="toString">toString</a>
-                                            </span>
-                                    </code>
-                                </div>
-                            </div>
-                            <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
-                                <h4>Methods inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
-                                <div class="content" rel="yui:methods">
-                                    <code>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostEvent">                                        
-                                            <a class="" href="Plugin.Base.html#method_afterHostEvent" property="yui:name" title="afterHostEvent">afterHostEvent</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_afterHostMethod">                                        
-                                            <a class="" href="Plugin.Base.html#method_afterHostMethod" property="yui:name" title="afterHostMethod">afterHostMethod</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_beforeHostMethod">                                        
-                                            <a class="" href="Plugin.Base.html#method_beforeHostMethod" property="yui:name" title="beforeHostMethod">beforeHostMethod</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_destructor">                                        
-                                            <a class="" href="Plugin.Base.html#method_destructor" property="yui:name" title="destructor">destructor</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_doAfter">                                        
-                                            <a class="" href="Plugin.Base.html#method_doAfter" property="yui:name" title="doAfter">doAfter</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_doBefore">                                        
-                                            <a class="" href="Plugin.Base.html#method_doBefore" property="yui:name" title="doBefore">doBefore</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_initializer">                                        
-                                            <a class="" href="Plugin.Base.html#method_initializer" property="yui:name" title="initializer">initializer</a><span class="">,</span>
-                                            </span>
-                                            <span rel="yui:method" resource="Plugin.Base.html#method_onHostEvent">                                        
-                                            <a class="" href="Plugin.Base.html#method_onHostEvent" property="yui:name" title="onHostEvent">onHostEvent</a>
                                             </span>
                                     </code>
                                 </div>
@@ -1215,17 +1239,6 @@ entry in the cache. Returns null if there is no cache match.
                                 </code>
                             </div>
                         </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
-                            <h4>Events inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
-                            <div class="content" rel="yui:events">
-                                <code>
-                                        <span rel="yui:event" resource="Plugin.Base.html#event_hostChange">
-                                        <a class="" href="Plugin.Base.html#event_hostChange" property="yui:name" title="hostChange">hostChange</a><span class="">,</span>
-                                        </span>
-                                    
-                                </code>
-                            </div>
-                        </div>
                         </div>
                     </div>
 
@@ -1281,7 +1294,7 @@ Set to 0 to turn off caching.
                                     </div>        
                                     <div class="" rel="yui:attribute" resource="#config_uniqueKeys">
                                     <h4><a name="config_uniqueKeys">uniqueKeys</a>
-                                        <code>- <span property="yui:type">Number</span></code>
+                                        <code>- <span property="yui:type">Boolean</span></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description" property="yui:description">
@@ -1308,17 +1321,6 @@ is more performant.
                                         </span>
                                                                                 <span rel="yui:attribute" resource="Base.html#config_initialized">                                        
                                         <a class="" href="Base.html#config_initialized" property="yui:name" title="initialized">initialized</a>
-                                        </span>
-                                        
-                                </code>
-                            </div>
-                        </div>
-                        <div class="section field inheritance" rel="yui:superclass"  resource="Plugin.Base.html">
-                            <h4>Configuration attributes inherited from <a href="Plugin.Base.html" property="yui:name" title="Plugin.Base">Plugin.Base</a>:</h4>
-                            <div class="content" rel="yui:attributes">
-                                <code>
-                                        <span rel="yui:attribute" resource="Plugin.Base.html#config_host">                                        
-                                        <a class="" href="Plugin.Base.html#config_host" property="yui:name" title="host">host</a>
                                         </span>
                                         
                                 </code>
@@ -1401,13 +1403,15 @@ is more performant.
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class="selected"><a href="Cache.html" title="Cache">Cache</a></li>
+                                <li class=""><a href="CacheOffline.html" title="CacheOffline">CacheOffline</a></li>
                         </ul>
                     </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="cache.js.html" title="cache.js">cache.js</a></li>
+                                <li class=""><a href="cache-base.js.html" title="cache-base.js">cache-base.js</a></li>
+                                <li class=""><a href="cache-offline.js.html" title="cache-offline.js">cache-offline.js</a></li>
                         </ul>
                     </div>
 
@@ -1416,7 +1420,6 @@ is more performant.
                         <ul class="content">        
                                 <li class="private"><a href="#property__entries" title="_entries">_entries</a></li>
                                 <li class=""><a href="#property_NAME" title="NAME">NAME</a></li>
-                                <li class=""><a href="#property_NS" title="NS">NS</a></li>
                         </ul>
                     </div>
 
@@ -1425,7 +1428,10 @@ is more performant.
                         <ul class="content">        
                                 <li class="protected"><a href="#method__defAddFn" title="_defAddFn">_defAddFn</a></li>
                                 <li class="protected"><a href="#method__defFlushFn" title="_defFlushFn">_defFlushFn</a></li>
+                                <li class="protected"><a href="#method__getEntries" title="_getEntries">_getEntries</a></li>
+                                <li class="protected"><a href="#method__getSize" title="_getSize">_getSize</a></li>
                                 <li class="protected"><a href="#method__isMatch" title="_isMatch">_isMatch</a></li>
+                                <li class="protected"><a href="#method__setMax" title="_setMax">_setMax</a></li>
                                 <li class=""><a href="#method_add" title="add">add</a></li>
                                 <li class="private"><a href="#method_destructor" title="destructor">destructor</a></li>
                                 <li class=""><a href="#method_flush" title="flush">flush</a></li>
@@ -1468,7 +1474,7 @@ is more performant.
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "Cache", "name": "add", "url": "Cache.html#method_add", "type": "method"}, {"access": "", "host": "Cache", "name": "add", "url": "Cache.html#event_add", "type": "event"}, {"access": "protected", "host": "Cache", "name": "_defAddFn", "url": "Cache.html#method__defAddFn", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_defFlushFn", "url": "Cache.html#method__defFlushFn", "type": "method"}, {"access": "private", "host": "Cache", "name": "destructor", "url": "Cache.html#method_destructor", "type": "method"}, {"access": "private", "host": "Cache", "name": "_entries", "url": "Cache.html#property__entries", "type": "property"}, {"access": "", "host": "Cache", "name": "entries", "url": "Cache.html#config_entries", "type": "config"}, {"access": "", "host": "Cache", "name": "entriesChange", "url": "Cache.html#event_entriesChange", "type": "event"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#method_flush", "type": "method"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#event_flush", "type": "event"}, {"access": "private", "host": "Cache", "name": "initializer", "url": "Cache.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_isMatch", "url": "Cache.html#method__isMatch", "type": "method"}, {"access": "", "host": "Cache", "name": "max", "url": "Cache.html#config_max", "type": "config"}, {"access": "", "host": "Cache", "name": "maxChange", "url": "Cache.html#event_maxChange", "type": "event"}, {"access": "", "host": "Cache", "name": "NAME", "url": "Cache.html#property_NAME", "type": "property"}, {"access": "", "host": "Cache", "name": "NS", "url": "Cache.html#property_NS", "type": "property"}, {"access": "", "host": "Cache", "name": "request", "url": "Cache.html#event_request", "type": "event"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#method_retrieve", "type": "method"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#event_retrieve", "type": "event"}, {"access": "", "host": "Cache", "name": "size", "url": "Cache.html#config_size", "type": "config"}, {"access": "", "host": "Cache", "name": "sizeChange", "url": "Cache.html#event_sizeChange", "type": "event"}, {"access": "", "host": "Cache", "name": "uniqueKeys", "url": "Cache.html#config_uniqueKeys", "type": "config"}, {"access": "", "host": "Cache", "name": "uniqueKeysChange", "url": "Cache.html#event_uniqueKeysChange", "type": "event"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "Cache", "name": "add", "url": "Cache.html#method_add", "type": "method"}, {"access": "", "host": "Cache", "name": "add", "url": "Cache.html#event_add", "type": "event"}, {"access": "protected", "host": "Cache", "name": "_defAddFn", "url": "Cache.html#method__defAddFn", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_defFlushFn", "url": "Cache.html#method__defFlushFn", "type": "method"}, {"access": "private", "host": "Cache", "name": "destructor", "url": "Cache.html#method_destructor", "type": "method"}, {"access": "private", "host": "Cache", "name": "_entries", "url": "Cache.html#property__entries", "type": "property"}, {"access": "", "host": "Cache", "name": "entries", "url": "Cache.html#config_entries", "type": "config"}, {"access": "", "host": "Cache", "name": "entriesChange", "url": "Cache.html#event_entriesChange", "type": "event"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#method_flush", "type": "method"}, {"access": "", "host": "Cache", "name": "flush", "url": "Cache.html#event_flush", "type": "event"}, {"access": "protected", "host": "Cache", "name": "_getEntries", "url": "Cache.html#method__getEntries", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_getSize", "url": "Cache.html#method__getSize", "type": "method"}, {"access": "private", "host": "Cache", "name": "initializer", "url": "Cache.html#method_initializer", "type": "method"}, {"access": "protected", "host": "Cache", "name": "_isMatch", "url": "Cache.html#method__isMatch", "type": "method"}, {"access": "", "host": "Cache", "name": "max", "url": "Cache.html#config_max", "type": "config"}, {"access": "", "host": "Cache", "name": "maxChange", "url": "Cache.html#event_maxChange", "type": "event"}, {"access": "", "host": "Cache", "name": "NAME", "url": "Cache.html#property_NAME", "type": "property"}, {"access": "", "host": "Cache", "name": "request", "url": "Cache.html#event_request", "type": "event"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#method_retrieve", "type": "method"}, {"access": "", "host": "Cache", "name": "retrieve", "url": "Cache.html#event_retrieve", "type": "event"}, {"access": "protected", "host": "Cache", "name": "_setMax", "url": "Cache.html#method__setMax", "type": "method"}, {"access": "", "host": "Cache", "name": "size", "url": "Cache.html#config_size", "type": "config"}, {"access": "", "host": "Cache", "name": "sizeChange", "url": "Cache.html#event_sizeChange", "type": "event"}, {"access": "", "host": "Cache", "name": "uniqueKeys", "url": "Cache.html#config_uniqueKeys", "type": "config"}, {"access": "", "host": "Cache", "name": "uniqueKeysChange", "url": "Cache.html#event_uniqueKeysChange", "type": "event"}];
 </script>
 </body>
 </html>

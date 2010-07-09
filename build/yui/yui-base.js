@@ -334,6 +334,7 @@ proto = {
      *
      */
     add: function(name, fn, version, details) {
+
         details = details || {};
         var env = YUI.Env,
             mod  = {
@@ -357,15 +358,12 @@ proto = {
      * @private
      */
     _attach: function(r, fromLoader) {
-        var i, name, mod, details, req, use,
+        var i, name, mod, details, req, use, 
+            ret  = true,
             mods = YUI.Env.mods,
             Y    = this,
             done = Y.Env._attached,
             len  = r.length;
-
-        if (Y.Env.lastError) {
-            return;
-        }
 
         for (i=0; i<len; i++) {
             name = r[i]; 
@@ -378,7 +376,10 @@ proto = {
                 use        = details.use;
 
                 if (req && req.length) {
-                    Y._attach(Y.Array(req));
+                    ret = Y._attach(Y.Array(req));
+                    if (!ret) {
+                        return false;
+                    }
                 }
 
 
@@ -386,16 +387,18 @@ proto = {
                     try {
                         mod.fn(Y, name);
                     } catch (e) {
-                        Y.Env.lastError = e;
                         Y.error('Attach error: ' + name, e, name);
+                        return false;
                     }
                 }
 
                 if (use && use.length) {
-                    Y._attach(Y.Array(use));
+                    ret = Y._attach(Y.Array(use));
                 }
             }
         }
+
+        return ret;
     },
 
     /**
@@ -458,6 +461,7 @@ proto = {
             boot     = config.bootstrap,
             missing  = [], 
             r        = [], 
+            ret      = true,
             fetchCSS = config.fetchCSS,
             process  = function(name) {
 
@@ -494,7 +498,7 @@ proto = {
             },
 
             notify = function(response) {
-                if (callback  && !Y.Env.lastError) {
+                if (callback) {
                     try {
                         callback(Y, response);
                     } catch (e) {
@@ -508,7 +512,8 @@ proto = {
                         success: true,
                         msg: 'not dynamic'
                     }, 
-                    newData, redo, origMissing,
+                    newData, redo, origMissing, 
+                    ret = true,
                     data = response.data;
 
                 Y._loading = false;
@@ -529,16 +534,19 @@ proto = {
                 if (redo && data) {
                     newData = data.concat();
                     newData.push(function() {
-                        Y._attach(data);
-                        notify(response);
+                        if (Y._attach(data)) {
+                            notify(response);
+                        }
                     });
                     Y._loading  = false;
                     Y.use.apply(Y, newData);
                 } else {
                     if (data) {
-                        Y._attach(data);
+                        ret = Y._attach(data);
                     }
-                    notify(response);
+                    if (ret) {
+                        notify(response);
+                    }
                 }
 
                 if (Y._useQueue && Y._useQueue.size() && !Y._loading) {
@@ -552,8 +560,6 @@ proto = {
             Y._useQueue.add(args);
             return Y;
         }
-
-        Y.Env.lastError = null;
 
 
         // The last argument supplied to use can be a load complete callback
@@ -609,8 +615,9 @@ proto = {
                 Y._loading = false;
                 queue.running = false;
                 Env.bootstrapped = true;
-                Y._attach(['loader']);
-                Y.use.apply(Y, args);
+                if (Y._attach(['loader'])) {
+                    Y.use.apply(Y, args);
+                }
             };
 
             if (G_ENV._bootstrapping) {
@@ -626,8 +633,10 @@ proto = {
             if (len) {
                 Y.message('Requirement NOT loaded: ' + missing, 'warn', 'yui');
             }
-            Y._attach(r);
-            handleLoader();
+            ret = Y._attach(r);
+            if (ret) {
+                handleLoader();
+            }
         }
 
         return Y;
@@ -685,13 +694,13 @@ proto = {
      */
     error: function(msg, e) {
 
-        var Y = this;
+        var Y = this, ret;
         
         if (Y.config.errorFn) {
-            Y.config.errorFn.apply(Y, arguments);
+            ret = Y.config.errorFn.apply(Y, arguments);
         }
 
-        if (Y.config.throwFail) {
+        if (Y.config.throwFail && !ret) {
             throw (e || new Error(msg)); 
         } else {
             Y.message(msg, "error"); // don't scrub this one

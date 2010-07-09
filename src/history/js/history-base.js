@@ -10,19 +10,12 @@
  */
 
 /**
- * The history-base module uses a simple object to store state. To integrate
- * state management with browser history and allow the back/forward buttons to
- * navigate between states, use history-hash.
+ * Provides global state management backed by an object, but with no browser
+ * history integration. For actual browser history integration and back/forward
+ * support, use the history-html5 or history-hash modules.
  *
  * @module history
  * @submodule history-base
- */
-
-/**
- * The HistoryBase class provides basic state management functionality backed by
- * an object. History state is shared globally among all instances and
- * subclass instances of HistoryBase.
- *
  * @class HistoryBase
  * @uses EventTarget
  * @constructor
@@ -45,14 +38,14 @@ var Lang        = Y.Lang,
     isUndefined = Y.Lang.isUndefined,
     win         = Y.config.win,
 
-    EVT_CHANGE  = 'change',
-    NAME        = 'historyBase',
-    SRC_ADD     = 'add',
-    SRC_REPLACE = 'replace',
+    DEFAULT_OPTIONS = {merge: true},
+    EVT_CHANGE      = 'change',
+    SRC_ADD         = 'add',
+    SRC_REPLACE     = 'replace';
 
-HistoryBase = function () {
+function HistoryBase() {
     this._init.apply(this, arguments);
-};
+}
 
 Y.augment(HistoryBase, Y.EventTarget, null, null, {
     emitFacade : true,
@@ -74,7 +67,7 @@ if (!GlobalEnv._state) {
  * @type String
  * @static
  */
-HistoryBase.NAME = NAME;
+HistoryBase.NAME = 'historyBase';
 
 /**
  * Constant used to identify state changes originating from the
@@ -204,19 +197,37 @@ Y.mix(HistoryBase.prototype, {
     // -- Public Methods -------------------------------------------------------
 
     /**
-     * Adds a state entry with new values for the specified key or keys. Any key
-     * with a <code>null</code> or <code>undefined</code> value will be removed
-     * from the current state; all others will be merged into it.
+     * Adds a state entry with new values for the specified keys. By default,
+     * the new state will be merged into the existing state, and new values will
+     * override existing values. Specifying a <code>null</code> or
+     * <code>undefined</code> value will cause that key to be removed from the
+     * new state entry.
      *
      * @method add
-     * @param {Object|String} state|key object hash of key/value string pairs,
-     *   or the name of a single key
-     * @param {String|null} value (optional) if <i>state</i> is the name of a
-     *   single key, <i>value</i> will become its new value
+     * @param {Object} state Object hash of key/value pairs.
+     * @param {Object} options (optional) Zero or more of the following options:
+     *   <dl>
+     *     <dt>merge (Boolean)</dt>
+     *     <dd>
+     *       <p>
+     *       If <code>true</code> (the default), the new state will be merged
+     *       into the existing state. New values will override existing values,
+     *       and <code>null</code> or <code>undefined</code> values will be
+     *       removed from the state.
+     *       </p>
+     *
+     *       <p>
+     *       If <code>false</code>, the existing state will be discarded as a
+     *       whole and the new state will take its place.
+     *       </p>
+     *     </dd>
+     *   </dl>
      * @chainable
      */
-    add: function (state, value) {
-        return this._change(SRC_ADD, state, value);
+    add: function () {
+        var args = Y.Array(arguments, 0, true);
+        args.unshift(SRC_ADD);
+        return this._change.apply(this, args);
     },
 
     /**
@@ -225,9 +236,9 @@ Y.mix(HistoryBase.prototype, {
      * no key is specified.
      *
      * @method get
-     * @param {String} key (optional) state parameter key
-     * @return {Object|mixed} value of the specified state parameter, or an
-     *   object hash of key/value pairs for all current state parameters
+     * @param {String} key (optional) State parameter key.
+     * @return {Object|String} Value of the specified state parameter, or an
+     *   object hash of key/value pairs for all current state parameters.
      */
     get: function (key) {
         var state = GlobalEnv._state;
@@ -240,19 +251,20 @@ Y.mix(HistoryBase.prototype, {
     },
 
     /**
-     * Replaces the current state entry with new values for the specified
-     * parameters, just as with <code>add()</code>, except that no change events
-     * are generated.
+     * Same as <code>add()</code> except that a new browser history entry will
+     * not be created. Instead, the current history entry will be replaced with
+     * the new state.
      *
      * @method replace
-     * @param {Object|String} state|key object hash of key/value string pairs,
-     *   or the name of a single key
-     * @param {String|null} value (optional) if <i>state</i> is the name of a
-     *   single key, <i>value</i> will become its new value
+     * @param {Object} state Object hash of key/value pairs.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
      * @chainable
      */
-    replace: function (state, value) {
-        return this._change(SRC_REPLACE, state, value);
+    replace: function () {
+        var args = Y.Array(arguments, 0, true);
+        args.unshift(SRC_REPLACE);
+        return this._change.apply(this, args);
     },
 
     // -- Protected Methods ----------------------------------------------------
@@ -262,25 +274,22 @@ Y.mix(HistoryBase.prototype, {
      * add() and replace().
      *
      * @method _change
-     * @param {String} src source of the change, for inclusion in event facades
-     *   to facilitate filtering
-     * @param {Object|String} state|key object hash of key/value string pairs,
-     *   or the name of a single key
-     * @param {String|null} value (optional) if <i>state</i> is the name of a
-     *   single key, <i>value</i> will become its new value
+     * @param {String} src Source of the change, for inclusion in event facades
+     *   to facilitate filtering.
+     * @param {Object} state Object hash of key/value pairs.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
      * @protected
      * @chainable
      */
-    _change: function (src, state, value) {
-        var key;
+    _change: function (src, state, options) {
+        options = options ? Y.merge(DEFAULT_OPTIONS, options) : DEFAULT_OPTIONS;
 
-        if (Lang.isString(state)) {
-            key        = state;
-            state      = {};
-            state[key] = value;
+        if (options.merge) {
+            state = Y.merge(GlobalEnv._state, state);
         }
 
-        this._resolveChanges(src, Y.merge(GlobalEnv._state, state));
+        this._resolveChanges(src, state, options);
         return this;
     },
 
@@ -289,12 +298,16 @@ Y.mix(HistoryBase.prototype, {
      * care of actually firing the necessary events.
      *
      * @method _fireEvents
-     * @param {String} src source of the changes, for inclusion in event facades
-     *   to facilitate filtering
-     * @param {Object} changes resolved changes
+     * @param {String} src Source of the changes, for inclusion in event facades
+     *   to facilitate filtering.
+     * @param {Object} changes Resolved changes.
+     * @param {Object} options Zero or more options. See <code>add()</code> for
+     *   a list of supported options.
      * @protected
      */
     _fireEvents: function (src, changes) {
+        // Note: the options param isn't used here, but it is used by subclasses.
+
         // Fire the global change event.
         this.fire(EVT_CHANGE, {
             changed: changes.changed,
@@ -432,9 +445,11 @@ Y.mix(HistoryBase.prototype, {
      *   to facilitate filtering
      * @param {Object} newState object hash of key/value pairs representing the
      *   new state
+     * @param {Object} options Zero or more options. See <code>add()</code> for
+     *   a list of supported options.
      * @protected
      */
-    _resolveChanges: function (src, newState) {
+    _resolveChanges: function (src, newState, options) {
         var changed   = {},
             isChanged,
             prevState = GlobalEnv._state,
@@ -471,7 +486,7 @@ Y.mix(HistoryBase.prototype, {
                 newState : newState,
                 prevState: prevState,
                 removed  : removed
-            });
+            }, options);
         }
     },
 
