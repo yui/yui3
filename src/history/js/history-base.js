@@ -231,6 +231,26 @@ Y.mix(HistoryBase.prototype, {
     },
 
     /**
+     * Adds a state entry with a new value for a single key. By default, the new
+     * value will be merged into the existing state values, and will override an
+     * existing value with the same key if there is one. Specifying a
+     * <code>null</code> or <code>undefined</code> value will cause the key to
+     * be removed from the new state entry.
+     *
+     * @method addValue
+     * @param {String} key State parameter key.
+     * @param {String} value New value.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
+     * @chainable
+     */
+    addValue: function (key, value, options) {
+        var state = {};
+        state[key] = value;
+        return this._change(SRC_ADD, state, options);
+    },
+
+    /**
      * Returns the current value of the state parameter specified by <i>key</i>,
      * or an object hash of key/value pairs for all current state parameters if
      * no key is specified.
@@ -267,11 +287,29 @@ Y.mix(HistoryBase.prototype, {
         return this._change.apply(this, args);
     },
 
+    /**
+     * Same as <code>addValue()</code> except that a new browser history entry
+     * will not be created. Instead, the current history entry will be replaced
+     * with the new state.
+     *
+     * @method replaceValue
+     * @param {String} key State parameter key.
+     * @param {String} value New value.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
+     * @chainable
+     */
+    replaceValue: function (key, value, options) {
+        var state = {};
+        state[key] = value;
+        return this._change(SRC_REPLACE, state, options);
+    },
+
     // -- Protected Methods ----------------------------------------------------
 
     /**
      * Changes the state. This method provides a common implementation shared by
-     * add() and replace().
+     * the public methods for changing state.
      *
      * @method _change
      * @param {String} src Source of the change, for inclusion in event facades
