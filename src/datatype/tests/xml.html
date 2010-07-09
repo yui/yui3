@@ -74,8 +74,12 @@
             }
         });
 
-        Y.Test.Runner.add(testParse);
-        Y.Test.Runner.add(testFormat);
+        var suite = new Y.Test.Suite({name:"DataType.XML Test Suite"});
+        suite.add(testParse);
+        suite.add(testFormat);
+
+        Y.Test.Runner.setName("DataType.XML Test Runner");
+        Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
 })();

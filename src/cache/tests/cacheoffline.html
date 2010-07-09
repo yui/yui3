@@ -287,11 +287,15 @@
             }
         });
 
-        Y.Test.Runner.add(testClass);
-        Y.Test.Runner.add(testBasic);
-        Y.Test.Runner.add(testEvents);
-        Y.Test.Runner.add(testEntryManagement);
-        Y.Test.Runner.add(testBoundaryValues);
+        var suite = new Y.Test.Suite({name:"CacheOffline Test Suite"});
+        suite.add(testClass);
+        suite.add(testBasic);
+        suite.add(testEvents);
+        suite.add(testEntryManagement);
+        suite.add(testBoundaryValues);
+
+        Y.Test.Runner.setName("CacheOffline Test Runner");
+        Y.Test.Runner.add(suite);
         
         if(window.localStorage) {
             window.localStorage.clear();
