@@ -38,7 +38,7 @@ canvas {
                 graphics.render(document.getElementById("appdiv"));
                 graphics.setSize(800, 600);
                 graphics.lineStyle(12, "#0000ff", 1);
-                graphics.beginGradientFill("linear", ["#0000ff", "#ffffff", "#ff0000"], [], [0, 0.5, 1], {rotation:360, x:40, y:40, width:600, height:300});
+                graphics.beginGradientFill({type:"linear", colors:["#0000ff", "#ffffff", "#ff0000"], ratios:[0, 0.5, 1]});
                 graphics.drawRect(40, 40, 600, 300);
                 graphics.end();
              
@@ -46,8 +46,8 @@ canvas {
                 {
                     var rot = document.getElementById("gradientRotationField").value;
                     graphics.clear();
-                    graphics.lineStyle(12, "#0000ff", 1);
-                    graphics.beginGradientFill("linear", ["#0000ff", "#ffffff", "#ff0000"], [], [0, 0.5, 1], {rotation:rot, x:40, y:40, width:600, height:300});
+                    graphics.lineStyle(0, "#0000ff", 1);
+                    graphics.beginGradientFill({type:"linear", colors:["#0000ff", "#ffffff", "#ff0000"], ratios:[0, 0.5, 1], rotation:rot});
                     graphics.drawRect(40, 40, 600, 300);
                     graphics.end();
 

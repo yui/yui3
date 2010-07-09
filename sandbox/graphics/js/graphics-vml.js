@@ -27,6 +27,16 @@ VMLGraphics.prototype = {
         this._stroked = false;
     },
 
+    _clearPath: function()
+    {
+        this._shape = null;
+        this._path = '';
+        this._width = 0;
+        this._height = 0;
+        this._x = 0;
+        this._y = 0;
+    },
+
     _createGraphics: function() {
         var group = this._createGraphicNode("group");
         group.style.display = "inline-block";
@@ -54,18 +64,32 @@ VMLGraphics.prototype = {
         return this;
     },
 
-    beginGradientFill: function(type, colors, alphas, ratios, box) {
-        var i = 0,
-            len,
-            pct,
-            fill = {colors:""},
-            rotation = 0;
-        
+    beginGradientFill: function(config) {
+        var type = config.type,
+            colors = config.colors,
+            alphas = config.alphas || [],
+            ratios = config.ratios || [],
+            fill = {
+                colors:colors,
+                ratios:ratios
+            },
+            len = alphas.length,
+            i = 0,
+            alpha,
+            oi,
+            rotation = config.rotation || 0;
+    
+        for(;i < len; ++i)
+        {
+            alpha = alphas[i];
+            oi = i > 0 ? i + 1 : "";
+            alphas[i] = Math.round(alpha * 100) + "%";
+            fill["opacity" + oi] = alphas[i];
+        }
         if(type === "linear")
         {
-            if(box)
+            if(config)
             {
-                rotation = box.rotation || 0;
             }
             if(rotation > 0 && rotation <= 90)
             {
@@ -88,17 +112,29 @@ VMLGraphics.prototype = {
         }
         else if(type === "radial")
         {
+            fill.alignshape = false;
             fill.type = "gradientradial";
             fill.focus = "100%";
             fill.focusposition = "50%,50%";
         }
-        len = colors.length;
-        for(;i < len; ++i) {
-            pct = ratios[i] || i/(len-1);
-            pct = Math.round(100 * pct) + "%";
-            fill.colors += ", " + pct + " " + colors[i];
+        fill.ratios = ratios || [];
+        
+        if(!isNaN(config.tx) ||
+            !isNaN(config.ty) ||
+            !isNaN(config.width) ||
+            !isNaN(config.height))
+        {
+            this._gradientBox = {
+                tx:config.tx,
+                ty:config.ty,
+                width:config.width,
+                height:config.height
+            };
         }
-        fill.colors = fill.colors.substr(2);
+        else
+        {
+            this._gradientBox = null;
+        }
         this._fillProps = fill;
         return this;
     },
@@ -112,12 +148,13 @@ VMLGraphics.prototype = {
         return this;
     },
 
+
 	drawCircle: function(x, y, r, start, end, anticlockwise) {
         this._width = this._height = r * 2;
         this._x = x - r;
         this._y = y - r;
         this._shape = "oval";
-        return this;
+        this._drawVML();
 	},
 
     drawEllipse: function(x, y, w, h) {
@@ -126,15 +163,20 @@ VMLGraphics.prototype = {
         this._x = x;
         this._y = y;
         this._shape = "oval";
-        return this;
+        this._drawVML();
     },
 
     drawRect: function(x, y, w, h) {
+        this._x = x;
+        this._y = y;
+        this._width = w;
+        this._height = h;
         this.moveTo(x, y);
         this.lineTo(x + w, y);
         this.lineTo(x + w, y + h);
         this.lineTo(x, y + h);
         this.lineTo(x, y);
+        this._drawVML();
     },
 
     getShape: function(config)
@@ -152,19 +194,18 @@ VMLGraphics.prototype = {
         }
     },
 
-    _shape: "shape",
+    _shape: null,
 
 	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
         return this;
 	},
 
-    end: function() {
+    _drawVML: function()
+    {
         var shape = this._createGraphicNode(this._shape),
             w = this._width,
             h = this._height,
-            fillProps = this._fillProps,
-            prop,
-            fill;
+            fillProps = this._fillProps;
         
         if(this._path)
         {
@@ -172,7 +213,10 @@ VMLGraphics.prototype = {
             {
                 this._path += ' x';
             }
-            this._path += ' e';
+            if(this._stroke)
+            {
+                this._path += ' e';
+            }
             shape.path = this._path;
             shape.coordSize = w + ', ' + h;
         }
@@ -192,7 +236,7 @@ VMLGraphics.prototype = {
             shape.filled = false;
         }
 
-        if (this._stroke) {
+        if (this._stroke && this._strokeWeight > 0) {
             shape.strokeColor = this._strokeColor;
             shape.strokeWeight = this._strokeWeight;
         } else {
@@ -200,22 +244,70 @@ VMLGraphics.prototype = {
         }
         shape.style.width = w + 'px';
         shape.style.height = h + 'px';
-       
-
         if (fillProps) {
-            fill = this._createGraphicNode("fill");
-            for (prop in fillProps) {
-                if(fillProps.hasOwnProperty(prop)) {
-                    fill.setAttribute(prop, fillProps[prop]);
-                }
-            }
             shape.filled = true;
-            shape.appendChild(fill);
+            shape.appendChild(this.getFill());
         }
 
         this._vml.appendChild(shape);
+        this._clearPath();
+    },
+
+    getFill: function() {
+        var fill = this._createGraphicNode("fill"),
+            w = this._width,
+            h = this._height,
+            fillProps = this._fillProps,
+            prop,
+            pct,
+            i = 0,
+            colors,
+            colorstring = "",
+            len,
+            ratios,
+            hyp = Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2)),
+            cx = 50,
+            cy = 50;
+        if(this._gradientBox)
+        {
+            cx= Math.round( (this._gradientBox.width/2 - ((this._x - this._gradientBox.tx) * hyp/w))/(w * w/hyp) * 100);
+            cy = Math.round( (this._gradientBox.height/2 - ((this._y - this._gradientBox.ty) * hyp/h))/(h * h/hyp) * 100);
+            fillProps.focussize = (this._gradientBox.width/w)/10 + " " + (this._gradientBox.height/h)/10;
+        }
+        if(fillProps.colors)
+        {
+            colors = fillProps.colors.concat();
+            ratios = fillProps.ratios.concat();
+            len = colors.length;
+            for(;i < len; ++i) {
+                pct = ratios[i] || i/(len-1);
+                pct = Math.round(100 * pct) + "%";
+                colorstring += ", " + pct + " " + colors[i];
+            }
+            if(parseInt(pct, 10) < 100)
+            {
+                colorstring += ", 100% " + colors[len-1];
+            }
+        }
+        for (prop in fillProps) {
+            if(fillProps.hasOwnProperty(prop)) {
+                fill.setAttribute(prop, fillProps[prop]);
+           }
+        }
+        fill.colors = colorstring.substr(2);
+        if(fillProps.type === "gradientradial")
+        {
+            fill.focusposition = cx + "%," + cy + "%";
+        }
+        return fill;
+    },
+
+    end: function() {
+        if(this._shape)
+        {
+            this._drawVML();
+        }
         this._initProps();
-        return this;
     },
 
     lineGradientStyle: function() {
@@ -226,7 +318,6 @@ VMLGraphics.prototype = {
         this._stroke = 1;
         this._strokeWeight = thickness * 0.7;
         this._strokeColor = color;
-        return this;
     },
 
     lineTo: function(point1, point2, etc) {
@@ -244,12 +335,10 @@ VMLGraphics.prototype = {
 
             this._trackSize.apply(this, args[i]);
         }
-        return this;
     },
 
     moveTo: function(x, y) {
         this._path += ' m ' + x + ', ' + y;
-        return this;
     },
 
     setSize: function(w, h) {
