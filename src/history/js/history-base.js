@@ -31,12 +31,11 @@
  * </dl>
  */
 
-var Lang        = Y.Lang,
-    Obj         = Y.Object,
-    GlobalEnv   = YUI.namespace('Env.History'),
-    docMode     = Y.config.doc.documentMode,
-    isUndefined = Y.Lang.isUndefined,
-    win         = Y.config.win,
+var Lang      = Y.Lang,
+    Obj       = Y.Object,
+    GlobalEnv = YUI.namespace('Env.History'),
+    docMode   = Y.config.doc.documentMode,
+    win       = Y.config.win,
 
     DEFAULT_OPTIONS = {merge: true},
     EVT_CHANGE      = 'change',
@@ -98,8 +97,12 @@ HistoryBase.SRC_REPLACE = SRC_REPLACE;
  * @type Boolean
  * @static
  */
+
+// All HTML5-capable browsers except Gecko 2+ (Firefox 4+) correctly return
+// true for 'onpopstate' in win. In order to support Gecko 2, we fall back to a
+// UA sniff for now. (current as of Firefox 4.0b1)
 HistoryBase.html5 = !!(win.history && win.history.pushState &&
-        win.history.replaceState && !isUndefined(win.onpopstate));
+        win.history.replaceState && ('onpopstate' in win || Y.UA.gecko >= 2));
 
 /**
  * Whether or not this browser supports the <code>window.onhashchange</code>
@@ -117,7 +120,7 @@ HistoryBase.html5 = !!(win.history && win.history.pushState &&
 // Mode. However, IE8 in IE7 compatibility mode still defines the
 // event but never fires it, so we can't just detect the event. We also can't
 // just UA sniff for IE8, since other browsers support this event as well.
-HistoryBase.nativeHashChange = !isUndefined(win.onhashchange) &&
+HistoryBase.nativeHashChange = 'onhashchange' in win &&
         (!docMode || docMode > 7);
 
 Y.mix(HistoryBase.prototype, {
