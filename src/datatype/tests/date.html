@@ -278,13 +278,17 @@
             }
         });
 
-        Y.Test.Runner.add(testParse);
-        Y.Test.Runner.add(testFormat);
-        Y.Test.Runner.add(testFormatDeprecatedLocales);
-        Y.Test.Runner.add(testFormatUS);
-        Y.Test.Runner.add(testFormatFR);
-        Y.Test.Runner.add(testFormatKR);
-        Y.Test.Runner.add(testFormatIN);
+        var suite = new Y.Test.Suite({name:"DataType.Date Test Suite"});
+        suite.add(testParse);
+        suite.add(testFormat);
+        suite.add(testFormatDeprecatedLocales);
+        suite.add(testFormatUS);
+        suite.add(testFormatFR);
+        suite.add(testFormatKR);
+        suite.add(testFormatIN);
+
+        Y.Test.Runner.setName("DataType.Date Test Runner");
+        Y.Test.Runner.add(suite);
         Y.Test.Runner.run();
     });
 })();

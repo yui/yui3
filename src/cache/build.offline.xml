@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YuiBase" default="local">
+    <description>Component Build File</description>
+
+    <property environment="env" />
+
+    <property file="build.offline.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+</project>
