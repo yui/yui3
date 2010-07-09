@@ -30,23 +30,25 @@ YUI.add('autocomplete-base', function (Y) {
 
 // -- Shorthand & Private Variables --------------------------------------------
 var Lang       = Y.Lang,
+    YArray     = Y.Array,
     isFunction = Lang.isFunction,
     isNumber   = Lang.isNumber,
 
-    AC               = 'autocomplete',
-    ALLOW_BROWSER_AC = 'allowBrowserAutocomplete',
-    DATA_SOURCE      = 'dataSource',
-    INPUT_NODE       = 'inputNode',
-    MIN_QUERY_LENGTH = 'minQueryLength',
-    QUERY            = 'query',
-    QUERY_DELAY      = 'queryDelay',
-    REQUEST_TEMPLATE = 'requestTemplate',
-    RESULT_FILTERS   = 'resultFilters',
-    VALUE_CHANGE     = 'valueChange',
+    AC                 = 'autocomplete',
+    ALLOW_BROWSER_AC   = 'allowBrowserAutocomplete',
+    DATA_SOURCE        = 'dataSource',
+    INPUT_NODE         = 'inputNode',
+    MIN_QUERY_LENGTH   = 'minQueryLength',
+    QUERY              = 'query',
+    QUERY_DELAY        = 'queryDelay',
+    REQUEST_TEMPLATE   = 'requestTemplate',
+    RESULT_FILTERS     = 'resultFilters',
+    RESULT_HIGHLIGHTER = 'resultHighlighter',
+    VALUE_CHANGE       = 'valueChange',
 
-    EVT_QUERY        = QUERY,
-    EVT_RESULTS      = 'results',
-    EVT_VALUE_CHANGE = VALUE_CHANGE;
+    EVT_QUERY          = QUERY,
+    EVT_RESULTS        = 'results',
+    EVT_VALUE_CHANGE   = VALUE_CHANGE;
 
 // Constructor
 function AutoComplete() {
@@ -204,6 +206,7 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
      */
     _onResponse: function (e) {
         var filters,
+            highlighter,
             i,
             len,
             query,
@@ -214,7 +217,15 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
 
             // Ignore stale responses that aren't for the current query.
             if (query === this.get(QUERY)) {
-                filters = this.get(RESULT_FILTERS) || [];
+                filters     = this.get(RESULT_FILTERS) || [];
+                highlighter = this.get(RESULT_HIGHLIGHTER);
+
+                if (highlighter) {
+                    // The highlighter is treated just like a filter except that
+                    // it's always called last. Concat is used to ensure that
+                    // the original filters array isn't touched.
+                    filters = filters.concat([highlighter]);
+                }
 
                 for (i = 0, len = filters.length; i < len; ++i) {
                     results = filters[i](query, results);
@@ -304,7 +315,7 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
         }
     }
 }, {
-    // -- Static Properties ----------------------------------------------------
+    // -- Public Static Properties ---------------------------------------------
 
     /**
      * Name of this component.
@@ -486,11 +497,12 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
         /**
          * <p>
          * Array of local result filter functions. If provided, each filter
-         * will be called with two arguments: the query and the results received
-         * from the DataSource. Each filter is expected to return a filtered or
-         * modified version of those results, which will then be passed on to
-         * subsequent filters and to subscribers to the <code>results</code>
-         * event.
+         * will be called with two arguments when results are received: the
+         * query and the results received from the DataSource. Each filter is
+         * expected to return a filtered or modified version of those results,
+         * which will then be passed on to subsequent filters, to the
+         * <code>resultHighlighter</code> function (if set), and finally to
+         * subscribers to the <code>results</code> event.
          * </p>
          *
          * <p>
@@ -507,7 +519,101 @@ Y.AutoComplete = Y.extend(AutoComplete, Y.Base, {
             },
 
             value: []
+        },
+
+        /**
+         * <p>
+         * Function which will be used to highlight results. If provided, this
+         * function will be called with two arguments after results have been
+         * received and filtered: the query and the filtered results. The
+         * highlighter is expected to return a modified version of the results
+         * with the query highlighted in some form.
+         * </p>
+         *
+         * <p>
+         * If no DataSource is set, the highlighter will not be called.
+         * </p>
+         *
+         * @attribute resultHighlighter
+         * @type Function|null
+         */
+        resultHighlighter: {
+            validator: function (value) {
+                return isFunction(value) || value === null;
+            }
         }
+    },
+
+    /**
+     * Regular expression that matches an individual non-word character.
+     *
+     * @property REGEX_NOT_WORD
+     * @type RegExp
+     * @static
+     * @final
+     */
+    REGEX_NOT_WORD: /\W/,
+
+    // -- Public Static Methods ------------------------------------------------
+
+    /**
+     * Returns an array of unique words in the specified string. A "word" is any
+     * consecutive part of the string that doesn't match the
+     * <code>REGEX_NOT_WORD</code> regular expression.
+     *
+     * @method getWords
+     * @param {String} string String to parse
+     * @param {Boolean} preserveCase (optional) If <code>true</code>, case will
+     *   be preserved; otherwise all words will be converted to lowercase.
+     * @return {Array} Unique words in the string
+     * @static
+     */
+    getWords: function (string, preserveCase) {
+        var regex = AutoComplete.REGEX_NOT_WORD,
+            words = YArray.unique((preserveCase ? string : string.toLowerCase()).split(regex));
+
+        return YArray.reject(words, function (word) {
+            return word === '' || regex.test(word);
+        });
+    },
+
+    // -- Protected Static Methods ---------------------------------------------
+
+    /**
+     * Returns a copy of the specified string with special HTML characters
+     * escaped. The following characters will be converted to their
+     * corresponding character entities:
+     * <code>&amp; &lt; &gt; &quot; &#x27; &#x2F;</code>
+     *
+     * @method _escapeHTML
+     * @param {String} string string to escape
+     * @return {String} escaped string
+     * @protected
+     * @static
+     */
+    _escapeHTML: function (string) {
+        // Based on the OWASP HTML escaping recommendations at
+        // http://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet
+        return string.replace(/&/g, '&amp;').
+                      replace(/</g, '&lt;').
+                      replace(/>/g, '&gt;').
+                      replace(/"/g, '&quot;').
+                      replace(/'/g, '&#x27;').
+                      replace(/\//g, '&#x2F;');
+    },
+
+    /**
+     * Returns a copy of the specified string with special RegExp characters
+     * escaped.
+     *
+     * @method _escapeRegExp
+     * @param {String} string string to escape
+     * @return {String} escaped string
+     * @protected
+     * @static
+     */
+    _escapeRegExp: function (string) {
+        return string.replace(/([\\\^\$*+\[\]?{}.=!:(|)])/g, '\\$1');
     }
 });
 

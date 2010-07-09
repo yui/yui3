@@ -139,6 +139,9 @@
 <span class="cm"> *  callback executed each time a script or css file is loaded&lt;/li&gt;</span>
 <span class="cm"> *  &lt;li&gt;modules:</span>
 <span class="cm"> *  A list of module definitions.  See Loader.addModule for the supported module metadata&lt;/li&gt;</span>
+<span class="cm"> *  &lt;li&gt;groups:</span>
+<span class="cm"> *  A list of group definitions.  Each group can contain specific definitions for base, comboBase,</span>
+<span class="cm"> *  combine, and accepts a list of modules.  See above for the description of these properties.&lt;/li&gt;</span>
 <span class="cm"> * &lt;/ul&gt;</span>
 <span class="cm"> */</span>
 
@@ -728,6 +731,8 @@
 <span class="cm">     *     &lt;dt&gt;fullpath:&lt;/dt&gt;   &lt;dd&gt;If fullpath is specified, this is used instead of the configured base + path&lt;/dd&gt;</span>
 <span class="cm">     *     &lt;dt&gt;skinnable:&lt;/dt&gt;  &lt;dd&gt;flag to determine if skin assets should automatically be pulled in&lt;/dd&gt;</span>
 <span class="cm">     *     &lt;dt&gt;submodules:&lt;/dt&gt; &lt;dd&gt;a hash of submodules&lt;/dd&gt;</span>
+<span class="cm">     *     &lt;dt&gt;group:&lt;/dt&gt;      &lt;dd&gt;The group the module belongs to -- this is set automatically when</span>
+<span class="cm">     *                          it is added as part of a group configuration.&lt;/dd&gt;</span>
 <span class="cm">     *     &lt;dt&gt;lang:&lt;/dt&gt;       &lt;dd&gt;array of BCP 47 language tags of</span>
 <span class="cm">     *                              languages for which this module has localized resource bundles,</span>
 <span class="cm">     *                              e.g., [&quot;en-GB&quot;,&quot;zh-Hans-CN&quot;]&lt;/dd&gt;</span>
@@ -1209,7 +1214,7 @@
             <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="kd">var</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">type</span><span class="p">,</span> <span class="nx">found</span><span class="p">,</span> <span class="nx">pname</span><span class="p">,</span> 
+        <span class="kd">var</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">found</span><span class="p">,</span> <span class="nx">pname</span><span class="p">,</span> 
             <span class="nx">m</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">moduleInfo</span><span class="p">[</span><span class="nx">mname</span><span class="p">],</span> 
             <span class="nx">patterns</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">patterns</span><span class="p">;</span>
 
@@ -1221,7 +1226,6 @@
                 <span class="k">if</span> <span class="p">(</span><span class="nx">patterns</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">pname</span><span class="p">))</span> <span class="p">{</span>
                     <span class="c1">// Y.log(&#39;testing pattern &#39; + i);</span>
                     <span class="nx">p</span> <span class="o">=</span> <span class="nx">patterns</span><span class="p">[</span><span class="nx">pname</span><span class="p">];</span>
-                    <span class="nx">type</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">type</span><span class="p">;</span>
 
                     <span class="c1">// use the metadata supplied for the pattern</span>
                     <span class="c1">// as the module definition.</span>
@@ -1868,6 +1872,7 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>

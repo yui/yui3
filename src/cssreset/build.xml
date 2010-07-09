@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YUI" default="local">
+    <description>cssreset - Build All Modules</description>
+
+    <macrodef name="build-cssreset">
+        <attribute name="target"/>
+        <sequential>
+            <subant target="@{target}">
+                <fileset dir="." includes="build.*.xml"/>
+            </subant>
+        </sequential>
+    </macrodef>
+
+    <target name="local">
+        <build-cssreset target="local"/>
+    </target>
+    <target name="deploy">
+        <build-cssreset target="deploy"/>
+    </target>
+    <target name="all">
+        <build-cssreset target="all"/>
+    </target>
+    <target name="clean">
+        <build-cssreset target="clean"/>
+    </target>
+
+</project>

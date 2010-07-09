@@ -11,6 +11,8 @@ var Lang = Y.Lang;
  * parent of another Widget.
  *
  * @class WidgetParent
+ * @constructor
+ * @uses ArrayList
  * @param {Object} config User configuration object.
  */
 function Parent(config) {

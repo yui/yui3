@@ -9,59 +9,110 @@ YUI.add('autocomplete-filters', function (Y) {
  * @static
  */
 
-var YArray = Y.Array;
+var YArray  = Y.Array,
+    YObject = Y.Object,
 
-Y.namespace('AutoComplete').Filters = {
+    AutoComplete = Y.AutoComplete,
+
+Filters = {
     // -- Public Methods -------------------------------------------------------
 
     /**
-     * Returns an array of results that contain the specified query.
-     * Case-insensitive.
+     * Returns an array of results that contain all of the characters in the
+     * query, in any order (not necessarily consecutive). Case-insensitive.
      *
-     * @method contains
-     * @param {String} query query to match
-     * @param {Array} results results to filter
-     * @return {Array} filtered results
+     * @method charMatch
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
      * @static
      */
-    contains: function (query, results) {
-        var queryLower = query.toLowerCase();
+    charMatch: function (query, results, caseSensitive) {
+        // The caseSensitive parameter is only intended for use by
+        // charMatchCase(). It's intentionally undocumented.
+
+        var queryChars = YArray.unique((caseSensitive ? query : query.toLowerCase()).split(''));
 
         return YArray.filter(results, function (result) {
-            return result.toLowerCase().indexOf(queryLower) !== -1;
+            if (!caseSensitive) {
+                result = result.toLowerCase();
+            }
+
+            return YArray.every(queryChars, function (chr) {
+                return result.indexOf(chr) !== -1;
+            });
         });
     },
 
     /**
-     * Case-sensitive version of <code>contains()</code>.
+     * Case-sensitive version of <code>charMatch()</code>.
      *
-     * @method containsCase
-     * @param {String} query query to match
-     * @param {Array} results results to filter
-     * @return {Array} filtered results
+     * @method charMatchCase
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
      * @static
      */
-    containsCase: function (query, results) {
+    charMatchCase: function (query, results) {
+        return Filters.charMatch(query, results, true);
+    },
+
+    /**
+     * Returns an array of results that contain the complete query as a phrase.
+     * Case-insensitive.
+     *
+     * @method phraseMatch
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
+     * @static
+     */
+    phraseMatch: function (query, results, caseSensitive) {
+        // The caseSensitive parameter is only intended for use by
+        // phraseMatchCase(). It's intentionally undocumented.
+
+        if (!caseSensitive) {
+            query = query.toLowerCase();
+        }
+
         return YArray.filter(results, function (result) {
-            return result.indexOf(query) !== -1;
+            return (caseSensitive ? result : result.toLowerCase()).indexOf(query) !== -1;
         });
     },
 
     /**
-     * Returns an array of results that start with the specified query.
-     * Case-insensitive.
+     * Case-sensitive version of <code>phraseMatch()</code>.
+     *
+     * @method phraseMatchCase
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
+     * @static
+     */
+    phraseMatchCase: function (query, results) {
+        return Filters.phraseMatch(query, results, true);
+    },
+
+    /**
+     * Returns an array of results that start with the complete query as a
+     * phrase. Case-insensitive.
      *
      * @method startsWith
-     * @param {String} query query to match
-     * @param {Array} results results to filter
-     * @return {Array} filtered results
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
      * @static
      */
-    startsWith: function (query, results) {
-        var queryLower = query.toLowerCase();
+    startsWith: function (query, results, caseSensitive) {
+        // The caseSensitive parameter is only intended for use by
+        // startsWithCase(). It's intentionally undocumented.
+
+        if (!caseSensitive) {
+            query = query.toLowerCase();
+        }
 
         return YArray.filter(results, function (result) {
-            return result.toLowerCase().indexOf(queryLower) === 0;
+            return (caseSensitive ? result : result.toLowerCase()).indexOf(query) === 0;
         });
     },
 
@@ -69,58 +120,57 @@ Y.namespace('AutoComplete').Filters = {
      * Case-sensitive version of <code>startsWith()</code>.
      *
      * @method startsWithCase
-     * @param {String} query query to match
-     * @param {Array} results results to filter
-     * @return {Array} filtered results
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
      * @static
      */
     startsWithCase: function (query, results) {
-        return YArray.filter(results, function (result) {
-            return result.indexOf(query) === 0;
-        });
+        return Filters.startsWith(query, results, true);
     },
 
     /**
-     * Returns an array of results that contain a subset of any or all of the
-     * characters in the query, in any order. Case-insensitive.
+     * Returns an array of results that contain all of the words in the query,
+     * in any order. Non-word characters like punctuation are ignored.
+     * Case-insensitive.
      *
-     * @method subset
-     * @param {String} query query to match
-     * @param {Array} results results to filter
-     * @return {Array} filtered results
+     * @method wordMatch
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
      * @static
      */
-    subset: function (query, results) {
-        var queryChars = YArray.unique(query.toLowerCase().split(''));
+    wordMatch: function (query, results, caseSensitive) {
+        // The caseSensitive parameter is only intended for use by
+        // wordMatchCase(). It's intentionally undocumented.
+
+        var queryWords = AutoComplete.getWords(query, caseSensitive);
 
         return YArray.filter(results, function (result) {
-            var resultLower = result.toLowerCase();
+            // Convert resultWords array to a hash for fast lookup.
+            var resultWords = YArray.hash(AutoComplete.getWords(result, caseSensitive));
 
-            return YArray.every(queryChars, function (chr) {
-                return resultLower.indexOf(chr) !== -1;
+            return YArray.every(queryWords, function (word) {
+                return YObject.owns(resultWords, word);
             });
         });
     },
 
     /**
-     * Case-sensitive version of <code>subset()</code>.
+     * Case-sensitive version of <code>wordMatch()</code>.
      *
-     * @method subsetCase
-     * @param {String} query query to match
-     * @param {Array} results results to filter
-     * @return {Array} filtered results
+     * @method wordMatchCase
+     * @param {String} query Query to match
+     * @param {Array} results Results to filter
+     * @return {Array} Filtered results
      * @static
      */
-    subsetCase: function (query, results) {
-        var queryChars = YArray.unique(query.split(''));
-
-        return YArray.filter(results, function (result) {
-            return YArray.every(queryChars, function (chr) {
-                return result.indexOf(chr) !== -1;
-            });
-        });
+    wordMatchCase: function (query, results) {
+        return Filters.wordMatch(query, results, true);
     }
 };
+
+AutoComplete.Filters = Filters;
 
 }, '@VERSION@', {
     requires: ['autocomplete-base', 'collection']

@@ -6,6 +6,7 @@
     /**
      * Wraps some common Selection/Range functionality into a simple object
      * @class Selection
+     * @for Selection
      * @constructor
      */
     
@@ -246,11 +247,29 @@
     };
 
     /**
+    * Returns the innerHTML of a node with all HTML tags removed.
+    * @static
+    * @method getText
+    * @param {Node} node The Node instance to remove the HTML from
+    * @return {String} The string of text
+    */
+    Y.Selection.getText = function(node) {
+        return node.get('innerHTML').replace(Y.Selection.STRIP_HTML, '');
+    };
+
+    /**
     * The selector to use when looking for Nodes to cache the value of: [style],font[face]
     * @static
     * @property ALL
     */
     Y.Selection.ALL = '[style],font[face]';
+
+    /**
+    * RegExp used to strip HTML tags from a string
+    * @static
+    * @property STRIP_HTML
+    */
+    Y.Selection.STRIP_HTML = /<\S[^><]*>/g;
 
     /**
     * The selector to use when looking for block level items.
@@ -407,7 +426,6 @@
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
                 if (node.test('body')) {
-                    console.log('Node: ', node);
                     b = Y.Node.create('<span></span>');
                     node.append(b);
                     node = b;
@@ -564,6 +582,9 @@
                     }
                 }
             } else {
+                if (node.nodeType === 3) {
+                    node = node.parentNode;
+                }
                 range.moveToElementText(node);
                 range.select();
                 if (collapse) {

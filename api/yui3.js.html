@@ -135,9 +135,19 @@
         <span class="p">}</span>
     <span class="p">},</span> 
     <span class="s2">&quot;cache&quot;</span><span class="o">:</span> <span class="p">{</span>
-        <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-            <span class="s2">&quot;plugin&quot;</span>
-        <span class="p">]</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;cache-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;cache-offline&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;cache-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;json&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
     <span class="p">},</span> 
     <span class="s2">&quot;classnamemanager&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -296,8 +306,7 @@
             <span class="p">},</span> 
             <span class="s2">&quot;datasource-cache&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
-                    <span class="s2">&quot;datasource-local&quot;</span><span class="p">,</span> 
-                    <span class="s2">&quot;cache&quot;</span>
+                    <span class="s2">&quot;datasource-local&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;datasource-function&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -721,6 +730,24 @@
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">},</span> 
+    <span class="s2">&quot;event-gestures&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;event-flick&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-touch&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-synthetic&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;event-move&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;node-base&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-touch&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;event-synthetic&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
     <span class="s2">&quot;event-simulate&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
             <span class="s2">&quot;event-base&quot;</span>
@@ -731,13 +758,22 @@
             <span class="s2">&quot;history-base&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;event-custom-complex&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;supersedes&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;history-deprecated&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;history-hash&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;after&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;history-html5&quot;</span>
+                <span class="p">],</span> 
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;event-synthetic&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;yui-later&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;supersedes&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;history-deprecated&quot;</span>
                 <span class="p">]</span>
             <span class="p">},</span> 
             <span class="s2">&quot;history-hash-ie&quot;</span><span class="o">:</span> <span class="p">{</span>
@@ -745,9 +781,27 @@
                     <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;history-hash&quot;</span><span class="p">,</span> 
                     <span class="s2">&quot;node-base&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;supersedes&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;history-deprecated&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;history-html5&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;history-base&quot;</span>
+                <span class="p">],</span> 
+                <span class="s2">&quot;supersedes&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;history-deprecated&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
-        <span class="p">}</span>
+        <span class="p">},</span> 
+        <span class="s2">&quot;supersedes&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;history-base&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;history-deprecated&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;history-hash&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;history-hash-ie&quot;</span><span class="p">,</span> 
+            <span class="s2">&quot;history-html5&quot;</span>
+        <span class="p">]</span>
     <span class="p">},</span> 
     <span class="s2">&quot;history-deprecated&quot;</span><span class="o">:</span> <span class="p">{</span>
         <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
@@ -814,6 +868,21 @@
             <span class="s2">&quot;json-stringify&quot;</span><span class="o">:</span> <span class="p">{</span>
                 <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
                     <span class="s2">&quot;yui-base&quot;</span>
+                <span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span> 
+    <span class="s2">&quot;jsonp&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;submodules&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;jsonp-base&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;get&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;oop&quot;</span>
+                <span class="p">]</span>
+            <span class="p">},</span> 
+            <span class="s2">&quot;jsonp-url&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;requires&quot;</span><span class="o">:</span> <span class="p">[</span>
+                    <span class="s2">&quot;jsonp-base&quot;</span>
                 <span class="p">]</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -1183,6 +1252,7 @@
                                 <li class=""><a href="module_dd.html" title="dd">dd</a></li>
                                 <li class=""><a href="module_dom.html" title="dom">dom</a></li>
                                 <li class=""><a href="module_dump.html" title="dump">dump</a></li>
+                                <li class=""><a href="module_editor.html" title="editor">editor</a></li>
                                 <li class=""><a href="module_event.html" title="event">event</a></li>
                                 <li class=""><a href="module_event-custom.html" title="event-custom">event-custom</a></li>
                                 <li class=""><a href="module_event-simulate.html" title="event-simulate">event-simulate</a></li>

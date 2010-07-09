@@ -139,7 +139,7 @@ button {
     </div>
 
     <table id="test-table">
-        <tr><td id="test-td"><div><em>grandchild of td</em></div></td></tr>
+        <tr><td id="test-td"><div><div>grandchild of td</div></div></td></tr>
     </table>
 
     <ol>
@@ -167,7 +167,7 @@ button {
 
 <div id="yui-log"></div>
 <script type="text/javascript">
-YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', function(Y) {
+YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'console', 'test', 'node-event-simulate', function(Y) {
     var Assert = Y.Assert,
         ArrayAssert = Y.ArrayAssert,
         suite = new Y.Test.Suite("yuisuite");
@@ -1207,11 +1207,67 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
         },
 
         test_ancestor: function() {
-            var node = Y.one('#test-table em').ancestor('td');
+            var node = Y.one('#test-table div div').ancestor('td');
 
             Y.Assert.areEqual(byId('test-td'), node._node,
                "Y.one('#test-table div').ancestor('td'))"); 
+
+            node = Y.Node.create('<div><div><table><tbody><tr></tr><tr></tr><tr><td><div><div class="inner"></div></div></td></tr></tbody></table></div></div>');
+            var inner = node.one('.inner');
+            inner.ancestor('td');
+        },
+
+        test_nodelistEvent: function() {
+            var nodelist = Y.all('div'),
+                item = nodelist.item(0),
+                evtObj = {
+                mousedown: function(e) {
+                    Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+                }
+            };
+
+            nodelist.on('click', function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            Y.on(evtObj, null, nodelist);
+            nodelist.on(evtObj);
+
+            nodelist.on({mouseup: true}, function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            nodelist.on({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+            nodelist.after('click', function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            Y.after(evtObj, null, nodelist);
+            nodelist.after(evtObj);
+
+            nodelist.after({mouseup: true}, function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            });
+
+            nodelist.after({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
+            item.simulate('click');
+            item.simulate('mousedown');
+            item.simulate('mouseup');
+            item.simulate('keydown');
         }
+
     })); 
 
     Y.Test.Runner.add(suite);

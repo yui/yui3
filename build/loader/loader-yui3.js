@@ -88,9 +88,19 @@ YUI.Env[Y.version].modules = {
         }
     }, 
     "cache": {
-        "requires": [
-            "plugin"
-        ]
+        "submodules": {
+            "cache-base": {
+                "requires": [
+                    "base"
+                ]
+            }, 
+            "cache-offline": {
+                "requires": [
+                    "cache-base", 
+                    "json"
+                ]
+            }
+        }
     }, 
     "classnamemanager": {
         "requires": [
@@ -249,8 +259,7 @@ YUI.Env[Y.version].modules = {
             }, 
             "datasource-cache": {
                 "requires": [
-                    "datasource-local", 
-                    "cache"
+                    "datasource-local"
                 ]
             }, 
             "datasource-function": {
@@ -674,6 +683,24 @@ YUI.Env[Y.version].modules = {
             }
         }
     }, 
+    "event-gestures": {
+        "submodules": {
+            "event-flick": {
+                "requires": [
+                    "node-base", 
+                    "event-touch", 
+                    "event-synthetic"
+                ]
+            }, 
+            "event-move": {
+                "requires": [
+                    "node-base", 
+                    "event-touch", 
+                    "event-synthetic"
+                ]
+            }
+        }
+    }, 
     "event-simulate": {
         "requires": [
             "event-base"
@@ -684,13 +711,22 @@ YUI.Env[Y.version].modules = {
             "history-base": {
                 "requires": [
                     "event-custom-complex"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
                 ]
             }, 
             "history-hash": {
+                "after": [
+                    "history-html5"
+                ], 
                 "requires": [
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
                 ]
             }, 
             "history-hash-ie": {
@@ -698,9 +734,27 @@ YUI.Env[Y.version].modules = {
                     "history-base", 
                     "history-hash", 
                     "node-base"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
+                ]
+            }, 
+            "history-html5": {
+                "requires": [
+                    "history-base"
+                ], 
+                "supersedes": [
+                    "history-deprecated"
                 ]
             }
-        }
+        }, 
+        "supersedes": [
+            "history-base", 
+            "history-deprecated", 
+            "history-hash", 
+            "history-hash-ie", 
+            "history-html5"
+        ]
     }, 
     "history-deprecated": {
         "requires": [
@@ -767,6 +821,21 @@ YUI.Env[Y.version].modules = {
             "json-stringify": {
                 "requires": [
                     "yui-base"
+                ]
+            }
+        }
+    }, 
+    "jsonp": {
+        "submodules": {
+            "jsonp-base": {
+                "requires": [
+                    "get", 
+                    "oop"
+                ]
+            }, 
+            "jsonp-url": {
+                "requires": [
+                    "jsonp-base"
                 ]
             }
         }

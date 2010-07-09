@@ -16,6 +16,13 @@
 				]
 			},
 
+			"autocomplete-highlighters": {
+				"requires": [
+					"autocomplete-base",
+					"collection"
+				]
+			},
+
             "autocomplete-plugin": {
                 "requires": [
                     "autocomplete-base",

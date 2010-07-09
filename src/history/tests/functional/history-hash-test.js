@@ -21,10 +21,6 @@ Y.Test.Runner.add(new Y.Test.Case({
     },
 
     // -- Static Properties and Methods ----------------------------------------
-    'History should have a static boolean nativeHashChange property': function () {
-        Y.Assert.isBoolean(Y.History.nativeHashChange);
-    },
-
     'createHash() should create a hash string from an object': function () {
         Y.Assert.areSame('foo=bar&baz=qu+ux', Y.History.createHash({foo: 'bar', baz: 'qu ux'}));
     },

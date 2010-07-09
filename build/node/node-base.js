@@ -1362,10 +1362,8 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     on: function(type, fn, context) {
-        var args = Y.Array(arguments, 0, true);
-        args.splice(2, 0, this._nodes);
-        args[3] = context || this;
-        return Y.on.apply(Y, args);
+        context = context || this;
+        return Y.on(type, fn, this._nodes, context);
     },
 
     /**
@@ -1381,10 +1379,8 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     after: function(type, fn, context) {
-        var args = Y.Array(arguments, 0, true);
-        args.splice(2, 0, this._nodes);
-        args[3] = context || this;
-        return Y.after.apply(Y, args);
+        context = context || this;
+        return Y.after(type, fn, this._nodes, context || this);
     },
 
     /**

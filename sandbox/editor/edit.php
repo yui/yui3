@@ -109,7 +109,8 @@
 <button id="focusEditor">Focus Editor</button>
 
 <div id="stub">
-<p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
+</div>
+<!--p><b>This is a <u>test. <i>This is</i> another</u> test.</b></p>
 This is some <strong>other</strong> loose test.
 <p>This <strong>is</strong> <font face="Courier New">another</font> test.</p>
 <ul>
@@ -138,7 +139,7 @@ del {
 }
 </style>
 This is some more loose test.
-</div>
+</div-->
 
 <!--script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script-->
 <script type="text/javascript" src="http://yui.yahooapis.com/3.1.0/build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
@@ -193,7 +194,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
                 val = ' <span style="color: red; background-color: blue;">Inserted Text (' + (new Date()).toString() + ')</span> ';
                 break;
             case 'backcolor':
-                val = '#ff0000';
+                val = '#33CC99';
                 break;
             case 'forecolor':
                 val = '#0000FF';
@@ -261,7 +262,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
             f_options.item(0).set('selected', true);
             f_options.each(function(v) {
                 var val = v.get('value').toLowerCase();
-                if (val === fname) {
+                if (val === fname.toLowerCase()) {
                     v.set('selected', true);
                 }
             });
@@ -300,7 +301,9 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         extracss: 'body { color: red; }'
     });
     editor.after('nodeChange', function(e) {
-        updateButtons(e);
+        if (e.changedType !== 'execcommand') {
+            updateButtons(e);
+        }
         
         if (e.changedType === 'keyup') {
             if (e.changedNode) {
@@ -359,7 +362,7 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
     }, '#setHTML');
 
     Y.on('click', function(e) {
-        editor.focus();
+        editor.focus(true);
     }, '#focusEditor');
 
 });

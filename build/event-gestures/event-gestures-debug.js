@@ -3,17 +3,13 @@ YUI.add('event-flick', function(Y) {
 // TODO: Better way to sniff 'n' switch touch support?
 var TOUCH = "ontouchstart" in Y.config.win,
 
-    TOUCH_EVENT_MAP = {
+    EVENT = (TOUCH) ? {
         start: "touchstart",
         end: "touchend"
-    },
-
-    MOUSE_EVENT_MAP = {
+    } : {
         start: "mousedown",
         end: "mouseup"
     },
-
-    EVENT = (TOUCH) ? TOUCH_EVENT_MAP : MOUSE_EVENT_MAP,
 
     START = "start",
     END = "end",
@@ -22,9 +18,11 @@ var TOUCH = "ontouchstart" in Y.config.win,
     MIN_VELOCITY = "minVelocity",
     MIN_DISTANCE = "minDistance",
 
-    FLICK_START = "_flickStart",
-    FLICK_START_HANDLE = "_flickStartHandle",
-    FLICK_END_HANDLE = "_flickEndHandle";
+    FLICK_START = "_fs",
+    FLICK_START_HANDLE = "_fsh",
+    FLICK_END_HANDLE = "_feh",
+
+    NODE_TYPE = "nodeType";
 
 Y.Event.define('flick', {
 
@@ -90,13 +88,14 @@ Y.Event.define('flick', {
                 pageX: e.pageX, 
                 pageY: e.pageY,
                 clientX: e.clientX, 
-                clientY: e.clientY
+                clientY: e.clientY,
+                _e : e
             });
 
             endHandle = node.getData(FLICK_END_HANDLE);
 
             if (!endHandle) {
-                doc = node.get(OWNER_DOCUMENT);
+                doc = node.get(NODE_TYPE) === 9 ? node : node.get(OWNER_DOCUMENT);
 
                 endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
                 node.setData(FLICK_END_HANDLE,endHandle);
@@ -161,7 +160,8 @@ Y.Event.define('flick', {
                             clientX: endEvent.clientX, 
                             clientY: endEvent.clientY,
                             pageX: endEvent.pageX,
-                            pageY: endEvent.pageY
+                            pageY: endEvent.pageY,
+                            _e : e 
                         }
                     });
                 }
@@ -176,54 +176,56 @@ Y.Event.define('flick', {
 });
 
 
-}, '@VERSION@' ,{use:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});
 YUI.add('event-move', function(Y) {
 
 // TODO: Better way to sniff 'n' switch touch support?
 var TOUCH = "ontouchstart" in Y.config.win,
 
-    TOUCH_EVENT_MAP = {
+    EVENT = (TOUCH) ? {
         start: "touchstart",
         move: "touchmove",
         end: "touchend"
-    },
-
-    MOUSE_EVENT_MAP = {
+    } : {
         start: "mousedown",
         move: "mousemove",
         end: "mouseup"
     },
 
-    EVENT = (TOUCH) ? TOUCH_EVENT_MAP : MOUSE_EVENT_MAP,
-
     START = "start",
     MOVE = "move",
     END = "end",
-    
-    MOVE_START_HANDLE = "_moveStartHandle",
-    MOVE_HANDLE = "_moveHandle",
-    MOVE_END_HANDLE = "_moveEndHandle",
 
-    MOVE_START = "_moveStart",
-    _MOVE = "_move",
+    MOVE_START_HANDLE = "_msh",
+    MOVE_HANDLE = "_mh",
+    MOVE_END_HANDLE = "_meh",
+
+    MOVE_START = "_ms",
+    _MOVE = "_m",
 
     MIN_TIME = "minTime",
     MIN_DISTANCE = "minDistance",
-    OWNER_DOCUMENT = "ownerDocument";
+    OWNER_DOCUMENT = "ownerDocument",
 
-Y.Event.define('movestart', {
+    NODE_TYPE = "nodeType",
+    
+    PUB_CFG = {
+        emitFacade:false
+    },
+
+    define = Y.Event.define;
+
+define('movestart', {
     
     init: function (node, subscriber, ce) {
 
-        var startHandle = node.on(EVENT[START], 
-            Y.bind(this._onStart, this), 
-            null, 
+        node.setData(MOVE_START_HANDLE, node.on(EVENT[START], 
+            this._onStart, 
+            null,
             node,
             subscriber, 
-            ce);
-
-        node.setData(MOVE_START_HANDLE, startHandle);
-    }, 
+            ce));
+    },
 
     destroy: function (node, subscriber, ce) {
         var startHandle = node.getData(MOVE_START_HANDLE);
@@ -238,24 +240,23 @@ Y.Event.define('movestart', {
         var params = args[3] ? args.splice(3,1) : {};
 
         if (!(MIN_TIME in params)) {
-            params.minVelocity = this.MIN_TIME;
+            params[MIN_TIME] = this.MIN_TIME;
         }
 
         if (!(MIN_DISTANCE in params)) {
-            params.minDistance = this.MIN_DISTANCE;
+            params[MIN_DISTANCE] = this.MIN_DISTANCE;
         }
 
         return params;
     },
 
+    publishConfig: PUB_CFG,
+
     _onStart : function(e, node, subscriber, ce) {
 
         e.preventDefault();
 
-        var start = true, // always true for mouse
-            payload; 
-
-        Y.log("_onStart");
+        var start = true; // always true for mouse
 
         if (e.touches) {
             start = (e.touches.length === 1);
@@ -263,18 +264,24 @@ Y.Event.define('movestart', {
         }
 
         if (start) {
+            e.type = "movestart";
 
             // TODO: Pass through e instead?
+            /*
             payload = {
+                target: e.target,
+                currentTarget: e.currentTarget,
                 time : new Date().getTime(),
                 clientX: e.clientX,
                 clientY: e.clientY,
-                pageX: e.pageX, 
-                pageY: e.pageY
+                pageX: e.pageX,
+                pageY: e.pageY,
+                button : e.button,
+                _e : e
             };
-
-            node.setData(MOVE_START, payload);
-            ce.fire(payload);
+            */
+            node.setData(MOVE_START, e);
+            ce.fire(e);
         }
     },
 
@@ -282,11 +289,11 @@ Y.Event.define('movestart', {
     MIN_DISTANCE : 3
 });
 
-Y.Event.define('move', {
+define('move', {
 
     init: function (node, subscriber, ce) {
 
-        var doc = node.get(OWNER_DOCUMENT),
+        var doc = node.get(NODE_TYPE) === 9 ? node : node.get(OWNER_DOCUMENT),
 
             moveHandle = doc.on(EVENT[MOVE], 
                 Y.bind(this._onMove, this),
@@ -304,51 +311,60 @@ Y.Event.define('move', {
         if (moveHandle) {
             moveHandle.detach();
             node.setData(MOVE_HANDLE, null);
-            Y.log("detaching move handler");            
         }
     },
+
+    publishConfig: PUB_CFG,
 
     _onMove : function(e, node, subscriber, ce) {
 
         var start = node.getData(MOVE_START),
             move = !!(start),
-            payload;
-
-        Y.log("_onMove:checkone. e.touches:" + e.touches);
-        Y.log("_onMove:checkone. start:" + start);
+            te;
 
         if (move) {
 
             if (e.touches) {
                 move = (e.touches.length === 1);
+                te = e;
                 e = e.touches[0];
+
+                if (!e.target) {
+                    e.target = te.target;
+                    e.currentTarget = te.currentTarget;
+                }
             }
 
             if (move) {
-
                 e.preventDefault();
 
-                Y.log("_onMove:checktwo");
+                e.type = "move";
 
+                /*
                 payload = {
+                    target: e.target,
+                    currentTarget: e.currentTarget,
                     time : new Date().getTime(),
                     clientX: e.clientX, 
                     clientY: e.clientY,
                     pageX: e.pageX, 
-                    pageY: e.pageY
+                    pageY: e.pageY,
+                    button : e.button,
+                    _e : e
                 };
+                */
     
-                node.setData(_MOVE, payload);
-                ce.fire(payload);
+                node.setData(_MOVE, e);
+                ce.fire(e);
             }
         }
     }
 });
 
-Y.Event.define('moveend', {
+define('moveend', {
 
     init: function (node, subscriber, ce) {
-        var doc = node.get(OWNER_DOCUMENT),
+        var doc = node.get(NODE_TYPE) === 9 ? node : node.get(OWNER_DOCUMENT),
 
             endHandle = doc.on(EVENT[END], 
                 Y.bind(this._onEnd, this), 
@@ -369,10 +385,11 @@ Y.Event.define('moveend', {
         }
     },
 
+    publishConfig: PUB_CFG,
+
     _onEnd : function(e, node, subscriber, ce) {
 
-        var moveEnd = !!(node.getData(_MOVE) || node.getData(MOVE_START)),
-            payload;
+        var moveEnd = !!(node.getData(_MOVE) || node.getData(MOVE_START));
 
         if (moveEnd) {
 
@@ -385,28 +402,34 @@ Y.Event.define('moveend', {
             }
 
             if (moveEnd) {
-
                 e.preventDefault();
+                e.type = "moveend";
 
+                /*
                 payload = {
+                    target: e.target,
+                    currentTarget: e.currentTarget,
                     time : new Date().getTime(),
                     clientX: e.clientX, 
                     clientY: e.clientY,
                     pageX: e.pageX, 
-                    pageY: e.pageY
+                    pageY: e.pageY,
+                    button: e.button,
+                    _e : e
                 };
+                */
 
                 node.setData(MOVE_START, null);
                 node.setData(_MOVE, null);
 
-                ce.fire(payload);
+                ce.fire(e);
             }
         }
     }
 });
 
 
-}, '@VERSION@' ,{use:['node-base','event-touch','event-synthetic']});
+}, '@VERSION@' ,{requires:['node-base','event-touch','event-synthetic']});
 
 
 YUI.add('event-gestures', function(Y){}, '@VERSION@' ,{use:['event-flick', 'event-move']});
