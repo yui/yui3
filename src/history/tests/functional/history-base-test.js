@@ -196,6 +196,11 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.areSame(1, Obj.size(this.history.get()));
     },
 
+    'add() should allow non-object states': function () {
+        this.history.add('pants');
+        Y.Assert.areSame('pants', this.history.get());
+    },
+
     // -- addValue() -----------------------------------------------------------
     'addValue() should change state with the correct event src': function () {
         var changeFired = false;

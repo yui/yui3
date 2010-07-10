@@ -34,6 +34,7 @@
 var Lang      = Y.Lang,
     Obj       = Y.Object,
     GlobalEnv = YUI.namespace('Env.History'),
+
     docMode   = Y.config.doc.documentMode,
     win       = Y.config.win,
 
@@ -55,6 +56,21 @@ Y.augment(HistoryBase, Y.EventTarget, null, null, {
 
 if (!GlobalEnv._state) {
     GlobalEnv._state = {};
+}
+
+// -- Private Methods ----------------------------------------------------------
+
+/**
+ * Returns <code>true</code> if <i>value</i> is a simple object and not a
+ * function or an array.
+ *
+ * @method _isSimpleObject
+ * @param {mixed} value
+ * @return {Boolean}
+ * @private
+ */
+function _isSimpleObject(value) {
+    return Lang.type(value) === 'object';
 }
 
 // -- Public Static Properties -------------------------------------------------
@@ -191,8 +207,7 @@ Y.mix(HistoryBase.prototype, {
 
         // If initialState was provided and is a simple object, merge it into
         // the current state.
-        if (Lang.isObject(initialState) && !Lang.isFunction(initialState) &&
-                !Lang.isArray(initialState)) {
+        if (_isSimpleObject(initialState)) {
             this.add(Y.merge(GlobalEnv._state, initialState));
         }
     },
@@ -264,12 +279,13 @@ Y.mix(HistoryBase.prototype, {
      *   object hash of key/value pairs for all current state parameters.
      */
     get: function (key) {
-        var state = GlobalEnv._state;
+        var state    = GlobalEnv._state,
+            isObject = _isSimpleObject(state);
 
         if (key) {
-            return Obj.owns(state, key) ? state[key] : undefined;
+            return isObject && Obj.owns(state, key) ? state[key] : undefined;
         } else {
-            return Y.mix({}, state, true); // Fast shallow clone.
+            return isObject ? Y.mix({}, state, true) : state; // mix provides a fast shallow clone.
         }
     },
 
@@ -326,7 +342,8 @@ Y.mix(HistoryBase.prototype, {
     _change: function (src, state, options) {
         options = options ? Y.merge(DEFAULT_OPTIONS, options) : DEFAULT_OPTIONS;
 
-        if (options.merge) {
+        if (options.merge && _isSimpleObject(state) &&
+                _isSimpleObject(GlobalEnv._state)) {
             state = Y.merge(GlobalEnv._state, state);
         }
 
@@ -496,30 +513,40 @@ Y.mix(HistoryBase.prototype, {
             prevState = GlobalEnv._state,
             removed   = {};
 
-        newState = newState || {};
+        if (!newState) {
+            newState = {};
+        }
 
-        // Figure out what was added or changed.
-        Obj.each(newState, function (newVal, key) {
-            var prevVal = prevState[key];
+        if (!options) {
+            options = {};
+        }
 
-            if (newVal !== prevVal) {
-                changed[key] = {
-                    newVal : newVal,
-                    prevVal: prevVal
-                };
+        if (_isSimpleObject(newState) && _isSimpleObject(prevState)) {
+            // Figure out what was added or changed.
+            Obj.each(newState, function (newVal, key) {
+                var prevVal = prevState[key];
 
-                isChanged = true;
-            }
-        }, this);
+                if (newVal !== prevVal) {
+                    changed[key] = {
+                        newVal : newVal,
+                        prevVal: prevVal
+                    };
 
-        // Figure out what was removed.
-        Obj.each(prevState, function (prevVal, key) {
-            if (!Obj.owns(newState, key) || newState[key] === null) {
-                delete newState[key];
-                removed[key] = prevVal;
-                isChanged = true;
-            }
-        }, this);
+                    isChanged = true;
+                }
+            }, this);
+
+            // Figure out what was removed.
+            Obj.each(prevState, function (prevVal, key) {
+                if (!Obj.owns(newState, key) || newState[key] === null) {
+                    delete newState[key];
+                    removed[key] = prevVal;
+                    isChanged = true;
+                }
+            }, this);
+        } else {
+            isChanged = newState !== prevState;
+        }
 
         if (isChanged) {
             this._fireEvents(src, {
