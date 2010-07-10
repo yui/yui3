@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>history-hash test</title>
-    <link rel="stylesheet" href="../assets/test.css">
     <style>
         #critters {
             list-style: none;
@@ -50,7 +49,7 @@ var Y = YUI({
         history: 'debug'
     },
     useBrowserConsole: false
-}).use('console-filters', 'event-delegate', 'history', 'json-stringify', function (Y) {
+}).use('console-filters', 'event-delegate', 'history-hash', 'json-stringify', function (Y) {
     new Y.Console({
         style: 'block',
         width: Y.UA.ie ? '100%' : 'inherit',
