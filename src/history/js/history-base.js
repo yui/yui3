@@ -363,16 +363,15 @@ Y.mix(HistoryBase.prototype, {
      *   a list of supported options.
      * @protected
      */
-    _fireEvents: function (src, changes) {
-        // Note: the options param isn't used here, but it is used by subclasses.
-
+    _fireEvents: function (src, changes, options) {
         // Fire the global change event.
         this.fire(EVT_CHANGE, {
-            changed: changes.changed,
-            newVal : changes.newState,
-            prevVal: changes.prevState,
-            removed: changes.removed,
-            src    : src
+            _options: options,
+            changed : changes.changed,
+            newVal  : changes.newState,
+            prevVal : changes.prevState,
+            removed : changes.removed,
+            src     : src
         });
 
         // Fire change/remove events for individual items.
@@ -564,13 +563,15 @@ Y.mix(HistoryBase.prototype, {
      * fired properly.
      *
      * @method _storeState
-     * @param {String} src source of the changes, for inclusion in event facades
-     *   to facilitate filtering
+     * @param {String} src source of the changes
      * @param {Object} newState new state to store
+     * @param {Object} options Zero or more options. See <code>add()</code> for
+     *   a list of supported options.
      * @protected
      */
     _storeState: function (src, newState) {
-        // Note: the src param isn't used here, but it is used by subclasses.
+        // Note: the src and options params aren't used here, but they are used
+        // by subclasses.
         GlobalEnv._state = newState || {};
     },
 
@@ -584,7 +585,7 @@ Y.mix(HistoryBase.prototype, {
      * @protected
      */
     _defChangeFn: function (e) {
-        this._storeState(e.src, e.newVal);
+        this._storeState(e.src, e.newVal, e._options);
     }
 }, true);
 
