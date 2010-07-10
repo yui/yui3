@@ -94,7 +94,8 @@ YUI.Env[Y.version].modules = {
             }, 
             "cache-offline": {
                 "requires": [
-                    "cache-base"
+                    "cache-base", 
+                    "json"
                 ]
             }
         }

@@ -96,7 +96,8 @@ YUI.Env[Y.version].modules = {
             }, 
             "cache-offline": {
                 "requires": [
-                    "cache-base"
+                    "cache-base", 
+                    "json"
                 ]
             }
         }
@@ -1176,7 +1177,6 @@ YUI.Env[Y.version].modules = {
         }
     }
 };
-
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

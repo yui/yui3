@@ -18,6 +18,12 @@ The YUI Global
         Array
         Core
 
+3.2.0
+
+* script errors in module and use callback functions are caught and routed through Y.error
+* Y.error invokations can be monitored with the errorFn configuration
+* Returning true from the errorFn will prevent the script error from halting further script execution.
+
 3.1.1
 * Removed limit on the number of config objects you can supply to the constructor
 

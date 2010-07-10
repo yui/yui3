@@ -89,7 +89,8 @@
             }, 
             "cache-offline": {
                 "requires": [
-                    "cache-base"
+                    "cache-base", 
+                    "json"
                 ]
             }
         }
