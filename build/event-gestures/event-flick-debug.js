@@ -1,5 +1,13 @@
 YUI.add('event-flick', function(Y) {
 
+/**
+ * Adds support for a "flick" event, which is fired at the end of a touch or mouse based flick gesture, and provides 
+ * velocity of the flick, along with distance and time information.
+ *
+ * @module event-gestures
+ * @submodule event-flick
+ */
+
 // TODO: Better way to sniff 'n' switch touch support?
 var EVENT = ("ontouchstart" in Y.config.win) ? {
         start: "touchstart",
@@ -22,8 +30,23 @@ var EVENT = ("ontouchstart" in Y.config.win) ? {
 
     NODE_TYPE = "nodeType";
 
+/**
+ * Sets up a "flick" event, that is fired whenever the user initiates a flick gesture on the node
+ * where the listener is attached. The subscriber can specify a minimum distance or velocity for
+ * which the event is to be fired.  
+ * 
+ * @event flick
+ * @param type {string} "flick"
+ * @param fn {function} The method the event invokes.
+ * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity
+ * of the flick gesture for which the event is to be fired.
+ *  
+ * @return {EventHandle} the detach handle
+ */
+
 Y.Event.define('flick', {
 
+    // The initialization implementation. Called for the first subscription per node.
     init: function (node, subscriber, ce) {
 
         var startHandle = node.on(EVENT[START],
@@ -36,6 +59,7 @@ Y.Event.define('flick', {
         node.setData(_FLICK_START_HANDLE, startHandle);
     },
 
+    // The destroy implementation. Called for the last detach per node.
     destroy: function (node, subscriber, ce) {
 
         var startHandle = node.getData(_FLICK_START_HANDLE),
@@ -52,6 +76,7 @@ Y.Event.define('flick', {
         }
     },
 
+    // How to process the additional spec args
     processArgs: function(args) {
         var params = (args[3]) ? args.splice(3, 1) : {};
 
@@ -68,6 +93,7 @@ Y.Event.define('flick', {
         return params;
     },
 
+    // Internal DOM listener to identify the start of the gesture 
     _onStart: function(e, node, subscriber, ce) {
 
         var start = true, // always true for mouse
@@ -103,6 +129,8 @@ Y.Event.define('flick', {
         }
     },
 
+    // Internal DOM listener to identify the end of the gesture. Fires the 
+    // synthetic flick event. 
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
