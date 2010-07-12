@@ -12,53 +12,25 @@ Graphic.prototype = {
         this._initProps();
     },
 
-    _reHex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
 
-    _2RGBA: function(val, alpha) {
-        alpha = (alpha !== undefined) ? alpha : 1;
-        if (this._reHex.exec(val)) {
-            val = 'rgba(' + [
-                parseInt(RegExp.$1, 16),
-                parseInt(RegExp.$2, 16),
-                parseInt(RegExp.$3, 16)
-            ].join(',') + ',' + alpha + ')';
-        }
-        return val;
-    },
-
-    _createDummy: function() {
-        var dummy = Y.config.doc.createElement('div');
-        dummy.style.height = 0;
-        dummy.style.width = 0;
-        dummy.style.overflow = 'hidden';
-        Y.config.doc.documentElement.appendChild(dummy);
-        return dummy;
-    },
-
-    _createGraphic: function(config) {
-        var graphic = Y.config.doc.createElement('canvas');
-
-        // no size until drawn on
-        graphic.width = 600;
-        graphic.height = 600;
-        return graphic;
-    },
-
-    _2RGB: function(val) {
-        this._dummy.style.background = val;
-        return this._dummy.style.backgroundColor;
-    },
-
-    beginBitmapFill: function(bitmap, matrix, repeat) {
-    /*
-        repeat = (repeat === false) ? 'no-repeat' : 'repeat';
-        var context = this._context;
+    /** 
+     *Specifies a bitmap fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
+     */
+    beginBitmapFill: function(config) {
+        var context = this._context,
+            bitmap = config.bitmap,
+            repeat = config.repeat || 'repeat';
+        this._fillWidth = config.width || null;
+        this._fillHeight = config.height || null;
+        this._fillX = !isNaN(config.tx) ? config.tx : NaN;
+        this._fillY = !isNaN(config.ty) ? config.ty : NaN;
         this._fillType =  'bitmap';
-        context.fillStyle = context.createPattern(bitmap, repeat);
-    */
-        return this;
+        this._bitmapFill = context.createPattern(bitmap, repeat);
     },
 
+    /**
+     * Specifes a solid fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
+     */
     beginFill: function(color, alpha) {
         var context = this._context;
         context.beginPath();
@@ -108,7 +80,213 @@ Graphic.prototype = {
         }
         this._context.beginPath();
     },
+   
+    /**
+     * Clears the graphics object.
+     */
+    clear: function() {
+        this._initProps();
+        this._canvas.width = this._canvas.width;
+    },
+
+    /**
+     * Draws a bezier curve
+     */
+    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
+        this._context.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y);
+        this._drawingComplete = false;
+    },
+
+    /**
+     * Draws a quadratic curve
+     */
+    quadraticCurveTo: function(controlX, controlY, anchorX, anchorY) {
+        this._context.quadraticCurveTo(controlX, controlY, anchorX, anchorY);
+        this._drawingComplete = false;
+    },
+
+    /**
+     * Draws a circle
+     */
+	drawCircle: function(x, y, radius) {
+        var context = this._context,
+            startAngle = 0 * Math.PI / 180,
+            endAngle = 360 * Math.PI / 180;
+
+        this._trackPos(x, y);
+        this._trackSize(radius * 2, radius * 2);
+        context.beginPath();
+        context.arc(x, y, radius, startAngle, endAngle, false);
+        this._drawShape();
+    },
+
+    /**
+     * Draws an ellipse
+     */
+	drawEllipse: function(x, y, w, h) {
+        var context = this._context,
+            startAngle = 0 * Math.PI / 180,
+            endAngle = 360 * Math.PI / 180;
+
+        this._trackPos(x, y);
+        this._trackSize(w, h);
+        context.beginPath();
+        context.moveTo(x + w, y + h/2);
+        context.arc(x + w/2, y + h/2, w/2, startAngle, endAngle, false);
+        this._drawShape();
+	},
+
+    /**
+     * Draws a rectangle
+     */
+    drawRect: function(x, y, w, h) {
+        this._context.beginPath();
+        this.moveTo(x, y).lineTo(x + w, y).lineTo(x + w, y + h).lineTo(x, y + h).lineTo(x, y);
+        this._trackPos(x, y);
+        this._trackSize(w, h);
+        this._drawShape();
+    },
+
+    /**
+     * Draws a rectangle with rounded corners
+     */
+    drawRoundRect: function(x, y, w, h, ew, eh) {
+        var ctx = this._context;
+        ctx.beginPath();
+        ctx.moveTo(x, y + eh);
+        ctx.lineTo(x, y + h - eh);
+        ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
+        ctx.lineTo(x + w - ew, y + h);
+        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
+        ctx.lineTo(x + w, y + eh);
+        ctx.quadraticCurveTo(x + w, y, x + w - ew, y);
+        ctx.lineTo(x + ew, y);
+        ctx.quadraticCurveTo(x, y, x, y + eh);
+
+        this._drawShape();
+        this._trackPos(x, y);
+        this._trackSize(w, h);
+    },
+
+    /**
+     * Ends a drawing
+     */
+    end: function() {
+        this._drawShape();
+        this._initProps();
+    },
     
+    /**
+     * @private
+     * Not implemented
+     * Specifies a gradient to use for the stroke when drawing lines.
+     */
+    lineGradientStyle: function() {
+    },
+
+    /**
+     * Specifies a line style used for subsequent calls to drawing methods
+     */
+    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
+        color = color || '#000000';
+        var context = this._context;
+        if(this._stroke)
+        {
+            context.stroke();
+        }
+        context.lineWidth = thickness;
+
+        if (thickness) {
+            this._stroke = 1;
+        } else {
+            this._stroke = 0;
+        }
+
+        if (color) {
+            context.strokeStyle = color;
+
+            if (alpha) {
+                context.strokeStyle = this._2RGBA(context.strokeStyle, alpha);
+            }
+        }
+        
+        if(!this._fill)
+        {
+            context.beginPath();
+        }
+
+        if (caps === 'butt') {
+            caps = 'none';
+        }
+
+        if (context.lineCap) { // FF errors when trying to set
+            //context.lineCap = caps;
+        }
+        this._drawingComplete = false;
+    },
+
+    /**
+     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
+     */
+    lineTo: function(point1, point2, etc) {
+        var args = arguments, 
+            context = this._context,
+            i, len;
+        if (typeof point1 === 'string' || typeof point1 === 'number') {
+            args = [[point1, point2]];
+        }
+
+        for (i = 0, len = args.length; i < len; ++i) {
+            context.lineTo(args[i][0], args[i][1]);
+
+            this._trackSize.apply(this, args[i]);
+        }
+        this._drawingComplete = false;
+    },
+
+    /**
+     * Moves the current drawing position to specified x and y coordinates.
+     */
+    moveTo: function(x, y) {
+        this._context.moveTo(x, y);
+        this._trackPos(x, y);
+        this._drawingComplete = false;
+    },
+
+    /**
+     * Sets the size of the canvas object
+     */
+    setSize: function(w, h)
+    {
+        this._node.style.width = w + "px";
+        this._node.style.height = h + "px";
+        this._canvas.width = w;
+        this._canvas.height = h;
+    },
+
+    /**
+     * @private
+     */
+    render: function(node) {
+        node = node || Y.config.doc.body;
+        this._node = document.createElement("div");
+        this._node.style.width = node.offsetWidth + "px";
+        this._node.style.height = node.offsetHeight + "px";
+        this._node.style.display = "block";
+        this._node.style.position = "absolute";
+        this._node.style.left = node.style.left;
+        this._node.style.top = node.style.top;
+        node.appendChild(this._node);
+        this._node.appendChild(this._canvas);
+        this._canvas.width = node.offsetWidth > 0 ? node.offsetWidth : 100;
+        this._canvas.height = node.offsetHeight > 0 ? node.offsetHeight : 100;
+        return this;
+    },
+
+    /**
+     * @private
+     * Clears all values
+     */
     _initProps: function() {
         var context = this._context;
         
@@ -126,69 +304,14 @@ Graphic.prototype = {
         this._y = 0;
         this._fillType = null;
         this._stroke = null;
+        this._bitmapFill = null;
+        this._drawingComplete = false;
     },
 
-    clear: function() {
-        this._initProps();
-        this._canvas.width = this._canvas.width;
-        return this;
-    },
-
-    curveTo: function(controlX, controlY, anchorX, anchorY) {
-        this._context.quadraticCurveTo(controlX, controlY, anchorX, anchorY);
-    },
-
-	drawCircle: function(x, y, radius) {
-        var context = this._context,
-            startAngle = 0 * Math.PI / 180,
-            endAngle = 360 * Math.PI / 180;
-
-        this._trackPos(x, y);
-        this._trackSize(radius * 2, radius * 2);
-        context.beginPath();
-        context.arc(x, y, radius, startAngle, endAngle, false);
-        this.drawShape();
-    },
-
-	drawEllipse: function(x, y, w, h) {
-        var context = this._context,
-            startAngle = 0 * Math.PI / 180,
-            endAngle = 360 * Math.PI / 180;
-
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        context.beginPath();
-        context.moveTo(x + w, y + h/2);
-        context.arc(x + w/2, y + h/2, w/2, startAngle, endAngle, false);
-        this.drawShape();
-	},
-
-    drawRect: function(x, y, w, h) {
-        this._context.beginPath();
-        this.moveTo(x, y).lineTo(x + w, y).lineTo(x + w, y + h).lineTo(x, y + h).lineTo(x, y);
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-        this.drawShape();
-    },
-
-    drawRoundRect: function(x, y, w, h, ew, eh) {
-        var ctx = this._context;
-        ctx.beginPath();
-        ctx.moveTo(x, y + eh);
-        ctx.lineTo(x, y + h - eh);
-        ctx.quadraticCurveTo(x, y + h, x + ew, y + h);
-        ctx.lineTo(x + w - ew, y + h);
-        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
-        ctx.lineTo(x + w, y + eh);
-        ctx.quadraticCurveTo(x + w, y, x + w - ew, y);
-        ctx.lineTo(x + ew, y);
-        ctx.quadraticCurveTo(x, y, x, y + eh);
-
-        this.drawShape();
-        this._trackPos(x, y);
-        this._trackSize(w, h);
-    },
-
+    /**
+     * @private
+     * Returns ths actual fill object to be used in a drawing or shape
+     */
     _getFill: function() {
         var type = this._fillType,
             fill;
@@ -201,7 +324,9 @@ Graphic.prototype = {
             case 'radial': 
                 fill = this._getRadialGradient('fill');
                 break;
-
+            case 'bitmap':
+                fill = this._bitmapFill;
+                break;
             case 'solid': 
                 fill = this._fillColor;
                 break;
@@ -209,6 +334,10 @@ Graphic.prototype = {
         return fill;
     },
 
+    /**
+     * @private
+     * Returns a linear gradient fill
+     */
     _getLinearGradient: function(type) {
         var prop = '_' + type,
             colors = this[prop + 'Colors'],
@@ -274,6 +403,10 @@ Graphic.prototype = {
         return grad;
     },
 
+    /**
+     * @private
+     * Returns a radial gradient fill
+     */
     _getRadialGradient: function(type) {
         var prop = '_' + type,
             colors = this[prop + "Colors"],
@@ -300,9 +433,17 @@ Graphic.prototype = {
         }
         return grad;
     },
-    
-    drawShape: function()
+   
+    /**
+     * @private
+     * Completes a shape or drawing
+     */
+    _drawShape: function()
     {
+        if(this._drawingComplete)
+        {
+            return;
+        }
         var context = this._context,
             fill;
 
@@ -314,7 +455,6 @@ Graphic.prototype = {
             context.closePath();
         }
 
-
         if (this._fillType) {
             context.fill();
         }
@@ -322,105 +462,78 @@ Graphic.prototype = {
         if (this._stroke) {
             context.stroke();
         }
-        
-
+        this._drawingComplete = true;
     },
 
-    end: function() {
-        this.drawShape();
-        this._initProps();
-    },
+    _drawingComplete: false,
 
-    lineGradientStyle: function() {
-        return this;
-    },
-
-    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-        color = color || '#000000';
-        var context = this._context;
-        if(this._stroke)
-        {
-            context.stroke();
-        }
-        context.lineWidth = thickness;
-
-        if (thickness) {
-            this._stroke = 1;
-        } else {
-            this._stroke = 0;
-        }
-
-        if (color) {
-            context.strokeStyle = color;
-
-            if (alpha) {
-                context.strokeStyle = this._2RGBA(context.strokeStyle, alpha);
-            }
-        }
-        
-        if(!this._fill)
-        {
-            context.beginPath();
-        }
-
-        if (caps === 'butt') {
-            caps = 'none';
-        }
-
-        if (context.lineCap) { // FF errors when trying to set
-            //context.lineCap = caps;
-        }
-        return this;
-    },
-
-    lineTo: function(point1, point2, etc) {
-        var args = arguments, 
-            context = this._context,
-            i, len;
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
-        }
-
-        for (i = 0, len = args.length; i < len; ++i) {
-            context.lineTo(args[i][0], args[i][1]);
-
-            this._trackSize.apply(this, args[i]);
-        }
-        return this;
-    },
-
-    moveTo: function(x, y) {
-        this._context.moveTo(x, y);
-        this._trackPos(x, y);
-        return this;
-    },
-
-    setSize: function(w, h)
-    {
-        this._node.style.width = w + "px";
-        this._node.style.height = h + "px";
-        this._canvas.width = w;
-        this._canvas.height = h;
-    },
-
+    /**
+     * @private
+     * Reference to the node for the graphics object
+     */
     _node: null,
+    
+    /**
+     * @private
+     * Regex expression used for converting hex strings to rgb
+     */
+    _reHex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
 
-    render: function(node) {
-        node = node || Y.config.doc.body;
-        this._node = document.createElement("div");
-        this._node.style.width = node.offsetWidth + "px";
-        this._node.style.height = node.offsetHeight + "px";
-        this._node.style.display = "block";
-        this._node.style.position = "absolute";
-        this._node.style.left = node.style.left;
-        this._node.style.top = node.style.top;
-        node.appendChild(this._node);
-        this._node.appendChild(this._canvas);
-        this._canvas.width = node.offsetWidth > 0 ? node.offsetWidth : 100;
-        this._canvas.height = node.offsetHeight > 0 ? node.offsetHeight : 100;
-        return this;
+    /**
+     * @private
+     * Parses hex color string and alpha value to rgba
+     */
+    _2RGBA: function(val, alpha) {
+        alpha = (alpha !== undefined) ? alpha : 1;
+        if (this._reHex.exec(val)) {
+            val = 'rgba(' + [
+                parseInt(RegExp.$1, 16),
+                parseInt(RegExp.$2, 16),
+                parseInt(RegExp.$3, 16)
+            ].join(',') + ',' + alpha + ')';
+        }
+        return val;
     },
 
+    /**
+     * @private
+     * Creates dom element used for converting color string to rgb
+     */
+    _createDummy: function() {
+        var dummy = Y.config.doc.createElement('div');
+        dummy.style.height = 0;
+        dummy.style.width = 0;
+        dummy.style.overflow = 'hidden';
+        Y.config.doc.documentElement.appendChild(dummy);
+        return dummy;
+    },
+
+    /**
+     * @private
+     * Creates canvas element
+     */
+    _createGraphic: function(config) {
+        var graphic = Y.config.doc.createElement('canvas');
+
+        // no size until drawn on
+        graphic.width = 600;
+        graphic.height = 600;
+        return graphic;
+    },
+
+    /**
+     * @private 
+     * Converts color to rgb format
+     */
+    _2RGB: function(val) {
+        this._dummy.style.background = val;
+        return this._dummy.style.backgroundColor;
+    },
+    
+    /**
+     * @private
+     * Updates the size of the graphics object
+     */
     _trackSize: function(w, h) {
         if (w > this._width) {
             this._width = w;
@@ -430,6 +543,10 @@ Graphic.prototype = {
         }
     },
 
+    /**
+     * @private
+     * Updates the position of the current drawing
+     */
     _trackPos: function(x, y) {
         if (x > this._x) {
             this._x = x;
@@ -455,42 +572,36 @@ VMLGraphics.prototype = {
         this._initProps();
     },
 
-    _initProps: function() {
-        this._fillColor = null;
-        this._strokeColor = null;
-        this._strokeWeight = 0;
-        this._fillProps = null;
-        this._path = '';
-        this._width = 0;
-        this._height = 0;
-        this._x = 0;
-        this._y = 0;
-        this._fill = null;
-        this._stroke = 0;
-        this._stroked = false;
+    /** 
+     *Specifies a bitmap fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
+     */
+    beginBitmapFill: function(config) {
+       
+        var fill = {};
+        fill.src = config.bitmap.src;
+        fill.type = "tile";
+        this._fillProps = fill;
+        if(!isNaN(config.tx) ||
+            !isNaN(config.ty) ||
+            !isNaN(config.width) ||
+            !isNaN(config.height))
+        {
+            this._gradientBox = {
+                tx:config.tx,
+                ty:config.ty,
+                width:config.width,
+                height:config.height
+            };
+        }
+        else
+        {
+            this._gradientBox = null;
+        }
     },
 
-    _clearPath: function()
-    {
-        this._shape = null;
-        this._path = '';
-        this._width = 0;
-        this._height = 0;
-        this._x = 0;
-        this._y = 0;
-    },
-
-    _createGraphics: function() {
-        var group = this._createGraphicNode("group");
-        group.style.display = "inline-block";
-        group.style.position = 'absolute';
-        return group;
-    },
-
-    beginBitmapFill: function() {
-        return this;
-    },
-
+    /**
+     * Specifes a solid fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
+     */
     beginFill: function(color, alpha) {
         if (color) {
             if (alpha) {
@@ -506,6 +617,9 @@ VMLGraphics.prototype = {
         return this;
     },
 
+    /** 
+     *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
+     */
     beginGradientFill: function(config) {
         var type = config.type,
             colors = config.colors,
@@ -578,19 +692,26 @@ VMLGraphics.prototype = {
             this._gradientBox = null;
         }
         this._fillProps = fill;
-        return this;
     },
 
+    /**
+     * Clears the graphics object.
+     */
     clear: function() {
         this._path = '';
         return this;
     },
 
-    curveTo: function(controlX, controlY, anchorX, anchorY) {
-        return this;
+    /**
+     * Draws a bezier curve
+     */
+    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
+        this._path += 'c ' + cp1x + ", " + cp1y + ", " + cp2x + ", " + cp2y + ", " + x + ", " + y;
     },
 
-
+    /**
+     * Draws a circle
+     */
 	drawCircle: function(x, y, r, start, end, anticlockwise) {
         this._width = this._height = r * 2;
         this._x = x - r;
@@ -599,6 +720,9 @@ VMLGraphics.prototype = {
         this._drawVML();
 	},
 
+    /**
+     * Draws an ellipse
+     */
     drawEllipse: function(x, y, w, h) {
         this._width = w;
         this._height = h;
@@ -608,6 +732,9 @@ VMLGraphics.prototype = {
         this._drawVML();
     },
 
+    /**
+     * Draws a rectangle
+     */
     drawRect: function(x, y, w, h) {
         this._x = x;
         this._y = y;
@@ -627,6 +754,97 @@ VMLGraphics.prototype = {
 
     },
 
+    /**
+     * Draws a rectangle with rounded corners
+     */
+	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
+        return this;
+	},
+
+    end: function() {
+        if(this._shape)
+        {
+            this._drawVML();
+        }
+        this._initProps();
+    },
+
+    /**
+     * @private
+     * Not implemented
+     * Specifies a gradient to use for the stroke when drawing lines.
+     */
+    lineGradientStyle: function() {
+    },
+    
+    /**
+     * Specifies a line style used for subsequent calls to drawing methods
+     */
+    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
+        this._stroke = 1;
+        this._strokeWeight = thickness * 0.7;
+        this._strokeColor = color;
+    },
+
+    /**
+     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
+     */
+    lineTo: function(point1, point2, etc) {
+        var args = arguments,
+            i,
+            len;
+        if (typeof point1 === 'string' || typeof point1 === 'number') {
+            args = [[point1, point2]];
+        }
+        len = args.length;
+        this._shape = "shape";
+        this._path += ' l ';
+        for (i = 0; i < len; ++i) {
+            this._path += ' ' + args[i][0] + ', ' + args[i][1];
+
+            this._trackSize.apply(this, args[i]);
+        }
+    },
+
+    /**
+     * Moves the current drawing position to specified x and y coordinates.
+     */
+    moveTo: function(x, y) {
+        this._path += ' m ' + x + ', ' + y;
+    },
+
+    /**
+     * Sets the size of the graphics object
+     */
+    setSize: function(w, h) {
+        this._vml.style.width = w + 'px';
+        this._vml.style.height = h + 'px';
+        this._vml.coordSize = w + ' ' + h;
+    },
+    
+    /**
+     * @private
+     */
+    render: function(node) {
+        var w = node.offsetWidth,
+            h = node.offsetHeight;
+        node = node || Y.config.doc.body;
+        node.appendChild(this._vml);
+        this.setSize(w, h);
+        this._initProps();
+        return this;
+    },
+
+    /**
+     * @private
+     * Reference to current vml shape
+     */
+    _shape: null,
+
+    /**
+     * @private
+     * Updates the size of the graphics object
+     */
     _trackSize: function(w, h) {
         if (w > this._width) {
             this._width = w;
@@ -636,12 +854,43 @@ VMLGraphics.prototype = {
         }
     },
 
-    _shape: null,
+    /**
+     * @private
+     * Clears the properties
+     */
+    _initProps: function() {
+        this._fillColor = null;
+        this._strokeColor = null;
+        this._strokeWeight = 0;
+        this._fillProps = null;
+        this._path = '';
+        this._width = 0;
+        this._height = 0;
+        this._x = 0;
+        this._y = 0;
+        this._fill = null;
+        this._stroke = 0;
+        this._stroked = false;
+    },
 
-	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
-        return this;
-	},
+    /**
+     * @private
+     * Clears path properties
+     */
+    _clearPath: function()
+    {
+        this._shape = null;
+        this._path = '';
+        this._width = 0;
+        this._height = 0;
+        this._x = 0;
+        this._y = 0;
+    },
 
+    /**
+     * @private 
+     * Completes a vml shape
+     */
     _drawVML: function()
     {
         var shape = this._createGraphicNode(this._shape),
@@ -677,7 +926,6 @@ VMLGraphics.prototype = {
         {
             shape.filled = false;
         }
-
         if (this._stroke && this._strokeWeight > 0) {
             shape.strokeColor = this._strokeColor;
             shape.strokeWeight = this._strokeWeight;
@@ -688,14 +936,18 @@ VMLGraphics.prototype = {
         shape.style.height = h + 'px';
         if (fillProps) {
             shape.filled = true;
-            shape.appendChild(this.getFill());
+            shape.appendChild(this._getFill());
         }
 
         this._vml.appendChild(shape);
         this._clearPath();
     },
 
-    getFill: function() {
+    /**
+     * @private
+     * Returns ths actual fill object to be used in a drawing or shape
+     */
+    _getFill: function() {
         var fill = this._createGraphicNode("fill"),
             w = this._width,
             h = this._height,
@@ -744,51 +996,17 @@ VMLGraphics.prototype = {
         return fill;
     },
 
-    end: function() {
-        if(this._shape)
-        {
-            this._drawVML();
-        }
-        this._initProps();
+    /**
+     * @private
+     * Creates a group element
+     */
+    _createGraphics: function() {
+        var group = this._createGraphicNode("group");
+        group.style.display = "inline-block";
+        group.style.position = 'absolute';
+        return group;
     },
 
-    lineGradientStyle: function() {
-        return this;
-    },
-
-    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-        this._stroke = 1;
-        this._strokeWeight = thickness * 0.7;
-        this._strokeColor = color;
-    },
-
-    lineTo: function(point1, point2, etc) {
-        var args = arguments,
-            i,
-            len;
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
-        }
-        len = args.length;
-        this._shape = "shape";
-        this._path += ' l ';
-        for (i = 0; i < len; ++i) {
-            this._path += ' ' + args[i][0] + ', ' + args[i][1];
-
-            this._trackSize.apply(this, args[i]);
-        }
-    },
-
-    moveTo: function(x, y) {
-        this._path += ' m ' + x + ', ' + y;
-    },
-
-    setSize: function(w, h) {
-        this._vml.style.width = w + 'px';
-        this._vml.style.height = h + 'px';
-        this._vml.coordSize = w + ' ' + h;
-    },
-    
     /**
      * @private
      * Creates a vml node.
@@ -797,16 +1015,6 @@ VMLGraphics.prototype = {
     {
         return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
     
-    },
-
-    render: function(node) {
-        var w = node.offsetWidth,
-            h = node.offsetHeight;
-        node = node || Y.config.doc.body;
-        node.appendChild(this._vml);
-        this.setSize(w, h);
-        this._initProps();
-        return this;
     }
 };
 
