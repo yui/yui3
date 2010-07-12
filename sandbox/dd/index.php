@@ -381,6 +381,8 @@ YUI(yConfig).use('event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-p
 });
 
 YUI(yConfig2).use('event-synthetic', 'event-gestures', 'dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-throttle', function(Y) {
+    
+    //alert(navigator.userAgent);
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
 //Y.on('event:ready', function() {
     Y.DD.DDM._debugShim = true;
@@ -392,14 +394,14 @@ YUI(yConfig2).use('event-synthetic', 'event-gestures', 'dd-drop', 'dd-proxy', 'd
     Y.DD.DDM.set('throttleTime', 50);
 
     Y.DD.DDM.on('drop:over', function(e) {
-        console.log('DDM:drop:over :: ', arguments);
+        //console.log('DDM:drop:over :: ', arguments);
     });
     
     Y.DD.DDM.on('drag:drag', function(e) {
-        console.log('DDM:drag:drag :: ', e);
+        //console.log('DDM:drag:drag :: ', e);
     });
     Y.DD.DDM.on('drag:dropmiss', function(e) {
-        console.log('DDM:drag:dropmiss :: ', e);
+        //console.log('DDM:drag:dropmiss :: ', e);
     });
     //Y.DD.DDM.set('multiDrop', false);
 
