@@ -214,10 +214,6 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     <div id="ft">&nbsp;</div>
 </div>
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event/event-touch.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event/event-synthetic-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/event-gestures/event-gestures-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
 
 <script type="text/javascript" src="js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
@@ -380,7 +376,7 @@ YUI(yConfig).use('event-synthetic', 'event-gestures', 'dd-ddm', 'dd-drag', 'dd-p
 
 });
 
-YUI(yConfig2).use('event-synthetic', 'event-gestures', 'dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-throttle', function(Y) {
+YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', 'dd-drop-plugin', 'yui-throttle', function(Y) {
     
     //alert(navigator.userAgent);
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
