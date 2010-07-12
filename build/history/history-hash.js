@@ -8,6 +8,7 @@ YUI.add('history-hash', function(Y) {
  *
  * @module history
  * @submodule history-hash
+ * @since 3.2.0
  * @class HistoryHash
  * @extends HistoryBase
  * @constructor
@@ -67,6 +68,7 @@ Y.extend(HistoryHash, HistoryBase, {
      * Handler for hashchange events.
      *
      * @method _afterHashChange
+     * @param {Event} e
      * @protected
      */
     _afterHashChange: function (e) {
@@ -446,4 +448,4 @@ if (!Y.History && (!HistoryBase.html5 || !Y.HistoryHTML5)) {
 }
 
 
-}, '@VERSION@' ,{requires:['event-synthetic', 'history-base', 'yui-later'], supersedes:['history-deprecated']});
+}, '@VERSION@' ,{requires:['event-synthetic', 'history-base', 'yui-later']});

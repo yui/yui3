@@ -90,6 +90,9 @@
  *  callback executed each time a script or css file is loaded</li>
  *  <li>modules:
  *  A list of module definitions.  See Loader.addModule for the supported module metadata</li>
+ *  <li>groups:
+ *  A list of group definitions.  Each group can contain specific definitions for base, comboBase,
+ *  combine, and accepts a list of modules.  See above for the description of these properties.</li>
  * </ul>
  */
 
@@ -679,6 +682,8 @@ Y.Loader.prototype = {
      *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
      *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
      *     <dt>submodules:</dt> <dd>a hash of submodules</dd>
+     *     <dt>group:</dt>      <dd>The group the module belongs to -- this is set automatically when
+     *                          it is added as part of a group configuration.</dd>
      *     <dt>lang:</dt>       <dd>array of BCP 47 language tags of
      *                              languages for which this module has localized resource bundles,
      *                              e.g., ["en-GB","zh-Hans-CN"]</dd>
@@ -1160,7 +1165,7 @@ Y.Loader.prototype = {
             return null;
         }
 
-        var p, type, found, pname, 
+        var p, found, pname, 
             m = this.moduleInfo[mname], 
             patterns = this.patterns;
 
@@ -1172,7 +1177,6 @@ Y.Loader.prototype = {
                 if (patterns.hasOwnProperty(pname)) {
                     // Y.log('testing pattern ' + i);
                     p = patterns[pname];
-                    type = p.type;
 
                     // use the metadata supplied for the pattern
                     // as the module definition.

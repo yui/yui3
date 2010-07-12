@@ -161,8 +161,8 @@
 
 }
 
-.yui3-menu-hiden .yui3-menuitem-content,
-.yui3-menu-hiden .yui3-menu-label {
+.yui3-menu-hidden .yui3-menuitem-content,
+.yui3-menu-hidden .yui3-menu-label {
 
 	_zoom: normal;
 

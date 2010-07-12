@@ -434,9 +434,11 @@ Y.CustomEvent.prototype = {
      */
     on: function(fn, context) {
         var a = (arguments.length > 2) ? Y.Array(arguments, 2, true): null;
-        this.host._monitor('attach', this.type, {
-            args: arguments
-        });
+        if (this.host) {
+            this.host._monitor('attach', this.type, {
+                args: arguments
+            });
+        }
         return this._on(fn, context, a, true);
     },
 
@@ -659,10 +661,12 @@ Y.CustomEvent.prototype = {
             delete this.afters[s.id];
         }
 
-        this.host._monitor('detach', this.type, {
-            ce: this, 
-            sub: s
-        });
+        if (this.host) {
+            this.host._monitor('detach', this.type, {
+                ce: this, 
+                sub: s
+            });
+        }
     }
 };
 

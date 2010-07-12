@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>history-hash test</title>
+    <title>history-html5 test</title>
     <style>
         #critters {
             list-style: none;
@@ -24,7 +24,7 @@
 </head>
 <body class="yui3-skin-sam">
 
-<h1>history-hash test</h1>
+<h1>history-html5 test</h1>
 
 <form>
     <ul id="critters">
@@ -49,7 +49,7 @@ var Y = YUI({
         history: 'debug'
     },
     useBrowserConsole: false
-}).use('console-filters', 'event-delegate', 'history-hash', 'json-stringify', function (Y) {
+}).use('console-filters', 'event-delegate', 'history-html5', 'json-stringify', function (Y) {
     new Y.Console({
         style: 'block',
         width: Y.UA.ie ? '100%' : 'inherit',

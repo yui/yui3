@@ -54,6 +54,14 @@
             }
             to.setStyles(newStyles);
         },
+        _fixFirstPara: function() {
+            var inst = this.getInstance(), sel;
+            inst.one('body').setContent('<p>&nbsp;</p>');
+            sel = new inst.Selection();
+            try {
+                sel.selectNode(inst.one('body > p').get('firstChild'));
+            } catch (er) {}
+        },
         /**
         * The default handler for the nodeChange event.
         * @method _defNodeChangeFn
@@ -62,25 +70,32 @@
         */
         _defNodeChangeFn: function(e) {
             Y.log('Default nodeChange function: ' + e.changedType, 'info', 'editor');
+            var inst = this.getInstance();
+
+            /*
+            * @TODO
+            * This whole method needs to be fixed and made more dynamic.
+            * Maybe static functions for the e.changeType and an object bag
+            * to walk through and filter to pass off the event to before firing..
+            */
+            
             switch (e.changedType) {
+                case 'keydown':
+                    var cont = inst.config.doc.body.innerHTML;
+                    if (cont && cont.toLowerCase() == '<br>') {
+                        this._fixFirstPara();
+                    }
+                    break;
                 case 'backspace-up':
-                    var inst = this.getInstance(),
-                    ps = inst.all('body > p'), br, p, sel, item;
+                case 'delete-up':
+                    var ps = inst.all('body > p'), br, p, sel, item;
                     if (ps.size() < 2) {
                         item = inst.one('body');
                         if (ps.item(0)) {
                             item = ps.item(0);
                         }
                         if (inst.Selection.getText(item) === '' && !item.test('p')) {
-                            br = item.all('br');
-                            if (br.size() === 1) {
-                                br.item(0).remove();
-                            }
-                            inst.one('body').append('<p>&nbsp;</p>');
-                            sel = new inst.Selection();
-                            try {
-                                sel.selectNode(inst.one('body > p').get('firstChild'));
-                            } catch (e) {}
+                            this._fixFirstPara();
                         } else if (item.test('p') && item.get('innerHTML').length === 0) {
                             e.changedEvent.halt();
                         }
@@ -108,6 +123,8 @@
                             }
                         }
                     }
+                    //TODO
+                    //inst.Selection.filterBlocks();
                     break;
                 case 'tab':
                     if (!e.changedNode.test('li, li *') && !e.changedEvent.shiftKey) {
@@ -237,6 +254,7 @@
             this.frame.on('mousedown', Y.bind(this._onFrameMouseDown, this));
             this.frame.on('keyup', Y.bind(this._onFrameKeyUp, this));
             this.frame.on('keydown', Y.bind(this._onFrameKeyDown, this));
+            this.frame.on('keypress', Y.bind(this._onFrameKeyPress, this));
             inst.Selection.filter();
         },
         /**
@@ -277,6 +295,17 @@
                 if (EditorBase.NC_KEYS[e.keyCode]) {
                     this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode], changedEvent: e });
                     this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-down', changedEvent: e });
+                }
+            }
+        },
+        _onFrameKeyPress: function(e) {
+            var inst = this.frame.getInstance(),
+                sel = new inst.Selection();
+
+            if (sel.anchorNode) {
+                this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: 'keypress', changedEvent: e });
+                if (EditorBase.NC_KEYS[e.keyCode]) {
+                    this.fire('nodeChange', { changedNode: sel.anchorNode, changedType: EditorBase.NC_KEYS[e.keyCode] + '-press', changedEvent: e });
                 }
             }
         },

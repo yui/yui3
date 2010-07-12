@@ -1,9 +1,7 @@
 YUI.add('event-flick', function(Y) {
 
 // TODO: Better way to sniff 'n' switch touch support?
-var TOUCH = "ontouchstart" in Y.config.win,
-
-    EVENT = (TOUCH) ? {
+var EVENT = ("ontouchstart" in Y.config.win) ? {
         start: "touchstart",
         end: "touchend"
     } : {
@@ -18,9 +16,9 @@ var TOUCH = "ontouchstart" in Y.config.win,
     MIN_VELOCITY = "minVelocity",
     MIN_DISTANCE = "minDistance",
 
-    FLICK_START = "_fs",
-    FLICK_START_HANDLE = "_fsh",
-    FLICK_END_HANDLE = "_feh",
+    _FLICK_START = "_fs",
+    _FLICK_START_HANDLE = "_fsh",
+    _FLICK_END_HANDLE = "_feh",
 
     NODE_TYPE = "nodeType";
 
@@ -35,22 +33,22 @@ Y.Event.define('flick', {
             subscriber, 
             ce);
  
-        node.setData(FLICK_START_HANDLE, startHandle);
+        node.setData(_FLICK_START_HANDLE, startHandle);
     },
 
     destroy: function (node, subscriber, ce) {
 
-        var startHandle = node.getData(FLICK_START_HANDLE),
-            endHandle = node.getData(FLICK_END_HANDLE);
+        var startHandle = node.getData(_FLICK_START_HANDLE),
+            endHandle = node.getData(_FLICK_END_HANDLE);
 
         if (startHandle) {
             startHandle.detach();
-            node.setData(FLICK_START_HANDLE, null);
+            node.clearData(_FLICK_START_HANDLE);
         }
 
         if (endHandle) {
             endHandle.detach();
-            node.setData(FLICK_END_HANDLE, null);
+            node.clearData(_FLICK_END_HANDLE);
         }
     },
 
@@ -64,6 +62,8 @@ Y.Event.define('flick', {
         if (!(MIN_DISTANCE in params)) {
             params.minDistance = this.MIN_DISTANCE;
         }
+
+        Y.log("flick, processArgs : minDistance =" + params.minDistance + ", minVelocity =" + params.minVelocity);
 
         return params;
     },
@@ -83,7 +83,7 @@ Y.Event.define('flick', {
 
             e.preventDefault();
 
-            node.setData(FLICK_START, {
+            node.setData(_FLICK_START, {
                 time : new Date().getTime(),
                 pageX: e.pageX, 
                 pageY: e.pageY,
@@ -92,13 +92,13 @@ Y.Event.define('flick', {
                 _e : e
             });
 
-            endHandle = node.getData(FLICK_END_HANDLE);
+            endHandle = node.getData(_FLICK_END_HANDLE);
 
             if (!endHandle) {
-                doc = node.get(NODE_TYPE) === 9 ? node : node.get(OWNER_DOCUMENT);
+                doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
 
                 endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
-                node.setData(FLICK_END_HANDLE,endHandle);
+                node.setData(_FLICK_END_HANDLE,endHandle);
             }
         }
     },
@@ -106,7 +106,7 @@ Y.Event.define('flick', {
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
-            valid = node.getData(FLICK_START),
+            valid = node.getData(_FLICK_START),
             start = valid,
             endEvent = e,
 
@@ -154,6 +154,7 @@ Y.Event.define('flick', {
                         time:time,
                         velocity:velocity,
                         axis:axis,
+                        button: e.button,
                         start: start,
                         end : {
                             time: endTime,
@@ -166,7 +167,7 @@ Y.Event.define('flick', {
                     });
                 }
 
-                node.setData(FLICK_START, null);
+                node.clearData(_FLICK_START);
             }
         }
     },

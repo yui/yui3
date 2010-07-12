@@ -112,7 +112,7 @@ function (Y) {
         }
 
         if (src !== Y.History.SRC_HASH) {
-            history.add('report', type);
+            history.addValue('report', type);
         }
 
         report.render('#results');
@@ -171,7 +171,7 @@ function (Y) {
 
     // Handle module selection changes.
     suites.on('change', function () {
-        history.add('suite', this.get('value') || null);
+        history.addValue('suite', this.get('value') || null);
     });
 
     // Handle Start clicks.

@@ -361,7 +361,6 @@ proto = {
      */
     _attach: function(r, fromLoader) {
         var i, name, mod, details, req, use, 
-            ret  = true,
             mods = YUI.Env.mods,
             Y    = this,
             done = Y.Env._attached,
@@ -378,8 +377,7 @@ proto = {
                 use        = details.use;
 
                 if (req && req.length) {
-                    ret = Y._attach(Y.Array(req));
-                    if (!ret) {
+                    if (!Y._attach(Y.Array(req))) {
                         return false;
                     }
                 }
@@ -396,12 +394,14 @@ proto = {
                 }
 
                 if (use && use.length) {
-                    ret = Y._attach(Y.Array(use));
+                    if (!Y._attach(Y.Array(use))) {
+                        return false;
+                    }
                 }
             }
         }
 
-        return ret;
+        return true;
     },
 
     /**
