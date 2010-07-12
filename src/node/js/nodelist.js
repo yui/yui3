@@ -279,6 +279,21 @@ Y.mix(NodeList.prototype, {
         return this;
     },
 
+    _prepEvtArgs: function(type, fn, context) {
+        // map to Y.on/after signature (type, fn, nodes, context, arg1, arg2, etc)
+        var args = Y.Array(arguments, 0, true);
+
+        if (args.length < 2) { // type only (event hash) just add nodes
+            args[2] = this._nodes;
+        } else {
+            args.splice(2, 0, this._nodes);
+        }
+
+        args[3] = context || this; // default to NodeList instance as context
+
+        return args;
+    },
+
     /**
      * Applies an event listener to each Node bound to the NodeList. 
      * @method on
@@ -290,8 +305,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     on: function(type, fn, context) {
-        context = context || this;
-        return Y.on(type, fn, this._nodes, context);
+        return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
 
     /**
@@ -307,8 +321,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     after: function(type, fn, context) {
-        context = context || this;
-        return Y.after(type, fn, this._nodes, context || this);
+        return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
 
     /**

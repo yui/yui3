@@ -1221,8 +1221,10 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             var nodelist = Y.all('div'),
                 item = nodelist.item(0),
                 evtObj = {
-                mousedown: function(e) {
+                mousedown: function(e, foo, bar) {
                     Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+                    Assert.areEqual('foo', foo, "foo === 'foo'");
+                    Assert.areEqual('bar', bar, "bar === 'bar'");
                 }
             };
 
@@ -1231,26 +1233,37 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
                 Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
             });
 
-            Y.on(evtObj, null, nodelist);
-            nodelist.on(evtObj);
+            Y.on(evtObj, null, nodelist, null, 'foo', 'bar');
+            nodelist.on(evtObj, null, null, 'foo', 'bar');
 
             nodelist.on({mouseup: true}, function(e) {
                 Assert.areEqual(this, nodelist);
                 Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
             });
 
+            nodelist.on({mouseup: function(e) {
+                Assert.areEqual(this, nodelist);
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }});
+
             nodelist.on({keydown: true}, function(e) {
                 Assert.areEqual(this, nodelist.item(0));
                 Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
             }, item);
+
+            nodelist.on({keydown: true}, function(e) {
+                Assert.areEqual(this, nodelist.item(0));
+                Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
+            }, item);
+
 
             nodelist.after('click', function(e) {
                 Assert.areEqual(this, nodelist);
                 Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
             });
 
-            Y.after(evtObj, null, nodelist);
-            nodelist.after(evtObj);
+            Y.after(evtObj, null, nodelist, null, 'foo', 'bar');
+            nodelist.after(evtObj, null, null, 'foo', 'bar');
 
             nodelist.after({mouseup: true}, function(e) {
                 Assert.areEqual(this, nodelist);
@@ -1262,8 +1275,8 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
                 Assert.areEqual('DIV', e.currentTarget.get('nodeName'), "e.currentTarget.get('nodeName')");
             }, item);
 
-            item.simulate('click');
             item.simulate('mousedown');
+            item.simulate('click');
             item.simulate('mouseup');
             item.simulate('keydown');
         }
