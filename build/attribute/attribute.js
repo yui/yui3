@@ -1104,6 +1104,41 @@ YUI.add('attribute-base', function(Y) {
 
 
             return val;
+        },
+
+        /**
+         * Returns an object with the configuration properties (and value)
+         * for the given attrubute. If attrName is not provided, returns the
+         * configuration properties for all attributes.
+         * 
+         * @method _getAttrCfg
+         * @protected
+         * @param {String} attrName
+         * @return {Object} The configuration properties for the given attribute,
+         * or all attributes.
+         */
+        _getAttrCfg : function(attrName) {
+            var o,
+                data = this._state.data;
+
+            if (data) {
+                o = {};
+
+                Y.each(data, function(cfg, cfgProp) {
+                    if (attrName) {
+                        if(attrName in cfg) {
+                            o[cfgProp] = cfg[attrName];
+                        }
+                    } else {
+                        Y.each(cfg, function(attrCfg, attr) {
+                           o[attr] = o[attr] || {};
+                           o[attr][cfgProp] = attrCfg;
+                        });
+                    }
+                });
+            }
+
+            return o;
         }
     };
 
