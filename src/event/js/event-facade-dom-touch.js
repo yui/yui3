@@ -1,5 +1,6 @@
 var SCALE = "scale",
-    ROTATION = "rotation";
+    ROTATION = "rotation",
+    IDENTIFIER = "identifier";
 
 Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
 
@@ -50,11 +51,15 @@ Y.DOMEventFacade.prototype._touch = function(e, currentTarget, wrapper) {
     }
 
     if (SCALE in e) {
-        this.scale = e.scale;
+        this[SCALE] = e[SCALE];
     }
 
     if (ROTATION in e) {
-        this.rotation = e.rotation;
+        this[ROTATION] = e[ROTATION];
+    }
+
+    if (IDENTIFIER in e) {
+        this[IDENTIFIER] = e[IDENTIFIER];
     }
 };
 
