@@ -1551,8 +1551,11 @@ Y.mix(Y_DOM, {
                             }
 
                         if ((scrollTop || scrollLeft)) {
-                            xy[0] += scrollLeft;
-                            xy[1] += scrollTop;
+                            if (!Y.UA.itouch) {
+                                xy[0] += scrollLeft;
+                                xy[1] += scrollTop;
+                            }
+                            
                         }
                     } else { // default to current offsets
                         xy = Y_DOM._getOffset(node);

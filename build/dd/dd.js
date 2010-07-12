@@ -2091,7 +2091,7 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm-base','event-synthetic', 'event-gestures'], skinnable:false});
 YUI.add('dd-proxy', function(Y) {
 
 
