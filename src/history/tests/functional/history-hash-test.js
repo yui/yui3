@@ -19,6 +19,13 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.HistoryHash.hashPrefix = defaultPrefix;
     },
 
+    _should: {
+        ignore: {
+            'onhashchange should be case-sensitive (except in IE8+)': Y.UA.ie >= 8,
+            'onhashchange should NOT be case-sensitive in IE8+': !Y.UA.ie || Y.UA.ie < 8
+        }
+    },
+
     // -- Static Properties and Methods ----------------------------------------
     'createHash() should create a hash string from an object': function () {
         Y.Assert.areSame('foo=bar&baz=qu+ux', Y.HistoryHash.createHash({foo: 'bar', baz: 'qu ux'}));
@@ -121,6 +128,66 @@ Y.Test.Runner.add(new Y.Test.Case({
 
         Y.Assert.areSame('aardvark', this.history.get('a'));
         Y.Assert.areSame('boomerang', this.history.get('b'));
+    },
+
+    // -- Bug Tests ------------------------------------------------------------
+
+    // http://yuilibrary.com/projects/yui3/ticket/2528444
+    'onhashchange should be case-sensitive (except in IE8+)': function () {
+        var changed;
+
+        Y.once('hashchange', function () {
+            changed = true;
+            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
+        }, win);
+
+        location.hash = '#foo=bar';
+
+        this.wait(function () {
+            Y.Assert.isTrue(changed);
+
+            changed = false;
+
+            Y.once('hashchange', function () {
+                changed = true;
+                Y.Assert.areSame('foo=baR', Y.HistoryHash.getHash());
+            }, win);
+
+            location.hash = '#foo=baR';
+
+            this.wait(function () {
+                Y.Assert.isTrue(changed);
+            }, 50);
+        }, 50);
+    },
+
+    // http://yuilibrary.com/projects/yui3/ticket/2528444
+    'onhashchange should NOT be case-sensitive in IE8+': function () {
+        var changed;
+
+        Y.once('hashchange', function () {
+            changed = true;
+            Y.Assert.areSame('foo=bar', Y.HistoryHash.getHash());
+        }, win);
+
+        location.hash = '#foo=bar';
+
+        this.wait(function () {
+            Y.Assert.isTrue(changed);
+
+            changed = false;
+
+            Y.once('hashchange', function () {
+                changed = true;
+                Y.Assert.fail();
+            }, win);
+
+            location.hash = '#foo=baR';
+
+            this.wait(function () {
+                Y.Assert.isFalse(changed);
+            }, 50);
+        }, 50);
     }
 }));
 
