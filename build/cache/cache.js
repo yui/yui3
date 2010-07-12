@@ -294,7 +294,7 @@ Y.extend(Cache, Y.Base, {
     add: function(request, response) {
         if(this.get("entries") && ((this.get("max") === null) || this.get("max") > 0) &&
                 (LANG.isValue(request) || LANG.isNull(request) || LANG.isUndefined(request))) {
-            this.fire("add", {entry: {request:request, response:response}});
+            this.fire("add", {entry: {request:request, response:response, cached: new Date()}});
         }
         else {
         }
@@ -554,7 +554,7 @@ var localStorage = Y.config.win.localStorage,
     retrieve: function(request) {
         this.fire("request", {request: request});
 
-        var entry, expires;
+        var entry, expires, cached;
 
         try {
             request = JSON.stringify({"request":request});
@@ -568,6 +568,8 @@ var localStorage = Y.config.win.localStorage,
         }
         
         if(entry) {
+            cached = entry.cached;
+            entry.cached = cached ? new Date(cached) : cached;
             expires = entry.expires;
             if(!expires || new Date() < expires) {
                 this.fire("retrieve", {entry: entry});
