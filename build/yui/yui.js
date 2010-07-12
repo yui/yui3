@@ -2296,6 +2296,41 @@ Y.UA = function() {
          * @type float
          */
         air: 0,
+        /**
+         * Detects Apple iPad's OS version
+         * @property ipad
+         * @type float
+         * @static
+         */
+        ipad: 0,
+        /**
+         * Detects Apple iPhone's OS version
+         * @property iphone
+         * @type float
+         * @static
+         */
+        iphone: 0,
+        /**
+         * Detects Apples iPod's OS version
+         * @property ipod
+         * @type float
+         * @static
+         */
+        ipod: 0,
+        /**
+         * General truthy check for iPad, iPhone or iPod
+         * @property itouch
+         * @type float
+         * @static
+         */
+        itouch: null,
+        /**
+         * Detects Googles Android OS version
+         * @property android 
+         * @type float
+         * @static
+         */
+        android: 0,
 
         /**
          * Google Caja version number or 0.
@@ -2354,10 +2389,27 @@ Y.UA = function() {
             // Mobile browser check
             if (/ Mobile\//.test(ua)) {
                 o.mobile = "Apple"; // iPhone or iPod Touch
+
+                m = ua.match(/OS ([^\s]*)/);
+                if (m && m[1]) {
+                    m = numberify(m[1].replace('_', '.'));
+                }
+                o.ipad = (navigator.platform == 'iPad') ? m : 0;
+                o.ipod = (navigator.platform == 'iPod') ? m : 0;
+                o.iphone = (navigator.platform == 'iPhone') ? m : 0;
+                o.itouch = o.ipad || o.iphone || o.ipod;
             } else {
                 m=ua.match(/NokiaN[^\/]*|Android \d\.\d|webOS\/\d\.\d/);
                 if (m) {
                     o.mobile = m[0]; // Nokia N-series, Android, webOS, ex: NokiaN95
+                }
+                if (/ Android/.test(ua)) {
+                    o.mobile = 'Android';
+                    m = ua.match(/Android ([^\s]*);/);
+                    if (m && m[1]) {
+                        o.android = numberify(m[1]);
+                    }
+
                 }
             }
 
