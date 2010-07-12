@@ -16,7 +16,7 @@ var Node = Y.Node;
 		 */
 
 		/**
-		 * Creates the Uploader instance and contains initialization data
+		 * Creates the Uploader instance and keeps the initialization data
 		 *
 		 * @class Uploader
 		 * @augments Y.Event.Target
