@@ -2460,7 +2460,9 @@ YUI.Env[Y.version].modules = {
             }, 
             "dd-drag": {
                 "requires": [
-                    "dd-ddm-base"
+                    "dd-ddm-base", 
+                    "event-synthetic", 
+                    "event-gestures"
                 ]
             }, 
             "dd-drop": {

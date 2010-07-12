@@ -5,42 +5,31 @@ $count = (($_GET['count']) ? $_GET['count'] : 100);
 <html>
 <head>
     <title>YUI: XY</title>
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/reset-fonts-grids/reset-fonts-grids.css"> 
-    <link rel="stylesheet" href="http://blog.davglass.com/files/yui/css/davglass.css" type="text/css">
     <style type="text/css" media="screen">
         p, h2 {
             margin: 1em;
         }
         #node {
             position: relative;
-            top: 200px;
+            top: 700px;
             left: 200px;
             border: 1px solid black;
             background-color: #ccc;
-            height: 20px;
-            width: 20px;
+            height: 100px;
+            width: 100px;
         }
 	</style>
 </head>
 <body class="yui-skin-sam">
-<div id="davdoc" class="yui-t7">
-    <div id="hd"><h1 id="header"><a href="http://blog.davglass.com/">YUI: DragDrop 3.x</a></h1></div>
-    <div id="bd">
-        <div id="node"></div>
-        <div id="res"></div>
-    </div>
-    <div id="ft">&nbsp;</div>
+    <div id="node"></div>
+    <div id="res"></div>
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/attribute/attribute-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/base/base-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/event/event-touch.js?bust=<?php echo(mktime()); ?>"></script>
 <script type="text/javascript" src="../../build/event/event-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/oop/oop-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/dom/dom-debug.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../build/node/node-debug.js?bust=<?php echo(mktime()); ?>"></script>
-
-
+<script type="text/javascript" src="../../build/event/event-synthetic-debug.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../build/event-gestures/event-gestures-debug.js?bust=<?php echo(mktime()); ?>"></script>
 
 
 <script type="text/javascript">
@@ -59,22 +48,19 @@ var yConfig = {
 };
 
 //var Y1 = new YUI().use('dd-drag', 'dd-proxy');
-YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-scroll', function(Y) {
-    myY = Y;
-    
-    var node = Y.get('#node'),
-        res = [];
-    
-    for (var i = 1; i <= <?php echo($count); ?>; i++) {
-        var s = (new Date()).getTime();
-        node.getXY();
-        res.push((new Date()).getTime() - s);
-    }
-    Y.get('#res').set('innerHTML', res.join('<br>'));
+YUI(yConfig).use('event-synthetic', 'event-gestures', function(Y) {
+    console.log('Go!');
+    var node = Y.one('#node'),
+        res = Y.one('#res');
+
+    node.on('movestart', function(e) {
+        var html = '<p>pageX: ' + e.pageX + '<br>pageY: ' + e.pageY + '</p><hr>';
+        res.append(html);
+    });
+
 });
 
 
 </script>
 </body>
 </html>
-<?php @include_once($_SERVER["DOCUMENT_ROOT"]."/wp-content/plugins/shortstat/inc.stats.php"); ?>

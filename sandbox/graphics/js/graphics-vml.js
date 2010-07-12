@@ -12,43 +12,36 @@ VMLGraphics.prototype = {
         this._initProps();
     },
 
-    _initProps: function() {
-        this._fillColor = null;
-        this._strokeColor = null;
-        this._strokeWeight = 0;
-        this._fillProps = null;
-        this._path = '';
-        this._width = 0;
-        this._height = 0;
-        this._x = 0;
-        this._y = 0;
-        this._fill = null;
-        this._stroke = 0;
-        this._stroked = false;
+    /** 
+     *Specifies a bitmap fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
+     */
+    beginBitmapFill: function(config) {
+       
+        var fill = {};
+        fill.src = config.bitmap.src;
+        fill.type = "tile";
+        this._fillProps = fill;
+        if(!isNaN(config.tx) ||
+            !isNaN(config.ty) ||
+            !isNaN(config.width) ||
+            !isNaN(config.height))
+        {
+            this._gradientBox = {
+                tx:config.tx,
+                ty:config.ty,
+                width:config.width,
+                height:config.height
+            };
+        }
+        else
+        {
+            this._gradientBox = null;
+        }
     },
 
-    _clearPath: function()
-    {
-        this._shape = null;
-        this._path = '';
-        this._width = 0;
-        this._height = 0;
-        this._x = 0;
-        this._y = 0;
-    },
-
-    _createGraphics: function() {
-        var group = this._createGraphicNode("group");
-        group.style.display = "inline-block";
-        group.style.position = 'absolute';
-        return group;
-    },
-
-    beginBitmapFill: function() {
-        Y.log('bitmapFill not implemented', 'warn', 'graphics-vml');
-        return this;
-    },
-
+    /**
+     * Specifes a solid fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
+     */
     beginFill: function(color, alpha) {
         if (color) {
             if (alpha) {
@@ -64,6 +57,9 @@ VMLGraphics.prototype = {
         return this;
     },
 
+    /** 
+     *Specifies a gradient fill used by subsequent calls to other Graphics methods (such as lineTo() or drawCircle()) for the object.
+     */
     beginGradientFill: function(config) {
         var type = config.type,
             colors = config.colors,
@@ -136,19 +132,26 @@ VMLGraphics.prototype = {
             this._gradientBox = null;
         }
         this._fillProps = fill;
-        return this;
     },
 
+    /**
+     * Clears the graphics object.
+     */
     clear: function() {
         this._path = '';
         return this;
     },
 
-    curveTo: function(controlX, controlY, anchorX, anchorY) {
-        return this;
+    /**
+     * Draws a bezier curve
+     */
+    curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
+        this._path += 'c ' + cp1x + ", " + cp1y + ", " + cp2x + ", " + cp2y + ", " + x + ", " + y;
     },
 
-
+    /**
+     * Draws a circle
+     */
 	drawCircle: function(x, y, r, start, end, anticlockwise) {
         this._width = this._height = r * 2;
         this._x = x - r;
@@ -157,6 +160,9 @@ VMLGraphics.prototype = {
         this._drawVML();
 	},
 
+    /**
+     * Draws an ellipse
+     */
     drawEllipse: function(x, y, w, h) {
         this._width = w;
         this._height = h;
@@ -166,6 +172,9 @@ VMLGraphics.prototype = {
         this._drawVML();
     },
 
+    /**
+     * Draws a rectangle
+     */
     drawRect: function(x, y, w, h) {
         this._x = x;
         this._y = y;
@@ -185,6 +194,98 @@ VMLGraphics.prototype = {
 
     },
 
+    /**
+     * Draws a rectangle with rounded corners
+     */
+	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
+        return this;
+	},
+
+    end: function() {
+        if(this._shape)
+        {
+            this._drawVML();
+        }
+        this._initProps();
+    },
+
+    /**
+     * @private
+     * Not implemented
+     * Specifies a gradient to use for the stroke when drawing lines.
+     */
+    lineGradientStyle: function() {
+        Y.log('lineGradientStyle not implemented', 'warn', 'graphics-canvas');
+    },
+    
+    /**
+     * Specifies a line style used for subsequent calls to drawing methods
+     */
+    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
+        this._stroke = 1;
+        this._strokeWeight = thickness * 0.7;
+        this._strokeColor = color;
+    },
+
+    /**
+     * Draws a line segment using the current line style from the current drawing position to the specified x and y coordinates.
+     */
+    lineTo: function(point1, point2, etc) {
+        var args = arguments,
+            i,
+            len;
+        if (typeof point1 === 'string' || typeof point1 === 'number') {
+            args = [[point1, point2]];
+        }
+        len = args.length;
+        this._shape = "shape";
+        this._path += ' l ';
+        for (i = 0; i < len; ++i) {
+            this._path += ' ' + args[i][0] + ', ' + args[i][1];
+
+            this._trackSize.apply(this, args[i]);
+        }
+    },
+
+    /**
+     * Moves the current drawing position to specified x and y coordinates.
+     */
+    moveTo: function(x, y) {
+        this._path += ' m ' + x + ', ' + y;
+    },
+
+    /**
+     * Sets the size of the graphics object
+     */
+    setSize: function(w, h) {
+        this._vml.style.width = w + 'px';
+        this._vml.style.height = h + 'px';
+        this._vml.coordSize = w + ' ' + h;
+    },
+    
+    /**
+     * @private
+     */
+    render: function(node) {
+        var w = node.offsetWidth,
+            h = node.offsetHeight;
+        node = node || Y.config.doc.body;
+        node.appendChild(this._vml);
+        this.setSize(w, h);
+        this._initProps();
+        return this;
+    },
+
+    /**
+     * @private
+     * Reference to current vml shape
+     */
+    _shape: null,
+
+    /**
+     * @private
+     * Updates the size of the graphics object
+     */
     _trackSize: function(w, h) {
         if (w > this._width) {
             this._width = w;
@@ -194,12 +295,43 @@ VMLGraphics.prototype = {
         }
     },
 
-    _shape: null,
+    /**
+     * @private
+     * Clears the properties
+     */
+    _initProps: function() {
+        this._fillColor = null;
+        this._strokeColor = null;
+        this._strokeWeight = 0;
+        this._fillProps = null;
+        this._path = '';
+        this._width = 0;
+        this._height = 0;
+        this._x = 0;
+        this._y = 0;
+        this._fill = null;
+        this._stroke = 0;
+        this._stroked = false;
+    },
 
-	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
-        return this;
-	},
+    /**
+     * @private
+     * Clears path properties
+     */
+    _clearPath: function()
+    {
+        this._shape = null;
+        this._path = '';
+        this._width = 0;
+        this._height = 0;
+        this._x = 0;
+        this._y = 0;
+    },
 
+    /**
+     * @private 
+     * Completes a vml shape
+     */
     _drawVML: function()
     {
         var shape = this._createGraphicNode(this._shape),
@@ -235,7 +367,6 @@ VMLGraphics.prototype = {
         {
             shape.filled = false;
         }
-
         if (this._stroke && this._strokeWeight > 0) {
             shape.strokeColor = this._strokeColor;
             shape.strokeWeight = this._strokeWeight;
@@ -246,14 +377,18 @@ VMLGraphics.prototype = {
         shape.style.height = h + 'px';
         if (fillProps) {
             shape.filled = true;
-            shape.appendChild(this.getFill());
+            shape.appendChild(this._getFill());
         }
 
         this._vml.appendChild(shape);
         this._clearPath();
     },
 
-    getFill: function() {
+    /**
+     * @private
+     * Returns ths actual fill object to be used in a drawing or shape
+     */
+    _getFill: function() {
         var fill = this._createGraphicNode("fill"),
             w = this._width,
             h = this._height,
@@ -302,51 +437,17 @@ VMLGraphics.prototype = {
         return fill;
     },
 
-    end: function() {
-        if(this._shape)
-        {
-            this._drawVML();
-        }
-        this._initProps();
+    /**
+     * @private
+     * Creates a group element
+     */
+    _createGraphics: function() {
+        var group = this._createGraphicNode("group");
+        group.style.display = "inline-block";
+        group.style.position = 'absolute';
+        return group;
     },
 
-    lineGradientStyle: function() {
-        return this;
-    },
-
-    lineStyle: function(thickness, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit) {
-        this._stroke = 1;
-        this._strokeWeight = thickness * 0.7;
-        this._strokeColor = color;
-    },
-
-    lineTo: function(point1, point2, etc) {
-        var args = arguments,
-            i,
-            len;
-        if (typeof point1 === 'string' || typeof point1 === 'number') {
-            args = [[point1, point2]];
-        }
-        len = args.length;
-        this._shape = "shape";
-        this._path += ' l ';
-        for (i = 0; i < len; ++i) {
-            this._path += ' ' + args[i][0] + ', ' + args[i][1];
-
-            this._trackSize.apply(this, args[i]);
-        }
-    },
-
-    moveTo: function(x, y) {
-        this._path += ' m ' + x + ', ' + y;
-    },
-
-    setSize: function(w, h) {
-        this._vml.style.width = w + 'px';
-        this._vml.style.height = h + 'px';
-        this._vml.coordSize = w + ' ' + h;
-    },
-    
     /**
      * @private
      * Creates a vml node.
@@ -355,16 +456,6 @@ VMLGraphics.prototype = {
     {
         return document.createElement('<' + type + ' xmlns="urn:schemas-microsft.com:vml" class="vml' + type + '"/>');
     
-    },
-
-    render: function(node) {
-        var w = node.offsetWidth,
-            h = node.offsetHeight;
-        node = node || Y.config.doc.body;
-        node.appendChild(this._vml);
-        this.setSize(w, h);
-        this._initProps();
-        return this;
     }
 };
 
