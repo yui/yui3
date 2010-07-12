@@ -1,6 +1,5 @@
 YUI.add('yql', function(Y) {
 
-
     /**
      * This class adds a sugar class to allow access to YQL (http://developer.yahoo.com/yql/).
      * @module yql
@@ -15,7 +14,6 @@ YUI.add('yql', function(Y) {
      * @param {Object} params An object literal of configuration options (optional): proto (http|https), base (url)
      */
     var YQLRequest = function (sql, callback, params, opts) {
-        var qs = '', url = ((opts && opts.proto) ? opts.proto : Y.YQLRequest.PROTO);
         
         if (!params) {
             params = {};
@@ -26,13 +24,49 @@ YUI.add('yql', function(Y) {
             params.env = Y.YQLRequest.ENV;
         }
 
-        Y.each(params, function(v, k) {
-            qs += k + '=' + encodeURIComponent(v) + '&';
-        });
-        
-        url += ((opts && opts.base) ? opts.base : Y.YQLRequest.BASE_URL) + qs;
+        this._params = params;
+        this._opts = opts;
+        this._callback = callback;
 
-        Y.jsonp(url, callback);
+    };
+    
+    YQLRequest.prototype = {
+        /**
+        * @private
+        * @property _opts
+        * @description Holder for the opts argument
+        */
+        _opts: null,
+        /**
+        * @private
+        * @property _callback
+        * @description Holder for the callback argument
+        */
+        _callback: null,
+        /**
+        * @private
+        * @property _params
+        * @description Holder for the params argument
+        */
+        _params: null,
+        /**
+        * @method send
+        * @description The method that executes the YQL Request.
+        * @chainable
+        * @returns {YQLRequest}
+        */
+        send: function() {
+            var qs = '', url = ((this._opts && this._opts.proto) ? this._opts.proto : Y.YQLRequest.PROTO);
+
+            Y.each(this._params, function(v, k) {
+                qs += k + '=' + encodeURIComponent(v) + '&';
+            });
+            
+            url += ((this._opts && this._opts.base) ? this._opts.base : Y.YQLRequest.BASE_URL) + qs;
+
+            Y.jsonp(url, this._callback);
+            return this;
+        }
     };
 
     /**
@@ -65,7 +99,7 @@ YUI.add('yql', function(Y) {
      * @param {Object} params An object literal of extra parameters to pass along (optional).
      */
 	Y.YQL = function(sql, callback, params) {
-        return new Y.YQLRequest(sql, callback, params);
+        return new Y.YQLRequest(sql, callback, params).send();
     };
 
 

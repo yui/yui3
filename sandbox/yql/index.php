@@ -1,3 +1,7 @@
+<?php
+
+$zip = (($_GET['zip']) ? htmlentities($_GET['zip']) : '62959');
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -31,9 +35,9 @@ YUI(yConfig).use('node', 'jsonp', 'yql', function(Y) {
 
     var res = Y.one('#res');
     
-    Y.YQL('select * from weather.forecast where location=62896', function(r) {
+    Y.YQL('select * from weather.forecast where location=<?php echo($zip); ?>', function(r) {
         var el = Y.Node.create('<div class="mod"></div>');
-        el.set('innerHTML', '<h2>Weather for 62896</h2>' +
+        el.set('innerHTML', '<h2>Weather for <?php echo($zip); ?></h2>' +
             r.query.results.channel.item.description);
         res.appendChild(el);
     });

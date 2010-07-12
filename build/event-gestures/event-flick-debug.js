@@ -1,9 +1,15 @@
 YUI.add('event-flick', function(Y) {
 
-// TODO: Better way to sniff 'n' switch touch support?
-var TOUCH = "ontouchstart" in Y.config.win,
+/**
+ * Adds support for a "flick" event, which is fired at the end of a touch or mouse based flick gesture, and provides 
+ * velocity of the flick, along with distance and time information.
+ *
+ * @module event-gestures
+ * @submodule event-flick
+ */
 
-    EVENT = (TOUCH) ? {
+// TODO: Better way to sniff 'n' switch touch support?
+var EVENT = ("ontouchstart" in Y.config.win) ? {
         start: "touchstart",
         end: "touchend"
     } : {
@@ -18,14 +24,29 @@ var TOUCH = "ontouchstart" in Y.config.win,
     MIN_VELOCITY = "minVelocity",
     MIN_DISTANCE = "minDistance",
 
-    FLICK_START = "_fs",
-    FLICK_START_HANDLE = "_fsh",
-    FLICK_END_HANDLE = "_feh",
+    _FLICK_START = "_fs",
+    _FLICK_START_HANDLE = "_fsh",
+    _FLICK_END_HANDLE = "_feh",
 
     NODE_TYPE = "nodeType";
 
+/**
+ * Sets up a "flick" event, that is fired whenever the user initiates a flick gesture on the node
+ * where the listener is attached. The subscriber can specify a minimum distance or velocity for
+ * which the event is to be fired.  
+ * 
+ * @event flick
+ * @param type {string} "flick"
+ * @param fn {function} The method the event invokes.
+ * @param cfg {Object} Optional. An object which specifies the minimum distance and/or velocity
+ * of the flick gesture for which the event is to be fired.
+ *  
+ * @return {EventHandle} the detach handle
+ */
+
 Y.Event.define('flick', {
 
+    // The initialization implementation. Called for the first subscription per node.
     init: function (node, subscriber, ce) {
 
         var startHandle = node.on(EVENT[START],
@@ -35,25 +56,27 @@ Y.Event.define('flick', {
             subscriber, 
             ce);
  
-        node.setData(FLICK_START_HANDLE, startHandle);
+        node.setData(_FLICK_START_HANDLE, startHandle);
     },
 
+    // The destroy implementation. Called for the last detach per node.
     destroy: function (node, subscriber, ce) {
 
-        var startHandle = node.getData(FLICK_START_HANDLE),
-            endHandle = node.getData(FLICK_END_HANDLE);
+        var startHandle = node.getData(_FLICK_START_HANDLE),
+            endHandle = node.getData(_FLICK_END_HANDLE);
 
         if (startHandle) {
             startHandle.detach();
-            node.setData(FLICK_START_HANDLE, null);
+            node.clearData(_FLICK_START_HANDLE);
         }
 
         if (endHandle) {
             endHandle.detach();
-            node.setData(FLICK_END_HANDLE, null);
+            node.clearData(_FLICK_END_HANDLE);
         }
     },
 
+    // How to process the additional spec args
     processArgs: function(args) {
         var params = (args[3]) ? args.splice(3, 1) : {};
 
@@ -65,9 +88,12 @@ Y.Event.define('flick', {
             params.minDistance = this.MIN_DISTANCE;
         }
 
+        Y.log("flick, processArgs : minDistance =" + params.minDistance + ", minVelocity =" + params.minVelocity);
+
         return params;
     },
 
+    // Internal DOM listener to identify the start of the gesture 
     _onStart: function(e, node, subscriber, ce) {
 
         var start = true, // always true for mouse
@@ -83,7 +109,7 @@ Y.Event.define('flick', {
 
             e.preventDefault();
 
-            node.setData(FLICK_START, {
+            node.setData(_FLICK_START, {
                 time : new Date().getTime(),
                 pageX: e.pageX, 
                 pageY: e.pageY,
@@ -92,21 +118,23 @@ Y.Event.define('flick', {
                 _e : e
             });
 
-            endHandle = node.getData(FLICK_END_HANDLE);
+            endHandle = node.getData(_FLICK_END_HANDLE);
 
             if (!endHandle) {
-                doc = node.get(NODE_TYPE) === 9 ? node : node.get(OWNER_DOCUMENT);
+                doc = (node.get(NODE_TYPE) === 9) ? node : node.get(OWNER_DOCUMENT);
 
                 endHandle = doc.on(EVENT[END], Y.bind(this._onEnd, this), null, node, subscriber, ce);
-                node.setData(FLICK_END_HANDLE,endHandle);
+                node.setData(_FLICK_END_HANDLE,endHandle);
             }
         }
     },
 
+    // Internal DOM listener to identify the end of the gesture. Fires the 
+    // synthetic flick event. 
     _onEnd: function(e, node, subscriber, ce) {
 
         var endTime = new Date().getTime(),
-            valid = node.getData(FLICK_START),
+            valid = node.getData(_FLICK_START),
             start = valid,
             endEvent = e,
 
@@ -154,6 +182,7 @@ Y.Event.define('flick', {
                         time:time,
                         velocity:velocity,
                         axis:axis,
+                        button: e.button,
                         start: start,
                         end : {
                             time: endTime,
@@ -166,7 +195,7 @@ Y.Event.define('flick', {
                     });
                 }
 
-                node.setData(FLICK_START, null);
+                node.clearData(_FLICK_START);
             }
         }
     },

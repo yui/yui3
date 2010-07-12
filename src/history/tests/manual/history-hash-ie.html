@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>history-hash-ie test</title>
-    <link rel="stylesheet" href="../assets/test.css">
     <style>
         #critters {
             list-style: none;
@@ -88,7 +87,7 @@ var Y = YUI({
 
     Y.one('#critters').delegate('click', function (e) {
         var node = e.currentTarget;
-        history.add(node.get('id'), node.get('checked') ? '1' : null);
+        history.addValue(node.get('id'), node.get('checked') ? '1' : null);
     }, 'input');
 
     if (!Y.UA.ie || Y.UA.ie > 7) {

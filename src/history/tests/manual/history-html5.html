@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>history-html5 test</title>
+    <style>
+        #critters {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #log { margin-top: 1em; }
+
+        #photos {
+            height: 200px;
+            margin-top: 1em;
+        }
+
+        #photos img {
+            margin-right: 10px;
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+
+<h1>history-html5 test</h1>
+
+<form>
+    <ul id="critters">
+        <li><label><input type="checkbox" id="aardvark">Aardvark</label></li>
+        <li><label><input type="checkbox" id="bumblebee">Bumblebee</label></li>
+        <li><label><input type="checkbox" id="cheetah">Cheetah</label></li>
+    </ul>
+</form>
+
+<p>
+<a href="http://www.yahoo.com">Yahoo!</a>
+</p>
+
+<div id="photos"></div>
+<div id="log"></div>
+
+<script src="../../../../build/yui/yui.js"></script>
+<script>
+var Y = YUI({
+    filter: 'raw',
+    filters: {
+        history: 'debug'
+    },
+    useBrowserConsole: false
+}).use('console-filters', 'event-delegate', 'history-html5', 'json-stringify', function (Y) {
+    new Y.Console({
+        style: 'block',
+        width: Y.UA.ie ? '100%' : 'inherit',
+
+        entryTemplate:
+            '<div class="{entry_class} {cat_class} {src_class}">' +
+                '<pre class="{entry_content_class}">{message}</pre>' +
+            '</div>',
+
+        after: {
+            render: function () {
+                this.get('contentBox').insertBefore(this._foot, this._body);
+            }
+        }
+    }).plug(Y.Plugin.ConsoleFilters, {}).render('#log');
+
+    var history    = new Y.History(),
+        bookmarked = history.get(),
+        images  = {
+            aardvark : 'http://farm3.static.flickr.com/2380/3530738527_4d1e318df2.jpg', // http://www.flickr.com/photos/dipthongasaurus_rex/3530738527/
+            bumblebee: 'http://farm4.static.flickr.com/3293/2923728081_8c78210921.jpg', // http://www.flickr.com/photos/vickisnature/2923728081/
+            cheetah  : 'http://farm4.static.flickr.com/3287/2380266276_570418b291.jpg'  // http://www.flickr.com/photos/80835774@N00/2380266276/
+        },
+
+        crittersNode = Y.one('#critters'),
+        photosNode   = Y.one('#photos');
+
+    function refresh(state) {
+        crittersNode.all('input[type="checkbox"]').set('checked', false);
+        photosNode.setContent('');
+
+        Y.Object.each(state, function (value, key) {
+            if (Y.Object.owns(images, key)) {
+                var img = new Image();
+
+                img.src = images[key];
+                img.alt = key;
+
+                crittersNode.one('#' + key).set('checked', true);
+                photosNode.append(img);
+            }
+        });
+    }
+
+    Y.on('history:change', function (e) {
+        refresh(e.newVal);
+    });
+
+    Y.one('#critters').delegate('click', function (e) {
+        var node = e.currentTarget;
+        history.addValue(node.get('id'), node.get('checked') ? '1' : null);
+    }, 'input');
+
+    // Refresh with the bookmarked state, if any.
+    Y.log('Bookmarked state: ' + Y.JSON.stringify(bookmarked));
+    refresh(bookmarked);
+});
+</script>
+
+</body>
+</html>
