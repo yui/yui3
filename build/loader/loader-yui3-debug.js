@@ -96,7 +96,8 @@ YUI.Env[Y.version].modules = {
             }, 
             "cache-offline": {
                 "requires": [
-                    "cache-base"
+                    "cache-base", 
+                    "json"
                 ]
             }
         }
@@ -708,11 +709,11 @@ YUI.Env[Y.version].modules = {
     "history": {
         "submodules": {
             "history-base": {
+                "after": [
+                    "history-deprecated"
+                ], 
                 "requires": [
                     "event-custom-complex"
-                ], 
-                "supersedes": [
-                    "history-deprecated"
                 ]
             }, 
             "history-hash": {
@@ -723,9 +724,6 @@ YUI.Env[Y.version].modules = {
                     "event-synthetic", 
                     "history-base", 
                     "yui-later"
-                ], 
-                "supersedes": [
-                    "history-deprecated"
                 ]
             }, 
             "history-hash-ie": {
@@ -733,27 +731,16 @@ YUI.Env[Y.version].modules = {
                     "history-base", 
                     "history-hash", 
                     "node-base"
-                ], 
-                "supersedes": [
-                    "history-deprecated"
                 ]
             }, 
             "history-html5": {
                 "requires": [
-                    "history-base"
-                ], 
-                "supersedes": [
-                    "history-deprecated"
+                    "event-base", 
+                    "history-base", 
+                    "node-base"
                 ]
             }
-        }, 
-        "supersedes": [
-            "history-base", 
-            "history-deprecated", 
-            "history-hash", 
-            "history-hash-ie", 
-            "history-html5"
-        ]
+        }
     }, 
     "history-deprecated": {
         "requires": [
@@ -1176,7 +1163,6 @@ YUI.Env[Y.version].modules = {
         }
     }
 };
-
 
 
 }, '@VERSION@' ,{requires:['loader-base']});

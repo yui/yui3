@@ -31,12 +31,12 @@
  * </dl>
  */
 
-var Lang        = Y.Lang,
-    Obj         = Y.Object,
-    GlobalEnv   = YUI.namespace('Env.History'),
-    docMode     = Y.config.doc.documentMode,
-    isUndefined = Y.Lang.isUndefined,
-    win         = Y.config.win,
+var Lang      = Y.Lang,
+    Obj       = Y.Object,
+    GlobalEnv = YUI.namespace('Env.History'),
+
+    docMode   = Y.config.doc.documentMode,
+    win       = Y.config.win,
 
     DEFAULT_OPTIONS = {merge: true},
     EVT_CHANGE      = 'change',
@@ -56,6 +56,21 @@ Y.augment(HistoryBase, Y.EventTarget, null, null, {
 
 if (!GlobalEnv._state) {
     GlobalEnv._state = {};
+}
+
+// -- Private Methods ----------------------------------------------------------
+
+/**
+ * Returns <code>true</code> if <i>value</i> is a simple object and not a
+ * function or an array.
+ *
+ * @method _isSimpleObject
+ * @param {mixed} value
+ * @return {Boolean}
+ * @private
+ */
+function _isSimpleObject(value) {
+    return Lang.type(value) === 'object';
 }
 
 // -- Public Static Properties -------------------------------------------------
@@ -98,8 +113,12 @@ HistoryBase.SRC_REPLACE = SRC_REPLACE;
  * @type Boolean
  * @static
  */
+
+// All HTML5-capable browsers except Gecko 2+ (Firefox 4+) correctly return
+// true for 'onpopstate' in win. In order to support Gecko 2, we fall back to a
+// UA sniff for now. (current as of Firefox 4.0b1)
 HistoryBase.html5 = !!(win.history && win.history.pushState &&
-        win.history.replaceState && !isUndefined(win.onpopstate));
+        win.history.replaceState && ('onpopstate' in win || Y.UA.gecko >= 2));
 
 /**
  * Whether or not this browser supports the <code>window.onhashchange</code>
@@ -117,7 +136,7 @@ HistoryBase.html5 = !!(win.history && win.history.pushState &&
 // Mode. However, IE8 in IE7 compatibility mode still defines the
 // event but never fires it, so we can't just detect the event. We also can't
 // just UA sniff for IE8, since other browsers support this event as well.
-HistoryBase.nativeHashChange = !isUndefined(win.onhashchange) &&
+HistoryBase.nativeHashChange = 'onhashchange' in win &&
         (!docMode || docMode > 7);
 
 Y.mix(HistoryBase.prototype, {
@@ -188,8 +207,7 @@ Y.mix(HistoryBase.prototype, {
 
         // If initialState was provided and is a simple object, merge it into
         // the current state.
-        if (Lang.isObject(initialState) && !Lang.isFunction(initialState) &&
-                !Lang.isArray(initialState)) {
+        if (_isSimpleObject(initialState)) {
             this.add(Y.merge(GlobalEnv._state, initialState));
         }
     },
@@ -231,6 +249,26 @@ Y.mix(HistoryBase.prototype, {
     },
 
     /**
+     * Adds a state entry with a new value for a single key. By default, the new
+     * value will be merged into the existing state values, and will override an
+     * existing value with the same key if there is one. Specifying a
+     * <code>null</code> or <code>undefined</code> value will cause the key to
+     * be removed from the new state entry.
+     *
+     * @method addValue
+     * @param {String} key State parameter key.
+     * @param {String} value New value.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
+     * @chainable
+     */
+    addValue: function (key, value, options) {
+        var state = {};
+        state[key] = value;
+        return this._change(SRC_ADD, state, options);
+    },
+
+    /**
      * Returns the current value of the state parameter specified by <i>key</i>,
      * or an object hash of key/value pairs for all current state parameters if
      * no key is specified.
@@ -241,12 +279,13 @@ Y.mix(HistoryBase.prototype, {
      *   object hash of key/value pairs for all current state parameters.
      */
     get: function (key) {
-        var state = GlobalEnv._state;
+        var state    = GlobalEnv._state,
+            isObject = _isSimpleObject(state);
 
         if (key) {
-            return Obj.owns(state, key) ? state[key] : undefined;
+            return isObject && Obj.owns(state, key) ? state[key] : undefined;
         } else {
-            return Y.mix({}, state, true); // Fast shallow clone.
+            return isObject ? Y.mix({}, state, true) : state; // mix provides a fast shallow clone.
         }
     },
 
@@ -267,11 +306,29 @@ Y.mix(HistoryBase.prototype, {
         return this._change.apply(this, args);
     },
 
+    /**
+     * Same as <code>addValue()</code> except that a new browser history entry
+     * will not be created. Instead, the current history entry will be replaced
+     * with the new state.
+     *
+     * @method replaceValue
+     * @param {String} key State parameter key.
+     * @param {String} value New value.
+     * @param {Object} options (optional) Zero or more options. See
+     *   <code>add()</code> for a list of supported options.
+     * @chainable
+     */
+    replaceValue: function (key, value, options) {
+        var state = {};
+        state[key] = value;
+        return this._change(SRC_REPLACE, state, options);
+    },
+
     // -- Protected Methods ----------------------------------------------------
 
     /**
      * Changes the state. This method provides a common implementation shared by
-     * add() and replace().
+     * the public methods for changing state.
      *
      * @method _change
      * @param {String} src Source of the change, for inclusion in event facades
@@ -285,7 +342,8 @@ Y.mix(HistoryBase.prototype, {
     _change: function (src, state, options) {
         options = options ? Y.merge(DEFAULT_OPTIONS, options) : DEFAULT_OPTIONS;
 
-        if (options.merge) {
+        if (options.merge && _isSimpleObject(state) &&
+                _isSimpleObject(GlobalEnv._state)) {
             state = Y.merge(GlobalEnv._state, state);
         }
 
@@ -305,16 +363,15 @@ Y.mix(HistoryBase.prototype, {
      *   a list of supported options.
      * @protected
      */
-    _fireEvents: function (src, changes) {
-        // Note: the options param isn't used here, but it is used by subclasses.
-
+    _fireEvents: function (src, changes, options) {
         // Fire the global change event.
         this.fire(EVT_CHANGE, {
-            changed: changes.changed,
-            newVal : changes.newState,
-            prevVal: changes.prevState,
-            removed: changes.removed,
-            src    : src
+            _options: options,
+            changed : changes.changed,
+            newVal  : changes.newState,
+            prevVal : changes.prevState,
+            removed : changes.removed,
+            src     : src
         });
 
         // Fire change/remove events for individual items.
@@ -455,30 +512,40 @@ Y.mix(HistoryBase.prototype, {
             prevState = GlobalEnv._state,
             removed   = {};
 
-        newState = newState || {};
+        if (!newState) {
+            newState = {};
+        }
 
-        // Figure out what was added or changed.
-        Obj.each(newState, function (newVal, key) {
-            var prevVal = prevState[key];
+        if (!options) {
+            options = {};
+        }
 
-            if (newVal !== prevVal) {
-                changed[key] = {
-                    newVal : newVal,
-                    prevVal: prevVal
-                };
+        if (_isSimpleObject(newState) && _isSimpleObject(prevState)) {
+            // Figure out what was added or changed.
+            Obj.each(newState, function (newVal, key) {
+                var prevVal = prevState[key];
 
-                isChanged = true;
-            }
-        }, this);
+                if (newVal !== prevVal) {
+                    changed[key] = {
+                        newVal : newVal,
+                        prevVal: prevVal
+                    };
 
-        // Figure out what was removed.
-        Obj.each(prevState, function (prevVal, key) {
-            if (!Obj.owns(newState, key) || newState[key] === null) {
-                delete newState[key];
-                removed[key] = prevVal;
-                isChanged = true;
-            }
-        }, this);
+                    isChanged = true;
+                }
+            }, this);
+
+            // Figure out what was removed.
+            Obj.each(prevState, function (prevVal, key) {
+                if (!Obj.owns(newState, key) || newState[key] === null) {
+                    delete newState[key];
+                    removed[key] = prevVal;
+                    isChanged = true;
+                }
+            }, this);
+        } else {
+            isChanged = newState !== prevState;
+        }
 
         if (isChanged) {
             this._fireEvents(src, {
@@ -496,13 +563,15 @@ Y.mix(HistoryBase.prototype, {
      * fired properly.
      *
      * @method _storeState
-     * @param {String} src source of the changes, for inclusion in event facades
-     *   to facilitate filtering
+     * @param {String} src source of the changes
      * @param {Object} newState new state to store
+     * @param {Object} options Zero or more options. See <code>add()</code> for
+     *   a list of supported options.
      * @protected
      */
     _storeState: function (src, newState) {
-        // Note: the src param isn't used here, but it is used by subclasses.
+        // Note: the src and options params aren't used here, but they are used
+        // by subclasses.
         GlobalEnv._state = newState || {};
     },
 
@@ -516,7 +585,7 @@ Y.mix(HistoryBase.prototype, {
      * @protected
      */
     _defChangeFn: function (e) {
-        this._storeState(e.src, e.newVal);
+        this._storeState(e.src, e.newVal, e._options);
     }
 }, true);
 

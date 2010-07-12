@@ -2,12 +2,12 @@
     "history": {
         "submodules": {
             "history-base": {
-                "requires": [
-                    "event-custom-complex"
+                "after": [
+                    "history-deprecated"
                 ],
 
-                "supersedes": [
-                    "history-deprecated"
+                "requires": [
+                    "event-custom-complex"
                 ]
             },
 
@@ -20,10 +20,6 @@
                     "event-synthetic",
                     "history-base",
                     "yui-later"
-                ],
-
-                "supersedes": [
-                    "history-deprecated"
                 ]
             },
 
@@ -32,30 +28,16 @@
                     "history-base",
                     "history-hash",
                     "node-base"
-                ],
-
-                "supersedes": [
-                    "history-deprecated"
                 ]
             },
 
             "history-html5": {
                 "requires": [
-                    "history-base"
-                ],
-
-                "supersedes": [
-                    "history-deprecated"
+                    "event-base",
+                    "history-base",
+                    "node-base"
                 ]
             }
-        },
-
-        "supersedes": [
-            "history-base",
-            "history-deprecated",
-            "history-hash",
-            "history-hash-ie",
-            "history-html5"
-        ]
+        }
     }
 }

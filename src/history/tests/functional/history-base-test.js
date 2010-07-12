@@ -196,6 +196,44 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.areSame(1, Obj.size(this.history.get()));
     },
 
+    'add() should allow non-object states': function () {
+        this.history.add('pants');
+        Y.Assert.areSame('pants', this.history.get());
+    },
+
+    // -- addValue() -----------------------------------------------------------
+    'addValue() should change state with the correct event src': function () {
+        var changeFired = false;
+
+        this.history.on('change', function (e) {
+            changeFired = true;
+            Y.Assert.areSame(Y.HistoryBase.SRC_ADD, e.src);
+        });
+
+        this.history.addValue('foo', 'bar');
+        Y.Assert.isTrue(changeFired);
+    },
+
+    'addValue() should merge states when the "merge" option is true': function () {
+        this.history.addValue('foo', 'bar');
+        Y.Assert.areSame('bar', this.history.get('foo'));
+        Y.Assert.areSame(1, Obj.size(this.history.get()));
+
+        this.history.addValue('baz', 'quux');
+        Y.Assert.areSame('quux', this.history.get('baz'));
+        Y.Assert.areSame(2, Obj.size(this.history.get()));
+    },
+
+    'addValue() should not merge states when the "merge" option is false': function () {
+        this.history.addValue('foo', 'bar');
+        Y.Assert.areSame('bar', this.history.get('foo'));
+        Y.Assert.areSame(1, Obj.size(this.history.get()));
+
+        this.history.addValue('baz', 'quux', {merge: false});
+        Y.Assert.areSame('quux', this.history.get('baz'));
+        Y.Assert.areSame(1, Obj.size(this.history.get()));
+    },
+
     // -- replace() ------------------------------------------------------------
     'replace() should change state with the correct event src': function () {
         var changeFired = false;
@@ -225,6 +263,39 @@ Y.Test.Runner.add(new Y.Test.Case({
         Y.Assert.areSame(1, Obj.size(this.history.get()));
 
         this.history.replace({baz: 'quux'}, {merge: false});
+        Y.Assert.areSame('quux', this.history.get('baz'));
+        Y.Assert.areSame(1, Obj.size(this.history.get()));
+    },
+
+    // -- replaceValue() -------------------------------------------------------
+    'replaceValue() should change state with the correct event src': function () {
+        var changeFired = false;
+
+        this.history.on('change', function (e) {
+            changeFired = true;
+            Y.Assert.areSame(Y.HistoryBase.SRC_REPLACE, e.src);
+        });
+
+        this.history.replaceValue('foo', 'bar');
+        Y.Assert.isTrue(changeFired);
+    },
+
+    'replaceValue() should merge states when the "merge" option is true': function () {
+        this.history.replaceValue('foo', 'bar');
+        Y.Assert.areSame('bar', this.history.get('foo'));
+        Y.Assert.areSame(1, Obj.size(this.history.get()));
+
+        this.history.replaceValue('baz', 'quux');
+        Y.Assert.areSame('quux', this.history.get('baz'));
+        Y.Assert.areSame(2, Obj.size(this.history.get()));
+    },
+
+    'replaceValue() should not merge states when the "merge" option is false': function () {
+        this.history.replaceValue('foo', 'bar');
+        Y.Assert.areSame('bar', this.history.get('foo'));
+        Y.Assert.areSame(1, Obj.size(this.history.get()));
+
+        this.history.replaceValue('baz', 'quux', {merge: false});
         Y.Assert.areSame('quux', this.history.get('baz'));
         Y.Assert.areSame(1, Obj.size(this.history.get()));
     }
