@@ -234,6 +234,9 @@
                         widget.set("bodyContent", "hide, followed by show");
                     },
                     function() {
+                        widget.setStdModContent(Y.WidgetStdMod.FOOTER, null);
+                    },
+                    function() {
                         widget.setStdModContent(Y.WidgetStdMod.HEADER, Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
                         widget.setStdModContent(Y.WidgetStdMod.FOOTER, Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
                         widget.setStdModContent(Y.WidgetStdMod.BODY, "Replaced Body - DONE!", Y.WidgetStdMod.REPLACE);

@@ -61,7 +61,6 @@
 <span class="cm">     * @param {Object} params An object literal of configuration options (optional): proto (http|https), base (url)</span>
 <span class="cm">     */</span>
     <span class="kd">var</span> <span class="nx">YQLRequest</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">sql</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">qs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">url</span> <span class="o">=</span> <span class="p">((</span><span class="nx">opts</span> <span class="o">&amp;&amp;</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">proto</span><span class="p">)</span> <span class="o">?</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">proto</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">.</span><span class="nx">PROTO</span><span class="p">);</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">params</span> <span class="o">=</span> <span class="p">{};</span>
@@ -72,13 +71,49 @@
             <span class="nx">params</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">.</span><span class="nx">ENV</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">qs</span> <span class="o">+=</span> <span class="nx">k</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">;</span>
-        <span class="p">});</span>
-        
-        <span class="nx">url</span> <span class="o">+=</span> <span class="p">((</span><span class="nx">opts</span> <span class="o">&amp;&amp;</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">base</span><span class="p">)</span> <span class="o">?</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">base</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">.</span><span class="nx">BASE_URL</span><span class="p">)</span> <span class="o">+</span> <span class="nx">qs</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_params</span> <span class="o">=</span> <span class="nx">params</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_opts</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_callback</span> <span class="o">=</span> <span class="nx">callback</span><span class="p">;</span>
 
-        <span class="nx">Y</span><span class="p">.</span><span class="nx">jsonp</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+    <span class="p">};</span>
+    
+    <span class="nx">YQLRequest</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @property _opts</span>
+<span class="cm">        * @description Holder for the opts argument</span>
+<span class="cm">        */</span>
+        <span class="nx">_opts</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @property _callback</span>
+<span class="cm">        * @description Holder for the callback argument</span>
+<span class="cm">        */</span>
+        <span class="nx">_callback</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @private</span>
+<span class="cm">        * @property _params</span>
+<span class="cm">        * @description Holder for the params argument</span>
+<span class="cm">        */</span>
+        <span class="nx">_params</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">        * @method send</span>
+<span class="cm">        * @description The method that executes the YQL Request.</span>
+<span class="cm">        * @chainable</span>
+<span class="cm">        * @returns {YQLRequest}</span>
+<span class="cm">        */</span>
+        <span class="nx">send</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">qs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">url</span> <span class="o">=</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_opts</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_opts</span><span class="p">.</span><span class="nx">proto</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_opts</span><span class="p">.</span><span class="nx">proto</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">.</span><span class="nx">PROTO</span><span class="p">);</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_params</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">qs</span> <span class="o">+=</span> <span class="nx">k</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">;</span>
+            <span class="p">});</span>
+            
+            <span class="nx">url</span> <span class="o">+=</span> <span class="p">((</span><span class="k">this</span><span class="p">.</span><span class="nx">_opts</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_opts</span><span class="p">.</span><span class="nx">base</span><span class="p">)</span> <span class="o">?</span> <span class="k">this</span><span class="p">.</span><span class="nx">_opts</span><span class="p">.</span><span class="nx">base</span> <span class="o">:</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">.</span><span class="nx">BASE_URL</span><span class="p">)</span> <span class="o">+</span> <span class="nx">qs</span><span class="p">;</span>
+
+            <span class="nx">Y</span><span class="p">.</span><span class="nx">jsonp</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_callback</span><span class="p">);</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+        <span class="p">}</span>
     <span class="p">};</span>
 
     <span class="cm">/**</span>
@@ -111,7 +146,7 @@
 <span class="cm">     * @param {Object} params An object literal of extra parameters to pass along (optional).</span>
 <span class="cm">     */</span>
 	<span class="nx">Y</span><span class="p">.</span><span class="nx">YQL</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">sql</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">(</span><span class="nx">sql</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Y</span><span class="p">.</span><span class="nx">YQLRequest</span><span class="p">(</span><span class="nx">sql</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">params</span><span class="p">).</span><span class="nx">send</span><span class="p">();</span>
     <span class="p">};</span>
 </pre></div>
 
@@ -215,7 +250,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"access": "", "host": "YQLRequest", "name": "BASE_URL", "url": "YQLRequest.html#property_BASE_URL", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "ENV", "url": "YQLRequest.html#property_ENV", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "PROTO", "url": "YQLRequest.html#property_PROTO", "type": "property"}];
+    var ALL_YUI_PROPS = [{"access": "", "host": "YQLRequest", "name": "BASE_URL", "url": "YQLRequest.html#property_BASE_URL", "type": "property"}, {"access": "private", "host": "YQLRequest", "name": "_callback", "url": "YQLRequest.html#property__callback", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "ENV", "url": "YQLRequest.html#property_ENV", "type": "property"}, {"access": "private", "host": "YQLRequest", "name": "_opts", "url": "YQLRequest.html#property__opts", "type": "property"}, {"access": "private", "host": "YQLRequest", "name": "_params", "url": "YQLRequest.html#property__params", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "PROTO", "url": "YQLRequest.html#property_PROTO", "type": "property"}, {"access": "", "host": "YQLRequest", "name": "send", "url": "YQLRequest.html#method_send", "type": "method"}];
 </script>
 </body>
 </html>

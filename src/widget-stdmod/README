@@ -1,6 +1,11 @@
 An extension, which can be used with Base.build to add standard
 module (header, body, footer) support to a Widget class.
 
+3.2.0
+
+* Setting content to null (or undefined, or NaN), will remove section
+  from the std mod.
+
 3.1.1
 
 * No changes.
