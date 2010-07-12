@@ -764,12 +764,17 @@
                 ds.sendRequest({request:"c"});
 
                 ds.on("data", function(e) {
-                    ASSERT.fail("Entry should be cached -- 'data' event is unexpected");
+                    
                 });
 
                 ds.sendRequest({request:"a"});
                 ds.sendRequest({request:"b"});
-                ds.sendRequest({request:"c"});
+                ds.sendRequest({request:"c", callback:{success:function(e){
+                    if(!e.cached) {
+                        ASSERT.isNotUndefined("Entry should have a 'cached' property");
+                        //ASSERT.isDate("Entry should have a 'cached' property");
+                    }
+                }}});
             },
 
             testLocalCacheUnplug: function() {
