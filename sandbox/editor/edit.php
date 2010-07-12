@@ -235,9 +235,11 @@ YUI(yConfig).use('node', 'selector-css3', 'base', 'editor-base', 'frame', 'subst
         }
     });
     s_cont.delegate('click', function(e) {
-        var img = e.currentTarget;
+        var img = e.currentTarget, inst = editor.getInstance();
         editor.focus();
-        editor.execCommand('inserthtml', '<span>&nbsp;<img src="' + img.get('src') + '">&nbsp;</span>');
+        editor.execCommand('inserthtml', '<span>&nbsp;<img src="' + img.get('src') + '">&nbsp;</span>' + inst.Selection.CURSOR);
+        var sel = new inst.Selection();
+        sel.focusCursor();
     }, 'img');
     
     var buttons = Y.all('#test1 button');

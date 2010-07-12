@@ -5,6 +5,7 @@
  *
  * @module history
  * @submodule history-hash-ie
+ * @since 3.2.0
  */
 
 // Combination of a UA sniff to ensure this is IE (or a browser that wants us to

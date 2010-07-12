@@ -141,8 +141,11 @@
     * @method filterBlocks
     */
     Y.Selection.filterBlocks = function() {
-        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true;
+        var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true, sel;
         if (childs) {
+            sel = new Y.Selection();
+            sel.setCursor();
+
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
                 if (!node.test(Y.Selection.BLOCKS)) {
@@ -163,6 +166,8 @@
                 }
             }
             wrapped = Y.Selection._wrapBlock(wrapped);
+
+            sel.focusCursor();
         }
     };
 
