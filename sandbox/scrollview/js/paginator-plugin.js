@@ -35,12 +35,12 @@ PaginatorPlugin.NAME = 'paginatorPlugin';
  *
  * @property PaginatorPlugin.NS
  * @type String
- * @default 'paginator'
+ * @default 'pages'
  * @readOnly
  * @protected
  * @static
  */
-PaginatorPlugin.NS = 'paginator';
+PaginatorPlugin.NS = 'pages';
 
 /**
  * ATTRS for scrollbars plugin
@@ -57,32 +57,32 @@ PaginatorPlugin.ATTRS = {
      * CSS selector for a page inside the scrollview. The scrollview
      * will snap to the closest page.
      *
-     * @attribute pageSelector
+     * @attribute selector
      * @type {String}
      */
-    pageSelector: {
+    selector: {
         value: null
     },
     
     /**
      * The active page number for a paged scrollview
      *
-     * @attribute selectedIndex
+     * @attribute index
      * @type {Number}
      * @default 0
      */
-    selectedIndex: {
+    index: {
         value: 0
     },
     
     /**
      * The total number of pages
      *
-     * @attribute totalPages
+     * @attribute total
      * @type {Number}
      * @default 0
      */
-    totalPages: {
+    total: {
         value: 0
     }
 };
@@ -97,11 +97,11 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     initializer: function() {
         var host = this.get('host');
         
-        this.afterHostMethod('_uiSizeCB', this._calculatePageOffsets);
-        this.afterHostMethod('_touchesBegan', this._setBoundaryPoints);
+        this.afterHostMethod('_uiDimensionsChange', this._calculatePageOffsets);
+        this.afterHostMethod('_onTouchstart', this._setBoundaryPoints);
         this.afterHostMethod('_flick', this._afterFlick);
-        this.afterHostEvent('scroll:end', this._scrollEnded);
-        this.after('selectedIndexChange', this._afterSelectedIndexChange);
+        this.afterHostEvent('scrollEnd', this._scrollEnded);
+        this.after('indexChange', this._afterIndexChange);
         
         if(host.get('bounce') !== 0) {
             // Change bounce constant to increase friction
@@ -131,7 +131,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */    
     _calculatePageOffsets: function() {
         var cb = this.get('host').get('contentBox'),
-            pageSelector = this.get('pageSelector'),
+            pageSelector = this.get('selector'),
             pages,
             points = [];
             
@@ -145,7 +145,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         
         this._minPoints = points;
 
-        this.set('totalPages', pages.size());
+        this.set('total', pages.size());
     },
     
     /**
@@ -157,7 +157,7 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
     _setBoundaryPoints: function(e) {
         var host = this.get('host'),
-            pageIndex = this.get('selectedIndex');
+            pageIndex = this.get('index');
         
         // Set min/max points
         if(host._scrollsHorizontal) {
@@ -182,8 +182,8 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
             positive = velocity > 0,
             speed = Math.abs(velocity),
             host = this.get('host'),
-            pageIndex = this.get('selectedIndex'),
-            pageCount = this.get('totalPages');
+            pageIndex = this.get('index'),
+            pageCount = this.get('total');
             
         // @TODO: find the right minimum velocity to turn the page.
         // Right now, hard-coding at 1.
@@ -192,14 +192,14 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
         }
     
         if(positive && pageIndex < pageCount-1) {
-            this.set('selectedIndex', pageIndex+1, { src: UI });
+            this.set('index', pageIndex+1, { src: UI });
         } else if(!positive && pageIndex > 0){
-            this.set('selectedIndex', pageIndex-1, { src: UI });
+            this.set('index', pageIndex-1, { src: UI });
         }
     },
     
     /**
-     * scroll:end handler detects if a page needs to change
+     * scrollEnd handler detects if a page needs to change
      *
      * @method _scrollEnded
      * @param {Event.Facade}
@@ -207,82 +207,82 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
      */
      _scrollEnded: function(e) {
          var host = this.get('host'),
-             pageIndex = this.get('selectedIndex'),
-             pageCount = this.get('totalPages');
+             pageIndex = this.get('index'),
+             pageCount = this.get('total');
 
          // Stale scroll - snap to current/next/prev page
          if(e.staleScroll) {
              if(host._scrolledHalfway) {
                  if(host._scrolledForward && pageIndex < pageCount-1) {
-                     this.set('selectedIndex', pageIndex+1);
+                     this.set('index', pageIndex+1);
                  } else if(pageIndex > 0) {
-                     this.set('selectedIndex', pageIndex-1);
+                     this.set('index', pageIndex-1);
                  } else {
-                     this.snapToCurrentPage();
+                     this.snapToCurrent();
                  }
              } else {
-                 this.snapToCurrentPage();
+                 this.snapToCurrent();
              }
          }
      },
     
     /**
-     * selectedIndex attr change handler
+     * index attr change handler
      *
-     * @method _afterSelectedIndexChange
+     * @method _afterIndexChange
      * @protected
      */
-    _afterSelectedIndexChange: function(e) {
+    _afterIndexChange: function(e) {
         if(e.src !== UI) {
-            this._uiSelectedIndex(e.newVal);
+            this._uiIndex(e.newVal);
         }
     },
     
     /**
      * Update the UI based on the current page index
      *
-     * @method _uiSelectedIndex
+     * @method _uiIndex
      * @protected
      */
-    _uiSelectedIndex: function(index) {
-        this.scrollToPage(index, 350, 'ease-out');
+    _uiIndex: function(index) {
+        this.scrollTo(index, 350, 'ease-out');
     },
     
     /**
      * Scroll to the next page in the scrollview, with animation
      *
-     * @method nextPage
+     * @method next
      * @param disableAnim {Boolean} If true, no animation is used
      */
-    nextPage: function(disableAnim) {
-        var index = this.get('selectedIndex');  
-        if(index < this.get('totalPages')-1) {
-            this.set('selectedIndex', index+1);
+    next: function(disableAnim) {
+        var index = this.get('index');  
+        if(index < this.get('total')-1) {
+            this.set('index', index+1);
         }
     },
     
     /**
      * Scroll to the previous page in the scrollview, with animation
      *
-     * @method prevPage
+     * @method prev
      * @param disableAnim {Boolean} If true, no animation is used
      */
-    prevPage: function(disableAnim) {
-        var index = this.get('selectedIndex');
+    prev: function(disableAnim) {
+        var index = this.get('index');
         if(index > 0) {
-            this.set('selectedIndex', index-1);
+            this.set('index', index-1);
         }
     },
     
     /**
      * Scroll to a given page in the scrollview, with animation.
      *
-     * @method scrollToPage
+     * @method scrollTo
      * @param index {Number} The index of the page to scroll to
      * @param duration {Number} The number of ms the animation should last
      * @param easing {String} The timing function to use in the animation
      */
-    scrollToPage: function(index, duration, easing) {
+    scrollTo: function(index, duration, easing) {
         var host = this.get('host'),
             x = host.get('scrollX'),
             y = host.get('scrollY');
@@ -300,10 +300,10 @@ Y.extend(PaginatorPlugin, Y.Plugin.Base, {
     /**
      * Snaps the scrollview to the currently selected page
      *
-     * @method snapToCurrentPage
+     * @method snapToCurrent
      */
-    snapToCurrentPage: function() {
-        this.get('host').set('scrollX', this._minPoints[this.get('selectedIndex')], {
+    snapToCurrent: function() {
+        this.get('host').set('scrollX', this._minPoints[this.get('index')], {
             duration: 300,
             easing: 'ease-out'
         });

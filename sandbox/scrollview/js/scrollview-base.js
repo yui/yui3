@@ -18,10 +18,10 @@ var getClassName = Y.ClassNameManager.getClassName,
         middle: getClassName(SCROLLVIEW, 'middle'),
         showing: getClassName(SCROLLVIEW, 'showing')
     },
-    EV_SCROLL_START = 'scroll:start',
-    EV_SCROLL_CHANGE = 'scroll:change',
-    EV_SCROLL_END = 'scroll:end',
-    EV_SCROLL_FLICK = 'scroll:flick',
+    EV_SCROLL_START = 'scrollStart',
+    EV_SCROLL_CHANGE = 'scrollChange',
+    EV_SCROLL_END = 'scrollEnd',
+    EV_SCROLL_FLICK = 'flick',
     UI = 'ui';
 
 /**
@@ -57,25 +57,10 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @private
      */    
     _createEvents: function() {
-        this.publish(EV_SCROLL_START, {
-            prefix: 'scroll',
-            defaultFn: this._defScrollStartFn
-        });
-
-        this.publish(EV_SCROLL_CHANGE, {
-            prefix: 'scroll',
-            defaultFn: this._defScrollChangeFn
-        });
-        
-        this.publish(EV_SCROLL_END, {
-            prefix: 'scroll',
-            defaultFn: this._defScrollEndFn
-        });
-        
-        this.publish(EV_SCROLL_FLICK, {
-            prefix: 'scroll',
-            defaultFn: this._defScrollFlickFn
-        });
+        this.publish(EV_SCROLL_START);
+        this.publish(EV_SCROLL_CHANGE);
+        this.publish(EV_SCROLL_END);
+        this.publish(EV_SCROLL_FLICK);
     },
     
     /** 
@@ -85,29 +70,8 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @method _uiSizeCB
      * @protected
      */
-    _uiSizeCB: function() {
-        var cb = this.get('contentBox'),
-            bb = this.get('boundingBox'),
-            height = this.get('height'),
-            width = this.get('width'),
-            scrollHeight = cb.get('scrollHeight'),
-            scrollWidth = cb.get('scrollWidth');
+    _uiSizeCB: function() {},
         
-        if(height && scrollHeight > height) {
-            this._scrollsVertical = true;
-            this._maxScrollY = scrollHeight - height;
-            this._minScrollY = 0;
-            bb.setStyle('overflow-y', 'auto');
-        }
-        
-        if(width && scrollWidth > width) {
-            this._scrollsHorizontal = true;
-            this._maxScrollX = scrollWidth - width;
-            this._minScrollX = 0;
-            bb.setStyle('overflow-x', 'auto');
-        }
-    },
-    
     /**
      * TranstionEnd event handler
      *
@@ -125,11 +89,14 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @method bindUI
      */
     bindUI: function() {
-        this.get('boundingBox').on('touchstart', this._touchesBegan, this);
+        this.get('boundingBox').on('touchstart', this._onTouchstart, this);
         this.get('contentBox')._node.addEventListener('webkitTransitionEnd', Y.bind(this._transitionEnded, this), false);
-        this.get('contentBox')._node.addEventListener('DOMSubtreeModified', Y.bind(this._uiSizeCB, this));
-        this.after("scrollYChange", this._afterScrollYChange);
-        this.after("scrollXChange", this._afterScrollXChange);
+        this.get('contentBox')._node.addEventListener('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+        this.after('scrollYChange', this._afterScrollYChange);
+        this.after('scrollXChange', this._afterScrollXChange);
+        this.after('heightChange', this._afterHeightChange);
+        this.after('widthChange', this._afterWidthChange);
+        this.after('renderedChange', function() { Y.later(0, this, '_uiDimensionsChange'); });
     },
     
     /**
@@ -140,7 +107,6 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      */
     syncUI: function() {
         this.scrollTo(this.get('scrollX'), this.get('scrollY'));
-        this._uiSizeCB();
     },
     
     /**
@@ -177,11 +143,11 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     /**
      * touchstart event handler
      *
-     * @method _touchesBegan
+     * @method _onTouchstart
      * @param e {Event} The event
      * @private
      */
-    _touchesBegan: function(e) {
+    _onTouchstart: function(e) {
         var touch;
         
         if(e.touches && e.touches.length === 1) {
@@ -190,8 +156,8 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
             
             this._killTimer();
         
-            this._touchmoveEvt = this.get('boundingBox').on('touchmove', this._touchesMoved, this);
-            this._touchendEvt = this.get('boundingBox').on('touchend', this._touchesEnded, this);
+            this._touchmoveEvt = this.get('boundingBox').on('touchmove', this._onTouchmove, this);
+            this._touchendEvt = this.get('boundingBox').on('touchend', this._onTouchend, this);
         
             this._touchstartY = e.touches[0].clientY + this.get('scrollY');
             this._touchstartX = e.touches[0].clientX + this.get('scrollX');
@@ -208,11 +174,11 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     /**
      * touchmove event handler
      *
-     * @method _touchesMoved
+     * @method _onTouchmove
      * @param e {Event} The event
      * @private
      */
-    _touchesMoved: function(e) {
+    _onTouchmove: function(e) {
         var touch = e.touches[0];
         
         e.preventDefault();
@@ -234,11 +200,11 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     /**
      * touchend event handler
      *
-     * @method _touchesEnded
+     * @method _onTouchend
      * @param e {Event} The event
      * @private
      */
-    _touchesEnded: function(e) {
+    _onTouchend: function(e) {
         var minY = this._minScrollY,
             maxY = this._maxScrollY,
             minX = this._minScrollX,
@@ -363,40 +329,56 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     },
     
     /**
-     * Default scroll:start handler
+     * after listener for the height attribute
      *
-     * @method _defScrollStartFn
-     * @param {Event.Facade}
+     * @method _afterHeightChange
+     * @param e {Event.Facade} The event
      * @protected
      */
-    _defScrollStartFn: function(e) {},
+    _afterHeightChange: function() {
+        this._uiDimensionsChange();
+    },
     
     /**
-     * Default scroll:change handler
+     * after listener for the width attribute
      *
-     * @method _defScrollChangeFn
-     * @param {Event.Facade}
+     * @method _afterHeightChange
+     * @param e {Event.Facade} The event
      * @protected
      */
-    _defScrollChangeFn: function(e) {},
+    _afterWidthChange: function() {
+        this._uiDimensionsChange();
+    },
     
     /**
-     * Default scroll:end handler
+     * This method gets invoked whenever the height or width attrs change,
+     * allowing us to determine which scrolling axes need to be enabled.
      *
-     * @method _defScrollEndFn
-     * @param {Event.Facade}
+     * @method _uiDimensionsChange
      * @protected
      */
-    _defScrollEndFn: function(e) {},
-    
-    /**
-     * Default scroll:flick handler
-     *
-     * @method _defScrollFlickFn
-     * @param {Event.Facade}
-     * @protected
-     */
-    _defScrollFlickFn: function(e) {},
+    _uiDimensionsChange: function() {
+        var cb = this.get('contentBox'),
+            bb = this.get('boundingBox'),
+            height = this.get('height'),
+            width = this.get('width'),
+            scrollHeight = cb.get('scrollHeight'),
+            scrollWidth = cb.get('scrollWidth');
+        
+        if(height && scrollHeight > height) {
+            this._scrollsVertical = true;
+            this._maxScrollY = scrollHeight - height;
+            this._minScrollY = 0;
+            bb.setStyle('overflow-y', 'auto');
+        }
+        
+        if(width && scrollWidth > width) {
+            this._scrollsHorizontal = true;
+            this._maxScrollX = scrollWidth - width;
+            this._minScrollX = 0;
+            bb.setStyle('overflow-x', 'auto');
+        }
+    },
     
     /**
      * Execute a flick at the end of a scroll action
@@ -489,7 +471,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * Stop the animation timer
      *
      * @method _killTimer
-     * @param fireEvent {Boolean} If true, fire the scroll:end event
+     * @param fireEvent {Boolean} If true, fire the scrollEnd event
      * @private
      */
     _killTimer: function(fireEvent) {

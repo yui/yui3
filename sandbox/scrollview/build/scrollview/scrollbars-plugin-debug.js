@@ -14,7 +14,7 @@ var _classNames = Y.ScrollView.CLASS_NAMES;
  *
  * @class ScrollbarsPlugin
  */
-function ScrollbarsPlugin(config) {
+function ScrollbarsPlugin() {
     ScrollbarsPlugin.superclass.constructor.apply(this, arguments);
 }
 
@@ -71,22 +71,22 @@ ScrollbarsPlugin.ATTRS = {
     /**
      * Vertical scrollbar node
      *
-     * @attribute verticalScrollbarNode
+     * @attribute verticalNode
      * @type Y.Node
      */
-    verticalScrollbarNode: {
-		setter: '_setVerticalScrollbarNode',
+    verticalNode: {
+		setter: '_setVerticalNode',
         value: Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE)
     },
 
     /**
      * Horizontal scrollbar node
      *
-     * @attribute horizontalScrollbarNode
+     * @attribute horizontalNode
      * @type Y.Node
      */
-    horizontalScrollbarNode: {
-		setter: '_setHorizontalScrollbarNode',
+    horizontalNode: {
+		setter: '_setHorizontalNode',
         value: Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE)
     }
 };
@@ -99,55 +99,57 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
      * @method initializer
      */    
     initializer: function() {
-        this.afterHostMethod('renderUI', this._renderScrollbars);
-        this.afterHostMethod('_uiSizeCB', this._renderScrollbars);
-        this.afterHostMethod('_uiScrollY', this._updateScrollbars);
-        this.afterHostMethod('_uiScrollX', this._updateScrollbars);
-        this.doAfter('scroll:end', this.flashScrollbars);
+        this.afterHostMethod('_uiScrollY', this._update);
+        this.afterHostMethod('_uiScrollX', this._update);
+        this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
+        this.doAfter('scrollEnd', this.flash);
     },
     
     /**
-     * Set up the DOM nodes for the scrollbars
+     * Set up the DOM nodes for the scrollbars. This method is invoked whenver the
+     * host's _uiDimensionsChange fires, giving us the opportunity to remove un-needed
+     * scrollbars, as well as add one if necessary.
      *
-     * @method _renderScrollbars
-     * @param contentBox {Y.Node} The contentBox for the widget
+     * @method _hostDimensionsChange
      * @protected
      */    
-    _renderScrollbars: function(contentBox) {
-        var boundingBox = this.get('host').get('boundingBox'),
-            verticalNode = this.get('verticalScrollbarNode'),
-            horizontalNode = this.get('horizontalScrollbarNode'),
-            updatedScrollbars = true;
+    _hostDimensionsChange: function() {
+        var host = this.get('host'),
+            boundingBox = this.get('host').get('boundingBox'),
+            verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode'),
+            verticalNodeInDoc = verticalNode.inDoc(),
+            horizontalNodeInDoc = horizontalNode.inDoc();
 
         // Vertical
-        if(this.get('host')._scrollsVertical && !verticalNode.inDoc()) {
+        if(host._scrollsVertical && !verticalNodeInDoc) {
             boundingBox.append(verticalNode);
-            updatedScrollbars = false;
+        } else if(!host._scrollsVertical && verticalNodeInDoc) {
+            verticalNode.remove();
         }
 
         // Horizontal
-        if(this.get('host')._scrollsHorizontal && !horizontalNode.inDoc()) {
+        if(host._scrollsHorizontal && !horizontalNodeInDoc) {
             boundingBox.append(horizontalNode);
-            updatedScrollbars = false;
-        }
-        
-        if(!updatedScrollbars) {
-            this._updateScrollbars();
+        } else if(!host._scrollsHorizontal && horizontalNodeInDoc) {
+            horizontalNode.remove();
         }
 
-        Y.later(500, this, 'flashScrollbars', true);
+        this._update();
+        
+        Y.later(500, this, 'flash', true);
     },
     
     /**
      * Position and resize the scroll bars according to the content size
      *
-     * @method _updateScrollbars
-     * @param scrollPos {Number} The current scrollX or scrollY value (not used here, but passed by default from _uiScrollX/_uiScrollY)
+     * @method _update
+     * @param currentPos {Number} The current scrollX or scrollY value (not used here, but passed by default from _uiScrollX/_uiScrollY)
      * @param duration {Number} Number of ms of animation (optional) - used when snapping to bounds
      * @param easing {String} Optional easing equation to use during the animation, if duration is set
      * @protected
      */
-    _updateScrollbars: function(scrollPos, duration, easing) {
+    _update: function(currentPos, duration, easing) {
         var cb = this.get('host').get('contentBox'),
             scrollSize = 0,
             scrollPos = 1,
@@ -156,17 +158,17 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
             width = this.get('host').get('width'),
             scrollHeight = cb.get('scrollHeight'),
             scrollWidth = cb.get('scrollWidth'),
-            verticalNode = this.get('verticalScrollbarNode'),
-            horizontalNode = this.get('horizontalScrollbarNode'),
+            verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode'),
             currentX = this.get('host').get('scrollX') * -1,
             currentY = this.get('host').get('scrollY') * -1;
 
         if(!this._showingScrollBars) {
-            this.showScrollbars();
+            this.show();
         }
 
         if(horizontalNode && scrollHeight <= height) {
-            this.hideScrollbars();
+            this.hide();
             return;
         }
 
@@ -260,12 +262,12 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
     /**
      * Show the scroll bar indicators
      *
-     * @method showScrollbars
+     * @method show
      * @param animated {Boolean} Whether or not to animate the showing 
      */
-    showScrollbars: function(animated) {    
-        var verticalNode = this.get('verticalScrollbarNode'),
-            horizontalNode = this.get('horizontalScrollbarNode');
+    show: function(animated) {    
+        var verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode');
 
         this._showingScrollBars = true;
         
@@ -293,12 +295,12 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
     /**
      * Hide the scroll bar indicators
      *
-     * @method hideScrollbars
+     * @method hide
      * @param animated {Boolean} Whether or not to animate the hiding
      */
-    hideScrollbars: function(animated) {
-        var verticalNode = this.get('verticalScrollbarNode'),
-            horizontalNode = this.get('horizontalScrollbarNode');
+    hide: function(animated) {
+        var verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode');
 
         this._showingScrollBars = false;
 
@@ -326,9 +328,9 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
     /**
      * Momentarily flash the scroll bars to indicate current scroll position
      *
-     * @method flashScrollbars
+     * @method flash
      */
-    flashScrollbars: function() {
+    flash: function() {
         var shouldFlash = false;
         if(this.get('host')._scrollsVertical && this.get('host').get('contentBox').get('scrollHeight') > this.get('host').get('height')) {
             shouldFlash = true;
@@ -339,19 +341,19 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
         }
         
         if(shouldFlash) {
-            this.showScrollbars(true);
-            this._flashTimer = Y.later(800, this, 'hideScrollbars', true);
+            this.show(true);
+            this._flashTimer = Y.later(800, this, 'hide', true);
         }
     },
 
     /**
-     * Setter for the verticalScrollbarNode ATTR
+     * Setter for the verticalNode ATTR
      *
-     * @method _setVerticalScrollbarNode
+     * @method _setVerticalNode
      * @param node {Y.Node} The Y.Node instance for the scrollbar
      * @protected
      */
-    _setVerticalScrollbarNode: function(node) {
+    _setVerticalNode: function(node) {
         node = Y.one(node);
         if(node) {
             node.addClass(_classNames.scrollbar);
@@ -361,13 +363,13 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Setter for the horizontalScrollbarNode ATTR
+     * Setter for the horizontalNode ATTR
      *
-     * @method _setHorizontalScrollbarNode
+     * @method _setHorizontalNode
      * @param node {Y.Node} The Y.Node instance for the scrollbar
      * @protected
      */
-    _setHorizontalScrollbarNode: function(node) {
+    _setHorizontalNode: function(node) {
         node = Y.one(node);
         if(node) {
             node.addClass(_classNames.scrollbar);

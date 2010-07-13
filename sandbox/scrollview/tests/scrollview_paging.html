@@ -19,8 +19,8 @@
 		</style>
 
 		<script src="../../../build/yui/yui.js" type="text/javascript" charset="utf-8"></script>
-		<script src="../build/scrollview/scrollview.js" type="text/javascript" charset="utf-8"></script>
-		<script src="../build/scrollview/paginator-plugin.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../build/scrollview/scrollview-debug.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../build/scrollview/paginator-plugin-debug.js" type="text/javascript" charset="utf-8"></script>
 		
     </head>
     
@@ -50,13 +50,13 @@
                 });
 			
 				scrollView.plug(Y.Plugin.PaginatorPlugin, {
-					pageSelector: 'li'
+					selector: 'li'
 				});
                 
 				scrollView.render();
 
-				Y.one('#next-page').on('click', Y.bind(scrollView.paginator.nextPage, scrollView.paginator));
-				Y.one('#prev-page').on('click', Y.bind(scrollView.paginator.prevPage, scrollView.paginator));
+				Y.one('#next-page').on('click', Y.bind(scrollView.pages.next, scrollView.pages));
+				Y.one('#prev-page').on('click', Y.bind(scrollView.pages.prev, scrollView.pages));
 				
 				Y.later(200, window, scrollTo, [0, 0]);
             });

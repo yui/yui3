@@ -20,10 +20,10 @@ var getClassName = Y.ClassNameManager.getClassName,
         middle: getClassName(SCROLLVIEW, 'middle'),
         showing: getClassName(SCROLLVIEW, 'showing')
     },
-    EV_SCROLL_START = 'scroll:start',
-    EV_SCROLL_CHANGE = 'scroll:change',
-    EV_SCROLL_END = 'scroll:end',
-    EV_SCROLL_FLICK = 'scroll:flick',
+    EV_SCROLL_START = 'scrollStart',
+    EV_SCROLL_CHANGE = 'scrollChange',
+    EV_SCROLL_END = 'scrollEnd',
+    EV_SCROLL_FLICK = 'flick',
     UI = 'ui';
 
 /**
@@ -59,25 +59,10 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @private
      */    
     _createEvents: function() {
-        this.publish(EV_SCROLL_START, {
-            prefix: 'scroll',
-            defaultFn: this._defScrollStartFn
-        });
-
-        this.publish(EV_SCROLL_CHANGE, {
-            prefix: 'scroll',
-            defaultFn: this._defScrollChangeFn
-        });
-        
-        this.publish(EV_SCROLL_END, {
-            prefix: 'scroll',
-            defaultFn: this._defScrollEndFn
-        });
-        
-        this.publish(EV_SCROLL_FLICK, {
-            prefix: 'scroll',
-            defaultFn: this._defScrollFlickFn
-        });
+        this.publish(EV_SCROLL_START);
+        this.publish(EV_SCROLL_CHANGE);
+        this.publish(EV_SCROLL_END);
+        this.publish(EV_SCROLL_FLICK);
     },
     
     /** 
@@ -87,29 +72,8 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @method _uiSizeCB
      * @protected
      */
-    _uiSizeCB: function() {
-        var cb = this.get('contentBox'),
-            bb = this.get('boundingBox'),
-            height = this.get('height'),
-            width = this.get('width'),
-            scrollHeight = cb.get('scrollHeight'),
-            scrollWidth = cb.get('scrollWidth');
+    _uiSizeCB: function() {},
         
-        if(height && scrollHeight > height) {
-            this._scrollsVertical = true;
-            this._maxScrollY = scrollHeight - height;
-            this._minScrollY = 0;
-            bb.setStyle('overflow-y', 'auto');
-        }
-        
-        if(width && scrollWidth > width) {
-            this._scrollsHorizontal = true;
-            this._maxScrollX = scrollWidth - width;
-            this._minScrollX = 0;
-            bb.setStyle('overflow-x', 'auto');
-        }
-    },
-    
     /**
      * TranstionEnd event handler
      *
@@ -127,11 +91,14 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * @method bindUI
      */
     bindUI: function() {
-        this.get('boundingBox').on('touchstart', this._touchesBegan, this);
+        this.get('boundingBox').on('touchstart', this._onTouchstart, this);
         this.get('contentBox')._node.addEventListener('webkitTransitionEnd', Y.bind(this._transitionEnded, this), false);
-        this.get('contentBox')._node.addEventListener('DOMSubtreeModified', Y.bind(this._uiSizeCB, this));
-        this.after("scrollYChange", this._afterScrollYChange);
-        this.after("scrollXChange", this._afterScrollXChange);
+        this.get('contentBox')._node.addEventListener('DOMSubtreeModified', Y.bind(this._uiDimensionsChange, this));
+        this.after('scrollYChange', this._afterScrollYChange);
+        this.after('scrollXChange', this._afterScrollXChange);
+        this.after('heightChange', this._afterHeightChange);
+        this.after('widthChange', this._afterWidthChange);
+        this.after('renderedChange', function() { Y.later(0, this, '_uiDimensionsChange'); });
     },
     
     /**
@@ -142,7 +109,6 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      */
     syncUI: function() {
         this.scrollTo(this.get('scrollX'), this.get('scrollY'));
-        this._uiSizeCB();
     },
     
     /**
@@ -179,11 +145,11 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     /**
      * touchstart event handler
      *
-     * @method _touchesBegan
+     * @method _onTouchstart
      * @param e {Event} The event
      * @private
      */
-    _touchesBegan: function(e) {
+    _onTouchstart: function(e) {
         var touch;
         
         if(e.touches && e.touches.length === 1) {
@@ -192,8 +158,8 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
             
             this._killTimer();
         
-            this._touchmoveEvt = this.get('boundingBox').on('touchmove', this._touchesMoved, this);
-            this._touchendEvt = this.get('boundingBox').on('touchend', this._touchesEnded, this);
+            this._touchmoveEvt = this.get('boundingBox').on('touchmove', this._onTouchmove, this);
+            this._touchendEvt = this.get('boundingBox').on('touchend', this._onTouchend, this);
         
             this._touchstartY = e.touches[0].clientY + this.get('scrollY');
             this._touchstartX = e.touches[0].clientX + this.get('scrollX');
@@ -210,11 +176,11 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     /**
      * touchmove event handler
      *
-     * @method _touchesMoved
+     * @method _onTouchmove
      * @param e {Event} The event
      * @private
      */
-    _touchesMoved: function(e) {
+    _onTouchmove: function(e) {
         var touch = e.touches[0];
         
         e.preventDefault();
@@ -236,11 +202,11 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     /**
      * touchend event handler
      *
-     * @method _touchesEnded
+     * @method _onTouchend
      * @param e {Event} The event
      * @private
      */
-    _touchesEnded: function(e) {
+    _onTouchend: function(e) {
         var minY = this._minScrollY,
             maxY = this._maxScrollY,
             minX = this._minScrollX,
@@ -365,40 +331,56 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
     },
     
     /**
-     * Default scroll:start handler
+     * after listener for the height attribute
      *
-     * @method _defScrollStartFn
-     * @param {Event.Facade}
+     * @method _afterHeightChange
+     * @param e {Event.Facade} The event
      * @protected
      */
-    _defScrollStartFn: function(e) {},
+    _afterHeightChange: function() {
+        this._uiDimensionsChange();
+    },
     
     /**
-     * Default scroll:change handler
+     * after listener for the width attribute
      *
-     * @method _defScrollChangeFn
-     * @param {Event.Facade}
+     * @method _afterHeightChange
+     * @param e {Event.Facade} The event
      * @protected
      */
-    _defScrollChangeFn: function(e) {},
+    _afterWidthChange: function() {
+        this._uiDimensionsChange();
+    },
     
     /**
-     * Default scroll:end handler
+     * This method gets invoked whenever the height or width attrs change,
+     * allowing us to determine which scrolling axes need to be enabled.
      *
-     * @method _defScrollEndFn
-     * @param {Event.Facade}
+     * @method _uiDimensionsChange
      * @protected
      */
-    _defScrollEndFn: function(e) {},
-    
-    /**
-     * Default scroll:flick handler
-     *
-     * @method _defScrollFlickFn
-     * @param {Event.Facade}
-     * @protected
-     */
-    _defScrollFlickFn: function(e) {},
+    _uiDimensionsChange: function() {
+        var cb = this.get('contentBox'),
+            bb = this.get('boundingBox'),
+            height = this.get('height'),
+            width = this.get('width'),
+            scrollHeight = cb.get('scrollHeight'),
+            scrollWidth = cb.get('scrollWidth');
+        
+        if(height && scrollHeight > height) {
+            this._scrollsVertical = true;
+            this._maxScrollY = scrollHeight - height;
+            this._minScrollY = 0;
+            bb.setStyle('overflow-y', 'auto');
+        }
+        
+        if(width && scrollWidth > width) {
+            this._scrollsHorizontal = true;
+            this._maxScrollX = scrollWidth - width;
+            this._minScrollX = 0;
+            bb.setStyle('overflow-x', 'auto');
+        }
+    },
     
     /**
      * Execute a flick at the end of a scroll action
@@ -491,7 +473,7 @@ Y.ScrollViewBase = Y.extend(ScrollViewBase, Y.Widget, {
      * Stop the animation timer
      *
      * @method _killTimer
-     * @param fireEvent {Boolean} If true, fire the scroll:end event
+     * @param fireEvent {Boolean} If true, fire the scrollEnd event
      * @private
      */
     _killTimer: function(fireEvent) {
@@ -662,7 +644,7 @@ var _classNames = Y.ScrollView.CLASS_NAMES;
  *
  * @class ScrollbarsPlugin
  */
-function ScrollbarsPlugin(config) {
+function ScrollbarsPlugin() {
     ScrollbarsPlugin.superclass.constructor.apply(this, arguments);
 }
 
@@ -719,22 +701,22 @@ ScrollbarsPlugin.ATTRS = {
     /**
      * Vertical scrollbar node
      *
-     * @attribute verticalScrollbarNode
+     * @attribute verticalNode
      * @type Y.Node
      */
-    verticalScrollbarNode: {
-		setter: '_setVerticalScrollbarNode',
+    verticalNode: {
+		setter: '_setVerticalNode',
         value: Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE)
     },
 
     /**
      * Horizontal scrollbar node
      *
-     * @attribute horizontalScrollbarNode
+     * @attribute horizontalNode
      * @type Y.Node
      */
-    horizontalScrollbarNode: {
-		setter: '_setHorizontalScrollbarNode',
+    horizontalNode: {
+		setter: '_setHorizontalNode',
         value: Y.Node.create(ScrollbarsPlugin.SCROLLBAR_TEMPLATE)
     }
 };
@@ -747,55 +729,57 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
      * @method initializer
      */    
     initializer: function() {
-        this.afterHostMethod('renderUI', this._renderScrollbars);
-        this.afterHostMethod('_uiSizeCB', this._renderScrollbars);
-        this.afterHostMethod('_uiScrollY', this._updateScrollbars);
-        this.afterHostMethod('_uiScrollX', this._updateScrollbars);
-        this.doAfter('scroll:end', this.flashScrollbars);
+        this.afterHostMethod('_uiScrollY', this._update);
+        this.afterHostMethod('_uiScrollX', this._update);
+        this.afterHostMethod('_uiDimensionsChange', this._hostDimensionsChange);
+        this.doAfter('scrollEnd', this.flash);
     },
     
     /**
-     * Set up the DOM nodes for the scrollbars
+     * Set up the DOM nodes for the scrollbars. This method is invoked whenver the
+     * host's _uiDimensionsChange fires, giving us the opportunity to remove un-needed
+     * scrollbars, as well as add one if necessary.
      *
-     * @method _renderScrollbars
-     * @param contentBox {Y.Node} The contentBox for the widget
+     * @method _hostDimensionsChange
      * @protected
      */    
-    _renderScrollbars: function(contentBox) {
-        var boundingBox = this.get('host').get('boundingBox'),
-            verticalNode = this.get('verticalScrollbarNode'),
-            horizontalNode = this.get('horizontalScrollbarNode'),
-            updatedScrollbars = true;
+    _hostDimensionsChange: function() {
+        var host = this.get('host'),
+            boundingBox = this.get('host').get('boundingBox'),
+            verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode'),
+            verticalNodeInDoc = verticalNode.inDoc(),
+            horizontalNodeInDoc = horizontalNode.inDoc();
 
         // Vertical
-        if(this.get('host')._scrollsVertical && !verticalNode.inDoc()) {
+        if(host._scrollsVertical && !verticalNodeInDoc) {
             boundingBox.append(verticalNode);
-            updatedScrollbars = false;
+        } else if(!host._scrollsVertical && verticalNodeInDoc) {
+            verticalNode.remove();
         }
 
         // Horizontal
-        if(this.get('host')._scrollsHorizontal && !horizontalNode.inDoc()) {
+        if(host._scrollsHorizontal && !horizontalNodeInDoc) {
             boundingBox.append(horizontalNode);
-            updatedScrollbars = false;
-        }
-        
-        if(!updatedScrollbars) {
-            this._updateScrollbars();
+        } else if(!host._scrollsHorizontal && horizontalNodeInDoc) {
+            horizontalNode.remove();
         }
 
-        Y.later(500, this, 'flashScrollbars', true);
+        this._update();
+        
+        Y.later(500, this, 'flash', true);
     },
     
     /**
      * Position and resize the scroll bars according to the content size
      *
-     * @method _updateScrollbars
-     * @param scrollPos {Number} The current scrollX or scrollY value (not used here, but passed by default from _uiScrollX/_uiScrollY)
+     * @method _update
+     * @param currentPos {Number} The current scrollX or scrollY value (not used here, but passed by default from _uiScrollX/_uiScrollY)
      * @param duration {Number} Number of ms of animation (optional) - used when snapping to bounds
      * @param easing {String} Optional easing equation to use during the animation, if duration is set
      * @protected
      */
-    _updateScrollbars: function(scrollPos, duration, easing) {
+    _update: function(currentPos, duration, easing) {
         var cb = this.get('host').get('contentBox'),
             scrollSize = 0,
             scrollPos = 1,
@@ -804,17 +788,17 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
             width = this.get('host').get('width'),
             scrollHeight = cb.get('scrollHeight'),
             scrollWidth = cb.get('scrollWidth'),
-            verticalNode = this.get('verticalScrollbarNode'),
-            horizontalNode = this.get('horizontalScrollbarNode'),
+            verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode'),
             currentX = this.get('host').get('scrollX') * -1,
             currentY = this.get('host').get('scrollY') * -1;
 
         if(!this._showingScrollBars) {
-            this.showScrollbars();
+            this.show();
         }
 
         if(horizontalNode && scrollHeight <= height) {
-            this.hideScrollbars();
+            this.hide();
             return;
         }
 
@@ -908,12 +892,12 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
     /**
      * Show the scroll bar indicators
      *
-     * @method showScrollbars
+     * @method show
      * @param animated {Boolean} Whether or not to animate the showing 
      */
-    showScrollbars: function(animated) {    
-        var verticalNode = this.get('verticalScrollbarNode'),
-            horizontalNode = this.get('horizontalScrollbarNode');
+    show: function(animated) {    
+        var verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode');
 
         this._showingScrollBars = true;
         
@@ -941,12 +925,12 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
     /**
      * Hide the scroll bar indicators
      *
-     * @method hideScrollbars
+     * @method hide
      * @param animated {Boolean} Whether or not to animate the hiding
      */
-    hideScrollbars: function(animated) {
-        var verticalNode = this.get('verticalScrollbarNode'),
-            horizontalNode = this.get('horizontalScrollbarNode');
+    hide: function(animated) {
+        var verticalNode = this.get('verticalNode'),
+            horizontalNode = this.get('horizontalNode');
 
         this._showingScrollBars = false;
 
@@ -974,9 +958,9 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
     /**
      * Momentarily flash the scroll bars to indicate current scroll position
      *
-     * @method flashScrollbars
+     * @method flash
      */
-    flashScrollbars: function() {
+    flash: function() {
         var shouldFlash = false;
         if(this.get('host')._scrollsVertical && this.get('host').get('contentBox').get('scrollHeight') > this.get('host').get('height')) {
             shouldFlash = true;
@@ -987,19 +971,19 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
         }
         
         if(shouldFlash) {
-            this.showScrollbars(true);
-            this._flashTimer = Y.later(800, this, 'hideScrollbars', true);
+            this.show(true);
+            this._flashTimer = Y.later(800, this, 'hide', true);
         }
     },
 
     /**
-     * Setter for the verticalScrollbarNode ATTR
+     * Setter for the verticalNode ATTR
      *
-     * @method _setVerticalScrollbarNode
+     * @method _setVerticalNode
      * @param node {Y.Node} The Y.Node instance for the scrollbar
      * @protected
      */
-    _setVerticalScrollbarNode: function(node) {
+    _setVerticalNode: function(node) {
         node = Y.one(node);
         if(node) {
             node.addClass(_classNames.scrollbar);
@@ -1009,13 +993,13 @@ Y.ScrollbarsPlugin = Y.extend(ScrollbarsPlugin, Y.Plugin.Base, {
     },
 
     /**
-     * Setter for the horizontalScrollbarNode ATTR
+     * Setter for the horizontalNode ATTR
      *
-     * @method _setHorizontalScrollbarNode
+     * @method _setHorizontalNode
      * @param node {Y.Node} The Y.Node instance for the scrollbar
      * @protected
      */
-    _setHorizontalScrollbarNode: function(node) {
+    _setHorizontalNode: function(node) {
         node = Y.one(node);
         if(node) {
             node.addClass(_classNames.scrollbar);
