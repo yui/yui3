@@ -703,10 +703,14 @@
 <span class="cm">     */</span>
     <span class="nx">_delete</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">delete</span> <span class="nx">s</span><span class="p">.</span><span class="nx">fn</span><span class="p">;</span>
-            <span class="k">delete</span> <span class="nx">s</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
-            <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">s</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
-            <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">afters</span><span class="p">[</span><span class="nx">s</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">s</span><span class="p">.</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">subscribers</span><span class="p">[</span><span class="nx">s</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">subCount</span><span class="o">--</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">afters</span><span class="p">[</span><span class="nx">s</span><span class="p">.</span><span class="nx">id</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">afters</span><span class="p">[</span><span class="nx">s</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">afterCount</span><span class="o">--</span><span class="p">;</span>
+            <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">host</span><span class="p">)</span> <span class="p">{</span>
@@ -714,6 +718,11 @@
                 <span class="nx">ce</span><span class="o">:</span> <span class="k">this</span><span class="p">,</span> 
                 <span class="nx">sub</span><span class="o">:</span> <span class="nx">s</span>
             <span class="p">});</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">delete</span> <span class="nx">s</span><span class="p">.</span><span class="nx">fn</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="nx">s</span><span class="p">.</span><span class="nx">context</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">};</span>
