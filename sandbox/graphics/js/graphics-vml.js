@@ -139,24 +139,31 @@ VMLGraphics.prototype = {
      */
     clear: function() {
         this._path = '';
-        return this;
     },
 
     /**
      * Draws a bezier curve
      */
     curveTo: function(cp1x, cp1y, cp2x, cp2y, x, y) {
-        this._path += 'c ' + cp1x + ", " + cp1y + ", " + cp2x + ", " + cp2y + ", " + x + ", " + y;
+        this._path += ' c ' + cp1x + ", " + cp1y + ", " + cp2x + ", " + cp2y + ", " + x + ", " + y;
+    },
+
+    /**
+     * Draws a quadratic bezier curve
+     */
+    quadraticCurveTo: function(cpx, cpy, x, y) {
+        this._path += ' qb ' + cpx + ", " + cpy + ", " + x + ", " + y;
     },
 
     /**
      * Draws a circle
      */
-	drawCircle: function(x, y, r, start, end, anticlockwise) {
+	drawCircle: function(x, y, r, start, end) {
         this._width = this._height = r * 2;
         this._x = x - r;
         this._y = y - r;
-        this._shape = "oval";
+        this._shape = "shape";
+        this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
         this._drawVML();
 	},
 
@@ -168,7 +175,8 @@ VMLGraphics.prototype = {
         this._height = h;
         this._x = x;
         this._y = y;
-        this._shape = "oval";
+        this._shape = "shape";
+        this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
         this._drawVML();
     },
 
@@ -197,8 +205,21 @@ VMLGraphics.prototype = {
     /**
      * Draws a rectangle with rounded corners
      */
-	drawRoundRect: function(x, y, r, start, end, anticlockwise) {
-        return this;
+    drawRoundRect: function(x, y, w, h, ew, eh) {
+        this._x = x;
+        this._y = y;
+        this._width = w;
+        this._height = h;
+        this.moveTo(x, y + eh);
+        this.lineTo(x, y + h - eh);
+        this.quadraticCurveTo(x, y + h, x + ew, y + h);
+        this.lineTo(x + w - ew, y + h);
+        this.quadraticCurveTo(x + w, y + h, x + w, y + h - eh);
+        this.lineTo(x + w, y + eh);
+        this.quadraticCurveTo(x + w, y, x + w - ew, y);
+        this.lineTo(x + ew, y);
+        this.quadraticCurveTo(x, y, x, y + eh);
+        this._drawVML();
 	},
 
     end: function() {
@@ -341,7 +362,7 @@ VMLGraphics.prototype = {
         
         if(this._path)
         {
-            if(this._fill)
+            if(this._fill || this._fillProps)
             {
                 this._path += ' x';
             }
@@ -379,7 +400,6 @@ VMLGraphics.prototype = {
             shape.filled = true;
             shape.appendChild(this._getFill());
         }
-
         this._vml.appendChild(shape);
         this._clearPath();
     },
