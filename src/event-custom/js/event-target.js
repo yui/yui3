@@ -311,15 +311,17 @@ ET.prototype = {
         var parts = _parseType(type, this._yuievt.config.prefix), 
         detachcategory = L.isArray(parts) ? parts[0] : null,
         shorttype = (parts) ? parts[3] : null,
-        handle, adapt, store = Y.Env.evt.handles, cat, args,
+        adapt, store = Y.Env.evt.handles, detachhost, cat, args,
         ce,
 
-        keyDetacher = function(lcat, ltype) {
-            var handles = lcat[ltype];
+        keyDetacher = function(lcat, ltype, host) {
+            var handles = lcat[ltype], ce, i;
             if (handles) {
-                while (handles.length) {
-                    handle = handles.pop();
-                    handle.detach();
+                for (i = handles.length - 1; i >= 0; --i) {
+                    ce = handles[i].evt;
+                    if (ce.host === host || ce.el === host) {
+                        handles[i].detach();
+                    }
                 }
             }
         };
@@ -328,14 +330,15 @@ ET.prototype = {
 
             cat = store[detachcategory];
             type = parts[1];
+            detachhost = (isNode) ? Y.Node.getDOMNode(this) : this;
 
             if (cat) {
                 if (type) {
-                    keyDetacher(cat, type);
+                    keyDetacher(cat, type, detachhost);
                 } else {
                     for (i in cat) {
                         if (cat.hasOwnProperty(i)) {
-                            keyDetacher(cat, i);
+                            keyDetacher(cat, i, detachhost);
                         }
                     }
                 }
