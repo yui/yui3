@@ -426,7 +426,7 @@ YUI.add('selection', function(Y) {
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
-                if (node.test('body')) {
+                if (node && node.test('body')) {
                     b = Y.Node.create('<span></span>');
                     node.append(b);
                     node = b;
@@ -437,9 +437,16 @@ YUI.add('selection', function(Y) {
                 newNode = Y.Node.create(html);
                 range.pasteHTML('<span id="rte-insert"></span>');
                 inHTML = Y.one('#rte-insert');
-                inHTML.set('id', '');
-                inHTML.replace(newNode);
-                return newNode;
+                if (inHTML) {
+                    inHTML.set('id', '');
+                    inHTML.replace(newNode);
+                    return newNode;
+                } else {
+                    Y.on('available', function() {
+                        inHTML.set('id', '');
+                        inHTML.replace(newNode);
+                    }, '#rte-insert');
+                }
             } else {
                 //TODO using Y.Node.create here throws warnings & strips first white space character
                 //txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));
