@@ -23,21 +23,21 @@ Y.mix(Y.DOM, {
         Y.DOM._setSize(node, 'height', size);
     },
 
-    _getOffsetProp: function(node, prop) {
-        return 'offset' + prop.charAt(0).toUpperCase() + prop.substr(1);
-    },
-
     _setSize: function(node, prop, val) {
-        var offset;
+        val = (val > 0) ? val : 0;
+        var size = 0;
 
-        Y.DOM.setStyle(node, prop, val + 'px');
-        offset = node[Y.DOM._getOffsetProp(node, prop)];
-        val = val - (offset - val);
+        node.style[prop] = val + 'px';
+        size = (prop === 'height') ? node.offsetHeight : node.offsetWidth;
 
-        // TODO: handle size less than border/padding (add class?)
-        if (val < 0) {
-            val = 0; // no negative sizes
+        if (size > val) {
+            val = val - (size - val);
+
+            if (val < 0) {
+                val = 0;
+            }
+
+            node.style[prop] = val + 'px';
         }
-        Y.DOM.setStyle(node, prop, val + 'px');
     }
 });

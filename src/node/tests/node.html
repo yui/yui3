@@ -13,6 +13,8 @@ body {
 #doc {
     min-height:200px;
     width:1000px;
+    border:10px solid red;
+    padding:1em;
 }
 
 #get-style {
@@ -1279,6 +1281,40 @@ YUI({base: '../../../build/', filter: 'raw'}).use('selector-css3', 'anim', 'cons
             item.simulate('click');
             item.simulate('mouseup');
             item.simulate('keydown');
+        },
+
+        test_size: function() {
+            var node = Y.one('#doc'),
+                height = node._node.offsetHeight,
+                width = node._node.offsetWidth;
+
+            node.set('offsetHeight', 1000);
+            node.set('offsetWidth', 800);
+
+            Assert.areEqual(1000, node.get('offsetHeight'),
+                "node.set('offsetHeight')");
+
+            Assert.areEqual(800, node.get('offsetWidth'),
+                "node.set('offsetWidth')");
+
+            node.set('offsetWidth', -100);
+            node.set('offsetHeight', -100);
+
+            Assert.areEqual('0px', node.getStyle('height'),
+                "node.get('offsetHeight')");
+
+            Assert.areEqual('0px', node.getStyle('width'),
+                "node.get('offsetWidth')");
+
+            node.setStyle('height', '');
+            node.setStyle('width', '');
+
+            Assert.areEqual(height, node.get('offsetHeight'),
+                "node.get('offsetHeight')");
+
+            Assert.areEqual(width, node.get('offsetWidth'),
+                "node.get('offsetWidth')");
+
         }
 
     })); 
