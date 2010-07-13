@@ -200,9 +200,9 @@ Y.extend(HistoryHash, HistoryBase, {
             prefix = HistoryHash.hashPrefix;
 
         // Slight code duplication here, but execution speed is of the essence
-        // since getHash() is called every 20ms or so to poll for changes in
-        // browsers that don't support native onhashchange. An additional
-        // function call would add unnecessary overhead.
+        // since getHash() is called every 50ms to poll for changes in browsers
+        // that don't support native onhashchange. An additional function call
+        // would add unnecessary overhead.
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     }),

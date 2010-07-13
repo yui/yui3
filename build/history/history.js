@@ -207,10 +207,9 @@ Y.mix(HistoryBase.prototype, {
             defaultFn: this._defChangeFn
         });
 
-        // If initialState was provided and is a simple object, merge it into
-        // the current state.
-        if (_isSimpleObject(initialState)) {
-            this.add(Y.merge(GlobalEnv._state, initialState));
+        // If initialState was provided, merge it into the current state.
+        if (initialState) {
+            this.add(initialState);
         }
     },
 
@@ -797,9 +796,9 @@ Y.extend(HistoryHash, HistoryBase, {
             prefix = HistoryHash.hashPrefix;
 
         // Slight code duplication here, but execution speed is of the essence
-        // since getHash() is called every 20ms or so to poll for changes in
-        // browsers that don't support native onhashchange. An additional
-        // function call would add unnecessary overhead.
+        // since getHash() is called every 50ms to poll for changes in browsers
+        // that don't support native onhashchange. An additional function call
+        // would add unnecessary overhead.
         return prefix && hash.indexOf(prefix) === 0 ?
                     hash.replace(prefix, '') : hash;
     }),
@@ -1076,8 +1075,12 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
         // this is a reasonable tradeoff. The only time the parent frame's hash
         // will be returned is if the iframe hasn't been created yet (i.e.,
         // before domready).
-        return iframe ? iframe.contentWindow.location.hash.substr(1) :
-                location.hash.substr(1);
+        var prefix = HistoryHash.hashPrefix,
+            hash   = iframe ? iframe.contentWindow.location.hash.substr(1) :
+                        location.hash.substr(1);
+
+        return prefix && hash.indexOf(prefix) === 0 ?
+                    hash.replace(prefix, '') : hash;
     };
 
     HistoryHash.getUrl = function () {
