@@ -143,9 +143,6 @@
     Y.Selection.filterBlocks = function() {
         var childs = Y.config.doc.body.childNodes, i, node, wrapped = false, doit = true, sel;
         if (childs) {
-            sel = new Y.Selection();
-            sel.setCursor();
-
             for (i = 0; i < childs.length; i++) {
                 node = Y.one(childs[i]);
                 if (!node.test(Y.Selection.BLOCKS)) {
@@ -166,8 +163,6 @@
                 }
             }
             wrapped = Y.Selection._wrapBlock(wrapped);
-
-            sel.focusCursor();
         }
     };
 
@@ -430,7 +425,7 @@
             var cur = Y.Node.create('<' + Y.Selection.DEFAULT_TAG + ' class="yui-non"></' + Y.Selection.DEFAULT_TAG + '>'),
                 inHTML, txt, txt2, newNode, range = this.createRange(), b;
 
-                if (node.test('body')) {
+                if (node && node.test('body')) {
                     b = Y.Node.create('<span></span>');
                     node.append(b);
                     node = b;
@@ -441,9 +436,16 @@
                 newNode = Y.Node.create(html);
                 range.pasteHTML('<span id="rte-insert"></span>');
                 inHTML = Y.one('#rte-insert');
-                inHTML.set('id', '');
-                inHTML.replace(newNode);
-                return newNode;
+                if (inHTML) {
+                    inHTML.set('id', '');
+                    inHTML.replace(newNode);
+                    return newNode;
+                } else {
+                    Y.on('available', function() {
+                        inHTML.set('id', '');
+                        inHTML.replace(newNode);
+                    }, '#rte-insert');
+                }
             } else {
                 //TODO using Y.Node.create here throws warnings & strips first white space character
                 //txt = Y.one(Y.Node.create(inHTML.substr(0, offset)));
@@ -622,9 +624,9 @@
         focusCursor: function() {
             var cur = this.getCursor();
             if (cur) {
-                cur.set('id', '');
-                cur.set('innerHTML', ' ');
-                this.selectNode(cur);
+                cur.removeAttribute('id');
+                cur.set('innerHTML', '&nbsp;&nbsp;');
+                this.selectNode(cur, true, true);
             }
         },
         /**
