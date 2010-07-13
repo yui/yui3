@@ -28,8 +28,12 @@ if (Y.UA.ie && !Y.HistoryBase.nativeHashChange) {
         // this is a reasonable tradeoff. The only time the parent frame's hash
         // will be returned is if the iframe hasn't been created yet (i.e.,
         // before domready).
-        return iframe ? iframe.contentWindow.location.hash.substr(1) :
-                location.hash.substr(1);
+        var prefix = HistoryHash.hashPrefix,
+            hash   = iframe ? iframe.contentWindow.location.hash.substr(1) :
+                        location.hash.substr(1);
+
+        return prefix && hash.indexOf(prefix) === 0 ?
+                    hash.replace(prefix, '') : hash;
     };
 
     HistoryHash.getUrl = function () {
