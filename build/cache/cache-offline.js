@@ -195,7 +195,7 @@ var localStorage = Y.config.win.localStorage,
     retrieve: function(request) {
         this.fire("request", {request: request});
 
-        var entry, expires;
+        var entry, expires, cached;
 
         try {
             request = JSON.stringify({"request":request});
@@ -209,6 +209,8 @@ var localStorage = Y.config.win.localStorage,
         }
         
         if(entry) {
+            cached = entry.cached;
+            entry.cached = cached ? new Date(cached) : cached;
             expires = entry.expires;
             if(!expires || new Date() < expires) {
                 this.fire("retrieve", {entry: entry});

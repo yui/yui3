@@ -59,9 +59,8 @@ QueryString.stringify = function (obj, c, name) {
     if (L.isArray(obj)) {
         s = [];
         name = aK ? name + '[]' : name;
-        i = 0; 
         l = obj.length;
-        for (; i < l; i ++) {
+        for (i = 0; i < l; i++) {
             s.push( QueryString.stringify(obj[i], c, name) );
         }
 
@@ -95,6 +94,7 @@ QueryString.stringify = function (obj, c, name) {
 
     return s;
 };
+
 
 
 }, '@VERSION@' );

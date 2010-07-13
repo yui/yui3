@@ -143,7 +143,9 @@ QueryString.unescape = function (s) {
 
 
 
+
 }, '@VERSION@' ,{requires:['collection']});
+
 YUI.add('querystring-stringify', function(Y) {
 
 /**
@@ -206,9 +208,8 @@ QueryString.stringify = function (obj, c, name) {
     if (L.isArray(obj)) {
         s = [];
         name = aK ? name + '[]' : name;
-        i = 0; 
         l = obj.length;
-        for (; i < l; i ++) {
+        for (i = 0; i < l; i++) {
             s.push( QueryString.stringify(obj[i], c, name) );
         }
 
@@ -248,7 +249,9 @@ QueryString.stringify = function (obj, c, name) {
 };
 
 
+
 }, '@VERSION@' );
+
 
 
 YUI.add('querystring', function(Y){}, '@VERSION@' ,{use:['querystring-parse', 'querystring-stringify']});

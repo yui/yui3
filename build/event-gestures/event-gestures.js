@@ -50,8 +50,8 @@ Y.Event.define('flick', {
     init: function (node, subscriber, ce) {
 
         var startHandle = node.on(EVENT[START],
-            Y.bind(this._onStart, this),
-            null, // Don't want stuff mixed into the facade
+            this._onStart,
+            this,
             node,
             subscriber, 
             ce);
@@ -78,7 +78,7 @@ Y.Event.define('flick', {
 
     // How to process the additional spec args
     processArgs: function(args) {
-        var params = (args[3]) ? args.splice(3, 1) : {};
+        var params = (args[3]) ? args.splice(3, 1)[0] : {};
 
         if (!(MIN_VELOCITY in params)) {
             params.minVelocity = this.MIN_VELOCITY;
@@ -177,13 +177,13 @@ Y.Event.define('flick', {
 
                 if (isFinite(velocity) && velocity >= params.minVelocity && absDistance >= params.minDistance) {
                     ce.fire({
-                        distance:distance,
-                        time:time,
-                        velocity:velocity,
-                        axis:axis,
+                        distance: distance,
+                        time: time,
+                        velocity: velocity,
+                        axis: axis,
                         button: e.button,
                         start: start,
-                        end : {
+                        end: {
                             time: endTime,
                             clientX: endEvent.clientX, 
                             clientY: endEvent.clientY,
@@ -257,7 +257,7 @@ define('movestart', {
 
         node.setData(_MOVE_START_HANDLE, node.on(EVENT[START], 
             this._onStart, 
-            null,
+            this,
             node,
             subscriber, 
             ce));
@@ -322,8 +322,8 @@ define('move', {
         var root = _getRoot(node, subscriber),
 
             moveHandle = root.on(EVENT[MOVE], 
-                Y.bind(this._onMove, this),
-                null,
+                this._onMove,
+                this,
                 node,
                 subscriber,
                 ce);
@@ -377,8 +377,8 @@ define('moveend', {
         var root = _getRoot(node, subscriber),
 
             endHandle = root.on(EVENT[END], 
-                Y.bind(this._onEnd, this), 
-                null,
+                this._onEnd, 
+                this,
                 node,
                 subscriber, 
                 ce);

@@ -54,6 +54,8 @@ var DOT = '.',
 
         this._stateProxy = node; // when augmented with Attribute
 
+        Y.EventTarget.call(this, {emitFacade:true});
+
         if (this._initPlugins) { // when augmented with Plugin.Host
             this._initPlugins();
         }
@@ -448,7 +450,8 @@ Y_Node.DEFAULT_GETTER = function(name) {
     return val;
 };
 
-Y.augment(Y_Node, Y.Event.Target);
+// Basic prototype augment - no lazy constructor invocation.
+Y.mix(Y_Node, Y.EventTarget, false, null, 1);
 
 Y.mix(Y_Node.prototype, {
 /**
@@ -1351,6 +1354,21 @@ Y.mix(NodeList.prototype, {
         return this;
     },
 
+    _prepEvtArgs: function(type, fn, context) {
+        // map to Y.on/after signature (type, fn, nodes, context, arg1, arg2, etc)
+        var args = Y.Array(arguments, 0, true);
+
+        if (args.length < 2) { // type only (event hash) just add nodes
+            args[2] = this._nodes;
+        } else {
+            args.splice(2, 0, this._nodes);
+        }
+
+        args[3] = context || this; // default to NodeList instance as context
+
+        return args;
+    },
+
     /**
      * Applies an event listener to each Node bound to the NodeList. 
      * @method on
@@ -1362,8 +1380,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     on: function(type, fn, context) {
-        context = context || this;
-        return Y.on(type, fn, this._nodes, context);
+        return Y.on.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
 
     /**
@@ -1379,8 +1396,7 @@ Y.mix(NodeList.prototype, {
      * @see Event.on
      */
     after: function(type, fn, context) {
-        context = context || this;
-        return Y.after(type, fn, this._nodes, context || this);
+        return Y.after.apply(Y, this._prepEvtArgs.apply(this, arguments));
     },
 
     /**
@@ -1855,6 +1871,45 @@ if (Y.config.doc.createElement('form').elements.nodeType) {
     };
 }
 
+Y.mix(Y.Node.ATTRS, {
+    offsetHeight: {
+        setter: function(h) {
+            Y.DOM.setHeight(this._node, h);
+            return h;
+        },
+
+        getter: function() {
+            return this._node.offsetHeight;
+        }
+    },
+
+    offsetWidth: {
+        setter: function(w) {
+            Y.DOM.setWidth(this._node, w);
+            return w;
+        },
+
+        getter: function() {
+            return this._node.offsetWidth;
+        }
+    }
+});
+
+Y.mix(Y.Node.prototype, {
+    sizeTo: function(w, h) {
+        var node;
+        if (arguments.length < 2) {
+            node = Y.one(w);
+            w = node.get('offsetWidth');
+            h = node.get('offsetHeight');
+        }
+
+        this.setAttrs({
+            offsetWidth: w,
+            offsetHeight: h
+        });
+    }
+});
 
 
 }, '@VERSION@' ,{requires:['dom-base', 'selector-css2', 'event-base']});
