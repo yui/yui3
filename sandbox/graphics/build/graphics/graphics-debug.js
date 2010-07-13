@@ -740,12 +740,12 @@ VMLGraphics.prototype = {
     /**
      * Draws a circle
      */
-	drawCircle: function(x, y, r, start, end) {
+	drawCircle: function(x, y, r) {
         this._width = this._height = r * 2;
         this._x = x - r;
         this._y = y - r;
-        this._shape = "shape";
-        this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
+        this._shape = "oval";
+        //this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
         this._drawVML();
 	},
 
@@ -757,8 +757,8 @@ VMLGraphics.prototype = {
         this._height = h;
         this._x = x;
         this._y = y;
-        this._shape = "shape";
-        this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
+        this._shape = "oval";
+        //this._path += ' ar ' + this._x + ", " + this._y + ", " + (this._x + this._width) + ", " + (this._y + this._height) + ", " + this._x + " " + this._y + ", " + this._x + " " + this._y;
         this._drawVML();
     },
 
